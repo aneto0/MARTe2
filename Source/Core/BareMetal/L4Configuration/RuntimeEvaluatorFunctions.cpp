@@ -878,4 +878,83 @@ REGISTER_WRITECONV(WRITE,Write,int32 ,int16)
 
 
 
+/*********************************************************************************************************
+ *********************************************************************************************************
+ *
+ *                      Remote Type converting Write operators
+ *
+ *********************************************************************************************************
+ **********************************************************************************************************/
+
+template <typename T> void RRead(RuntimeEvaluator &context){
+    CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    T *x = context.Variable<T *>(index);
+    context.Push(*x);
+}
+template <typename T> void RWrite(RuntimeEvaluator &context){
+    CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    T *x = context.Variable<T *>(index);
+    context.Pop(*x);
+}
+
+REGISTER_PCODE_FUNCTION(RREAD,double,0,1,RRead<float64> ,Float64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,float ,0,1,RRead<float32> ,Float32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint64,0,1,RRead<uint64>  ,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int64 ,0,1,RRead<int64>   ,SignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint32,0,1,RRead<uint32>  ,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int32 ,0,1,RRead<int32>   ,SignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint16,0,1,RRead<uint16>  ,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int16 ,0,1,RRead<int16>   ,SignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint8 ,0,1,RRead<uint8>   ,UnsignedInteger8Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int8  ,0,1,RRead<int8>    ,SignedInteger8Bit)
+
+REGISTER_PCODE_FUNCTION(RWRITE,double,1,0,RWrite<float64>   ,Float64Bit             ,Float64Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,float ,1,0,RWrite<float32>   ,Float32Bit             ,Float32Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,uint64,1,0,RWrite<uint64>    ,UnsignedInteger64Bit   ,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int64 ,1,0,RWrite<int64>     ,SignedInteger64Bit     ,SignedInteger64Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint32,1,0,RWrite<uint32>    ,UnsignedInteger32Bit   ,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int32 ,1,0,RWrite<int32>     ,SignedInteger32Bit     ,SignedInteger32Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint16,1,0,RWrite<uint16>    ,UnsignedInteger16Bit   ,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int16 ,1,0,RWrite<int16>     ,SignedInteger16Bit     ,SignedInteger16Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint8 ,1,0,RWrite<uint8>     ,UnsignedInteger8Bit    ,UnsignedInteger8Bit )
+REGISTER_PCODE_FUNCTION(RWRITE,int8  ,1,0,RWrite<int8>      ,SignedInteger8Bit      ,SignedInteger8Bit   )
+
+template <typename Tin,typename Tout> void RWrite_2T(RuntimeEvaluator &context){
+    CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    Tin x1;
+    context.Pop(x1);
+    Tout *x2 = context.Variable<Tout *>(index);
+    bool ret;
+    ret = SafeNumber2Number(x1,*x2);
+    if (!ret){
+        context.runtimeError.outOfRange = true;
+    }
+}
+
+// register function with difference between input and outout type   fun(type1)==>typeOut
+#define REGISTER_WRITECONV(name,fname,typeIn,typeOut)                                           \
+    static Function functionP ## fname ## typeIn ## typeOut = & fname ## _2T<typeIn,typeOut>;    \
+    REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1,0,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
+
+REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint8)
+REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint16)
+REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint32)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,uint8)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,uint16)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,uint32)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,uint64)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,int8)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,int16)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,int32)
+REGISTER_WRITECONV(RWRITE,RWrite,uint32,uint8)
+REGISTER_WRITECONV(RWRITE,RWrite,uint32,uint16)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,uint8)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,uint16)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,uint32)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,int8)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,int16)
+
 } //MARTe
