@@ -52,9 +52,9 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestIntegration) {
     ASSERT_TRUE(pseudoCodeTest.TestIntegration());
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestError) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestError2) {
     RuntimeEvaluatorTest pseudoCodeTest;
-    ASSERT_TRUE(pseudoCodeTest.TestError());
+    ASSERT_TRUE(pseudoCodeTest.TestError2());
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestExpression_1) {
@@ -131,7 +131,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_MissingPara
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ExceedingParameters) {
@@ -143,11 +146,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ExceedingPa
             "WRITE ret\n"
     ;
     
-    EXPECT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
     
-    float64 values[2] = { 10.0, 9.9 };
-    
-    ASSERT_FALSE(pseudoCodeTest.TestExpression(rpnCode, values));
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_NumericParameter) {
@@ -159,7 +161,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_NumericPara
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ReservedKeywordAsParameter_1) {
@@ -171,7 +176,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ReservedKey
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ReservedKeywordAsParameter_2) {
@@ -183,7 +191,90 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ReservedKey
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+/*---------------------------------------------------------------------------*/
+/*                                  WRITE                                    */
+/*---------------------------------------------------------------------------*/
+
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_WRITE_MissingParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "WRITE \n"
+    ;
+    
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_WRITE_ExceedingParameters) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "WRITE ret1 ret2\n"
+    ;
+    
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_WRITE_NumericParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "WRITE 10\n"
+    ;
+    
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_WRITE_ReservedKeywordAsParameter_1) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "WRITE float32\n"
+    ;
+    
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_WRITE_ReservedKeywordAsParameter_2) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "READ WRITE\n"
+            "WRITE WRITE\n"
+    ;
+    
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 /*---------------------------------------------------------------------------*/
@@ -199,7 +290,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_MissingPar
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_SwitchedParameters) {
@@ -211,7 +305,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_SwitchedPa
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ExceedingParameters) {
@@ -223,7 +320,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ExceedingP
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_NonNumericParameter) {
@@ -235,7 +335,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_NonNumeric
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ReservedKeywordAsParameter_1) {
@@ -247,7 +350,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ReservedKe
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ReservedKeywordAsParameter_2) {
@@ -259,7 +365,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ReservedKe
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_UnsupportedType) {
@@ -271,7 +380,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_Unsupporte
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_UnspecifiedType) {
@@ -283,7 +395,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_Unspecifie
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_NonNumericType) {
@@ -295,5 +410,124 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_NonNumeric
             "WRITE ret\n"
     ;
     
-    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+/*---------------------------------------------------------------------------*/
+/*                                  CAST                                     */
+/*---------------------------------------------------------------------------*/
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_MissingParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "CAST \n"
+            "WRITE ret\n"
+    ;
+    
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_ExceedingParameters) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "CAST float32 float64\n"
+            "WRITE ret\n"
+    ;
+    
+    // expected to fail at Compile()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::InitialisationError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_NumericParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "CAST 11\n"
+            "WRITE ret\n"
+    ;
+    
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_NonNumericParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "CAST A\n"
+            "WRITE ret\n"
+    ;
+    
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_ReservedKeywordAsParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "CAST WRITE\n"
+            "WRITE ret\n"
+    ;
+    
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_UnsupportedType) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "CAST unsupportedtype\n"
+            "WRITE ret\n"
+    ;
+    
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_NonNumericType) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float64 10\n"
+            "CAST char8\n"
+            "WRITE ret\n"
+    ;
+    
+    // expected to fail at ExtractVariables()
+    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
+    
+    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }

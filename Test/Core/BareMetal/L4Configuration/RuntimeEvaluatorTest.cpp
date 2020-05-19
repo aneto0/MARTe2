@@ -290,7 +290,7 @@ bool RuntimeEvaluatorTest::TestIntegration() {
     return ret;
 }
 
-bool RuntimeEvaluatorTest::TestError() {
+bool RuntimeEvaluatorTest::TestError2() {
 
     CCString rpnCode=
             "READ A\n"
@@ -475,6 +475,84 @@ bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode) {
     ret = context.ExtractVariables();
 
     return ret;
+}
+
+bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
+                                     ErrorManagement::ErrorType expectedError
+                                    ) {
+    
+    StreamString RPNCodeStream(rpnCode);
+    
+    RuntimeEvaluator evaluator(RPNCodeStream);
+    
+    ErrorManagement::ErrorType ok;
+    ErrorManagement::ErrorType ret = ErrorManagement::NoError;
+    
+    // 1. try ExtractVariabler()
+    
+    ok = evaluator.ExtractVariables();
+    if (!ok) {
+        ret = ErrorManagement::SyntaxError;
+        printf("Failed at ExtractVariables().\n");
+    }
+    
+    // 2. try Compile()
+    
+    if (ok) {
+        uint32 index = 0U;
+        VariableInformation *var;
+
+        while(evaluator.BrowseInputVariable(index,var) && ok) {
+            ok = evaluator.SetInputVariableType(index, Float64Bit);
+            index++;
+        }
+        
+        // output variable types automatically derived from input types
+    }
+    
+    if (ok) {
+        ok = evaluator.Compile();
+        if (!ok) {
+            ret = ErrorManagement::InitialisationError;
+            printf("Failed at Compile().\n");
+        }
+    }
+    
+    // 3. try Execute()
+    
+    if (ok){
+        uint32 index = 0;
+        VariableInformation *var;
+        
+        while(evaluator.BrowseInputVariable(index,var)){
+            float64 *x = (float64*)evaluator.GetInputVariableMemory(index);
+            *x = 1.0;
+            index++;
+        }
+    }
+    
+    if (ok) {
+        ok = evaluator.Execute();
+        if (!ok) {
+            ret = ErrorManagement::FatalError;
+            printf("Failed at Execute().\n");
+        }
+    }
+    
+    if (ret == ErrorManagement::NoError) {
+        
+        printf("NoError, but should generate one.\n");
+        
+        // usually generates a segfault
+        //StreamString retVar = "ret";
+        //float64* x = (float64*)(evaluator.GetOutputVariableMemory(retVar));
+        //printf("Result: %d\n", *x);
+    }
+    
+    ok = (ret == expectedError);
+    
+    return ok;
+    
 }
 
 bool RuntimeEvaluatorTest::TestExpression(CCString rpnCode, float64 valueArray[]) {
