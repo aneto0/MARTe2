@@ -50,7 +50,6 @@
 /*---------------------------------------------------------------------------*/
 
 
-
 namespace MARTe{
 
 /**
@@ -243,7 +242,7 @@ private:
      * Checks existence of name using FindInputVariable
      * If not found add new variable
      */
-    inline ErrorManagement::ErrorType AddInputVariable(CCString name,TypeDescriptor td = InvalidType(0),RuntimeEvaluatorInfo::DataMemoryAddress location = MAXDataMemoryAddress);
+    inline ErrorManagement::ErrorType AddInputVariable(CCString name,TypeDescriptor td = VoidType,RuntimeEvaluatorInfo::DataMemoryAddress location = MAXDataMemoryAddress);
 
     /**
      * Looks for a variable of a given name
@@ -254,7 +253,7 @@ private:
      * Checks existence of name using FindOutputVariable
      * If not found add new variable
      */
-    inline ErrorManagement::ErrorType AddOutputVariable(CCString name,TypeDescriptor td = InvalidType(0),RuntimeEvaluatorInfo::DataMemoryAddress location = MAXDataMemoryAddress);
+    inline ErrorManagement::ErrorType AddOutputVariable(CCString name,TypeDescriptor td = VoidType,RuntimeEvaluatorInfo::DataMemoryAddress location = MAXDataMemoryAddress);
 
     /**
      * Looks for a variable of a given name

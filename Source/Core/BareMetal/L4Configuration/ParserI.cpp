@@ -194,7 +194,7 @@ uint32 ParserI::GetConflictRow(const uint32 index)const  {
 
 ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	errorStream,uint32 debugLevel) {
 	ErrorManagement::ErrorType ret;
-	const Token * currentToken;
+	const Token * currentToken = NULL_PTR(Token *);
 	DebugStream debugStream = {errorStream, debugLevel};
 
 //        uint32 stackArray[constants.StackSize];
@@ -208,24 +208,22 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
         StackPush(0);
         StackPush(start_symbol);
 
-
         PARSER_DIAGNOSTIC_REPORT(debugStream,3,"Push %s (=%i)\n",GetSymbolName(start_symbol),start_symbol);
 
-        if (ret){
-        	ret = PeekToken(stream,0,currentToken);
-            PARSER_ERROR_REPORT(debugStream,ret,"Failed reading token",0);
-        }
+       	ret = PeekToken(stream,0,currentToken);
+        PARSER_ERROR_REPORT(debugStream,ret,"Failed reading token",0);
+
+        uint32 symbol = StackPop();
+		PARSER_DIAGNOSTIC_REPORT(debugStream,3,"Pop %s (=%i) \n",GetSymbolName(symbol),symbol);
 
         uint32 token = 0;
-        if (currentToken != NULL){
+        if (ret && (currentToken != NULL)){
             token = currentToken->GetId();
+    		PARSER_DIAGNOSTIC_REPORT(debugStream,2,"Token= [%s](%s) \n",GetSymbolName(token),currentToken->GetData());
         }
         uint32 new_token = token;
 //		uint32 symbol = StackPop(top);
-        uint32 symbol = StackPop();
 
-		PARSER_DIAGNOSTIC_REPORT(debugStream,2,"Token= [%s](%s) \n",GetSymbolName(token),currentToken->GetData());
-		PARSER_DIAGNOSTIC_REPORT(debugStream,3,"Pop %s (=%i) \n",GetSymbolName(symbol),symbol);
         for (; (symbol > 0u) && (ret);) {
 
         	/// from StartAction to EndAction

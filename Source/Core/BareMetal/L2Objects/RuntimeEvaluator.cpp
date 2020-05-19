@@ -297,6 +297,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
     RuntimeEvaluatorInfo::DataMemoryAddress nextVariableAddress = startOfVariables;
     // check that all variables have a type and allocate variables + constants
 
+    {
     uint32 index = 0;
     RuntimeEvaluatorInfo::VariableInformation *var;
     while(BrowseInputVariable(index,var) && ret){
@@ -310,11 +311,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                 // if NULL variable is in DataMemory
                 nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
             } else {
-            	// enable Variable<T>[] method
-            	variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
-                // save address now
-                Variable<void *>(nextVariableAddress)= var->externalLocation;
-            	// otherwise variable address is in DataMemory
+            	// variable address is in DataMemory
                 nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
             }
         }
@@ -323,24 +320,27 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
 
     index = 0;
     while(BrowseOutputVariable(index,var) && ret){
-        ret.unsupportedFeature = !var->type.IsNumericType();
-        COMPOSITE_REPORT_ERROR(ret,"input variable ",var->name," has incompatible non-numeric type ");
-
-        if (ret){
+    	// local variable reserve 8 bytes for it
+    	if (var->type.SameAs(VoidType) && (var->externalLocation == NULL)){
             var->location = nextVariableAddress;
-            if (var->externalLocation == NULL){
-                // if NULL variable is in DataMemory
-                nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
-            } else {
-            	// enable Variable<T>[] method
-            	variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
-                // save address now
-                Variable<void *>(nextVariableAddress) = var->externalLocation;
-            	// otherwise variable address is in DataMemory
-                nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+            nextVariableAddress += ByteSizeToDataMemorySize(sizeof(double));
+    	} else {
+            ret.unsupportedFeature = !var->type.IsNumericType();
+            COMPOSITE_REPORT_ERROR(ret,"output variable ",var->name," has incompatible non-numeric type ");
+
+            if (ret){
+                var->location = nextVariableAddress;
+                if (var->externalLocation == NULL){
+                    // if NULL variable is in DataMemory
+                    nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+                } else {
+                	// variable address is in DataMemory
+                    nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+                }
             }
-        }
+    	}
         index++;
+    }
     }
 
     // already
@@ -427,17 +427,27 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                 }
 
                 if (ret){
-                    /// change from WRITE to RWRITE
+                    // change from WRITE to RWRITE
                     if (variableInformation->externalLocation != NULL){
                     	command = remoteWriteToken;
+                        // save address now
+                        Variable<void *>(variableInformation->location)= variableInformation->externalLocation;
                     }
                 }
 
                 TypeDescriptor td = InvalidType(0);
                 if (ret){
                     td = variableInformation->type;
-                    ret.unsupportedFeature = !td.IsNumericType();
-                    COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1, "does not have a numeric supported format");
+
+                    // found local variable - allocate and give type here
+                	if (td.SameAs(VoidType) && (variableInformation->externalLocation == NULL)){
+                		ret.fatalError = !typeStack.Peek(0,td);
+                        REPORT_ERROR(ret,"expecting source type in stack");
+                        variableInformation->type = td;
+                	} else {
+                        ret.unsupportedFeature = !td.IsNumericType();
+                        COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1, "does not have a numeric supported format");
+                	}
                 }
 
                 if (ret){
@@ -486,6 +496,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     /// change from READ to RREAD
                     if (variableInformation->externalLocation != NULL){
                     	command = remoteReadToken;
+                        // save address now
+                        Variable<void *>(variableInformation->location)= variableInformation->externalLocation;
                     }
                 }
 
@@ -622,7 +634,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
 
      const RuntimeEvaluatorInfo::CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
 
-     if (functionInformation.name == writeToken){
+     if ((functionInformation.name == writeToken) || (functionInformation.name == remoteWriteToken)){
          RuntimeEvaluatorInfo::CodeMemoryElement pCode2 = GetPseudoCode();
 
          RuntimeEvaluatorInfo::VariableInformation *vi;
@@ -686,7 +698,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
         cst.Append(' ');
         ret.fatalError = !functionInformation.types[functionInformation.numberOfInputs].ToString(cst);
     } else
-    if (functionInformation.name == readToken) {
+    if ((functionInformation.name == readToken)||(functionInformation.name == remoteReadToken)) {
         RuntimeEvaluatorInfo::CodeMemoryElement pCode2;
         if (lookBack){
             pCode2 = codeMemoryPtr[-1];
@@ -757,76 +769,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
     return ret;
 }
 
-
-#if 0
-class VariableGatherer: public GenericIterator<RuntimeEvaluatorInfo::VariableInformation>{
-public:
-    /**
-     *
-     */
-	VariableGatherer(RuntimeEvaluator &rte);
-    /**
-     *
-     */
-    virtual IteratorAction Do(RuntimeEvaluatorInfo::VariableInformation &data,uint32 depth=0);
-private:
-    /**
-     *
-     */
-    RuntimeEvaluator &rte;
-
-};
-
-VariableGatherer::VariableGatherer(RuntimeEvaluator &rteIn): rte(rteIn){}
-
-IteratorAction VariableGatherer::Do(RuntimeEvaluatorInfo::VariableInformation &data,uint32 depth){
-    IteratorAction ret;
-    if (data.externalLocation != NULL){
-    	memcpy(&rte.Variable<char8 >(data.location),data.externalLocation,data.type.StorageSize());
-    }
-    return ret;
-}
-
-class VariableScatterer: public GenericIterator<RuntimeEvaluatorInfo::VariableInformation>{
-public:
-    /**
-     *
-     */
-	VariableScatterer(RuntimeEvaluator &rte);
-    /**
-     *
-     */
-    virtual IteratorAction Do(RuntimeEvaluatorInfo::VariableInformation &data,uint32 depth=0);
-private:
-    /**
-     *
-     */
-    RuntimeEvaluator &rte;
-
-};
-
-VariableScatterer::VariableScatterer(RuntimeEvaluator &rteIn): rte(rteIn){}
-
-IteratorAction VariableScatterer::Do(RuntimeEvaluatorInfo::VariableInformation &data,uint32 depth){
-    IteratorAction ret;
-    if (data.externalLocation != NULL){
-    	memcpy(data.externalLocation,&rte.Variable<char8 >(data.location),data.type.StorageSize());
-    }
-    return ret;
-}
-
-void RuntimeEvaluator::GatherInputs(){
-	VariableGatherer vg(*this);
-	inputVariableInfo.Iterate(vg);
-}
-
-void RuntimeEvaluator::ScatterOutputs(){
-	VariableScatterer vs(*this);
-	outputVariableInfo.Iterate(vs);
-}
-
-#endif
-
 ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI *debugStream,RuntimeEvaluatorInfo::CodeMemoryAddress *step){
 
     stackPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement*>(stack.GetDataPointer());
@@ -838,8 +780,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
 
     variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
     runtimeError = ErrorManagement::ErrorType(true);
-
-    //GatherInputs();
 
     switch (mode){
     case fastMode:{
@@ -933,9 +873,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
         COMPOSITE_REPORT_ERROR(runtimeError,"stack pointer not back to origin : ",offset, " elements left");
     }
 
-    //if (runtimeError){
-    //    ScatterOutputs();
-    //}
     return runtimeError;
 }
 
@@ -956,6 +893,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(DynamicCString &RPNCode,b
 
         if ((fr.name == readToken) && (codeMemoryPtr[0] < startOfVariables)){
             cst.Append(constToken);
+        } else
+        if (fr.name == remoteReadToken) {
+            cst.Append(readToken);
+        } else
+        if (fr.name == remoteWriteToken) {
+            cst.Append(writeToken);
         } else {
             cst.Append(fr.name);
         }

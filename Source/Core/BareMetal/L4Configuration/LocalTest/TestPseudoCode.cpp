@@ -80,14 +80,14 @@ CCString RPNCode=
 		"SUB\n"
 		"CONST float32 3.140000\n"
 		"MUL\n"
-		"DUP\n"
 		"WRITE C\n"
+		"READ C\n"
 		"CONST float32 0.500000\n"
 		"POW\n"
 		"TAN\n"
 		"CAST int32\n"
-		"DUP\n"
 		"WRITE D\n"
+		"READ D\n"
 		"READ C\n"
 		"LOG\n"
 		"CAST int32\n"
@@ -96,13 +96,15 @@ CCString RPNCode=
 		"READ N1\n"
 		"READ N2\n"
 		"SUB\n"
-		"DUP\n"
+		"WRITE TEMP\n"
+		"READ TEMP\n"
+		"READ TEMP\n"
 		"READ N3\n"
 		"READ N4\n"
 		"DIV\n"
 		"ADD\n"
-		"DUP\n"
 		"WRITE N5\n"
+		"READ N5\n"
 		"CAST int64\n"
 		"GT\n"
 		"WRITE F\n"
@@ -135,32 +137,10 @@ void MyCallBack(CCString name, uint32 nameLength, CCString value, uint32 valueLe
 }
 
 
-class pippo{
-public:
-	class pluto;
-
-	int wiener(pluto &x);
-};
-
-
-class pippo::pluto{
-public:
-	int ubba;
-};
-
-pippo::pluto minga;
-
-int pippo::wiener(pluto & x){
-	return x.ubba;
-}
-
-pippo menga;
 
 int main(){
 
 	StartupManager::Initialise();
-
-    menga.wiener(minga);
 
 #if 0
 {
@@ -258,20 +238,19 @@ int main(){
 #endif
 
 
-#if 1
+#if 0
 {
-	//StreamString err;
 	StreamMemoryReference smr(MATHExpr.GetList(),MATHExpr.GetSize());
+	smr.Seek(0);
 	MathExpressionParser mexp;
 	mexp.Parse(smr,NULL/*&err*/,2);
 
 	printf(">>\n%s\n<<\n",mexp.GetStackMachineExpression().GetList());
-//	printf(">>\n%s\n<<\n",err.Buffer().GetList());
 
 }
 #endif
 
-#if 0
+#if 1
 {
 	RuntimeEvaluator context;
 
@@ -279,19 +258,27 @@ int main(){
 
 	ret = context.ExtractVariables(RPNCode);
 
+	//####################################################
+	//    External variables
+	//####################################################
+
+	float externalA = 1.0;
+	float externalB = 2.0;
+	uint8 externalF = 0;
+
 	if (ret){
 		uint32 index = 0U;
 		RuntimeEvaluatorInfo::VariableInformation *var;
 
 		printf ("VAR SCAN RESULT\n");
 		while(context.BrowseInputVariable(index,var)){
-			printf ("input  var %2i @%04x = %s \n",index,var->location,var->name.GetList());
-			index++;
 			if (var->name == "A"){
 				var->type = TypeDescriptor("float32");
+				var->externalLocation = &externalA;
 			}
 			if (var->name == "B"){
 				var->type = TypeDescriptor("float32");
+				var->externalLocation = &externalB;
 			}
 			if (var->name == "N1"){
 				var->type = TypeDescriptor("int8");
@@ -305,12 +292,47 @@ int main(){
 			if (var->name == "N4"){
 				var->type = TypeDescriptor("int8");
 			}
+            DynamicCString xx;
+            CStringTool xxct = xx();
+            var->type.ToString(xxct);
+
+            printf ("input  var %2i @%04x = %s type = %s\n",index,var->location,var->name.GetList(),xx.GetList());
+			index++;
 		}
 
 		index = 0;
 		while(context.BrowseOutputVariable(index,var)){
-			printf ("output var %2i @%04x = %s\n",index,var->location,var->name.GetList());
+			if (var->name == "D"){
+				var->type = TypeDescriptor("int32");
+			}
+			if (var->name == "E"){
+				var->type = TypeDescriptor("uint8");
+			}
+			if (var->name == "F"){
+				var->type = TypeDescriptor("uint8");
+				var->externalLocation = &externalF;
+			}
+			if (var->name == "N5"){
+				var->type = TypeDescriptor("int8");
+			}
+            DynamicCString xx;
+            CStringTool xxct = xx();
+            var->type.ToString(xxct);
+
+            printf ("output var %2i @%04x = %s type = %s\n",index,var->location,var->name.GetList(),xx.GetList());
 			index++;
+		}
+	}
+
+	if (ret){
+		printf ("COMPILE\n");
+		ret = context.Compile(RPNCode);
+	}
+	if (ret){
+		uint32 index = 0U;
+		RuntimeEvaluatorInfo::VariableInformation *var;
+
+		while(context.BrowseOutputVariable(index,var)){
 			if (var->name == "C"){
 				var->type = TypeDescriptor("float32");
 			}
@@ -326,12 +348,13 @@ int main(){
 			if (var->name == "N5"){
 				var->type = TypeDescriptor("int8");
 			}
-		}
-	}
+	        DynamicCString xx;
+	        CStringTool xxct = xx();
+	        var->type.ToString(xxct);
 
-	if (ret){
-		printf ("COMPILE\n");
-		ret = context.Compile(RPNCode);
+	        printf ("output var %2i @%04x = %s type = %s\n",index,var->location,var->name.GetList(),xx.GetList());
+			index++;
+		}
 	}
 
 	if (ret){
@@ -349,6 +372,7 @@ int main(){
 
 		while(context.BrowseInputVariable(index,var)){
 			index++;
+/*
 			if (var->name == "A"){
 				float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
 				*x = 1.0;
@@ -357,6 +381,7 @@ int main(){
 				float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
 				*x = 2.0;
 			}
+*/
 			if (var->name == "N1"){
 				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
 				*x = 31;
@@ -421,7 +446,6 @@ int main(){
 		fflush(stdout);
 		DynamicCString dcs;
 		CStringTool cst = dcs();
-//		BasicConsole console;
 		ret = context.Execute(RuntimeEvaluator::debugMode,&cst,0);
 		if (dcs.GetSize() > 0){
 			printf("%s\n",dcs.GetList());
