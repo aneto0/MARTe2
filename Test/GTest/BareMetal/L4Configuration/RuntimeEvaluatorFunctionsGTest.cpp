@@ -1222,6 +1222,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFunctionTyp
 
     test.Add2In1OutFunction("int8",   "int8",     "int32");
     test.Add2In1OutFunction("int16",  "int16",    "int32");
+    test.Add2In1OutFunction("int32",  "int32",    "int32");
 
     test.Add2In1OutFunction("int32",  "int32",    "int64");
     test.Add2In1OutFunction("int64",  "int64",    "int64");
@@ -1581,6 +1582,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulFunctionTyp
 
     test.Add2In1OutFunction("int8",   "int8",     "int32");
     test.Add2In1OutFunction("int16",  "int16",    "int32");
+    test.Add2In1OutFunction("int32",  "int32",    "int32");
 
     test.Add2In1OutFunction("int32",  "int32",    "int64");
     test.Add2In1OutFunction("int64",  "int64",    "int64");
