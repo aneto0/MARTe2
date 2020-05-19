@@ -213,7 +213,6 @@ template <typename T1,typename T2> void Casting(RuntimeEvaluator &context){
     context.Push(x2);
     if (!ret){
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
 }
 
@@ -340,7 +339,6 @@ REGISTER_LOGICAL_OPERATOR(XOR, ^ ,xor)
 
 
 
-#if 1 // safe - upcasting  operators
 
 /*********************************************************************************************************
  *********************************************************************************************************
@@ -698,7 +696,6 @@ template <typename T1,typename T2,typename Ttest> void Greater_3T(RuntimeEvaluat
         result = y2 > y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Push(result);
 }
@@ -717,7 +714,6 @@ template <typename T1,typename T2,typename Ttest> void Lower_3T(RuntimeEvaluator
         result = y2 < y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Push(result);
 }
@@ -736,7 +732,6 @@ template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(RuntimeE
         result = y2 >= y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Push(result);
 }
@@ -755,7 +750,6 @@ template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(RuntimeEva
         result = y2 <= y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Push(result);
 }
@@ -774,7 +768,6 @@ template <typename T1,typename T2,typename Ttest> void Same_3T(RuntimeEvaluator 
         result = y2 == y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Push(result);
 }
@@ -793,7 +786,6 @@ template <typename T1,typename T2,typename Ttest> void Different_3T(RuntimeEvalu
         result = y2 != y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",y1, "OR",x2,"!=",y2);
     }
     context.Push(result);
 }
@@ -855,7 +847,6 @@ template <typename Tin,typename Tout> void Write_2T(RuntimeEvaluator &context){
     ret = SafeNumber2Number(x1,x2);
     if (!ret){
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Variable<Tout>(index) = x2;
 }
@@ -886,35 +877,5 @@ REGISTER_WRITECONV(WRITE,Write,int32 ,int8)
 REGISTER_WRITECONV(WRITE,Write,int32 ,int16)
 
 
-
-
-#else  // standard operators
-
-// TODO - implement without casting. promote all results between u/int16 and u/int8 to int32 as the compiler would do
-#define REGISTER_OPERATOR(name,oper,fname)                                          \
-        template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
-            T x1,x2,x3;                                                             \
-            context.Pop(x1);                                                        \
-            context.Pop(x2);                                                        \
-            x3 = static_cast<T>(x2 oper x1);                                        \
-            context.Push(x3);                                                       \
-        }                                                                           \
-        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
-        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
-        REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit) \
-        REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)       \
-        REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit) \
-        REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)       \
-        REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit) \
-        REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)       \
-        REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)    \
-        REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
-
-REGISTER_OPERATOR(ADD, + ,Addition)
-REGISTER_OPERATOR(SUB, - ,Subtract)
-REGISTER_OPERATOR(MUL, * ,Multipl)
-REGISTER_OPERATOR(DIV, / ,Division)
-
-#endif
 
 } //MARTe
