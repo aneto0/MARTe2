@@ -1728,13 +1728,13 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFunctionTyp
     test.AddExpectedFunction2In1Out("float64", "float64", "float64");
     test.AddExpectedFunction2In1Out("float32", "float32", "float32");
 
-    test.AddExpectedFunction2In1Out("int8",   "int8",     "int8");
-    test.AddExpectedFunction2In1Out("int16",  "int16",    "int16");
+    test.AddExpectedFunction2In1Out("int8",   "int8",     "int32");
+    test.AddExpectedFunction2In1Out("int16",  "int16",    "int32");
     test.AddExpectedFunction2In1Out("int32",  "int32",    "int32");
     test.AddExpectedFunction2In1Out("int64",  "int64",    "int64");
 
-    test.AddExpectedFunction2In1Out("uint8",  "uint8",    "uint8");
-    test.AddExpectedFunction2In1Out("uint16", "uint16",   "uint16");
+    test.AddExpectedFunction2In1Out("uint8",  "uint8",    "uint32");
+    test.AddExpectedFunction2In1Out("uint16", "uint16",   "uint32");
     test.AddExpectedFunction2In1Out("uint32", "uint32",   "uint32");
     test.AddExpectedFunction2In1Out("uint64", "uint64",   "uint64");
 
