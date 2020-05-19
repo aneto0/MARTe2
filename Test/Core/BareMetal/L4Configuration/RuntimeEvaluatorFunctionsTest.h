@@ -148,6 +148,7 @@ inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEva
     VariableInformation *var;
     T *resultPointer;
     T epsilon;
+    bool ok = true;
 
     ret = context.Execute(RuntimeEvaluator::fastMode);
 
@@ -155,26 +156,40 @@ inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEva
     resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
     epsilon = fabs(*resultPointer - expectedResult);
 
-    return (ret == expectedReturn) && (epsilon < MAX_EPSILON);
+    if (expectedReturn == ErrorManagement::NoError) {
+        ok &= (ret.ErrorsCleared());
+        ok &= (epsilon < MAX_EPSILON);
+    } else {
+        ok &= ret.Contains(expectedReturn);
+    }
+
+    return ok;
 }
 
 template <typename T>
 inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn) {
 
     ErrorManagement::ErrorType ret;
-    bool resultOk = true;
     VariableInformation *var;
     T *resultPointer;
+    T epsilon;
+    bool ok = true;
 
     ret = context.Execute(RuntimeEvaluator::fastMode);
 
-    for (uint8 i = 0; (resultOk) && (i < numberOfResults); ++i) {
-        context.BrowseOutputVariable(i,var);
-        resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
-        resultOk &= (fabs(*resultPointer - expectedResults[i]) < MAX_EPSILON);
+    if (expectedReturn == ErrorManagement::NoError) {
+        ok &= (ret.ErrorsCleared());
+        for (uint8 i = 0; (ok) && (i < numberOfResults); ++i) {
+            context.BrowseOutputVariable(i,var);
+            resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
+            epsilon = fabs(*resultPointer - expectedResults[i]);
+            ok &= (epsilon < MAX_EPSILON);
+        }
+    } else {
+        ok &= ret.Contains(expectedReturn);
     }
 
-    return (ret == expectedReturn) && (resultOk);
+    return ok;
 }
 
 #endif /* RUNTIMEEVALUATORFUNCTIONSTEST_H_ */
