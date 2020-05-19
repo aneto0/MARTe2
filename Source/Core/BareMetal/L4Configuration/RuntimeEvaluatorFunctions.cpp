@@ -642,12 +642,12 @@ REGISTER_3T_OPERATOR(MUL, SMultiplication,uint16,uint64,uint64)
 REGISTER_3T_OPERATOR(MUL, SMultiplication,uint32,uint64,uint64)
 
 // no reason to upcast
-REGISTER_2T_OPERATOR(DIV, Division,int8  ,int8)
-REGISTER_2T_OPERATOR(DIV, Division,int16 ,int16)
+REGISTER_2T_OPERATOR(DIV, Division,int8  ,int32)
+REGISTER_2T_OPERATOR(DIV, Division,int16 ,int32)
 REGISTER_2T_OPERATOR(DIV, Division,int32 ,int32)
 REGISTER_2T_OPERATOR(DIV, Division,int64 ,int64)
-REGISTER_2T_OPERATOR(DIV, Division,uint8 ,uint8)
-REGISTER_2T_OPERATOR(DIV, Division,uint16,uint16)
+REGISTER_2T_OPERATOR(DIV, Division,uint8 ,uint32)
+REGISTER_2T_OPERATOR(DIV, Division,uint16,uint32)
 REGISTER_2T_OPERATOR(DIV, Division,uint32,uint32)
 REGISTER_2T_OPERATOR(DIV, Division,uint64,uint64)
 
