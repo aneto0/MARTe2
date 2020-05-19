@@ -84,6 +84,23 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadExecution)
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -152.3));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRReadFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    test.AddExpectedFunction1Out("float64");
+    test.AddExpectedFunction1Out("float32");
+    test.AddExpectedFunction1Out("uint64");
+    test.AddExpectedFunction1Out("int64");
+    test.AddExpectedFunction1Out("uint32");
+    test.AddExpectedFunction1Out("int32");
+    test.AddExpectedFunction1Out("uint16");
+    test.AddExpectedFunction1Out("int16");
+    test.AddExpectedFunction1Out("uint8");
+    test.AddExpectedFunction1Out("int8");
+
+    ASSERT_TRUE(test.TestFunctionTypes("RREAD", 0, 1));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -149,6 +166,31 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteConvExecu
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, UnsignedInteger8Bit));
 
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0, ErrorManagement::OutOfRange));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    test.AddExpectedFunction1In("float64");
+    test.AddExpectedFunction1In("float32");
+    test.AddExpectedFunction1In("uint16");
+    test.AddExpectedFunction1In("int16");
+    test.AddExpectedFunction1In("uint8");
+    test.AddExpectedFunction1In("int8");
+    for (uint8 i = 0; i < 4; ++i) {
+        test.AddExpectedFunction1In("uint64");
+    }
+    for (uint8 i = 0; i < 8; ++i) {
+        test.AddExpectedFunction1In("int64");
+    }
+    for (uint8 i = 0; i < 3; ++i) {
+        test.AddExpectedFunction1In("uint32");
+    }
+    for (uint8 i = 0; i < 6; ++i) {
+        test.AddExpectedFunction1In("int32");
+    }
+
+    ASSERT_TRUE(test.TestFunctionTypes("RWRITE", 1, 0));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
