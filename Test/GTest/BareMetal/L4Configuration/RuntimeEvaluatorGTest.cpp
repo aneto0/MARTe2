@@ -31,6 +31,7 @@
 
 #include "gtest/gtest.h"
 #include "RuntimeEvaluatorTest.h"
+#include "RuntimeEvaluator.h"
 #include "Vector.h"
 
 /*---------------------------------------------------------------------------*/
@@ -88,13 +89,210 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestExpression_2) {
     ASSERT_TRUE(pseudoCodeTest.TestExpression(rpnCode, values));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestError_WrongRPNCode_1) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_CONST_CommaAsSeparator) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST,float32,1\n"
+            "WRITE,ret\n"
+    ;
+    
+    //TODO ExtractVariables returns true as expected but the actual output should also be checked.
+    
+    ASSERT_TRUE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_CONST_TabAsSeparator) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST\tfloat32\t1\n"
+            "WRITE\tret\n"
+    ;
+    
+    //TODO ExtractVariables returns true as expected but the actual output should also be checked.
+    
+    ASSERT_TRUE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+/*---------------------------------------------------------------------------*/
+/*                                  READ                                     */
+/*---------------------------------------------------------------------------*/
+
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_MissingParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "READ \n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ExceedingParameters) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "READ one two\n"
+            "WRITE ret\n"
+    ;
+    
+    EXPECT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    
+    float64 values[2] = { 10.0, 9.9 };
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExpression(rpnCode, values));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_NumericParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "READ 10\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ReservedKeywordAsParameter_1) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "READ float32\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ReservedKeywordAsParameter_2) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "READ WRITE\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+/*---------------------------------------------------------------------------*/
+/*                                 CONST                                     */
+/*---------------------------------------------------------------------------*/
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_MissingParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST \n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_SwitchedParameters) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST 1 float32\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ExceedingParameters) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float32 1 2\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_NonNumericParameter) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float32 var\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ReservedKeywordAsParameter_1) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float32 float32\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ReservedKeywordAsParameter_2) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST float32 WRITE\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_UnsupportedType) {
     
     RuntimeEvaluatorTest pseudoCodeTest;
     
     CCString rpnCode=
             "CONST unsupportedtype 15\n"
-            "WRITE F\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_UnspecifiedType) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST 10\n"
+            "WRITE ret\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_NonNumericType) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST char8 a\n"
+            "WRITE ret\n"
     ;
     
     ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));

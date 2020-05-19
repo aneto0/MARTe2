@@ -60,7 +60,13 @@ public:
     bool TestError();
     
     /**
-     * @brief TODO
+     * @brief     Tests RuntimeEvaluator initialization.
+     * @details   Before compiling RuntimeEvaluator requires the
+     *            RuntimeEvaluator::ExtractVariables() method to be
+     *            called. This test checks if RuntimeEvaluator::ExtractVariables()
+     *            can process the input RPN code.
+     * @param[in] rpnCode the input RPN code.
+     * @returns   `true` if RuntimeEvaluator::ExtractVariables() succeed.
      */
     bool TestExtractVariables(CCString rpnCode);
     
