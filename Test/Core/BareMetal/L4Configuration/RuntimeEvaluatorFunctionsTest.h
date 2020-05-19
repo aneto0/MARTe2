@@ -66,13 +66,24 @@ public:
      */
     bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
 
-    void AddInputCombinationFunctions(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
-    void Add1InFunction(StreamString inputTypeName);
-    void Add1OutFunction(StreamString outputTypeName);
-    void Add1In1OutFunction(StreamString inputTypeName, StreamString outputTypeName);
-    void Add2In1OutFunction(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
-    void Add1In2OutFunction(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName);
-    void AddFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]);
+    /**
+     * @brief Add functions to expectedFunctionTypesCdb with a combination of provided inputs.
+     */
+    void AddExpectedFunctionCombinedInputs(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
+
+    /**
+     * @brief Add functions to expectedFunctionTypesCdb with different number of input, outputs.
+     */
+    void AddExpectedFunction1In(StreamString inputTypeName);
+    void AddExpectedFunction1Out(StreamString outputTypeName);
+    void AddExpectedFunction1In1Out(StreamString inputTypeName, StreamString outputTypeName);
+    void AddExpectedFunction2In1Out(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
+    void AddExpectedFunction1In2Out(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName);
+
+    /**
+     * @brief Add functions to expectedFunctionTypesCdb.
+     */
+    void AddExpectedFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]);
 
     /**
      * @brief Tests TryConsume.
@@ -86,13 +97,20 @@ public:
     template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
     template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
 
+    /**
+     * @brief Prepares RuntimeEvaluator for its execution.
+     */
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType);
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor input1Type, TypeDescriptor input2Type, TypeDescriptor outputType);
+
+    /**
+     * @brief Sets input variable values of RuntimeEvaluator.
+     */
     template <typename T> void SetInputs(RuntimeEvaluator &context, T inputs[]);
 
 private:
     /**
-     * @brief Checks if types provided are within types lists.
+     * @brief Checks if provided types are within types database.
      */
     bool FindTypesInCdb(CCString &foundIndex, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &FunctionTypesCdb);
 

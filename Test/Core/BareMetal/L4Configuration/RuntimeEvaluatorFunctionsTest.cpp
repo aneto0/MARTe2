@@ -142,57 +142,57 @@ bool RuntimeEvaluatorFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<T
     return found;
 }
 
-void RuntimeEvaluatorFunctionsTest::Add1InFunction(StreamString inputTypeName) {
+void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In(StreamString inputTypeName) {
 
     StreamString inputs[] = {inputTypeName};
     StreamString outputs[] = {};
-    AddFunction(1, inputs, 0, outputs);
+    AddExpectedFunction(1, inputs, 0, outputs);
 
 }
 
-void RuntimeEvaluatorFunctionsTest::Add1OutFunction(StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1Out(StreamString outputTypeName) {
 
     StreamString inputs[] = {};
     StreamString outputs[] = {outputTypeName};
-    AddFunction(0, inputs, 1, outputs);
+    AddExpectedFunction(0, inputs, 1, outputs);
 
 }
 
-void RuntimeEvaluatorFunctionsTest::Add1In1OutFunction(StreamString inputTypeName, StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In1Out(StreamString inputTypeName, StreamString outputTypeName) {
 
     StreamString inputs[] = {inputTypeName};
     StreamString outputs[] = {outputTypeName};
-    AddFunction(1, inputs, 1, outputs);
+    AddExpectedFunction(1, inputs, 1, outputs);
 
 }
 
-void RuntimeEvaluatorFunctionsTest::Add2In1OutFunction(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionsTest::AddExpectedFunction2In1Out(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
 
     StreamString inputs[] = {input1TypeName, input2TypeName};
     StreamString outputs[] = {outputTypeName};
-    AddFunction(2, inputs, 1, outputs);
+    AddExpectedFunction(2, inputs, 1, outputs);
 
 }
 
-void RuntimeEvaluatorFunctionsTest::Add1In2OutFunction(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName) {
+void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In2Out(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName) {
 
     StreamString inputs[] = {inputTypeName};
     StreamString outputs[] = {output1TypeName, output2TypeName};
-    AddFunction(1, inputs, 2, outputs);
+    AddExpectedFunction(1, inputs, 2, outputs);
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddInputCombinationFunctions(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionsTest::AddExpectedFunctionCombinedInputs(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
 
     StreamString inputs1[] = {input1TypeName, input2TypeName};
     StreamString inputs2[] = {input2TypeName, input1TypeName};
     StreamString outputs[] = {outputTypeName};
-    AddFunction(2, inputs1, 1, outputs);
-    AddFunction(2, inputs2, 1, outputs);
+    AddExpectedFunction(2, inputs1, 1, outputs);
+    AddExpectedFunction(2, inputs2, 1, outputs);
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]) {
+void RuntimeEvaluatorFunctionsTest::AddExpectedFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]) {
     uint32 lastExistentFunction = expectedFunctionTypesCdb.GetNumberOfChildren();
     StreamString functionName;
 
