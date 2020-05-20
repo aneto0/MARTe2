@@ -700,3 +700,26 @@ bool RuntimeEvaluatorTest::TestExpression(CCString rpnCode, float64 valueArray[]
 /*---------------------------------------------------------------------------*/
 /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
 /*---------------------------------------------------------------------------*/
+
+bool RuntimeEvaluatorTest::TestConstructor() {
+    RuntimeEvaluator context("");
+    bool ok = true;
+
+    /*
+    // Right after construction variablesMemoryPtr is NULL leading to a segmentation fault
+    uint32 variable;
+    variable = context.Variable<uint32>(0);
+    ok &= (variable == 0);
+
+    // Right after construction codeMemoryPtr is NULL leading to a segmentation fault
+    CodeMemoryElement element;
+    element = context.GetPseudoCode();
+    ok &= (element == 0);
+    */
+
+    uint32 value = 5;
+    context.Peek(value);
+    ok &= (value == 5);
+
+    return ok;
+}
