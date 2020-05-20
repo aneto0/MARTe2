@@ -274,7 +274,23 @@ bool RuntimeEvaluatorFunctionsTest::TestTryConsume(RuntimeEvaluatorFunctions &fu
     return ok;
 }
 
-bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType) {
+bool RuntimeEvaluatorFunctionsTest::TestFunctionExecution(RuntimeEvaluator &context, ErrorManagement::ErrorType expectedReturn) {
+
+    ErrorManagement::ErrorType ret;
+    bool ok = true;
+
+    ret = context.Execute(RuntimeEvaluator::fastMode);
+
+    if (expectedReturn == ErrorManagement::NoError) {
+        ok &= (ret.ErrorsCleared());
+    } else {
+        ok &= ret.Contains(expectedReturn);
+    }
+
+    return ok;
+}
+
+bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType, void *inputExternalLocation, void *outputExternalLocation) {
 
     ErrorManagement::ErrorType ret;
     VariableInformation *var;
@@ -283,10 +299,16 @@ bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, Ty
 
     for (uint32 i = 0; (ret) && (context.BrowseInputVariable(i,var)); ++i) {
         var->type = inputType;
+        if (inputExternalLocation != NULL) {
+            var->externalLocation = inputExternalLocation;
+        }
     }
 
     for (uint32 i = 0; (ret) && (context.BrowseOutputVariable(i,var)); ++i) {
         var->type = outputType;
+        if (outputExternalLocation != NULL) {
+            var->externalLocation = outputExternalLocation;
+        }
     }
 
     if (ret) {

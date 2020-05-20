@@ -93,6 +93,7 @@ public:
     /**
      * @brief Tests function execution.
      */
+    bool TestFunctionExecution(RuntimeEvaluator &context, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
     template <typename T> inline bool TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
     template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
     template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
@@ -100,7 +101,7 @@ public:
     /**
      * @brief Prepares RuntimeEvaluator for its execution.
      */
-    bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType);
+    bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType, void * inputExternalLocation = NULL, void *outputExternalLocation = NULL);
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor input1Type, TypeDescriptor input2Type, TypeDescriptor outputType);
 
     /**
