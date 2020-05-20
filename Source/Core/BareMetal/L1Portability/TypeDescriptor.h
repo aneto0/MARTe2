@@ -307,7 +307,7 @@ static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
 /**
  * Invalid type descriptor
  */
-static const TypeDescriptor InvalidType(0u);
+static const TypeDescriptor InvalidType(false, Invalid, 0u);
 
 
 /**
