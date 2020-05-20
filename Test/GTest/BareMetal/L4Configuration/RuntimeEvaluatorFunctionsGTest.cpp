@@ -221,6 +221,35 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteExecutio
     ASSERT_TRUE(output == -152.3);
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteConvExecution_Successful) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST int64 -112\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+    int8 output;
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger8Bit, NULL, static_cast<void *>(&output)));
+    ASSERT_TRUE(test.TestFunctionExecution(context));
+    ASSERT_TRUE(output == -112);
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteConvExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST int64 -112\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+    uint8 output;
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, UnsignedInteger8Bit, NULL, static_cast<void *>(&output)));
+    ASSERT_TRUE(test.TestFunctionExecution(context, ErrorManagement::OutOfRange));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
     CCString typeNames[] = {"float64", "float32", "uint64", "int64", "uint32", "int32", "uint16", "int16", "uint8", "int8"};
