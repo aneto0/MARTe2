@@ -52,11 +52,6 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestIntegration) {
     ASSERT_TRUE(pseudoCodeTest.TestIntegration());
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestError2) {
-    RuntimeEvaluatorTest pseudoCodeTest;
-    ASSERT_TRUE(pseudoCodeTest.TestError2());
-}
-
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestExpression_1) {
     
     RuntimeEvaluatorTest pseudoCodeTest;
@@ -462,7 +457,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_NumericPara
     
     CCString rpnCode=
             "CONST float64 10\n"
-            "CAST float32\n"
+            "CAST 10\n"
             "WRITE ret\n"
     ;
     
