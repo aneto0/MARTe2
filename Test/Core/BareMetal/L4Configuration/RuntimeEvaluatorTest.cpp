@@ -290,6 +290,56 @@ bool RuntimeEvaluatorTest::TestIntegration() {
     return ret;
 }
 
+bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
+    
+    ErrorManagement::ErrorType ret;
+    
+    StreamString rpnCode = "READ A\n"
+                           "READ B\n"
+                           "ADD\n"
+                           "WRITE C\n";
+    
+    StreamString varA("A");
+    StreamString varB("B");
+    StreamString varC("C");
+    
+    RuntimeEvaluator evaluator(rpnCode);
+    
+    ret = evaluator.ExtractVariables();
+    
+    if (ret) {
+        evaluator.SetInputVariableType(varA, Float64Bit);
+        evaluator.SetInputVariableType(varB, Float64Bit);
+    }
+    
+    if (ret) {
+        evaluator.SetInputVariableType(varC, Float64Bit);
+    }
+    
+    if (ret) {
+        ret = evaluator.Compile();
+    }
+    
+    char8 *evaluatorMemoryAddress = reinterpret_cast<char8 *>(evaluator.GetVariablesMemory());
+    uint32 numberOfVariables = 2U;
+    uint32 offsets[] = { sizeof(float32), sizeof(float64) };
+    
+    if (ret) {
+        uint32 i;
+        uint32 offset = 0u;
+        for (i = 0; (i < numberOfVariables) && (ret); i++) {
+            ret = (evaluator.GetInputVariableMemory(i) == (evaluatorMemoryAddress + offset));
+            offset += offsets[i];
+        }
+    }
+    //if (ret) {
+        //ret = (gamA->GetInputSignalMemory(1000) == NULL_PTR(void *));
+    //}
+    
+    return ret;
+    
+}
+
 bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode) {
 
     
@@ -302,7 +352,7 @@ bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode) {
 
     
     ret = context.ExtractVariables();
-
+    
     return ret;
 }
 

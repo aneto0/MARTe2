@@ -112,6 +112,13 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_CONST
     ASSERT_TRUE(pseudoCodeTest.TestExtractVariables(rpnCode));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetInputVariableMemory) {
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    
+    ASSERT_TRUE(evaluatorTest.TestGetInputVariableMemory());
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                  READ                                     */
 /*---------------------------------------------------------------------------*/
