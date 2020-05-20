@@ -101,6 +101,20 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRReadFunctionT
     ASSERT_TRUE(test.TestFunctionTypes("RREAD", 0, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRReadExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "READ IN1\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+    float64 input = -152.3;
+
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit, Float64Bit, static_cast<void *>(&input)));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -152.3));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -136,7 +150,6 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteExecution
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, Float64Bit));
-
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -152.3));
 }
 
@@ -191,6 +204,21 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteFunction
     }
 
     ASSERT_TRUE(test.TestFunctionTypes("RWRITE", 1, 0));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -152.3\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+    float64 output;
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, Float64Bit, NULL, static_cast<void *>(&output)));
+    ASSERT_TRUE(test.TestFunctionExecution(context));
+    ASSERT_TRUE(output == -152.3);
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
