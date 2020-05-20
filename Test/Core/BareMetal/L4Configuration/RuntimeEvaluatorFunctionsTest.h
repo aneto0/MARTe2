@@ -140,21 +140,16 @@ void RuntimeEvaluatorFunctionsTest::SetInputs(RuntimeEvaluator &context, T input
 template <typename T>
 inline bool RuntimeEvaluatorFunctionsTest::TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn) {
 
-    ErrorManagement::ErrorType ret;
     VariableInformation *var;
     T *resultPointer;
-    bool ok = true;
+    bool ok;
 
-    ret = context.Execute(RuntimeEvaluator::fastMode);
-
-    context.BrowseOutputVariable(0,var);
-    resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
+    ok = TestFunctionExecution(context, expectedReturn);
 
     if (expectedReturn == ErrorManagement::NoError) {
-        ok &= (ret.ErrorsCleared());
+        context.BrowseOutputVariable(0,var);
+        resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
         ok &= (*resultPointer == expectedResult);
-    } else {
-        ok &= ret.Contains(expectedReturn);
     }
 
     return ok;
@@ -163,23 +158,18 @@ inline bool RuntimeEvaluatorFunctionsTest::TestIntFunctionExecution(RuntimeEvalu
 template <typename T>
 inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn) {
 
-    ErrorManagement::ErrorType ret;
     VariableInformation *var;
     T *resultPointer;
     T epsilon;
-    bool ok = true;
+    bool ok;
 
-    ret = context.Execute(RuntimeEvaluator::fastMode);
-
-    context.BrowseOutputVariable(0,var);
-    resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
-    epsilon = fabs(*resultPointer - expectedResult);
+    ok = TestFunctionExecution(context, expectedReturn);
 
     if (expectedReturn == ErrorManagement::NoError) {
-        ok &= (ret.ErrorsCleared());
+        context.BrowseOutputVariable(0,var);
+        resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
+        epsilon = fabs(*resultPointer - expectedResult);
         ok &= (epsilon < MAX_EPSILON);
-    } else {
-        ok &= ret.Contains(expectedReturn);
     }
 
     return ok;
@@ -188,24 +178,20 @@ inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEva
 template <typename T>
 inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn) {
 
-    ErrorManagement::ErrorType ret;
     VariableInformation *var;
     T *resultPointer;
     T epsilon;
     bool ok = true;
 
-    ret = context.Execute(RuntimeEvaluator::fastMode);
+    ok = TestFunctionExecution(context, expectedReturn);
 
     if (expectedReturn == ErrorManagement::NoError) {
-        ok &= (ret.ErrorsCleared());
         for (uint8 i = 0; (ok) && (i < numberOfResults); ++i) {
             context.BrowseOutputVariable(i,var);
             resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
             epsilon = fabs(*resultPointer - expectedResults[i]);
             ok &= (epsilon < MAX_EPSILON);
         }
-    } else {
-        ok &= ret.Contains(expectedReturn);
     }
 
     return ok;
