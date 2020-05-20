@@ -696,3 +696,7 @@ bool RuntimeEvaluatorTest::TestExpression(CCString rpnCode, float64 valueArray[]
 
     return ret;
 }
+
+/*---------------------------------------------------------------------------*/
+/*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
+/*---------------------------------------------------------------------------*/
