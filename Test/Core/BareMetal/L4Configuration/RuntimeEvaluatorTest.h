@@ -55,6 +55,27 @@ public:
     bool TestIntegration();
     
     /**
+     * @brief TODO
+     */
+    bool TestExpression(CCString rpnCode, float64 valueArray[]);
+    
+    /**
+     * @brief Tests all methods to get the memory address of a variable.
+     */
+    bool TestGetInputVariableMemory();
+    
+    /**
+     * @brief     Tests RuntimeEvaluator initialization.
+     * @details   Before compiling RuntimeEvaluator requires the
+     *            RuntimeEvaluator::ExtractVariables() method to be
+     *            called. This test checks if RuntimeEvaluator::ExtractVariables()
+     *            can process the input RPN code.
+     * @param[in] rpnCode the input RPN code.
+     * @returns   `true` if RuntimeEvaluator::ExtractVariables() succeed.
+     */
+    bool TestExtractVariables(CCString rpnCode);
+    
+    /**
      * @brief     Tests RuntimeEvaluator in case of errors.
      * @details   Checks that RuntimeEvaluator fails in case it is fed
      *            with wrong inputs and that it fails at the right stage
@@ -74,25 +95,7 @@ public:
      *              to fail at RuntimeEvaluator::Execute().
      * @returns   `true` if RuntimeEvaluator fails at the correct stage.
      */
-    bool TestError(CCString rpnCode,
-                                         ErrorManagement::ErrorType expectedError
-                                        );
-    
-    /**
-     * @brief     Tests RuntimeEvaluator initialization.
-     * @details   Before compiling RuntimeEvaluator requires the
-     *            RuntimeEvaluator::ExtractVariables() method to be
-     *            called. This test checks if RuntimeEvaluator::ExtractVariables()
-     *            can process the input RPN code.
-     * @param[in] rpnCode the input RPN code.
-     * @returns   `true` if RuntimeEvaluator::ExtractVariables() succeed.
-     */
-    bool TestExtractVariables(CCString rpnCode);
-    
-    /**
-     * @brief TODO
-     */
-    bool TestExpression(CCString rpnCode, float64 valueArray[]);
+    bool TestError(CCString rpnCode, ErrorManagement::ErrorType expectedError);
     
     /*---------------------------------------------------------------------------*/
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
