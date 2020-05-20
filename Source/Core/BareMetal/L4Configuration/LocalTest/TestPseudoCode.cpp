@@ -108,7 +108,7 @@ CCString RPNCode=
 		"CAST int64\n"
 		"GT\n"
 		"WRITE F\n"
-;
+		;
 
 
 

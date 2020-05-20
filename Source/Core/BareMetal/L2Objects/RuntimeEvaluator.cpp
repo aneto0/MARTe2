@@ -376,6 +376,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             lineP = DynamicCString::Tokenize(lineP,parameter1,limit," \t,"," \t,",false);
             DynamicCString::Tokenize(lineP,parameter2,limit," \t,"," \t,",false);
         }
+        bool hasParameter1 = (parameter1.GetSize()> 0);
+        bool hasParameter2 = (parameter2.GetSize()> 0);
+
 
         // now analyze the command
         if (command.GetSize() > 0){
@@ -383,13 +386,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             RuntimeEvaluatorInfo::CodeMemoryElement code2 = TypeCharacteristics<RuntimeEvaluatorInfo::CodeMemoryElement>::MaxValue();
             bool matchOutput = false;
 
-            bool hasParameter1 = (parameter1.GetSize()> 0);
 
             // PROCESS CAST command
             // PUSH type(parameter1) --> TypeStack
             // matchOutput = true;
             if (command == castToken){
-                ret.invalidOperation = !hasParameter1;
+                ret.invalidOperation = !hasParameter1 || hasParameter2;
                 COMPOSITE_REPORT_ERROR(ret,command," without type name");
                 if (ret){
                     // transform the type name into a TypeDescriptor
@@ -417,7 +419,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             // matchOutput = true;
             // assign code2 to address of variable
             if (command == writeToken){
-                ret.invalidOperation = !hasParameter1;
+                ret.invalidOperation = !hasParameter1 || hasParameter2;
+//                ret.invalidOperation = !hasParameter1;
                 COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
 
                 RuntimeEvaluatorInfo::VariableInformation *variableInformation = NULL_PTR(RuntimeEvaluatorInfo::VariableInformation *);
@@ -473,7 +476,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             // matchOutput = true;
             // assign code2 to address of variable
             if (command == readToken){
-                ret.invalidOperation = !hasParameter1;
+                ret.invalidOperation = !hasParameter1 || hasParameter2;
+//               ret.invalidOperation = !hasParameter1;
                 COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
 
                 RuntimeEvaluatorInfo::VariableInformation *variableInformation = NULL_PTR(RuntimeEvaluatorInfo::VariableInformation *);
@@ -527,7 +531,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             // assign code2 to address of constant
             // command = READ
             if (command == constToken){
-                bool hasParameter2 = (parameter2.GetSize()> 0);
+//                bool hasParameter2 = (parameter2.GetSize()> 0);
 
                 ret.invalidOperation = !hasParameter1 || !hasParameter2;
                 COMPOSITE_REPORT_ERROR(ret,constToken," without type name and value");
