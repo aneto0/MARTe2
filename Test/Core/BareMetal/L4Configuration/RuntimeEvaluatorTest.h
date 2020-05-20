@@ -63,7 +63,12 @@ public:
      * @brief     Tests RuntimeEvaluator in case of errors.
      * @details   Checks that RuntimeEvaluator fails in case it is fed
      *            with wrong inputs and that it fails at the right stage
-     *            in the evaluation sequence.
+     *            in the evaluation sequence:
+     *            - `READ`, `WRITE` and `CONST` commands are dealt with
+     *              in the ExtractVariable() method, so they are expected
+     *              to fail mostly there.
+     *            - `CAST` is dealt with in the Compile() method and
+     *              is expected to fail there.
      * @param[in] rpnCode       the input RPN code.
      * @param[in] expectedError the expected error, that is:
      *            - `SyntaxError` if RuntimeEvaluator is expected
