@@ -256,6 +256,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     return ret;
 }
 
+void* RuntimeEvaluator::GetVariablesMemory() {
+
+    return reinterpret_cast<void*>(&startOfVariables);
+    
+}
+
 void* RuntimeEvaluator::GetInputVariableMemory(StreamString &varNameIn) {
     
     void* retAddress = NULL_PTR(void*);
