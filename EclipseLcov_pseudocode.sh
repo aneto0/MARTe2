@@ -2,7 +2,7 @@
 OUTPUT_DIR=Build
 
 #Build with coverage enabled
-make -f Makefile.cov clean
+#make -f Makefile.cov clean
 make -f Makefile.cov
 
 #Run baseline coverage
@@ -12,7 +12,7 @@ make -f Makefile.cov
 #Test/GTest/cov/MainGTest.ex --gtest_filter=BareMetal*
 #Test/GTest/cov/MainGTest.ex --gtest_filter=FileSystem*
 #Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*
-Test/GTest/cov/MainGTest.ex --gtest_filter=*PseudoCode*
+Test/GTest/cov/MainGTest.ex --gtest_filter=*RuntimeEvaluator*
 
 #Create test coverage data file
 #lcov --capture --directory . --no-external --output-file $OUTPUT_DIR/MARTe2.coverage.info.tests
