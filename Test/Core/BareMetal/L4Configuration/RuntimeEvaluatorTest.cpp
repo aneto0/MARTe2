@@ -502,12 +502,11 @@ bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
         uint32 index = 0U;
         VariableInformation *var;
 
-        while(evaluator.BrowseInputVariable(index,var) && ok) {
-            ok = evaluator.SetInputVariableType(index, Float64Bit);
+        while(evaluator.BrowseInputVariable(index,var)) {
+            evaluator.SetInputVariableType(index, Float64Bit);
             index++;
         }
         
-        // output variable types automatically derived from input types
     }
     
     if (ok) {
