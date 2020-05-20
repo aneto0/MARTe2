@@ -331,7 +331,7 @@ bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
         }
     }
     //if (ret) {
-        //ret = (gamA->GetInputSignalMemory(1000) == NULL_PTR(void *));
+        //ret = (evaluator.GetInputVariableMemory(1000) == NULL_PTR(void *));
     //}
     
     return ret;

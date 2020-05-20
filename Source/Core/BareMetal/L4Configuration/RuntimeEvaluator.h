@@ -136,7 +136,7 @@ public:
      *            to the proper type before using it.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    void* GetInputVariableMemory(uint32 &varIndexIn);
+    void* GetInputVariableMemory(uint32 varIndexIn);
     
     /**
      * @brief     Retrieves the address of an output variable in memory
@@ -162,7 +162,7 @@ public:
      *            to the proper type before usage.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    void* GetOutputVariableMemory(uint32 &varIndexIn);
+    void* GetOutputVariableMemory(uint32 varIndexIn);
     
     /**
      * @brief     Set the type of an input variable.
@@ -188,7 +188,7 @@ public:
      * @param[in] typeIn    the type to set the variable to.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetInputVariableType(uint32 &varIndexIn, TypeDescriptor typeIn);
+    bool SetInputVariableType(uint32 varIndexIn, TypeDescriptor typeIn);
     
     /**
      * @brief     Set the type of an output variable.
@@ -214,7 +214,7 @@ public:
      * @param[in] typeIn    the type to set the variable to.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetOutputVariableType(uint32 &varIndexIn, TypeDescriptor typeIn);
+    bool SetOutputVariableType(uint32 varIndexIn, TypeDescriptor typeIn);
     
     /**
      * Cleans memory
