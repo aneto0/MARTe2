@@ -122,7 +122,7 @@ public:
      *            to the proper type before using it.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    void* GetInputVariableMemory(StreamString &varNameIn);
+    void* GetInputVariableMemory(StreamString varNameIn);
     
     /**
      * @brief     Searches the address of an input variable in memory
@@ -148,7 +148,7 @@ public:
      *            to the proper type before using it.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    void* GetOutputVariableMemory(StreamString &varNameIn);
+    void* GetOutputVariableMemory(StreamString varNameIn);
     
     /**
      * @brief     Retrieves the address of an output variable in memory
@@ -174,7 +174,7 @@ public:
      * @param[in] typeIn    the type to set the variable to.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetInputVariableType(StreamString &varNameIn, TypeDescriptor typeIn);
+    bool SetInputVariableType(StreamString varNameIn, TypeDescriptor typeIn);
     
     /**
      * @brief     Set the type of an input variable.
@@ -200,7 +200,7 @@ public:
      * @param[in] typeIn    the type to set the variable to.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetOutputVariableType(StreamString &varNameIn, TypeDescriptor typeIn);
+    bool SetOutputVariableType(StreamString varNameIn, TypeDescriptor typeIn);
     
     /**
      * @brief     Set the type of an output variable.

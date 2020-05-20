@@ -299,8 +299,6 @@ bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
                            "ADD\n"
                            "WRITE C\n";
     
-    StreamString varA("A");
-    StreamString varB("B");
     StreamString varC("C");
     
     RuntimeEvaluator evaluator(rpnCode);
@@ -308,8 +306,8 @@ bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
     ret = evaluator.ExtractVariables();
     
     if (ret) {
-        evaluator.SetInputVariableType(varA, Float64Bit);
-        evaluator.SetInputVariableType(varB, Float64Bit);
+        evaluator.SetInputVariableType("A", Float64Bit);
+        evaluator.SetInputVariableType("B", Float64Bit);
     }
     
     if (ret) {

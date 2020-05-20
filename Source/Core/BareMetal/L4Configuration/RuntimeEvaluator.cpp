@@ -262,7 +262,7 @@ void* RuntimeEvaluator::GetVariablesMemory() {
     
 }
 
-void* RuntimeEvaluator::GetInputVariableMemory(StreamString &varNameIn) {
+void* RuntimeEvaluator::GetInputVariableMemory(StreamString varNameIn) {
     
     void* retAddress = NULL_PTR(void*);
     bool isFound = false;
@@ -298,7 +298,7 @@ void* RuntimeEvaluator::GetInputVariableMemory(uint32 &varIndexIn) {
     
 }
 
-void* RuntimeEvaluator::GetOutputVariableMemory(StreamString &varNameIn) {
+void* RuntimeEvaluator::GetOutputVariableMemory(StreamString varNameIn) {
     
     void* retAddress = NULL_PTR(void*);
     bool isFound = false;
@@ -334,7 +334,7 @@ void* RuntimeEvaluator::GetOutputVariableMemory(uint32 &varIndexIn) {
     
 }
 
-bool RuntimeEvaluator::SetInputVariableType(StreamString &varNameIn, TypeDescriptor typeIn) {
+bool RuntimeEvaluator::SetInputVariableType(StreamString varNameIn, TypeDescriptor typeIn) {
     
     bool isFound = false;
     
@@ -368,7 +368,7 @@ bool RuntimeEvaluator::SetInputVariableType(uint32 &varIndexIn, TypeDescriptor t
     
 }
 
-bool RuntimeEvaluator::SetOutputVariableType(StreamString &varNameIn, TypeDescriptor typeIn) {
+bool RuntimeEvaluator::SetOutputVariableType(StreamString varNameIn, TypeDescriptor typeIn) {
     
     bool isFound = false;
     
