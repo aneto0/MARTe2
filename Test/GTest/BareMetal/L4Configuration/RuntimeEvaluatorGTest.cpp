@@ -535,3 +535,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_NonNumericT
     
     ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
 }
+
+/*---------------------------------------------------------------------------*/
+/*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
+/*---------------------------------------------------------------------------*/
