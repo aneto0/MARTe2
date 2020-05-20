@@ -47,7 +47,7 @@ public:
     /**
      * @brief Tests the constructor of Context class.
      */
-    bool TestContextConstructor();
+    bool TestConstructor();
 
     /**
      * @brief TODO

@@ -539,3 +539,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CAST_NonNumericT
 /*---------------------------------------------------------------------------*/
 /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
 /*---------------------------------------------------------------------------*/
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestConstructor) {
+    RuntimeEvaluatorTest evaluatorTest;
+    ASSERT_TRUE(evaluatorTest.TestConstructor());
+}
