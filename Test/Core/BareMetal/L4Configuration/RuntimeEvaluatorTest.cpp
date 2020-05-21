@@ -466,6 +466,79 @@ bool RuntimeEvaluatorTest::TestSetVariableType() {
     return ret;
 }
 
+bool RuntimeEvaluatorTest::TestPushPopPeek() {
+    
+    bool ret = false;
+    
+    StreamString rpnCode = "READ A\n"
+                           "WRITE B\n"
+                           "";
+    
+    RuntimeEvaluator evaluator(rpnCode);
+    
+    ret = evaluator.ExtractVariables();
+    
+    if (ret) {
+        ret = evaluator.SetInputVariableType("A", Float32Bit);
+    }
+    
+    if (ret) {
+        ret = evaluator.Compile();
+    }
+    
+    uint8  pushVarUint8,  peekVarUint8,  popVarUint8;
+    uint16 pushVarUint16, peekVarUint16, popVarUint16;
+    uint32 pushVarUint32, peekVarUint32, popVarUint32;
+    uint64 pushVarUint64, peekVarUint64, popVarUint64;
+    
+    pushVarUint8  = 1;
+    pushVarUint16 = 2;
+    pushVarUint32 = 3;
+    pushVarUint64 = 4;
+    
+    evaluator.Push(pushVarUint8);
+    evaluator.Push(pushVarUint16);
+    evaluator.Push(pushVarUint32);
+    evaluator.Push(pushVarUint64);
+    
+    if (ret) {
+        evaluator.Peek(peekVarUint64);
+        evaluator.Pop(popVarUint64);
+        ret = ( (popVarUint64 == pushVarUint64) && (peekVarUint64 == pushVarUint64) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarUint32);
+        evaluator.Pop(popVarUint32);
+        ret = ( (popVarUint32 == pushVarUint32) && (peekVarUint32 == pushVarUint32) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarUint16);
+        evaluator.Pop(popVarUint16);
+        ret = ( (popVarUint16 == pushVarUint16) && (peekVarUint16 == pushVarUint16) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarUint8);
+        evaluator.Pop(popVarUint8);
+        ret = ( (popVarUint8 == pushVarUint8) && (peekVarUint8 == pushVarUint8) );
+    }
+    
+    //float64 varX = 10;
+    //float64 varY = 20;
+    //int16 varZ = 30;
+    //int16 varW;
+    
+    //evaluator.Push(varX);
+    //evaluator.Push(varY);
+    //evaluator.Push(varZ);
+    
+    //evaluator.Pop(varW);
+    
+    //printf("THERE: %i\n", varW);
+    
+    return ret;
+    
+}
+
 bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode) {
 
     
