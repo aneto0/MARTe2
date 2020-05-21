@@ -113,23 +113,17 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_CONST
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetInputVariableMemory) {
-    
     RuntimeEvaluatorTest evaluatorTest;
-    
     ASSERT_TRUE(evaluatorTest.TestGetInputVariableMemory());
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetOutputVariableMemory) {
-    
     RuntimeEvaluatorTest evaluatorTest;
-    
     ASSERT_TRUE(evaluatorTest.TestGetOutputVariableMemory());
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestSetVariableType) {
-    
     RuntimeEvaluatorTest evaluatorTest;
-    
     ASSERT_TRUE(evaluatorTest.TestSetVariableType());
 }
 

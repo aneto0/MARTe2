@@ -694,7 +694,6 @@ bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
     ok = evaluator.ExtractVariables();
     if (!ok) {
         ret = ErrorManagement::SyntaxError;
-        printf("Failed at ExtractVariables().\n");
     }
     
     // 2. try Compile()
@@ -714,7 +713,6 @@ bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
         ok = evaluator.Compile();
         if (!ok) {
             ret = ErrorManagement::InitialisationError;
-            printf("Failed at Compile().\n");
         }
     }
     
@@ -735,7 +733,6 @@ bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
         ok = evaluator.Execute();
         if (!ok) {
             ret = ErrorManagement::FatalError;
-            printf("Failed at Execute().\n");
         }
     }
     
