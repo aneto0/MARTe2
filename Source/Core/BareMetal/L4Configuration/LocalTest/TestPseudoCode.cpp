@@ -332,22 +332,17 @@ int main(){
 		uint32 index = 0U;
 		RuntimeEvaluatorInfo::VariableInformation *var;
 
+		while(context.BrowseInputVariable(index,var)){
+	        DynamicCString xx;
+	        CStringTool xxct = xx();
+	        var->type.ToString(xxct);
+
+	        printf ("input var %2i @%04x = %s type = %s\n",index,var->location,var->name.GetList(),xx.GetList());
+			index++;
+		}
+
+		index = 0;
 		while(context.BrowseOutputVariable(index,var)){
-			if (var->name == "C"){
-				var->type = TypeDescriptor("float32");
-			}
-			if (var->name == "D"){
-				var->type = TypeDescriptor("int32");
-			}
-			if (var->name == "E"){
-				var->type = TypeDescriptor("uint8");
-			}
-			if (var->name == "F"){
-				var->type = TypeDescriptor("uint8");
-			}
-			if (var->name == "N5"){
-				var->type = TypeDescriptor("int8");
-			}
 	        DynamicCString xx;
 	        CStringTool xxct = xx();
 	        var->type.ToString(xxct);

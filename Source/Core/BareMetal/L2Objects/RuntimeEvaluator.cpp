@@ -208,63 +208,67 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
 //printf("LINE = %s\n",line.GetList());
         // extract command and parameter
         DynamicCString command;
-        DynamicCString parameter;
+        DynamicCString parameter1;
+        DynamicCString parameter2;
         if (!finished){
             CCString lineP = line;
             // extract up to two tokens per line
             lineP = DynamicCString::Tokenize(lineP,command,limit," \t,"," \t,",false);
-            DynamicCString::Tokenize(lineP,parameter,limit," \t,"," \t,",false);
+            lineP = DynamicCString::Tokenize(lineP,parameter1,limit," \t,"," \t,",false);
+            DynamicCString::Tokenize(lineP,parameter2,limit," \t,"," \t,",false);
         }
+        bool hasParameter1 = (parameter1.GetSize()> 0);
+        bool hasParameter2 = (parameter2.GetSize()> 0);
 
         // now analyse the command
         if (command.GetSize() > 0){
-            bool hasParameter = (parameter.GetSize()> 0);
+//            bool hasParameter = (parameter.GetSize()> 0);
 
             if (command == readToken){
-                ret.invalidOperation = !hasParameter;
+                ret.invalidOperation = !hasParameter1 || hasParameter2;
                 COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
                 if (ret){
                     // if an output variable of this name is already present
                     // it means it would have already been loaded
                     // so no need to fetch an external input
                     RuntimeEvaluatorInfo::VariableInformation *variableInformation;
-                    ret = FindOutputVariable(parameter,variableInformation);
+                    ret = FindOutputVariable(parameter1,variableInformation);
 
                     if (!ret){
-                        ret = AddInputVariable(parameter);
+                        ret = AddInputVariable(parameter1);
                         if (ret.invalidOperation == true){
-                            COMPOSITE_REPORT_ERROR(ErrorManagement::Information,"variable ",parameter," already registered");
+                            COMPOSITE_REPORT_ERROR(ErrorManagement::Information,"variable ",parameter1," already registered");
                             // mask out the case that we already registered this variable
                             ret.invalidOperation = false;
                         }
-                        COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable ",parameter);
+                        COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable ",parameter1);
                     }
                 }
             } else
             if (command == writeToken){
-                ret.invalidOperation = !hasParameter;
+                ret.invalidOperation = !hasParameter1 || hasParameter2;
                 COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
 
                 if (ret){
-                    ret = AddOutputVariable(parameter);
+                    ret = AddOutputVariable(parameter1);
                     if (ret.invalidOperation == true){
-                        COMPOSITE_REPORT_ERROR(ret,"variable ",parameter," already registered");
+                        COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1," already registered");
                         // the error remains as we do not allow overwriting outputs
                     }
-                    COMPOSITE_REPORT_ERROR(ret,"Failed Adding output variable ",parameter);
+                    COMPOSITE_REPORT_ERROR(ret,"Failed Adding output variable ",parameter1);
                 }
             } else
             if (command == constToken){
-                ret.invalidOperation = !hasParameter;
+                ret.invalidOperation = !hasParameter1 || !hasParameter2;
                 COMPOSITE_REPORT_ERROR(ret,constToken," without type name");
 
                 // transform the type name into a TypeDescriptor
                 // check it is one of the supported types
                 TypeDescriptor td;
                 if (ret){
-                    td = TypeDescriptor(parameter);
+                    td = TypeDescriptor(parameter1);
                     ret.unsupportedFeature = !td.IsNumericType();
-                    COMPOSITE_REPORT_ERROR(ret,"type ",parameter, " is not a numeric supported format");
+                    COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " is not a numeric supported format");
 //printf("const type = %x\n",td.all);
                 }
                 // if supported add up the memory needs
@@ -276,7 +280,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
                 if (ret){
                     uint32 size = td.StorageSize();
                     ret.unsupportedFeature = (size == 0);
-                    COMPOSITE_REPORT_ERROR(ret,"type ",parameter, " has 0 storgaSize");
+                    COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " has 0 storgaSize");
 
                     nextConstantAddress += ByteSizeToDataMemorySize(size);
                 }
