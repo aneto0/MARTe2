@@ -600,9 +600,32 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Const
             "CONST int32 -15\n"
     ;
 
-    evaluatorTest.AddExpectedInputVariable("Constant@0", UnsignedInteger8Bit, 0, NULL, false);
-    evaluatorTest.AddExpectedInputVariable("Constant@1", Float64Bit, 1, NULL, false);
-    evaluatorTest.AddExpectedInputVariable("Constant@3", SignedInteger32Bit, 3, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("Constant@0", UnsignedInteger8Bit,   0, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("Constant@1", Float64Bit,            1, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("Constant@3", SignedInteger32Bit,    3, NULL, false);
+
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_MixedSuccessful) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "CONST int32 -15\n"
+            "WRITE OUT1\n"
+            "CONST uint16 5\n"
+            "READ IN1\n"
+            "CONST float64 3.140000\n"
+            "WRITE OUT2\n"
+    ;
+
+    evaluatorTest.AddExpectedInputVariable("Constant@0",    SignedInteger32Bit,     0,                      NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1",         VoidType,               MAXDataMemoryAddress,   NULL, false);
+    evaluatorTest.AddExpectedInputVariable("Constant@1",    UnsignedInteger16Bit,   1,                      NULL, false);
+    evaluatorTest.AddExpectedInputVariable("IN1",           VoidType,               MAXDataMemoryAddress,   NULL, false);
+    evaluatorTest.AddExpectedInputVariable("Constant@2",    Float64Bit,             2,                      NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT2",         VoidType,               MAXDataMemoryAddress,   NULL, false);
 
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
