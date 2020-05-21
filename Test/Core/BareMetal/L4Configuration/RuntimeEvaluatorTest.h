@@ -130,12 +130,6 @@ public:
      */
     bool TestExtractVariables(CCString rpnCode);
     
-    template<typename T>
-    struct StackTableTest {
-        T maxValue;
-        T minValue;
-    };
-    
     /*---------------------------------------------------------------------------*/
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
     /*---------------------------------------------------------------------------*/
