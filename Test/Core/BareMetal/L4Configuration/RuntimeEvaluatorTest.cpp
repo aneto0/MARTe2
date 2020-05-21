@@ -925,16 +925,21 @@ bool RuntimeEvaluatorTest::TestConstructor() {
 bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError) {
     RuntimeEvaluator context(rpnCode);
     bool ok = true;
-    uint32 variableIndex = 0;
     VariableInformation *var;
 
     ok &= (context.ExtractVariables() == expectedError);
 
-    while (ok && context.BrowseInputVariable(variableIndex++, var)) {
+    for (uint32 i = 0; (ok) && (context.BrowseInputVariable(i, var)); ++i) {
         ok &= RemoveMatchingVariable(var, expectedInputVariables);
     }
 
     ok &= (expectedInputVariables.ListSize() == 0);
+
+    for (uint32 i = 0; (ok) && (context.BrowseOutputVariable(i, var)); ++i) {
+        ok &= RemoveMatchingVariable(var, expectedOutputVariables);
+    }
+
+    ok &= (expectedOutputVariables.ListSize() == 0);
 
     return ok;
 }
@@ -964,7 +969,15 @@ bool RuntimeEvaluatorTest::VariablesMatch(const VariableInformation *var1, const
     return match;
 }
 
-void RuntimeEvaluatorTest::AddExpectedInput(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
+void RuntimeEvaluatorTest::AddExpectedInputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
+    AddExpectedVariable(expectedInputVariables, name, type, location, externalLocation, variableUsed);
+}
+
+void RuntimeEvaluatorTest::AddExpectedOutputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
+    AddExpectedVariable(expectedOutputVariables, name, type, location, externalLocation, variableUsed);
+}
+
+void RuntimeEvaluatorTest::AddExpectedVariable(LinkedListHolderT<VariableInformation> &varList, CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
     VariableInformation * var = new VariableInformation();
 
     var->name = name;
@@ -973,5 +986,5 @@ void RuntimeEvaluatorTest::AddExpectedInput(CCString name, TypeDescriptor type, 
     var->externalLocation = externalLocation;
     var->variableUsed = variableUsed;
 
-    expectedInputVariables.ListAdd(var);
+    varList.ListAdd(var);
 }

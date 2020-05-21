@@ -134,14 +134,18 @@ public:
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
     /*---------------------------------------------------------------------------*/
 
-    void AddExpectedInput(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
+    void AddExpectedInputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
+    void AddExpectedOutputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
     
     bool TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError);
+
+private:
+    void AddExpectedVariable(LinkedListHolderT<VariableInformation> &varList, CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
     bool RemoveMatchingVariable(const VariableInformation *var, LinkedListHolderT<VariableInformation> &varList);
     bool VariablesMatch(const VariableInformation *var1, const VariableInformation *var2);
 
-private:
     LinkedListHolderT<VariableInformation, true> expectedInputVariables;
+    LinkedListHolderT<VariableInformation, true> expectedOutputVariables;
 };
 
 /*---------------------------------------------------------------------------*/
