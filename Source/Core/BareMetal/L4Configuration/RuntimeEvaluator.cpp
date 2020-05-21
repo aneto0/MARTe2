@@ -157,19 +157,26 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
 
         // extract command and parameter
         StreamString command;
-        StreamString parameter;
+        StreamString parameter1;
+        StreamString parameter2;
+        StreamString parameter3;
 
         // extract up to two tokens per line
         line.Seek(0u);
         line.GetToken(command, " \t,", terminator," \t,");
-        line.GetToken(parameter, " \t,", terminator," \t,");
+        line.GetToken(parameter1, " \t,", terminator," \t,");
+        line.GetToken(parameter2, " \t,", terminator," \t,");
+        line.GetToken(parameter3, " \t,", terminator," \t,");
+
+        bool hasParameter1 = (parameter1.Size()> 0);
+        bool hasParameter2 = (parameter2.Size()> 0);
+        bool hasParameter3 = (parameter3.Size()> 0);
 
         // now analyse the command
         if (command.Size() > 0){
-            bool hasParameter = (parameter.Size()> 0);
 
             if (command == readToken){
-                ret.illegalOperation = !hasParameter;
+                ret.illegalOperation = !hasParameter1 || hasParameter2;
 
                 if (!ret){
                     REPORT_ERROR_STATIC(ret,"%s without variable name", command.Buffer());
@@ -178,40 +185,40 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                     // it means it would have already been loaded
                     // so no need to fetch an external input
                     VariableInformation *variableInformation;
-                    ret = FindOutputVariable(parameter.Buffer(),variableInformation);
+                    ret = FindOutputVariable(parameter1.Buffer(),variableInformation);
 
                     if (!ret){
-                        ret = AddInputVariable(parameter.Buffer());
+                        ret = AddInputVariable(parameter1.Buffer());
                         if (ret.illegalOperation == true){
-                            REPORT_ERROR_STATIC(ErrorManagement::Information,"variable %s already registered", parameter.Buffer());
+                            REPORT_ERROR_STATIC(ErrorManagement::Information,"variable %s already registered", parameter1.Buffer());
                             // mask out the case that we already registered this variable
                             ret.illegalOperation = false;
                         }
                         if (!ret){
-                            REPORT_ERROR_STATIC(ret,"Failed Adding input variable %s",parameter.Buffer());
+                            REPORT_ERROR_STATIC(ret,"Failed Adding input variable %s",parameter1.Buffer());
                         }
                     }
                 }
             } else
             if (command == writeToken){
-                ret.illegalOperation = !hasParameter;
+                ret.illegalOperation = !hasParameter1 || hasParameter2;
                 if (!ret){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 }
 
                 if (ret){
-                    ret = AddOutputVariable(parameter.Buffer());
+                    ret = AddOutputVariable(parameter1.Buffer());
                     if (ret.illegalOperation == true){
-                        REPORT_ERROR_STATIC(ret,"variable %s already registered", parameter.Buffer());
+                        REPORT_ERROR_STATIC(ret,"variable %s already registered", parameter1.Buffer());
                         // the error remains as we do not allow overwriting outputs
                     }
                     if (!ret){
-                        REPORT_ERROR_STATIC(ret,"Failed Adding output variable %s",parameter.Buffer());
+                        REPORT_ERROR_STATIC(ret,"Failed Adding output variable %s",parameter1.Buffer());
                     }
                 }
             } else
             if (command == constToken){
-                ret.illegalOperation = !hasParameter;
+                ret.illegalOperation = !hasParameter1 || !hasParameter2 || hasParameter3;
                 if (!ret){
                     REPORT_ERROR_STATIC(ret, "%s without type name", command.Buffer());
                 }
@@ -220,10 +227,10 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                 // check it is one of the supported types
                 TypeDescriptor td;
                 if (ret){
-                    td = TypeDescriptor::GetTypeDescriptorFromTypeName(parameter.Buffer());
+                    td = TypeDescriptor::GetTypeDescriptorFromTypeName(parameter1.Buffer());
                     ret.unsupportedFeature = !td.IsNumericType();
                     if (!ret){
-                        REPORT_ERROR_STATIC(ret,"type %s is not a numeric supported format", parameter.Buffer());
+                        REPORT_ERROR_STATIC(ret,"type %s is not a numeric supported format", parameter1.Buffer());
                     }
 //printf("const type = %x\n",td.all);
                 }
@@ -237,7 +244,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                     uint32 size = td.numberOfBits/8u;
                     ret.unsupportedFeature = (size == 0);
                     if (!ret){
-                        REPORT_ERROR_STATIC(ret,"type %s has 0 storageSize", parameter.Buffer());
+                        REPORT_ERROR_STATIC(ret,"type %s has 0 storageSize", parameter1.Buffer());
                     }
 
                     nextConstantAddress += ByteSizeToDataMemorySize(size);
@@ -482,12 +489,18 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
         StreamString command;
         StreamString parameter1;
         StreamString parameter2;
+        StreamString parameter3;
 
         // extract up to three tokens per line
         line.Seek(0u);
         line.GetToken(command, " \t,", terminator, " \t,");
         line.GetToken(parameter1, " \t,", terminator, " \t,");
         line.GetToken(parameter2, " \t,", terminator, " \t,");
+        line.GetToken(parameter3, " \t,", terminator, " \t,");
+
+        bool hasParameter1 = (parameter1.Size()> 0);
+        bool hasParameter2 = (parameter2.Size()> 0);
+        bool hasParameter3 = (parameter3.Size()> 0);
 
         // now analyze the command
         if (command.Size() > 0){
@@ -495,13 +508,11 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             CodeMemoryElement code2 = TypeCharacteristics<CodeMemoryElement>::MaxValue();
             bool matchOutput = false;
 
-            bool hasParameter1 = (parameter1.Size()> 0);
-
             // PROCESS CAST command
             // PUSH type(parameter1) --> TypeStack
             // matchOutput = true;
             if (command == castToken){
-                ret.illegalOperation = !hasParameter1;
+                ret.illegalOperation = !hasParameter1 || hasParameter2;
                 if (!ret){
                     REPORT_ERROR_STATIC(ret,"%s without type name", command.Buffer());
                 } else{
@@ -534,7 +545,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             if (command == writeToken){
                 VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
 
-                ret.illegalOperation = !hasParameter1;
+                ret.illegalOperation = !hasParameter1 || hasParameter2;
                 if (!ret){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 } else{
@@ -599,7 +610,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             if (command == readToken){
                 VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
 
-                ret.illegalOperation = !hasParameter1;
+                ret.illegalOperation = !hasParameter1 || hasParameter2;
                 if (!ret){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 } else{
@@ -658,9 +669,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             // command = READ
             if (command == constToken){
                 TypeDescriptor td;
-                bool hasParameter2 = (parameter2.Size()> 0);
 
-                ret.illegalOperation = !hasParameter1 || !hasParameter2;
+                ret.illegalOperation = !hasParameter1 || !hasParameter2 || hasParameter3;
                 if (!ret){
                     REPORT_ERROR_STATIC(ret,"%s without type name and value", command.Buffer());
                 } else{
