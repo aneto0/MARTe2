@@ -486,15 +486,16 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
         ret = evaluator.Compile();
     }
     
+    // unsigned integers 
     uint8  pushVarUint8,  peekVarUint8,  popVarUint8;
     uint16 pushVarUint16, peekVarUint16, popVarUint16;
     uint32 pushVarUint32, peekVarUint32, popVarUint32;
     uint64 pushVarUint64, peekVarUint64, popVarUint64;
     
-    pushVarUint8  = 1;
-    pushVarUint16 = 2;
-    pushVarUint32 = 3;
-    pushVarUint64 = 4;
+    pushVarUint8  = 255;
+    pushVarUint16 = 65535;
+    pushVarUint32 = 4294967295;
+    pushVarUint64 = 18446744073709551615ul;
     
     evaluator.Push(pushVarUint8);
     evaluator.Push(pushVarUint16);
@@ -522,18 +523,106 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
         ret = ( (popVarUint8 == pushVarUint8) && (peekVarUint8 == pushVarUint8) );
     }
     
-    //float64 varX = 10;
-    //float64 varY = 20;
-    //int16 varZ = 30;
-    //int16 varW;
+    // signed integers
+    int8   pushVarInt8,  peekVarInt8,  popVarInt8;
+    int16  pushVarInt16, peekVarInt16, popVarInt16;
+    int32  pushVarInt32, peekVarInt32, popVarInt32;
+    int64  pushVarInt64, peekVarInt64, popVarInt64;
     
-    //evaluator.Push(varX);
-    //evaluator.Push(varY);
-    //evaluator.Push(varZ);
+    pushVarInt8  = -127;
+    pushVarInt16 = 32767;
+    pushVarInt32 = -2147483647;
+    pushVarInt64 = 9223372036854775807;
     
-    //evaluator.Pop(varW);
+    evaluator.Push(pushVarInt8);
+    evaluator.Push(pushVarInt16);
+    evaluator.Push(pushVarInt32);
+    evaluator.Push(pushVarInt64);
     
-    //printf("THERE: %i\n", varW);
+    if (ret) {
+        evaluator.Peek(peekVarInt64);
+        evaluator.Pop(popVarInt64);
+        ret = ( (popVarInt64 == pushVarInt64) && (peekVarInt64 == pushVarInt64) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarInt32);
+        evaluator.Pop(popVarInt32);
+        ret = ( (popVarInt32 == pushVarInt32) && (peekVarInt32 == pushVarInt32) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarInt16);
+        evaluator.Pop(popVarInt16);
+        ret = ( (popVarInt16 == pushVarInt16) && (peekVarInt16 == pushVarInt16) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarInt8);
+        evaluator.Pop(popVarInt8);
+        ret = ( (popVarInt8 == pushVarInt8) && (peekVarInt8 == pushVarInt8) );
+    }
+    
+    // floats
+    float32 pushVarFloat32, peekVarFloat32, popVarFloat32;
+    float64 pushVarFloat64, peekVarFloat64, popVarFloat64;
+    
+    pushVarFloat32 = -340282346638528859811704183484516925440.0;
+    pushVarFloat64 = 340282346638528859811704183484516925440.0;
+    
+    evaluator.Push(pushVarFloat32);
+    evaluator.Push(pushVarFloat64);
+    
+    if (ret) {
+        evaluator.Peek(peekVarFloat64);
+        evaluator.Pop(popVarFloat64);
+        ret = ( (popVarFloat64 == pushVarFloat64) && (peekVarFloat64 == pushVarFloat64) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarFloat32);
+        evaluator.Pop(popVarFloat32);
+        ret = ( (popVarFloat32 == pushVarFloat32) && (peekVarFloat32 == pushVarFloat32) );
+    }
+    
+    // mixed types
+    evaluator.Push(pushVarFloat64);
+    evaluator.Push(pushVarInt32);
+    //evaluator.Push(pushVarUint64);
+    evaluator.Push(pushVarUint8);
+    evaluator.Push(pushVarFloat32);
+    evaluator.Push(pushVarInt32);
+    
+    if (ret) {
+        evaluator.Peek(peekVarInt32);
+        evaluator.Pop(popVarInt32);
+        ret = ( (popVarInt32 == pushVarInt32) && (peekVarInt32 == pushVarInt32) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarFloat32);
+        evaluator.Pop(popVarFloat32);
+        ret = ( (popVarFloat32 == pushVarFloat32) && (peekVarFloat32 == pushVarFloat32) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarUint8);
+        evaluator.Pop(popVarUint8);
+        ret = ( (popVarUint8 == pushVarUint8) && (peekVarUint8 == pushVarUint8) );
+    }
+    //if (ret) {
+        //evaluator.Peek(peekVarUint64);
+        //evaluator.Pop(popVarUint64);
+        //ret = ( (popVarUint64 == pushVarUint64) && (peekVarUint64 == pushVarUint64) );
+    //}
+    if (ret) {
+        evaluator.Peek(peekVarInt32);
+        evaluator.Pop(popVarInt32);
+        ret = ( (popVarInt32 == pushVarInt32) && (peekVarInt32 == pushVarInt32) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarFloat64);
+        evaluator.Pop(popVarFloat64);
+        ret = ( (popVarFloat64 == pushVarFloat64) && (peekVarFloat64 == pushVarFloat64) );
+    }
+    
+    // TODO?
+    // 1. no segfault if stack is not initialised (before Compile())
+    // 2. no segfault if output variable is not suitable to hold the Pop()ed/Peek()ed one
     
     return ret;
     
