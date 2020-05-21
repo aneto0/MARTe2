@@ -575,6 +575,21 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadS
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadNoParameter) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "READ \n"
+            "READ IN2\n"
+    ;
+
+    evaluatorTest.AddExpectedInputVariable("IN1", VoidType, MAXDataMemoryAddress, NULL, false);
+
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::IllegalOperation));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_WriteSuccessful) {
 
     RuntimeEvaluatorTest evaluatorTest;
