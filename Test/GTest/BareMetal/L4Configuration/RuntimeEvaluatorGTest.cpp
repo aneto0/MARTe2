@@ -589,3 +589,20 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Write
 
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstSuccessful) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "CONST uint8 5\n"
+            "CONST float64 3.140000\n"
+            "CONST int32 -15\n"
+    ;
+
+    evaluatorTest.AddExpectedInputVariable("Constant@0", UnsignedInteger8Bit, 0, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("Constant@1", Float64Bit, 1, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("Constant@3", SignedInteger32Bit, 3, NULL, false);
+
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
+}
