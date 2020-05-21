@@ -265,7 +265,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
 
 void* RuntimeEvaluator::GetVariablesMemory() {
 
-    return reinterpret_cast<void*>(&startOfVariables);
+    return reinterpret_cast<void*>(&dataMemory[0]);
     
 }
 
