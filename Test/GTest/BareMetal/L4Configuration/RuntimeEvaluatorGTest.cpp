@@ -560,17 +560,32 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestConstructor) {
     ASSERT_TRUE(evaluatorTest.TestConstructor());
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_MultipleReadSuccessful) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadSuccessful) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
     CCString rpnCode=
-            "READ A\n"
-            "READ B\n"
+            "READ IN1\n"
+            "READ IN2\n"
     ;
 
-    evaluatorTest.AddExpectedInput("A", VoidType, MAXDataMemoryAddress, NULL, false);
-    evaluatorTest.AddExpectedInput("B", VoidType, MAXDataMemoryAddress, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("IN1", VoidType, MAXDataMemoryAddress, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("IN2", VoidType, MAXDataMemoryAddress, NULL, false);
+
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_WriteSuccessful) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "WRITE OUT1\n"
+            "WRITE OUT2\n"
+    ;
+
+    evaluatorTest.AddExpectedOutputVariable("OUT1", VoidType, MAXDataMemoryAddress, NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT2", VoidType, MAXDataMemoryAddress, NULL, false);
 
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
