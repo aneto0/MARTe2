@@ -399,6 +399,69 @@ bool RuntimeEvaluatorTest::TestGetOutputVariableMemory() {
     
 }
 
+bool RuntimeEvaluatorTest::TestSetVariableType() {
+    
+    bool ret = false;
+    
+    StreamString rpnCode = "READ A\n"
+                           "READ B\n"
+                           "ADD\n"
+                           "WRITE C\n"
+                           "READ C\n"
+                           "WRITE D\n";
+    
+    RuntimeEvaluator evaluator(rpnCode);
+    
+    ret = evaluator.ExtractVariables();
+    
+    if (ret) {
+        ret = evaluator.SetInputVariableType("A", UnsignedInteger32Bit);
+        if (ret) {
+            ret = evaluator.SetInputVariableType(1u, UnsignedInteger64Bit);
+        }
+    }
+    
+    if (ret) {
+        ret = evaluator.SetOutputVariableType(0u, UnsignedInteger64Bit);
+        if (ret) {
+            ret = evaluator.SetOutputVariableType("D", UnsignedInteger64Bit);
+        }
+    }
+    
+    if (ret) {
+        ret = !evaluator.SetInputVariableType("Z", UnsignedInteger64Bit);
+        if (ret) {
+            ret = !evaluator.SetOutputVariableType("Z", UnsignedInteger64Bit);
+        }
+    }
+    
+    if (ret) {
+        ret = evaluator.Compile();
+    }
+
+    TypeDescriptor  inTypes[] = {UnsignedInteger32Bit, UnsignedInteger64Bit};
+    TypeDescriptor outTypes[] = {UnsignedInteger64Bit, UnsignedInteger64Bit};
+    
+    if (ret) {
+        uint32 index = 0U;
+        VariableInformation *var;
+
+        while(evaluator.BrowseInputVariable(index,var) && ret) {
+            ret = (var->type == inTypes[index]);
+            index++;
+        }
+        
+        index = 0U;
+        
+        while(evaluator.BrowseOutputVariable(index,var) && ret) {
+            ret = (var->type == outTypes[index]);
+            index++;
+        }
+    }
+    
+    return ret;
+}
+
 bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode) {
 
     

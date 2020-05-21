@@ -60,14 +60,29 @@ public:
     bool TestExpression(CCString rpnCode, float64 valueArray[]);
     
     /**
-     * @brief Tests all methods to get the memory address of an input variable.
+     * @brief   Tests all methods to get the memory address
+     *          of an input variable.
+     * @details Checks coherency between method outputs and the address
+     *          of the variables computed manually with pointer
+     *          arithmetics. 
      */
     bool TestGetInputVariableMemory();
     
     /**
-     * @brief Tests all methods to get the memory address of an output variable.
+     * @brief   Tests all methods to get the memory address
+     *          of an output variable.
+     * @details Checks coherency between method outputs and the address
+     *          of the variables computed manually with pointer
+     *          arithmetics. 
      */
     bool TestGetOutputVariableMemory();
+    
+    /**
+     * @brief   Tests all methods to set the type of a variable.
+     * @details Checks if the method works by manually inspecting each
+     *          `type` member of the variables.
+     */
+    bool TestSetVariableType();
     
     /**
      * @brief     Tests RuntimeEvaluator initialization.
