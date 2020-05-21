@@ -470,8 +470,23 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
     
     bool ret = false;
     
+    // add variables to increase the size of the stack
     StreamString rpnCode = "READ A\n"
-                           "WRITE B\n"
+                           "READ B\n"
+                           "READ C\n"
+                           "READ D\n"
+                           "READ E\n"
+                           "READ F\n"
+                           "READ G\n"
+                           "READ H\n"
+                           "ADD\n"
+                           "ADD\n"
+                           "ADD\n"
+                           "ADD\n"
+                           "ADD\n"
+                           "ADD\n"
+                           "ADD\n"
+                           "WRITE I\n"
                            "";
     
     RuntimeEvaluator evaluator(rpnCode);
@@ -480,6 +495,13 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
     
     if (ret) {
         ret = evaluator.SetInputVariableType("A", Float32Bit);
+        ret = evaluator.SetInputVariableType("B", Float32Bit);
+        ret = evaluator.SetInputVariableType("C", Float32Bit);
+        ret = evaluator.SetInputVariableType("D", Float32Bit);
+        ret = evaluator.SetInputVariableType("E", Float32Bit);
+        ret = evaluator.SetInputVariableType("F", Float32Bit);
+        ret = evaluator.SetInputVariableType("G", Float32Bit);
+        ret = evaluator.SetInputVariableType("H", Float32Bit);
     }
     
     if (ret) {
@@ -584,11 +606,23 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
     // mixed types
     evaluator.Push(pushVarFloat64);
     evaluator.Push(pushVarInt32);
-    //evaluator.Push(pushVarUint64);
+    evaluator.Push(pushVarUint64);
     evaluator.Push(pushVarUint8);
     evaluator.Push(pushVarFloat32);
     evaluator.Push(pushVarInt32);
+    evaluator.Push(pushVarInt16);
+    evaluator.Push(pushVarFloat32);
     
+    if (ret) {
+        evaluator.Peek(peekVarFloat32);
+        evaluator.Pop(popVarFloat32);
+        ret = ( (popVarFloat32 == pushVarFloat32) && (peekVarFloat32 == pushVarFloat32) );
+    }
+    if (ret) {
+        evaluator.Peek(peekVarInt16);
+        evaluator.Pop(popVarInt16);
+        ret = ( (popVarInt16 == pushVarInt16) && (peekVarInt16 == pushVarInt16) );
+    }
     if (ret) {
         evaluator.Peek(peekVarInt32);
         evaluator.Pop(popVarInt32);
@@ -604,11 +638,11 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
         evaluator.Pop(popVarUint8);
         ret = ( (popVarUint8 == pushVarUint8) && (peekVarUint8 == pushVarUint8) );
     }
-    //if (ret) {
-        //evaluator.Peek(peekVarUint64);
-        //evaluator.Pop(popVarUint64);
-        //ret = ( (popVarUint64 == pushVarUint64) && (peekVarUint64 == pushVarUint64) );
-    //}
+    if (ret) {
+        evaluator.Peek(peekVarUint64);
+        evaluator.Pop(popVarUint64);
+        ret = ( (popVarUint64 == pushVarUint64) && (peekVarUint64 == pushVarUint64) );
+    }
     if (ret) {
         evaluator.Peek(peekVarInt32);
         evaluator.Pop(popVarInt32);
