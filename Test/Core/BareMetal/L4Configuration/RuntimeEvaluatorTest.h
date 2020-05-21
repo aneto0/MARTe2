@@ -82,6 +82,11 @@ public:
     
     /**
      * @brief   Tests Push(), Pop() and Peek() methods.
+     * @details RuntimeEvaluator has an internal #stack. The #stack is
+     *          public since it's managed mostly by RuntimeEvaluatorFunctions.
+     *          The stack size is increased by compiling a long sequence
+     *          of `READ` and `ADD` operations. Push(), Pop() and Peek()
+     *          methods are then tested on the allocated space.
      */
      bool TestPushPopPeek();
     
