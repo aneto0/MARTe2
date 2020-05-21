@@ -801,3 +801,57 @@ bool RuntimeEvaluatorTest::TestConstructor() {
 
     return ok;
 }
+
+bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError) {
+    RuntimeEvaluator context(rpnCode);
+    bool ok = true;
+    uint32 variableIndex = 0;
+    VariableInformation *var;
+
+    ok &= (context.ExtractVariables() == expectedError);
+
+    while (ok && context.BrowseInputVariable(variableIndex++, var)) {
+        ok &= RemoveMatchingVariable(var, expectedInputVariables);
+    }
+
+    ok &= (expectedInputVariables.ListSize() == 0);
+
+    return ok;
+}
+
+bool RuntimeEvaluatorTest::RemoveMatchingVariable(const VariableInformation *var, LinkedListHolderT<VariableInformation> &varList) {
+    bool removed = false;
+
+    for (uint32 i = 0; (!removed) && (i < varList.ListSize()); ++i) {
+        if (VariablesMatch(var, varList.ListPeek(i))) {
+            varList.ListExtract(i);
+            removed = true;
+        }
+    }
+
+    return removed;
+}
+
+bool RuntimeEvaluatorTest::VariablesMatch(const VariableInformation *var1, const VariableInformation *var2) {
+    bool match = true;
+
+    match &= (var1->name == var2->name);
+    match &= (var1->type == var2->type);
+    match &= (var1->location == var2->location);
+    match &= (var1->externalLocation == var2->externalLocation);
+    match &= (var1->variableUsed == var2->variableUsed);
+
+    return match;
+}
+
+void RuntimeEvaluatorTest::AddExpectedInput(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
+    VariableInformation * var = new VariableInformation();
+
+    var->name = name;
+    var->type = type;
+    var->location = location;
+    var->externalLocation = externalLocation;
+    var->variableUsed = variableUsed;
+
+    expectedInputVariables.ListAdd(var);
+}

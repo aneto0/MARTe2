@@ -565,3 +565,18 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestConstructor) {
     RuntimeEvaluatorTest evaluatorTest;
     ASSERT_TRUE(evaluatorTest.TestConstructor());
 }
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_MultipleReadSuccessful) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ A\n"
+            "READ B\n"
+    ;
+
+    evaluatorTest.AddExpectedInput("A", VoidType, MAXDataMemoryAddress, NULL, false);
+    evaluatorTest.AddExpectedInput("B", VoidType, MAXDataMemoryAddress, NULL, false);
+
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
+}
