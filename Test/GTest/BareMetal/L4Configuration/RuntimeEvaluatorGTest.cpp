@@ -133,6 +133,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestSetVariableType) {
     ASSERT_TRUE(evaluatorTest.TestSetVariableType());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestPushPopPeek) {
+    RuntimeEvaluatorTest evaluatorTest;
+    ASSERT_TRUE(evaluatorTest.TestPushPopPeek());
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                  READ                                     */
 /*---------------------------------------------------------------------------*/

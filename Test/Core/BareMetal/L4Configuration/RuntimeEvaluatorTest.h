@@ -55,11 +55,6 @@ public:
     bool TestIntegration();
     
     /**
-     * @brief TODO
-     */
-    bool TestExpression(CCString rpnCode, float64 valueArray[]);
-    
-    /**
      * @brief   Tests all methods to get the memory address
      *          of an input variable.
      * @details Checks coherency between method outputs and the address
@@ -85,15 +80,9 @@ public:
     bool TestSetVariableType();
     
     /**
-     * @brief     Tests RuntimeEvaluator initialization.
-     * @details   Before compiling RuntimeEvaluator requires the
-     *            RuntimeEvaluator::ExtractVariables() method to be
-     *            called. This test checks if RuntimeEvaluator::ExtractVariables()
-     *            can process the input RPN code.
-     * @param[in] rpnCode the input RPN code.
-     * @returns   `true` if RuntimeEvaluator::ExtractVariables() succeed.
+     * @brief   Tests Push(), Pop() and Peek() methods.
      */
-    bool TestExtractVariables(CCString rpnCode);
+     bool TestPushPopPeek();
     
     /**
      * @brief     Tests RuntimeEvaluator in case of errors.
@@ -116,6 +105,24 @@ public:
      * @returns   `true` if RuntimeEvaluator fails at the correct stage.
      */
     bool TestError(CCString rpnCode, ErrorManagement::ErrorType expectedError);
+    
+    // tests that can be removed:
+    
+    /**
+     * @brief TODO
+     */
+    bool TestExpression(CCString rpnCode, float64 valueArray[]);
+    
+    /**
+     * @brief     Tests RuntimeEvaluator initialization.
+     * @details   Before compiling RuntimeEvaluator requires the
+     *            RuntimeEvaluator::ExtractVariables() method to be
+     *            called. This test checks if RuntimeEvaluator::ExtractVariables()
+     *            can process the input RPN code.
+     * @param[in] rpnCode the input RPN code.
+     * @returns   `true` if RuntimeEvaluator::ExtractVariables() succeed.
+     */
+    bool TestExtractVariables(CCString rpnCode);
     
     /*---------------------------------------------------------------------------*/
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
