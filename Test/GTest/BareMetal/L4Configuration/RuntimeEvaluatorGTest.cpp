@@ -126,6 +126,13 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetOutputVariableMemor
     ASSERT_TRUE(evaluatorTest.TestGetOutputVariableMemory());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestSetVariableType) {
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    
+    ASSERT_TRUE(evaluatorTest.TestSetVariableType());
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                  READ                                     */
 /*---------------------------------------------------------------------------*/
