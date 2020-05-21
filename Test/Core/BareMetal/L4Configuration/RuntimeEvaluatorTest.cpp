@@ -292,14 +292,12 @@ bool RuntimeEvaluatorTest::TestIntegration() {
 
 bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
     
-    ErrorManagement::ErrorType ret;
+    bool ret;
     
     StreamString rpnCode = "READ A\n"
                            "READ B\n"
                            "ADD\n"
                            "WRITE C\n";
-    
-    StreamString varC("C");
     
     RuntimeEvaluator evaluator(rpnCode);
     
@@ -311,7 +309,63 @@ bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
     }
     
     if (ret) {
-        evaluator.SetInputVariableType(varC, Float64Bit);
+        evaluator.SetOutputVariableType("C", Float64Bit);
+    }
+    
+    if (ret) {
+        ret = evaluator.Compile();
+    }
+    
+    char8* evaluatorMemoryAddress = reinterpret_cast<char8 *>(evaluator.GetVariablesMemory());
+    uint32 numberOfVariables = 2U;
+    uint32 offsets[] = { sizeof(float64), sizeof(float64) };
+    StreamString names[] = {"A", "B"};
+    
+    if (ret) {
+        uint32 i;
+        uint32 offset = 0u;
+        
+        for (i = 0; (i < numberOfVariables) && (ret); i++) {
+            ret = (evaluator.GetInputVariableMemory(i) == (evaluatorMemoryAddress + offset));
+            if (ret) {
+                ret = (evaluator.GetInputVariableMemory(names[i]) == (evaluatorMemoryAddress + offset));
+            }
+            offset += offsets[i];
+        }
+    }
+    if (ret) {
+        ret = (evaluator.GetInputVariableMemory(1000) == NULL_PTR(void*));
+    }
+    
+    // TODO add cases where externalLocation is used
+    
+    return ret;
+    
+}
+
+bool RuntimeEvaluatorTest::TestGetOutputVariableMemory() {
+    
+    bool ret;
+    
+    StreamString rpnCode = "READ A\n"
+                           "READ B\n"
+                           "ADD\n"
+                           "WRITE C\n"
+                           "READ C\n"
+                           "WRITE D\n";
+    
+    RuntimeEvaluator evaluator(rpnCode);
+    
+    ret = evaluator.ExtractVariables();
+    
+    if (ret) {
+        evaluator.SetInputVariableType("A", Float64Bit);
+        evaluator.SetInputVariableType("B", Float64Bit);
+    }
+    
+    if (ret) {
+        evaluator.SetOutputVariableType("C", Float64Bit);
+        evaluator.SetOutputVariableType("D", Float64Bit);
     }
     
     if (ret) {
@@ -320,19 +374,26 @@ bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
     
     char8 *evaluatorMemoryAddress = reinterpret_cast<char8 *>(evaluator.GetVariablesMemory());
     uint32 numberOfVariables = 2U;
-    uint32 offsets[] = { sizeof(float32), sizeof(float64) };
+    uint23 inputVariableMemory = sizeof(float64) + sizeof(float64);
+    uint32 offsets[] = { sizeof(float64), sizeof(float64) };
+    StreamString names[] = {"C", "D"};
     
     if (ret) {
         uint32 i;
         uint32 offset = 0u;
         for (i = 0; (i < numberOfVariables) && (ret); i++) {
-            ret = (evaluator.GetInputVariableMemory(i) == (evaluatorMemoryAddress + offset));
+            ret = (evaluator.GetOutputVariableMemory(i) == (evaluatorMemoryAddress + inputVariableMemory + offset));
+            if (ret) {
+                ret = (evaluator.GetOutputVariableMemory(names[i]) == (evaluatorMemoryAddress + inputVariableMemory  + offset));
+            }
             offset += offsets[i];
         }
     }
-    //if (ret) {
-        //ret = (evaluator.GetInputVariableMemory(1000) == NULL_PTR(void *));
-    //}
+    if (ret) {
+        ret = (evaluator.GetOutputVariableMemory(1000) == NULL_PTR(void*));
+    }
+    
+    // TODO add cases where externalLocation is used
     
     return ret;
     
