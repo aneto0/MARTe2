@@ -316,7 +316,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadE
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadNoName) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadFailedNoName) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
@@ -361,7 +361,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Write
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_WriteExistingOutput) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_WriteFailedExistingOutput) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
@@ -375,7 +375,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Write
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::IllegalOperation));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_WriteNoName) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_WriteFailedNoName) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
@@ -407,7 +407,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Const
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstNoTypeNoValue) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstFailedNoTypeNoValue) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
@@ -422,7 +422,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Const
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::IllegalOperation));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstNoValue) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstFailedNoValue) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
@@ -437,7 +437,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Const
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::IllegalOperation));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstNoNumeric) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstFailedNoNumeric) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
@@ -452,7 +452,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Const
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::UnsupportedFeature));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstTypeSize0) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstFailedTypeSize0) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
@@ -491,42 +491,40 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Mixed
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_MixedSuccessfulCommaAsSeparator) {
 
-
-
-
-
-
-/*
-
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_CONST_CommaAsSeparator) {
-
-    RuntimeEvaluatorTest pseudoCodeTest;
+    RuntimeEvaluatorTest evaluatorTest;
 
     CCString rpnCode=
             "CONST,float32,1\n"
-            "WRITE,ret\n"
+            "WRITE,OUT1\n"
+            "READ,IN1\n"
     ;
 
-    //TODO ExtractVariables returns true as expected but the actual output should also be checked.
+    evaluatorTest.AddExpectedInputVariable("Constant@0",    Float32Bit, 0,                      NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1",         VoidType,   MAXDataMemoryAddress,   NULL, false);
+    evaluatorTest.AddExpectedInputVariable("IN1",           VoidType,   MAXDataMemoryAddress,   NULL, false);
 
-    ASSERT_TRUE(pseudoCodeTest.TestExtractVariables(rpnCode));
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_CONST_TabAsSeparator) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_MixedSuccessfulTabAsSeparator) {
 
-    RuntimeEvaluatorTest pseudoCodeTest;
+    RuntimeEvaluatorTest evaluatorTest;
 
     CCString rpnCode=
             "CONST\tfloat32\t1\n"
-            "WRITE\tret\n"
+            "WRITE\tOUT1\n"
+            "READ\tIN1\n"
     ;
 
-    //TODO ExtractVariables returns true as expected but the actual output should also be checked.
+    evaluatorTest.AddExpectedInputVariable("Constant@0",    Float32Bit, 0,                      NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1",         VoidType,   MAXDataMemoryAddress,   NULL, false);
+    evaluatorTest.AddExpectedInputVariable("IN1",           VoidType,   MAXDataMemoryAddress,   NULL, false);
 
-    ASSERT_TRUE(pseudoCodeTest.TestExtractVariables(rpnCode));
+        ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
-
+/*^
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ExceedingParameters) {
 
     RuntimeEvaluatorTest pseudoCodeTest;
