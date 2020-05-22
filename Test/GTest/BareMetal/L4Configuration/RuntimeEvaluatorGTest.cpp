@@ -331,6 +331,20 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadF
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::IllegalOperation));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadExceedingParameters) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "READ IN2 2\n"
+    ;
+
+    evaluatorTest.AddExpectedInputVariable("IN1", VoidType, MAXDataMemoryAddress, NULL, false);
+
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::IllegalOperation));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_WriteSuccessful) {
 
     RuntimeEvaluatorTest evaluatorTest;
@@ -383,6 +397,20 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Write
             "WRITE OUT1\n"
             "WRITE \n"
             "WRITE OUT2\n"
+    ;
+
+    evaluatorTest.AddExpectedOutputVariable("OUT1", VoidType, MAXDataMemoryAddress, NULL, false);
+
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::IllegalOperation));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_WriteFailedExceedingParameters) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "WRITE OUT1\n"
+            "WRITE OUT2 2\n"
     ;
 
     evaluatorTest.AddExpectedOutputVariable("OUT1", VoidType, MAXDataMemoryAddress, NULL, false);
@@ -468,6 +496,21 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Const
     ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::UnsupportedFeature));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ConstFailedExceedingParameters) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "CONST uint8 5\n"
+            "CONST uint8 16 7\n"
+            "CONST float64 3.140000\n"
+    ;
+
+    evaluatorTest.AddExpectedInputVariable("Constant@0", UnsignedInteger8Bit,   0, NULL, false);
+
+    ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::IllegalOperation));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_MixedSuccessful) {
 
     RuntimeEvaluatorTest evaluatorTest;
@@ -524,49 +567,3 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Mixed
 
         ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
 }
-/*^
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_READ_ExceedingParameters) {
-
-    RuntimeEvaluatorTest pseudoCodeTest;
-
-    CCString rpnCode=
-            "READ one two\n"
-            "WRITE ret\n"
-    ;
-
-    // expected to fail at ExtractVariables()
-    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
-
-    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
-}
-
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_WRITE_ExceedingParameters) {
-
-    RuntimeEvaluatorTest pseudoCodeTest;
-
-    CCString rpnCode=
-            "CONST float64 10\n"
-            "WRITE ret1 ret2\n"
-    ;
-
-    // expected to fail at ExtractVariables()
-    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
-
-    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
-}
-
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestError_CONST_ExceedingParameters) {
-
-    RuntimeEvaluatorTest pseudoCodeTest;
-
-    CCString rpnCode=
-            "CONST float32 1 2\n"
-            "WRITE ret\n"
-    ;
-
-    // expected to fail at ExtractVariables()
-    ErrorManagement::ErrorType expectedError = ErrorManagement::SyntaxError;
-
-    ASSERT_TRUE(!pseudoCodeTest.TestError(rpnCode, expectedError));
-}
-*/
