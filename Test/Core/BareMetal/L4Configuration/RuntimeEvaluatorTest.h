@@ -32,7 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "RuntimeEvaluator.h"
+#include "RuntimeEvaluatorFunctions.h"
 #include "LinkedListHolderT.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -131,6 +133,9 @@ public:
     void AddExpectedInputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
     void AddExpectedOutputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
     
+    void AddExpectedFunctionInMemory(StreamString name, StreamString inputType, StreamString outputType);
+    void AddExpectedVariableInMemory(CodeMemoryElement location);
+
     bool TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError);
     bool TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError);
 
@@ -139,8 +144,12 @@ private:
     bool RemoveMatchingVariable(const VariableInformation *var, LinkedListHolderT<VariableInformation> &varList);
     bool VariablesMatch(const VariableInformation *var1, const VariableInformation *var2);
 
+    bool RecordMatchesExpectedFunction(RuntimeEvaluatorFunctions &functionRecord);
+
     LinkedListHolderT<VariableInformation, true> expectedInputVariables;
     LinkedListHolderT<VariableInformation, true> expectedOutputVariables;
+
+    ConfigurationDatabase expectedCodeMemory;
 };
 
 /*---------------------------------------------------------------------------*/
