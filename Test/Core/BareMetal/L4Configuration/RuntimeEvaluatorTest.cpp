@@ -975,6 +975,26 @@ bool RuntimeEvaluatorTest::TestCompile(RuntimeEvaluator &evaluator, ErrorManagem
 
     ok &= (expectedOutputVariables.ListSize() == 0);
 
+    for (uint32 i = 0; (ok) && (i < expectedCodeMemory.GetNumberOfChildren()); ++i){
+        StreamString type;
+        CodeMemoryElement location, expectedLocation;
+
+        location = evaluator.GetPseudoCode();
+        expectedCodeMemory.MoveToChild(i);
+        expectedCodeMemory.Read("Type", type);
+
+        if (type == "Function") {
+            ok &= RecordMatchesExpectedFunction(functionRecords[location]);
+
+        } else if (type == "Variable") {
+            expectedCodeMemory.Read("Location", expectedLocation);
+            ok &= (expectedLocation == location);
+        }
+
+        expectedCodeMemory.MoveToRoot();
+    }
+
+
     return ok;
 }
 
@@ -1021,4 +1041,67 @@ void RuntimeEvaluatorTest::AddExpectedVariable(LinkedListHolderT<VariableInforma
     var->variableUsed = variableUsed;
 
     varList.ListAdd(var);
+}
+
+bool RuntimeEvaluatorTest::RecordMatchesExpectedFunction(RuntimeEvaluatorFunctions &functionRecord) {
+    bool match = true;
+    StreamString expectedName, expectedInput, expectedOutput;
+    Vector<TypeDescriptor> inputs, outputs;
+
+    expectedCodeMemory.Read("Name", expectedName);
+    match &= (functionRecord.GetName() == expectedName);
+
+    inputs = functionRecord.GetInputTypes();
+    if (expectedCodeMemory.Read("Input", expectedInput)) {
+        match &= (inputs.GetNumberOfElements() == 1);
+        match &= (expectedInput == TypeDescriptor::GetTypeNameFromTypeDescriptor(inputs[0]));
+    } else {
+        match &= (inputs.GetNumberOfElements() == 0);
+    }
+
+    outputs = functionRecord.GetOutputTypes();
+    if (expectedCodeMemory.Read("Output", expectedOutput)) {
+        match &= (outputs.GetNumberOfElements() == 1);
+        match &= (expectedOutput == TypeDescriptor::GetTypeNameFromTypeDescriptor(outputs[0]));
+    } else {
+        match &= (outputs.GetNumberOfElements() == 0);
+    }
+
+    return match;
+}
+
+void RuntimeEvaluatorTest::AddExpectedFunctionInMemory(StreamString name, StreamString inputType, StreamString outputType) {
+    uint32 lastChildren = expectedCodeMemory.GetNumberOfChildren();
+    StreamString functionName;
+
+    functionName.Printf("Element%i", lastChildren);
+    expectedCodeMemory.CreateRelative(functionName.Buffer());
+
+    expectedCodeMemory.Write("Type", "Function");
+
+    expectedCodeMemory.Write("Name", name);
+
+    if (inputType != "void"){
+        expectedCodeMemory.Write("Input", inputType);
+    }
+
+    if (outputType != "void"){
+        expectedCodeMemory.Write("Output", outputType);
+    }
+
+    expectedCodeMemory.MoveToRoot();
+}
+
+void RuntimeEvaluatorTest::AddExpectedVariableInMemory(CodeMemoryElement location) {
+    uint32 lastChildren = expectedCodeMemory.GetNumberOfChildren();
+    StreamString functionName;
+
+    functionName.Printf("Element%i", lastChildren);
+    expectedCodeMemory.CreateRelative(functionName.Buffer());
+
+    expectedCodeMemory.Write("Type", "Variable");
+
+    expectedCodeMemory.Write("Location", location);
+
+    expectedCodeMemory.MoveToRoot();
 }

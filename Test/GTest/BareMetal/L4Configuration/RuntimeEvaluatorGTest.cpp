@@ -613,10 +613,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadWriteSucce
     evaluatorTest.AddExpectedInputVariable("IN1",   UnsignedInteger8Bit, 0, NULL, false);
     evaluatorTest.AddExpectedOutputVariable("OUT1", UnsignedInteger8Bit, 1, NULL, true);
 
-    /*
-    evaluatorTest.AddExpectedCodeMemory("READ",     UnsignedInteger8Bit,    VoidType);
-    evaluatorTest.AddExpectedCodeMemory("WRITE",    VoidType,               UnsignedInteger8Bit);
-    */
+    evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "uint8");
+    evaluatorTest.AddExpectedVariableInMemory(0);
+    evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "uint8",    "void");
+    evaluatorTest.AddExpectedVariableInMemory(1);
 
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError));
 }
