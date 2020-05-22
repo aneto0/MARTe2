@@ -957,6 +957,27 @@ bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode, ErrorManagemen
     return ok;
 }
 
+bool RuntimeEvaluatorTest::TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError) {
+    bool ok = true;
+    VariableInformation *var;
+
+    ok &= (evaluator.Compile() == expectedError);
+
+    for (uint32 i = 0; (ok) && (evaluator.BrowseInputVariable(i, var)); ++i) {
+        ok &= RemoveMatchingVariable(var, expectedInputVariables);
+    }
+
+    ok &= (expectedInputVariables.ListSize() == 0);
+
+    for (uint32 i = 0; (ok) && (evaluator.BrowseOutputVariable(i, var)); ++i) {
+        ok &= RemoveMatchingVariable(var, expectedOutputVariables);
+    }
+
+    ok &= (expectedOutputVariables.ListSize() == 0);
+
+    return ok;
+}
+
 bool RuntimeEvaluatorTest::RemoveMatchingVariable(const VariableInformation *var, LinkedListHolderT<VariableInformation> &varList) {
     bool removed = false;
 
