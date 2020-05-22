@@ -291,6 +291,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestConstructor) {
     ASSERT_TRUE(evaluatorTest.TestConstructor());
 }
 
+/*---------------------------------------------------------------------------*/
+/*                             ExtractVariables                              */
+/*---------------------------------------------------------------------------*/
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_ReadSuccessful) {
 
     RuntimeEvaluatorTest evaluatorTest;
@@ -584,4 +588,35 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Mixed
     evaluatorTest.AddExpectedInputVariable("IN1",           VoidType,   MAXDataMemoryAddress,   NULL, false);
 
         ASSERT_TRUE(evaluatorTest.TestExtractVariables(rpnCode, ErrorManagement::NoError));
+}
+
+/*---------------------------------------------------------------------------*/
+/*                                 Compile                                   */
+/*---------------------------------------------------------------------------*/
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadWriteSuccessful) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "WRITE OUT1\n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetInputVariableType("IN1",   UnsignedInteger8Bit);
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    evaluatorTest.AddExpectedInputVariable("IN1",   UnsignedInteger8Bit, 0, NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1", UnsignedInteger8Bit, 1, NULL, true);
+
+    /*
+    evaluatorTest.AddExpectedCodeMemory("READ",     UnsignedInteger8Bit,    VoidType);
+    evaluatorTest.AddExpectedCodeMemory("WRITE",    VoidType,               UnsignedInteger8Bit);
+    */
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError));
 }

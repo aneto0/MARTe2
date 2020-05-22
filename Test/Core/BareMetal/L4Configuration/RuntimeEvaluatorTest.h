@@ -132,6 +132,7 @@ public:
     void AddExpectedOutputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
     
     bool TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError);
+    bool TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError);
 
 private:
     void AddExpectedVariable(LinkedListHolderT<VariableInformation> &varList, CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
