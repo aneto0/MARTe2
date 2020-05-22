@@ -119,17 +119,6 @@ public:
      */
     bool TestExpression(CCString rpnCode, float64 valueArray[]);
     
-    /**
-     * @brief     Tests RuntimeEvaluator initialization.
-     * @details   Before compiling RuntimeEvaluator requires the
-     *            RuntimeEvaluator::ExtractVariables() method to be
-     *            called. This test checks if RuntimeEvaluator::ExtractVariables()
-     *            can process the input RPN code.
-     * @param[in] rpnCode the input RPN code.
-     * @returns   `true` if RuntimeEvaluator::ExtractVariables() succeed.
-     */
-    bool TestExtractVariables(CCString rpnCode);
-    
     /*---------------------------------------------------------------------------*/
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
     /*---------------------------------------------------------------------------*/

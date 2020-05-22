@@ -662,22 +662,6 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
     
 }
 
-bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode) {
-
-    
-    StreamString RPNCodeStream(rpnCode);
-    
-    RuntimeEvaluator context(RPNCodeStream);
-
-    ErrorManagement::ErrorType ret;
-    ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
-
-    
-    ret = context.ExtractVariables();
-    
-    return ret;
-}
-
 bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
                                      ErrorManagement::ErrorType expectedError
                                     ) {
