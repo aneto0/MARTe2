@@ -662,6 +662,46 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
     
 }
 
+bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError) {
+    
+    bool ok = false;
+    
+    RuntimeEvaluator evaluator(rpnCode);
+    
+    ok = (evaluator.ExtractVariables() == ErrorManagement::NoError);
+    if (!ok) printf("Failed at ExtractVariables()\n");
+    
+    VariableInformation* var;
+    
+    for (uint32 j = 0; (ok) && (evaluator.BrowseInputVariable(j, var)); j++) {
+        
+        for (uint32 i = 0; i < expectedInputVariables.ListSize(); i++) {
+            
+            if (var->name == (expectedInputVariables.ListPeek(i))->name ) {
+                
+                var->type = (expectedInputVariables.ListPeek(i))->type;
+                var->externalLocation = (expectedInputVariables.ListPeek(i))->externalLocation;
+                
+                expectedInputVariables.ListExtract(i);
+            }
+        }
+        
+    }
+
+    if (ok) {
+        ok = (evaluator.Compile() == ErrorManagement::NoError);
+        if (!ok) printf("Failed at Compile()\n");
+    }
+    
+    if (ok) {
+        ok = (evaluator.Execute() == ErrorManagement::NoError);
+        if (!ok) printf("Failed at Execute()\n");
+    }
+    
+    return ok;
+    
+}
+
 bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
                                      ErrorManagement::ErrorType expectedError
                                     ) {

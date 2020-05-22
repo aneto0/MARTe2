@@ -99,6 +99,24 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestPushPopPeek) {
     ASSERT_TRUE(evaluatorTest.TestPushPopPeek());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_1) {
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    CCString rpnCode = "READ A\n"
+                       "READ B\n"
+                       "ADD\n"
+                       "WRITE F\n"
+    ;
+    
+    float32 A = 10;
+    float32 B = 10;
+    
+    evaluatorTest.AddExpectedInputVariable("A",         Float32Bit, MAXDataMemoryAddress, &A, false);
+    evaluatorTest.AddExpectedInputVariable("B",         Float32Bit, MAXDataMemoryAddress, &B, false);
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::NoError));
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                 CONST                                     */
 /*---------------------------------------------------------------------------*/

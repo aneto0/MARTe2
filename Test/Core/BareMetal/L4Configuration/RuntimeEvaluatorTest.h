@@ -91,6 +91,11 @@ public:
      bool TestPushPopPeek();
     
     /**
+     * @brief   Tests the Execute() method.
+     */
+     bool TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError);
+    
+    /**
      * @brief     Tests RuntimeEvaluator in case of errors.
      * @details   Checks that RuntimeEvaluator fails in case it is fed
      *            with wrong inputs and that it fails at the right stage
