@@ -279,7 +279,12 @@ void* RuntimeEvaluator::GetInputVariableMemory(StreamString varNameIn) {
 
     while(BrowseInputVariable(index,var) && !isFound){
         if (var->name == varNameIn){
-            retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+            if (var->externalLocation != NULL) {
+                retAddress = var->externalLocation;
+            }
+            else {
+                retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+            }
             isFound = true;
         }
         index++;
@@ -296,9 +301,12 @@ void* RuntimeEvaluator::GetInputVariableMemory(uint32 varIndexIn) {
     VariableInformation *var;
     
     if (BrowseInputVariable(varIndexIn,var)) {
-        
-        retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
-        
+        if (var->externalLocation != NULL) {
+            retAddress = var->externalLocation;
+        }
+        else {
+            retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+        }
     }
     
     return retAddress;
@@ -315,7 +323,12 @@ void* RuntimeEvaluator::GetOutputVariableMemory(StreamString varNameIn) {
 
     while(BrowseOutputVariable(index,var) && !isFound){
         if (var->name == varNameIn){
-            retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+            if (var->externalLocation != NULL) {
+                retAddress = var->externalLocation;
+            }
+            else {
+                retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+            }
             isFound = true;
         }
         index++;
@@ -332,9 +345,12 @@ void* RuntimeEvaluator::GetOutputVariableMemory(uint32 varIndexIn) {
     VariableInformation *var;
     
     if (BrowseOutputVariable(varIndexIn,var)) {
-        
-        retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
-        
+        if (var->externalLocation != NULL) {
+            retAddress = var->externalLocation;
+        }
+        else {
+            retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+        }
     }
     
     return retAddress;
