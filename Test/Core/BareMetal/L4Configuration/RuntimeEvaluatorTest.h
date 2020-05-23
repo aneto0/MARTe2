@@ -125,6 +125,22 @@ public:
      * @brief TODO
      */
     bool TestExpression(CCString rpnCode, float64 valueArray[]);
+
+// private:
+    
+    struct VariableListElement {
+        
+        VariableInformation var;
+        float64             expectedValue;
+        
+    };
+    
+    void SetTestInputVariable (CCString name, TypeDescriptor type, void *externalLocation = NULL, float64 expectedVarValue = 0);
+    void SetTestOutputVariable(CCString name, TypeDescriptor type, void *externalLocation = NULL, float64 expectedVarValue = 0);
+    void SetTestVariable(StaticList<VariableListElement*>& list, CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue);
+    
+    StaticList<VariableListElement*> usedInputVariables;
+    StaticList<VariableListElement*> usedOutputVariables;
     
     /*---------------------------------------------------------------------------*/
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */

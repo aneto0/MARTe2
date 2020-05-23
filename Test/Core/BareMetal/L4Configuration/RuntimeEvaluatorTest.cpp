@@ -654,53 +654,99 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
         ret = ( (popVarFloat64 == pushVarFloat64) && (peekVarFloat64 == pushVarFloat64) );
     }
     
-    // TODO?
-    // 1. no segfault if stack is not initialised (before Compile())
-    // 2. no segfault if output variable is not suitable to hold the Pop()ed/Peek()ed one
-    
     return ret;
     
 }
 
+//bool RuntimeEvaluatorTest::TestExecute(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError) {
+    
+    //bool ok = false;
+    
+    //ok = (evaluator.Execute() == expectedError);
+    //if (!ok) printf("Failed at Execute()\n");
+    
+    //VariableInformation* var;
+    //evaluator.BrowseOutputVariable(0, var);
+    
+    
+    //printf("RESULT: %f\n", *((float32*)var->externalLocation));
+    
+    //return ok;
+    
+//}
+
 bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError) {
     
     bool ok = false;
+    ErrorManagement::ErrorType ret;
     
-    RuntimeEvaluator evaluator(rpnCode);
+    RuntimeEvaluator context(rpnCode);
     
-    ok = (evaluator.ExtractVariables() == ErrorManagement::NoError);
-    if (!ok) printf("Failed at ExtractVariables()\n");
+    ret = context.ExtractVariables();
+    ok = (ret == ErrorManagement::NoError);
     
-    VariableInformation* var;
+    VariableListElement* element;
     
-    for (uint32 j = 0; (ok) && (evaluator.BrowseInputVariable(j, var)); j++) {
+    for (uint32 i = 0; i < usedInputVariables.GetSize() && ok; i++) {
         
-        for (uint32 i = 0; i < expectedInputVariables.ListSize(); i++) {
-            
-            if (var->name == (expectedInputVariables.ListPeek(i))->name ) {
-                
-                var->type = (expectedInputVariables.ListPeek(i))->type;
-                var->externalLocation = (expectedInputVariables.ListPeek(i))->externalLocation;
-                
-                expectedInputVariables.ListExtract(i);
-            }
+        ok = usedInputVariables.Peek(i, element);
+        
+        printf("VARIABLE: %s ", (element->var.name).Buffer());
+        ok = context.SetInputVariableType(element->var.name, element->var.type);
+        
+        if (ok && (element->var.externalLocation != NULL)) {
+            ok = context.SetInputVariableMemory(element->var.name, element->var.externalLocation);
         }
         
+        if (ok) printf("OK!\n");
+        
     }
-
+    
+    for (uint32 i = 0; i < usedOutputVariables.GetSize() && ok; i++) {
+        
+        ok = usedOutputVariables.Peek(i, element);
+        
+        printf("VARIABLE: %s ", (element->var.name).Buffer());
+        ok = context.SetOutputVariableType(element->var.name, element->var.type);
+        
+        if (ok && (element->var.externalLocation != NULL)) {
+            ok = context.SetOutputVariableMemory(element->var.name, element->var.externalLocation);
+        }
+        
+        if (ok) printf("OK!\n");
+        
+    }
+    
     if (ok) {
-        ok = (evaluator.Compile() == ErrorManagement::NoError);
+        ret = context.Compile();
+        ok = (ret == ErrorManagement::NoError);
         if (!ok) printf("Failed at Compile()\n");
     }
     
-    if (ok) {
-        ok = (evaluator.Execute() == ErrorManagement::NoError);
-        if (!ok) printf("Failed at Execute()\n");
+    ok = (context.Execute() == expectedError);
+    if (!ok) printf("Failed at Execute()\n");
+    
+    VariableInformation* var;
+    context.BrowseOutputVariable(0, var);
+    
+    for (uint32 i = 0; i < usedOutputVariables.GetSize() && ok; i++) {
+        
+        ok = usedOutputVariables.Peek(i, element);
+        
+        printf("RESULT: %s = ", (element->var.name).Buffer());
+        printf("%f\n", *((float32*)context.GetOutputVariableMemory(element->var.name)));
+        
+        float32 expectedValue = (float32)(element->expectedValue);
+        float32 actualValue   = *((float32*)context.GetOutputVariableMemory(element->var.name));
+        ok = (expectedValue == actualValue);
+        printf("%u\n", ok);
     }
     
     return ok;
     
 }
+
+
 
 bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
                                      ErrorManagement::ErrorType expectedError
@@ -917,6 +963,27 @@ bool RuntimeEvaluatorTest::TestExpression(CCString rpnCode, float64 valueArray[]
     }
 
     return ret;
+}
+
+void RuntimeEvaluatorTest::SetTestInputVariable(CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
+    SetTestVariable(usedInputVariables, name, type, externalLocation, expectedVarValue);
+}
+
+void RuntimeEvaluatorTest::SetTestOutputVariable(CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
+    SetTestVariable(usedOutputVariables, name, type, externalLocation, expectedVarValue);
+}
+
+void RuntimeEvaluatorTest::SetTestVariable(StaticList<VariableListElement*>& list, CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
+    
+    VariableListElement* element = new VariableListElement();
+    
+    element->var.name = name;
+    element->var.type = type;
+    element->var.externalLocation = externalLocation;
+    
+    element->expectedValue = expectedVarValue;
+    
+    list.Add(element);
 }
 
 /*---------------------------------------------------------------------------*/
