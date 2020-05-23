@@ -165,6 +165,42 @@ public:
     void* GetOutputVariableMemory(uint32 varIndexIn);
     
     /**
+     * @brief     Set the address of a variable to an external location.
+     * @returns   true on success.
+     * @param[in] varNameIn          the name of the variable to retrieve.
+     * @param[in] externalLocationIn the address that will hold the memory.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
+     */
+    bool SetInputVariableMemory(StreamString varNameIn, void* externalLocationIn);
+    
+    /**
+     * @brief     Set the address of a variable to an external location.
+     * @returns   true on success.
+     * @param[in] varIndexIn         the index of the variable to retrieve.
+     * @param[in] externalLocationIn the address that will hold the memory.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
+     */
+    bool SetInputVariableMemory(uint32 varIndexIn, void* externalLocationIn);
+    
+    /**
+     * @brief     Set the address of a variable to an external location.
+     * @returns   true on success.
+     * @param[in] varNameIn          the name of the variable to retrieve.
+     * @param[in] externalLocationIn the address that will hold the memory.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
+     */
+    bool SetOutputVariableMemory(StreamString varNameIn, void* externalLocationIn);
+    
+    /**
+     * @brief     Set the address of a variable to an external location.
+     * @returns   true on success.
+     * @param[in] varIndexIn         the index of the variable to retrieve.
+     * @param[in] externalLocationIn the address that will hold the memory.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
+     */
+    bool SetOutputVariableMemory(uint32 varIndexIn, void* externalLocationIn);
+    
+    /**
      * @brief     Set the type of an input variable.
      * @details   RuntimeEvaluator needs to know the types of all
      *            variables that are present in the input RPNCode to

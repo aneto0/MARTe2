@@ -341,6 +341,74 @@ void* RuntimeEvaluator::GetOutputVariableMemory(uint32 varIndexIn) {
     
 }
 
+bool RuntimeEvaluator::SetInputVariableMemory(StreamString varNameIn, void* externalLocationIn) {
+    
+    bool isFound = false;
+    
+    int32 index = 0;
+    VariableInformation *var;
+
+    while(BrowseInputVariable(index,var) && !isFound){
+        if (var->name == varNameIn){
+            var->externalLocation = externalLocationIn;
+            isFound = true;
+        }
+        index++;
+    }
+    
+    return isFound;
+    
+}
+
+bool RuntimeEvaluator::SetInputVariableMemory(uint32 varIndexIn, void* externalLocationIn) {
+    
+    bool isFound = false;
+    
+    VariableInformation *var;
+    
+    if (BrowseInputVariable(varIndexIn,var)) {
+        var->externalLocation = externalLocationIn;
+        isFound = true;
+    }
+    
+    return isFound;
+    
+}
+
+bool RuntimeEvaluator::SetOutputVariableMemory(StreamString varNameIn, void* externalLocationIn) {
+    
+    bool isFound = false;
+    
+    int32 index = 0;
+    VariableInformation *var;
+
+    while(BrowseOutputVariable(index,var) && !isFound){
+        if (var->name == varNameIn){
+            var->externalLocation = externalLocationIn;
+            isFound = true;
+        }
+        index++;
+    }
+    
+    return isFound;
+    
+}
+
+bool RuntimeEvaluator::SetOutputVariableMemory(uint32 varIndexIn, void* externalLocationIn) {
+    
+    bool isFound = false;
+    
+    VariableInformation *var;
+    
+    if (BrowseOutputVariable(varIndexIn,var)) {
+        var->externalLocation = externalLocationIn;
+        isFound = true;
+    }
+    
+    return isFound;
+    
+}
+
 bool RuntimeEvaluator::SetInputVariableType(StreamString varNameIn, TypeDescriptor typeIn) {
     
     bool isFound = false;
