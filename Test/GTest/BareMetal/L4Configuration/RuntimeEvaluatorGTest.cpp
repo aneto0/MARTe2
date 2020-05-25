@@ -769,13 +769,15 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExtractVariables_Mixed
 /*                                 Compile                                   */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadWriteSuccessful) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_MixedSuccessful) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
     CCString rpnCode=
-            "READ IN1\n"
+            "CONST uint8 1\n"
             "WRITE OUT1\n"
+            "READ IN1\n"
+            "WRITE OUT2\n"
     ;
 
     RuntimeEvaluator evaluator(rpnCode);
@@ -784,14 +786,22 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadWriteSucce
 
     evaluator.SetInputVariableType("IN1",   UnsignedInteger8Bit);
     evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+    evaluator.SetOutputVariableType("OUT2", UnsignedInteger8Bit);
 
-    evaluatorTest.AddExpectedInputVariable("IN1",   UnsignedInteger8Bit, 0, NULL, false);
-    evaluatorTest.AddExpectedOutputVariable("OUT1", UnsignedInteger8Bit, 1, NULL, true);
+    evaluatorTest.AddExpectedInputVariable("Constant@0",    UnsignedInteger8Bit, 0, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("IN1",           UnsignedInteger8Bit, 1, NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1",         UnsignedInteger8Bit, 2, NULL, true);
+    evaluatorTest.AddExpectedOutputVariable("OUT2",         UnsignedInteger8Bit, 3, NULL, true);
 
     evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "uint8");
     evaluatorTest.AddExpectedVariableInMemory(0);
     evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "uint8",    "void");
+    evaluatorTest.AddExpectedVariableInMemory(2);
+    evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "uint8");
     evaluatorTest.AddExpectedVariableInMemory(1);
+    evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "uint8",    "void");
+    evaluatorTest.AddExpectedVariableInMemory(3);
 
-    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError, 2));
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError, 4));
+    ASSERT_TRUE(evaluator.Variable<uint8>(0) == 1);
 }
