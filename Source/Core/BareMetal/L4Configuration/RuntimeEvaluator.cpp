@@ -1051,8 +1051,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
         while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError.ErrorsCleared())){
             CodeMemoryElement pCode = GetPseudoCode();
             functionRecords[pCode].ExecuteFunction(*this);
-            // note that the syackPtr will reach the max value - as it points to the next value to write
-            runtimeError.outOfRange = ((stackPtr > stackMaxPtr) ||  (stackPtr < stackMinPtr));
+            // note that the stackPtr will reach the max value - as it points to the next value to write
+            runtimeError.outOfRange = ((runtimeError.outOfRange) || (stackPtr > stackMaxPtr) ||  (stackPtr < stackMinPtr));
             if (!runtimeError){
                 REPORT_ERROR_STATIC(runtimeError,"stack over/under flow %i [0 - %i]", (int64)(stackPtr-stackMinPtr), (int64)(stackMaxPtr- stackMinPtr));
             }
