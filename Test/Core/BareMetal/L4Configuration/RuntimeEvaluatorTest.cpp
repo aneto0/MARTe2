@@ -966,11 +966,6 @@ void RuntimeEvaluatorTest::SetTestVariable(StaticList<VariableListElement*>& lis
     list.Add(element);
 }
 
-//void RuntimeEvaluatorTest::MockRead(RuntimeEvaluator &context) {
-    //float32 variableHolder;
-    //context.Push(variableHolder);
-//}
-
 /*---------------------------------------------------------------------------*/
 /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
 /*---------------------------------------------------------------------------*/
