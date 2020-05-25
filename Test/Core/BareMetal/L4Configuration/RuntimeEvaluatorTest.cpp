@@ -989,17 +989,19 @@ bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode, ErrorManagemen
 
     ok &= (context.ExtractVariables() == expectedError);
 
-    for (uint32 i = 0; (ok) && (context.BrowseInputVariable(i, var)); ++i) {
-        ok &= RemoveMatchingVariable(var, expectedInputVariables);
+    if (expectedError) {
+        for (uint32 i = 0; (ok) && (context.BrowseInputVariable(i, var)); ++i) {
+            ok &= RemoveMatchingVariable(var, expectedInputVariables);
+        }
+
+        ok &= (expectedInputVariables.ListSize() == 0);
+
+        for (uint32 i = 0; (ok) && (context.BrowseOutputVariable(i, var)); ++i) {
+            ok &= RemoveMatchingVariable(var, expectedOutputVariables);
+        }
+
+        ok &= (expectedOutputVariables.ListSize() == 0);
     }
-
-    ok &= (expectedInputVariables.ListSize() == 0);
-
-    for (uint32 i = 0; (ok) && (context.BrowseOutputVariable(i, var)); ++i) {
-        ok &= RemoveMatchingVariable(var, expectedOutputVariables);
-    }
-
-    ok &= (expectedOutputVariables.ListSize() == 0);
 
     return ok;
 }
@@ -1010,38 +1012,40 @@ bool RuntimeEvaluatorTest::TestCompile(RuntimeEvaluator &evaluator, ErrorManagem
 
     ok &= (evaluator.Compile() == expectedError);
 
-    for (uint32 i = 0; (ok) && (evaluator.BrowseInputVariable(i, var)); ++i) {
-        ok &= RemoveMatchingVariable(var, expectedInputVariables);
-    }
-
-    ok &= (expectedInputVariables.ListSize() == 0);
-
-    for (uint32 i = 0; (ok) && (evaluator.BrowseOutputVariable(i, var)); ++i) {
-        ok &= RemoveMatchingVariable(var, expectedOutputVariables);
-    }
-
-    ok &= (expectedOutputVariables.ListSize() == 0);
-
-    for (uint32 i = 0; (ok) && (i < expectedCodeMemory.GetNumberOfChildren()); ++i){
-        StreamString type;
-        CodeMemoryElement location, expectedLocation;
-
-        location = evaluator.GetPseudoCode();
-        expectedCodeMemory.MoveToChild(i);
-        expectedCodeMemory.Read("Type", type);
-
-        if (type == "Function") {
-            ok &= RecordMatchesExpectedFunction(functionRecords[location]);
-
-        } else if (type == "Variable") {
-            expectedCodeMemory.Read("Location", expectedLocation);
-            ok &= (expectedLocation == location);
+    if (expectedError) {
+        for (uint32 i = 0; (ok) && (evaluator.BrowseInputVariable(i, var)); ++i) {
+            ok &= RemoveMatchingVariable(var, expectedInputVariables);
         }
 
-        expectedCodeMemory.MoveToRoot();
-    }
+        ok &= (expectedInputVariables.ListSize() == 0);
 
-    ok &= (evaluator.dataMemory.GetNumberOfElements() == expectedDataSize);
+        for (uint32 i = 0; (ok) && (evaluator.BrowseOutputVariable(i, var)); ++i) {
+            ok &= RemoveMatchingVariable(var, expectedOutputVariables);
+        }
+
+        ok &= (expectedOutputVariables.ListSize() == 0);
+
+        for (uint32 i = 0; (ok) && (i < expectedCodeMemory.GetNumberOfChildren()); ++i){
+            StreamString type;
+            CodeMemoryElement location, expectedLocation;
+
+            location = evaluator.GetPseudoCode();
+            expectedCodeMemory.MoveToChild(i);
+            expectedCodeMemory.Read("Type", type);
+
+            if (type == "Function") {
+                ok &= RecordMatchesExpectedFunction(functionRecords[location]);
+
+            } else if (type == "Variable") {
+                expectedCodeMemory.Read("Location", expectedLocation);
+                ok &= (expectedLocation == location);
+            }
+
+            expectedCodeMemory.MoveToRoot();
+        }
+
+        ok &= (evaluator.dataMemory.GetNumberOfElements() == expectedDataSize);
+    }
 
     return ok;
 }

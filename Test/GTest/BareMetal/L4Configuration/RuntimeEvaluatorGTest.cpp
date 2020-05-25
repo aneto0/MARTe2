@@ -826,10 +826,5 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_FailedInputNoN
     evaluator.SetInputVariableType("IN1", CharString);
     evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
 
-    evaluatorTest.AddExpectedInputVariable("IN1",   CharString,             MAXDataMemoryAddress, NULL, false);
-    evaluatorTest.AddExpectedOutputVariable("OUT1", UnsignedInteger8Bit,    MAXDataMemoryAddress, NULL, false);
-
-    //TODO: Ignore checks if expectedError != NoError
-
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::UnsupportedFeature, 0));
 }
