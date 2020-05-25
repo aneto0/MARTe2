@@ -143,13 +143,6 @@ public:
     StaticList<VariableListElement*> usedInputVariables;
     StaticList<VariableListElement*> usedOutputVariables;
     
-    /**
-     * @brief   Custom RuntimeEvaluatorFunctions function
-     * @details This function is intentionally broken to reach Execute()
-     *          safeMode checks.
-     */
-    //void MockRead(RuntimeEvaluator &context);
-    
     /*---------------------------------------------------------------------------*/
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
     /*---------------------------------------------------------------------------*/
@@ -175,6 +168,36 @@ private:
 
     ConfigurationDatabase expectedCodeMemory;
 };
+
+/**
+ * @brief   Custom RuntimeEvaluatorFunctions function 
+ * @details The function intentionally pushes to the stack without
+ *          declaring to do so when registered in order to reach Execute()
+ *          safeMode checks. 
+ */
+void MockRead(RuntimeEvaluator &context);
+
+/**
+ * @brief   Custom RuntimeEvaluatorFunctions function 
+ * @details The function intentionally pops from the stack without
+ *          declaring to do so when registered in order to reach Execute()
+ *          safeMode checks. 
+ */
+void MockWrite(RuntimeEvaluator &context);
+
+/**
+ * @brief   Custom RuntimeEvaluatorFunctions function 
+ * @details The function intentionally raises an error during
+ *          execution in order to reach Execute() safeMode checks. 
+ */
+void MockExecutionError(RuntimeEvaluator &context);
+
+/**
+ * @brief   Custom RuntimeEvaluatorFunctions function 
+ * @details The function intentionally raises an ErrorManagement::OutOfRange
+ *          error during execution in order to reach Execute() safeMode checks. 
+ */
+void MockOutOfRangeExecutionError(RuntimeEvaluator &context);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

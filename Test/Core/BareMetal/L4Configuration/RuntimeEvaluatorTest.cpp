@@ -1157,3 +1157,25 @@ void RuntimeEvaluatorTest::AddExpectedVariableInMemory(CodeMemoryElement locatio
 
     expectedCodeMemory.MoveToRoot();
 }
+
+void MockRead(RuntimeEvaluator &context) {
+    float32 variableHolder;
+    context.Push(variableHolder);
+    context.Push(variableHolder);
+    context.Push(variableHolder);
+}
+
+void MockWrite(RuntimeEvaluator &context) {
+    float32 variableHolder;
+    context.Pop(variableHolder);
+    context.Pop(variableHolder);
+    context.Pop(variableHolder);
+}
+
+void MockExecutionError(RuntimeEvaluator &context) {
+    context.runtimeError.syntaxError = true;
+}
+
+void MockOutOfRangeExecutionError(RuntimeEvaluator &context) {
+    context.runtimeError.outOfRange = true;
+}
