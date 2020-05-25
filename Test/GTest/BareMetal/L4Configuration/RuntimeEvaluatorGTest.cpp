@@ -810,6 +810,86 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_MixedSuccessfu
     ASSERT_TRUE(evaluator.Variable<uint8>(0) == 25);
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ExternalInputSuccessful) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "WRITE OUT1\n"
+    ;
+
+    uint8 in1 = 12;
+    DataMemoryAddress in1DataSize;
+    VariableInformation *var;
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.BrowseInputVariable(0, var);
+    var->type = UnsignedInteger8Bit;
+    var->externalLocation = &in1;
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    in1DataSize = ByteSizeToDataMemorySize(sizeof(&in1));
+
+    evaluatorTest.AddExpectedInputVariable("IN1",   UnsignedInteger8Bit,             0, &in1, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1", UnsignedInteger8Bit,   in1DataSize, NULL, true);
+
+    evaluatorTest.AddExpectedFunctionInMemory("RREAD",  "void",     "uint8");
+    evaluatorTest.AddExpectedVariableInMemory(0);
+    evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "uint8",    "void");
+    evaluatorTest.AddExpectedVariableInMemory(in1DataSize);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError,  in1DataSize + 1));
+    ASSERT_TRUE(evaluator.Variable<void *>(0) == &in1);
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ExternalOutputSuccessful) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "READ IN2\n"
+            "WRITE OUT1\n"
+            "WRITE OUT2\n"
+    ;
+
+    int64 out1;
+    DataMemoryAddress out1DataSize;
+    VariableInformation *var;
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetInputVariableType("IN1",   UnsignedInteger16Bit);
+    evaluator.SetInputVariableType("IN2",   SignedInteger64Bit);
+    evaluator.BrowseOutputVariable(0, var);
+    var->type = SignedInteger64Bit;
+    var->externalLocation = &out1;
+    evaluator.SetOutputVariableType("OUT2", UnsignedInteger16Bit);
+
+    out1DataSize = ByteSizeToDataMemorySize(sizeof(&out1));
+
+    evaluatorTest.AddExpectedInputVariable("IN1",   UnsignedInteger16Bit,   0,                  NULL, false);
+    evaluatorTest.AddExpectedInputVariable("IN2",   SignedInteger64Bit,     1,                  NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1", SignedInteger64Bit,     3,                  &out1, true);
+    evaluatorTest.AddExpectedOutputVariable("OUT2", UnsignedInteger16Bit,   3 + out1DataSize,   NULL, true);
+
+    evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "uint16");
+    evaluatorTest.AddExpectedVariableInMemory(0);
+    evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "int64");
+    evaluatorTest.AddExpectedVariableInMemory(1);
+    evaluatorTest.AddExpectedFunctionInMemory("RWRITE", "int64",    "void");
+    evaluatorTest.AddExpectedVariableInMemory(3);
+    evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "uint16",   "void");
+    evaluatorTest.AddExpectedVariableInMemory(3 + out1DataSize);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError,  out1DataSize + 4));
+    ASSERT_TRUE(evaluator.Variable<void *>(3) == &out1);
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_FailedInputNoNumeric) {
 
     RuntimeEvaluatorTest evaluatorTest;
