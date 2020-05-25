@@ -983,20 +983,20 @@ bool RuntimeEvaluatorTest::TestConstructor() {
 }
 
 bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError) {
-    RuntimeEvaluator context(rpnCode);
+    RuntimeEvaluator evaluator(rpnCode);
     bool ok = true;
     VariableInformation *var;
 
-    ok &= (context.ExtractVariables() == expectedError);
+    ok &= (evaluator.ExtractVariables() == expectedError);
 
     if (expectedError) {
-        for (uint32 i = 0; (ok) && (context.BrowseInputVariable(i, var)); ++i) {
+        for (uint32 i = 0; (ok) && (evaluator.BrowseInputVariable(i, var)); ++i) {
             ok &= RemoveMatchingVariable(var, expectedInputVariables);
         }
 
         ok &= (expectedInputVariables.ListSize() == 0);
 
-        for (uint32 i = 0; (ok) && (context.BrowseOutputVariable(i, var)); ++i) {
+        for (uint32 i = 0; (ok) && (evaluator.BrowseOutputVariable(i, var)); ++i) {
             ok &= RemoveMatchingVariable(var, expectedOutputVariables);
         }
 
