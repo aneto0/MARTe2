@@ -1004,7 +1004,7 @@ bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode, ErrorManagemen
     return ok;
 }
 
-bool RuntimeEvaluatorTest::TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError) {
+bool RuntimeEvaluatorTest::TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError, uint32 expectedDataSize) {
     bool ok = true;
     VariableInformation *var;
 
@@ -1041,6 +1041,7 @@ bool RuntimeEvaluatorTest::TestCompile(RuntimeEvaluator &evaluator, ErrorManagem
         expectedCodeMemory.MoveToRoot();
     }
 
+    ok &= (evaluator.dataMemory.GetNumberOfElements() == expectedDataSize);
 
     return ok;
 }
