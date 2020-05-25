@@ -774,9 +774,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_MixedSuccessfu
     RuntimeEvaluatorTest evaluatorTest;
 
     CCString rpnCode=
-            "CONST uint8 1\n"
+            "CONST int8 25\n"
+            "CAST uint8\n"
             "WRITE OUT1\n"
             "READ IN1\n"
+            "SIN\n"
             "WRITE OUT2\n"
     ;
 
@@ -784,24 +786,26 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_MixedSuccessfu
 
     evaluator.ExtractVariables();
 
-    evaluator.SetInputVariableType("IN1",   UnsignedInteger8Bit);
+    evaluator.SetInputVariableType("IN1",   Float64Bit);
     evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
-    evaluator.SetOutputVariableType("OUT2", UnsignedInteger8Bit);
+    evaluator.SetOutputVariableType("OUT2", Float64Bit);
 
-    evaluatorTest.AddExpectedInputVariable("Constant@0",    UnsignedInteger8Bit, 0, NULL, false);
-    evaluatorTest.AddExpectedInputVariable("IN1",           UnsignedInteger8Bit, 1, NULL, false);
-    evaluatorTest.AddExpectedOutputVariable("OUT1",         UnsignedInteger8Bit, 2, NULL, true);
-    evaluatorTest.AddExpectedOutputVariable("OUT2",         UnsignedInteger8Bit, 3, NULL, true);
+    evaluatorTest.AddExpectedInputVariable("Constant@0",    SignedInteger8Bit,      0, NULL, false);
+    evaluatorTest.AddExpectedInputVariable("IN1",           Float64Bit,             1, NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1",         UnsignedInteger8Bit,    3, NULL, true);
+    evaluatorTest.AddExpectedOutputVariable("OUT2",         Float64Bit,             4, NULL, true);
 
-    evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "uint8");
+    evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "int8");
     evaluatorTest.AddExpectedVariableInMemory(0);
-    evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "uint8",    "void");
-    evaluatorTest.AddExpectedVariableInMemory(2);
-    evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "uint8");
-    evaluatorTest.AddExpectedVariableInMemory(1);
+    evaluatorTest.AddExpectedFunctionInMemory("CAST",   "int8",    "uint8");
     evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "uint8",    "void");
     evaluatorTest.AddExpectedVariableInMemory(3);
+    evaluatorTest.AddExpectedFunctionInMemory("READ",   "void",     "float64");
+    evaluatorTest.AddExpectedVariableInMemory(1);
+    evaluatorTest.AddExpectedFunctionInMemory("SIN",    "float64",  "float64");
+    evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "float64",  "void");
+    evaluatorTest.AddExpectedVariableInMemory(4);
 
-    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError, 4));
-    ASSERT_TRUE(evaluator.Variable<uint8>(0) == 1);
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError, 6));
+    ASSERT_TRUE(evaluator.Variable<uint8>(0) == 25);
 }
