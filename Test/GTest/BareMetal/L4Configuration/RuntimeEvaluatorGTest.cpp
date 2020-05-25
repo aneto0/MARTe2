@@ -188,14 +188,38 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Stack
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::InternalSetupError, RuntimeEvaluator::safeMode));
 }
 
-void MockExecutionError(RuntimeEvaluator &context) {
-        context.runtimeError.outOfRange = true;
-    }
-
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_ExecutionError) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_GeneralExecutionError) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
-    RuntimeEvaluatorFunctions mockExecErr("MEXECERR", 0, 0, types, MockExecutionError);
+    RuntimeEvaluatorFunctions mockGeneralExecErr("MGENEXECERR", 0, 0, types, MockExecutionError);
+    RegisterFunction(mockGeneralExecErr);
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    CCString rpnCode = "READ A\n"
+                       "MGENEXECERR\n"
+                       "WRITE ret1\n"
+    ;
+    
+    float32 A = 10;
+    float32 ret1;
+    
+    evaluatorTest.SetTestInputVariable("A", Float32Bit, &A, 0);
+    
+    evaluatorTest.SetTestOutputVariable("ret1", Float32Bit, &ret1, 20);
+    
+    ErrorManagement::ErrorType expectedError;
+    
+    expectedError.internalSetupError = true;
+    expectedError.notCompleted       = true;
+    expectedError.syntaxError        = true;
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_OutOfRangeExecutionError) {
+    
+    TypeDescriptor types[] = {Float32Bit, Float32Bit};
+    RuntimeEvaluatorFunctions mockExecErr("MEXECERR", 0, 0, types, MockOutOfRangeExecutionError);
     RegisterFunction(mockExecErr);
     
     RuntimeEvaluatorTest evaluatorTest;
@@ -214,20 +238,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Execu
     ErrorManagement::ErrorType expectedError;
     
     expectedError.internalSetupError = true;
-    expectedError.notCompleted = true;
-    expectedError.outOfRange = true;
-    
-    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
+    expectedError.notCompleted       = true;
+    expectedError.outOfRange         = true;
     
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
 }
-
-void MockRead(RuntimeEvaluator &context) {
-        float32 variableHolder;
-        context.Push(variableHolder);
-        context.Push(variableHolder);
-        context.Push(variableHolder);
-    }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_StackOverflow) {
     
@@ -251,18 +266,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Stack
     ErrorManagement::ErrorType expectedError;
     
     expectedError.internalSetupError = true;
-    expectedError.notCompleted = true;
-    expectedError.outOfRange = true;
+    expectedError.notCompleted       = true;
+    expectedError.outOfRange         = true;
     
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
 }
-
-void MockWrite(RuntimeEvaluator &context) {
-        float32 variableHolder;
-        context.Pop(variableHolder);
-        context.Pop(variableHolder);
-        context.Pop(variableHolder);
-    }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_StackUnderflow) {
     
@@ -286,8 +294,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Stack
     ErrorManagement::ErrorType expectedError;
     
     expectedError.internalSetupError = true;
-    expectedError.notCompleted = true;
-    expectedError.outOfRange = true;
+    expectedError.notCompleted       = true;
+    expectedError.outOfRange         = true;
     
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
 }
