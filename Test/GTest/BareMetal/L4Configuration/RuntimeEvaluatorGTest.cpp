@@ -99,80 +99,6 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestPushPopPeek) {
     ASSERT_TRUE(evaluatorTest.TestPushPopPeek());
 }
 
-//TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_1) {
-    
-    //RuntimeEvaluatorTest evaluatorTest;
-    
-    //CCString rpnCode=
-            //"READ IN1\n"
-            //"READ IN2\n"
-            //"ADD\n"
-            //"WRITE OUT1\n"
-    //;
-    
-    //RuntimeEvaluator evaluator(rpnCode);
-    
-    //evaluator.ExtractVariables();
-    
-    //evaluator.SetInputVariableType ("IN1",  Float32Bit);
-    //evaluator.SetInputVariableType ("IN2",  Float32Bit);
-    //evaluator.SetOutputVariableType("OUT1", Float32Bit);
-    
-    //float32 A = 10;
-    //float32 B = 5;
-    
-    //float32 OUT1 = 0;
-    
-    //VariableInformation* var;
-    
-    //uint32 index = 0u;
-    //while(evaluator.BrowseInputVariable(index,var)){
-        //if (var->name == "IN1"){
-            //var->externalLocation = &A;
-        //}
-        //if (var->name == "IN2"){
-            //var->externalLocation = &B;
-        //}
-        //index++;
-    //}
-    
-    //index = 0u;
-    //while(evaluator.BrowseOutputVariable(index,var)){
-        //if (var->name == "OUT1"){
-            //var->externalLocation = &OUT1;
-        //}
-        //index++;
-    //}
-    
-    //bool ok = (evaluator.Compile() == ErrorManagement::NoError);
-    //if (!ok) printf("Failed at Compile()\n");
-    
-    ////*((float32*)evaluator.GetInputVariableMemory("IN1")) = 10;
-    ////*((float32*)evaluator.GetInputVariableMemory("IN2")) = 5;
-    
-    //printf("THERE: %f", *((float32*)evaluator.GetOutputVariableMemory("OUT1")));
-    
-    //printf("so far so good\n");
-    //ASSERT_TRUE(evaluatorTest.TestExecute(evaluator, ErrorManagement::NoError));
-//}
-
-//TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_MoreReadThanWrite) {
-    
-    //RuntimeEvaluatorTest evaluatorTest;
-    //CCString rpnCode = "READ A\n"
-                       //"READ B\n"
-                       //"WRITE F\n"
-    //;
-    
-    //float32 A = 10;
-    //float32 B = 10;
-    
-    //evaluatorTest.AddExpectedInputVariable("A",         Float32Bit, MAXDataMemoryAddress, &A, false);
-    //evaluatorTest.AddExpectedInputVariable("B",         Float32Bit, MAXDataMemoryAddress, &B, false);
-    
-    //ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::InternalSetupError));
-//}
-
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_Successful_1) {
     
     RuntimeEvaluatorTest evaluatorTest;
@@ -220,6 +146,148 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_Successful_2) 
     evaluatorTest.SetTestOutputVariable("ret2", Float32Bit, NULL,  100);
     
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::NoError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_FastMode_StackNotEmpty) {
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    CCString rpnCode = "READ A\n"
+                       "READ B\n"
+                       "WRITE ret1\n"
+    ;
+    
+    float32 A = 10;
+    float32 B = 10;
+    float32 ret1;
+    
+    evaluatorTest.SetTestInputVariable("A", Float32Bit, &A, 0);
+    evaluatorTest.SetTestInputVariable("B", Float32Bit, &B, 0);
+    
+    evaluatorTest.SetTestOutputVariable("ret1", Float32Bit, &ret1, 20);
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::InternalSetupError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_StackNotEmpty) {
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    CCString rpnCode = "READ A\n"
+                       "READ B\n"
+                       "WRITE ret1\n"
+    ;
+    
+    float32 A = 10;
+    float32 B = 10;
+    float32 ret1;
+    
+    evaluatorTest.SetTestInputVariable("A", Float32Bit, &A, 0);
+    evaluatorTest.SetTestInputVariable("B", Float32Bit, &B, 0);
+    
+    evaluatorTest.SetTestOutputVariable("ret1", Float32Bit, &ret1, 20);
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::InternalSetupError, RuntimeEvaluator::safeMode));
+}
+
+void MockExecutionError(RuntimeEvaluator &context) {
+        context.runtimeError.outOfRange = true;
+    }
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_ExecutionError) {
+    
+    TypeDescriptor types[] = {Float32Bit, Float32Bit};
+    RuntimeEvaluatorFunctions mockExecErr("MEXECERR", 0, 0, types, MockExecutionError);
+    RegisterFunction(mockExecErr);
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    CCString rpnCode = "READ A\n"
+                       "MEXECERR\n"
+                       "WRITE ret1\n"
+    ;
+    
+    float32 A = 10;
+    float32 ret1;
+    
+    evaluatorTest.SetTestInputVariable("A", Float32Bit, &A, 0);
+    
+    evaluatorTest.SetTestOutputVariable("ret1", Float32Bit, &ret1, 20);
+    
+    //ErrorManagement::ErrorType expectedError;
+    
+    //expectedError.internalSetupError = true;
+    //expectedError.notCompleted = true;
+    //expectedError.outOfRange = true;
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::OutOfRange, RuntimeEvaluator::safeMode));
+}
+
+void MockRead(RuntimeEvaluator &context) {
+        float32 variableHolder;
+        context.Push(variableHolder);
+        context.Push(variableHolder);
+        context.Push(variableHolder);
+    }
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_StackOverflow) {
+    
+    TypeDescriptor types[] = {Float32Bit, Float32Bit};
+    RuntimeEvaluatorFunctions mockRead("MREAD", 0, 1, types, MockRead);
+    RegisterFunction(mockRead);
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    CCString rpnCode = "READ A\n"
+                       "MREAD\n"
+                       "WRITE ret1\n"
+    ;
+    
+    float32 A = 10;
+    float32 ret1;
+    
+    evaluatorTest.SetTestInputVariable("A", Float32Bit, &A, 0);
+    
+    evaluatorTest.SetTestOutputVariable("ret1", Float32Bit, &ret1, 20);
+    
+    ErrorManagement::ErrorType expectedError;
+    
+    expectedError.internalSetupError = true;
+    expectedError.notCompleted = true;
+    expectedError.outOfRange = true;
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
+}
+
+void MockWrite(RuntimeEvaluator &context) {
+        float32 variableHolder;
+        context.Pop(variableHolder);
+        context.Pop(variableHolder);
+        context.Pop(variableHolder);
+    }
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_StackUnderflow) {
+    
+    TypeDescriptor types[] = {Float32Bit, Float32Bit};
+    RuntimeEvaluatorFunctions mockWrite("MWRITE", 0, 1, types, MockWrite);
+    RegisterFunction(mockWrite);
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    CCString rpnCode = "READ A\n"
+                       "MWRITE\n"
+                       "WRITE ret1\n"
+    ;
+    
+    float32 A = 10;
+    float32 ret1;
+    
+    evaluatorTest.SetTestInputVariable("A", Float32Bit, &A, 0);
+    
+    evaluatorTest.SetTestOutputVariable("ret1", Float32Bit, &ret1, 20);
+    
+    ErrorManagement::ErrorType expectedError;
+    
+    expectedError.internalSetupError = true;
+    expectedError.notCompleted = true;
+    expectedError.outOfRange = true;
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
 }
 
 /*---------------------------------------------------------------------------*/

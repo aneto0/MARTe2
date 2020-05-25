@@ -658,32 +658,14 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
     
 }
 
-//bool RuntimeEvaluatorTest::TestExecute(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError) {
-    
-    //bool ok = false;
-    
-    //ok = (evaluator.Execute() == expectedError);
-    //if (!ok) printf("Failed at Execute()\n");
-    
-    //VariableInformation* var;
-    //evaluator.BrowseOutputVariable(0, var);
-    
-    
-    //printf("RESULT: %f\n", *((float32*)var->externalLocation));
-    
-    //return ok;
-    
-//}
-
-bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError) {
+bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError,
+                                       RuntimeEvaluator::executionMode mode, StreamI *debugStream, CodeMemoryAddress *step) {
     
     bool ok = false;
-    ErrorManagement::ErrorType ret;
     
     RuntimeEvaluator context(rpnCode);
     
-    ret = context.ExtractVariables();
-    ok = (ret == ErrorManagement::NoError);
+    ok = (context.ExtractVariables() == ErrorManagement::NoError);
     
     VariableListElement* element;
     
@@ -718,16 +700,12 @@ bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorT
     }
     
     if (ok) {
-        ret = context.Compile();
-        ok = (ret == ErrorManagement::NoError);
+        ok = (context.Compile() == ErrorManagement::NoError);
         if (!ok) printf("Failed at Compile()\n");
     }
     
-    ok = (context.Execute() == expectedError);
-    if (!ok) printf("Failed at Execute()\n");
-    
-    VariableInformation* var;
-    context.BrowseOutputVariable(0, var);
+    ErrorManagement::ErrorType ret = context.Execute(mode);
+    REPORT_ERROR_STATIC(ret, "Execute() status");
     
     for (uint32 i = 0; i < usedOutputVariables.GetSize() && ok; i++) {
         
@@ -741,6 +719,8 @@ bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorT
         ok = (expectedValue == actualValue);
         printf("%u\n", ok);
     }
+    
+    ok = (ret == expectedError);
     
     return ok;
     
@@ -985,6 +965,11 @@ void RuntimeEvaluatorTest::SetTestVariable(StaticList<VariableListElement*>& lis
     
     list.Add(element);
 }
+
+//void RuntimeEvaluatorTest::MockRead(RuntimeEvaluator &context) {
+    //float32 variableHolder;
+    //context.Push(variableHolder);
+//}
 
 /*---------------------------------------------------------------------------*/
 /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
