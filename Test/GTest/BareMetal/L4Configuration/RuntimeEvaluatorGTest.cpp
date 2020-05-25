@@ -828,3 +828,22 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_FailedInputNoN
 
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::UnsupportedFeature, 0));
 }
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_FailedOutputNoNumeric) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "WRITE OUT1\n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetInputVariableType("IN1", UnsignedInteger8Bit);
+    evaluator.SetOutputVariableType("OUT1", CharString);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::UnsupportedFeature, 0));
+}
