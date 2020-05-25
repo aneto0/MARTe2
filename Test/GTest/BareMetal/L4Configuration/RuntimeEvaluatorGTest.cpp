@@ -211,13 +211,15 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Execu
     
     evaluatorTest.SetTestOutputVariable("ret1", Float32Bit, &ret1, 20);
     
-    //ErrorManagement::ErrorType expectedError;
+    ErrorManagement::ErrorType expectedError;
     
-    //expectedError.internalSetupError = true;
-    //expectedError.notCompleted = true;
-    //expectedError.outOfRange = true;
+    expectedError.internalSetupError = true;
+    expectedError.notCompleted = true;
+    expectedError.outOfRange = true;
     
-    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::OutOfRange, RuntimeEvaluator::safeMode));
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
 }
 
 void MockRead(RuntimeEvaluator &context) {
