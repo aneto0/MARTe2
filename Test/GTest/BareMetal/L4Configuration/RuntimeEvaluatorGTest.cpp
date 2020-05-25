@@ -969,13 +969,12 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_FailedTypeStac
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::InternalSetupError, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_CastFailedNoType) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadFailedNoName) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
     CCString rpnCode=
-            "CONST int8 25\n"
-            "CAST \n"
+            "READ \n"
             "WRITE OUT1\n"
     ;
 
@@ -983,18 +982,18 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_CastFailedNoTy
 
     evaluator.ExtractVariables();
 
+    evaluator.SetInputVariableType("IN1", UnsignedInteger8Bit);
     evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
 
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::IllegalOperation, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_CastFailedExceedingParameters) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadFailedExceedingParameters) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
     CCString rpnCode=
-            "CONST int8 25\n"
-            "CAST uint8 uint8\n"
+            "READ IN1 IN1\n"
             "WRITE OUT1\n"
     ;
 
@@ -1002,47 +1001,32 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_CastFailedExce
 
     evaluator.ExtractVariables();
 
+    evaluator.SetInputVariableType("IN1", UnsignedInteger8Bit);
     evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
 
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::IllegalOperation, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_CastFailedNoNumeric) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadFailedNotFound) {
 
     RuntimeEvaluatorTest evaluatorTest;
 
     CCString rpnCode=
-            "CONST int8 25\n"
-            "CAST string\n"
+            "READ IN1\n"
             "WRITE OUT1\n"
     ;
 
+    VariableInformation *var;
     RuntimeEvaluator evaluator(rpnCode);
 
     evaluator.ExtractVariables();
 
+    evaluator.BrowseInputVariable(0, var);
+    var->name = "WRONG";
+    var->type = UnsignedInteger8Bit;
     evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
 
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::UnsupportedFeature, 0));
-}
-
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ConstFailedNoTypeNoValue) {
-
-    RuntimeEvaluatorTest evaluatorTest;
-
-    CCString rpnCode=
-            "CONST \n"
-            "CAST uint8\n"
-            "WRITE OUT1\n"
-    ;
-
-    RuntimeEvaluator evaluator(rpnCode);
-
-    evaluator.ExtractVariables();
-
-    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
-
-    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::IllegalOperation, 0));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ConstFailedNoValue) {
@@ -1138,4 +1122,80 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ConstFailedVal
     evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
 
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::FatalError, 0));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_CastFailedNoType) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "CONST int8 25\n"
+            "CAST \n"
+            "WRITE OUT1\n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::IllegalOperation, 0));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_CastFailedExceedingParameters) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "CONST int8 25\n"
+            "CAST uint8 uint8\n"
+            "WRITE OUT1\n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::IllegalOperation, 0));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_CastFailedNoNumeric) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "CONST int8 25\n"
+            "CAST string\n"
+            "WRITE OUT1\n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::UnsupportedFeature, 0));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ConstFailedNoTypeNoValue) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "CONST \n"
+            "CAST uint8\n"
+            "WRITE OUT1\n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::IllegalOperation, 0));
 }
