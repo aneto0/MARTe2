@@ -95,7 +95,8 @@ public:
     /**
      * @brief   Tests the Execute() method.
      */
-     bool TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError);
+     bool TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError,
+                      RuntimeEvaluator::executionMode mode = RuntimeEvaluator::fastMode, StreamI *debugStream=NULL_PTR(StreamI *), CodeMemoryAddress *step=NULL);
     
     /**
      * @brief     Tests RuntimeEvaluator in case of errors.
@@ -141,6 +142,13 @@ public:
     
     StaticList<VariableListElement*> usedInputVariables;
     StaticList<VariableListElement*> usedOutputVariables;
+    
+    /**
+     * @brief   Custom RuntimeEvaluatorFunctions function
+     * @details This function is intentionally broken to reach Execute()
+     *          safeMode checks.
+     */
+    //void MockRead(RuntimeEvaluator &context);
     
     /*---------------------------------------------------------------------------*/
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
