@@ -161,7 +161,7 @@ public:
     void AddExpectedVariableInMemory(CodeMemoryElement location);
 
     bool TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError);
-    bool TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError);
+    bool TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError, uint32 expectedDataSize);
 
 private:
     void AddExpectedVariable(LinkedListHolderT<VariableInformation> &varList, CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);

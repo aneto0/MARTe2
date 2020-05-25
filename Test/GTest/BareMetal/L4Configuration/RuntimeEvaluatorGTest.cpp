@@ -793,5 +793,5 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadWriteSucce
     evaluatorTest.AddExpectedFunctionInMemory("WRITE",  "uint8",    "void");
     evaluatorTest.AddExpectedVariableInMemory(1);
 
-    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError));
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError, 2));
 }
