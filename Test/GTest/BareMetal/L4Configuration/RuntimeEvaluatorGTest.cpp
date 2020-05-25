@@ -809,3 +809,27 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_MixedSuccessfu
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::NoError, 6));
     ASSERT_TRUE(evaluator.Variable<uint8>(0) == 25);
 }
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_FailedInputNoNumeric) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "WRITE OUT1\n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetInputVariableType("IN1", CharString);
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    evaluatorTest.AddExpectedInputVariable("IN1",   CharString,             MAXDataMemoryAddress, NULL, false);
+    evaluatorTest.AddExpectedOutputVariable("OUT1", UnsignedInteger8Bit,    MAXDataMemoryAddress, NULL, false);
+
+    //TODO: Ignore checks if expectedError != NoError
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::UnsupportedFeature, 0));
+}
