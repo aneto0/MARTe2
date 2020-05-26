@@ -27,7 +27,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <iostream>
+#include <cstdio>
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -94,54 +94,25 @@ public:
     
     /**
      * @brief   Tests the Execute() method.
+     * @details Checks if execution stops with the correct expectedError.
+     *          If `expectedError == ErrorManagement::NoError`, then
+     *          expected values for output variables are checked.
+     *          Expected values are set with the last parameter of
+     *          AddExpectedOutputVariable().
      */
-     bool TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError,
-                      RuntimeEvaluator::executionMode mode = RuntimeEvaluator::fastMode, StreamI *debugStream=NULL_PTR(StreamI *), CodeMemoryAddress *step=NULL);
+     bool TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError, RuntimeEvaluator::executionMode mode = RuntimeEvaluator::fastMode);
     
     /**
-     * @brief     Tests RuntimeEvaluator in case of errors.
-     * @details   Checks that RuntimeEvaluator fails in case it is fed
-     *            with wrong inputs and that it fails at the right stage
-     *            in the evaluation sequence:
-     *            - `READ`, `WRITE` and `CONST` commands are dealt with
-     *              in the ExtractVariable() method, so they are expected
-     *              to fail mostly there.
-     *            - `CAST` is dealt with in the Compile() method and
-     *              is expected to fail there.
-     * @param[in] rpnCode       the input RPN code.
-     * @param[in] expectedError the expected error, that is:
-     *            - `SyntaxError` if RuntimeEvaluator is expected
-     *              to fail at RuntimeEvaluator::ExtractVariables(),
-     *            - `InitializationError` if RuntimeEvaluator is expected
-     *              to fail at RuntimeEvaluator::Compile(),
-     *            - `FatalError` if RuntimeEvaluator is expected
-     *              to fail at RuntimeEvaluator::Execute().
-     * @returns   `true` if RuntimeEvaluator fails at the correct stage.
+     * @brief Insert a variable in usedInputVariables so that TestExecute
+     *        can load it in a RuntimeEvaluator object.
      */
-    bool TestError(CCString rpnCode, ErrorManagement::ErrorType expectedError);
-    
-    // tests that can be removed:
-    
-    /**
-     * @brief TODO
-     */
-    bool TestExpression(CCString rpnCode, float64 valueArray[]);
-
-// private:
-    
-    struct VariableListElement {
-        
-        VariableInformation var;
-        float64             expectedValue;
-        
-    };
     
     void SetTestInputVariable (CCString name, TypeDescriptor type, void *externalLocation = NULL, float64 expectedVarValue = 0);
+    /**
+     * @brief Insert a variable in usedOutputVariables so that TestExecute
+     *        can load it in a RuntimeEvaluator object.
+     */
     void SetTestOutputVariable(CCString name, TypeDescriptor type, void *externalLocation = NULL, float64 expectedVarValue = 0);
-    void SetTestVariable(StaticList<VariableListElement*>& list, CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue);
-    
-    StaticList<VariableListElement*> usedInputVariables;
-    StaticList<VariableListElement*> usedOutputVariables;
     
     /*---------------------------------------------------------------------------*/
     /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
@@ -157,6 +128,7 @@ public:
     bool TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError, uint32 expectedDataSize);
 
 private:
+
     void AddExpectedVariable(LinkedListHolderT<VariableInformation> &varList, CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
     bool RemoveMatchingVariable(const VariableInformation *var, LinkedListHolderT<VariableInformation> &varList);
     bool VariablesMatch(const VariableInformation *var1, const VariableInformation *var2);
@@ -167,11 +139,34 @@ private:
     LinkedListHolderT<VariableInformation, true> expectedOutputVariables;
 
     ConfigurationDatabase expectedCodeMemory;
+    
+    /**
+     * @brief A strucutre that holds a RuntimeEvaluator variable along
+     *        with its value.
+     */
+    struct VariableListElement {
+        VariableInformation var;
+        float64             expectedValue;
+    };
+    
+    /**
+     * @brief Helper function that insert a VariableListElement in the
+     *        lists used by TestExecute().
+     */
+    void SetTestVariable(StaticList<VariableListElement*>& list, CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue);
+    
+    /**
+     * @brief Helper lists that holds variables used by TestExecute().
+     */
+    //@{
+        StaticList<VariableListElement*> usedInputVariables;
+        StaticList<VariableListElement*> usedOutputVariables;
+    //@}
 };
 
 /**
  * @brief   Custom RuntimeEvaluatorFunctions function 
- * @details The function intentionally pushes to the stack without
+ * @details This function intentionally pushes to the stack without
  *          declaring to do so when registered in order to reach Execute()
  *          safeMode checks. 
  */
@@ -179,7 +174,7 @@ void MockRead(RuntimeEvaluator &context);
 
 /**
  * @brief   Custom RuntimeEvaluatorFunctions function 
- * @details The function intentionally pops from the stack without
+ * @details This function intentionally pops from the stack without
  *          declaring to do so when registered in order to reach Execute()
  *          safeMode checks. 
  */
@@ -187,14 +182,14 @@ void MockWrite(RuntimeEvaluator &context);
 
 /**
  * @brief   Custom RuntimeEvaluatorFunctions function 
- * @details The function intentionally raises an error during
+ * @details This function intentionally raises an error during
  *          execution in order to reach Execute() safeMode checks. 
  */
 void MockExecutionError(RuntimeEvaluator &context);
 
 /**
  * @brief   Custom RuntimeEvaluatorFunctions function 
- * @details The function intentionally raises an ErrorManagement::OutOfRange
+ * @details This function intentionally raises an ErrorManagement::OutOfRange
  *          error during execution in order to reach Execute() safeMode checks. 
  */
 void MockOutOfRangeExecutionError(RuntimeEvaluator &context);

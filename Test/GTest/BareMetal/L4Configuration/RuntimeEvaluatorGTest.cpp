@@ -47,38 +47,6 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestIntegration) {
     ASSERT_TRUE(pseudoCodeTest.TestIntegration());
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestExpression_1) {
-    
-    RuntimeEvaluatorTest pseudoCodeTest;
-    
-    float64 values[2] = { 10.0, 8.9 };
-    
-    CCString rpnCode=
-            "READ A\n"
-            "READ B\n"
-            "SUB\n"
-            "WRITE F\n"
-    ;
-    
-    ASSERT_TRUE(pseudoCodeTest.TestExpression(rpnCode, values));
-}
-
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestExpression_2) {
-    
-    RuntimeEvaluatorTest pseudoCodeTest;
-    
-    float64 values[2] = { 10.0, 9.9 };
-    
-    CCString rpnCode=
-            "READ A\n"
-            "READ B\n"
-            "ADD\n"
-            "WRITE F\n"
-    ;
-    
-    ASSERT_TRUE(pseudoCodeTest.TestExpression(rpnCode, values));
-}
-
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetInputVariableMemory) {
     RuntimeEvaluatorTest evaluatorTest;
     ASSERT_TRUE(evaluatorTest.TestGetInputVariableMemory());
