@@ -198,6 +198,10 @@ public:
      */
     static const char8 *GetTypeNameFromStaticTable(const uint32 index);
 
+    /**
+     * @brief Returns boolean conveying whether this TypeDescriptor represents a numeric type.
+     * @return true if it represents a numeric type.
+     */
     bool IsNumericType() const;
 
 };
