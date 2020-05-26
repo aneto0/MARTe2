@@ -1026,7 +1026,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI *debugStream,CodeMemoryAddress *step){
+ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI *debugStream){
 
     stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
 
