@@ -156,11 +156,6 @@ MathExpressionParser::~MathExpressionParser() {
         if (operatorStack.Extract(0u, toDelete)) {
             delete toDelete;
         }
-        else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                "StaticList<currentOperator *>: Failed Extract() during garbage collection."
-                );
-        }
     }
     
     queueSize = typecastStack.GetSize();
@@ -168,11 +163,6 @@ MathExpressionParser::~MathExpressionParser() {
         StreamString* toDelete;
         if (typecastStack.Extract(0u, toDelete)) {
             delete toDelete;
-        }
-        else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                "StaticList<currentOperator *>: Failed Extract() during garbage collection."
-                );
         }
     }
 }
@@ -299,7 +289,6 @@ void MathExpressionParser::PopOperatorAlternate() {
         stackMachineExpr += "NEG\n";
     }
     else {
-        stackMachineExpr += "ERR\n";
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
             "PopOperatorAlternat(): operator %s has no alternative form.", currentOperator->Buffer()
             );

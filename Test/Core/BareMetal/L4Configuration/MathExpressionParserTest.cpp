@@ -59,6 +59,19 @@ bool MathExpressionParserTest::TestConstructor() {
     return ok;
 }
 
+bool MathExpressionParserTest::TestDestructor() {
+
+    StreamString configString = "C = A + (float64) B"
+                                ;
+    
+    configString.Seek(0);
+    MathExpressionParser myParser(configString);
+    
+    bool ok = myParser.Parse();
+
+    return !ok;
+}
+
 bool MathExpressionParserTest::TestGetGrammarInfo() {
     return TestConstructor();
 }
@@ -66,41 +79,35 @@ bool MathExpressionParserTest::TestGetGrammarInfo() {
 bool MathExpressionParserTest::TestExpression(const char8* expressionIn, const char8* expectedOutputString)
 {
     StreamString errors;
-    
     StreamString exprString = expressionIn;
     StreamString compString = expectedOutputString;
 
     exprString.Seek(0);
     compString.Seek(0);
-    
     MathExpressionParser myParser(exprString, &errors);
     
-    if (!myParser.Parse())
+    if (!myParser.Parse()) {
         return false;
+    }
     
     StreamString outputString = myParser.GetStackMachineExpression();
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "SME:\n%s", outputString.Buffer());
     
-    if (StringHelper::Compare(compString.Buffer(), outputString.Buffer()) != 0)
+    if (StringHelper::Compare(compString.Buffer(), outputString.Buffer()) != 0) {
        return false;
-
+    }
+    
     return true;
 }
 
 bool MathExpressionParserTest::TestExpressionError(const char8* expressionIn)
 {
     StreamString errors;
-    
     StreamString exprString = expressionIn;
     
     exprString.Seek(0);
-
     MathExpressionParser myParser(exprString, &errors);
-	
-    bool ret = myParser.Parse();
     
-    StreamString outputString = myParser.GetStackMachineExpression();
-	REPORT_ERROR_STATIC(ErrorManagement::Debug, "SME:\n%s", outputString.Buffer());
+    bool ret = myParser.Parse();
     
     return !ret;
 

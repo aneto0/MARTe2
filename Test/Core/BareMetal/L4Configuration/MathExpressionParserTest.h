@@ -45,6 +45,15 @@ public:
      * @brief Tests the constructor.
      */
     bool TestConstructor();
+    
+    /**
+     * @brief   Tests the destructor.
+     * @details The test tries to feed the parser with an expression not ended
+     *          by `;`, resulting in a premature abort and typecastStack
+     *          and operatorStack not popped. The test thus checks the
+     *          destructor ability to empty those stacks when required. 
+     */
+    bool TestDestructor();
 
     /**
      * @brief Tests if the function returns the math grammar.
