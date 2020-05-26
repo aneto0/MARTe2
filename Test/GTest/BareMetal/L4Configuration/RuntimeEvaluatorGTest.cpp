@@ -1127,6 +1127,66 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ReadFailedNotF
     ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::UnsupportedFeature, 0));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_WriteFailedNoName) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "WRITE \n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetInputVariableType("IN1", UnsignedInteger8Bit);
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::IllegalOperation, 0));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_WriteFailedExceedingParameters) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "WRITE OUT1 OUT1\n"
+    ;
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetInputVariableType("IN1", UnsignedInteger8Bit);
+    evaluator.SetOutputVariableType("OUT1", UnsignedInteger8Bit);
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::IllegalOperation, 0));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_WriteFailedNotFound) {
+
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode=
+            "READ IN1\n"
+            "WRITE OUT1\n"
+    ;
+
+    VariableInformation *var;
+    RuntimeEvaluator evaluator(rpnCode);
+
+    evaluator.ExtractVariables();
+
+    evaluator.SetInputVariableType("IN1", UnsignedInteger8Bit);
+    evaluator.BrowseOutputVariable(0, var);
+    var->name = "WRONG";
+    var->type = UnsignedInteger8Bit;
+
+    ASSERT_TRUE(evaluatorTest.TestCompile(evaluator, ErrorManagement::UnsupportedFeature, 0));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestCompile_ConstFailedNoValue) {
 
     RuntimeEvaluatorTest evaluatorTest;
