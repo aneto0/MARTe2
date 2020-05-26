@@ -185,7 +185,7 @@ public:
 
     /**
      * @brief Remove all elements. Does not shrink list or free memory
-     * @post listSize_ = 0;
+     * @post GetSize() = 0
      */
     inline void Clean();
 
