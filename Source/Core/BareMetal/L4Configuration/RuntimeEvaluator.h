@@ -299,7 +299,7 @@ public:
      * debugStream is only used in debugMode. after every command execution a report is written to the stream
      * step is only used in step mode. step value need to be initialised to 0 and maintained between calls
      */
-    ErrorManagement::ErrorType Execute(executionMode mode = fastMode, StreamI *debugStream=NULL_PTR(StreamI *), CodeMemoryAddress *step=NULL);
+    ErrorManagement::ErrorType Execute(executionMode mode = fastMode, StreamI *debugStream=NULL_PTR(StreamI *));
 
     /**
      * Reconstruct the RPNCode with type information

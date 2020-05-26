@@ -252,7 +252,7 @@ bool RuntimeEvaluatorTest::TestIntegration() {
         char8 terminator;
         StreamString expectedDebugStream (expectedDebug);
 
-        ret = context.Execute(RuntimeEvaluator::debugMode,&debugStream,0);
+        ret = context.Execute(RuntimeEvaluator::debugMode,&debugStream);
         debugStream.Seek(0u);
         expectedDebugStream.Seek(0u);
 
