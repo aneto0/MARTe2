@@ -707,20 +707,22 @@ bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorT
     ErrorManagement::ErrorType ret = context.Execute(mode);
     REPORT_ERROR_STATIC(ret, "Execute() status");
     
-    for (uint32 i = 0; i < usedOutputVariables.GetSize() && ok; i++) {
-        
-        ok = usedOutputVariables.Peek(i, element);
-        
-        printf("RESULT: %s = ", (element->var.name).Buffer());
-        printf("%f\n", *((float32*)context.GetOutputVariableMemory(element->var.name)));
-        
-        float32 expectedValue = (float32)(element->expectedValue);
-        float32 actualValue   = *((float32*)context.GetOutputVariableMemory(element->var.name));
-        ok = (expectedValue == actualValue);
-        printf("%u\n", ok);
-    }
-    
     ok = (ret == expectedError);
+    
+    if (expectedError == ErrorManagement::NoError) {
+        for (uint32 i = 0; i < usedOutputVariables.GetSize() && ok; i++) {
+            
+            ok = usedOutputVariables.Peek(i, element);
+            
+            printf("RESULT: %s = ", (element->var.name).Buffer());
+            printf("%f\n", *((float32*)context.GetOutputVariableMemory(element->var.name)));
+            
+            float32 expectedValue = (float32)(element->expectedValue);
+            float32 actualValue   = *((float32*)context.GetOutputVariableMemory(element->var.name));
+            ok = (expectedValue == actualValue);
+            printf("%u\n", ok);
+        }
+    }
     
     return ok;
     

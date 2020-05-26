@@ -148,7 +148,48 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_Successful_2) 
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::NoError));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_FastMode_StackNotEmpty) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_Successful_3) {
+    
+    RuntimeEvaluatorTest evaluatorTest;
+    CCString rpnCode = "READ v1\n"
+                       "READ t2\n"
+                       "READ t1\n"
+                       "SUB\n"
+                       "DIV\n"
+                       "WRITE a\n"
+                       "READ v1\n"
+                       "CONST float32 2\n"
+                       "POW\n"
+                       "CONST float32 2\n"
+                       "READ a\n"
+                       "CONST float32 2\n"
+                       "POW\n"
+                       "MUL\n"
+                       "DIV\n"
+                       "WRITE x2\n"
+                       "READ m\n"
+                       "READ a\n"
+                       "MUL\n"
+                       "WRITE F\n"
+    ;
+    
+    float32 v1 = 22.5;
+    float32 m  = 9;
+    float32 t1 = 3.5;
+    float32 t2 = 8;
+    float32 F;
+    
+    evaluatorTest.SetTestInputVariable("v1", Float32Bit, &v1, 0);
+    evaluatorTest.SetTestInputVariable("m",  Float32Bit, &m,  0);
+    evaluatorTest.SetTestInputVariable("t1", Float32Bit, &t1, 0);
+    evaluatorTest.SetTestInputVariable("t2", Float32Bit, &t2, 0);
+    
+    evaluatorTest.SetTestOutputVariable("F", Float32Bit, &F, 45);
+    
+    ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::NoError));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_FastMode_FailedStackNotEmpty) {
     
     RuntimeEvaluatorTest evaluatorTest;
     CCString rpnCode = "READ A\n"
@@ -168,7 +209,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_FastMode_Stack
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::InternalSetupError));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_StackNotEmpty) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedStackNotEmpty) {
     
     RuntimeEvaluatorTest evaluatorTest;
     CCString rpnCode = "READ A\n"
@@ -188,7 +229,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Stack
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, ErrorManagement::InternalSetupError, RuntimeEvaluator::safeMode));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_GeneralExecutionError) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedGeneralExecutionError) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
     RuntimeEvaluatorFunctions mockGeneralExecErr("MGENEXECERR", 0, 0, types, MockExecutionError);
@@ -216,7 +257,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Gener
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_OutOfRangeExecutionError) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedOutOfRangeExecutionError) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
     RuntimeEvaluatorFunctions mockExecErr("MEXECERR", 0, 0, types, MockOutOfRangeExecutionError);
@@ -244,7 +285,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_OutOf
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_StackOverflow) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedStackOverflow) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
     RuntimeEvaluatorFunctions mockRead("MREAD", 0, 1, types, MockRead);
@@ -272,7 +313,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Stack
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_StackUnderflow) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedStackUnderflow) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
     RuntimeEvaluatorFunctions mockWrite("MWRITE", 0, 1, types, MockWrite);
