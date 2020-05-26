@@ -442,6 +442,70 @@ bool RuntimeEvaluatorTest::TestSetVariableType() {
     return ret;
 }
 
+bool RuntimeEvaluatorTest::TestSetVariableMemory() {
+    
+    bool ret = false;
+    
+    StreamString rpnCode = "READ A\n"
+                           "READ B\n"
+                           "ADD\n"
+                           "WRITE C\n"
+                           "READ C\n"
+                           "WRITE D\n";
+    
+    RuntimeEvaluator evaluator(rpnCode);
+    
+    ret = evaluator.ExtractVariables();
+    
+    uint32 A;
+    uint64 B;
+    uint64 C;
+    uint64 D;
+    uint64 foo;
+    
+    if (ret) {
+        ret &= evaluator.SetInputVariableType("A", UnsignedInteger32Bit);
+        ret &= evaluator.SetInputVariableType("B", UnsignedInteger64Bit);
+        
+        ret &= evaluator.SetInputVariableMemory("A", &A);
+        ret &= evaluator.SetInputVariableMemory("B", &B);
+    }
+    
+    if (ret) {
+        ret &= evaluator.SetOutputVariableType("C", UnsignedInteger64Bit);
+        ret &= evaluator.SetOutputVariableType("D", UnsignedInteger64Bit);
+        
+        ret &= evaluator.SetOutputVariableMemory("C", &C);
+        ret &= evaluator.SetOutputVariableMemory("D", &D);
+    }
+    
+    if (ret) {
+        ret = evaluator.Compile();
+    }
+
+    void*  inAddresses[] = {(void*)(&A), (void*)(&B)};
+    void* outAddresses[] = {(void*)(&C), (void*)(&D)};
+    
+    if (ret) {
+        uint32 index = 0U;
+        VariableInformation *var;
+
+        while(evaluator.BrowseInputVariable(index,var) && ret) {
+            ret = (var->externalLocation == inAddresses[index]);
+            index++;
+        }
+        
+        index = 0U;
+        
+        while(evaluator.BrowseOutputVariable(index,var) && ret) {
+            ret = (var->externalLocation == outAddresses[index]);
+            index++;
+        }
+    }
+    
+    return ret;
+}
+
 bool RuntimeEvaluatorTest::TestPushPopPeek() {
     
     bool ret = false;
