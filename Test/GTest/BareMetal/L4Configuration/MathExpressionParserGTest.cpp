@@ -46,6 +46,11 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestConstructor) {
     ASSERT_TRUE(parserTest.TestConstructor());
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestDestructor) {
+    MathExpressionParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestDestructor());
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestGetGrammarInfo) {
     MathExpressionParserTest parserTest;
     ASSERT_TRUE(parserTest.TestGetGrammarInfo());
