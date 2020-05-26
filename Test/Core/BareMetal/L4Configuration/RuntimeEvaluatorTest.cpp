@@ -515,14 +515,14 @@ bool RuntimeEvaluatorTest::TestSetVariableMemory() {
         ret &= evaluator.SetInputVariableType("B", UnsignedInteger64Bit);
         
         ret &= evaluator.SetInputVariableMemory("A", &A);
-        ret &= evaluator.SetInputVariableMemory("B", &B);
+        ret &= evaluator.SetInputVariableMemory(1u, &B);
     }
     
     if (ret) {
         ret &= evaluator.SetOutputVariableType("C", UnsignedInteger64Bit);
         ret &= evaluator.SetOutputVariableType("D", UnsignedInteger64Bit);
         
-        ret &= evaluator.SetOutputVariableMemory("C", &C);
+        ret &= evaluator.SetOutputVariableMemory(0u, &C);
         ret &= evaluator.SetOutputVariableMemory("D", &D);
     }
     
