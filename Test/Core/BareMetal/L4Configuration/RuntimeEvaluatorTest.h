@@ -104,6 +104,9 @@ public:
      */
      bool TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError, RuntimeEvaluator::executionMode mode = RuntimeEvaluator::fastMode);
     
+     bool TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError);
+     bool TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError, uint32 expectedDataSize);
+
     /**
      * @brief Insert a variable in usedInputVariables so that TestExecute
      *        can load it in a RuntimeEvaluator object.
@@ -115,19 +118,12 @@ public:
      *        can load it in a RuntimeEvaluator object.
      */
     void SetTestOutputVariable(CCString name, TypeDescriptor type, void *externalLocation = NULL, float64 expectedVarValue = 0);
-    
-    /*---------------------------------------------------------------------------*/
-    /*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
-    /*---------------------------------------------------------------------------*/
 
     void AddExpectedInputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
     void AddExpectedOutputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
     
     void AddExpectedFunctionInMemory(StreamString name, StreamString inputType, StreamString outputType);
     void AddExpectedVariableInMemory(CodeMemoryElement location);
-
-    bool TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError);
-    bool TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError, uint32 expectedDataSize);
 
 private:
 

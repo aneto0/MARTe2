@@ -47,6 +47,15 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestIntegration) {
     ASSERT_TRUE(pseudoCodeTest.TestIntegration());
 }
 
+/*---------------------------------------------------------------------------*/
+/*                      Constructor/Setters/Getters                          */
+/*---------------------------------------------------------------------------*/
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestConstructor) {
+    RuntimeEvaluatorTest evaluatorTest;
+    ASSERT_TRUE(evaluatorTest.TestConstructor());
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetInputVariableMemory) {
     RuntimeEvaluatorTest evaluatorTest;
     ASSERT_TRUE(evaluatorTest.TestGetInputVariableMemory());
@@ -71,6 +80,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestPushPopPeek) {
     RuntimeEvaluatorTest evaluatorTest;
     ASSERT_TRUE(evaluatorTest.TestPushPopPeek());
 }
+
+/*---------------------------------------------------------------------------*/
+/*                                Execute                                    */
+/*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_Successful_1) {
     
@@ -388,15 +401,6 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Faile
     expectedError.outOfRange         = true;
     
     ASSERT_TRUE(evaluatorTest.TestExecute(rpnCode, expectedError, RuntimeEvaluator::safeMode));
-}
-
-/*---------------------------------------------------------------------------*/
-/*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
-/*---------------------------------------------------------------------------*/
-
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestConstructor) {
-    RuntimeEvaluatorTest evaluatorTest;
-    ASSERT_TRUE(evaluatorTest.TestConstructor());
 }
 
 /*---------------------------------------------------------------------------*/

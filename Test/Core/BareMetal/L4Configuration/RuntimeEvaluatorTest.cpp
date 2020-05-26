@@ -270,6 +270,18 @@ bool RuntimeEvaluatorTest::TestIntegration() {
     return ret;
 }
 
+bool RuntimeEvaluatorTest::TestConstructor() {
+    RuntimeEvaluator context("");
+    bool ok = true;
+
+    //Check that stackPtr is null
+    uint32 value = 5;
+    context.Peek(value);
+    ok &= (value == 5);
+
+    return ok;
+}
+
 bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
     
     bool ret;
@@ -796,43 +808,6 @@ bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorT
     
 }
 
-void RuntimeEvaluatorTest::SetTestInputVariable(CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
-    SetTestVariable(usedInputVariables, name, type, externalLocation, expectedVarValue);
-}
-
-void RuntimeEvaluatorTest::SetTestOutputVariable(CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
-    SetTestVariable(usedOutputVariables, name, type, externalLocation, expectedVarValue);
-}
-
-void RuntimeEvaluatorTest::SetTestVariable(StaticList<VariableListElement*>& list, CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
-    
-    VariableListElement* element = new VariableListElement();
-    
-    element->var.name = name;
-    element->var.type = type;
-    element->var.externalLocation = externalLocation;
-    
-    element->expectedValue = expectedVarValue;
-    
-    list.Add(element);
-}
-
-/*---------------------------------------------------------------------------*/
-/*    ↑ N                   CODE LINE DO NOT CROSS                     D ↓   */
-/*---------------------------------------------------------------------------*/
-
-bool RuntimeEvaluatorTest::TestConstructor() {
-    RuntimeEvaluator context("");
-    bool ok = true;
-
-    //Check that stackPtr is null
-    uint32 value = 5;
-    context.Peek(value);
-    ok &= (value == 5);
-
-    return ok;
-}
-
 bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError) {
     RuntimeEvaluator evaluator(rpnCode);
     bool ok = true;
@@ -901,6 +876,71 @@ bool RuntimeEvaluatorTest::TestCompile(RuntimeEvaluator &evaluator, ErrorManagem
     return ok;
 }
 
+void RuntimeEvaluatorTest::SetTestInputVariable(CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
+    SetTestVariable(usedInputVariables, name, type, externalLocation, expectedVarValue);
+}
+
+void RuntimeEvaluatorTest::SetTestOutputVariable(CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
+    SetTestVariable(usedOutputVariables, name, type, externalLocation, expectedVarValue);
+}
+
+void RuntimeEvaluatorTest::SetTestVariable(StaticList<VariableListElement*>& list, CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
+    
+    VariableListElement* element = new VariableListElement();
+    
+    element->var.name = name;
+    element->var.type = type;
+    element->var.externalLocation = externalLocation;
+    
+    element->expectedValue = expectedVarValue;
+    
+    list.Add(element);
+}
+
+void RuntimeEvaluatorTest::AddExpectedInputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
+    AddExpectedVariable(expectedInputVariables, name, type, location, externalLocation, variableUsed);
+}
+
+void RuntimeEvaluatorTest::AddExpectedOutputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
+    AddExpectedVariable(expectedOutputVariables, name, type, location, externalLocation, variableUsed);
+}
+
+void RuntimeEvaluatorTest::AddExpectedFunctionInMemory(StreamString name, StreamString inputType, StreamString outputType) {
+    uint32 lastChildren = expectedCodeMemory.GetNumberOfChildren();
+    StreamString functionName;
+
+    functionName.Printf("Element%i", lastChildren);
+    expectedCodeMemory.CreateRelative(functionName.Buffer());
+
+    expectedCodeMemory.Write("Type", "Function");
+
+    expectedCodeMemory.Write("Name", name);
+
+    if (inputType != "void"){
+        expectedCodeMemory.Write("Input", inputType);
+    }
+
+    if (outputType != "void"){
+        expectedCodeMemory.Write("Output", outputType);
+    }
+
+    expectedCodeMemory.MoveToRoot();
+}
+
+void RuntimeEvaluatorTest::AddExpectedVariableInMemory(CodeMemoryElement location) {
+    uint32 lastChildren = expectedCodeMemory.GetNumberOfChildren();
+    StreamString functionName;
+
+    functionName.Printf("Element%i", lastChildren);
+    expectedCodeMemory.CreateRelative(functionName.Buffer());
+
+    expectedCodeMemory.Write("Type", "Variable");
+
+    expectedCodeMemory.Write("Location", location);
+
+    expectedCodeMemory.MoveToRoot();
+}
+
 bool RuntimeEvaluatorTest::RemoveMatchingVariable(const VariableInformation *var, LinkedListHolderT<VariableInformation> &varList) {
     bool removed = false;
 
@@ -924,14 +964,6 @@ bool RuntimeEvaluatorTest::VariablesMatch(const VariableInformation *var1, const
     match &= (var1->variableUsed == var2->variableUsed);
 
     return match;
-}
-
-void RuntimeEvaluatorTest::AddExpectedInputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
-    AddExpectedVariable(expectedInputVariables, name, type, location, externalLocation, variableUsed);
-}
-
-void RuntimeEvaluatorTest::AddExpectedOutputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
-    AddExpectedVariable(expectedOutputVariables, name, type, location, externalLocation, variableUsed);
 }
 
 void RuntimeEvaluatorTest::AddExpectedVariable(LinkedListHolderT<VariableInformation> &varList, CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed) {
@@ -971,42 +1003,6 @@ bool RuntimeEvaluatorTest::RecordMatchesExpectedFunction(RuntimeEvaluatorFunctio
     }
 
     return match;
-}
-
-void RuntimeEvaluatorTest::AddExpectedFunctionInMemory(StreamString name, StreamString inputType, StreamString outputType) {
-    uint32 lastChildren = expectedCodeMemory.GetNumberOfChildren();
-    StreamString functionName;
-
-    functionName.Printf("Element%i", lastChildren);
-    expectedCodeMemory.CreateRelative(functionName.Buffer());
-
-    expectedCodeMemory.Write("Type", "Function");
-
-    expectedCodeMemory.Write("Name", name);
-
-    if (inputType != "void"){
-        expectedCodeMemory.Write("Input", inputType);
-    }
-
-    if (outputType != "void"){
-        expectedCodeMemory.Write("Output", outputType);
-    }
-
-    expectedCodeMemory.MoveToRoot();
-}
-
-void RuntimeEvaluatorTest::AddExpectedVariableInMemory(CodeMemoryElement location) {
-    uint32 lastChildren = expectedCodeMemory.GetNumberOfChildren();
-    StreamString functionName;
-
-    functionName.Printf("Element%i", lastChildren);
-    expectedCodeMemory.CreateRelative(functionName.Buffer());
-
-    expectedCodeMemory.Write("Type", "Variable");
-
-    expectedCodeMemory.Write("Location", location);
-
-    expectedCodeMemory.MoveToRoot();
 }
 
 void MockRead(RuntimeEvaluator &context) {
