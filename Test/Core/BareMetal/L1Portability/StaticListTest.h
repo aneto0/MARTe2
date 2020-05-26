@@ -189,6 +189,11 @@ public:
     template<elementType value>
     bool TestSet(uint32 positionToSet);
 
+    /**
+     * @brief Tests if size goes down to 0 and capacity maintained after calling Clean function
+     */
+    bool TestClean();
+
 };
 
 }
@@ -762,6 +767,27 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     elementType test;
     targetList.Peek(positionToSet, test);
     return value == test;
+}
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestClean() {
+    bool ok = true;
+    uint32 initialCapacity;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Initializes the target list with the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+    }
+
+    initialCapacity = targetList.GetCapacity();
+
+    targetList.Clean();
+
+    ok &= (targetList.GetSize() == 0);
+    ok &= (targetList.GetCapacity() == initialCapacity);
+
+    return ok;
 }
 
 }
