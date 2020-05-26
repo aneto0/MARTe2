@@ -264,6 +264,7 @@ void Vector<T>::FreeMemory(){
     if (canDestroy) {
         delete[] reinterpret_cast<T*>(dataPointer);
         dataPointer = NULL;
+        numberOfElements = 0;
         canDestroy = false;
     }
 }
