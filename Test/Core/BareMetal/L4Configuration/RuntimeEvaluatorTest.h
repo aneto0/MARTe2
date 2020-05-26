@@ -82,6 +82,12 @@ public:
      */
     bool TestSetVariableType();
     
+    /**
+     * @brief   Tests all methods to set the memory location of a variable.
+     * @details Checks coherency set addresses and the address
+     *          of the variables computed manually with pointer
+     *          arithmetics.
+     */
     bool TestSetVariableMemory();
     
     /**
