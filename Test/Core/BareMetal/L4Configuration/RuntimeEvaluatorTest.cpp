@@ -24,12 +24,13 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <cstdio>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "RuntimeEvaluatorTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,31 +40,6 @@
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
-//bool RuntimeEvaluatorTest::TestContextConstructor() {
-    //RuntimeEvaluatorTest::Context context;
-
-    ///* Right after construction variablesMemoryPtr is NULL leading to a segmentation fault
-    //uint32 variable;
-    //variable = context.Variable<uint32>(0)
-    //if (variable != 0) {
-        //return false;
-    //}*/
-
-    ///* Right after construction codeMemoryPtr is NULL leading to a segmentation fault
-    //CodeMemoryElement element;
-    //context.GetPseudoCode(element);
-    //if (element != 0) {
-        //return false;
-    //}*/
-
-    //uint32 value = 5;
-    //context.Peek<uint32>(value);
-    //if (value != 5) {
-        //return false;
-    //}
-
-    //return (context.startOfVariables == 0);
-//}
 
 bool RuntimeEvaluatorTest::TestIntegration() {
 
@@ -658,8 +634,7 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
     
 }
 
-bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError,
-                                       RuntimeEvaluator::executionMode mode, StreamI *debugStream, CodeMemoryAddress *step) {
+bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError, RuntimeEvaluator::executionMode mode) {
     
     bool ok = false;
     
@@ -672,40 +647,28 @@ bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorT
     for (uint32 i = 0; i < usedInputVariables.GetSize() && ok; i++) {
         
         ok = usedInputVariables.Peek(i, element);
-        
-        printf("VARIABLE: %s ", (element->var.name).Buffer());
         ok = context.SetInputVariableType(element->var.name, element->var.type);
-        
         if (ok && (element->var.externalLocation != NULL)) {
             ok = context.SetInputVariableMemory(element->var.name, element->var.externalLocation);
         }
-        
-        if (ok) printf("OK!\n");
         
     }
     
     for (uint32 i = 0; i < usedOutputVariables.GetSize() && ok; i++) {
         
         ok = usedOutputVariables.Peek(i, element);
-        
-        printf("VARIABLE: %s ", (element->var.name).Buffer());
         ok = context.SetOutputVariableType(element->var.name, element->var.type);
-        
         if (ok && (element->var.externalLocation != NULL)) {
             ok = context.SetOutputVariableMemory(element->var.name, element->var.externalLocation);
         }
-        
-        if (ok) printf("OK!\n");
         
     }
     
     if (ok) {
         ok = (context.Compile() == ErrorManagement::NoError);
-        if (!ok) printf("Failed at Compile()\n");
     }
     
     ErrorManagement::ErrorType ret = context.Execute(mode);
-    REPORT_ERROR_STATIC(ret, "Execute() status");
     
     ok = (ret == expectedError);
     
@@ -714,237 +677,15 @@ bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorT
             
             ok = usedOutputVariables.Peek(i, element);
             
-            printf("RESULT: %s = ", (element->var.name).Buffer());
-            printf("%f\n", *((float32*)context.GetOutputVariableMemory(element->var.name)));
-            
             float32 expectedValue = (float32)(element->expectedValue);
             float32 actualValue   = *((float32*)context.GetOutputVariableMemory(element->var.name));
             ok = (expectedValue == actualValue);
-            printf("%u\n", ok);
+            
         }
     }
     
     return ok;
     
-}
-
-
-
-bool RuntimeEvaluatorTest::TestError(CCString rpnCode,
-                                     ErrorManagement::ErrorType expectedError
-                                    ) {
-    
-    StreamString RPNCodeStream(rpnCode);
-    
-    RuntimeEvaluator evaluator(RPNCodeStream);
-    
-    ErrorManagement::ErrorType ok;
-    ErrorManagement::ErrorType ret = ErrorManagement::NoError;
-    
-    // 1. try ExtractVariabler()
-    
-    ok = evaluator.ExtractVariables();
-    if (!ok) {
-        ret = ErrorManagement::SyntaxError;
-    }
-    
-    // 2. try Compile()
-    
-    if (ok) {
-        uint32 index = 0U;
-        VariableInformation *var;
-
-        while(evaluator.BrowseInputVariable(index,var)) {
-            evaluator.SetInputVariableType(index, Float64Bit);
-            index++;
-        }
-        
-    }
-    
-    if (ok) {
-        ok = evaluator.Compile();
-        if (!ok) {
-            ret = ErrorManagement::InitialisationError;
-        }
-    }
-    
-    // 3. try Execute()
-    
-    if (ok){
-        uint32 index = 0;
-        VariableInformation *var;
-        
-        while(evaluator.BrowseInputVariable(index,var)){
-            float64 *x = (float64*)evaluator.GetInputVariableMemory(index);
-            *x = 1.0;
-            index++;
-        }
-    }
-    
-    if (ok) {
-        ok = evaluator.Execute();
-        if (!ok) {
-            ret = ErrorManagement::FatalError;
-        }
-    }
-    
-    if (ret == ErrorManagement::NoError) {
-        
-        printf("NoError, but should generate one.\n");
-        
-        // usually generates a segfault
-        //StreamString retVar = "ret";
-        //float64* x = (float64*)(evaluator.GetOutputVariableMemory(retVar));
-        //printf("Result: %d\n", *x);
-    }
-    
-    ok = (ret == expectedError);
-    
-    return ok;
-    
-}
-
-bool RuntimeEvaluatorTest::TestExpression(CCString rpnCode, float64 valueArray[]) {
-
-    
-    StreamString RPNCodeStream(rpnCode);
-    
-    RuntimeEvaluator context(RPNCodeStream);
-
-    ErrorManagement::ErrorType ret;
-    ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
-
-    
-    ret = context.ExtractVariables();
-
-    if (ret){
-        uint32 index = 0U;
-        VariableInformation *var;
-
-        //ASSIGN TYPE TO VARIABLES
-        while(context.BrowseInputVariable(index,var)) {
-            context.SetInputVariableType(index, Float32Bit);
-            index++;
-        }
-
-        index = 0;
-        while(context.BrowseOutputVariable(index,var)){
-            context.SetOutputVariableType(index, Float32Bit);
-            index++;
-        }
-    }
-    
-    if (ret){
-        //COMPILE
-        RPNCodeStream.Seek(0u);
-        ret = context.Compile();
-    }
-    
-    //if (ret){
-        //ret = (context.startOfVariables == 2) ? ret : fatalError;
-        //ret = (context.dataMemory.GetNumberOfElements() == 13) ? ret : fatalError;
-        //ret = (context.codeMemory.GetSize() == 45) ? ret : fatalError;
-        //ret = (context.stack.GetNumberOfElements() == 4) ? ret : fatalError;
-    //}
-
-    if (ret){
-        //ASSIGN VALUES TO VARIABLES
-        uint32 index = 0;
-        VariableInformation *var;
-        
-        while(context.BrowseInputVariable(index,var)){
-            
-            // one way to retrieve the address
-            //float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
-            
-            // one more way (by var name)
-            //float *x = (float*)context.GetInputVariableMemory(var->name);
-            
-            
-            // yet another way (by var index, fastest way)
-            float64 *x = (float64*)context.GetInputVariableMemory(index);
-            
-            *x = valueArray[index];
-            
-            index++;
-        }
-    }
-    
-    if (ret){
-        uint32 index = 0U;
-        VariableInformation *var;
-        
-        printf ("--- Allocation ---\n");
-        //AFTER VAR ALLOCATION
-        while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
-            index++;
-        }
-
-        index = 0;
-        while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
-            index++;
-        }
-    }
-
-    if (ret){
-        //DECOMPILE
-        StreamString RPNCodeRev;
-        ret = context.DeCompile(RPNCodeRev, false);
-
-        if ((ret) && (RPNCodeRev != rpnCode.GetList())){
-            ret = fatalError;
-            printf ("decompilation error");
-        }
-    }
-
-
-    if (ret){
-        //DEBUG MODE EXECUTION
-        //StreamString debugStream, debugLine, expectedDebugLine;
-        StreamString debugStream;
-        //char8 terminator;
-        //StreamString expectedDebugStream (expectedDebug);
-
-        ret = context.Execute(RuntimeEvaluator::debugMode,&debugStream,0);
-        debugStream.Seek(0u);
-        //expectedDebugStream.Seek(0u);
-        
-        printf ("debug stream:\n%s\n", debugStream.Buffer());
-        
-        //while (ret && debugStream.GetToken(debugLine, "\n", terminator, "\n\r")){
-            //expectedDebugStream.GetToken(expectedDebugLine, "\n", terminator, "\n\r");
-            //if (debugLine != expectedDebugLine){
-                //ret = fatalError;
-                //printf ("debug error");
-            //} else{
-                //debugLine = "";
-                //expectedDebugLine = "";
-            //}
-        //}
-    }
-    
-    if (ret){
-        uint32 index = 0U;
-        VariableInformation *var;
-        
-        printf (rpnCode);
-        printf ("--- Results ---\n");
-        //EXECUTE() RESULTS
-        while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
-            index++;
-        }
-
-        index = 0;
-        while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
-            index++;
-        }
-    }
-
-    return ret;
 }
 
 void RuntimeEvaluatorTest::SetTestInputVariable(CCString name, TypeDescriptor type, void *externalLocation, float64 expectedVarValue) {
