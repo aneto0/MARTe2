@@ -94,5 +94,26 @@ TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestGetTypeNameFromStaticTable)
     ASSERT_TRUE(typeDescriptorTest.TestGetTypeNameFromStaticTable());
 }
 
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsNumericTypeFloat) {
+    ASSERT_TRUE(Float64Bit.IsNumericType());
+}
 
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsNumericTypeSignedInt) {
+    ASSERT_TRUE(SignedInteger8Bit.IsNumericType());
+}
 
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsNumericTypeUnsignedInt) {
+    ASSERT_TRUE(UnsignedInteger32Bit.IsNumericType());
+}
+
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsNumericTypeVoid) {
+    ASSERT_TRUE(!VoidType.IsNumericType());
+}
+
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsNumericTypeInvalid) {
+    ASSERT_TRUE(!InvalidType.IsNumericType());
+}
+
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsNumericTypeChar) {
+    ASSERT_TRUE(!Character8Bit.IsNumericType());
+}
