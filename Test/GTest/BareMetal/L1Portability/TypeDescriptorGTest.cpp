@@ -117,3 +117,15 @@ TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsNumericTypeInvalid) {
 TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsNumericTypeChar) {
     ASSERT_TRUE(!Character8Bit.IsNumericType());
 }
+
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestType2TypeDescriptorInt) {
+    ASSERT_TRUE(Type2TypeDescriptor<int8>() == SignedInteger8Bit);
+}
+
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestType2TypeDescriptorUnsignedInt) {
+    ASSERT_TRUE(Type2TypeDescriptor<uint32>() == UnsignedInteger32Bit);
+}
+
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestType2TypeDescriptorFloat) {
+    ASSERT_TRUE(Type2TypeDescriptor<float64>() == Float64Bit);
+}
