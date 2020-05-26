@@ -668,6 +668,15 @@ bool RuntimeEvaluatorTest::TestExecute(CCString rpnCode, ErrorManagement::ErrorT
         ok = (context.Compile() == ErrorManagement::NoError);
     }
     
+    for (uint32 i = 0; i < usedInputVariables.GetSize() && ok; i++) {
+        
+        ok = usedInputVariables.Peek(i, element);
+        if (ok && (element->var.externalLocation == NULL)) {
+            *((float32*)context.GetInputVariableMemory(element->var.name)) = (float32)(element->expectedValue);
+        }
+        
+    }
+    
     ErrorManagement::ErrorType ret = context.Execute(mode);
     
     ok = (ret == expectedError);
