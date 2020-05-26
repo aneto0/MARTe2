@@ -297,17 +297,21 @@ bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, Ty
 
     ret = context.ExtractVariables();
 
-    for (uint32 i = 0; (ret) && (context.BrowseInputVariable(i,var)); ++i) {
-        var->type = inputType;
-        if (inputExternalLocation != NULL) {
-            var->externalLocation = inputExternalLocation;
+    if ((ret) && (inputType != InvalidType)){
+        for (uint32 i = 0; context.BrowseInputVariable(i,var); ++i) {
+            var->type = inputType;
+            if (inputExternalLocation != NULL) {
+                var->externalLocation = inputExternalLocation;
+            }
         }
     }
 
-    for (uint32 i = 0; (ret) && (context.BrowseOutputVariable(i,var)); ++i) {
-        var->type = outputType;
-        if (outputExternalLocation != NULL) {
-            var->externalLocation = outputExternalLocation;
+    if ((ret) && (outputType != InvalidType)){
+        for (uint32 i = 0; context.BrowseOutputVariable(i,var); ++i) {
+            var->type = outputType;
+            if (outputExternalLocation != NULL) {
+                var->externalLocation = outputExternalLocation;
+            }
         }
     }
 
@@ -325,16 +329,18 @@ bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, Ty
 
     ret = context.ExtractVariables();
 
-    if ((ret) && (context.BrowseInputVariable(0,var))) {
+    if ((ret) && (input1Type != InvalidType) && (context.BrowseInputVariable(0,var))) {
         var->type = input1Type;
     }
 
-    if ((ret) && (context.BrowseInputVariable(1,var))) {
+    if ((ret) && (input2Type != InvalidType) && (context.BrowseInputVariable(1,var))) {
         var->type = input2Type;
     }
 
-    for (uint32 i = 0; (ret) && (context.BrowseOutputVariable(i,var)); ++i) {
-        var->type = outputType;
+    if ((ret) && (outputType != InvalidType)){
+        for (uint32 i = 0; context.BrowseOutputVariable(i,var); ++i) {
+            var->type = outputType;
+        }
     }
 
     if (ret) {
