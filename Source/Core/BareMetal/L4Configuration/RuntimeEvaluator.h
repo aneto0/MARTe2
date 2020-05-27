@@ -42,7 +42,6 @@
 #include "TypeConversion.h"
 #include "TypeDescriptor.h"
 #include "VariableInformation.h"
-#include "VariableFinder.h"
 #include "Vector.h"
 
 /*---------------------------------------------------------------------------*/

@@ -45,7 +45,6 @@ OBJSX=	AnyObject.x \
 		ParserI.x \
 		StandardParser.x \
 		ValidateBasicType.x \
-		VariableFinder.x \
 		XMLParser.x
         
 PACKAGE=Core/BareMetal

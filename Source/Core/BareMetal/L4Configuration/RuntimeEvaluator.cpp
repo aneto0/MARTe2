@@ -52,6 +52,70 @@ const CCString castToken("CAST");
 const CCString remoteWriteToken("RWRITE");
 const CCString remoteReadToken("RREAD");
 
+
+
+/**
+ * allows searching for a variable with a given name or address
+ */
+class VariableFinder: public IteratorT<VariableInformation>{
+public:
+    /**
+     *
+     */
+    VariableFinder(CCString name) {
+        variable = NULL_PTR(VariableInformation*);
+        variableName = name;
+        variableAddress = MAXDataMemoryAddress;
+    }
+    /**
+     *
+     */
+    VariableFinder(DataMemoryAddress address) {
+        variable = NULL_PTR(VariableInformation*);
+        variableAddress = address;
+    }
+    /**
+     *
+     */
+    void Do(VariableInformation *data) {
+        if (data == NULL_PTR(VariableInformation *)){
+            error = ErrorManagement::FatalError;
+        } else {
+            if (variableName.Size() > 0){
+                if (data->name == variableName){
+                    variable = data;
+                    error = ErrorManagement::NoError;
+                }
+            } else
+            if (variableAddress < MAXDataMemoryAddress){
+                if (data->location == variableAddress){
+                    variable = data;
+                    error = ErrorManagement::NoError;
+                }
+            }
+        }
+    }
+    /**
+     *
+     */
+    VariableInformation *variable;
+    /**
+     *
+     */
+    ErrorManagement::ErrorType error;
+
+private:
+    /**
+     *
+     */
+    StreamString variableName;
+
+    /**
+     *
+     */
+    DataMemoryAddress variableAddress;
+};
+
 RuntimeEvaluator::RuntimeEvaluator(StreamString RPNCodeIn){
     RPNCode = RPNCodeIn;
     variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
