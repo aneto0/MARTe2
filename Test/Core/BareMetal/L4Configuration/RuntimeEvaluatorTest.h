@@ -53,7 +53,9 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief TODO
+     * @brief   Tests the RuntimeEvaluator through all stages of its
+     *          lifecycle i.e. ExtractVariables - Compile - Execute,
+     *          with a rich RPN Code.
      */
     bool TestIntegration();
     
@@ -109,43 +111,112 @@ public:
      *          AddExpectedOutputVariable().
      */
      bool TestExecute(CCString rpnCode, ErrorManagement::ErrorType expectedError, RuntimeEvaluator::executionMode mode = RuntimeEvaluator::fastMode);
-    
+
+     /**
+      * @brief   Tests the ExtractVariables() method.
+      * @details Checks if execution stops with the correct expectedError.
+      *          If `expectedError == ErrorManagement::NoError`, then checks
+      *          - variableInformation returned by RuntimeEvaluator::BrowseInputVariables
+      *            match those in expectedInputVariables
+      *          - variableInformation returned by RuntimeEvaluator::BrowseOutputVariables
+      *            match those in expectedOutputVariables
+      */
      bool TestExtractVariables(CCString rpnCode, ErrorManagement::ErrorType expectedError);
+
+     /**
+      * @brief   Tests the Compile() method.
+      * @details Checks if execution stops with the correct expectedError.
+      *          If `expectedError == ErrorManagement::NoError`, then checks
+      *          - variableInformation returned by RuntimeEvaluator::BrowseInputVariables
+      *            match those in expectedInputVariables
+      *          - variableInformation returned by RuntimeEvaluator::BrowseOutputVariables
+      *            match those in expectedOutputVariables
+      *          - locations stored in RuntimeEvaluator::codeMemory match those
+      *            in expectedCodeMemory
+      */
      bool TestCompile(RuntimeEvaluator &evaluator, ErrorManagement::ErrorType expectedError, uint32 expectedDataSize);
 
     /**
      * @brief Insert a variable in usedInputVariables so that TestExecute
      *        can load it in a RuntimeEvaluator object.
      */
-    
     void SetTestInputVariable (CCString name, TypeDescriptor type, void *externalLocation = NULL, float64 expectedVarValue = 0);
+
     /**
      * @brief Insert a variable in usedOutputVariables so that TestExecute
      *        can load it in a RuntimeEvaluator object.
      */
     void SetTestOutputVariable(CCString name, TypeDescriptor type, void *externalLocation = NULL, float64 expectedVarValue = 0);
 
+    /**
+     * @brief Insert a variableInformation in expectedInputVariables so that it can be
+     *        checked against the variables contained by RuntimeEvaluator
+     */
     void AddExpectedInputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
+
+    /**
+     * @brief Insert a variableInformation in expectedOutputVariables so that it can be
+     *        checked against the variables contained by RuntimeEvaluator
+     */
     void AddExpectedOutputVariable(CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
-    
+
+    /**
+     * @brief Insert a Function in expectedCodeMemory so that it can be
+     *        checked against the RuntimeEvaluator::codeMemory
+     */
     void AddExpectedFunctionInMemory(StreamString name, StreamString inputType, StreamString outputType);
+
+    /**
+     * @brief Insert a variable location in expectedCodeMemory so that it can be
+     *        checked against the RuntimeEvaluator::codeMemory
+     */
     void AddExpectedVariableInMemory(CodeMemoryElement location);
 
 private:
 
+    /**
+     * @brief Insert a variableInformation in a LinkedList
+     */
     void AddExpectedVariable(LinkedListHolderT<VariableInformation> &varList, CCString name, TypeDescriptor type, DataMemoryAddress location, void *externalLocation, bool variableUsed);
+
+    /**
+     * @brief Searches inside a LinkedList a VariableInformation equals to var
+     *        and removes it
+     * @return true if found inside list a VariableInformation equals to var
+     */
     bool RemoveMatchingVariable(const VariableInformation *var, LinkedListHolderT<VariableInformation> &varList);
+
+    /**
+     * @brief Compares two VariableInformation arguments
+     * @return true if the two VariableInformation arguments are equal
+     */
     bool VariablesMatch(const VariableInformation *var1, const VariableInformation *var2);
 
+    /**
+     * @brief Compares RuntimeEvaluatorFunction with next element in expectedCodeMemory
+     * @pre functionRecord has at at most 1 input/output
+     * @return true if functionRecord has expected name, input and output type
+     */
     bool RecordMatchesExpectedFunction(RuntimeEvaluatorFunctions &functionRecord);
 
+    /**
+     * @brief LinkedList that holds the expected input VariableInformation by the test.
+     */
     LinkedListHolderT<VariableInformation, true> expectedInputVariables;
+
+    /**
+     * @brief LinkedList that holds the expected output VariableInformation by the test.
+     */
     LinkedListHolderT<VariableInformation, true> expectedOutputVariables;
 
+    /**
+     * @brief ConfigurationDb that holds the expected codeMemory
+     *        (function details and variable locations) by the test.
+     */
     ConfigurationDatabase expectedCodeMemory;
     
     /**
-     * @brief A strucutre that holds a RuntimeEvaluator variable along
+     * @brief A structure that holds a RuntimeEvaluator variable along
      *        with its value.
      */
     struct VariableListElement {
