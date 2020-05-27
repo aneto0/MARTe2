@@ -381,3 +381,40 @@ TEST(BareMetal_L0Types_VectorGTest,TestProduct) {
     ASSERT_TRUE(vectorTest.TestProduct());
 }
 
+TEST(BareMetal_L0Types_VectorGTest,TestSetSizeCanDestroy_NotEmptyToNotEmpty) {
+    VectorTest vectorTest;
+    Vector<int32> vector1(5);
+
+    ASSERT_TRUE(vectorTest.TestSetSize(vector1, 7));
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestSetSizeCanDestroy_NotEmptyToEmpty) {
+    VectorTest vectorTest;
+    Vector<int32> vector1(5);
+
+    ASSERT_TRUE(vectorTest.TestSetSize(vector1, 0));
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestSetSizeCanDestroy_EmptyToNotEmpty) {
+    VectorTest vectorTest;
+    Vector<int32> vector1(0);
+
+    ASSERT_TRUE(vectorTest.TestSetSize(vector1, 10));
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestSetSizeCannotDestroy_Heap) {
+    VectorTest vectorTest;
+    int32 *array = (int32*) HeapManager::Malloc(sizeof(int32) * 21);
+    Vector<int32> vector1(array, 21);
+
+    ASSERT_TRUE(vectorTest.TestSetSize(vector1, 30));
+    HeapManager::Free((void*&)array);
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestSetSizeCannotDestroy_Static) {
+    VectorTest vectorTest;
+    int32 array[15];
+    Vector<int32> vector1(array);
+
+    ASSERT_TRUE(vectorTest.TestSetSize(vector1, 5));
+}
