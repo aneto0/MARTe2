@@ -3,6 +3,7 @@
  * @brief Source file for class PseudoCode
  * @date 04/05/2015
  * @author RFX
+ * @author Didac Magrinya
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
