@@ -40,6 +40,10 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------*/
+/*                             Constructors                                  */
+/*---------------------------------------------------------------------------*/
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDefaultConstructor) {
     RuntimeEvaluatorFunctionsTest test;
     ASSERT_TRUE(test.TestDefaultConstructor());
@@ -49,6 +53,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestFullConstructo
     RuntimeEvaluatorFunctionsTest test;
     ASSERT_TRUE(test.TestFullConstructor());
 }
+
+/*---------------------------------------------------------------------------*/
+/*                              READ/RREAD                                   */
+/*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
@@ -114,6 +122,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRReadExecution
     ASSERT_TRUE(test.PrepareContext(context, Float64Bit, Float64Bit, static_cast<void *>(&input)));
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -152.3));
 }
+
+/*---------------------------------------------------------------------------*/
+/*                             WRITE/RWRITE                                  */
+/*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
@@ -250,6 +262,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteConvExec
     ASSERT_TRUE(test.TestFunctionExecution(context, ErrorManagement::OutOfRange));
 }
 
+/*---------------------------------------------------------------------------*/
+/*                                 CAST                                      */
+/*---------------------------------------------------------------------------*/
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
     CCString typeNames[] = {"float64", "float32", "uint64", "int64", "uint32", "int32", "uint16", "int16", "uint8", "int8"};
@@ -290,6 +306,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastExecution_
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, UnsignedInteger8Bit));
     ASSERT_TRUE(test.TestIntFunctionExecution<int8>(context, 255, ErrorManagement::OutOfRange));
 }
+
+/*---------------------------------------------------------------------------*/
+/*                                 MATH                                      */
+/*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
@@ -452,6 +472,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowExecution) 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, Float64Bit));
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1061.208));
 }
+
+/*---------------------------------------------------------------------------*/
+/*                              COMPARISON                                   */
+/*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
@@ -1167,6 +1191,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteDiffTypesEx
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context2, 0, ErrorManagement::OutOfRange));
 }
 
+/*---------------------------------------------------------------------------*/
+/*                                LOGICAL                                    */
+/*---------------------------------------------------------------------------*/
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAndFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -1277,6 +1305,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestXorExecution) 
     test.SetInputs(context, inputs11);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
+
+/*---------------------------------------------------------------------------*/
+/*                                  ADD                                      */
+/*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
@@ -1461,6 +1493,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
 }
 
+/*---------------------------------------------------------------------------*/
+/*                                   SUB                                     */
+/*---------------------------------------------------------------------------*/
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -1637,6 +1673,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
 }
+
+/*---------------------------------------------------------------------------*/
+/*                                   MUL                                     */
+/*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
@@ -1821,6 +1861,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
 }
 
+/*---------------------------------------------------------------------------*/
+/*                                   DIV                                     */
+/*---------------------------------------------------------------------------*/
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -1950,6 +1994,10 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
 }
+
+/*---------------------------------------------------------------------------*/
+/*                                TryConsume                                 */
+/*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful) {
     RuntimeEvaluatorFunctionsTest test;

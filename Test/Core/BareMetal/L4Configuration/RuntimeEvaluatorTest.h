@@ -3,6 +3,7 @@
  * @brief Header file for class PseudoCodeTest
  * @date 04/05/2020
  * @author RFX
+ * @author Didac Magrinya
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -210,8 +211,8 @@ private:
     LinkedListHolderT<VariableInformation, true> expectedOutputVariables;
 
     /**
-     * @brief ConfigurationDb that holds the expected codeMemory
-     *        (function details and variable locations) by the test.
+     * @brief ConfigurationDb that holds the codeMemory (function details
+     *        and variable locations) expected by the test.
      */
     ConfigurationDatabase expectedCodeMemory;
     

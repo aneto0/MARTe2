@@ -62,17 +62,71 @@ public:
     bool TestFullConstructor();
 
     /**
-     * @brief Tests types of registered RuntimeEvaluatorFunctions.
+     * @brief   Tests types of registered RuntimeEvaluatorFunctions.
+     * @details Checks that all RuntimeEvaluatorFunctions in FunctionRecords
+     *          with functionName, numberOfInputs, and numberOfOutputs match
+     *          with a set of types in expectedFunctionTypesCdb. It also checks
+     *          that there is a FunctionRecord for each set of types in
+     *          expectedFunctionTypesCdb.
      */
     bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
 
     /**
-     * @brief Add functions to expectedFunctionTypesCdb with a combination of provided inputs.
+     * @brief   Tests ExecuteFunction().
+     * @details Checks that calling RuntimeEvaluator::Execute on the provided
+     *          RuntimeEvaluator returns expectedError.
+     */
+    bool TestFunctionExecution(RuntimeEvaluator &context, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
+
+    /**
+     * @brief   Tests ExecuteFunction().
+     * @details Checks that calling RuntimeEvaluator::Execute on the provided
+     *          RuntimeEvaluator returns expectedError.
+     *          If `expectedError == ErrorManagement::NoError`, then it also
+     *          checks that the output variable is exactly equal to expectedResult.
+     */
+    template <typename T> inline bool TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
+
+    /**
+     * @brief   Tests ExecuteFunction().
+     * @details Checks that calling RuntimeEvaluator::Execute on the provided
+     *          RuntimeEvaluator returns expectedError.
+     *          If `expectedError == ErrorManagement::NoError`, then it also
+     *          checks that the output variable is close enough to expectedResult.
+     */
+    template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
+
+    /**
+     * @brief   Tests ExecuteFunction().
+     * @details Checks that calling RuntimeEvaluator::Execute on the provided
+     *          RuntimeEvaluator returns expectedError.
+     *          If `expectedError == ErrorManagement::NoError`, then it also
+     *          checks that the output variables are close enough to elements in
+     *          expectedResults array.
+     */
+    template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
+
+    /**
+     * @brief   Tests TryConsume().
+     * @details Checks that calling the method returns expectedRet.
+     *          If expectedRet is true:
+     *          - checks that dataStackSize is set to expectedDataStackSize
+     *          - checks that used types are removed from typeStack and the
+     *            rest is left untouched
+     *          If expectedRet is false:
+     *          - checks that dataStackSize is set to expectedDataStackSize
+     *          - checks that typeStack is left untouched
+     */
+    bool TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize);
+
+    /**
+     * @brief Adds sets of input-output types to expectedFunctionTypesCdb with all possible
+     *        combinations of provided input types with the same output type.
      */
     void AddExpectedFunctionCombinedInputs(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
 
     /**
-     * @brief Add functions to expectedFunctionTypesCdb with different number of input, outputs.
+     * @brief Adds set of input-output types to expectedFunctionTypesCdb.
      */
     void AddExpectedFunction1In(StreamString inputTypeName);
     void AddExpectedFunction1Out(StreamString outputTypeName);
@@ -81,25 +135,15 @@ public:
     void AddExpectedFunction1In2Out(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName);
 
     /**
-     * @brief Add functions to expectedFunctionTypesCdb.
+     * @brief Adds set of input-output types to expectedFunctionTypesCdb.
      */
     void AddExpectedFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]);
 
     /**
-     * @brief Tests TryConsume.
-     */
-    bool TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize);
-
-    /**
-     * @brief Tests function execution.
-     */
-    bool TestFunctionExecution(RuntimeEvaluator &context, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
-    template <typename T> inline bool TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
-    template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
-    template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
-
-    /**
-     * @brief Prepares RuntimeEvaluator for its execution.
+     * @brief Prepares RuntimeEvaluator for its execution:
+     *        - calls RuntimeEvaluator::ExtractVariables
+     *        - configures RuntimeEvaluator variables with type and externalLocation
+     *        - calls RuntimeEvaluator::Compile
      */
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType, void * inputExternalLocation = NULL, void *outputExternalLocation = NULL);
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor input1Type, TypeDescriptor input2Type, TypeDescriptor outputType);
@@ -111,14 +155,22 @@ public:
 
 private:
     /**
-     * @brief Checks if provided types are within types database.
+     * @brief   Checks if set of input-output types are within types database.
+     *          Set foundIndex to the index where the set is found.
+     * @return  true if set of input-output types found within types database.
      */
     bool FindTypesInCdb(CCString &foundIndex, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &FunctionTypesCdb);
 
+    /**
+     * @brief ConfigurationDb that holds the set of input-output types expected
+     *        by the test.
+     */
     ConfigurationDatabase expectedFunctionTypesCdb;
 };
 
-
+/**
+ * @brief Function to mock RuntimeEvaluatorFunction implementation
+ */
 void MockFunction(RuntimeEvaluator &evaluator);
 
 /*---------------------------------------------------------------------------*/
