@@ -190,3 +190,18 @@ bool VectorTest::TestProduct() {
     return result == 11;
 }
 
+bool VectorTest::TestSetSize(Vector<int32> &vector1, uint32 newSize) {
+    bool ok = true;
+
+    vector1.SetSize(newSize);
+
+    ok &= (vector1.GetNumberOfElements() == newSize);
+    if (newSize != 0) {
+        ok &= (vector1.GetDataPointer() != NULL_PTR(int32*));
+    } else {
+        ok &= (vector1.GetDataPointer() == NULL_PTR(int32*));
+    }
+
+    return ok;
+}
+

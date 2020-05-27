@@ -99,6 +99,11 @@ public:
      * @brief Tests if the function calculates correctly the scalar product between two vectors.
      */
     bool TestProduct();
+
+    /**
+     * @brief Tests if SetSize function allocates a new dataPointer and changes the number of elements.
+     */
+    bool TestSetSize(Vector<int32> &vector1, uint32 newSize);
 };
 
 /*---------------------------------------------------------------------------*/
