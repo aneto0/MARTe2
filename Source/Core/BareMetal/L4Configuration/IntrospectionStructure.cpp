@@ -175,7 +175,7 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
 
                     uint32 memberSize = 0u;
                     TypeDescriptor td = TypeDescriptor::GetTypeDescriptorFromTypeName(typeNameStr.Buffer());
-                    if (td != voidAnyType.GetTypeDescriptor()) {
+                    if (td != InvalidType) {
                         memberSize = static_cast<uint32>(td.numberOfBits) / 8u;
                     }
                     else {
