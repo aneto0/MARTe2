@@ -1435,12 +1435,10 @@ bool GAMTest::TestGetSignalNumberOfDimensions() {
         }
         uint32 numberOfDimensions;
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalNumberOfDimensions(InputSignals, 10000, numberOfDimensions);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalNumberOfDimensions(InputSignals, 10000, numberOfDimensions);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalNumberOfDimensions(OutputSignals, 10000, numberOfDimensions);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalNumberOfDimensions(OutputSignals, 10000, numberOfDimensions);
         }
     }
     return ret;
@@ -1508,12 +1506,10 @@ bool GAMTest::TestGetSignalNumberOfElements() {
         }
         uint32 numberOfElements;
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalNumberOfElements(InputSignals, 10000, numberOfElements);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalNumberOfElements(InputSignals, 10000, numberOfElements);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalNumberOfElements(OutputSignals, 10000, numberOfElements);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalNumberOfElements(OutputSignals, 10000, numberOfElements);
         }
     }
     return ret;
@@ -1581,12 +1577,10 @@ bool GAMTest::TestGetSignalByteSize() {
         }
         uint32 numberOfBytes;
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteSize(InputSignals, 10000, numberOfBytes);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteSize(InputSignals, 10000, numberOfBytes);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteSize(OutputSignals, 10000, numberOfBytes);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteSize(OutputSignals, 10000, numberOfBytes);
         }
     }
     return ret;
@@ -1712,12 +1706,10 @@ bool GAMTest::TestGetSignalNumberOfByteOffsets() {
         }
         uint32 numberOfBytesOffsets;
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalNumberOfByteOffsets(InputSignals, 10000, numberOfBytesOffsets);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalNumberOfByteOffsets(InputSignals, 10000, numberOfBytesOffsets);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalNumberOfByteOffsets(OutputSignals, 10000, numberOfBytesOffsets);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalNumberOfByteOffsets(OutputSignals, 10000, numberOfBytesOffsets);
         }
     }
     return ret;
@@ -1811,20 +1803,16 @@ bool GAMTest::TestGetSignalByteOffsetInfo() {
         uint32 startIdx;
         uint32 byteSize;
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteOffsetInfo(InputSignals, 4, 1000, startIdx, byteSize);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteOffsetInfo(InputSignals, 4, 1000, startIdx, byteSize);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteOffsetInfo(OutputSignals, 4, 1000, startIdx, byteSize);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteOffsetInfo(OutputSignals, 4, 1000, startIdx, byteSize);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteOffsetInfo(InputSignals, 10000, 0, startIdx, byteSize);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteOffsetInfo(InputSignals, 10000, 0, startIdx, byteSize);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteOffsetInfo(OutputSignals, 10000, 0, startIdx, byteSize);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteOffsetInfo(OutputSignals, 10000, 0, startIdx, byteSize);
         }
     }
     return ret;
@@ -1892,12 +1880,10 @@ bool GAMTest::TestGetSignalNumberOfRanges() {
         }
         uint32 numberOfBytesOffsets;
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalNumberOfRanges(InputSignals, 10000, numberOfBytesOffsets);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalNumberOfRanges(InputSignals, 10000, numberOfBytesOffsets);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalNumberOfRanges(OutputSignals, 10000, numberOfBytesOffsets);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalNumberOfRanges(OutputSignals, 10000, numberOfBytesOffsets);
         }
     }
     return ret;
@@ -1991,20 +1977,16 @@ bool GAMTest::TestGetSignalRangesInfo() {
         uint32 startIdx;
         uint32 byteSize;
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteOffsetInfo(InputSignals, 4, 1000, startIdx, byteSize);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteOffsetInfo(InputSignals, 4, 1000, startIdx, byteSize);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteOffsetInfo(OutputSignals, 4, 1000, startIdx, byteSize);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteOffsetInfo(OutputSignals, 4, 1000, startIdx, byteSize);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteOffsetInfo(InputSignals, 10000, 0, startIdx, byteSize);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteOffsetInfo(InputSignals, 10000, 0, startIdx, byteSize);
         }
         if (ret) {
-            TypeDescriptor desc = gam->GetSignalByteOffsetInfo(OutputSignals, 10000, 0, startIdx, byteSize);
-            ret = (desc == InvalidType);
+            ret = !gam->GetSignalByteOffsetInfo(OutputSignals, 10000, 0, startIdx, byteSize);
         }
     }
     return ret;
