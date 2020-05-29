@@ -146,7 +146,7 @@ GrammarInfo ParserI::GetGrammarInfo() const {
 }
 
 void ParserI::PrintErrorLine() {
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "HERE: %s", GetCurrentTokenData(currentToken));
+    
     // retrieve the error line
     uint32 lineNumber = GetCurrentTokenLineNumber(currentToken);
     char8 line[100];
@@ -254,7 +254,6 @@ bool ParserI::Parse() {
                     else {
                         isError = true;
                         PrintErrorOnStream("Syntax error 3. Invalid expression on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
-                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "HERE2: %s", GetCurrentTokenData(currentToken));
                         PrintErrorLine();
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }

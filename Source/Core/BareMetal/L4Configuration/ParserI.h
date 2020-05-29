@@ -113,7 +113,10 @@ public:
 protected:
     
     /**
-     * @brief Prints the line where the syntax error was found.
+     * @brief   Prints the line where the syntax error was found.
+     * @details The method uses the tokenLine property of a token
+     *          the exact location where the parsing of the input
+     *          stream has failed.
      */
     void PrintErrorLine();
     
