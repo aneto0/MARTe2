@@ -53,6 +53,10 @@ static void PrintErrorOnStream(const char8 * const format,
     REPORT_ERROR_STATIC(ErrorManagement::FatalError,  format, lineNumber);
 }
 
+static const char8* GetCurrentTokenData(Token * const token) {
+    return (token != NULL)?(token->GetData()):(static_cast<const char8*>(NULL));
+}
+
 static uint32 GetCurrentTokenLineNumber(const Token * const token) {
     return (token != NULL)?(token->GetLineNumber()):0u;
 }
@@ -75,6 +79,14 @@ ParserI::ParserI(StreamI &stream,
     grammar = grammarIn;
     currentToken = static_cast<Token*>(NULL);
     isError = false;
+    
+    // create a local copy of the stream
+    
+    //inputStream=dynamic_cast<BufferedStreamI*>(&stream);
+    uint64 pos = stream.Position();
+    stream.Seek(0u);
+    inputStream.Copy(dynamic_cast<BufferedStreamI&>(stream));
+    stream.Seek(pos);
 }
 
 ParserI::~ParserI() {
@@ -133,6 +145,36 @@ GrammarInfo ParserI::GetGrammarInfo() const {
     return grammar;
 }
 
+void ParserI::PrintErrorLine() {
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "HERE: %s", GetCurrentTokenData(currentToken));
+    // retrieve the error line
+    uint32 lineNumber = GetCurrentTokenLineNumber(currentToken);
+    char8 line[100];
+    inputStream.Seek(0u);
+    for (uint32 i = 0u; i < lineNumber; i++) {
+        inputStream.GetLine(line, 100u);
+    }
+    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", line);
+    
+    // create an arrow that points to the error
+    if (GetCurrentTokenData(currentToken)) {
+        
+        const char8* errorTokenPtr = StringHelper::SearchString(line, GetCurrentTokenData(currentToken));
+        
+        if (errorTokenPtr) {
+            uint32 length = errorTokenPtr - line; // number of characters between start of line and error token
+            char8 arrow[length + 2];
+            bool ok = StringHelper::SetChar(arrow, length, ' ');
+            if (ok) {
+                arrow[length] = '^';
+                arrow[length + 1] = '\0';
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", arrow);
+            }
+        }
+        
+    }
+}
+
 bool ParserI::Parse() {
     
     bool isEOF = false;
@@ -188,7 +230,8 @@ bool ParserI::Parse() {
                     else {
                         (token == 0u) ? (isEOF = true) : (isError = true);
                         if (isError) {
-                            PrintErrorOnStream("Syntax err[1]. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                            PrintErrorOnStream("Syntax error 1. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                            PrintErrorLine();
                         }
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
@@ -196,7 +239,8 @@ bool ParserI::Parse() {
                 else {
                     (token == 0u) ? (isEOF = true) : (isError = true);
                     if (isError) {
-                        PrintErrorOnStream("Syntax err[2]. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorOnStream("Syntax error 2. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorLine();
                     }
                     new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                 }
@@ -209,7 +253,9 @@ bool ParserI::Parse() {
                     }
                     else {
                         isError = true;
-                        PrintErrorOnStream("Syntax err[3]. Invalid expression on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorOnStream("Syntax error 3. Invalid expression on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "HERE2: %s", GetCurrentTokenData(currentToken));
+                        PrintErrorLine();
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
                 }
