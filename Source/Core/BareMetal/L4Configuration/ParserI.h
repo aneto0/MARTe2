@@ -111,7 +111,12 @@ public:
     GrammarInfo GetGrammarInfo() const;
 
 protected:
-
+    
+    /**
+     * @brief Prints the line where the syntax error was found.
+     */
+    void PrintErrorLine();
+    
     /**
      * @brief Retrieves the next expected token identifiers to be
      * pushed on the stack.
@@ -225,6 +230,11 @@ protected:
      * The stream to print the error messages.
      */
     BufferedStreamI *errorStream;
+    
+    /**
+     * A copy of the input stream.
+     */
+    StreamString inputStream;
     
     /**
      * Stores the information about the language to be parsed.
