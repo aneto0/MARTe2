@@ -179,11 +179,6 @@ bool ParserI::Parse() {
     
     bool isEOF = false;
     
-    //for (uint32 i = 0; ((tokenProducer.PeekToken(i))->GetId()) != 0; i++)
-    //{
-        //REPORT_ERROR_STATIC(ErrorManagement::Debug, "op: %-10s %-10s %-2u", (tokenProducer.PeekToken(i))->GetDescription(), (tokenProducer.PeekToken(i))->GetData(), (tokenProducer.PeekToken(i))->GetId());
-    //}
-    
     while ((!isError) && (!isEOF)) {
         
         uint32 stackArray[ParserConstant::PARSE_STACK_SIZE];

@@ -74,17 +74,6 @@ static uint32 GetCurrentTokenLineNumber(const Token * const token) {
 
 namespace MARTe {
 
-/**
-     * @brief Constructor which initializes the instance with all the items
-     * involved into the parsing (input, output, and grammar configuration).
-     * @param[in] stream is the stream to be read and parsed.
-     * @param[in,out] databaseIn is the StructuredData in output.
-     * @param[out] err is a stream where parse error messages are written into.
-     * @param[in] grammarIn contains the comments patterns, the separator and
-     * terminal characters.
-     * @post
-     *   GetGrammar() == grammarIn
-     */
 ConfigurationParserI::ConfigurationParserI(StreamI &stream,
                                StructuredDataI &databaseIn,
                                BufferedStreamI * const err,
