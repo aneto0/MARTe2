@@ -569,12 +569,6 @@ public:
          * Produces a step by step evolution of the stack following each function execution
          */
         debugMode,
-
-        /**
-         * allows single step execution
-         * external step counter must be maintained
-         */
-        singleStep
     };
 
     /**
