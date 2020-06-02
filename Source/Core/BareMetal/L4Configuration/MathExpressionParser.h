@@ -128,7 +128,7 @@ namespace MARTe{
  * COS
  * CONST int64 2
  * POW
- * +
+ * ADD
  * WRITE retVar
  * ~~~~~~~~~~~~
  *
