@@ -50,99 +50,183 @@
 
 namespace MARTe {
 
-/** the type of the PCode function */
+/**
+ * @brief The type of the runtime function
+ */
 typedef void (*Function)(RuntimeEvaluator & context);
 
 /**
- * records information necessary to be able to use it during compilation
+ * @brief   Function object required by RuntimeEvaluator.
+ * 
+ * @details This class holds the definition of a function class
+ *          as well as a bunch of macros and templates to register
+ *          all combinations of functions and types required by
+ *          RuntimeEvaluator during runtime execution.
+ * 
+ * Each function is registerd and made available in the following way:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * TypeDescriptor types[] = {Float32Bit, Float32Bit};
+ * RuntimeEvaluatorFunctions exampleFunction("EXFUN", 1, 1, types, ExampleFunction);
+ * RegisterFunction(exampleFunction);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * This allows RuntimeEvaluator to call a function named `ExampleFunction`
+ * (and defined elsewhere) by using the name `EXFUN`.
+ * The `EXFUN` function is expected to pop exactely one `float32` element
+ * from the RuntimeEvaluator stack and then push exactely one `float32`
+ * element on the same stack.
+ * 
+ * After registration each function is added to the #functionRecords
+ * array of RuntimeEvaluatorFunctions (see RuntimeEvaluatorFunctions.h,
+ * outside the class definition).
+ * 
+ * RuntimeEvaluator calls a function by searching the #functionRecords
+ * for the function its stack is currently pointing to, and then calling
+ * the ExecuteFunction() method of that function and passing itself
+ * as an argument so that the function can act on the stack of the
+ * calling RuntimeEvaluator.
+ * 
  */
-class RuntimeEvaluatorFunctions{
+class RuntimeEvaluatorFunctions {
 public:
 
     /**
-     * default constructor
+     * @brief Default constructor.
      */
     RuntimeEvaluatorFunctions();
 
     /**
-     * full constructor
+     * @brief     Full constructor.
+     * @details   Instantiate a function object that can then be registered
+     *            and made available to RuntimeEvaluator.
+     * @param[in] nameIn            name of the function
+     * @param[in] numberOfInputsIn  number of elements this function is
+     *                              expected to pop from the RuntimeEvaluator stack
+     * @param[in] numberOfOutputsIn number of elements this function is
+     *                              expected to push to the RuntimeEvaluator stack
+     * @param[in] typesIn           pointer to the array holding the types
+     *                              the function is expected to manage
+     * @param[in] functionIn        pointer to the actual C++ function
+     *                              that will be executed.
      */
     RuntimeEvaluatorFunctions(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn);
-
+    
+    /**
+     * @brief Get the name of the function.
+     */
     StreamString GetName(){return name;}
-
+    
+    /**
+     * @brief Get the input types set for the function
+     */
     Vector<TypeDescriptor> GetInputTypes();
 
     /**
-     * It only includes types of outputs going to stack. It does not include types of outputs going to memory variables
+     * @brief Get the output types set for the function
+     * @note It only includes types of outputs going to stack.
+     *       It does not include types of outputs going to memory variables
      */
     Vector<TypeDescriptor> GetOutputTypes();
-
+    
+    /**
+     * @brief     Executes a function.
+     * @param[in] context the RuntimeEvaluator object on whose stack
+     *                    the function shall be executed
+     * @details   This method executes the function on the input
+     *            RuntimeEvaluator. This means that the function acts
+     *            on the input RuntimeEvaluator stack and carries out
+     *            the required operations on it.
+     *            For example the calling the `SUM` function on a
+     *            RuntimeEvaluator object will pop two elements
+     *            from the input RuntimeEvaluator, sum them and then
+     *            push the result to the input RuntimeEvaluator stack.
+     */
     void ExecuteFunction(RuntimeEvaluator &context){function(context);}
 
     /**
-     * returns true if the name and types matches
-     * on success replaces the type on the stack with the result type
-     * also simulates variations on the dataStack
+     * @brief   Replaces the type on the stack with the result type.
+     * @returns `true` if the name and types matches.
+     * @note    Also simulates variations on the dataStack.
      */
     bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
 
 private:
     /**
-     *  The name of the functions as used in the RPN code
+     * @brief   The name of the functions as used in the RPN code.
+     * @details This is the name of the function as it will be referred
+     *          to in the RPN code processed by RuntimeEvaluator.
+     *          On the other hand, RuntimeEvaluator will need to use
+     *          this name to call the function.
      */
     StreamString            name;
 
     /**
-     * How many stack elements it will consume
-     * !NOTE that for CONST
+     * @brief   How many stack elements the function will consume.
+     * @details When called with `function.ExecuteFunction(evaluator)`,
+     *          each function acts on the `evaluator` stack. #numberOfInputs
+     *          is the number of stack elements this function will pop
+     *          from the stack when called.
      */
     uint16                  numberOfInputs;
 
     /**
-     * How many stack elements it will produce
+     * @brief   How many stack elements the function will produce.
+     * @details When called with `function.ExecuteFunction(evaluator)`,
+     *          each function acts on the `evaluator` stack. #numberOfOutputs
+     *          is the number of stack elements this function will push
+     *          to the stack when called.
      */
     uint16                  numberOfOutputs;
 
     /**
-     * array of types in the following order: stack inputs | stack outputs | memory variables outputs
+     * @brief   The array holding the types of inputs and outputs.
+     * @details Types are saved in the array in the following order:
+     *          `stack inputs | stack outputs | memory variables outputs`
      */
     TypeDescriptor*   types;
 
     /**
-     * The function code itself
+     * @brief The function code itself.
      */
     Function                function;
 
-};
+}; /* class RuntimeEvaluatorFunctions */
 
 /**
- * max number of registered functions
+ * @brief Max number of registered functions.
  */
 static const uint32 maxFunctions = 16384;
 
 /**
- * actually available functions
+ * @brief Number of currently available functions.
  */
 extern uint32 availableFunctions;
 
 /**
- * the database of functions
+ * @brief   Database of all registered functions to be used by RuntimeEvaluator.
+ * @details This array holds all RuntimeEvaluatorFunctions objects
+ *          used by RuntimeEvaluator.
+ *          To add a function to this database the RegisterFunction()
+ *          method shall be used.
  */
 extern RuntimeEvaluatorFunctions functionRecords[maxFunctions];
 
 /**
- *
+ * @brief Finds a PCode elements and updates the typestack accordingly.
  */
 bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
 
 /**
- * to register a function
+ * @brief   Adds a function to #functionRecord.
+ * @details This function is used to add a RuntimeEvaluatorFunctions
+ *          function to the database of functions (#functionRecord)
+ *          that can be called during runtime by RuntimeEvaluator.
  */
 void RegisterFunction(const RuntimeEvaluatorFunctions &record);
 
 /**
- * generates boiler plate code to register a function
+ * @brief Generates boilerplate code to register a function.
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
     static TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
