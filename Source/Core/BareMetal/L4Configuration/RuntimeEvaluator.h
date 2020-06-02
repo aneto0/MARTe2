@@ -342,11 +342,11 @@ struct RuntimeEvaluatorFunctions;
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
  * 
  * void NewAddition(RuntimeEvaluator &evaluator) {
- * float32 x1,x2,x3;
- * evaluator.Pop(x1);
- * evaluator.Pop(x2);
- * x3 = x2 + x1;
- * evaluator.Push(x3);
+ *     float32 x1,x2,x3;
+ *     evaluator.Pop(x1);
+ *     evaluator.Pop(x2);
+ *     x3 = x2 + x1;
+ *     evaluator.Push(x3);
  * }
  * 
  * TypeDescriptor types[] = {Float32Bit, Float32Bit, Float32Bit};
