@@ -60,45 +60,309 @@ namespace MARTe {
 struct RuntimeEvaluatorFunctions;
 
 /**
- *  The context required to execute a PCode. It is the result of a compilation of a RPN Code
+ * @brief Runtime mathematical expression evaluation engine.
+ * 
+ * @details Engine to evaluate mathematical expressions at runtime.
+ * 
+ * Summary
+ * =======
+ * 
+ * Runtime evaluator takes an expression in stack machine form at
+ * construction time and is then capable of compiling and executing it.
+ * The expression in stack machine form can be used straight away or
+ * be derived from an infix expression (a mathematical expression
+ * in the usual form) by using MARTe::MathExpressionParser.
+ * 
+ * Usage
+ * =====
+ * 
+ * To use the evaluator, the following steps must be followed:
+ * - the evaluator is instantiated and fed with the expression
+ *   it will be required to evaluate
+ * - the evaluator internal variable database is initialised by
+ *   calling the ExtractVariable method
+ * - variable properties are set by using the APIs
+ * - the expression is compiled by calling the Compile() method
+ * - the expression is executed by calling the Execute() method
+ * 
+ * Instantiating the evaluator
+ * ---------------------------
+ * 
+ * The expression must first be fed to the RuntimeEvaluator at
+ * construction time, either typed directly:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * 
+ * StreamString rpnCode = "READ A\n"
+ *                        "READ B\n"
+ *                        "ADD\n"
+ *                        "WRITE ret\n"
+ * ;
+ * 
+ * RuntimeEvaluator expression(rpnCode);
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * or by converting an infix expression via the MathExpressionParser:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * 
+ * StreamString infixExpr = "ret = A + B;"
+ * 
+ * MathExpressionParser parser(infixExpr);
+ * parser.Parse();
+ * 
+ * RuntimeEvaluator expression(parser.GetStackMachineExpression());
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * Initialising the evaluator
+ * --------------------------
+ * 
+ * First of all, RuntimeEvaluator must know what variables are contained
+ * in the expression. This is done by calling the ExtractVariables()
+ * method. After that, variable properties can be set by using
+ * RuntimeEvaluator variable managing APIs.
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * ret = expression.ExtractVariables();
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * Setting up variables
+ * --------------------
+ * 
+ * Variable properties must then be set. Variables properties are:
+ * - type (can be one of MARTe2 supported types: `Unsigned32Bit`, `Float64Bit` etc.)
+ * - location (the memory location where the variable value will be held)
+ * 
+ * Types *must* be set by using the SetInputVariableType and
+ * SetOutputVaribleType methods:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * ret = expression.SetInputVariableType("theta", Float64Bit);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * Locations *can* be set by using the SetInputVariableMemory and
+ * SetOutputVariableMemory methods.
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * float64 y;
+ * ret = expression.SetOutputVariableMemory("y", &y);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * - In case and external location for a variable is set, the variable
+ *   is considered external and any modification of its value will be
+ *   reflected to the specified memory address.
+ * - In case an external location for a variable is not set, the variable
+ *   is considered internal (this is the default behavior.
+ *   RuntimeEvaluator will be responsible of allocating space for all
+ *   internal variables. The memory location of internal variables will
+ *   be available after compilation by calling GetInputVariableMemory and
+ *   GetOutputVariableMemory methods.
+ * 
+ * Compiling
+ * ---------
+ * 
+ * After setting up the desired properties for variables, the expression
+ * can be compiled:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * ret = expression.Compile();
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * From now on, variable values can be set and the expression can be
+ * executed.
+ * 
+ * Executing
+ * ---------
+ * 
+ * Before executing, values of each variable can be updated. External
+ * variable values are updated simply by updating the memory they have
+ * been set to follow:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * float64 theta;
+ * ret = expression.SetInputVariableMemory("theta", &theta);
+ * ret = expression.Compile();
+ * theta = 10.0;
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * Internal variables can be modified by retrieving a pointer to them:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * ret = expression.SetInputVariableType("theta", Float64Bit);
+ * 
+ * float64* ptr;
+ * ptr = (float64*)expression.GetInputVariableMemory("theta");
+ * 
+ * *ptr = 10.0;
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * Each time the expression is executed, all output variables
+ * are updated. If they have been set external, their values are
+ * directly available:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * float64 y;
+ * expression.SetOutputVariableMemory("y", &y);
+ * ...
+ * expression.Compile();
+ * ...
+ * expression.Execute();
+ * REPORT_ERROR(ErrorManagement::Information, "Value of y is: %f", y);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * if they are internal, GetOutputVariableMemory shall be used to
+ * retrieve their addresses and obtain the final value.
+ * 
+ * Variable values can be uopdated mutiple times, and each time the
+ * Execute() method will recalculate the output variable values.
+ * 
+ * Examples
+ * ========
+ * 
+ * Example usage with the following expression:
+ * `y = pow(sin(theta), 2) + pow(cos(theta), 2)`
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * #include "RuntimeEvaluator.h"
+ * 
+ * bool ret;
+ * 
+ * StreamString rpnCode = "READ theta\n"
+ *                        "SIN\n"
+ *                        "CONST int64 2\n"
+ *                        "POW\n"
+ *                        "READ theta\n"
+ *                        "COS\n"
+ *                        "CONST int64 2\n"
+ *                        "POW\n"
+ *                        "ADD\n"
+ *                        "WRITE y\n"
+ * ;
+ * 
+ * RuntimeEvaluator expression(rpnCode);
+ * 
+ * ret = expression.ExtractVariables();
+ * 
+ * float64 theta;
+ * float64 y;
+ * 
+ * if (ret) {
+ *     ret &= expression.SetInputVariableType("theta", Float64Bit);
+ *     ret &= expression.SetInputVariableMemory("theta", &theta);
+ * }
+ * 
+ * if (ret) {
+ *     ret &= expression.SetOutputVariableType("y", Float64Bit);
+ *     ret &= expression.SetOutputVariableMemory("y", &y);
+ * }
+ * 
+ * if (ret) {
+ *     ret = expression.Compile();
+ * }
+ * 
+ * // now variable values can be set
+ * theta = 3.14;
+ * 
+ * if (ret) {
+ *     ret = expression.Execute();
+ * }
+ * 
+ * // result is now available
+ * if (y == 1.0) {
+ *     REPORT_ERROR(ErrorManagement::Information, "OK!");
+ * }
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * Further details
+ * ===============
+ * 
+ * RuntimeEvaluator is a stack machine that reads instructions from
+ * a stack machine expression and executes them in a last in-first out
+ * fashion. All operations rely on an internal stack: operands are
+ * retrieved from the stack and results are placed in the stack.
+ * 
+ * Operations are executed by RuntimeEvaluatorFunctions, which is
+ * responsible for managing RuntimeEvaluator internal stack by using
+ * Pop(), Push() and Peek() methods. See RuntimeEvaluatorFunctions
+ * documentation for further details.
+ * 
+ * Supported operators
+ * -------------------
+ * 
+ * This is a table of all supported operators:
+ * 
+ * | Operator         | Meaning                                                                |
+ * | :--------------- | :--------------------------------------------------------------------- |
+ * | `READ  var`      | Pushes the value of variable `var` from memory to the top of the stack |
+ * | `WRITE var`      | Pops the top of the stack and writes its value to variable `var`       |
+ * | `CONST type val` | Push a constant of value `val` and type `type` to the top of the stack |
+ * | `CAST type`      | Casts the top of the stack to type `type`                              |
+ * | `AND`            | AND operation between top two elements of the stack                    |
+ * | `OR`             | OR operation between top two elements of the stack                     |
+ * | `XOR`            | XOR operation between top two elements of the stack                    |
+ * | `GT`             | Greater than operation between top two elements of the stack           |
+ * | `LT`             | Less than operation between top two elements of the stack              |
+ * | `GTE`            | Greater or equal operation between top two elements of the stack       |
+ * | `LTE`            | Less or equal operation between top two elements of the stack          |
+ * | `EQ`             | Equal operation between top two elements of the stack                  |
+ * | `NE`             | Not equal operation between top two elements of the stack              |
+ * | `ADD`            | Sum between top two elements of the stack                              |
+ * | `SUB`            | Subtraction between top two elements of the stack                      |
+ * | `MUL`            | Multiplication between top two elements of the stack                   |
+ * | `DIV`            | Division between top two elements of the stack                         |
+ * | `SIN`            | Sine operation on the top of the stack                                 |
+ * | `COS`            | Cosine operation on the top of the stack                               |
+ * | `POW`            | Power operation between top two elements of the stack                  |
+ *  
+ * 
  */
 class RuntimeEvaluator {
 
 public:
     /**
-     * constructor
+     * @brief     Default constructor.
+     * @param[in] RPNCode the expression to be evaluated in stack machine form.
      */
     RuntimeEvaluator(StreamString RPNCode);
 
     /**
-     * destructor
+     * @brief Destructor.
      */
     ~RuntimeEvaluator();
 
     /**
-     * Reads from code memory
+     * @brief Reads from code memory
      */
     inline CodeMemoryElement    GetPseudoCode();
 
     /**
-     * Reads from Data Memory
+     * @brief Reads from Data Memory
      */
     template<typename T>T &     Variable(DataMemoryAddress variableIndex);
 
     /**
-     * Cleans inputVariableInfo
-     * Cleans outputVariableInfo
-     * Scans RPNCode looking for READ, WRITE and CONST functions
+     * @brief   Fills the variable database.
+     * @details Cleans inputVariableInfo and outputVariableInfo, then
+     *          scans RPNCode looking for READ, WRITE and CONST functions.
+     *          Once this method has been called, variable management
+     *          APIs are available.
      */
     ErrorManagement::ErrorType ExtractVariables();
 
     /**
-     * Looks for a variable at a given location
+     * @brief Returns a pointer to a RuntimeEvaluator variable.
+     * @param[in]  index the index of the variable to be retrieved.
+     * @param[out] variableInformation a pointer to the variable.
      */
     ErrorManagement::ErrorType BrowseInputVariable(uint32 index,VariableInformation *&variableInformation);
 
     /**
-     * Looks for a variable at a given location
+     * @brief Returns a pointer to a RuntimeEvaluator variable.
+     * @param[in]  index the index of the variable to be retrieved.
+     * @param[out] variableInformation a pointer to the variable.
      */
     ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
     
@@ -252,35 +516,41 @@ public:
     bool SetOutputVariableType(uint32 varIndexIn, TypeDescriptor typeIn);
     
     /**
-     * Cleans memory
-     * Allocates inputVariables
-     * Allocates outputVariables
-     * Allocates constants
-     * Allocates PCode space
-     * Scans RPNCode
-     *    compiles into codeMemory
-     *    writes constants into dataMemory
-     *    checks type consistency
-     *    grow stack to required size
+     * @brief   Compiles the expression and prepares it for execution.
+     * @details Compile() carries out the following operations:
+     *          - Cleans memory
+     *          - Allocates inputVariables
+     *          - Allocates outputVariables
+     *          - Allocates constants
+     *          - Allocates PCode space
+     *          - Scans RPNCode
+     *            + compiles into codeMemory
+     *            + writes constants into dataMemory
+     *            + checks type consistency
+     *            +  grow stack to required size
+     * 
+     * @pre     ExtractVariables() == true && all variable types must
+     *          be set.
      */
     ErrorManagement::ErrorType Compile();
 
     /**
-     * allow choosing how to run the code
+     * @brief   Allows choosing how to run the code.
+     * @details Used as input argument of Execute().
      */
     enum executionMode {
         /**
-         * fastMode: executes with minimal checks - assumes compilation was correct and function description was truthful
+         * Executes with minimal checks - assumes compilation was correct and function description was truthful
          */
         fastMode,
 
         /**
-         * safeMode: checks stack,errors, and code pointer at every step
+         * Checks stack,errors, and code pointer at every step
          */
         safeMode,
 
         /**
-         * debugMode: produces a step by step evolution of the stack following each function execution
+         * Produces a step by step evolution of the stack following each function execution
          */
         debugMode,
 
@@ -292,58 +562,71 @@ public:
     };
 
     /**
-     * executes every command in codeMemory
-     * note that the inputs need to be loaded before calling execute
-     * returns the combination of error flags reported by all the functions that were executed
-     * debugStream is only used in debugMode. after every command execution a report is written to the stream
-     * step is only used in step mode. step value need to be initialised to 0 and maintained between calls
+     * @brief     Executes every command in codeMemory.
+     * @returns   the combination of error flags reported by all the functions that were executed.
+     * @param[in] mode execution mode
+     * @param[in] debugStream only used in debugMode, after every command
+     *            execution a report is written to the stream
+     * @pre ExtractVariables() == true && Compile() == true && all
+     *      variable types must be set.
      */
     ErrorManagement::ErrorType Execute(executionMode mode = fastMode, StreamI *debugStream=NULL_PTR(StreamI *));
 
     /**
-     * Reconstruct the RPNCode with type information
+     * @brief Reconstruct the RPNCode with type information
      */
     ErrorManagement::ErrorType DeCompile(StreamString &DeCompileRPNCode, bool showTypes);
     
     /**
      * @name    Members required by RuntimeEvaluatorFunctions
-     * @details These members are public since RuntimeEvaluatorFunctions
+     * @details These methods allow RuntimeEvaluatorFunctions to manage
+     *          RuntimeEvaluator internal stack so that they can execute
+     *          operations on the stack itself when required by the code.
+     * @note    These members are public since RuntimeEvaluatorFunctions
      *          need to access them.
-     * @warning These members may be made private in a future release.
-     * @todo    Make these private.
      */
     //@{
         /**
-        * @brief Get the top of the stack and then move the pointer.
-        * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-        * @return .
+        * @brief      Get the value on the top of the stack and then move the pointer.
+        * @param[in] value reference to the variable that will hold the value
+        *                  popped from the top of the stack
+        * @details    writes the value on the top of the stack to `value`
+        *             and then update stack pointer (note that the stack
+        *             will have a specific granularity).
         */
         template<typename T>
         inline void Pop(T &value);
 
         /**
-        * @brief Add to the top of the stack and then move the pointer.
-        * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-        * @return .
+        * @brief     Push a value to the top of the stack and then move the pointer.
+        * @param[in] value reference to the variable that holds the value
+        *                  to be pushed on the top of the stack
+        * @details   writes the value of `value` on the top of the stack
+        *            and then update stack pointer (note that the stack
+        *            will have a specific granularity).
         */
         template<typename T>
         inline void Push(T &value);
 
         /**
-        * @brief Get the top of the stack and do not move the pointer.
-        * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-        * @return .
+        * @brief      Get the value on the top of the stack and do not move the pointer.
+        * @param[in] value reference to the variable that will hold the value
+        *                  on the top of the stack
+        * @details    writes the value on the top of the stack to `value`
+        *             and do not update stack pointer (note that the stack
+        *             will have a specific granularity).
         */
         template<typename T>
         inline void Peek(T &value);
         
         /**
-         * the errors produced by the functions and the checks during runtime
+         * @brief The errors produced by the functions and the checks during runtime.
          */
         ErrorManagement::ErrorType runtimeError;
         
         /**
-         * variable and constants are allocated here
+         * @brief   Variable and constants are allocated here.
+         * @details 
          * MEMORY MAP
          *
          * sizeOfVariablesArea     VARIABLES   --> variablesMemoryPtr   : pCodePtr
@@ -357,59 +640,63 @@ public:
 private:
 
     /**
-     * stack and variable are allocated here
+     * @brief Stack and variable are allocated here.
      */
-    StaticList<CodeMemoryElement,32>    codeMemory;
+    StaticList<CodeMemoryElement,32>   codeMemory;
     
     /**
-     * address of first variable (after constants) or how many MemoryElement are used for constants
+     * @brief Address of first variable (after constants)
+     *        or how many MemoryElement are used for constants
      */
-    DataMemoryAddress                   startOfVariables;
+    DataMemoryAddress                  startOfVariables;
     
     /**
-     * stack is allocated here
+     * @brief Stack is allocated here.
      */
-    Vector<DataMemoryElement>           stack;
+    Vector<DataMemoryElement>          stack;
 
     /**
-     * Checks existence of name using FindInputVariable
-     * If not found add new variable
+     * @brief   Adds a new input variable.
+     * @details Checks existence of name using FindInputVariable.
+     *          If not found add new variable to inputVariableInfo.
      */
     inline ErrorManagement::ErrorType AddInputVariable(CCString name,TypeDescriptor td = VoidType,DataMemoryAddress location = MAXDataMemoryAddress);
 
     /**
-     * Looks for a variable of a given name
+     * @brief Looks for a variable of a given name
      */
     inline ErrorManagement::ErrorType FindInputVariable(CCString name,VariableInformation *&variableInformation);
 
     /**
-     * Checks existence of name using FindOutputVariable
-     * If not found add new variable
+     * @brief   Adds a new output variable.
+     * @details Checks existence of name using FindInputVariable.
+     *          If not found add new variable to outputVariableInfo.
      */
     inline ErrorManagement::ErrorType AddOutputVariable(CCString name,TypeDescriptor td = VoidType,DataMemoryAddress location = MAXDataMemoryAddress);
 
     /**
-     * Looks for a variable of a given name
+     * @brief Looks for a variable of a given name
      */
     inline ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *&variableInformation);
 
     /**
-     * Looks for a variable of a given name
+     * @brief Looks for a variable of a given name
      */
     ErrorManagement::ErrorType FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation);
 
     /**
-     * implements AddOutputVariable and AddInputVariable
+     * @brief Implements AddOutputVariable and AddInputVariable
      */
     ErrorManagement::ErrorType AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location);
 
     /**
-     * implements FindOutputVariable
+     * @brief Implements FindOutputVariable
      */
     ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db);
 
     /**
-     * expands function information input description into readable text
+     * @brief expands function information input description into readable text
+     * @details
      * if more pCode is required for the decoding it will peek it from context. It will consume the PCode only if peekOnly=false
      * it will access DataMemory as well to decode constants
      * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
@@ -417,7 +704,8 @@ private:
     ErrorManagement::ErrorType FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool peekOnly=true,bool showData=true,bool showTypes=true);
 
     /**
-     * expands function information output description into readable text
+     * @brief expands function information output description into readable text
+     * @details
      * if more pCode is required for the decoding it will peek it from context. It will re-read the last pCode if lookBack is true otherwise it will consume next
      * it will access DataMemory as well to decode constants
      * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
@@ -425,32 +713,38 @@ private:
     ErrorManagement::ErrorType FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
 
     /**
-     * the input variable names
+     * @brief   The list containing all input variables.
+     * @details This list is filled by ExtractVariables().
      */
     LinkedListHolderT<VariableInformation>          inputVariableInfo;
 
     /**
-     * the output variable names
+     * @brief   The list containing all output variables.
+     * @details This list is filled by ExtractVariables().
      */
     LinkedListHolderT<VariableInformation>          outputVariableInfo;
 
     /**
-     * used by Push/Pop/Peek
+     * @brief   Pointer to the current active location in the stack.
+     * @details Used by Push(), Pop() and Peek().
      */
     DataMemoryElement *                 stackPtr;
 
     /**
-     * used by Variable()
+     * @brief   A pointer to the starting address of variable memory.
+     * @details Used by Variable().
      */
     DataMemoryElement *                 variablesMemoryPtr;
 
     /**
-     * used by GetPseudoCode()
+     * @brief   A pointer to the starting address of code memory.
+     * @details Used by GetPseudoCode().
      */
     const CodeMemoryElement *           codeMemoryPtr;
     
     /**
-     * RPN code bounded to each instance.
+     * @brief   The code to be evaluated in stack machine form.
+     * @details This code is bound to each instance of RuntimeEvaluator.
      */
     StreamString RPNCode;
 };
