@@ -107,7 +107,7 @@ public:
             const char8 * const multipleLineCommentEndIn,
             const char8 * const keywordsIn);
     
-	/**
+    /**
      * @brief Destructor.
      */
     ~LexicalAnalyzer();
@@ -152,7 +152,7 @@ private:
      */
     void AddTerminal(const char8 terminal);
     
-	/**
+    /**
      * @brief Adds a terminal to the internal queue (multicharacter terminal).
      * @param[in] terminalBuffer is the terminal data.
      */
@@ -188,7 +188,7 @@ private:
      */
     StreamString multipleLineCommentEnd;
     
-	/**
+    /**
      * Keywords to be detected as terminals.
      */
     StreamString keywords;

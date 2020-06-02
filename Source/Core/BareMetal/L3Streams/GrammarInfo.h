@@ -71,6 +71,8 @@ struct GrammarInfo {
     
     /**
      * Multi-character terminals.
+     * @details Holds multicharacter terminals separated by spaces
+     *          (e.g. `"if && =="`).
      * @warning Keywords with more than 2 characters are not supported
      */
     const char8 *keywords;
@@ -156,7 +158,7 @@ static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", "", '<', 
  * @warning Keywords with more than 2 characters are not supported
  */
 static const GrammarInfo MathGrammar = { "\n\r\t ", "//", "/*", "*/",                                // sep
-	                                     "| || & && ^ < > <= >= == !=",                              // keywords
+	                                     "|| && ^ < > <= >= == !=",                              // keywords
 	                                     '+', '-', '*', '/', '=', '(', ')', '(', ')', ')', ",;\0" }; // term
 
 }

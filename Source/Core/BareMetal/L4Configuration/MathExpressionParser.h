@@ -58,26 +58,28 @@ namespace MARTe{
  * Multiple expressions are allowed (provided that each is terminated
  * with a comma or semicolon). Accepted operators are the following:
  * 
- * | Operator | Meaning          |
- * | :------: | :--------------- |
- * | &        | Bitwise AND      |
- * | \|       | Bitwise OR       |
- * | &&       | AND              |
- * | \|\|     | OR               |
- * | ^        | Exclusive OR     |
- * | !        | NOT              |
- * | <        | Less than        |
- * | >        | Greater than     |
- * | <=       | Less ot equal    |
- * | >=       | Greater or equal |
- * | +        | Sum              |
- * | -        | Subtraction      |
- * | *        | Multiplication   |
- * | /        | Division         |
+ * | Operator | Meaning           |
+ * | :------: | :---------------- |
+ * | =        | Assignment        |
+ * | &&       | AND               |
+ * | \|\|     | OR                |
+ * | ^        | Exclusive OR      |
+ * | !        | NOT               |
+ * | <        | Less than         |
+ * | >        | Greater than      |
+ * | <=       | Less ot equal     |
+ * | >=       | Greater or equal  |
+ * | ==       | Equal             |
+ * | !=       | Not equal         |
+ * | +        | Sum               |
+ * | -        | Subtraction       |
+ * | *        | Multiplication    |
+ * | /        | Division          |
+ * | , ; \\n  | End of expression |
  * 
- * Functions are also supported in the form `sin(x)`, `pow(x,y)` etc.
+ * Functions in the form `sin(x)`, `pow(x,y)` etc are supported.
  * However, the function name is passed as-is to the evaluation engine,
- * so please verify that the evaluation engine (typically MARTe::PseudoCode)
+ * so please verify that the evaluation engine (typically MARTe::RuntimeEvaluator)
  * supports the required function.
  * 
  * The mathematical expression must be provided to the parser at
@@ -87,9 +89,8 @@ namespace MARTe{
  * Constructor requires:
  * - an input stream of characters containing the mathematical
  *   expression in infix form,
- * - an output foo structured data, (TODO this is not necessary and will be removed)
  * - an output stream of characters where the parser will write all
- *   the errors found on the input stream of characters.
+ *   the errors found on the input stream of characters (optional).
  * 
  * To make the parser parse the expression, users should call the Parse()
  * method. Provided that the Parse() method was called, the expression
@@ -105,13 +106,15 @@ namespace MARTe{
  * StreamString expr = "retVar = pow(sin(theta), 2) + pow(cos(theta), (int64) 2);"
  * expr.Seek(0);
  * 
- * MathExpressionParser mathParser(expr, fooDatabase, &errStream);
+ * MathExpressionParser mathParser(expr);
  * bool parseOk = mathParser.Parse();
  * 
- * StreamString outputExpr;
- * outputExpr = mathParser.GetStackMachineExpression();
- * 
- * REPORT_ERROR(ErrorManagement::Information, "\n%s", outputExpr.Buffer());
+ * if (parseOk) {
+ *     StreamString outputExpr;
+ *     outputExpr = mathParser.GetStackMachineExpression();
+ *     
+ *     REPORT_ERROR(ErrorManagement::Information, "\n%s", outputExpr.Buffer());
+ * }
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * This should print:
@@ -146,9 +149,8 @@ public:
 
     /**
      * @brief Default constructor.
-     * @param[in] stream is the stream containing the expression to be parsed.
-     * @param[out] databaseIn is the built StructuredData in output. (TODO remove)
-     * @param[out] err is the stream where error messages are printed to.
+     * @param[in]  stream is the stream containing the expression to be parsed.
+     * @param[out] err    is the stream where error messages are printed to (optional parameter).
      */
     MathExpressionParser(StreamI &stream,
                          BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
@@ -176,6 +178,8 @@ protected:
      *          the appropriate stack and is then responsible for popping
      *          it in the right order into the #stackMachineExpression
      *          so that the resulting expression is in RPN form.
+     *          The order in which push and pop methods are called is
+     *          specified in MathGrammar.ll
      */
     //@{
         /**
@@ -200,8 +204,9 @@ protected:
          * @brief   Pops alternative forms of operators.
          * @details Alternative version of PopOperator() in case of
          *          operators that have more than one meaning (e.g.
-         *          prefix `+` must be ignored, prefix `-` has a
-         *          different meaning with respect to infix `-` etc).
+         *          in `+ A - B` prefix `+` must be ignored, in `- A - B`
+         *          prefix `-` has a different meaning with respect
+         *          to infix `-` etc).
          */
         virtual void PopOperatorAlternate();
         
@@ -260,12 +265,12 @@ protected:
          *          then printed at the end of the #stackMachineExpr by
          *          the End() method. For example in:
          *          
-         *          <pre> ret = A + B </pre>
+         *          `ret = A + B`
          * 
          *          ret is stored, and later written at the end of the 
          *          #stackMachineExpr as
          * 
-         *          <pre> WRITE ret </pre>
+         *          `WRITE ret`
          */
         virtual void StoreAssignment();
         
@@ -287,22 +292,38 @@ protected:
      * @returns Operator in the form required by PseudoCode.h 
      * @details The stack machine expression is required to express
      *          functions as uppercase postfix string. This method 
-     *          transforms function names to uppercase, while leaving
-     *          operators as they are. As for now this functions is
-     *          a wrapper of StringHelper::ToUpper, but could be useful
-     *          in the future if operators need to be translated from
-     *          one form to another.
-     * 
-     * The infix expression `y = sin(x) + cos(x)` is translated as:
+     *          transforms function names to uppercase, and operators
+     *          in a corresponding uppercase string according to the 
+     *          following table:
      *          
-     *          ~~~~~~~~~
+     *          | Operator | String |
+     *          | :------: | :----- |
+     *          | &&       | AND    |
+     *          | \|\|     | OR     |
+     *          | ^        | XOR    |
+     *          | !        | NOT    |
+     *          | <        | LT     |
+     *          | >        | GT     |
+     *          | <=       | LTE    |
+     *          | >=       | GTE    |
+     *          | ==       | EQ     |
+     *          | !=       | NEQ    |
+     *          | +        | ADD    |
+     *          | -        | SUB    |
+     *          | *        | MUL    |
+     *          | /        | DIV    |
+     *          
+     *          For example, the infix expression `y = sin(x) + cos(x)`
+     *          is translated as:
+     *          
+     * ~~~~~~~~~~~~~~~~~
      *          READ x
      *          SIN
      *          READ x
      *          COS
-     *          +
+     *          ADD
      *          WRITE y
-     *          ~~~~~~~~~
+     * ~~~~~~~~~~~~~~~~~
      * 
      */
     const char8* OperatorFormatting(char8* const operatorIn) const;
