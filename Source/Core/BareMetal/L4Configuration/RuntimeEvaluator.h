@@ -284,7 +284,23 @@ struct RuntimeEvaluatorFunctions;
  * fashion. All operations rely on an internal stack: operands are
  * retrieved from the stack and results are placed in the stack.
  * 
- * Operations are executed by RuntimeEvaluatorFunctions, which is
+ * Working principle
+ * -----------------
+ * 
+ * RuntimeEvaluator scans the input stack machine code and the variable
+ * types. Combination of code and types during Compile() produces
+ * a list of calls to functions with specific types (the "pseudocode")
+ * that will be executed during Execute().
+ * Functions that will be called must be present in the #functionRecords
+ * array, an array that holds all the available functions that
+ * RuntimeEvaluator can call. #functionRecords is an array of
+ * RuntimeEvaluatorFunctions objects.
+ * 
+ * When RuntimeEvaluator executes an operation, it actually calls the
+ * corresponding function in #functionRecords, or better calls the
+ * RuntimeEvaluatorFunctions::ExecuteFunction() method of that function
+ * and passes itself to the method as the argument.
+ * The operation is then executed by RuntimeEvaluatorFunctions, which is
  * responsible for managing RuntimeEvaluator internal stack by using
  * Pop(), Push() and Peek() methods. See RuntimeEvaluatorFunctions
  * documentation for further details.
