@@ -35,51 +35,67 @@ uint32 availableFunctions = 0;
 RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
 
-bool RuntimeEvaluatorFunction::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize){
-    bool ret = false;
+ErrorManagement::ErrorType  RuntimeEvaluatorFunction::TryConsume(
+		CCString 									nameIn,
+		Stack<VariableDescriptor> &					typeStack,
+		bool 										matchOutput,
+		RuntimeEvaluatorInfo::DataMemoryAddress &	dataStackSize
+){
+    //bool ret = false;
+	ErrorManagement::ErrorType ret;
 
-    // match function name
-    ret = (name == nameIn);
+	// match function name
+    ret.comparisonFailure = !(name == nameIn);
+
+    VariableDescriptor vd;
 
     // match first output if matchOutput is set
     uint32 index = 0U;
     if (ret && matchOutput){
-        TypeDescriptor type;
-        ret = typeStack.Peek(index++,type);
-        if (ret){
-            ret = (type.SameAs(types[numberOfInputs]));
-        }
+        ret = typeStack.Peek(vd,index++);
+        COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
+    }
+
+    if (ret && matchOutput){
+        ret.comparisonFailure = !types[numberOfInputs].SameAs(vd);
     }
 
     // match inputs types
     for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
-        TypeDescriptor type;
-        ret = typeStack.Peek(index++,type);
+        ret = typeStack.Peek(vd,index++);
+        COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
         if (ret){
-            ret = (type.SameAs(types[i]));
+            ret.comparisonFailure = !vd.SameAs(types[i]);
         }
     }
 
     // found! commit changes
     if (ret){
 
-        // remove first output type
+    	// remove first output type
         if (matchOutput){
-            TypeDescriptor type;
-            typeStack.Pop(type);
+            VariableDescriptor vd;
+            ret = typeStack.Pop(vd);
+            REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
         }
 
         // remove inputs types
         for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
-            TypeDescriptor type;
-            typeStack.Pop(type);
-            dataStackSize -= ByteSizeToDataMemorySize(type.StorageSize());
+        	VariableDescriptor vd;
+            ret = typeStack.Pop(vd);
+            REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
+            if (ret){
+                dataStackSize -= ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
+            }
         }
 
         // insert output types
         for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
-            typeStack.Push(types[i+numberOfInputs]);
-            dataStackSize += ByteSizeToDataMemorySize(types[i+numberOfInputs].StorageSize());
+            ret = typeStack.Push(types[i+numberOfInputs]);
+            REPORT_ERROR(ret,"typeStack.Push(..) failed");
+            if (ret){
+                dataStackSize += ByteSizeToDataMemorySize(types[i+numberOfInputs].GetSummaryTypeDescriptor().StorageSize());
+            }
         }
     }
 
@@ -95,24 +111,43 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record){
     }
 }
 
-/**
- * find the correct PCode and updates the type in the typestack
- */
-bool FindPCodeAndUpdateTypeStack(RuntimeEvaluatorInfo::CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize){
+
+ErrorManagement::ErrorType  FindPCodeAndUpdateTypeStack(
+		RuntimeEvaluatorInfo::CodeMemoryElement &code,
+		CCString 								nameIn,
+		Stack<VariableDescriptor> &				typeStack,
+		bool 									matchOutput,
+		RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize
+){
+	ErrorManagement::ErrorType ret;
 
     RuntimeEvaluatorInfo::CodeMemoryElement i = 0;
-//printf("looking for %s within %i - %i funs\n",nameIn.GetList(),availableFunctions,maxFunctions);
 
-    bool found = false;
-    for (i=0; (!found) && (i < availableFunctions);i++ ){
-        found = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
-        if (found){
-            code = i;
+    for (i=0; ret && (i < availableFunctions);i++ ){
+    	/*
+    	{
+        	DynamicCString cs;
+        	CStringTool cst = cs();
+        	cst.Append(" types[0]=");
+        	functionRecords[i].types[0].ToString(cst);
+        	cst.Append(" types[").Append(functionRecords[i].numberOfInputs).Append("]=");
+        	functionRecords[i].types[functionRecords[i].numberOfInputs].ToString(cst);
+            COMPOSITE_REPORT_ERROR(ErrorManagement::Debug,i," = ",functionRecords[i].name, cs, "stackSize = ",typeStack.Size());
         }
+        */
+        ret = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
+        if (ret){
+            code = i;
+            // force exit
+            i = availableFunctions;
+        }
+
+        ret.comparisonFailure = false;
     }
 
-    return found;
+    return ret;
 }
+
 
 
 
@@ -127,7 +162,7 @@ bool FindPCodeAndUpdateTypeStack(RuntimeEvaluatorInfo::CodeMemoryElement &code, 
 
 
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
-    static const TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
+    static const VariableDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
     static const RuntimeEvaluatorFunction name ## type1 ## type2 ## _FunctionRecord={#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>}; \
     static class name ## type1 ## type2 ## RegisterClass { \
     public: name ## type1 ## type2 ## RegisterClass(){\

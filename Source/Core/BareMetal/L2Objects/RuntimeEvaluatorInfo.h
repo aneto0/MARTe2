@@ -34,7 +34,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeCharacteristics.h"
-#include "TypeDescriptor.h"
+#include "VariableDescriptor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -73,6 +73,11 @@ typedef CodeMemoryElement DataMemoryAddress;
 #define MAXDataMemoryAddress TypeCharacteristics<RuntimeEvaluatorInfo::DataMemoryAddress>::MaxValue()
 
 /**
+ * used to mark an address to be invalid
+ */
+#define InvalidCode TypeCharacteristics<RuntimeEvaluatorInfo::CodeMemoryElement>::MaxValue()
+
+/**
  *  Element for the list of variables
  */
 struct VariableInformation {
@@ -84,7 +89,7 @@ struct VariableInformation {
 	/**
 	 * type of the variable. Only simple and numeric types are possible
 	 */
-	TypeDescriptor 		type;
+	VariableDescriptor  type;
 
 	/**
 	 * location of the variable in the data area.
@@ -109,7 +114,7 @@ struct VariableInformation {
 	inline VariableInformation();
 
 	/**
-	 * copies
+	 *
 	 */
 	inline VariableInformation(const VariableInformation &in);
 };

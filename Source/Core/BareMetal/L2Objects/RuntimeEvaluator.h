@@ -40,6 +40,7 @@
 #include "TypeDescriptor.h"
 #include "CompositeErrorManagement.h"
 #include "RuntimeEvaluatorInfo.h"
+#include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -133,11 +134,6 @@ public:
          */
         debugMode,
 
-        /**
-         * allows single step execution
-         * external step counter must be maintained
-         */
-        singleStep
     };
 
     /**
@@ -145,9 +141,8 @@ public:
      * note that the inputs need to be loaded before calling execute
      * returns the combination of error flags reported by all the functions that were executed
      * debugStream is only used in debugMode. after every command execution a report is written to the stream
-     * step is only used in step mode. step value need to be initialised to 0 and maintained between calls
      */
-    ErrorManagement::ErrorType Execute(executionMode mode = fastMode, StreamI *debugStream=NULL_PTR(StreamI *), RuntimeEvaluatorInfo::CodeMemoryAddress *step=NULL);
+    ErrorManagement::ErrorType Execute(executionMode mode = fastMode, StreamI *debugStream=NULL_PTR(StreamI *));
 
     /**
      * Reconstruct the RPNCode with type information
@@ -291,18 +286,6 @@ private:
      */
     ErrorManagement::ErrorType FunctionRecordOutputs2String(RuntimeEvaluatorFunction &functionInformation,CStringTool &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
 
-#if 0
-    /**
-     * goes through all the input variables and copies from externalLocation if not NULL
-     */
-    void GatherInputs();
-
-    /**
-     * goes through all the input variables and copies to externalLocation if not NULL
-     */
-    void ScatterOutputs();
-#endif
-
     /**
      * the input variable names
      */
@@ -312,6 +295,11 @@ private:
      * the output variable names
      */
     List<RuntimeEvaluatorInfo::VariableInformation>          outputVariableInfo;
+
+    /**
+     * contains the memory used by large intermediate objects
+     */
+    List<Reference>											 largeObjectPool;
 
     /**
      * used by Push/Pop/Peek

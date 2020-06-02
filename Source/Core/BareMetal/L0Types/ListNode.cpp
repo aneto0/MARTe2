@@ -100,10 +100,10 @@ ErrorManagement::ErrorType ListNode::RemoveAfter(ListNode *&node, uint32 skipNo)
 	return ret;
 }
 
-ErrorManagement::ErrorType ListNode::Peek(ListNode *&node, uint32 skipNo){
+ErrorManagement::ErrorType ListNode::Peek(ListNode *&node, uint32 skipNo) const{
 	ErrorManagement::ErrorType ret;
 
-	ListNode *location = this;
+	const ListNode *location = this;
 
 	while ((skipNo > 0) && (ret)){
 		location = location->next;

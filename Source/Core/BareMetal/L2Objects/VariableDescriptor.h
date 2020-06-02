@@ -105,6 +105,14 @@ public:
      */
     VariableDescriptor(const TypeDescriptor &td, CCString modifierString=emptyString);
 
+
+    /**
+     * @brief compare two VariableDescriptors
+     * compares both TypeDescriptor using SameAs()
+     * and compare the two modifier strings to be an exact match
+     */
+    inline bool SameAs(const VariableDescriptor &compare) const;
+
     /**
      * @brief returns size of all the memory addressed by this variable.
      * @param[in] pointer, the pointer to the variable
@@ -581,6 +589,15 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+bool VariableDescriptor::SameAs(const VariableDescriptor &compare) const{
+	bool isSame = compare.typeDescriptor.SameAs(typeDescriptor);
+	if (isSame){
+		isSame = (compare.modifiers == modifiers);
+	}
+	return isSame;
+}
+
 
 template <class T>
 inline  VariableDescriptor::VariableDescriptor( T  x){

@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StaticStack.h"
+#include "Stack.h"
 #include "RuntimeEvaluatorInfo.h"
-#include "../RuntimeEvaluator.h"
+#include "RuntimeEvaluator.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -56,35 +56,39 @@ struct RuntimeEvaluatorFunction{
     /**
      *    The name of the functions as used in the RPN code
      */
-    CCString                 name;
+    CCString                 	name;
 
     /**
      * How many stack elements it will consume
      * !NOTE that for CONST
      */
-    uint16                  numberOfInputs;
+    uint16                  	numberOfInputs;
 
     /**
      * How many stack elements it will produce
      */
-    uint16                     numberOfOutputs;
+    uint16                     	numberOfOutputs;
 
     /**
      * array of types one for each input and output
      */
-    const TypeDescriptor *    types;
+    const VariableDescriptor *  types;
 
     /**
      * The function code itself
      */
-    Function                 ExecuteFunction;
+    Function                 	ExecuteFunction;
 
     /**
-     * returns true if the name and types matches
+     * @brief returns true if the name and types matches
      * on success replaces the type on the stack with the result type
      * also simulates variations on the dataStack
-     */
-    bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize);
+	 *  @param[out] code the address within functionRecords to the selected function
+	 *  @param[in] 	nameIn the function name to be matched
+	 *  @param[in] 	typeStack the current stack of input types which need to be matched, consumed and replaced with the outputType
+	 *  @param[in,out] dataStackSize the amount of space needed in the dataStack (it gets updated by this function upon match)
+	 */
+    ErrorManagement::ErrorType TryConsume(CCString nameIn,Stack<VariableDescriptor> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize);
 
 };
 
@@ -104,9 +108,20 @@ extern uint32 availableFunctions;
 extern RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
 /**
+ *  @brief Searches the list of functions for one matching the needs
+ *  @param[out] code the address within functionRecords to the selected function
+ *  @param[in] 	nameIn the function name to be matched
+ *  @param[in] 	typeStack the current stack of input types which need to be matched, consumed and replaced with the outputType
+ *  @param[out] dataStackSize the amount of space needed in the dataStack
  *
  */
-bool FindPCodeAndUpdateTypeStack(RuntimeEvaluatorInfo::CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize);
+ErrorManagement::ErrorType FindPCodeAndUpdateTypeStack(
+		RuntimeEvaluatorInfo::CodeMemoryElement &code,
+		CCString nameIn,
+		Stack<VariableDescriptor> &typeStack,
+		bool matchOutput,
+		RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize
+);
 
 /**
  * to register a function
@@ -117,7 +132,7 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record);
  * generates boiler plate code to register a function
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
-    static const TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
+    static const VariableDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
     static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function}; \
     static class name ## subName ## RegisterClass { \
     public: name ## subName ## RegisterClass(){\

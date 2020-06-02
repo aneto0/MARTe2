@@ -441,7 +441,7 @@ int main(){
 		fflush(stdout);
 		DynamicCString dcs;
 		CStringTool cst = dcs();
-		ret = context.Execute(RuntimeEvaluator::debugMode,&cst,0);
+		ret = context.Execute(RuntimeEvaluator::debugMode,&cst);
 		if (dcs.GetSize() > 0){
 			printf("%s\n",dcs.GetList());
 		}
@@ -458,7 +458,7 @@ int main(){
 				printf (".");
 				fflush(stdout);
 				for (int i = 0;(i<100000) && ret;i++) {
-					ret = context.Execute(RuntimeEvaluator::fastMode,NULL,0);
+					ret = context.Execute(RuntimeEvaluator::fastMode,NULL);
 				}
 			}
 		}
@@ -478,7 +478,7 @@ int main(){
 				printf (".");
 				fflush(stdout);
 				for (int i = 0;(i<100000) && ret;i++) {
-					ret = context.Execute(RuntimeEvaluator::safeMode,NULL,0);
+					ret = context.Execute(RuntimeEvaluator::safeMode,NULL);
 				}
 			}
 		}

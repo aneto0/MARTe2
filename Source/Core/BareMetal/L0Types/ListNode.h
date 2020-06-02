@@ -84,7 +84,7 @@ public:
 	 * return pointer to identified node .
 	 * @return illegalOperation if node->next is not NULL!
 	 */
-	ErrorManagement::ErrorType Peek(ListNode *&node, uint32 skipNo);
+	ErrorManagement::ErrorType Peek(ListNode *&node, uint32 skipNo) const;
 
 
 public:

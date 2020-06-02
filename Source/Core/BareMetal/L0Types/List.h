@@ -102,7 +102,7 @@ public:
 	 * @param[in] index the position of the requested element (0 means the first element).
 	 * @return a pointer to the element at index position.
 	 */
-	loadClass *operator[](const uint32 index);
+	loadClass *operator[](const uint32 index) const;
 
 	/**
 	 * @brief Returns the number of elements in the list.
@@ -175,7 +175,7 @@ ErrorManagement::ErrorType List<loadClass>::Remove( compatible &data, uint32 pos
 }
 
 template <class loadClass>
-loadClass *List<loadClass>::operator[](const uint32 index){
+loadClass *List<loadClass>::operator[](const uint32 index) const{
 	ListNode *savedNode = NULL_PTR(ListNode *);
 	/// the handling of new allocation failure is performed by ListGeneric
 	ErrorManagement::ErrorType ret;

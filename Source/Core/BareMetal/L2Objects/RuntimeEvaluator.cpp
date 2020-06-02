@@ -24,10 +24,12 @@
 #include <RuntimeEvaluator.h>
 #include <stdio.h>
 
+#include "Stack.h"
 #include "StaticStack.h"
 #include "AnyType.h"
 
 namespace MARTe{
+
 
 
 /**
@@ -205,7 +207,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
         // divide RPNCode into lines
         RPNCode = DynamicCString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
         finished = (line.GetSize()==0);
-//printf("LINE = %s\n",line.GetList());
         // extract command and parameter
         DynamicCString command;
         DynamicCString parameter1;
@@ -222,7 +223,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
 
         // now analyse the command
         if (command.GetSize() > 0){
-//            bool hasParameter = (parameter.GetSize()> 0);
 
             if (command == readToken){
                 ret.invalidOperation = !hasParameter1 || hasParameter2;
@@ -269,7 +269,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
                     td = TypeDescriptor(parameter1);
                     ret.unsupportedFeature = !td.IsNumericType();
                     COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " is not a numeric supported format");
-//printf("const type = %x\n",td.all);
                 }
                 // if supported add up the memory needs
                 if (ret){
@@ -305,7 +304,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
     uint32 index = 0;
     RuntimeEvaluatorInfo::VariableInformation *var;
     while(BrowseInputVariable(index,var) && ret){
-        ret.unsupportedFeature = !var->type.IsNumericType();
+        VariableDescriptor vd = var->type;
+    	TypeDescriptor td = vd.GetSummaryTypeDescriptor();
+        ret.unsupportedFeature = !td.IsNumericType();
         COMPOSITE_REPORT_ERROR(ret,"input variable ",var->name," has incompatible non-numeric type ");
 
         // skip constants are already allocated
@@ -313,7 +314,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             var->location = nextVariableAddress;
             if (var->externalLocation == NULL){
                 // if NULL variable is in DataMemory
-                nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+                nextVariableAddress += ByteSizeToDataMemorySize(td.StorageSize());
             } else {
             	// variable address is in DataMemory
                 nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
@@ -329,14 +330,16 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             var->location = nextVariableAddress;
             nextVariableAddress += ByteSizeToDataMemorySize(sizeof(double));
     	} else {
-            ret.unsupportedFeature = !var->type.IsNumericType();
+            VariableDescriptor vd = var->type;
+        	TypeDescriptor td = vd.GetSummaryTypeDescriptor();
+            ret.unsupportedFeature = !td.IsNumericType();
             COMPOSITE_REPORT_ERROR(ret,"output variable ",var->name," has incompatible non-numeric type ");
 
             if (ret){
                 var->location = nextVariableAddress;
                 if (var->externalLocation == NULL){
                     // if NULL variable is in DataMemory
-                    nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+                    nextVariableAddress += ByteSizeToDataMemorySize(td.StorageSize());
                 } else {
                 	// variable address is in DataMemory
                     nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
@@ -352,7 +355,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
     variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
 
     // initialise compilation memory
-    StaticStack<TypeDescriptor,32> typeStack;
+//    StaticStack<TypeDescriptor,32> typeStack;
+    Stack<VariableDescriptor> typeStack;
     RuntimeEvaluatorInfo::DataMemoryAddress maxDataStackSize = 0;    // max value of dataStackSize
     RuntimeEvaluatorInfo::DataMemoryAddress dataStackSize = 0;       // current simulated value of data stack size
 //    startOfVariables = 0;                      // for now no constants - so variables start at 0
@@ -390,7 +394,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             RuntimeEvaluatorInfo::CodeMemoryElement code2 = TypeCharacteristics<RuntimeEvaluatorInfo::CodeMemoryElement>::MaxValue();
             bool matchOutput = false;
 
-
+            if (command == remoteReadToken){
+            	ret.syntaxError = true;
+                REPORT_ERROR(ret,"RRRITE command is reserved and cannot be used");
+            } else
+            if (command == remoteWriteToken){
+            	ret.syntaxError = true;
+                REPORT_ERROR(ret,"RWRITE command is reserved and cannot be used");
+            } else
             // PROCESS CAST command
             // PUSH type(parameter1) --> TypeStack
             // matchOutput = true;
@@ -406,7 +417,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " is not a numeric supported format");
 
                     if (ret){
-                        ret.fatalError = !typeStack.Push(td);
+                    	VariableDescriptor vd(td);
+                        ret.fatalError = !typeStack.Push(vd);
                         REPORT_ERROR(ret,"failed to push type into stack");
                     }
 
@@ -424,7 +436,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             // assign code2 to address of variable
             if (command == writeToken){
                 ret.invalidOperation = !hasParameter1 || hasParameter2;
-//                ret.invalidOperation = !hasParameter1;
                 COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
 
                 RuntimeEvaluatorInfo::VariableInformation *variableInformation = NULL_PTR(RuntimeEvaluatorInfo::VariableInformation *);
@@ -442,26 +453,24 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     }
                 }
 
-                TypeDescriptor td = InvalidType(0);
+                VariableDescriptor vd;
                 if (ret){
-                    td = variableInformation->type;
+                    vd = variableInformation->type;
 
                     // found local variable - allocate and give type here
-                	if (td.SameAs(VoidType) && (variableInformation->externalLocation == NULL)){
-                		ret.fatalError = !typeStack.Peek(0,td);
+                	if (vd.SameAs(VariableDescriptor(VoidType)) && (variableInformation->externalLocation == NULL)){
+                		ret = typeStack.Peek(vd,0);
                         REPORT_ERROR(ret,"expecting source type in stack");
-                        variableInformation->type = td;
+                        variableInformation->type = vd;
                 	} else {
-                        ret.unsupportedFeature = !td.IsNumericType();
+                        ret.unsupportedFeature = !vd.GetSummaryTypeDescriptor().IsNumericType();
                         COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1, "does not have a numeric supported format");
                 	}
                 }
 
                 if (ret){
-//printf("Stack[%i].Push(%x) -->",typeStack.GetSize(),td.all);
-                    ret.fatalError = !typeStack.Push(td);
+                    ret = typeStack.Push(vd);
                     REPORT_ERROR(ret,"failed to push type into stack");
-//printf("Stack[%i] \n",typeStack.GetSize());
                 }
 
                 if (ret){
@@ -481,7 +490,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             // assign code2 to address of variable
             if (command == readToken){
                 ret.invalidOperation = !hasParameter1 || hasParameter2;
-//               ret.invalidOperation = !hasParameter1;
                 COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
 
                 RuntimeEvaluatorInfo::VariableInformation *variableInformation = NULL_PTR(RuntimeEvaluatorInfo::VariableInformation *);
@@ -509,15 +517,16 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     }
                 }
 
-                TypeDescriptor td = InvalidType(0);
+                VariableDescriptor vd;
                 if (ret){
-                    td = variableInformation->type;
+                    vd = variableInformation->type;
+                    TypeDescriptor td;
+                    td = vd.GetSummaryTypeDescriptor();
                     ret.unsupportedFeature = !td.IsNumericType();
                     COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1, "does not have a numeric supported format");
                 }
-//printf("read %s type = %x  type = %x\n",variableInformation->name.GetList(),td.all,variableInformation->type.all);
                 if (ret){
-                    ret.fatalError = !typeStack.Push(td);
+                    ret.fatalError = !typeStack.Push(vd);
                     REPORT_ERROR(ret,"failed to push type into stack");
                 }
 
@@ -533,7 +542,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             // matchOutput = true;
             // create AnyType and convert constant from string to variable memory
             // assign code2 to address of constant
-            // command = READ
+            // command = CONST
             if (command == constToken){
 //                bool hasParameter2 = (parameter2.GetSize()> 0);
 
@@ -559,7 +568,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                 }
 
                 if (ret){
-                    ret.fatalError = !typeStack.Push(td);
+                	VariableDescriptor vd(td);
+                    ret.fatalError = !typeStack.Push(VariableDescriptor(vd));
                     REPORT_ERROR(ret,"failed to push type into stack");
                 }
 
@@ -572,29 +582,35 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                 }
             }
 
-            RuntimeEvaluatorInfo::CodeMemoryElement code = 0;
+            RuntimeEvaluatorInfo::CodeMemoryElement code = InvalidCode;
             if (ret){
-                ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command,typeStack,matchOutput,dataStackSize);
-                if (!ret){
-                    DynamicCString typeList;
+                // prepare a description of the type and stack to have a nice reporting of error
+                DynamicCString typeList;
+                {
                     CStringTool cst = typeList();
                     uint32 n2scan = 2;
                     if (matchOutput) {
                         n2scan++;
                     }
                     cst.Append('[');
-                    for(uint32 index = 0;index < n2scan;index++){
-                        if (index > 0){
-                            cst.Append('|');
+                    ErrorManagement::ErrorType ret2;
+                    for(uint32 index = 0;(index < n2scan)&& ret2;index++){
+                        VariableDescriptor vd;
+                        ret2 = typeStack.Peek(vd,index);
+                        if (ret){
+                            if (index > 0){
+                                cst.Append('|');
+                            }
+                        	vd.ToString(cst);
                         }
-                        TypeDescriptor td;
-                        typeStack.Peek(index,td);
-                        td.ToString(cst);
                     }
                     cst.Append(']');
-                    COMPOSITE_REPORT_ERROR(ret,"command ",command, "(",typeList,") not found");
                 }
-//printf("after %s %i elements in dataStack\n ",command.GetList(),dataStackSize);
+
+            	ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command,typeStack,matchOutput,dataStackSize);
+//                COMPOSITE_REPORT_ERROR(ErrorManagement::UnsupportedFeature,"command ",command, "(",typeList,") not found");
+                COMPOSITE_REPORT_ERROR(ret,"command ",command, "(",typeList,") not found");
+
             }
 
             // finally compile!
@@ -630,8 +646,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
 
     // check that the TypeStack is empty
     if (ret){
-        ret.internalSetupError = (typeStack.GetSize() > 0);
-        COMPOSITE_REPORT_ERROR(ret,"operation sequence is incomplete: ",typeStack.GetSize()," data left in stack");
+        ret.internalSetupError = (typeStack.Size() > 0);
+        COMPOSITE_REPORT_ERROR(ret,"operation sequence is incomplete: ",typeStack.Size()," data left in stack");
     }
 
     return ret;
@@ -658,7 +674,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
 
     if (showData || showTypes){
         for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
-            TypeDescriptor td = functionInformation.types[i];
+            VariableDescriptor vd = functionInformation.types[i];
 
             if (i!=0) {
                 cst.Append(',');
@@ -669,15 +685,16 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
                 cst.Append('(');
             }
             if (showTypes){
-                 ret.fatalError = !td.ToString(cst);
+                 ret.fatalError = !vd.ToString(cst);
             }
             if (showData && showTypes){
                 cst.Append(')');
             }
             if (showData){
-                dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
+
+                dataStackIndex += ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
                 DynamicCString value;
-                AnyType src(td,stackPtr - dataStackIndex);
+                AnyType src(vd,stackPtr - dataStackIndex);
                 AnyType dest(value);
                 ret = src.CopyTo(dest);
 
@@ -744,7 +761,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
 
     if (showData || showTypes){
         for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
-            TypeDescriptor td = functionInformation.types[i+functionInformation.numberOfInputs];
+            VariableDescriptor vd = functionInformation.types[i+functionInformation.numberOfInputs];
             if (i!=0) {
                 cst.Append(',');
             } else {
@@ -754,16 +771,15 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
                 cst.Append('(');
             }
             if (showTypes){
-                ret.fatalError = !td.ToString(cst);
+                ret.fatalError = !vd.ToString(cst);
             }
             if (showData && showTypes){
                 cst.Append(')');
             }
             if (showData){
-                dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
-//cst.Append('[').Append(dataStackIndex).Append(']');
+                dataStackIndex += ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
                 DynamicCString value;
-                AnyType src(td,stackPtr - dataStackIndex);
+                AnyType src(vd,stackPtr - dataStackIndex);
                 AnyType dest(value);
                 ret = src.CopyTo(dest);
 
@@ -777,7 +793,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI *debugStream,RuntimeEvaluatorInfo::CodeMemoryAddress *step){
+ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI *debugStream){
 
     stackPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement*>(stack.GetDataPointer());
 
@@ -806,7 +822,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
             runtimeError.outOfRange = ((stackPtr > stackMaxPtr) ||  (stackPtr < stackMinPtr));
             COMPOSITE_REPORT_ERROR(runtimeError,"stack over/under flow ", (int64)(stackPtr-stackMinPtr), " [0 - ", (int64)(stackMaxPtr- stackMinPtr), "]");
         }
-        runtimeError.notCompleted = (codeMemoryPtr < codeMemoryMaxPtr);
+        runtimeError.notCompleted = runtimeError.notCompleted || (codeMemoryPtr < codeMemoryMaxPtr);
         REPORT_ERROR(runtimeError,"code execution interrupted");
     }break;
     case debugMode:
