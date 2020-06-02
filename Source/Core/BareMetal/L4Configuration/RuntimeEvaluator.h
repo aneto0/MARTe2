@@ -333,6 +333,31 @@ struct RuntimeEvaluatorFunctions;
  * | `COS`            | Cosine operation on the top of the stack                               |
  * | `POW`            | Power operation between top two elements of the stack                  |
  *  
+ * Adding new functions
+ * --------------------
+ * 
+ * New operations can be made available to RuntimeEvaluator by
+ * adding functions to the #functionRecords as follows:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * 
+ * void NewAddition(RuntimeEvaluator &evaluator) {
+ * float32 x1,x2,x3;
+ * evaluator.Pop(x1);
+ * evaluator.Pop(x2);
+ * x3 = x2 + x1;
+ * evaluator.Push(x3);
+ * }
+ * 
+ * TypeDescriptor types[] = {Float32Bit, Float32Bit, Float32Bit};
+ * RuntimeEvaluatorFunctions newAddition("NEWADD", 2, 1, types, NewAddition);
+ * RegisterFunction(newAddition);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * The function above pops two float32 element from the stack,
+ * sum them and then pushes the result to the stack. Upon `RegisterFunction`ing
+ * the function, the function itself becomes available to the RuntimeEvaluator
+ * by using the command `NEWADD`.
  * 
  */
 class RuntimeEvaluator {
