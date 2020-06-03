@@ -152,6 +152,44 @@ The :vcisdoxygencl:`IntrospectionStructure` class can also be used to dynamicall
        }
        ...
 
+Preprocessing
+-------------
+
+The MARTe configuration files can be preprocessed using the ``C`` preprocessor directives (e.g. ``#include`` and ``#define``). 
+
+This strategy can be used to write modular configuration settings (see example below). Note that the files must first be processed with a ``Makefile.inc`` and a ``Makefile.cfg``, following the MARTe Makefile structure:
+
+.. code-block:: makefile
+   :caption: Makefile.inc 
+
+    #Named of the unit files to be compiled. It will generate files named *_Gen.cfg (e.g. RTApp-6_Gen.cfg)
+    OBJSX=RTApp-6.x
+
+    #Location of the Build directory where the configuration file will be written to
+    BUILD_DIR?=.
+
+    #Location of the MakeDefaults directory.
+    #Note that the MARTe2_DIR environment variable
+    #must have been exported before
+    MAKEDEFAULTDIR=$(MARTe2_DIR)/MakeDefaults
+
+    include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+    CFLAGS += -DENABLE_WEB_BROWSING
+
+    all: $(OBJS) 
+        echo  $(OBJS)
+
+    include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
+.. code-block:: makefile
+   :caption: Makefile.cfg
+
+    export TARGET=cfg
+
+    include Makefile.inc
+
+
 Examples
 --------
 
@@ -190,3 +228,15 @@ Similar to the example below but the structures are registered using the configu
    :emphasize-lines: 190-203,206-212
    
 Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.
+
+Example on how to preprocess complex configuration files:
+
+.. literalinclude:: /_static/examples/Configurations/RTApp-6.cfg
+   :language: c++ 
+   :caption: Example of a configuration file that includes other configuration files.
+   :linenos:  
+
+.. literalinclude:: /_static/examples/Configurations/Makefile.inc
+   :language: makefile
+   :linenos:  
+ 
