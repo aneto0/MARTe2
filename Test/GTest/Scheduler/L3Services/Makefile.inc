@@ -30,7 +30,8 @@ OBJSX=  EmbeddedServiceMethodBinderTGTest.x \
     MultiClientEmbeddedThreadGTest.x \
     MultiClientServiceGTest.x \
     MultiThreadServiceGTest.x \
-    SingleThreadServiceGTest.x
+    SingleThreadServiceGTest.x \
+    ThreadsInformationQueryGTest.x
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..

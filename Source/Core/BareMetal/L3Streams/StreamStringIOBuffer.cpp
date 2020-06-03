@@ -64,6 +64,10 @@ bool StreamStringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
     ret = SetBufferHeapMemory(desiredSize + 1U, 1U);
 
     if (ret) {
+        if (desiredSize < UsedSize()) {
+            SetUsedSize(desiredSize);
+        }
+
         Terminate();
     }
 

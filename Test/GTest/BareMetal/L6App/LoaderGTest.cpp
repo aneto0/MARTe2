@@ -39,72 +39,92 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(LoaderGTest,TestConstructor) {
+TEST(BareMetal_L6App_LoaderGTest,TestConstructor) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(LoaderGTest,TestConfigure) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure());
 }
 
-TEST(LoaderGTest,TestConfigure_CPUs) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_CPUs) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_CPUs());
 }
 
-TEST(LoaderGTest,TestConfigure_Json) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_Json) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_Json());
 }
 
-TEST(LoaderGTest,TestConfigure_Xml) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_Xml) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_Xml());
 }
 
-TEST(LoaderGTest,TestConfigure_False_BadParser) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_False_BadParser) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_False_BadParser());
 }
 
-TEST(LoaderGTest,TestConfigure_False_FailedConfiguration) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_False_FailedConfiguration) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_False_FailedConfiguration());
 }
 
-TEST(LoaderGTest,TestConfigure_False_FailedParser) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_False_FailedParser) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_False_FailedParser());
 }
 
-TEST(LoaderGTest,TestConfigure_False_NoParser) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_False_NoParser) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_False_NoParser());
 }
 
-TEST(LoaderGTest,TestConfigure_False_FailedMessageFunction) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_False_FailedMessageFunction) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_False_FailedMessageFunction());
 }
 
-TEST(LoaderGTest,TestStart) {
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_BuildTokens) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_BuildTokens());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_BuildTokens_False) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_BuildTokens_False());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_DomainTokens) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_DomainTokens());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_DomainTokens_False) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_DomainTokens_False());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestStart) {
     LoaderTest test;
     ASSERT_TRUE(test.TestStart());
 }
 
-TEST(LoaderGTest,TestStart_NoMessage) {
+TEST(BareMetal_L6App_LoaderGTest,TestStart_NoMessage) {
     LoaderTest test;
     ASSERT_TRUE(test.TestStart_NoMessage());
 }
 
-TEST(LoaderGTest,TestStart_WrongMessage) {
+TEST(BareMetal_L6App_LoaderGTest,TestStart_WrongMessage) {
     LoaderTest test;
     ASSERT_TRUE(test.TestStart_WrongMessage());
 }
 
-TEST(LoaderGTest,TestStop) {
+TEST(BareMetal_L6App_LoaderGTest,TestStop) {
     LoaderTest test;
     ASSERT_TRUE(test.TestStop());
 }

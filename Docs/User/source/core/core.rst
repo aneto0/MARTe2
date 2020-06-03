@@ -34,6 +34,7 @@ The core library API can be found `here <https://vcis-jenkins.f4e.europa.eu/job/
    gams/rtapp
    scheduling/services
    scheduling/threads
+   http/http
    app/app
    examples
    

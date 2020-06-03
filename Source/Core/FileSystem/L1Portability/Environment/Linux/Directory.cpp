@@ -168,7 +168,7 @@ bool Directory::Create(const bool isFile) {
     if (ret) {
         if (isFile) {
             /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-21]  [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
-            int32 fd = open(fname, static_cast<mode_t>(00777 | O_EXCL | O_CREAT | O_WRONLY | O_TRUNC));
+            int32 fd = open(fname, static_cast<mode_t>(00777 | O_EXCL | O_CREAT | O_WRONLY | O_TRUNC), (S_IRWXU | S_IRWXG | S_IRWXO));
             if (fd < 0) {
                 ret = false;
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed creat()");

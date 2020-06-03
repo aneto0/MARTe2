@@ -151,6 +151,27 @@ const DesiredAction PrintInfo = 5u;
 const DesiredAction PrintStruct = 6u;
 
 /**
+ * Enumeration-like type for encoding the desired printing grammar
+ */
+typedef uint4 DesiredGrammar;
+
+/**
+ * Print in the standard MARTe grammar
+ */
+const DesiredGrammar PrintInStandardGrammar = 0u;
+
+/**
+ * Print using the json grammar
+ */
+const DesiredGrammar PrintInJsonGrammar = 1u;
+
+/**
+ * Print using the XML grammar
+ */
+const DesiredGrammar PrintInXMLGrammar = 2u;
+
+
+/**
  * @brief Definition of a format descriptor.
  * @details This class is used to describe the output format of a variable.\n
  * The format representation is made by:
@@ -165,7 +186,7 @@ const DesiredAction PrintStruct = 6u;
  * in a printf-like fashion.
  *
  * @remark The FormatDescriptor is internally represented as a 32-bit bitfield-like union with the following structure:
- * | size   | precision  | padded  | leftAligned | floatNotation | binaryNotation | binaryPadded | fullNotation | desiredAction | spareBits |
+ * | size   | precision  | padded  | leftAligned | floatNotation | binaryNotation | binaryPadded | fullNotation | desiredAction | desiredGrammar |
  * | :----: | :----:     | :----:  | :----:      | :----:        | :----:         | :----:       | :----:       | :----:        | :----:    |
  * |  8     | 8          | 1       | 1           | 3             | 2              | 1            | 1            | 3             | 4         |
  */
@@ -188,7 +209,7 @@ public:
      *   - ' ': activates padding (fills up to width using spaces);
      *   - '-': left-align (put padding spaces after printing the object);
      *   - '#': activates fullNotation, i.e.:
-     *     - + in front of integers
+     *     - " enclosing strings
      *     - 0x/0b/0o in front of Hex/octal/binary
      *   - '0': prepends zeros for Hex Octal and Binary notations.\n
      *     The number of zeros depends on precision and chosen notation (64 bit int and binary notation = up to 64 zeros)
@@ -354,10 +375,15 @@ public:
          */
         BitRange<uint32, 3u, 25u> desiredAction;
 
+
         /**
-         * Extra bits.
+         * Specifies the desired grammar, i.e:
+         *   Standart MARTe grammar
+         *   Json grammar
+         *   XML grammar
          */
-        BitRange<uint32, 4u, 28u> spareBits;
+        BitRange<uint32, 4u, 28u> desiredGrammar;
+
 
     };
 
@@ -388,7 +414,7 @@ FormatDescriptor::FormatDescriptor() {
     binaryNotation = DecimalNotation;
     binaryPadded = false;
     fullNotation = false;
-    spareBits = 0u;
+    desiredGrammar = 0u;
 }
 
 FormatDescriptor::FormatDescriptor(const uint32 x) {
@@ -421,7 +447,7 @@ FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
     binaryNotation = binaryNotationToSet;
     binaryPadded = isBinaryPadded;
     fullNotation = isFullNotation;
-    spareBits = 0u;
+    desiredGrammar = 0u;
 }
 
 }

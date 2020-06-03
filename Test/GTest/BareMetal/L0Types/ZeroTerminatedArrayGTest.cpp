@@ -46,245 +46,245 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_char8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_char8) {
     ZeroTerminatedArrayTest<char8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_int8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_int8) {
     ZeroTerminatedArrayTest<int8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_uint8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_uint8) {
     ZeroTerminatedArrayTest<uint8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_int16) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_int16) {
     ZeroTerminatedArrayTest<int16> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_uint16) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_uint16) {
     ZeroTerminatedArrayTest<uint16> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_int32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_int32) {
     ZeroTerminatedArrayTest<int32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_uint32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_uint32) {
     ZeroTerminatedArrayTest<uint32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_int64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_int64) {
     ZeroTerminatedArrayTest<int64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_uint64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_uint64) {
     ZeroTerminatedArrayTest<uint64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_float32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_float32) {
     ZeroTerminatedArrayTest<float32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestConstructor_float64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestConstructor_float64) {
     ZeroTerminatedArrayTest<float64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_char8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_char8) {
     ZeroTerminatedArrayTest<char8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_int8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_int8) {
     ZeroTerminatedArrayTest<int8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_uint8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_uint8) {
     ZeroTerminatedArrayTest<uint8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_int16) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_int16) {
     ZeroTerminatedArrayTest<int16> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_uint16) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_uint16) {
     ZeroTerminatedArrayTest<uint16> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_int32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_int32) {
     ZeroTerminatedArrayTest<int32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_uint32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_uint32) {
     ZeroTerminatedArrayTest<uint32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_int64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_int64) {
     ZeroTerminatedArrayTest<int64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_uint64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_uint64) {
     ZeroTerminatedArrayTest<uint64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_float32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_float32) {
     ZeroTerminatedArrayTest<float32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestSubscriptOperator());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestSubscriptOperator_float64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestSubscriptOperator_float64) {
     ZeroTerminatedArrayTest<float64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestConstructor());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_char8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_char8) {
     ZeroTerminatedArrayTest<char8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_int8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_int8) {
     ZeroTerminatedArrayTest<int8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_uint8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_uint8) {
     ZeroTerminatedArrayTest<uint8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_int16) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_int16) {
     ZeroTerminatedArrayTest<int16> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_uint16) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_uint16) {
     ZeroTerminatedArrayTest<uint16> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_int32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_int32) {
     ZeroTerminatedArrayTest<int32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_uint32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_uint32) {
     ZeroTerminatedArrayTest<uint32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_int64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_int64) {
     ZeroTerminatedArrayTest<int64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_uint64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_uint64) {
     ZeroTerminatedArrayTest<uint64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_float32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_float32) {
     ZeroTerminatedArrayTest<float32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetSize_float64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetSize_float64) {
     ZeroTerminatedArrayTest<float64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetSize());
 }
 
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_char8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_char8) {
     ZeroTerminatedArrayTest<char8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_int8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_int8) {
     ZeroTerminatedArrayTest<int8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_uint8) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_uint8) {
     ZeroTerminatedArrayTest<uint8> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_int16) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_int16) {
     ZeroTerminatedArrayTest<int16> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_uint16) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_uint16) {
     ZeroTerminatedArrayTest<uint16> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_int32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_int32) {
     ZeroTerminatedArrayTest<int32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_uint32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_uint32) {
     ZeroTerminatedArrayTest<uint32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_int64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_int64) {
     ZeroTerminatedArrayTest<int64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_uint64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_uint64) {
     ZeroTerminatedArrayTest<uint64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_float32) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_float32) {
     ZeroTerminatedArrayTest<float32> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }
 
 
-TEST(ZeroTerminatedArrayGTest,TestGetList_float64) {
+TEST(BareMetal_L0Types_ZeroTerminatedArrayGTest,TestGetList_float64) {
     ZeroTerminatedArrayTest<float64> ztArrayTest;
     ASSERT_TRUE(ztArrayTest.TestGetList());
 }

@@ -80,14 +80,13 @@ DECLARE_STRUCT_INTROSPECTION(TestIOBufferIntrospectionStructure, fields);
 
 class TestIOBufferNotIntrospectable: public Object {
 public:
-    CLASS_REGISTER_DECLARATION()
-    uint32 member1;
+    CLASS_REGISTER_DECLARATION()uint32 member1;
     float32 *member2;
     float64 member3[32];
     const char8 * member4[2][2];
 };
 
-CLASS_REGISTER(TestIOBufferNotIntrospectable,"1.0")
+CLASS_REGISTER(TestIOBufferNotIntrospectable, "1.0")
 
 //static ClassProperties TestIOBufferNotIntrospectable_prop("TestIOBufferNotIntrospectable", "TestIOBufferNotIntrospectable", "1.0");
 //static ClassRegistryItem TestIOBufferNotIntrospectable_item(TestIOBufferNotIntrospectable_prop, (ObjectBuildFn*) NULL);
@@ -796,7 +795,7 @@ bool IOBufferTest::TestRelativeSeek(uint32 initialPos,
     }
     else {
         if (delta >= 0) {
-            if (ioBuffer.Position() != (uint32) (usedSize)) {
+            if (ioBuffer.Position() != (uint32)(usedSize)) {
                 return false;
             }
         }
@@ -1367,6 +1366,7 @@ bool IOBufferTest::TestPrintFormatted_Stream() {
         AnyType toPrint = stream;
         ioBuffer.PrintFormatted(printfStreamTable[i][0], &toPrint);
         if (StringHelper::Compare(ioBuffer.Buffer(), printfStreamTable[i][2]) != 0) {
+            printf("|%s| |%s|", ioBuffer.Buffer(), printfStreamTable[i][2]);
             return false;
         }
         stream.FlushAndResync();
@@ -1695,39 +1695,112 @@ bool IOBufferTest::TestPrintFormattedIntrospection() {
     TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
     AnyType at(myType, 0, (void*) &myStruct);
     IOBuffer ioBuffer;
-    uint32 allocationSize = 600;
+    uint32 allocationSize = 1200;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
     ioBuffer.PrintFormatted("%?", &at);
     const char8* test = "\r\nTestIOBufferIntrospectionStructure = {\r\n"
             "    member1 = {\r\n"
-            "        type = uint32\r\n"
+            "        type = \"uint32\"\r\n"
             "        modifiers = \"\"\r\n"
             "        attributes = \"\"\r\n"
             "    }\r\n"
             "    member2 = {\r\n"
-            "        type = float32\r\n"
+            "        type = \"float32\"\r\n"
             "        modifiers = \"*\"\r\n"
             "        attributes = \"\"\r\n"
             "    }\r\n"
             "    member3 = {\r\n"
-            "        type = float64\r\n"
+            "        type = \"float64\"\r\n"
             "        modifiers = \"[32]\"\r\n"
             "        attributes = \"\"\r\n"
             "    }\r\n"
             "    member4 = {\r\n"
-            "        type = string\r\n"
+            "        type = \"string\"\r\n"
             "        modifiers = \"[2][2]\"\r\n"
             "        attributes = \"\"\r\n"
             "    }\r\n"
             "    member5 = {\r\n"
-            "        type = TestIOBufferIntrospectionNestedStructure\r\n"
+            "        type = \"TestIOBufferIntrospectionNestedStructure\"\r\n"
             "        modifiers = \"\"\r\n"
             "        attributes = \"\"\r\n"
             "    }\r\n"
             "}\r\n";
 
-    return StringHelper::Compare(ioBuffer.Buffer(), test) == 0;
+    printf("\n|%s||%s|\n", ioBuffer.Buffer(), test);
+    bool ret = (StringHelper::Compare(ioBuffer.Buffer(), test) == 0);
+    if (ret) {
+        Clear(ioBuffer);
+        ioBuffer.Seek(0);
+        ioBuffer.PrintFormatted("%J?", &at);
+
+        const char8* test1 = "\r\n\"TestIOBufferIntrospectionStructure\": {\r\n"
+                "    \"member1\": {\r\n"
+                "        \"type\": \"uint32\",\r\n"
+                "        \"modifiers\": \"\",\r\n"
+                "        \"attributes\": \"\"\r\n"
+                "    },\r\n"
+                "    \"member2\": {\r\n"
+                "        \"type\": \"float32\",\r\n"
+                "        \"modifiers\": \"*\",\r\n"
+                "        \"attributes\": \"\"\r\n"
+                "    },\r\n"
+                "    \"member3\": {\r\n"
+                "        \"type\": \"float64\",\r\n"
+                "        \"modifiers\": \"[32]\",\r\n"
+                "        \"attributes\": \"\"\r\n"
+                "    },\r\n"
+                "    \"member4\": {\r\n"
+                "        \"type\": \"string\",\r\n"
+                "        \"modifiers\": \"[2][2]\",\r\n"
+                "        \"attributes\": \"\"\r\n"
+                "    },\r\n"
+                "    \"member5\": {\r\n"
+                "        \"type\": \"TestIOBufferIntrospectionNestedStructure\",\r\n"
+                "        \"modifiers\": \"\",\r\n"
+                "        \"attributes\": \"\"\r\n"
+                "    }\r\n"
+                "}\r\n";
+        printf("\n|%s||%s|\n", ioBuffer.Buffer(), test1);
+        ret = (StringHelper::Compare(ioBuffer.Buffer(), test1) == 0);
+    }
+
+    if (ret) {
+        Clear(ioBuffer);
+        ioBuffer.Seek(0);
+        ioBuffer.PrintFormatted("%X?", &at);
+
+        const char8* test2 = "\r\n<TestIOBufferIntrospectionStructure>\r\n"
+                "    <member1>\r\n"
+                "        <type> \"uint32\"</type>\r\n"
+                "        <modifiers> \"\"</modifiers>\r\n"
+                "        <attributes> \"\"</attributes>\r\n"
+                "    </member1>\r\n"
+                "    <member2>\r\n"
+                "        <type> \"float32\"</type>\r\n"
+                "        <modifiers> \"*\"</modifiers>\r\n"
+                "        <attributes> \"\"</attributes>\r\n"
+                "    </member2>\r\n"
+                "    <member3>\r\n"
+                "        <type> \"float64\"</type>\r\n"
+                "        <modifiers> \"[32]\"</modifiers>\r\n"
+                "        <attributes> \"\"</attributes>\r\n"
+                "    </member3>\r\n"
+                "    <member4>\r\n"
+                "        <type> \"string\"</type>\r\n"
+                "        <modifiers> \"[2][2]\"</modifiers>\r\n"
+                "        <attributes> \"\"</attributes>\r\n"
+                "    </member4>\r\n"
+                "    <member5>\r\n"
+                "        <type> \"TestIOBufferIntrospectionNestedStructure\"</type>\r\n"
+                "        <modifiers> \"\"</modifiers>\r\n"
+                "        <attributes> \"\"</attributes>\r\n"
+                "    </member5>\r\n"
+                "</TestIOBufferIntrospectionStructure>\r\n";
+        printf("\n|%s||%s|\n", ioBuffer.Buffer(), test2);
+        ret = (StringHelper::Compare(ioBuffer.Buffer(), test2) == 0);
+    }
+    return ret;
 }
 
 bool IOBufferTest::TestPrintFormattedObject() {
@@ -1747,27 +1820,73 @@ bool IOBufferTest::TestPrintFormattedObject() {
     TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
     AnyType at(myType, 0, (void*) &myStruct);
     IOBuffer ioBuffer;
-    uint32 allocationSize = 600;
+    uint32 allocationSize = 1200;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
     ioBuffer.PrintFormatted("%@", &at);
 
-    StreamString test = "\r\nClass = TestIOBufferIntrospectionStructure\r\n"
+    StreamString test = "\r\nClass = \"TestIOBufferIntrospectionStructure\"\r\n"
             "member1 = 1\r\n"
             "member2 = ";
-    test.Printf("%x\r\n", ((void*) myStruct.member2));
+    test.Printf("%#x\r\n", ((void*) myStruct.member2));
     test +=
             "member3 = { 0 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 7.000000 8.000000 9.000000 10.000000 11.000000 12.000000 13.000000 14.000000 15.000000 16.000000 17.000000 18.000000 19.000000 20.000000 21.000000 22.000000 23.000000 24.000000 25.000000 26.000000 27.000000 28.000000 29.000000 30.000000 31.000000 } \r\n"
-                    "member4 = { { 4 5 } { 6 7 } } \r\n"
+                    "member4 = { { \"4\" \"5\" } { \"6\" \"7\" } } \r\n"
                     "member5 = {\r\n\r\n"
 
-                    "Class = TestIOBufferIntrospectionNestedStructure\r\n"
+                    "Class = \"TestIOBufferIntrospectionNestedStructure\"\r\n"
                     "nestedMember1 = 5\r\n"
-                    "nestedMember2 = Hello\r\n\r\n"
-
+                    "nestedMember2 = \"Hello\"\r\n"
                     "}\r\n";
 
-    return StringHelper::Compare(ioBuffer.Buffer(), test.Buffer()) == 0;
+    printf("\n|%s||%s|\n", ioBuffer.Buffer(), test.Buffer());
+    bool ret = (StringHelper::Compare(ioBuffer.Buffer(), test.Buffer()) == 0);
+    if (ret) {
+        ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+        Clear(ioBuffer);
+        ioBuffer.PrintFormatted("%J@", &at);
+
+        StreamString test1 = "\r\n\"Class\": \"TestIOBufferIntrospectionStructure\",\r\n"
+                "\"member1\": 1,\r\n"
+                "\"member2\": ";
+        test1.Printf("%#x,\r\n", ((void*) myStruct.member2));
+        test1 +=
+                "\"member3\": [ 0, 1.000000, 2.000000, 3.000000, 4.000000, 5.000000, 6.000000, 7.000000, 8.000000, 9.000000, 10.000000, 11.000000, 12.000000, 13.000000, 14.000000, 15.000000, 16.000000, 17.000000, 18.000000, 19.000000, 20.000000, 21.000000, 22.000000, 23.000000, 24.000000, 25.000000, 26.000000, 27.000000, 28.000000, 29.000000, 30.000000, 31.000000 ] ,\r\n"
+                        "\"member4\": [ [ \"4\", \"5\" ] ,[ \"6\", \"7\" ] ] ,\r\n"
+                        "\"member5\": {\r\n\r\n"
+
+                        "\"Class\": \"TestIOBufferIntrospectionNestedStructure\",\r\n"
+                        "\"nestedMember1\": 5,\r\n"
+                        "\"nestedMember2\": \"Hello\"\r\n"
+                        "}\r\n";
+        printf("\n|%s||%s|\n", ioBuffer.Buffer(), test1.Buffer());
+        ret = (StringHelper::Compare(ioBuffer.Buffer(), test1.Buffer()) == 0);
+
+    }
+
+    if (ret) {
+        ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+        Clear(ioBuffer);
+        ioBuffer.PrintFormatted("%X@", &at);
+
+        StreamString test2 = "\r\n<Class> \"TestIOBufferIntrospectionStructure\"</Class>\r\n"
+                "<member1> 1</member1>\r\n"
+                "<member2> ";
+        test2.Printf("%#x</member2>\r\n", ((void*) myStruct.member2));
+        test2 +=
+                "<member3> [ 0, 1.000000, 2.000000, 3.000000, 4.000000, 5.000000, 6.000000, 7.000000, 8.000000, 9.000000, 10.000000, 11.000000, 12.000000, 13.000000, 14.000000, 15.000000, 16.000000, 17.000000, 18.000000, 19.000000, 20.000000, 21.000000, 22.000000, 23.000000, 24.000000, 25.000000, 26.000000, 27.000000, 28.000000, 29.000000, 30.000000, 31.000000 ] </member3>\r\n"
+                        "<member4> [ [ \"4\", \"5\" ] ,[ \"6\", \"7\" ] ] </member4>\r\n"
+                        "<member5>\r\n\r\n"
+
+                        "<Class> \"TestIOBufferIntrospectionNestedStructure\"</Class>\r\n"
+                        "<nestedMember1> 5</nestedMember1>\r\n"
+                        "<nestedMember2> \"Hello\"</nestedMember2>\r\n"
+                        "</member5>\r\n";
+        printf("\n|%s||%s|\n", ioBuffer.Buffer(), test2.Buffer());
+        ret = (StringHelper::Compare(ioBuffer.Buffer(), test2.Buffer()) == 0);
+    }
+
+    return ret;
 }
 
 bool IOBufferTest::TestPrintStructuredDataInterface() {
@@ -1781,24 +1900,62 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
     cdb.MoveToRoot();
 
     IOBuffer ioBuffer;
-    uint32 allocationSize = 64;
+    uint32 allocationSize = 128;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
-    AnyType toPrint(cdb);
+    AnyType toPrint(*(StructuredDataI*) (&cdb));
     ioBuffer.PrintFormatted("%s", &toPrint);
     const char8* test = "A = {\r\n"
-            "B = {\r\n"
-            "x = +1\r\n"
-            "y = +2\r\n"
-            "}\r\n"
-            "C = {\r\n"
-            "z = +3\r\n"
-            "}\r\n"
+            "    B = {\r\n"
+            "        x = 1\r\n"
+            "        y = 2\r\n"
+            "    }\r\n"
+            "    C = {\r\n"
+            "        z = 3\r\n"
+            "    }\r\n"
             "}\r\n";
 
     printf("\r\n%s\r\n", ioBuffer.Buffer());
 
-    return StringHelper::Compare(test, ioBuffer.Buffer()) == 0;
+    bool ret = (StringHelper::Compare(test, ioBuffer.Buffer()) == 0);
+
+    if (ret) {
+        Clear(ioBuffer);
+        AnyType toPrint(*(StructuredDataI*) (&cdb));
+        ioBuffer.PrintFormatted("%Js", &toPrint);
+        const char8* test1 = "\"A\": {\r\n"
+                "    \"B\": {\r\n"
+                "        \"x\": 1,\r\n"
+                "        \"y\": 2\r\n"
+                "    },\r\n"
+                "    \"C\": {\r\n"
+                "        \"z\": 3\r\n"
+                "    }\r\n"
+                "}\r\n";
+
+        printf("\n|%s|\n|%s|\n", ioBuffer.Buffer(), test1);
+        ret = (StringHelper::Compare(test1, ioBuffer.Buffer()) == 0);
+    }
+
+    if (ret) {
+        Clear(ioBuffer);
+        AnyType toPrint(*(StructuredDataI*) (&cdb));
+        ioBuffer.PrintFormatted("%Xs", &toPrint);
+        const char8* test2 = "<A>\r\n"
+                "    <B>\r\n"
+                "        <x> 1</x>\r\n"
+                "        <y> 2</y>\r\n"
+                "    </B>\r\n"
+                "    <C>\r\n"
+                "        <z> 3</z>\r\n"
+                "    </C>\r\n"
+                "</A>\r\n";
+
+        printf("\n|%s|\n|%s|\n", ioBuffer.Buffer(), test2);
+        ret = (StringHelper::Compare(test2, ioBuffer.Buffer()) == 0);
+    }
+
+    return ret;
 }
 
 bool IOBufferTest::TestPrintFormattedIntrospection_NotIntrospectable() {
@@ -1839,7 +1996,7 @@ bool IOBufferTest::TestPrintPointerVector() {
     float32 three = 3.0;
 
     void *test[] = { &one, &two, &three };
-    uintp test2[] = { (uintp) &one, (uintp) &two, (uintp) &three };
+    uintp test2[] = { (uintp) & one, (uintp) & two, (uintp) & three };
 
     Clear(ioBuffer);
     Clear(ioBuffer2);
@@ -1866,7 +2023,7 @@ bool IOBufferTest::TestPrintPointerMatrix() {
     uint32 four = 4;
 
     void *test[][2] = { { &one, &two }, { &three, &four } };
-    uintp test2[][2] = { { (uintp) &one, (uintp) &two }, { (uintp) &three, (uintp) &four } };
+    uintp test2[][2] = { { (uintp) & one, (uintp) & two }, { (uintp) & three, (uintp) & four } };
 
     Clear(ioBuffer);
     Clear(ioBuffer2);
@@ -1879,4 +2036,32 @@ bool IOBufferTest::TestPrintPointerMatrix() {
     return StringHelper::Compare(ioBuffer.Buffer(), ioBuffer2.Buffer()) == 0;
 }
 
+bool IOBufferTest::TestRefill() {
+    IOBuffer ioBuffer;
+    return !ioBuffer.Refill();
+}
+
+bool IOBufferTest::TestFlush() {
+    IOBuffer ioBuffer;
+    bool ret = !ioBuffer.Flush();
+    if (ret) {
+        ret = !ioBuffer.Flush(10u);
+    }
+    return ret;
+}
+
+bool IOBufferTest::TestNoMoreSpaceToWriteArg() {
+    IOBuffer ioBuffer;
+    return !ioBuffer.NoMoreSpaceToWrite(10u);
+}
+
+bool IOBufferTest::TestNoMoreSpaceToWrite() {
+    IOBuffer ioBuffer;
+    return !ioBuffer.NoMoreSpaceToWrite();
+}
+
+bool IOBufferTest::TestNoMoreDataToRead() {
+    IOBuffer ioBuffer;
+    return !ioBuffer.NoMoreDataToRead();
+}
 

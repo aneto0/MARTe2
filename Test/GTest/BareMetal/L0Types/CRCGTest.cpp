@@ -39,72 +39,72 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(CRCGTest,TestConstructor) {
+TEST(BareMetal_L0Types_CRCGTest,TestConstructor) {
     CRCTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(CRCGTest,TestComputeTable_0x3D65) {
+TEST(BareMetal_L0Types_CRCGTest,TestComputeTable_0x3D65) {
     CRCTest test;
     ASSERT_TRUE(test.TestComputeTable_0x3D65());
 }
 
-TEST(CRCGTest,TestComputeTable_0x3D65_inverted) {
+TEST(BareMetal_L0Types_CRCGTest,TestComputeTable_0x3D65_inverted) {
     CRCTest test;
     ASSERT_TRUE(test.TestComputeTable_0x3D65_inverted());
 }
 
-TEST(CRCGTest,TestComputeTable_0x3D65_initialCRC) {
+TEST(BareMetal_L0Types_CRCGTest,TestComputeTable_0x3D65_initialCRC) {
     CRCTest test;
     ASSERT_TRUE(test.TestComputeTable_0x3D65_initialCRC());
 }
 
-TEST(CRCGTest,TestComputeTable_0x3D65_inverted_initialCRC) {
+TEST(BareMetal_L0Types_CRCGTest,TestComputeTable_0x3D65_inverted_initialCRC) {
     CRCTest test;
     ASSERT_TRUE(test.TestComputeTable_0x3D65_inverted_initialCRC());
 }
 
-TEST(CRCGTest,TestCompute_uint16_CRC_0) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_uint16_CRC_0) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_uint16_CRC_0());
 }
 
-TEST(CRCGTest,TestCompute_uint16_CRC_0_inverted) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_uint16_CRC_0_inverted) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_uint16_CRC_0_inverted());
 }
 
-TEST(CRCGTest,TestCompute_uint16_CRC_0_initialCRC) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_uint16_CRC_0_initialCRC) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_uint16_CRC_0_initialCRC());
 }
 
-TEST(CRCGTest,TestCompute_uint16_CRC_0_inverted_initialCRC) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_uint16_CRC_0_inverted_initialCRC) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_uint16_CRC_0_inverted_initialCRC());
 }
 
-TEST(CRCGTest,TestCompute_uint8_CRC_0) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_uint8_CRC_0) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_uint8_CRC_0());
 }
 
-TEST(CRCGTest,TestCompute_CRC8_CDMA2000) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_CRC8_CDMA2000) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_CRC8_CDMA2000());
 }
 
-TEST(CRCGTest,TestCompute_CRC8_CDMA2000_inverted) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_CRC8_CDMA2000_inverted) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_CRC8_CDMA2000_inverted());
 }
 
-TEST(CRCGTest,TestCompute_CRC32_MPEG2) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_CRC32_MPEG2) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_CRC32_MPEG2());
 }
 
-TEST(CRCGTest,TestCompute_CRC32_MPEG2_inverted) {
+TEST(BareMetal_L0Types_CRCGTest,TestCompute_CRC32_MPEG2_inverted) {
     CRCTest test;
     ASSERT_TRUE(test.TestCompute_CRC32_MPEG2_inverted());
 }

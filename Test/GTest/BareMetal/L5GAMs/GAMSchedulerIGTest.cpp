@@ -42,32 +42,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(GAMSchedulerIGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestConstructor) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(GAMSchedulerIGTest,TestConfigureScheduler) {
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestConfigureScheduler) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestConfigureScheduler());
 }
 
-TEST(GAMSchedulerIGTest,TestConfigureSchedulerFalse_InvalidState) {
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestConfigureSchedulerFalse_InvalidState) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestConfigureSchedulerFalse_InvalidState());
 }
 
-TEST(GAMSchedulerIGTest,TestGetNumberOfExecutables) {
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestGetNumberOfExecutables) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestGetNumberOfExecutables());
 }
 
-TEST(GAMSchedulerIGTest,TestPrepareNextState) {
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestPrepareNextState) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestPrepareNextState());
 }
 
-TEST(GAMSchedulerIGTest,TestExecuteSingleCycle) {
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestExecuteSingleCycle) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestExecuteSingleCycle());
+}
+
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestExecuteSingleCycle_False) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestExecuteSingleCycle_False());
 }

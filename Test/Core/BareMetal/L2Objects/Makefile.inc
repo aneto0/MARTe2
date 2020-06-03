@@ -41,6 +41,7 @@ OBJSX=  AnyTypeTest.x\
 		ObjectTest.x \
 		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \
+		ReferenceContainerFilterNameAndTypeTest.x\
 		ReferenceContainerFilterObjectNameTest.x \
 		ReferenceContainerFilterReferencesTest.x \
 		ReferenceContainerNodeTest.x \

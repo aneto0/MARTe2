@@ -147,6 +147,9 @@
 /* default constructor not referenced */
 -esym(1914,MARTe::*) 
 
+ -esym(1066,MARTe::*)
+
+
 /*
  * Rule 0-1-11
  * Justification: In the linux implementation of the console some of the 

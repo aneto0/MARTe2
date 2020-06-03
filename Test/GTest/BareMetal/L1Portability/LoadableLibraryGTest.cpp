@@ -42,37 +42,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(LoadableLibraryGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_LoadableLibraryGTest,TestConstructor) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestConstructor());
 }
 
-TEST(LoadableLibraryGTest,TestOpenCloseLibrary) {
+TEST(BareMetal_L1Portability_LoadableLibraryGTest,TestOpenCloseLibrary) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestOpenLibrary("libm.so"));
 }
 
-TEST(LoadableLibraryGTest,TestCloseLibrary) {
+TEST(BareMetal_L1Portability_LoadableLibraryGTest,TestCloseLibrary) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestCloseLibrary("libm.so"));
 }
 
-TEST(LoadableLibraryGTest,TestLoadFunction) {
+TEST(BareMetal_L1Portability_LoadableLibraryGTest,TestLoadFunction) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestLoadFunction());
 }
 
-TEST(LoadableLibraryGTest,TestLoadFunctionSquareBracketsOperator) {
+TEST(BareMetal_L1Portability_LoadableLibraryGTest,TestLoadFunctionSquareBracketsOperator) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestLoadFunctionSquareBracketsOperator());
 }
 
-TEST(LoadableLibraryGTest,TestGetModule) {
+TEST(BareMetal_L1Portability_LoadableLibraryGTest,TestGetModule) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestGetModule());
 }
 
-TEST(LoadableLibraryGTest,TestSetModule) {
+TEST(BareMetal_L1Portability_LoadableLibraryGTest,TestSetModule) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestSetModule());
 }

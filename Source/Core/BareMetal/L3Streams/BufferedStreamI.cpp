@@ -45,6 +45,10 @@ namespace MARTe {
 
 BufferedStreamI::BufferedStreamI() :
         StreamI() {
+
+    calibReadParam=4u;
+    calibWriteParam=4u;
+
 }
 
 BufferedStreamI::~BufferedStreamI() {
@@ -196,6 +200,24 @@ bool BufferedStreamI::Copy(BufferedStreamI &stream) {
 
     return ret;
 
+}
+
+bool BufferedStreamI::Flush() {
+    IOBuffer* buff = GetWriteBuffer();
+    bool ret = (buff != NULL_PTR(IOBuffer*));
+    if (ret) {
+        ret = buff->NoMoreSpaceToWrite();
+    }
+    return ret;
+}
+
+bool BufferedStreamI::Refill() {
+    IOBuffer* buff = GetReadBuffer();
+    bool ret = (buff != NULL_PTR(IOBuffer*));
+    if (ret) {
+        ret = buff->NoMoreDataToRead();
+    }
+    return ret;
 }
 
 

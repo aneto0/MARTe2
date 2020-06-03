@@ -2,7 +2,7 @@
  * @file StringHelper_CLIB_Generic.cpp
  * @brief Source file for module StringHelper
  * @date 30/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -130,6 +130,29 @@ int32 CompareN(const char8 * const string1,
     }
     return ret;
 }
+
+int32 CompareNoCaseSensN(const char8* const string1,
+                                 const char8* const string2,
+                                 const uint32 size){
+    int32 ret = -1;
+    if ((string1 != NULL) && (string2 != NULL)) {
+        ret = strncasecmp(string1, string2, static_cast<osulong>(size));
+        if (ret < 0) {
+            ret = 1; //1 if string1 < string2
+        }
+        else if (ret > 0) {
+            ret = 2; //2 if string1 > string2
+        }
+        else {
+            ret = 0;
+        }
+    }
+    else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+    }
+    return ret;
+}
+
 
 bool Copy(char8 * const destination,
           const char8 * const source) {

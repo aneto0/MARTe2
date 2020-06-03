@@ -159,10 +159,8 @@ bool ReferenceContainer::Insert(const char8 * const path, Reference ref) {
         else {
             bool created = false;
             ReferenceContainer* currentNode = this;
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(
-                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(
-                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
 
             const char8* toTokenize = path;
             const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
@@ -259,14 +257,11 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                 index = static_cast<int32>(list.ListSize()) - 1;
             }
 
-            ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
-
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
-            while ((!filter.IsFinished())
-                    && ((filter.IsReverse() && (index > -1))
-                            || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
+            while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
+                ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
                 Reference const & currentNodeReference = currentNode->GetReference();
                 //Check if the current node meets the filter criteria
                 bool found = filter.Test(result, currentNodeReference);
@@ -282,18 +277,15 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                                     //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
                                     if (!filter.IsReverse()) {
                                         index--;
-                                        currentNode = (list.ListPeek(static_cast<uint32>(index)));
                                     }
                                 }
                                 else {
-                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                                          "ReferenceContainer: Failed StaticList::Delete()");
+                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
                         }
                         else {
-                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                                  "ReferenceContainer: Failed StaticList::Insert()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                         }
                     }
                 }
@@ -316,13 +308,22 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                         UnLock();
                         currentNodeContainer->Find(result, filter);
                         if (Lock()) {
+                            //Recursion was aborted. Remove all the elements from the test results
+                            if (!filter.IsRecursive()) {
+                                while (result.list.ListSize() > 0u) {
+                                    LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
+                                    delete node;
+                                }
+                            }
                             //Something was found if the result size has changed
-                            if (sizeBeforeBranching == result.list.ListSize()) {
+                            else if (sizeBeforeBranching == result.list.ListSize()) {
                                 //Nothing found. Remove the stored path (which led to nowhere).
                                 if (filter.IsStorePath()) {
                                     LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
                                     delete node;
                                 }
+                            }
+                            else {
                             }
                         }
                         else {
@@ -330,19 +331,14 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                         }
                     }
                     else {
-                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                              "ReferenceContainer: Failed StaticList::Insert()");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
                 if (!filter.IsReverse()) {
                     index++;
-                    if (currentNode != NULL_PTR(ReferenceContainerNode *)) {
-                        currentNode = dynamic_cast<ReferenceContainerNode *>(currentNode->Next());
-                    }
                 }
                 else {
                     index--;
-                    currentNode = (list.ListPeek(static_cast<uint32>(index)));
                 }
             }
         }
@@ -434,44 +430,6 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     return ok;
 }
 
-bool ReferenceContainer::ExportData(StructuredDataI & data) {
-
-    // no need to lock
-    const char8 * objName = GetName();
-    uint32 objNameLength = StringHelper::Length(objName);
-    //To include $ or +
-    objNameLength += 1u;
-    char8 *objNameToCreate = reinterpret_cast<char8 *>(HeapManager::Malloc(objNameLength));
-    objNameToCreate[0] = (IsDomain()) ? (domainTokensList[0u]) : (buildTokensList[0u]);
-    bool ret = StringHelper::Copy(&objNameToCreate[1], objName);
-
-    if (ret) {
-        ret = data.CreateRelative(objNameToCreate);
-        if (ret) {
-            ret = HeapManager::Free(reinterpret_cast<void*&>(objNameToCreate));
-            if (ret) {
-                const ClassProperties *properties = GetClassProperties();
-                ret = (properties != NULL);
-                if (ret) {
-                    ret = data.Write("Class", properties->GetName());
-                    uint32 numberOfChildren = Size();
-                    for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-                        Reference child = Get(i);
-                        ret = child.IsValid();
-                        if (ret) {
-                            ret = child->ExportData(data);
-                        }
-                    }
-                }
-                if (!data.MoveToAncestor(1u)) {
-                    ret = false;
-                }
-            }
-        }
-    }
-    return ret;
-}
-
 bool ReferenceContainer::Lock() {
     return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
 }
@@ -491,7 +449,7 @@ void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
     uint32 numberOfElements = Size();
 
     bool ok = true;
-    //flat recursion to avoid stack waste
+//flat recursion to avoid stack waste
     for (uint32 i = 0u; (i < numberOfElements) && (ok); i++) {
         //extract the element from the list
         Reference node = Get(0u);
@@ -504,7 +462,7 @@ void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
         }
     }
 
-    //Recurse on all the sub nodes
+//Recurse on all the sub nodes
     for (uint32 i = purgeStart; i < purgeEnd; i++) {
         Reference nodeObj = purgeList.Get(i);
         if (nodeObj.IsValid()) {

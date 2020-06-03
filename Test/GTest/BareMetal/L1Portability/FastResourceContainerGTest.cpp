@@ -40,22 +40,22 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(FastResourceContainerGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_FastResourceContainerGTest,TestConstructor) {
     FastResourceContainerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(FastResourceContainerGTest,TestGetSize) {
+TEST(BareMetal_L1Portability_FastResourceContainerGTest,TestGetSize) {
     FastResourceContainerTest test;
     ASSERT_TRUE(test.TestGetSize());
 }
 
-TEST(FastResourceContainerGTest,TestTake) {
+TEST(BareMetal_L1Portability_FastResourceContainerGTest,TestTake) {
     FastResourceContainerTest test;
     ASSERT_TRUE(test.TestTake());
 }
 
-TEST(FastResourceContainerGTest,TestReturn) {
+TEST(BareMetal_L1Portability_FastResourceContainerGTest,TestReturn) {
     FastResourceContainerTest test;
     ASSERT_TRUE(test.TestReturn());
 }

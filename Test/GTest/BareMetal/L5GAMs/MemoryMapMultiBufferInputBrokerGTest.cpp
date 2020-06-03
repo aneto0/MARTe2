@@ -42,12 +42,12 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(MemoryMapMultiBufferInputBrokerGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferInputBrokerGTest,TestConstructor) {
     MemoryMapMultiBufferInputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapMultiBufferInputBrokerGTest,TestExecute) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferInputBrokerGTest,TestExecute) {
     MemoryMapMultiBufferInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute());
 }

@@ -41,28 +41,46 @@
 class IntrospectionStructureTest {
 public:
     /**
-     * Tests the registration of a complex structure.
+     * @brief Tests the registration of a complex structure.
      */
     bool TestStructureRegistration();
 
     /**
-     * Tests that the registration of a complex structure updates if the type is already registered.
+     * @brief Tests that the registration of a complex structure updates if the type is already registered.
      */
     bool TestStructureRegistration_TypeAlreadyRegistered();
 
     /**
-     * Tests that the registration of a complex structure fails if the type has no parameters.
+     * @brief Tests that the registration of a complex structure fails if the type has no parameters.
      */
     bool TestStructureRegistration_False_TypeNoParameters();
 
     /**
-     * Tests that the registration of a complex structure fails to update if the type is from a class.
+     * @brief Tests that the registration of a complex structure fails to update if the type is from a class.
      */
     bool TestStructureRegistration_False_TypeAlreadyRegistered_Class();
 
+    /**
+     * @brief Tests the RegisterStructuredDataI method.
+     */
+    bool TestRegisterStructuredDataI();
+
+    /**
+     * @brief Tests the RegisterStructuredDataI with the type keyword declared.
+     */
+    bool TestRegisterStructuredDataI_TypeDeclared();
+
+    /**
+     * @brief Tests the RegisterStructuredDataI with arrays of nodes.
+     */
+    bool TestRegisterStructuredDataI_ArraysStructures();
+
+    /**
+     * @brief Tests the RegisterStructuredDataI with arrays of nodes and with the type keyword declared.
+     */
+    bool TestRegisterStructuredDataI_ArraysStructures_TypeDeclared();
+
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

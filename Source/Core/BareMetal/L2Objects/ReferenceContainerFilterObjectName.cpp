@@ -53,17 +53,16 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
-ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
-                                                                       const uint32 &modeToSet,
-                                                                       const char8 * const address) :
+ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int32 &occurrenceNumber, const uint32 &modeToSet, const char8 * const address) :
         ReferenceContainerFilter(occurrenceNumber, modeToSet) {
 
     addressNumberNodes = 0u;
     addressToSearch = static_cast<char8 **>(NULL);
+    /*lint -e{1506} the caller must know that the address pointer shall be valid while the class is to be used*/
     SetAddress(address);
 }
 
-/*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
+/*lint -e{929} -e{925} -e{9007} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
 void ReferenceContainerFilterObjectName::SetAddress(const char8 * const address) {
     const char8 *lastOccurrence = address;
     addressToSearch = static_cast<char8 **>(NULL);
@@ -156,7 +155,8 @@ ReferenceContainerFilterObjectName &ReferenceContainerFilterObjectName::operator
             for (uint32 i = 0u; i < addressNumberNodes; i++) {
                 bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
                 if (!ok) {
-                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
+                                          "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
                 }
             }
         }
@@ -189,7 +189,8 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
         for (uint32 i = 0u; i < addressNumberNodes; i++) {
             bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
             if (!ok) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
+                                      "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
             }
         }
         delete[] addressToSearch;
@@ -198,9 +199,9 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
 }
 
 bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previouslyFound) const {
-    bool found = (previouslyFound.Size() == (addressNumberNodes - 1u));
-    int32 i;
-    for (i = (static_cast<int32>(previouslyFound.Size()) - 1); (found) && (i >= 0); i--) {
+    bool found = true;
+
+    for (uint32 i = 0u; (i < previouslyFound.Size()) && (found); i++) {
         found = false;
         if (previouslyFound.Get(static_cast<uint32>(i)).IsValid()) {
             if (previouslyFound.Get(static_cast<uint32>(i))->GetName() != NULL) {
@@ -211,24 +212,51 @@ bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previously
     return found;
 }
 
-bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
-                                              Reference const &referenceToTest) {
+bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound, Reference const &referenceToTest) {
     bool found = (addressNumberNodes > 0u);
 
-    if (addressNumberNodes > 1u) {
-        /*lint -e{9007} no side-effects on TestPath*/
-        found = (found && TestPath(previouslyFound));
+    if (found) {
+        found = referenceToTest.IsValid();
+    }
+    if (found) {
+        found = (referenceToTest->GetName() != NULL);
     }
 
-    //Check if this is the last node and if it matches the last part of the addressToSearch
-    if (found && referenceToTest.IsValid()) {
-        if (referenceToTest->GetName() != NULL) {
-            /*lint -e{661} -e{662} safe given that addressToSearch is always created with the size of addressNumberNodes
-             * and its size cannot be modified in runtime*/
-            found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[addressNumberNodes - 1u]) == 0);
+    if (found) {
+        //if addressNumberNodes==1 then just compare with addressToSearch[0]
+        uint32 index = (addressNumberNodes > 1u) ? (previouslyFound.Size()) : (0u);
+
+        found = (index < addressNumberNodes);
+        if (found) {
+            found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[index]) == 0);
         }
-        else {
-            found = false;
+
+        if (found) {
+            if (addressNumberNodes > 1u) {
+                /*lint -e{9007} no side-effects on TestPath*/
+                found = (TestPath(previouslyFound));
+            }
+        }
+        bool pathOk = found;
+
+        if (found) {
+            if (addressNumberNodes > 1u) {
+                found = (previouslyFound.Size() == (addressNumberNodes - 1u));
+            }
+        }
+
+        //remove the recursive mode if the path is wrong otherwise the Find function
+        //will continue deep.
+        if (addressNumberNodes > 1u) {
+
+            if (pathOk) {
+                SetMode(GetMode() | ReferenceContainerFilterMode::PATH);
+            }
+            else {
+                uint32 modeTemp = GetMode();
+                modeTemp &= ~(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+                SetMode(modeTemp);
+            }
         }
     }
 

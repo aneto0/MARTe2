@@ -73,6 +73,17 @@ public:
      */
     bool TestGetFunctionPointer();
 
+     /**
+     * @brief Tests the GetOwnerFunctionName method.
+     */
+    bool TestGetOwnerFunctionName();
+
+    /**
+     * @brief Tests the GetOwnerFunctionName method.
+     */
+    bool TestGetOwnerDataSourceName();
+
+
 };
 
 /*---------------------------------------------------------------------------*/

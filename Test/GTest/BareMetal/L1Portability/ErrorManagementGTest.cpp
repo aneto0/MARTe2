@@ -44,21 +44,21 @@
 
 
 
-TEST(ErrorManagementGTest,TestErrorCodeToStream) {
+TEST(BareMetal_L1Portability_ErrorManagementGTest,TestErrorCodeToStream) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestErrorCodeToStream());
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }
 
-TEST(ErrorManagementGTest,TestReportError) {
+TEST(BareMetal_L1Portability_ErrorManagementGTest,TestReportError) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestReportError(ErrorManagement::Information,"Information","This is an error","FileError", 1, "TestReportError"));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }
 
-TEST(ErrorManagementGTest,TestReportErrorFullContext) {
+TEST(BareMetal_L1Portability_ErrorManagementGTest,TestReportErrorFullContext) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestReportErrorFullContext(ErrorManagement::Information,"Information","Error!!","FileError2", 1, "TestReportErrorFullContext",32));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
@@ -66,21 +66,21 @@ TEST(ErrorManagementGTest,TestReportErrorFullContext) {
 }
 
 
-TEST(ErrorManagementGTest,TestReportErrorMacro) {
+TEST(BareMetal_L1Portability_ErrorManagementGTest,TestReportErrorMacro) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestReportErrorMacro(ErrorManagement::Information,"This is an error","Information"));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }
 
-TEST(ErrorManagementGTest,TestReportErrorMacroFullContext) {
+TEST(BareMetal_L1Portability_ErrorManagementGTest,TestReportErrorMacroFullContext) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestReportErrorMacroFullContext(ErrorManagement::Information,"Error!!","Information",32));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
 
 }
 
-TEST(ErrorManagementGTest,TestSetErrorProcessFunction) {
+TEST(BareMetal_L1Portability_ErrorManagementGTest,TestSetErrorProcessFunction) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestSetErrorProcessFunction());
     ErrorManagement::SetErrorProcessFunction (NULL);

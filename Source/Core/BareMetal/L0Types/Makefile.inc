@@ -26,7 +26,10 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  LinkedListable.x \
+OBJSX=  HashFunction.x\
+        DjbHashFunction.x\
+        Fnv1aHashFunction.x\
+        LinkedListable.x \
         LinkedListHolder.x
         
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

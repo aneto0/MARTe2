@@ -42,22 +42,22 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ProcessorGTest,VendorIdTest) {
+TEST(Scheduler_L1Portability_ProcessorGTest,VendorIdTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestVendorId(NULL));
 }
 
-TEST(ProcessorGTest,FamilyTest) {
+TEST(Scheduler_L1Portability_ProcessorGTest,FamilyTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestFamily(-1));
 }
 
-TEST(ProcessorGTest,ModelTest) {
+TEST(Scheduler_L1Portability_ProcessorGTest,ModelTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestModel(-1));
 }
 
-TEST(ProcessorGTest,AvailableTest) {
+TEST(Scheduler_L1Portability_ProcessorGTest,AvailableTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestAvailable(-1));
 }

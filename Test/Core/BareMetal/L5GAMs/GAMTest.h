@@ -225,6 +225,11 @@ public:
      * @brief Tests the GetOutputBrokers method.
      */
     bool TestGetOutputBrokers();
+
+    /**
+     * @brief Tests the ExportData method.
+     */
+    bool TestExportData();
 };
 
 /*---------------------------------------------------------------------------*/

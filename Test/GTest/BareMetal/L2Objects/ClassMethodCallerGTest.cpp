@@ -44,12 +44,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassMethodCallerGTest,TestDefaultConstructor) {
+TEST(BareMetal_L2Objects_ClassMethodCallerGTest,TestDefaultConstructor) {
     ClassMethodCallerTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(ClassMethodCallerGTest,TestCall) {
+TEST(BareMetal_L2Objects_ClassMethodCallerGTest,TestCall) {
     ClassMethodCallerTest target;
     ASSERT_TRUE(target.TestCall());
 }

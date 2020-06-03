@@ -26,14 +26,16 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StaticListTest.h"
 #include "GeneralDefinitions.h"
-#include "gtest/gtest.h"
+#include "StaticListTest.h"
+#include "StreamString.h"
+
 
 using namespace MARTe;
 
@@ -51,128 +53,128 @@ uint32 demoValues[] = { 3, 7, 2, 5, 45, 3, 6, 7, 47, 3, 74, 5, 32, 91, 8, 66, 9 
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StaticListGTest,TestDefaultConstructor) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestDefaultConstructor) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestDefaultConstructor());
 }
 
-TEST(StaticListGTest,TestAddOnEmptyList) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestAddOnEmptyList) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestAddOnEmptyList<25u>());
 }
 
-TEST(StaticListGTest,TestAddOnNonEmptyList) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestAddOnNonEmptyList) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestAddOnNonEmptyList<25u>());
 }
 
-TEST(StaticListGTest,TestAddOnFullList) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestAddOnFullList) {
     //WARN This test stresses the capacity of the list, so it takes a long time to finish.
     //StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
     //ASSERT_TRUE(tester.TestAddOnFullList<25u>());
 }
 
-TEST(StaticListGTest,TestInsertOnEmptyList) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestInsertOnEmptyList) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnEmptyList<25u>());
 }
 
-TEST(StaticListGTest,TestInsertOnNonEmptyListAtBeginning) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestInsertOnNonEmptyListAtBeginning) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtBeginning<25u>());
 }
 
-TEST(StaticListGTest,TestInsertOnNonEmptyListAtMiddle) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestInsertOnNonEmptyListAtMiddle) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtMiddle<25u>());
 }
 
-TEST(StaticListGTest,TestInsertOnNonEmptyListAtEnd) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestInsertOnNonEmptyListAtEnd) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtEnd<25u>());
 }
 
-TEST(StaticListGTest,TestInsertOnNonEmptyListAtInvalidPosition) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestInsertOnNonEmptyListAtInvalidPosition) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtInvalidPosition<5u>());
 }
 
-TEST(StaticListGTest,TestExtractAtBeginning) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestExtractAtBeginning) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestExtractAtBeginning());
 }
 
-TEST(StaticListGTest,TestExtractAtMiddle) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestExtractAtMiddle) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestExtractAtMiddle());
 }
 
-TEST(StaticListGTest,TestExtractAtEnd) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestExtractAtEnd) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestExtractAtEnd());
 }
 
-TEST(StaticListGTest,TestExtractInvalidPosition) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestExtractInvalidPosition) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestExtractInvalidPosition());
 }
 
-TEST(StaticListGTest,TestRemoveAtBeginning) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestRemoveAtBeginning) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveAtBeginning());
 }
 
-TEST(StaticListGTest,TestRemoveAtMiddle) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestRemoveAtMiddle) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveAtMiddle());
 }
 
-TEST(StaticListGTest,TestRemoveAtEnd) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestRemoveAtEnd) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveAtEnd());
 }
 
-TEST(StaticListGTest,TestRemoveInvalidPosition) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestRemoveInvalidPosition) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveInvalidPosition());
 }
 
-TEST(StaticListGTest,TestConstantness) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestConstantness) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestConstantness());
 }
 
-TEST(StaticListGTest,TestGetSize) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestGetSize) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestGetSize());
 }
 
-TEST(StaticListGTest,TestGetCapacity) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestGetCapacity) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestGetCapacity());
 }
 
-TEST(StaticListGTest,TestPeek) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestPeek) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestPeek());
 }
 
-TEST(StaticListGTest,TestPeekInvalidPosition) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestPeekInvalidPosition) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestPeekInvalidPosition());
 }
 
-TEST(StaticListGTest,TestSquareOperator) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestSquareOperator) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestSquareOperator());
 }
 
-TEST(StaticListGTest,TestSquareOperatorInvalidPosition) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestSquareOperatorInvalidPosition) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestSquareOperatorInvalidPosition());
 }
 
-TEST(StaticListGTest,TestSet) {
+TEST(BareMetal_L1Portability_StaticListGTest,TestSet) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
-    ASSERT_TRUE(tester.TestSet<5u>(2u));
+    ASSERT_TRUE(tester.TestSet<5u> (2u));
 }

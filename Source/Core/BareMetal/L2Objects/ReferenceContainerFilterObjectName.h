@@ -104,9 +104,9 @@ public:
      * @brief Sets the address of the object to search.
      * @param[in] address the address of the object to search.
      */
-    void SetAddress(const char8 * const address);
+    virtual void SetAddress(const char8 * const address);
 
-private:
+protected:
 
     /**
      * Broken-down list of the address to search.

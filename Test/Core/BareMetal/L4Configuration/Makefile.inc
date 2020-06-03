@@ -27,6 +27,7 @@
 
 OBJSX=	AnyObjectTest.x \
 	AnyTypeCreatorTest.x \
+	ConfigurationDatabaseNodeTest.x \
 	ConfigurationDatabaseTest.x \
 	IntrospectionTestHelper.x \
 	IntrospectionStructureTest.x \

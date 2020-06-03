@@ -415,7 +415,19 @@ public:
      */
     bool SkipTokens(uint32 count,
             const char8 * terminator);
-protected:
+
+    /**
+     * @brief User friendly function which simply calls NoMoreDataToRead.
+     * @return whatever NoMoreDataToRead returns.
+     */
+    virtual bool Refill();
+
+    /**
+     * @brief User friendly function which simply calls NoMoreSpaceToWrite.
+     * @return whatever NoMoreSpaceToWrite returns.
+     */
+    /*lint -e{1735} this function has the same default parameter of its father.*/
+    virtual bool Flush(const uint32 neededSize=0u);
 
     /**
      * @see NoMoreSpaceToWrite(const uint32)
@@ -571,7 +583,7 @@ bool IOBuffer::PutC(const char8 c) {
     if(retval) {
         // check if buffer needs updating and or saving
         if (amountLeft <= undoLevel) {
-            if (!NoMoreSpaceToWrite()) {
+            if (!Flush()) {
                 retval = false;
             }
 
@@ -627,7 +639,7 @@ bool IOBuffer::GetC(char8 &c) {
     if(retval) {
         // check if buffer needs updating and or saving
         if (UsedAmountLeft() <= undoLevel) {
-            if (!NoMoreDataToRead()) {
+            if (!Refill()) {
                 retval = false;
             }
 

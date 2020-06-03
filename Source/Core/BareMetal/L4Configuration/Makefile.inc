@@ -27,6 +27,7 @@
 OBJSX=	AnyObject.x \
 		AnyTypeCreator.x \
 		ConfigurationDatabase.x\
+		ConfigurationDatabaseNode.x\
 		FloatToInteger.x \
 		IntegerToFloat.x \
 		IntrospectionStructure.x \
@@ -40,7 +41,7 @@ OBJSX=	AnyObject.x \
 		ParserI.x \
 		StandardParser.x \
 		ValidateBasicType.x \
-		XMLParser.x 
+		XMLParser.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -98,6 +98,7 @@ ThreadStateType GetState(const ThreadIdentifier &threadId) {
 
 uint32 GetCPUs(const ThreadIdentifier &threadId) {
     uint32 cpus = 0u;
+    (void) ThreadsDatabase::Lock();
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
     if (pthread_getaffinity_np(threadId, sizeof(cpuset), &cpuset) == 0) {
@@ -112,6 +113,7 @@ uint32 GetCPUs(const ThreadIdentifier &threadId) {
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_getaffinity_np()");
     }
+    (void) ThreadsDatabase::UnLock();
     return cpus;
 }
 

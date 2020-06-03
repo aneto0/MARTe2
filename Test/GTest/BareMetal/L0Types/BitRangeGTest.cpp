@@ -42,54 +42,54 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(BitRangeGTest,TestCopyOperatorUnion) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestCopyOperatorUnion) {
     BitRangeTest<int64> bitrange;
     ASSERT_TRUE(bitrange.TestCopyOperatorUnion());
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned16in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned16in32) {
     BitRangeTest<uint32> bitrange;
     uint16 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned16in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned16in32) {
     BitRangeTest<uint32> bitrange;
     uint16 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned16in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned16in32) {
     BitRangeTest<int32> bitrange;
     uint16 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned16in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned16in32) {
     BitRangeTest<int32> bitrange;
     uint16 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned16in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned16in32) {
     BitRangeTest<int32> bitrange;
     int16 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned16in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned16in32) {
     BitRangeTest<int32> bitrange;
     int16 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned16in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned16in32) {
     BitRangeTest<uint32> bitrange;
     int16 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned16in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned16in32) {
     BitRangeTest<uint32> bitrange;
     int16 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
@@ -97,49 +97,49 @@ TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned16in32) {
 
 ///////////////////////////////////////////////
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned8in16) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned8in16) {
     BitRangeTest<uint16> bitrange;
     uint8 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned8in16) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned8in16) {
     BitRangeTest<uint16> bitrange;
     uint8 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned8in16) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned8in16) {
     BitRangeTest<int16> bitrange;
     uint8 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned8in16) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned8in16) {
     BitRangeTest<int16> bitrange;
     uint8 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned8in16) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned8in16) {
     BitRangeTest<int16> bitrange;
     int8 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned8in16) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned8in16) {
     BitRangeTest<int16> bitrange;
     int8 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned8in16) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned8in16) {
     BitRangeTest<uint16> bitrange;
     int8 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned8in16) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned8in16) {
     BitRangeTest<uint16> bitrange;
     int8 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
@@ -147,49 +147,49 @@ TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned8in16) {
 
 //////////////////////////////////////////////////////
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned32in64) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned32in64) {
     BitRangeTest<uint64> bitrange;
     uint32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned32in64) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned32in64) {
     BitRangeTest<uint64> bitrange;
     uint32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned32in64) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned32in64) {
     BitRangeTest<int64> bitrange;
     uint32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned32in64) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned32in64) {
     BitRangeTest<int64> bitrange;
     uint32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned32in64) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned32in64) {
     BitRangeTest<int64> bitrange;
     int32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned32in64) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned32in64) {
     BitRangeTest<int64> bitrange;
     int32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned32in64) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned32in64) {
     BitRangeTest<uint64> bitrange;
     int32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned32in64) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned32in64) {
     BitRangeTest<uint64> bitrange;
     int32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
@@ -197,50 +197,50 @@ TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned32in64) {
 
 /////////////////////////////////
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsignedSameSize32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsignedSameSize32) {
     BitRangeTest<uint32> bitrange;
     uint32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsignedSameSize32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsignedSameSize32) {
     BitRangeTest<int32> bitrange;
     uint32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSignedSameSize32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedSignedSameSize32) {
     BitRangeTest<int32> bitrange;
     int32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSignedSameSize32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSignedSameSize32) {
     BitRangeTest<uint32> bitrange;
     int32 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
 ///////////////////////////////////
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned64in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned64in32) {
     BitRangeTest<uint32> bitrange;
     uint64 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned64in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned64in32) {
     BitRangeTest<int32> bitrange;
     uint64 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned64in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned64in32) {
     BitRangeTest<int32> bitrange;
     int64 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
     BitRangeTest<uint32> bitrange;
     int64 input = 0;
     ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
@@ -249,23 +249,23 @@ TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
 /////////////////////////////
 
 
-TEST(BitRangeGTest,TestAnyTypeCastSigned) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestAnyTypeCastSigned) {
     BitRangeTest<int32> bitrange;
     ASSERT_TRUE(bitrange.TestAnyTypeCast());
 }
 
-TEST(BitRangeGTest,TestAnyTypeCastUnsigned) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestAnyTypeCastUnsigned) {
     BitRangeTest<uint32> bitrange;
     ASSERT_TRUE(bitrange.TestAnyTypeCast());
 }
 
-TEST(BitRangeGTest,TestNumberOfBits) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestNumberOfBits) {
     BitRangeTest<uint32> bitrange;
     ASSERT_TRUE(bitrange.TestNumberOfBits());
 }
 
 
-TEST(BitRangeGTest,TestBitOffset) {
+TEST(BareMetal_L0Types_BitRangeGTest,TestBitOffset) {
     BitRangeTest<uint32> bitrange;
     ASSERT_TRUE(bitrange.TestBitOffset());
 }

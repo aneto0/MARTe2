@@ -42,97 +42,97 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(TypeCharacteristicsGTest,TestIsSignedInt8) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestIsSignedInt8) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestIsSignedInt8());
 }
 
-TEST(TypeCharacteristicsGTest,TestIsSignedUInt32) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestIsSignedUInt32) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestIsSignedUInt32());
 }
 
-TEST(TypeCharacteristicsGTest,TestMaxValueInt8) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestMaxValueInt8) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMaxValueInt8());
 }
 
-TEST(TypeCharacteristicsGTest,TestMaxValueInt8BZ2) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestMaxValueInt8BZ2) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMaxValueInt8BZ2());
 }
 
-TEST(TypeCharacteristicsGTest,TestMaxValueUInt32) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestMaxValueUInt32) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMaxValueUInt32());
 }
 
-TEST(TypeCharacteristicsGTest,TestMaxValueUInt32BZ2) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestMaxValueUInt32BZ2) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMaxValueUInt32BZ2());
 }
 
-TEST(TypeCharacteristicsGTest,TestMinValueInt8) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestMinValueInt8) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMinValueInt8());
 }
 
-TEST(TypeCharacteristicsGTest,TestMinValueInt8BZ2) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestMinValueInt8BZ2) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMinValueInt8BZ2());
 }
 
-TEST(TypeCharacteristicsGTest,TestMinValueUInt32) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestMinValueUInt32) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMinValueUInt32());
 }
 
-TEST(TypeCharacteristicsGTest,TestMinValueUInt32BZ2) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestMinValueUInt32BZ2) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMinValueUInt32BZ2());
 }
 
-TEST(TypeCharacteristicsGTest,TestUsableBitSizeInt8) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableBitSizeInt8) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeInt8());
 }
 
-TEST(TypeCharacteristicsGTest,TestUsableBitSizeInt8BZ) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableBitSizeInt8BZ) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeInt8BZ());
 }
 
-TEST(TypeCharacteristicsGTest,TestUsableBitSizeUInt32) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableBitSizeUInt32) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeUInt32());
 }
 
-TEST(TypeCharacteristicsGTest,TestUsableBitSizeUInt32BZ2) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableBitSizeUInt32BZ2) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeUInt32BZ2());
 }
 
-TEST(TypeCharacteristicsGTest,TestSaturableIntegerNoChanges) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSaturableIntegerNoChanges) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerNoChanges());
 }
 
-TEST(TypeCharacteristicsGTest,TestSaturableIntegerLargerThan) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSaturableIntegerLargerThan) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLargerThan());
 }
 
-TEST(TypeCharacteristicsGTest,TestSaturableIntegerLargerThan2) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSaturableIntegerLargerThan2) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLargerThan2());
 }
 
-TEST(TypeCharacteristicsGTest,TestSaturableIntegerLessThan) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSaturableIntegerLessThan) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLessThan());
 }
 
-TEST(TypeCharacteristicsGTest,TestSaturableIntegerLessThan2) {
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSaturableIntegerLessThan2) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLessThan2());
 }

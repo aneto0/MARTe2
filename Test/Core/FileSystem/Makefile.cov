@@ -31,5 +31,6 @@ include Makefile.inc
 LIBRARIES_STATIC=L1Portability/cov/L1PortabilityTest$(LIBEXT)
 LIBRARIES_STATIC+=L3Streams/cov/L3StreamsTest$(LIBEXT)
 LIBRARIES_STATIC+=L4LoggerService/cov/L4LoggerServiceTest$(LIBEXT)
+LIBRARIES_STATIC+=L4HttpService/cov/L4HttpServiceTest$(LIBEXT)
 LIBRARIES_STATIC+=L6App/cov/L6AppTest$(LIBEXT)
 

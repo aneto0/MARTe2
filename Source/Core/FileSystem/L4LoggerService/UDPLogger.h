@@ -42,6 +42,7 @@ namespace MARTe {
 /**
  * @brief A LoggerConsumerI which outputs the log messages to a UDP socket.
  * @details The configuration syntax is (names are only given as an example):
+ * <pre>
  * +UDPLogger = {
  *     Class = UDPLogger
  *     Address = 127.0.0.1 //Compulsory. The address of the destination where the logs are to be sent to.
@@ -49,6 +50,7 @@ namespace MARTe {
  *     Format = ItOoFm //Compulsory. As described in LoggerConsumerI::LoadPrintPreferences
  *     PrintKeys = 1 //Optional. As described in LoggerConsumerI::LoadPrintPreferences
  * }
+ * </pre>
  */
 class UDPLogger: public Object, public LoggerConsumerI {
 public:

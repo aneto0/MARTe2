@@ -39,37 +39,37 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(BootstrapGTest, TestConstructor) {
+TEST(FileSystem_L6App_BootstrapGTest, TestConstructor) {
     BootstrapTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(BootstrapGTest, TestReadParameters) {
+TEST(FileSystem_L6App_BootstrapGTest, TestReadParameters) {
     BootstrapTest test;
     ASSERT_TRUE(test.TestReadParameters());
 }
 
-TEST(BootstrapGTest, TestReadParameters_FalseNoLoader) {
+TEST(FileSystem_L6App_BootstrapGTest, TestReadParameters_FalseNoLoader) {
     BootstrapTest test;
     ASSERT_TRUE(test.TestReadParameters_FalseNoLoader());
 }
 
-TEST(BootstrapGTest, TestReadParameters_FalseNoFilename) {
+TEST(FileSystem_L6App_BootstrapGTest, TestReadParameters_FalseNoFilename) {
     BootstrapTest test;
     ASSERT_TRUE(test.TestReadParameters_FalseNoFilename());
 }
 
-TEST(BootstrapGTest, TestGetConfigurationStream) {
+TEST(FileSystem_L6App_BootstrapGTest, TestGetConfigurationStream) {
     BootstrapTest test;
     ASSERT_TRUE(test.TestGetConfigurationStream());
 }
 
-TEST(BootstrapGTest, TestGetConfigurationStream_False) {
+TEST(FileSystem_L6App_BootstrapGTest, TestGetConfigurationStream_False) {
     BootstrapTest test;
     ASSERT_TRUE(test.TestGetConfigurationStream_False());
 }
 
-TEST(BootstrapGTest, TestPrintf) {
+TEST(FileSystem_L6App_BootstrapGTest, TestPrintf) {
     BootstrapTest test;
     ASSERT_TRUE(test.TestPrintf());
 }

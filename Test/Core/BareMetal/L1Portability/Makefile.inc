@@ -27,6 +27,7 @@
 OBJSX=  AtomicTest.x \
 	AuxHeap.x\
 	BasicConsoleTest.x \
+	BinaryTreeTest.x\
 	EndianityTest.x \
 	ErrorManagementTest.x \
 	FastMathTest.x \
@@ -37,6 +38,7 @@ OBJSX=  AtomicTest.x \
 	GlobalObjectsDatabaseTest.x \
 	HeapManagerTest.x \
 	HighResolutionTimerTest.x \
+	Md5EncryptTest.x\
 	LoadableLibraryTest.x \
 	MemoryAreaTest.x \
 	MemoryCheckTest.x \

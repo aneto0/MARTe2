@@ -27,3 +27,24 @@ How does MARTe guarantee real-time?
 -----------------------------------
 
 The framework is designed to ensure a fully predictable behaviour of the real-time execution loops. The real-time performance will, nevertheless, always depend on the underlying infrastructure (including the operating system) setup. 
+
+You use -std=c++98. Is this a specific requirement? Are there plans to upgrade to a newer standard?
+---------------------------------------------------------------------------------------------------
+
+The main reason was driven by our linting software https://www.gimpel.com/html/flex.htm (which at the time did not support some of the c++11 features). Nevertheless the benefits of moving to c++11 are clear (constexpr, nullptr, ...) and this update is planned for a future release of the framework.
+
+Why are exceptions avoided?
+---------------------------
+
+Because in the past (vxworks and gcc2.x) they had an impact on the real-time performance. Things might have changed though.
+
+Why are some C/glibc functions wrapped?
+---------------------------------------
+
+Mostly to provide the same API in terms of coding style and to guarantee portability to highly embedded systems. 
+
+Why is the C++ STL not used?
+----------------------------
+
+To keep dependencies to external libraries to the bare minimum and to maximise traceability of dependencies in the core components - and thus avoid uncontrolled creeping of features and untested code (through the inclusion of headers that do not belong to the core framework). STL could still be used to implement features in the Portability layers of given targets if required.
+

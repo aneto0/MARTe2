@@ -226,34 +226,6 @@ bool ObjectTest::TestExportData() {
     bool result = true;
     {
         /*
-         * This test verifies that method ObjectTest::ExportData signals an
-         * error because the testing object is an instance of a non registered
-         * class.
-         */
-        bool test = false;
-        NonRegisteredIntegerObject obj;
-        ConfigurationDatabase cdb;
-        obj.SetName("Test1");
-        obj.member = 10;
-        test = !obj.ExportData(cdb);
-        result = result && test;
-    }
-    {
-        /*
-         * This test verifies that method ObjectTest::ExportData signals an
-         * error because the testing object is an instance of a registered but
-         * non introspectable class.
-         */
-        bool test = false;
-        NonIntrospectableIntegerObject obj;
-        ConfigurationDatabase cdb;
-        obj.SetName("Test2");
-        obj.member = 20;
-        test = !obj.ExportData(cdb);
-        result = result && test;
-    }
-    {
-        /*
          * This test verifies that method ObjectTest::ExportData returns the
          * following tree (from a testing object which is an instance of a
          * registered and introspectable class):

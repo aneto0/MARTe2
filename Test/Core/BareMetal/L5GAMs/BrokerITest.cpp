@@ -679,3 +679,59 @@ bool BrokerITest::TestGetFunctionPointer() {
     }
     return ret;
 }
+
+bool BrokerITest::TestGetOwnerFunctionName() {
+    bool ret = InitialiseBrokerIEnviroment(config1);
+    ReferenceT<BrokerIDataSourceTestHelper> dataSource;
+    ReferenceT<BrokerITestHelper> broker;
+    ReferenceContainer brokers;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    if (ret) {
+        ret = dataSource->GetInputBrokers(brokers, "GAMA", (void *) 0xA0A0A0A0);
+    }
+    if (ret) {
+        ret = (brokers.Size() > 0u);
+    }
+    if (ret) {
+        broker = brokers.Get(0);
+        ret = broker.IsValid();
+    }
+    if (ret) {
+        ret = (broker->GetOwnerFunctionName() == "GAMA");
+    }
+
+    return ret;
+}
+
+bool BrokerITest::TestGetOwnerDataSourceName() {
+    bool ret = InitialiseBrokerIEnviroment(config1);
+    ReferenceT<BrokerIDataSourceTestHelper> dataSource;
+    ReferenceT<BrokerITestHelper> broker;
+    ReferenceContainer brokers;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    if (ret) {
+        ret = dataSource->GetInputBrokers(brokers, "GAMA", (void *) 0xA0A0A0A0);
+    }
+    if (ret) {
+        ret = (brokers.Size() > 0u);
+    }
+    if (ret) {
+        broker = brokers.Get(0);
+        ret = broker.IsValid();
+    }
+    if (ret) {
+        ret = (broker->GetOwnerDataSourceName() == "Drv1");
+    }
+
+    return ret;
+
+}
+

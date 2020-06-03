@@ -42,496 +42,496 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(IOBufferGTest, TestDefaultConstructor) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestDefaultConstructor) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestDefaultConstructor());
 }
 
-TEST(IOBufferGTest, TestFullConstructor_0) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestFullConstructor_0) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestFullConstructor(0));
 }
 
-TEST(IOBufferGTest, TestFullConstructor_100) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestFullConstructor_100) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestFullConstructor(100));
 }
 
-TEST(IOBufferGTest, TestFullConstructor_MAX) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestFullConstructor_MAX) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestFullConstructor(0xffffffff));
 }
 
-TEST(IOBufferGTest, TestDestructor) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestDestructor) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestDestructor());
 }
 
-TEST(IOBufferGTest, TestSize_size_in_granularity) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSize_size_in_granularity) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestBufferSize(10, 32));
 }
 
-TEST(IOBufferGTest, TestSize_granularity_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSize_granularity_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestBufferSize(10, 16));
 }
 
-TEST(IOBufferGTest, TestSize_zero_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSize_zero_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestBufferSize(0, 16));
 }
 
-TEST(IOBufferGTest, TestMaxUsableAmount_size_in_granularity) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestMaxUsableAmount_size_in_granularity) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestMaxUsableAmount(8, 2, 32));
 }
 
-TEST(IOBufferGTest, TestMaxUsableAmount_granularity_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestMaxUsableAmount_granularity_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestMaxUsableAmount(32, 2, 8));
 }
 
-TEST(IOBufferGTest, TestMaxUsableAmount_bigEndSpace_in_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestMaxUsableAmount_bigEndSpace_in_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestMaxUsableAmount(10, 12, 8));
 }
 
-TEST(IOBufferGTest, TestMaxUsableAmount_bigEndSpace_out_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestMaxUsableAmount_bigEndSpace_out_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestMaxUsableAmount(8, 12, 8));
 }
 
-TEST(IOBufferGTest, TestAmountLeft_size_in_granularity) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestAmountLeft_size_in_granularity) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestAmountLeft(8, 2, 32));
 }
 
-TEST(IOBufferGTest, TestAmountLeft_granularity_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestAmountLeft_granularity_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestAmountLeft(32, 2, 8));
 }
 
-TEST(IOBufferGTest, TestAmountLeft_bigEndSpace_in_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestAmountLeft_bigEndSpace_in_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestAmountLeft(10, 12, 8));
 }
 
-TEST(IOBufferGTest, TestAmountLeft_bigEndSpace_out_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestAmountLeft_bigEndSpace_out_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestAmountLeft(8, 12, 8));
 }
 
-TEST(IOBufferGTest, TestUsedAmountLeft_size_in_granularity) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUsedAmountLeft_size_in_granularity) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUsedAmountLeft(8, 2, 32));
 }
 
-TEST(IOBufferGTest, TestUsedAmountLeft_granularity_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUsedAmountLeft_granularity_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUsedAmountLeft(32, 2, 8));
 }
 
-TEST(IOBufferGTest, TestUsedAmountLeft_bigEndSpace_in_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUsedAmountLeft_bigEndSpace_in_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUsedAmountLeft(10, 12, 8));
 }
 
-TEST(IOBufferGTest, TestUsedAmountLeft_bigEndSpace_out_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUsedAmountLeft_bigEndSpace_out_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUsedAmountLeft(8, 12, 8));
 }
 
-TEST(IOBufferGTest, TestBuffer) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestBuffer) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestBuffer());
 }
 
-TEST(IOBufferGTest, TestBufferReference) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestBufferReference) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestBufferReference());
 }
 
-TEST(IOBufferGTest, TestPosition) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPosition) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPosition());
 }
 
-TEST(IOBufferGTest, TestUsedSize_size_in_granularity) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUsedSize_size_in_granularity) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUsedSize(8, 2, 32));
 }
 
-TEST(IOBufferGTest, TestUsedSize_granularity_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUsedSize_granularity_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUsedSize(32, 2, 8));
 }
 
-TEST(IOBufferGTest, TestUsedSize_bigEndSpace_in_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUsedSize_bigEndSpace_in_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUsedSize(10, 12, 8));
 }
 
-TEST(IOBufferGTest, TestUsedSize_bigEndSpace_out_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUsedSize_bigEndSpace_out_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUsedAmountLeft(8, 12, 8));
 }
 
-TEST(IOBufferGTest, TestAllocationGranularity_0) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestAllocationGranularity_0) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestAllocationGranularity(0, 1));
 }
 
-TEST(IOBufferGTest, TestAllocationGranularity_127) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestAllocationGranularity_127) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestAllocationGranularity(127, 64));
 }
 
-TEST(IOBufferGTest, TestAllocationGranularity_MAX) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestAllocationGranularity_MAX) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestAllocationGranularity(0xffffffff, 0x80000000));
 }
 
-TEST(IOBufferGTest, TestUndoLevel_0) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUndoLevel_0) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUndoLevel(0));
 }
 
-TEST(IOBufferGTest, TestUndoLevel_100) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUndoLevel_100) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUndoLevel(100));
 }
 
-TEST(IOBufferGTest, TestUndoLevel_MAX) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUndoLevel_MAX) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUndoLevel(0xffffffff));
 }
 
-TEST(IOBufferGTest, TestCanWrite) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestCanWrite) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestCanWrite());
 }
 
 
-TEST(IOBufferGTest, TestSetBufferHeapMemory_size_in_granularity) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferHeapMemory_size_in_granularity) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemory(8, 2, 32));
 }
 
-TEST(IOBufferGTest, TestSetBufferHeapMemory_granularity_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferHeapMemory_granularity_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemory(32, 2, 8));
 }
 
-TEST(IOBufferGTest, TestSetBufferHeapMemory_bigEndSpace_in_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferHeapMemory_bigEndSpace_in_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemory(10, 12, 8));
 }
 
-TEST(IOBufferGTest, TestSetBufferHeapMemory_bigEndSpace_out_memory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferHeapMemory_bigEndSpace_out_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemory(8, 12, 8));
 }
 
-TEST(IOBufferGTest, TestSetBufferHeapMemory_zero_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferHeapMemory_zero_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemory(0, 12, 8));
 }
 
-TEST(IOBufferGTest, TestSetBufferHeapMemoryIncrease) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferHeapMemoryIncrease) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemoryIncrease());
 }
 
-TEST(IOBufferGTest, TestSetBufferHeapMemoryDecrease) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferHeapMemoryDecrease) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemoryDecrease());
 }
-TEST(IOBufferGTest, TestSetBufferReadOnlyReferencedMemory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferReadOnlyReferencedMemory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferReadOnlyReferencedMemory());
 }
-TEST(IOBufferGTest, TestSetBufferReferencedMemory) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetBufferReferencedMemory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferReferencedMemory());
 }
 
-TEST(IOBufferGTest, TestResync) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestResync) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestResync());
 }
 
-TEST(IOBufferGTest, TestSeek_in_range) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSeek_in_range) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSeek(32, 16, true));
 }
 
-TEST(IOBufferGTest, TestSeek_out_range) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSeek_out_range) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSeek(32, 33, false));
 }
 
-TEST(IOBufferGTest, TestRelativeSeek_in_range) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRelativeSeek_in_range) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRelativeSeek(16, 8, true));
 }
 
-TEST(IOBufferGTest, TestRelativeSeek_left_boundary) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRelativeSeek_left_boundary) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRelativeSeek(16, -17, false));
 }
 
-TEST(IOBufferGTest, TestRelativeSeek_right_boundary) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRelativeSeek_right_boundary) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRelativeSeek(16, 17, false));
 }
 
-TEST(IOBufferGTest, TestPutC_Heap) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPutC_Heap) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPutC_Heap());
 }
 
-TEST(IOBufferGTest, TestPutC_MemoryReference) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPutC_MemoryReference) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPutC_MemoryReference());
 }
 
-TEST(IOBufferGTest, TestPutC_MemoryReferenceRO) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPutC_MemoryReferenceRO) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPutC_MemoryReferenceRO());
 }
 
-TEST(IOBufferGTest, TestGetC_Heap) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestGetC_Heap) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestGetC_Heap());
 }
 
-TEST(IOBufferGTest, TestGetC_MemoryReference) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestGetC_MemoryReference) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestGetC_MemoryReference());
 }
 
-TEST(IOBufferGTest, TestGetC_MemoryReferenceRO) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestGetC_MemoryReferenceRO) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestGetC_MemoryReferenceRO());
 }
 
-TEST(IOBufferGTest, TestUnPutC) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUnPutC) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUnPutC());
 }
 
-TEST(IOBufferGTest, TestUnGetC) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestUnGetC) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUnGetC());
 }
 
-TEST(IOBufferGTest, TestSetUsedSize) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetUsedSize) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetUsedSize(32, 31));
 }
 
-TEST(IOBufferGTest, TestSetUsedSize_clipped) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSetUsedSize_clipped) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetUsedSize(32, 33));
 }
-TEST(IOBufferGTest, TestWrite_Heap_size_in_allocated) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestWrite_Heap_size_in_allocated) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(32, 10, "HelloWorld"));
 }
 
-TEST(IOBufferGTest, TestWrite_Heap_allocated_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestWrite_Heap_allocated_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(8, 32, "HelloWorld"));
 }
 
-TEST(IOBufferGTest, TestWrite_Memoryreference) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestWrite_Memoryreference) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWrite_Memoryreference("HelloWorld",10));
 }
 
-TEST(IOBufferGTest, TestWrite_Memoryreference_Clip_Size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestWrite_Memoryreference_Clip_Size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWrite_Memoryreference("HelloWorld",5));
 }
 
-TEST(IOBufferGTest, TestWrite_NULL_Buffer) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestWrite_NULL_Buffer) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWrite_NULL_Buffer());
 }
 
-TEST(IOBufferGTest, TestRead_Heap_allocated_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRead_Heap_allocated_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRead_Heap(8, 32));
 }
 
-TEST(IOBufferGTest, TestRead_Heap_size_in_allocated) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRead_Heap_size_in_allocated) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRead_Heap(32, 10));
 }
 
-TEST(IOBufferGTest, TestRead_MemoryReference) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRead_MemoryReference) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRead_MemoryReference());
 }
 
-TEST(IOBufferGTest, TestRead_NULL_Buffer) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRead_NULL_Buffer) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRead_NULL_Buffer());
 }
 
-TEST(IOBufferGTest, TestWriteAll_size_in_allocated) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestWriteAll_size_in_allocated) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWriteAll(10, 5, "HelloWorld"));
 }
 
-TEST(IOBufferGTest, TestWriteAll_allocated_in_size) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestWriteAll_allocated_in_size) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWriteAll(5, 10, "HelloWorld"));
 }
 
-TEST(IOBufferGTest, TestEmpty) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestEmpty) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestEmpty());
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Integer_Decimal) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Integer_Decimal) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedDecimalTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Integer_Hexadecimal) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Integer_Hexadecimal) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedHexadecimalTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Integer_Octal) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Integer_Octal) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedOctalTable()));
 }
-TEST(IOBufferGTest, TestPrintFormatted_Integer_Binary) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Integer_Binary) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(128, GeneratePrintFormattedBinaryTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Float_FixedPoint) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Float_FixedPoint) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedFloatFPTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Float_FixedRelativePoint) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Float_FixedRelativePoint) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedFloatFPRTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Float_Exponential) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Float_Exponential) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedFloatExpTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Float_Engineering) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Float_Engineering) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedFloatEngTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Float_Smart) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Float_Smart) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedFloatSmartTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Float_Compact) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Float_Compact) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedFloatCompactTable()));
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_CCString) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_CCString) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_CCString());
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Pointer) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Pointer) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Pointer());
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Stream) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Stream) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Stream());
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_TooBigStream) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_TooBigStream) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_TooBigStream());
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_Stream_NotSeekable) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_Stream_NotSeekable) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Stream_NotSeekable());
 }
 
 
-TEST(IOBufferGTest, TestPrintFormatted_BitSet_Unsigned) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_BitSet_Unsigned) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_BitSet_Unsigned());
 }
 
-TEST(IOBufferGTest, TestPrintFormatted_BitSet_Signed) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormatted_BitSet_Signed) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_BitSet_Signed());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedMultiple) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormattedMultiple) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedGenericTable()));
 }
 
-TEST(IOBufferGTest, TestGetToken_ConstCharOutput_TableTerminators) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestGetToken_ConstCharOutput_TableTerminators) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestGetToken_ConstCharOutput(&TokenTestTableTerminators[0]));
 }
 
-TEST(IOBufferGTest, TestGetToken_ConstCharOutput_TableSkip) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestGetToken_ConstCharOutput_TableSkip) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestGetToken_ConstCharOutput(&TokenTestTableSkipCharacters[0]));
 }
 
 
-TEST(IOBufferGTest, GetToken_ConstCharOutput_ClipSize) {
+TEST(BareMetal_L3Streams_IOBufferGTest, GetToken_ConstCharOutput_ClipSize) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.GetToken_ConstCharOutput_ClipSize());
 }
 
-TEST(IOBufferGTest, TestGetToken_IOBufferOutput_TableTerminators) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestGetToken_IOBufferOutput_TableTerminators) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestGetToken_IOBufferOutput(&TokenTestTableTerminators[0]));
 }
 
-TEST(IOBufferGTest, TestGetToken_IOBufferOutput_TableSkip) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestGetToken_IOBufferOutput_TableSkip) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestGetToken_IOBufferOutput(&TokenTestTableSkipCharacters[0]));
 }
 
-TEST(IOBufferGTest, TestSkipToken) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestSkipToken) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSkipToken(&SkipTokensTestTable[0]));
 }
 
-TEST(IOBufferGTest, TestPrintFormattedObject) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormattedObject) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedObject());
 }
 
-TEST(IOBufferGTest, TestPrintStructuredDataInterface) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintStructuredDataInterface) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintStructuredDataInterface());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedIntrospection) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormattedIntrospection) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedIntrospection());
 }
 
-TEST(IOBufferGTest, TestPrintVector_Int32) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintVector_Int32) {
     IOBufferTest myIOBufferTest;
 
     const TestPrintFormattedTableVector<int32, 3> table[]={
@@ -544,7 +544,7 @@ TEST(IOBufferGTest, TestPrintVector_Int32) {
 }
 
 
-TEST(IOBufferGTest, TestPrintVector_Float32) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintVector_Float32) {
     IOBufferTest myIOBufferTest;
 
     const TestPrintFormattedTableVector<float32, 3> table[]={
@@ -557,7 +557,7 @@ TEST(IOBufferGTest, TestPrintVector_Float32) {
 }
 
 
-TEST(IOBufferGTest, TestPrintVector_CString) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintVector_CString) {
     IOBufferTest myIOBufferTest;
 
     const TestPrintFormattedTableVector<const char8*, 3> table[]={
@@ -569,7 +569,7 @@ TEST(IOBufferGTest, TestPrintVector_CString) {
     ASSERT_TRUE(myIOBufferTest.TestPrintVector(table));
 }
 
-TEST(IOBufferGTest, TestPrintVector_CArray) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintVector_CArray) {
     IOBufferTest myIOBufferTest;
 
     const TestPrintFormattedTableVector<const char8*, 3> table[]={
@@ -582,7 +582,7 @@ TEST(IOBufferGTest, TestPrintVector_CArray) {
 }
 
 
-TEST(IOBufferGTest, TestPrintMatrix_Int32) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintMatrix_Int32) {
     IOBufferTest myIOBufferTest;
 
     const TestPrintFormattedTableMatrix<int32, 2, 3 > table[]={
@@ -595,7 +595,7 @@ TEST(IOBufferGTest, TestPrintMatrix_Int32) {
 }
 
 
-TEST(IOBufferGTest, TestPrintMatrix_Float32) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintMatrix_Float32) {
     IOBufferTest myIOBufferTest;
 
     const TestPrintFormattedTableMatrix<float32, 2, 3> table[]={
@@ -608,7 +608,7 @@ TEST(IOBufferGTest, TestPrintMatrix_Float32) {
 }
 
 
-TEST(IOBufferGTest, TestPrintMatrix_CString) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintMatrix_CString) {
     IOBufferTest myIOBufferTest;
 
     const TestPrintFormattedTableMatrix<const char8*, 2,3> table[]={
@@ -619,7 +619,7 @@ TEST(IOBufferGTest, TestPrintMatrix_CString) {
     ASSERT_TRUE(myIOBufferTest.TestPrintMatrix(table));
 }
 
-TEST(IOBufferGTest, TestPrintMatrix_CArray) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintMatrix_CArray) {
     IOBufferTest myIOBufferTest;
 
     const TestPrintFormattedTableMatrix<const char8*, 2,3> table[]={
@@ -630,30 +630,54 @@ TEST(IOBufferGTest, TestPrintMatrix_CArray) {
     ASSERT_TRUE(myIOBufferTest.TestPrintCArrayMatrix(table));
 }
 
-TEST(IOBufferGTest, TestPrintTooMuchDimensions) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintTooMuchDimensions) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintTooMuchDimensions());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedIntrospection_NotIntrospectable) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormattedIntrospection_NotIntrospectable) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedIntrospection_NotIntrospectable());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedObject_NotIntrospectable) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintFormattedObject_NotIntrospectable) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedObject_NotIntrospectable());
 }
 
-TEST(IOBufferGTest, TestPrintPointerVector) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintPointerVector) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintPointerVector());
 }
 
 
-TEST(IOBufferGTest, TestPrintPointerMatrix) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintPointerMatrix) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintPointerMatrix());
 }
 
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRefill) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestRefill());
+}
+
+TEST(BareMetal_L3Streams_IOBufferGTest, TestFlush) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestFlush());
+}
+
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreSpaceToWriteArg) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreSpaceToWriteArg());
+}
+
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreSpaceToWrite) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreSpaceToWrite());
+}
+
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreDataToRead) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreDataToRead());
+}
 

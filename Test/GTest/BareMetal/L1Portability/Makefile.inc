@@ -25,6 +25,7 @@
 
 OBJSX=  AtomicGTest.x \
 	BasicConsoleGTest.x \
+	BinaryTreeGTest.x\
 	CircularStaticListGTest.x \
 	EndianityGTest.x \
 	ErrorManagementGTest.x \
@@ -36,6 +37,7 @@ OBJSX=  AtomicGTest.x \
 	GlobalObjectsDatabaseGTest.x \
 	HeapManagerGTest.x \
 	HighResolutionTimerGTest.x \
+	Md5EncryptGTest.x\
 	LoadableLibraryGTest.x \
 	MemoryAreaGTest.x \
 	MemoryCheckGTest.x\

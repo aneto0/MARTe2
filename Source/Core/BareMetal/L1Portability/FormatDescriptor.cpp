@@ -62,6 +62,9 @@ static const FDLookup flagsLookup[] = { { ' ', FormatDescriptor(PrintAnything, 0
         { '-', FormatDescriptor(PrintAnything, 0u, 0u, true, true, FixedPointNotation, DecimalNotation, false, false) },  // '-'
         { '0', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, true, false) },  // '0'
         { '#', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, true) },  // '#'
+        { 'S', FormatDescriptor(0x00000000u) },  // 'J'
+        { 'J', FormatDescriptor(0x10000000u) },  // 'J'
+        { 'X', FormatDescriptor(0x20000000u) },  // 'X'
         { static_cast<char8>(0), FormatDescriptor(0u) } };
 
 /**

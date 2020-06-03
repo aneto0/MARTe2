@@ -39,27 +39,27 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(RealTimeStateGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_RealTimeStateGTest,TestConstructor) {
     RealTimeStateTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(RealTimeStateGTest,TestAddStatefuls) {
+TEST(BareMetal_L5GAMs_RealTimeStateGTest,TestAddStatefuls) {
     RealTimeStateTest test;
     ASSERT_TRUE(test.TestAddStatefuls());
 }
 
-TEST(RealTimeStateGTest,TestAddStatefulsFalse_InvalidStateful) {
+TEST(BareMetal_L5GAMs_RealTimeStateGTest,TestAddStatefulsFalse_InvalidStateful) {
     RealTimeStateTest test;
     ASSERT_TRUE(test.TestAddStatefulsFalse_InvalidStateful());
 }
 
-TEST(RealTimeStateGTest,TestPrepareNextState) {
+TEST(BareMetal_L5GAMs_RealTimeStateGTest,TestPrepareNextState) {
     RealTimeStateTest test;
     ASSERT_TRUE(test.TestPrepareNextState());
 }
 
-TEST(RealTimeStateGTest,TestGetNumberOfStatefuls) {
+TEST(BareMetal_L5GAMs_RealTimeStateGTest,TestGetNumberOfStatefuls) {
     RealTimeStateTest test;
     ASSERT_TRUE(test.TestGetNumberOfStatefuls());
 }

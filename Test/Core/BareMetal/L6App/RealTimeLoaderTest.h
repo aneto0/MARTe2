@@ -62,7 +62,9 @@ public:
      */
     bool TestConfigure_False_FailedRealTimeApplicationConfiguration();
 
-
+    /**
+     * @brief Tests the Configure method more than RT one application.
+     */
     bool TestConfigure_MoreApplications();
 
     /**

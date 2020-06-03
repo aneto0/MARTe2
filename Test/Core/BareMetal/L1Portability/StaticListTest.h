@@ -183,9 +183,12 @@ public:
      */
     bool TestSquareOperatorInvalidPosition();
 
-
+    /**
+     * @brief Tests the Set function
+     */
     template<elementType value>
     bool TestSet(uint32 positionToSet);
+
 };
 
 }
@@ -753,14 +756,13 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
         targetList.Add(demoValues[i]);
     }
 
-    elementType toSet=value;
+    elementType toSet = value;
     targetList.Set(positionToSet, toSet);
 
     elementType test;
     targetList.Peek(positionToSet, test);
     return value == test;
 }
-
 
 }
 

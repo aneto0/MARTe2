@@ -117,6 +117,11 @@ public:
     bool TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples();
 
     /**
+     * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase with SignalDefinitionInterleaved and HeaderSize
+     */
+    bool TestSetConfiguredDatabase_PacketMemberSizes_HeaderSize();
+
+    /**
      * @brief Tests that CircularBufferThreadInputDataSource::SetConfiguredDatabase returns
      * false if a signal is produced
      */

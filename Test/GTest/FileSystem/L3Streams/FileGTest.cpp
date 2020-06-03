@@ -42,77 +42,77 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(FileGTest, TestConstructor) {
+TEST(FileSystem_L3Streams_FileGTest, TestConstructor) {
     FileTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(FileGTest, TestConstructor_Stream) {
+TEST(FileSystem_L3Streams_FileGTest, TestConstructor_Stream) {
     FileTest test;
     ASSERT_TRUE(test.TestConstructor_Stream());
 }
 
-TEST(FileGTest, TestConstructor_BasicFile) {
+TEST(FileSystem_L3Streams_FileGTest, TestConstructor_BasicFile) {
     FileTest test;
     ASSERT_TRUE(test.TestConstructor_BasicFile());
 }
 
-TEST(FileGTest, TestRead) {
+TEST(FileSystem_L3Streams_FileGTest, TestRead) {
     FileTest test;
     ASSERT_TRUE(test.TestRead());
 }
 
-TEST(FileGTest, TestRead_Timeout) {
+TEST(FileSystem_L3Streams_FileGTest, TestRead_Timeout) {
     FileTest test;
     ASSERT_TRUE(test.TestRead_Timeout());
 }
 
-TEST(FileGTest, TestWrite) {
+TEST(FileSystem_L3Streams_FileGTest, TestWrite) {
     FileTest test;
     ASSERT_TRUE(test.TestWrite());
 }
 
-TEST(FileGTest, TestWrite_Timeout) {
+TEST(FileSystem_L3Streams_FileGTest, TestWrite_Timeout) {
     FileTest test;
     ASSERT_TRUE(test.TestWrite_Timeout());
 }
 
-TEST(FileGTest, TestSize) {
+TEST(FileSystem_L3Streams_FileGTest, TestSize) {
     FileTest test;
     ASSERT_TRUE(test.TestSize());
 }
 
-TEST(FileGTest, TestSeek) {
+TEST(FileSystem_L3Streams_FileGTest, TestSeek) {
     FileTest test;
     ASSERT_TRUE(test.TestSeek());
 }
 
-TEST(FileGTest, TestRelativeSeek) {
+TEST(FileSystem_L3Streams_FileGTest, TestRelativeSeek) {
     FileTest test;
     ASSERT_TRUE(test.TestRelativeSeek());
 }
 
-TEST(FileGTest, TestPosition) {
+TEST(FileSystem_L3Streams_FileGTest, TestPosition) {
     FileTest test;
     ASSERT_TRUE(test.TestPosition());
 }
 
-TEST(FileGTest, TestSetSize) {
+TEST(FileSystem_L3Streams_FileGTest, TestSetSize) {
     FileTest test;
     ASSERT_TRUE(test.TestSetSize());
 }
 
-TEST(FileGTest, TestCanWrite) {
+TEST(FileSystem_L3Streams_FileGTest, TestCanWrite) {
     FileTest test;
     ASSERT_TRUE(test.TestCanWrite());
 }
 
-TEST(FileGTest, TestCanSeek) {
+TEST(FileSystem_L3Streams_FileGTest, TestCanSeek) {
     FileTest test;
     ASSERT_TRUE(test.TestCanSeek());
 }
 
-TEST(FileGTest, TestCanRead) {
+TEST(FileSystem_L3Streams_FileGTest, TestCanRead) {
     FileTest test;
     ASSERT_TRUE(test.TestCanRead());
 }

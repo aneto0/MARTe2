@@ -50,7 +50,7 @@ namespace MARTe {
 ConfigurationDatabase::ConfigurationDatabase() :
         Object() {
     mux.Create();
-    ReferenceT<ReferenceContainer> rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ConfigurationDatabaseNode> rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     rootNode = rootContainer;
     currentNode = rootNode;
 }
@@ -86,7 +86,7 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
     bool isRegisteredObject = (value.GetTypeDescriptor().isStructuredData);
     bool isStructuredDataI = (value.GetTypeDescriptor() == StructuredDataInterfaceType);
     if ((isRegisteredObject) || (isStructuredDataI)) {
-        ReferenceT<ReferenceContainer> storeCurrentNode = currentNode;
+        ReferenceT<ConfigurationDatabaseNode> storeCurrentNode = currentNode;
         if (CreateRelative(name)) {
             ok = TypeConvert((*this).operator MARTe::AnyType(), value);
         }
@@ -101,7 +101,6 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
             }
         }
         if (ok) {
-
             ReferenceT<AnyObject> objToWrite(GlobalObjectsDatabase::Instance()->GetStandardHeap());
             ok = objToWrite.IsValid();
             if (ok) {
@@ -120,18 +119,9 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
 }
 
 AnyType ConfigurationDatabase::GetType(const char8 * const name) {
-    bool found = false;
-    Reference foundReference;
-    uint32 i;
-    if (currentNode.IsValid()) {
-        for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-            foundReference = currentNode->Get(i);
-            found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
-        }
-    }
     AnyType retType;
-    if (found) {
-        ReferenceT<AnyObject> objToRead = foundReference;
+    if (currentNode.IsValid()) {
+        ReferenceT<AnyObject> objToRead = currentNode->FindLeaf(name);
         if (objToRead.IsValid()) {
             retType = objToRead->GetType();
         }
@@ -141,7 +131,7 @@ AnyType ConfigurationDatabase::GetType(const char8 * const name) {
 }
 
 bool ConfigurationDatabase::Copy(StructuredDataI &destination) {
-    ReferenceT<ReferenceContainer> foundNode;
+    ReferenceT<ConfigurationDatabaseNode> foundNode;
     bool ok = true;
     for (uint32 i = 0u; (i < currentNode->Size()) && (ok); i++) {
         foundNode = currentNode->Get(i);
@@ -179,6 +169,9 @@ bool ConfigurationDatabase::Initialise(StructuredDataI &data) {
     if (ok) {
         ok = data.Copy(*this);
     }
+    if (ok) {
+        rootNode->SetName(data.GetName());
+    }
     return ok;
 }
 
@@ -197,7 +190,7 @@ bool ConfigurationDatabase::Read(const char8 * const name, const AnyType &value)
     bool isRegisteredObject = (value.GetTypeDescriptor().isStructuredData);
     bool isStructuredDataI = (value.GetTypeDescriptor() == StructuredDataInterfaceType);
     if ((isRegisteredObject) || (isStructuredDataI)) {
-        ReferenceT<ReferenceContainer> storeCurrentNode = currentNode;
+        ReferenceT<ConfigurationDatabaseNode> storeCurrentNode = currentNode;
         if (MoveRelative(name)) {
             ok = TypeConvert(value, (*this).operator MARTe::AnyType());
         }
@@ -207,22 +200,10 @@ bool ConfigurationDatabase::Read(const char8 * const name, const AnyType &value)
         ok = currentNode.IsValid();
         if (ok) {
             //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
-            bool found = false;
-            Reference foundReference;
-            uint32 i;
-            for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-                foundReference = currentNode->Get(i);
-                found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
-            }
-
-            ok = found;
+            ReferenceT<AnyObject> objToRead = currentNode->FindLeaf(name);
+            ok = objToRead.IsValid();
             if (ok) {
-
-                ReferenceT<AnyObject> objToRead = foundReference;
-                ok = objToRead.IsValid();
-                if (ok) {
-                    ok = TypeConvert(value, objToRead->GetType());
-                }
+                ok = TypeConvert(value, objToRead->GetType());
             }
         }
     }
@@ -231,19 +212,11 @@ bool ConfigurationDatabase::Read(const char8 * const name, const AnyType &value)
 }
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
-
-    ReferenceContainerFilterObjectName filter(1, 0u, path);
-    ReferenceContainer resultSingle;
-    rootNode->Find(resultSingle, filter);
-
-    bool ok = (resultSingle.Size() > 0u);
+    //Invalidate move to leafs
+    ReferenceT<ConfigurationDatabaseNode> container = rootNode->Find(path);
+    bool ok = container.IsValid();
     if (ok) {
-        //Invalidate move to leafs
-        ReferenceT<ReferenceContainer> container = resultSingle.Get(resultSingle.Size() - 1u);
-        ok = container.IsValid();
-        if (ok) {
-            currentNode = container;
-        }
+        currentNode = container;
     }
 
     return ok;
@@ -251,18 +224,10 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
 bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
 
-    ReferenceContainerFilterObjectName filter(1, 0u, path);
-    ReferenceContainer resultSingle;
-    currentNode->Find(resultSingle, filter);
-
-    bool ok = (resultSingle.Size() > 0u);
+    ReferenceT<ConfigurationDatabaseNode> container = currentNode->Find(path);
+    bool ok = container.IsValid();
     if (ok) {
-        //Invalidate move to leafs
-        ReferenceT<ReferenceContainer> container = resultSingle.Get(resultSingle.Size() - 1u);
-        ok = container.IsValid();
-        if (ok) {
-            currentNode = container;
-        }
+        currentNode = container;
     }
 
     return ok;
@@ -271,7 +236,11 @@ bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
 bool ConfigurationDatabase::MoveToChild(const uint32 childIdx) {
     bool ok = (childIdx < currentNode->Size());
     if (ok) {
-        currentNode = currentNode->Get(childIdx);
+        ReferenceT<ConfigurationDatabaseNode> temp = currentNode->Get(childIdx);
+        ok = temp.IsValid();
+        if (ok) {
+            currentNode = temp;
+        }
     }
     return ok;
 }
@@ -279,22 +248,20 @@ bool ConfigurationDatabase::MoveToChild(const uint32 childIdx) {
 bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
     bool ok = (generations != 0u);
     if (ok) {
-        ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH,
-                                                  currentNode);
-        ReferenceContainer resultPath;
-        rootNode->Find(resultPath, filter);
-        ok = (resultPath.Size() > 0u);
-        if (ok) {
-            int32 newPositionIdx = (static_cast<int32>(resultPath.Size()) - 1) - static_cast<int32>(generations);
-            ok = (newPositionIdx >= -1);
+        ReferenceT<ConfigurationDatabaseNode> oldCurrent = currentNode;
+        for (uint32 i = 0u; (i < generations) && (ok); i++) {
+            ReferenceT<ConfigurationDatabaseNode> father = currentNode->GetParent();
+            ok = father.IsValid();
             if (ok) {
-                if (newPositionIdx == -1) {
-                    currentNode = rootNode;
+                if (father == rootNode) {
+                    ok = (generations == (i + 1u));
                 }
-                else {
-                    currentNode = resultPath.Get(static_cast<uint32>(newPositionIdx));
-                }
+                currentNode = father;
             }
+        }
+
+        if (!ok) {
+            currentNode = oldCurrent;
         }
     }
     return ok;
@@ -309,28 +276,22 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
     StreamString token;
     char8 c;
     bool created = false;
-    ReferenceT<ReferenceContainer> currentNodeOld = currentNode;
+    ReferenceT<ConfigurationDatabaseNode> currentNodeOld = currentNode;
 
     while ((pathStr.GetToken(token, ".", c)) && (ok)) {
         ok = (token.Size() > 0u);
         if (ok) {
             //Check if a node with this name already exists
-            bool found = false;
-            Reference foundReference;
-            uint32 i;
-            for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-                foundReference = currentNode->Get(i);
-                found = (StringHelper::Compare(foundReference->GetName(), token.Buffer()) == 0);
-            }
-
-            if (found) {
+            Reference foundReference = currentNode->FindLeaf(token.Buffer());
+            if (foundReference.IsValid()) {
                 currentNode = foundReference;
             }
             else {
-                ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                ReferenceT<ConfigurationDatabaseNode> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 container->SetName(token.Buffer());
                 ok = currentNode->Insert(container);
                 if (ok) {
+                    container->SetParent(currentNode);
                     currentNode = container;
                     created = true;
                 }
@@ -364,14 +325,8 @@ bool ConfigurationDatabase::CreateRelative(const char8 * const path) {
 }
 
 bool ConfigurationDatabase::Delete(const char8 * const name) {
-    bool ok = false;
-    Reference foundReference;
-    uint32 i;
-    for (i = 0u; (i < currentNode->Size()) && (!ok); i++) {
-        foundReference = currentNode->Get(i);
-        ok = (StringHelper::Compare(foundReference->GetName(), name) == 0);
-    }
-
+    Reference foundReference = currentNode->FindLeaf(name);
+    bool ok = (foundReference.IsValid());
     if (ok) {
         ok = currentNode->Delete(foundReference);
     }
@@ -380,7 +335,7 @@ bool ConfigurationDatabase::Delete(const char8 * const name) {
 }
 
 bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
-    ReferenceT<ReferenceContainer> nodeToAdd = node;
+    ReferenceT<ConfigurationDatabaseNode> nodeToAdd = node;
     bool ok = nodeToAdd.IsValid();
     if (ok) {
         ok = currentNode->Insert(nodeToAdd);
@@ -413,7 +368,7 @@ void ConfigurationDatabase::Unlock() {
     mux.FastUnLock();
 }
 
-ReferenceT<ReferenceContainer> ConfigurationDatabase::GetCurrentNode() const {
+Reference ConfigurationDatabase::GetCurrentNode() const {
     return currentNode;
 }
 

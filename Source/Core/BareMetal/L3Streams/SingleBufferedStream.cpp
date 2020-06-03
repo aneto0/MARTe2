@@ -143,21 +143,31 @@ bool SingleBufferedStream::Read(char8 * const output,
             toRead -= size;
 
             // decide whether to use the buffer again or just to read directly
-            if ((toRead * 4u) < internalBuffer.MaxUsableAmount()) {
-                if (!internalBuffer.Refill()) {
+            if ((toRead * calibReadParam) < internalBuffer.MaxUsableAmount()) {
+                if (!Refill()) {
                     ret = false;
                 }
 
-                else {
-
-                    if (!internalBuffer.Read(&output[size], toRead)) {
+                uint32 readBytes = size;
+                while ((toRead > 0u) && (ret)) {
+                    uint32 nReads = toRead;
+                    if (!internalBuffer.Read(&output[readBytes], nReads)) {
                         ret = false;
                     }
-                    size += toRead;
+                    if (nReads != toRead) {
+                        if (!Refill()) {
+                            ret = false;
+                        }
 
-                    // should have completed
-                    // as our buffer is at least 4x the need
+                    }
+                    if (ret) {
+                        toRead -= nReads;
+                        readBytes += nReads;
+                    }
+
                 }
+
+                size = readBytes;
 
             }
             else {
@@ -202,40 +212,33 @@ bool SingleBufferedStream::Write(const char8 * const input,
         // check available buffer size versus write size
         // if size is comparable to buffer size there
         // is no reason to use the buffering mechanism
-        if (internalBuffer.MaxUsableAmount() > (4u * size)) {
-
-            // try writing the buffer
-            if (!internalBuffer.Write(&input[0], size)) {
-                ret = false;
-            }
-
-            // all done! space available!
-            if (ret && (size != toWrite)) {
-                // make space
-                if (!internalBuffer.Flush()) {
+        if (internalBuffer.MaxUsableAmount() > (calibWriteParam * size)) {
+            uint32 writed = 0u;
+            //put a while here
+            while ((toWrite > 0u) && (ret)) {
+                uint32 nWrites = toWrite;
+                // try writing the buffer
+                if (!internalBuffer.Write(&input[writed], nWrites)) {
                     ret = false;
                 }
-                else {
-                    toWrite -= size;
-                    uint32 leftToWrite = toWrite;
-
-                    // try writing the buffer
-                    if (!internalBuffer.Write(&input[size], leftToWrite)) {
-                        ret = false;
-                    }
-
-                    size += leftToWrite;
-
-                    // should have been able to fill in it!!!
-                    if (leftToWrite != toWrite) {
+                if (nWrites != toWrite) {
+                    // make space
+                    if (!Flush()) {
                         ret = false;
                     }
                 }
+                if (ret) {
+                    writed += nWrites;
+                    toWrite -= nWrites;
+                }
             }
+
+            size = writed;
+
         }
         else {
             // write the buffer so far
-            if (!internalBuffer.Flush()) {
+            if (!Flush()) {
                 ret = false;
             }
             else {

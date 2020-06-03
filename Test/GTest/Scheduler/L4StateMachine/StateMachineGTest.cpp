@@ -41,72 +41,77 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StateMachineGTest,TestConstructor) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestConstructor) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(StateMachineGTest,TestInitialise) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestInitialise) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(StateMachineGTest,TestGetState) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestGetState) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestGetState());
 }
 
-TEST(StateMachineGTest,TestGetStateStatus) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestGetStateStatus) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestGetStateStatus());
 }
 
-TEST(StateMachineGTest,TestInitialise_False_NoStates) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestInitialise_False_NoStates) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestInitialise_False_NoStates());
 }
 
-TEST(StateMachineGTest,TestInitialise_False_NoEvents) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestInitialise_False_NoEvents) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestInitialise_False_NoEvents());
 }
 
-TEST(StateMachineGTest,TestInitialise_False_NextState) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestInitialise_False_NextState) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestInitialise_False_NextState());
 }
 
-TEST(StateMachineGTest,TestInitialise_False_NextStateError) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestInitialise_False_NextStateError) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestInitialise_False_NextStateError());
 }
 
-TEST(StateMachineGTest,TestEventTriggered) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestEventTriggered) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered());
 }
 
-TEST(StateMachineGTest,TestEventTriggered_SendMessage) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestEventTriggered_SendMessage) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered_SendMessage());
 }
 
-TEST(StateMachineGTest,TestEventTriggered_SendMessage_WaitReply) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestEventTriggered_SendMessage_WaitReply) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered_SendMessage_WaitReply());
 }
 
-TEST(StateMachineGTest,TestEventTriggered_SendMessage_GoToError) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestEventTriggered_SendMessage_GoToError) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered_SendMessage_GoToError());
 }
 
-TEST(StateMachineGTest,TestEventTriggered_SendMessage_GoToError_Timeout) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestEventTriggered_SendMessage_GoToError_Timeout) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered_SendMessage_GoToError_Timeout());
 }
 
-TEST(StateMachineGTest,TestEventTriggered_SendMessage_PingPong) {
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestEventTriggered_SendMessage_PingPong) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered_SendMessage_PingPong());
+}
+
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestExportData) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestExportData());
 }

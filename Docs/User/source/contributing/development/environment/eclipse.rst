@@ -162,7 +162,7 @@ Configuration
       3. In the **C/C++ Application** text field:
       
          a. Write ``Build\msc\GTest\MainGTest.exe`` if you are developing in Microsoft Windows;
-         b. Write ``Build/linux/GTest/MainGTest.ex`` if you are developing in Linux;
+         b. Write ``Build/x86-linux/GTest/MainGTest.ex`` if you are developing in Linux;
          
         .. image:: RunConfigurationsC_CppUnitTestCreation.png
          

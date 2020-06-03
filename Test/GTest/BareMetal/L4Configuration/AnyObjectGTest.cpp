@@ -41,593 +41,593 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(AnyObjectGTest,TestConstructor) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestConstructor) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestDefaultConstructor());
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_Char8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::char8('a')));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Scalar_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Scalar_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Scalar(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_Char8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::char8('a')));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_CharStar) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_CharStar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar("ThisIsAString"));
 }
 
-TEST(AnyObjectGTest,TestGetType_Scalar_String) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Scalar_String) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Scalar_String());
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_Char8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::char8('a')));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Vector_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Vector_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Vector(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_Char8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::char8('a')));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Vector_Static_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Vector_Static_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Vector_Static(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_ScalarCharStar) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_ScalarCharStar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_ScalarCharStar());
 }
 
-TEST(AnyObjectGTest,TestSerialise_VectorCharArray) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_VectorCharArray) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_VectorChar());
 }
 
-TEST(AnyObjectGTest,TestSerialise_StaticCharArray) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticCharArray) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticCharArray());
 }
 
-TEST(AnyObjectGTest,TestSerialise_StaticArrayCharStar) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticArrayCharStar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticArrayCharStar());
 }
 
-TEST(AnyObjectGTest,TestSerialise_ScalarString) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_ScalarString) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_ScalarString());
 }
 
-TEST(AnyObjectGTest,TestSerialise_StaticStringArray) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticStringArray) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticStringArray());
 }
 
-TEST(AnyObjectGTest,TestSerialise_VectorString) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_VectorString) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_VectorString());
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Char8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::char8('a')));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_Char8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::char8('a')));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Static_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Static_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Static(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_Char8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::char8('a')));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Matrix_Array_Static_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_Char8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::char8('a')));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_UInt8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_UInt8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::uint8(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_Int8) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_Int8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::int8(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_UInt16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_UInt16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::uint16(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_Int16) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_Int16) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::int16(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_UInt32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_UInt32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::uint32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_Int32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_Int32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::int32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_UInt64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_UInt64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::uint64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_Int64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_Int64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::int64(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_Float32) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_Float32) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::float32(7)));
 }
 
-TEST(AnyObjectGTest,TestGetType_Matrix_Float64) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_Float64) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::float64(7)));
 }
 
-TEST(AnyObjectGTest,TestSerialise_StaticMatrixCharStar) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticMatrixCharStar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticMatrixCharStar());
 }
 
-TEST(AnyObjectGTest,TestSerialise_MatrixCharStar) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_MatrixCharStar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_MatrixCharStar());
 }
 
-TEST(AnyObjectGTest,TestSerialise_StaticMatrixString) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticMatrixString) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticMatrixString());
 }
 
-TEST(AnyObjectGTest,TestSerialise_MatrixString) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_MatrixString) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_MatrixString());
 }
 
-TEST(AnyObjectGTest,TestGetClassProperties) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetClassProperties) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetClassProperties());
 }
 
-//TEST(AnyObjectGTest,TestGetClassPropertiesCopy) {
+//TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetClassPropertiesCopy) {
 //    AnyObjectTest anyObjTest;
 //    ASSERT_TRUE(anyObjTest.TestGetClassPropertiesCopy());
 //}
 
-TEST(AnyObjectGTest,TestGetObjectBuildFunction) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetObjectBuildFunction) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetObjectBuildFunction());
 }
 
 
-TEST(AnyObjectGTest,TestSerialise_StaticMatrixChar) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticMatrixChar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticMatrixChar());
 }
 
-TEST(AnyObjectGTest,TestSerialise_StaticMeshChar) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticMeshChar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticMeshChar());
 }
 
-TEST(AnyObjectGTest,TestCleanUp) {
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestCleanUp) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestCleanUp());
 }

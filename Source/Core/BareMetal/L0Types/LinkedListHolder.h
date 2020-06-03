@@ -108,7 +108,7 @@ public:
     inline void FastListInsertSingle(LinkedListable &p);
 
     /**
-     * @brief Inserts at the beginning of the list \a p. \a p can be a single element or an entire list.
+     * @brief Inserts at the end of the list \a p. \a p can be a single element or an entire list.
      * @param[in] p a pointer to the LinkedListable to insert.
      */
     void ListInsert(LinkedListable * const p);

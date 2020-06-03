@@ -53,10 +53,8 @@ bool BufferedStreamITest::TestAnyType() {
     return ok;
 }
 
-
-
 bool BufferedStreamITest::TestGetToken(uint32 bufferSize,
-                               const TokenTestTableRow *table) {
+                                       const TokenTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
@@ -96,7 +94,7 @@ bool BufferedStreamITest::TestGetToken(uint32 bufferSize,
 }
 
 bool BufferedStreamITest::TestGetToken_Stream(uint32 bufferSize,
-                                      const TokenTestTableRow *table) {
+                                              const TokenTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
@@ -138,7 +136,7 @@ bool BufferedStreamITest::TestGetToken_Stream(uint32 bufferSize,
 }
 
 bool BufferedStreamITest::TestSkipTokens(uint32 bufferSize,
-                                 const SkipTokensTestTableRow *table) {
+                                         const SkipTokensTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
@@ -169,7 +167,7 @@ bool BufferedStreamITest::TestSkipTokens(uint32 bufferSize,
 }
 
 bool BufferedStreamITest::TestGetLine(uint32 bufferSize,
-                              bool skipCharacter) {
+                                      bool skipCharacter) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     bool result = true;
@@ -209,7 +207,7 @@ bool BufferedStreamITest::TestGetLine(uint32 bufferSize,
 }
 
 bool BufferedStreamITest::TestGetLine_Stream(uint32 bufferSize,
-                                     bool skipCharacter) {
+                                             bool skipCharacter) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     bool result = true;
@@ -279,7 +277,7 @@ bool BufferedStreamITest::TestCopy_Stream(uint32 bufferSize) {
 }
 
 bool BufferedStreamITest::TestPrintFormatted(uint32 bufferSize,
-                                     const PrintfNode testTable[]) {
+                                             const PrintfNode testTable[]) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     uint32 i = 0;
@@ -452,7 +450,7 @@ bool BufferedStreamITest::TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize) 
 
 bool BufferedStreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
 
-    int64 data[5] = { (int64)0x13579BDF02468ACE, (int64)0x13579BDF02468ACE, (int64)0x123456789ABCDEF0, (int64)0xDEADBABEBAB00111 };
+    int64 data[5] = { (int64) 0x13579BDF02468ACE, (int64) 0x13579BDF02468ACE, (int64) 0x123456789ABCDEF0, (int64) 0xDEADBABEBAB00111 };
     const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
     int32 sizeStr = 63;
     uint32 dataBitSize = 256;
@@ -514,4 +512,125 @@ bool BufferedStreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
     }
 
     return true;
+}
+
+bool BufferedStreamITest::TestFlush() {
+
+    DummySingleBufferedStream test;
+    //force to use buffer
+    test.SetCalibWriteParam(0);
+
+    uint32 buffSize = 8u;
+    test.SetBufferSize(buffSize);
+    const char8 *str = "HelloWorld";
+    uint32 size = StringHelper::Length(str);
+    test.Write(str, size);
+
+    bool ret = StringHelper::CompareN(test.buffer, str, buffSize) == 0;
+    ret &= StringHelper::Length(test.buffer) == buffSize;
+    if (ret) {
+        test.Flush();
+        ret = StringHelper::Compare(test.buffer, str) == 0;
+    }
+
+    return ret;
+}
+
+bool BufferedStreamITest::TestRefill() {
+    DummySingleBufferedStream test;
+    //force to use buffer
+    test.SetCalibReadParam(0);
+
+    uint32 buffSize = 8u;
+    test.SetBufferSize(buffSize);
+    const char8 *str = "HelloWorld";
+    uint32 strSize = StringHelper::Length(str);
+    MemoryOperationsHelper::Copy(test.buffer, str, strSize);
+
+    uint32 size = 5u;
+
+    char8 outBuff[32];
+    MemoryOperationsHelper::Set(outBuff, '\0', 32);
+    test.Read(outBuff, size);
+
+    bool ret = StringHelper::CompareN(test.buffer, outBuff, size) == 0;
+    ret &= test.position == buffSize;
+    if (ret) {
+        test.Refill();
+        test.Read(outBuff, size);
+        ret = StringHelper::CompareN(test.buffer + buffSize, outBuff, size) == 0;
+    }
+
+    return ret;
+}
+
+bool BufferedStreamITest::TestSetCalibReadParam() {
+
+    DummySingleBufferedStream test;
+
+    //force to use buffer
+    test.SetCalibReadParam(2u);
+
+    uint32 buffSize = 8u;
+    test.SetBufferSize(buffSize);
+    const char8 *str = "HelloWorld";
+    uint32 size = StringHelper::Length(str);
+    MemoryOperationsHelper::Copy(test.buffer, str, size);
+
+    char8 outBuff[32];
+    MemoryOperationsHelper::Set(outBuff, 0, 32);
+    uint32 sizeToRead = 5;
+
+    test.Read(outBuff, sizeToRead);
+
+    //read directly from the stream
+    bool ret = test.position == sizeToRead;
+
+    if (ret) {
+        test.Seek(0);
+        MemoryOperationsHelper::Set(outBuff, 0, 32);
+
+        //force to use buffer
+        test.SetCalibReadParam(0);
+        test.Read(outBuff, sizeToRead);
+        //use the buffer!
+        ret = test.position == buffSize;
+    }
+
+    return ret;
+
+}
+
+bool BufferedStreamITest::TestSetCalibWriteParam() {
+    DummySingleBufferedStream test;
+
+    //force to use buffer
+    test.SetCalibWriteParam(2u);
+
+    uint32 buffSize = 8u;
+    test.SetBufferSize(buffSize);
+    const char8 *str = "HelloWorld";
+    uint32 size = StringHelper::Length(str);
+    test.Write(str, size);
+
+    bool ret = StringHelper::Compare(test.buffer, str) == 0;
+
+    if (ret) {
+        test.Seek(0);
+        MemoryOperationsHelper::Set(test.buffer, 0, size);
+
+        //force to use buffer
+        test.SetCalibWriteParam(0);
+        test.Write(str, size);
+
+        bool ret = StringHelper::CompareN(test.buffer, str, buffSize) == 0;
+        ret &= StringHelper::Length(test.buffer) == buffSize;
+        if (ret) {
+            test.Flush();
+            ret = StringHelper::Compare(test.buffer, str) == 0;
+        }
+    }
+
+    return ret;
+
 }

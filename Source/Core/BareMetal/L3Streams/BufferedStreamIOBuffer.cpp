@@ -46,12 +46,14 @@ namespace MARTe {
 BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
         IOBuffer() {
     stream = static_cast<OperatingSystemCallbacksI *>(NULL);
+    streamBuffered = static_cast<BufferedStreamI *>(NULL);
     timeout = TTInfiniteWait;
 }
 
 BufferedStreamIOBuffer::BufferedStreamIOBuffer(OperatingSystemCallbacksI * const s) :
         IOBuffer() {
     stream = s;
+    streamBuffered =dynamic_cast<BufferedStreamI *>(s);
     timeout = TTInfiniteWait;
 }
 
@@ -99,8 +101,8 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
             uint32 readSize = MaxUsableAmount();
 
             if (stream->OSRead(BufferReference(), readSize)) {
+                retval = (readSize > 0u);
                 IOBuffer::SetUsedSize(readSize);
-                retval = true;
             }
             else {
                 REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSRead");
@@ -147,6 +149,33 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
 
 bool BufferedStreamIOBuffer::SetBufferSize(const uint32 size) {
     return IOBuffer::SetBufferHeapMemory(size, 0u);
+}
+
+bool BufferedStreamIOBuffer::Flush(const uint32 neededSize) {
+
+    bool ret = true;
+
+    if (streamBuffered != NULL_PTR(BufferedStreamI*)) {
+        ret = streamBuffered->Flush();
+    }
+    else {
+        ret = IOBuffer::NoMoreSpaceToWrite(neededSize);
+    }
+    return ret;
+}
+
+
+bool BufferedStreamIOBuffer::Refill(){
+
+    bool ret = true;
+
+    if (streamBuffered != NULL_PTR(BufferedStreamI*)) {
+        ret = streamBuffered->Refill();
+    }
+    else {
+        ret = IOBuffer::NoMoreDataToRead();
+    }
+    return ret;
 }
 
 }

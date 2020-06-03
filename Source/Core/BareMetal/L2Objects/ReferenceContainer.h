@@ -32,14 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "LinkedListHolder.h"
 #include "FastPollingMutexSem.h"
-#include "TimeoutType.h"
+#include "LinkedListHolder.h"
 #include "Object.h"
 #include "Reference.h"
-#include "LinkedListable.h"
 #include "ReferenceContainerFilter.h"
 #include "ReferenceContainerNode.h"
+#include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -130,7 +129,7 @@ ReferenceContainer    ();
     bool Delete(const char8 * const path);
 
     /**
-     * @brief Finds on or more elements in the container.
+     * @brief Finds one or more elements in the container.
      * @details The container is walked and its elements are tested against a \a filter. Valid results are
      * stored in the \a result container.
      * @param[in,out] result container where to store the elements found (which may include a path to a given container).
@@ -315,6 +314,7 @@ private:
      */
     LinkedListHolderT<ReferenceContainerNode> list;
 
+    
     /**
      * Protects multiple access to the internal resources
      */

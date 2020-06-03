@@ -146,10 +146,6 @@ TypeDescriptor IntrospectionEntry::GetMemberTypeDescriptor() const {
         typeDes.isConstant = isConstant;
     }
 
-    // special case of char array
-    if (StringHelper::Compare(typeName, "char8") == 0) {
-        typeDes.numberOfBits = dimensionSize[0] * 8u;
-    }
     return typeDes;
 }
 
@@ -207,23 +203,11 @@ uint32 IntrospectionEntry::GetMemberPointerLevel() const {
 }
 
 uint32 IntrospectionEntry::GetNumberOfElements(const uint32 dimension) const {
-
-    uint32 dimensionNumber = dimension;
-    // special case of char array
-    if (StringHelper::Compare(typeName, "char8") == 0) {
-        dimensionNumber++;
-    }
-    return (dimensionNumber < 3u) ? dimensionSize[dimensionNumber] : dimensionSize[2];
+    return (dimension < 3u) ? dimensionSize[dimension] : dimensionSize[2];
 }
 
 uint8 IntrospectionEntry::GetNumberOfDimensions() const {
-    uint8 ret = numberOfDimensions;
-    if (StringHelper::Compare(typeName, "char8") == 0) {
-        if (ret > 0u) {
-            ret--;
-        }
-    }
-    return ret;
+    return numberOfDimensions;
 }
 
 }

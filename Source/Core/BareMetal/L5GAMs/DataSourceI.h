@@ -685,6 +685,11 @@ private:
      * Accelerator reference for the functionsDatabaseNode.
      */
     ConfigurationDatabase functionsDatabaseNode;
+
+    /**
+     * Accelerator for the signal names.
+     */
+    ConfigurationDatabase signalNameCache;
 };
 
 }

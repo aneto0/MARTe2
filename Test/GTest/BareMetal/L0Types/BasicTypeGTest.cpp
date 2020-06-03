@@ -42,57 +42,57 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(BasicTypeGTest,TestConstructorInt8) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorInt8) {
      BasicTypeTest myBasicTypeTest;
      ASSERT_TRUE(myBasicTypeTest.TestConstructorInt8());
 }
 
-TEST(BasicTypeGTest,TestConstructorUInt8) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorUInt8) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt8());
 }
 
-TEST(BasicTypeGTest,TestConstructorInt16) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorInt16) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorInt16());
 }
 
-TEST(BasicTypeGTest,TestConstructorUInt16) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorUInt16) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt16());
 }
 
-TEST(BasicTypeGTest,TestConstructorInt32) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorInt32) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorInt32());
 }
 
-TEST(BasicTypeGTest,TestConstructorUInt32) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorUInt32) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt32());
 }
 
-TEST(BasicTypeGTest,TestConstructorInt64) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorInt64) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorInt64());
 }
 
-TEST(BasicTypeGTest,TestConstructorUInt64) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorUInt64) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt64());
 }
 
-TEST(BasicTypeGTest,TestConstructorFloat32) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorFloat32) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorFloat32());
 }
 
-TEST(BasicTypeGTest,TestConstructorFloat64) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorFloat64) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorFloat64());
 }
 
-TEST(BasicTypeGTest,TestConstructorChar8) {
+TEST(BareMetal_L0Types_BasicTypeGTest,TestConstructorChar8) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorChar8());
 }

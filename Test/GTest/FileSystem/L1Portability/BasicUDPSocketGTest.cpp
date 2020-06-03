@@ -42,67 +42,67 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(BasicUDPSocketGTest,TesDefaultConstructor) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TesDefaultConstructor) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestDefaultConstructor());
 }
 
-TEST(BasicUDPSocketGTest,TestSeek) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestSeek) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestSeek());
 }
 
-TEST(BasicUDPSocketGTest,TestSize) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestSize) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestSize());
 }
 
-TEST(BasicUDPSocketGTest,TestRelativeSeek) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestRelativeSeek) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestRelativeSeek());
 }
 
-TEST(BasicUDPSocketGTest,TestPosition) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestPosition) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestPosition());
 }
 
-TEST(BasicUDPSocketGTest,TestSetSize) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestSetSize) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestSetSize());
 }
 
-TEST(BasicUDPSocketGTest,TestCanWrite) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestCanWrite) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestCanWrite());
 }
 
-TEST(BasicUDPSocketGTest,TestCanRead) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestCanRead) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestCanRead());
 }
 
-TEST(BasicUDPSocketGTest,TestCanSeek) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestCanSeek) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestCanSeek());
 }
 
-TEST(BasicUDPSocketGTest,TestIsValid) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestIsValid) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestIsValid());
 }
 
-TEST(BasicUDPSocketGTest,TestOpen) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestOpen) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestOpen());
 }
 
-TEST(BasicUDPSocketGTest,TestClose) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestClose) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestClose());
 }
 
-TEST(BasicUDPSocketGTest,TestListen) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestListen) {
     BasicUDPSocketTest basicUDPSocketTest;
 
     const ConnectListenUDPTestTable table[]={
@@ -118,7 +118,7 @@ TEST(BasicUDPSocketGTest,TestListen) {
 }
 
 
-TEST(BasicUDPSocketGTest,TestConnect) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestConnect) {
     BasicUDPSocketTest basicUDPSocketTest;
 
     const ConnectListenUDPTestTable table[]={
@@ -135,7 +135,7 @@ TEST(BasicUDPSocketGTest,TestConnect) {
 
 
 
-TEST(BasicUDPSocketGTest,TestRead) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestRead) {
     BasicUDPSocketTest basicUDPSocketTest;
 
 
@@ -155,7 +155,7 @@ TEST(BasicUDPSocketGTest,TestRead) {
     ASSERT_TRUE(basicUDPSocketTest.TestRead(table));
 }
 
-TEST(BasicUDPSocketGTest,TestPeek) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestPeek) {
     BasicUDPSocketTest basicUDPSocketTest;
 
 
@@ -174,7 +174,7 @@ TEST(BasicUDPSocketGTest,TestPeek) {
 
 
 
-TEST(BasicUDPSocketGTest,TestWrite) {
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestWrite) {
     BasicUDPSocketTest basicUDPSocketTest;
 
 

@@ -39,72 +39,72 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(MemoryMapAsyncOutputBrokerGTest,TestConstructor) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestConstructor) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestInit) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestInit) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestInit());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithBufferParameters());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_0_NumberOfBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_0_NumberOfBuffers) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithBufferParameters_False_0_NumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_MoreThanOneGAM) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_MoreThanOneGAM) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithBufferParameters_False_MoreThanOneGAM());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_Samples) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_Samples) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithBufferParameters_False_Samples());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestExecute_1_Buffer) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestExecute_1_Buffer) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1_Buffer());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestExecute_N_Buffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestExecute_N_Buffers) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_Buffers());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestExecute_Buffer_Overrun) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestExecute_Buffer_Overrun) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_Buffer_Overrun());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestGetCPUMask) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestGetCPUMask) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetCPUMask());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestGetNumberOfBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestGetNumberOfBuffers) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetNumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestGetStackSize) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestGetStackSize) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetStackSize());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestIsIgnoringBufferOverrun) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestIsIgnoringBufferOverrun) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestIsIgnoringBufferOverrun());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestSetIgnoreBufferOverrun) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncOutputBrokerGTest,TestSetIgnoreBufferOverrun) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestSetIgnoreBufferOverrun());
 }

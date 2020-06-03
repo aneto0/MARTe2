@@ -41,167 +41,167 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MultiClientServiceGTest,TestDefaultConstructor) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestDefaultConstructor) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(MultiClientServiceGTest,TestDefaultConstructor_Template) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestDefaultConstructor_Template) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestDefaultConstructor_Template());
 }
 
-TEST(MultiClientServiceGTest,TestInitialise) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestInitialise) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(MultiClientServiceGTest,TestInitialise_False_Timeout) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestInitialise_False_Timeout) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_Timeout());
 }
 
-TEST(MultiClientServiceGTest,TestInitialise_False_MaxNumberOfThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestInitialise_False_MaxNumberOfThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_MaxNumberOfThreads());
 }
 
-TEST(MultiClientServiceGTest,TestInitialise_False_MinNumberOfThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestInitialise_False_MinNumberOfThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_MinNumberOfThreads());
 }
 
-TEST(MultiClientServiceGTest,TestInitialise_False_MinGreaterThanMax) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestInitialise_False_MinGreaterThanMax) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_MinGreaterThanMax());
 }
 
-TEST(MultiClientServiceGTest,TestInitialise_False_MinNumberOfThreads_0) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestInitialise_False_MinNumberOfThreads_0) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_MinNumberOfThreads_0());
 }
 
-TEST(MultiClientServiceGTest,TestStart) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestStart) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestStart());
 }
 
-TEST(MultiClientServiceGTest,TestStart_False) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestStart_False) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestStart_False());
 }
 
-TEST(MultiClientServiceGTest,TestStart_Restart) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestStart_Restart) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestStart_Restart());
 }
 
-TEST(MultiClientServiceGTest,TestStart_NotEnoughThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestStart_NotEnoughThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestStart_NotEnoughThreads());
 }
 
-TEST(MultiClientServiceGTest,TestStop) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestStop) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestStop());
 }
 
-TEST(MultiClientServiceGTest,TestStop_Kill) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestStop_Kill) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestStop_Kill());
 }
 
-TEST(MultiClientServiceGTest,TestGetMinimumNumberOfPoolThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestGetMinimumNumberOfPoolThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestGetMinimumNumberOfPoolThreads());
 }
 
-TEST(MultiClientServiceGTest,TestSetMinimumNumberOfPoolThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestSetMinimumNumberOfPoolThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetMinimumNumberOfPoolThreads());
 }
 
-TEST(MultiClientServiceGTest,TestSetMinimumNumberOfPoolThreads_0) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestSetMinimumNumberOfPoolThreads_0) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetMinimumNumberOfPoolThreads_0());
 }
 
-TEST(MultiClientServiceGTest,TestSetMinimumNumberOfPoolThreads_AfterStart) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestSetMinimumNumberOfPoolThreads_AfterStart) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetMinimumNumberOfPoolThreads_AfterStart());
 }
 
-TEST(MultiClientServiceGTest,TestSetMinimumNumberOfPoolThreads_MinGreaterThanMax) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestSetMinimumNumberOfPoolThreads_MinGreaterThanMax) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetMinimumNumberOfPoolThreads_MinGreaterThanMax());
 }
 
-TEST(MultiClientServiceGTest,TestGetMaximumNumberOfPoolThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestGetMaximumNumberOfPoolThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestGetMaximumNumberOfPoolThreads());
 }
 
-TEST(MultiClientServiceGTest,TestSetMaximumNumberOfPoolThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestSetMaximumNumberOfPoolThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetMaximumNumberOfPoolThreads());
 }
 
-TEST(MultiClientServiceGTest,TestSetMaximumNumberOfPoolThreads_AfterStart) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestSetMaximumNumberOfPoolThreads_AfterStart) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetMaximumNumberOfPoolThreads_AfterStart());
 }
 
-TEST(MultiClientServiceGTest,TestSetMaximumNumberOfPoolThreads_MinGreaterThanMax) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestSetMaximumNumberOfPoolThreads_MinGreaterThanMax) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetMaximumNumberOfPoolThreads_MinGreaterThanMax());
 }
 
-TEST(MultiClientServiceGTest,TestTestGetNumberOfActiveThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestTestGetNumberOfActiveThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestGetNumberOfActiveThreads());
 }
 
-TEST(MultiClientServiceGTest,TestAddThread) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestAddThread) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestAddThread());
 }
 
-TEST(MultiClientServiceGTest,TestRemoveThread) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestRemoveThread) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestRemoveThread());
 }
 
-TEST(MultiClientServiceGTest,TestMoreThanEnoughThreads) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest,TestMoreThanEnoughThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestMoreThanEnoughThreads());
 }
 
-TEST(MultiClientServiceGTest, TestSetPriorityClass) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest, TestSetPriorityClass) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityClass());
 }
 
-TEST(MultiClientServiceGTest, TestSetPriorityLevel) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest, TestSetPriorityLevel) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityLevel());
 }
 
-TEST(MultiClientServiceGTest, TestSetCPUMask) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest, TestSetCPUMask) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetCPUMask());
 }
 
-TEST(MultiClientServiceGTest, TestSetPriorityClass_AfterStart) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest, TestSetPriorityClass_AfterStart) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityClass_AfterStart());
 }
 
-TEST(MultiClientServiceGTest, TestSetPriorityLevel_AfterStart) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest, TestSetPriorityLevel_AfterStart) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityLevel_AfterStart());
 }
 
-TEST(MultiClientServiceGTest, TestSetCPUMask_AfterStart) {
+TEST(Scheduler_L3Services_MultiClientServiceGTest, TestSetCPUMask_AfterStart) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestSetCPUMask_AfterStart());
 }

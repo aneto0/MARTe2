@@ -101,6 +101,8 @@ void *BrokerI::GetFunctionPointer(const uint32 copyIdx) const {
 
 bool BrokerI::InitFunctionPointers(const SignalDirection direction, DataSourceI &dataSource, const char8 * const functionName, void * const gamMemoryAddress) {
 
+    ownerDataSourceName = dataSource.GetName();
+    ownerFunctionName = functionName;
     //Need to check the broker class name. This function loops through all the signals of the
     //functionName and should only react to the signals which are related to this BrokerI instance.
     //Get the class name from the ClassProperties
@@ -229,6 +231,14 @@ bool BrokerI::InitFunctionPointers(const SignalDirection direction, DataSourceI 
         }
     }
     return ret;
+}
+
+StreamString BrokerI::GetOwnerFunctionName() const {
+    return ownerFunctionName;
+}
+
+StreamString BrokerI::GetOwnerDataSourceName() const {
+    return ownerDataSourceName;
 }
 
 }

@@ -42,77 +42,77 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestConstructor) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestInit) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestInit) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestInit());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestInit1) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestInit1) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestInit1());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyInputs) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyInputs());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_N_Times_More_Samples_Than_Buffers) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyInputs_N_Times_More_Samples_Than_Buffers) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyInputs_N_Times_More_Samples_Than_Buffers());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_Equal_Samples_And_Buffers) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyInputs_Equal_Samples_And_Buffers) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyInputs_Equal_Samples_And_Buffers());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_Equal_Samples_And_Buffers_NTimes) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyInputs_Equal_Samples_And_Buffers_NTimes) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyInputs_Equal_Samples_And_Buffers_NTimes());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_NoSamples) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyInputs_NoSamples) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyInputs_NoSamples());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_MoreBuffersThanSamples) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyInputs_MoreBuffersThanSamples) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyInputs_MoreBuffersThanSamples());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyOutputs) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyOutputs());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_NoSamples) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_NoSamples) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyOutputs_NoSamples());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_N_Times_More_Samples_Than_Buffers) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_N_Times_More_Samples_Than_Buffers) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyOutputs_N_Times_More_Samples_Than_Buffers());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_Equal_Samples_And_Buffers) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_Equal_Samples_And_Buffers) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyOutputs_Equal_Samples_And_Buffers());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_Equal_Samples_And_Buffers_NTimes) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_Equal_Samples_And_Buffers_NTimes) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyOutputs_Equal_Samples_And_Buffers_NTimes());
 }
 
-TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_MoreBuffersThanSamples) {
+TEST(BareMetal_L5GAMs_MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_MoreBuffersThanSamples) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyOutputs_MoreBuffersThanSamples());
 }

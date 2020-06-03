@@ -110,6 +110,11 @@ public:
      * @brief Tests the EventTriggered method through the SendMessage interface and by forcing two state machines to interchange information between them.
      */
     bool TestEventTriggered_SendMessage_PingPong();
+
+    /**
+     * @brief Tests the GetState method.
+     */
+    bool TestExportData();
 };
 
 /*---------------------------------------------------------------------------*/

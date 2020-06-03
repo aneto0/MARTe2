@@ -39,22 +39,22 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(GAMGroupGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_GAMGroupGTest,TestConstructor) {
     GAMGroupTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(GAMGroupGTest,TestInitialise) {
+TEST(BareMetal_L5GAMs_GAMGroupGTest,TestInitialise) {
     GAMGroupTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(GAMGroupGTest,TestSetContext) {
+TEST(BareMetal_L5GAMs_GAMGroupGTest,TestSetContext) {
     GAMGroupTest test;
     ASSERT_TRUE(test.TestSetContext());
 }
 
-TEST(GAMGroupGTest,TestSetContext_Failure) {
+TEST(BareMetal_L5GAMs_GAMGroupGTest,TestSetContext_Failure) {
     GAMGroupTest test;
     ASSERT_TRUE(test.TestSetContext_Failure());
 }

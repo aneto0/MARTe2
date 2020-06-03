@@ -273,6 +273,7 @@ public:
             SingleBufferedStream() {
     }
 
+
     virtual ~DummySingleBufferedStream() {
     }
 
@@ -367,6 +368,15 @@ public:
 
     bool SetBlocking(bool flag) {
         return DummyOSStream::SetBlocking(flag);
+    }
+
+
+    BufferedStreamIOBuffer *GetReadBufferX(){
+        return (BufferedStreamIOBuffer *)GetReadBuffer();
+    }
+
+    BufferedStreamIOBuffer *GetWriteBufferX(){
+        return (BufferedStreamIOBuffer *)GetWriteBuffer();
     }
 
 };

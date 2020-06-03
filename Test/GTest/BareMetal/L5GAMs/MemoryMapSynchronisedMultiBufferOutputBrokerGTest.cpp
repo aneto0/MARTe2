@@ -48,13 +48,13 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(MemoryMapSynchronisedMultiBufferOutputBrokerGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedMultiBufferOutputBrokerGTest,TestConstructor) {
     MemoryMapSynchronisedMultiBufferOutputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
 
-TEST(MemoryMapSynchronisedMultiBufferOutputBrokerGTest,TestExecute) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedMultiBufferOutputBrokerGTest,TestExecute) {
     MemoryMapSynchronisedMultiBufferOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute());
 }

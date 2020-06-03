@@ -394,7 +394,7 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
 
 bool ConfigurationDatabaseTest::TestAddToCurrentNode() {
     ConfigurationDatabase cdb;
-    ReferenceT<ReferenceContainer> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<ConfigurationDatabaseNode> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     return cdb.AddToCurrentNode(obj);
 }
 
@@ -726,7 +726,7 @@ bool ConfigurationDatabaseTest::TestGetCurrentNode() {
     ok &= cdb.CreateAbsolute("A.B.E");
     ok &= cdb.CreateAbsolute("A.B.F");
     ok &= cdb.MoveAbsolute("A.B");
-    ReferenceT<ReferenceContainer> refC = cdb.GetCurrentNode();
+    ReferenceT<ConfigurationDatabaseNode> refC = cdb.GetCurrentNode();
     return (refC->Size() == 4);
 }
 

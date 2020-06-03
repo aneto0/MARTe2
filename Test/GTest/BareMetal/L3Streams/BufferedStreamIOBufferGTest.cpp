@@ -42,71 +42,71 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(BufferedStreamIOBufferGTest, TestDefaultConstructor) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestDefaultConstructor) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestDefaultConstructor());
 }
 
-TEST(BufferedStreamIOBufferGTest, TestFullConstructor) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestFullConstructor) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFullConstructor());
 }
 
-TEST(BufferedStreamIOBufferGTest, TestGetTimeout) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestGetTimeout) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestGetTimeout());
 }
 
-TEST(BufferedStreamIOBufferGTest, TestSetTimeout) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestSetTimeout) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestSetTimeout());
 }
 
-TEST(BufferedStreamIOBufferGTest, TestRefill) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestRefill) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestRefill());
 }
-TEST(BufferedStreamIOBufferGTest, TestRefill_NULL_Stream) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestRefill_NULL_Stream) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestRefill_NULL_Stream());
 }
-TEST(BufferedStreamIOBufferGTest, TestRefill_NULL_Buffer) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestRefill_NULL_Buffer) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestRefill_NULL_Buffer());
 }
 
-TEST(BufferedStreamIOBufferGTest, TestFlush) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestFlush) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFlush());
 }
 
-TEST(BufferedStreamIOBufferGTest, TestFlush_NULL_Stream) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestFlush_NULL_Stream) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFlush_NULL_Stream());
 }
-TEST(BufferedStreamIOBufferGTest, TestFlush_NULL_Buffer) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestFlush_NULL_Buffer) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFlush_NULL_Buffer());
 }
-TEST(BufferedStreamIOBufferGTest, TestResync) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestResync) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestResync());
 }
-TEST(BufferedStreamIOBufferGTest, TestResync_NULL_Stream) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestResync_NULL_Stream) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestResync_NULL_Stream());
 }
-TEST(BufferedStreamIOBufferGTest, TestResync_NULL_Buffer) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestResync_NULL_Buffer) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestResync_NULL_Buffer());
 }
 
-TEST(BufferedStreamIOBufferGTest, TestSetBufferSize) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestSetBufferSize) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestSetBufferSize(32));
 }
 
-TEST(BufferedStreamIOBufferGTest, TestSetBufferSize_zero_size) {
+TEST(BareMetal_L3Streams_BufferedStreamIOBufferGTest, TestSetBufferSize_zero_size) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestSetBufferSize(0));
 }

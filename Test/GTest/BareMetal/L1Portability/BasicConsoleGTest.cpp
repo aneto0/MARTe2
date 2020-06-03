@@ -79,78 +79,78 @@ void Clean(BasicFile &inputFile) {
 #endif
 }
 
-TEST(BasicConsoleGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestConstructor) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestConstructor());
 }
 
-TEST(BasicConsoleGTest,TestOpenModeDefault) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestOpenModeDefault) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestOpenModeDefault());
 }
 
-TEST(BasicConsoleGTest,TestOpenModeCreateNewBuffer) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestOpenModeCreateNewBuffer) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestOpenModeCreateNewBuffer());
 }
 
-TEST(BasicConsoleGTest,TestOpenModePerformCharacterInput) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestOpenModePerformCharacterInput) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestOpenModePerformCharacterInput());
 }
 
-TEST(BasicConsoleGTest,TestOpenModeDisableControlBreak) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestOpenModeDisableControlBreak) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestOpenModeDisableControlBreak());
 }
 
-TEST(BasicConsoleGTest,TestOpenModeEnablePaging) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestOpenModeEnablePaging) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestOpenModeEnablePaging());
 }
 
-TEST(BasicConsoleGTest,TestGetOpeningMode) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestGetOpeningMode) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestGetOpeningMode());
 }
 
-TEST(BasicConsoleGTest,TestClose) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestClose) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestClose());
 }
 
-TEST(BasicConsoleGTest,TestWriteCheckReturn) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestWriteCheckReturn) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestWriteCheckReturn("ABC\nDE\n", 1));
 }
 
-TEST(BasicConsoleGTest,TestWriteNullString) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestWriteNullString) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestWriteNullString());
 }
 
-TEST(BasicConsoleGTest,TestWriteExactSize) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestWriteExactSize) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestWriteExactSize("abcd"));
 }
 
-TEST(BasicConsoleGTest,TestWriteSmallSize) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestWriteSmallSize) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestWriteSmallSize("abcd"));
 }
 
-TEST(BasicConsoleGTest,TestWriteEndColumn) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestWriteEndColumn) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestWriteEndColumn());
 }
 
-TEST(BasicConsoleGTest,TestWrite2) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestWrite2) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestWriteCheckReturn("Hello bye bye world\nWorld with spaces\n\n\nand new lines\nand\nsingle\nwords.", 0));
 }
 
 //This test needs user intervention. Do not uncomment for automatic tests.
-TEST(BasicConsoleGTest,TestPaging) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestPaging) {
     BasicConsoleTest console;
     BasicFile inputFile;
     RedirectConsoleInput(inputFile, "\n");
@@ -159,7 +159,7 @@ TEST(BasicConsoleGTest,TestPaging) {
 }
 
 //This test needs user intervention. Do not uncomment for automatic tests.
-TEST(BasicConsoleGTest,TestRead) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestRead) {
     BasicConsoleTest console;
     BasicFile inputFile;
     RedirectConsoleInput(inputFile, "Hello");
@@ -167,7 +167,7 @@ TEST(BasicConsoleGTest,TestRead) {
     Clean(inputFile);
 }
 
-TEST(BasicConsoleGTest,TestTimeoutRead) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestTimeoutRead) {
     BasicConsoleTest console;
     BasicFile inputFile;
     RedirectConsoleInput(inputFile, "");
@@ -175,94 +175,94 @@ TEST(BasicConsoleGTest,TestTimeoutRead) {
     Clean(inputFile);
 }
 
-TEST(BasicConsoleGTest,TestSetGetSize) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestSetGetSize) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetGetSceneSize(100, 70));
 }
 
-TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestSetGetWindowsSize) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetGetWindowSize(50, 20));
 }
 
-TEST(BasicConsoleGTest,TestClear) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestClear) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestClear());
 }
 
 //This test needs user intervention. Do not uncomment for automatic tests.
-TEST(BasicConsoleGTest,TestPerfChar) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestPerfChar) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPerfChar());
 }
 
-TEST(BasicConsoleGTest,TestShow) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestShow) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestShowBuffer());
 }
-TEST(BasicConsoleGTest,TestSetGetTitleBar) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestSetGetTitleBar) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetGetTitleBar("title"));
 }
 
 //This test is not supported.
-TEST(BasicConsoleGTest,TestSetGetCursorPosition) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestSetGetCursorPosition) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetGetCursorPosition(20, 10));
 }
 
 //This test is not supported.
-TEST(BasicConsoleGTest,TestSetColour) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestSetColour) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetColour(Blue, Red));
 }
 
-TEST(BasicConsoleGTest,TestPlotChar) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestPlotChar) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPlotChar('c', Blue, Yellow, 20, 10));
 }
 
-TEST(BasicConsoleGTest,TestCanWrite) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestCanWrite) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestCanWrite());
 }
 
-TEST(BasicConsoleGTest,TestCanRead) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestCanRead) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestCanRead());
 }
 
-TEST(BasicConsoleGTest,TestCanSeek) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestCanSeek) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestCanSeek());
 }
 
-TEST(BasicConsoleGTest,TestTimeoutWrite) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestTimeoutWrite) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestTimeoutWrite("HelloWorld", 500));
 }
 
-TEST(BasicConsoleGTest,TestSize) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestSize) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSize());
 }
 
-TEST(BasicConsoleGTest,TestSeek) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestSeek) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSeek());
 }
 
-TEST(BasicConsoleGTest,TestRelativeSeek) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestRelativeSeek) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestRelativeSeek());
 }
 
-TEST(BasicConsoleGTest,TestPosition) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestPosition) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPosition());
 }
 
-TEST(BasicConsoleGTest,TestSetSize) {
+TEST(BareMetal_L1Portability_BasicConsoleGTest,TestSetSize) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetSize());
 }

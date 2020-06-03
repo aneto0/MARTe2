@@ -1,6 +1,6 @@
 /**
- * @file ObjectsExample2.cpp
- * @brief Source file for class ObjectsExample2
+ * @file ObjectsExample3.cpp
+ * @brief Source file for class ObjectsExample3
  * @date 14/03/2018
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ObjectsExample2 (public, protected, and private). Be aware that some
+ * the class ObjectsExample3 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

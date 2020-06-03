@@ -37,6 +37,7 @@ OBJSX=  AnyTypeGTest.x \
 		ObjectBuilderTGTest.x \
 		ObjectGTest.x \
 		ObjectRegistryDatabaseGTest.x \
+		ReferenceContainerFilterNameAndTypeGTest.x \
 		ReferenceContainerFilterObjectNameGTest.x \
 		ReferenceContainerFilterReferencesGTest.x \
 		ReferenceContainerGTest.x \

@@ -34,7 +34,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "Bootstrap.h"
-#include "BasicFile.h"
+#include "File.h"
 #include "ConfigurationDatabase.h"
 #include "StructuredDataI.h"
 
@@ -46,7 +46,7 @@ namespace MARTe {
 /**
  * The configuration file.
  */
-static BasicFile inputConfigurationFile;
+static File inputConfigurationFile;
 /**
  * True while the application is to be running.
  */

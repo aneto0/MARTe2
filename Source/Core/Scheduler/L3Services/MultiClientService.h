@@ -90,7 +90,7 @@ public:
      * @post
      *   GetNumberOfActiveThreads()++
      */
-    ErrorManagement::ErrorType AddThread();
+    virtual ErrorManagement::ErrorType AddThread();
 
     /**
      * @brief Remove a the EmbeddedThreadI with GetThreadId=threadId from the list of active threads.
@@ -99,7 +99,7 @@ public:
      * @post
      *   GetNumberOfActiveThreads()--
      */
-    ErrorManagement::ErrorType RemoveThread(const ThreadIdentifier threadId);
+    virtual ErrorManagement::ErrorType RemoveThread(const ThreadIdentifier threadId);
 
     /**
      * @brief Gets the maximum number of threads available in the pool.

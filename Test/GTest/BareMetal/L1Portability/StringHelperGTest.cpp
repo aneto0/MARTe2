@@ -40,90 +40,90 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StringHelperGTest,TestLength) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestLength) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestLength("Hello"));
 }
 
-TEST(StringHelperGTest,TestCompare) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestCompare) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCompare("Hello", "Hello"));
 }
 
-TEST(StringHelperGTest,TestCompareN) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestCompareN) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCompareN());
 }
 
-TEST(StringHelperGTest,TestCopy) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestCopy) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCopy("Hello"));
 }
 
-TEST(StringHelperGTest,TestCopyN) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestCopyN) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCopyN());
 }
 
-TEST(StringHelperGTest,TestConcatenate) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestConcatenate) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestConcatenate());
 }
 
-TEST(StringHelperGTest,TestConcatenateN) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestConcatenateN) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestConcatenateN());
 }
 
-TEST(StringHelperGTest,TestSearchChars) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSearchChars) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchChars());
 }
 
-TEST(StringHelperGTest,TestSearchChar) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSearchChar) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchChar());
 }
 
-TEST(StringHelperGTest,TestSearchLastChar) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSearchLastChar) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchLastChar());
 }
-TEST(StringHelperGTest,TestSearchString) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSearchString) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchString());
 }
 
-TEST(StringHelperGTest,TestSearchIndex) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSearchIndex) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchIndex());
 }
 
-TEST(StringHelperGTest,TestSetChar) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSetChar) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSetChar());
 }
-TEST(StringHelperGTest,TestTokenByChars) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestTokenByChars) {
     StringHelperTest mystringportable;
     ASSERT_TRUE(mystringportable.TestTokenizeByChars());
 }
 
-TEST(StringHelperGTest,TestTokenByString) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestTokenByString) {
     StringHelperTest mystringportable;
     ASSERT_TRUE(mystringportable.TestTokenizeByString());
 }
 
-TEST(StringHelperGTest,TestSubstr) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSubstr) {
     StringHelperTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSubstr());
 }
 
-TEST(StringHelperGTest,TestSetChar0Size) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSetChar0Size) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSetChar0Size());
 }
 
-TEST(StringHelperGTest,TestSetCharNull) {
+TEST(BareMetal_L1Portability_StringHelperGTest,TestSetCharNull) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSetCharNull());
 }

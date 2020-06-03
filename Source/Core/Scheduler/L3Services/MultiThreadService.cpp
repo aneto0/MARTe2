@@ -262,6 +262,9 @@ ErrorManagement::ErrorType MultiThreadService::CreateThreads() {
             thread->SetPriorityLevel(GetPriorityLevel());
             thread->SetCPUMask(GetCPUMask());
             thread->SetTimeout(GetTimeout());
+            StreamString tname;
+            (void) tname.Printf("%s_%d", GetName(), threadNumber);
+            thread->SetName(tname.Buffer());
         }
         if (err.ErrorsCleared()) {
             err.fatalError = !threadPool.Insert(thread);

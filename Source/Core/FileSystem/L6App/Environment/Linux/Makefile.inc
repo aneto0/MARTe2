@@ -35,6 +35,7 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES+=-I../../
 
 INCLUDES+=-I../../../L1Portability
+INCLUDES+=-I../../../L3Streams
 INCLUDES+=-I../../../../BareMetal/L0Types
 INCLUDES+=-I../../../../BareMetal/L1Portability
 INCLUDES+=-I../../../../BareMetal/L2Objects

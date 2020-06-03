@@ -31,11 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "TimeoutType.h"
+#include "BufferedStreamI.h"
 #include "IOBuffer.h"
-#include "StreamI.h"
 #include "OperatingSystemCallbacksI.h"
+#include "StreamI.h"
+#include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -95,18 +95,6 @@ public:
     BufferedStreamIOBuffer(OperatingSystemCallbacksI * const s);
 
     /**
-     * @brief User friendly function which simply calls NoMoreDataToRead.
-     * @return whatever NoMoreDataToRead returns.
-     */
-    inline bool Refill();
-
-    /**
-     * @brief User friendly function which simply calls NoMoreSpaceToWrite.
-     * @return whatever NoMoreSpaceToWrite returns.
-     */
-    inline bool Flush();
-
-    /**
      * @brief Adjusts the position of the stream.
      * @details This function is called from the stream after a read operation because the position was shifted
      * forward (+bufferSize) due to the refill. Calls Seek moving the cursor back (-UsedAmountLeft).
@@ -138,7 +126,22 @@ public:
      */
     inline const OperatingSystemCallbacksI* GetStream() const;
 
-protected:
+    /**
+     * @see IOBuffer::Flush
+     * @details If the stream is not NULL it calls stream->Flush, otherwise it calls IOBuffer::NoMoreSpaceToWrite.
+     * This implementation allows the buffer to access to the strean Flush function. In the stream Flush implementation
+     * the user must use the buffer NoMoreSpaceToWrite function instead of the buffer Flush to not cause a infinite call loop.
+     */
+    /*lint -e{1735} this function has the same default parameter of its father.*/
+    virtual bool Flush(const uint32 neededSize=0u);
+
+    /**
+     * @see IOBuffer::Refill
+     * @details If the stream is not NULL it calls stream->Refill, otherwise it calls IOBuffer::NoMoreDataToRead.
+     * This implementation allows the buffer to access to the strean Refill function. In the stream Refill implementation
+     * the user must use the buffer NoMoreDataToRead function instead of the buffer Refill to not cause a infinite call loop.
+     */
+    virtual bool Refill();
 
     /**
      * @brief Refills the buffer reading from the stream.
@@ -163,6 +166,11 @@ private:
     OperatingSystemCallbacksI *stream;
 
     /**
+     * Accelerator to the BufferedStreamI buffer.
+     */
+    BufferedStreamI *streamBuffered;
+
+    /**
      * The timeout for read and write operations.
      */
     TimeoutType timeout;
@@ -173,13 +181,6 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool BufferedStreamIOBuffer::Refill() {
-    return NoMoreDataToRead();
-}
-
-bool BufferedStreamIOBuffer::Flush() {
-    return NoMoreSpaceToWrite();
-}
 
 TimeoutType BufferedStreamIOBuffer::GetTimeout() const {
     return timeout;

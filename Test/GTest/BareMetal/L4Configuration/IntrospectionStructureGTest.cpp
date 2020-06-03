@@ -39,22 +39,42 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(IntrospectionStructureGTest,TestStructureRegistration) {
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration) {
     IntrospectionStructureTest test;
     ASSERT_TRUE(test.TestStructureRegistration());
 }
 
-TEST(IntrospectionStructureGTest,TestStructureRegistration_TypeAlreadyRegistered) {
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration_TypeAlreadyRegistered) {
     IntrospectionStructureTest test;
     ASSERT_TRUE(test.TestStructureRegistration_TypeAlreadyRegistered());
 }
 
-TEST(IntrospectionStructureGTest,TestStructureRegistration_False_TypeAlreadyRegistered_Class) {
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration_False_TypeAlreadyRegistered_Class) {
     IntrospectionStructureTest test;
     ASSERT_TRUE(test.TestStructureRegistration_False_TypeAlreadyRegistered_Class());
 }
 
-TEST(IntrospectionStructureGTest,TestStructureRegistration_False_TypeNoParameters) {
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration_False_TypeNoParameters) {
     IntrospectionStructureTest test;
     ASSERT_TRUE(test.TestStructureRegistration_False_TypeNoParameters());
+}
+
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestRegisterStructuredDataI) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestRegisterStructuredDataI());
+}
+
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestRegisterStructuredDataI_TypeDeclared) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestRegisterStructuredDataI_TypeDeclared());
+}
+
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestRegisterStructuredDataI_ArraysStructures) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestRegisterStructuredDataI_ArraysStructures());
+}
+
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestRegisterStructuredDataI_ArraysStructures_TypeDeclared) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestRegisterStructuredDataI_ArraysStructures_TypeDeclared());
 }

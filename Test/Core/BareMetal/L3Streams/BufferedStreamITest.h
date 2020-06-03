@@ -123,6 +123,26 @@ public:
      */
     bool TestPrintf();
 
+    /**
+     * @brief Tests the Flush method
+     */
+    bool TestFlush();
+
+    /**
+     * @brief Tests the Refill method
+     */
+    bool TestRefill();
+
+    /**
+     * @brief Tests the SetCalibReadParam method
+     */
+    bool TestSetCalibReadParam();
+
+    /**
+     * @brief Tests the SetCalibWriteParam method
+     */
+    bool TestSetCalibWriteParam();
+
 
 };
 
