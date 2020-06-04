@@ -63,13 +63,12 @@ MemoryMapAsyncOutputBroker::~MemoryMapAsyncOutputBroker() {
     if (!sem.IsClosed()) {
         if (fastSem.FastLock() == ErrorManagement::NoError) {
             destroying = true;
+            fastSem.FastUnLock();
             if (!sem.Post()) {
                 REPORT_ERROR(ErrorManagement::FatalError, "Could not Post the EventSem.");
             }
             posted = true;
         }
-        fastSem.FastUnLock();
-
         if (!sem.Close()) {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not Close the EventSem.");
         }
@@ -216,8 +215,8 @@ bool MemoryMapAsyncOutputBroker::Execute() {
         if (ret) {
             ret = sem.Post();
             posted = true;
-            fastSem.FastUnLock();
         }
+        fastSem.FastUnLock();
     }
     return ret;
 }
@@ -272,11 +271,14 @@ ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(ExecutionInfo 
             if (!destroying) {
                 err = sem.Wait(TTInfiniteWait);
             }
+            else {
+                Sleep::Sec(0.1f);
+            }
             if (err.ErrorsCleared()) {
                 //Only reset the semaphore if it was not posted in-between the Wait exit and now...
                 if (fastSem.FastLock() == ErrorManagement::NoError) {
                     if (!posted) {
-                        err = sem.Reset();
+                        err.fatalError = !sem.Reset();
                     }
                     if (destroying) {
                         err = ErrorManagement::Completed;

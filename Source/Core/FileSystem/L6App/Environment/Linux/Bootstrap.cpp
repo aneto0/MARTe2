@@ -59,6 +59,13 @@ static bool killApp = false;
  * Callback function for the signal (see Run below).
  */
 static void StopApp(int sig) {
+    if(sig == SIGUSR1){
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Application recieved SIGUSR1.\n");
+    }else if(sig == SIGTERM){
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Application recieved SIGTERM.\n");
+    }else if (sig == SIGINT){
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Application recieved SIGINT.\n");
+    }
     //Second time this is called? Kill the application.
     if (!killApp) {
         killApp = true;
@@ -99,8 +106,15 @@ ErrorManagement::ErrorType Bootstrap::Run() {
     ErrorManagement::ErrorType ret = inputConfigurationFile.Close();
     if (ret) {
         mlockall(MCL_CURRENT | MCL_FUTURE);
-        signal(SIGTERM, StopApp);
-        signal(SIGINT, StopApp);
+        if(signal(SIGTERM, StopApp) == SIG_ERR){
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Signal with argment SIGTERM failed");
+        }
+        if(signal(SIGINT, StopApp) == SIG_ERR){
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Signal with argment SIGINT failed. System error ");
+        }
+        if(signal(SIGUSR1, StopApp) == SIG_ERR){
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Signal with argment SIGUSR1 failed. System error");
+        }
         while (keepRunning) {
             Sleep::Sec(1.0);
         }
