@@ -1,7 +1,7 @@
 /**
  * @file RuntimeEvaluator.cpp
  * @brief Header file for class AnyType
- * @date Mar 26, 2020
+ * @date 26/03/2020
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

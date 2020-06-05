@@ -2,7 +2,7 @@
  * @file RuntimeEvaluator.cpp
  * @brief Source file for class PseudoCode
  * @date 04/05/2015
- * @author RFX
+ * @author nferron
  * @author Didac Magrinya
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

@@ -1,8 +1,8 @@
 /**
  * @file MathExpressionParserTest.cpp
  * @brief Source file for class MathExpressionParserTest
- * @date 09/12/2015
- * @author Giuseppe Ferrò
+ * @date 21/04/2020
+ * @author nferron
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

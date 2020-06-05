@@ -1,7 +1,7 @@
 /**
  * @file RuntimeEvaluator.h
  * @brief Header file for class PseudoCodeEngine
- * @date Mar 23, 2020
+ * @date 23/03/2020
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -103,7 +103,7 @@ struct RuntimeEvaluatorFunctions;
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
- * or by converting an infix expression via the MathExpressionParser:
+ * or by converting an infix expression (e.g. via the MathExpressionParser):
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
  * 
@@ -135,14 +135,18 @@ struct RuntimeEvaluatorFunctions;
  * - type (can be one of MARTe2 supported types: `Unsigned32Bit`, `Float64Bit` etc.)
  * - location (the memory location where the variable value will be held)
  * 
- * Types *must* be set by using the SetInputVariableType and
- * SetOutputVaribleType methods:
+ * Types *must* be set for every input variable by using the
+ * SetInputVariableType and SetOutputVaribleType methods:
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
  * ret = expression.SetInputVariableType("theta", Float64Bit);
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
- * Locations *can* be set by using the SetInputVariableMemory and
+ * Output variable types *can* be set with SetOutputVariableType if needed.
+ * However, this is not compulsory as RuntimeEvaluator will assign them
+ * the output type of last operation.
+ * 
+ * Memory locations *can* be set by using the SetInputVariableMemory and
  * SetOutputVariableMemory methods.
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -150,11 +154,11 @@ struct RuntimeEvaluatorFunctions;
  * ret = expression.SetOutputVariableMemory("y", &y);
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
- * - In case and external location for a variable is set, the variable
- *   is considered external and any modification of its value will be
- *   reflected to the specified memory address.
+ * - In case an external location for a variable is set, the variable
+ *   is considered *external* and any modification of its value will
+ *   happen to the specified memory address.
  * - In case an external location for a variable is not set, the variable
- *   is considered internal (this is the default behavior.
+ *   is considered *internal* (this is the default behavior).
  *   RuntimeEvaluator will be responsible of allocating space for all
  *   internal variables. The memory location of internal variables will
  *   be available after compilation by calling GetInputVariableMemory and
@@ -215,8 +219,24 @@ struct RuntimeEvaluatorFunctions;
  * if they are internal, GetOutputVariableMemory shall be used to
  * retrieve their addresses and obtain the final value.
  * 
- * Variable values can be uopdated mutiple times, and each time the
- * Execute() method will recalculate the output variable values.
+ * Variables whose value can be updated in the middle of the expression:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * StreamString rpnCode = "READ A\n"      // first
+ *                        "READ B\n"
+ *                        "ADD\n"
+ *                        "WRITE A\n"     // output variable A is set
+ *                        "READ A\n"      // second
+ *                        "WRITE ret\n";
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * In the example above, the former `READ A` command reads from the
+ * input variable A, while the latter reads from the output variable A
+ * that was just set by the `WRITE A` command.
+ * 
+ * Variable values can be updated any time, and when invoked the
+ * Execute() method will recalculate the value of output variable
+ * based on the current value of input variables.
  * 
  * Examples
  * ========
