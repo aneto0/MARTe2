@@ -239,7 +239,7 @@ TypeConversion.cpp
 TypeDescriptor.cpp
 UDPLogger.cpp
 ValidateBasicType.cpp
-VariableInformation.cpp
+VariableInformation.h
 Vector.h
 XMLParser.cpp
 XMLPrinter.cpp
