@@ -135,7 +135,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(CCString name,Runt
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(CCString name,List<RuntimeEvaluatorInfo::VariableInformation> &db,TypeDescriptor td,RuntimeEvaluatorInfo::DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(CCString name,List<RuntimeEvaluatorInfo::VariableInformation> &db,VariableDescriptor vd,RuntimeEvaluatorInfo::DataMemoryAddress location){
     ErrorManagement::ErrorType 					ret;
     RuntimeEvaluatorInfo::VariableInformation *	variableInfo;
 
@@ -145,7 +145,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(CCString name,List<R
     if (ret.unsupportedFeature){
         RuntimeEvaluatorInfo::VariableInformation variableInfo;
         variableInfo.name 		= name;
-        variableInfo.type 		= td;
+        variableInfo.type 		= vd;
         variableInfo.location 	= location;
         ret = db.Insert(variableInfo );
     } else {
@@ -231,7 +231,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
                     // if an output variable of this name is already present
                     // it means it would have already been loaded
                     // so no need to fetch an external input
-                    RuntimeEvaluatorInfo::VariableInformation *variableInformation;
+                    RuntimeEvaluatorInfo::VariableInformation *variableInformation = NULL_PTR(RuntimeEvaluatorInfo::VariableInformation *);
                     ret = FindOutputVariable(parameter1,variableInformation);
 
                     if (!ret){
@@ -264,20 +264,21 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
 
                 // transform the type name into a TypeDescriptor
                 // check it is one of the supported types
-                TypeDescriptor td;
+//                TypeDescriptor td;
+                VariableDescriptor vd;
                 if (ret){
-                    td = TypeDescriptor(parameter1);
-                    ret.unsupportedFeature = !td.IsNumericType();
+                    vd = TypeDescriptor(parameter1);
+                    ret.unsupportedFeature = !vd.GetSummaryTypeDescriptor().IsNumericType();
                     COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " is not a numeric supported format");
                 }
                 // if supported add up the memory needs
                 if (ret){
                     DynamicCString constantName;
                     constantName().Append("Constant").Append('@').Append(nextConstantAddress);
-                    ret = AddInputVariable(constantName,td,nextConstantAddress);
+                    ret = AddInputVariable(constantName,vd,nextConstantAddress);
                 }
                 if (ret){
-                    uint32 size = td.StorageSize();
+                    uint32 size = vd.GetSummaryTypeDescriptor().StorageSize();
                     ret.unsupportedFeature = (size == 0);
                     COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " has 0 storgaSize");
 
@@ -351,8 +352,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
     }
 
     // already
-    dataMemory.SetSize(nextVariableAddress);
-    variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
+    variablesMemory.SetSize(nextVariableAddress);
+    variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(variablesMemory.GetDataPointer());
 
     // initialise compilation memory
 //    StaticStack<TypeDescriptor,32> typeStack;
@@ -641,7 +642,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
         stack.SetSize(maxDataStackSize);
         stackPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement*>(stack.GetDataPointer());
 
-        variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
+        variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(variablesMemory.GetDataPointer());
     }
 
     // check that the TypeStack is empty
@@ -802,7 +803,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
 
     const RuntimeEvaluatorInfo::CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
 
-    variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
+    variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(variablesMemory.GetDataPointer());
     runtimeError = ErrorManagement::ErrorType(true);
 
     switch (mode){
@@ -907,7 +908,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(DynamicCString &RPNCode,b
     RuntimeEvaluatorInfo::CodeMemoryAddress codeMaxIndex  = static_cast<RuntimeEvaluatorInfo::CodeMemoryAddress>(codeMemory.GetSize());
     const RuntimeEvaluatorInfo::CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
 
-    variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
+    variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(variablesMemory.GetDataPointer());
 
     CStringTool cst = RPNCode();
 

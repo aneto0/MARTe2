@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
+#include <Private/RegularExpressionEngine.h>
 #include "RegularExpression.h"
-#include "Private/RegularExpressionEngine.h"
 
 namespace MARTe{
 namespace RegularExpression{

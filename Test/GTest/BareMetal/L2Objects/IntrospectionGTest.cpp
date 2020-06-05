@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <Private/AnyObjectT.h>
 #include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
@@ -43,7 +44,6 @@
 #include "MemoryCheck.h"
 #include "TypeDescriptor.h"
 #include "CLASSMEMBERREGISTER.h"
-#include "AnyObjectT.h"
 #include "SaturatedInteger.h"
 #include "ProgressiveTypeCreator.h"
 #include "ErrorTypeLookup.h"

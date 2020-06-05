@@ -57,8 +57,6 @@ namespace AnyObject{
  */
 Reference Clone(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor);
 
-//Reference Clone(uint32 sizeToCopy,void *pointer,const VariableDescriptor &descriptor);
-
 };
 
 

@@ -501,6 +501,12 @@ ErrorManagement::ErrorType VariableDescriptor::ToString(CStringTool &string,bool
 }
 
 
+ErrorManagement::ErrorType VariableDescriptor::FromString(CCString typeName){
+
+	return VariableDescriptorLib::FromString(modifiers,typeDescriptor,typeName,false);
+}
+
+
 /***************************************************************************************************************/
 /*               Redirect                                                                                      */
 /***************************************************************************************************************/

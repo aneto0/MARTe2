@@ -53,7 +53,7 @@
 namespace MARTe{
 
 /**
- * @brief A tool to create AnyObjectI that contains scalar/vectors/arrays of fixed size objects
+ * @brief A tool to create AnyObject that contains scalar/vectors/arrays of fixed size objects
  */
 class DLL_API ProgressiveTypeCreator{
 

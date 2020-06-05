@@ -87,9 +87,9 @@ struct VariableInformation {
 	DynamicCString 		name;
 
 	/**
-	 * type of the variable. Only simple and numeric types are possible
+	 *
 	 */
-	VariableDescriptor  type;
+	VariableDescriptor type;
 
 	/**
 	 * location of the variable in the data area.

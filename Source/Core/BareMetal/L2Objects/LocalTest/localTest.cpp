@@ -58,7 +58,7 @@ int main(){
 
 	if (ret){
 		ret = context.Compile(RPNCode);
-		printf("size of data area = %i\n",context.dataMemory.GetNumberOfElements());
+		printf("size of data area = %i\n",context.GetSizeOfVariables());
 		printf("size of code area = %i\n",context.GetSizeOfCode());
 		printf("size of stack area = %i\n",context.GetSizeOfStack());
 	}

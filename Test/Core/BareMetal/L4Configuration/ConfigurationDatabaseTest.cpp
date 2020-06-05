@@ -31,7 +31,7 @@
 #include "AnyObject.h"
 #include "ConfigurationDatabaseTest.h"
 
-#include "AnyObjectT.h"
+#include "../../../../Source/Core/BareMetal/L2Objects/Private/AnyObjectT.h"
 #include "IntrospectionTestHelper.h"
 #include "Matrix.h"
 #include "ObjectRegistryDatabase.h"

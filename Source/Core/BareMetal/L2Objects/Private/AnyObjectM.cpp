@@ -21,7 +21,7 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#include "AnyObjectM.h"
+#include <Private/AnyObjectM.h>
 #include "MemoryOperators.h"
 
 

@@ -21,9 +21,9 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
+#include <RegularExpression.h>
 #include "MathExpressionParser.h"
 #include "ParserData.h"
-#include "RegularExpression.h"
 
 namespace MARTe{
 

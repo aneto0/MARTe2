@@ -21,20 +21,20 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
+#include "Private/AnyObjectM.h"
+#include "Private/AnyObjectT.h"
 #include "AnyObject.h"
-#include "AnyObjectT.h"
-#include "AnyObjectM.h"
 #include "HeapManager.h"
 #include "ReferenceT.h"
 
-#define CHECKANDMAKE(size)									\
-		if (sizeToCopy <= size){							\
-			ReferenceT<AnyObjectT<size> > ao(HeapManager::standardHeapId);\
-			if (ao.IsValid()){								\
-				ao->Setup(sizeToCopy,pointer,descriptor);	\
-				reference = ao;								\
-			}												\
-		} else												\
+#define CHECKANDMAKE(size)													\
+		if (sizeToCopy <= size){											\
+			ReferenceT<AnyObjectT<size> > ao(HeapManager::standardHeapId);	\
+			if (ao.IsValid()){												\
+				ao->Setup(sizeToCopy,pointer,descriptor);					\
+				reference = ao;												\
+			}																\
+		} else																\
 
 
 namespace MARTe{

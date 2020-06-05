@@ -33,10 +33,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../../L1Portability/RegularExpression.h"
 #include "CompilerTypes.h"
 #include "Vector.h"
 #include "CCString.h"
-#include "RegularExpression.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */

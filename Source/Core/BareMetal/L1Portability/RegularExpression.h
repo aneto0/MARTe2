@@ -35,8 +35,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorManagement.h"
-#include "BufferedStreamI.h"
-#include "CCString.h"
+#include "StreamI.h"
+#include "CStringTool.h"
+#include "DynamicCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -98,7 +99,7 @@ typedef void (*PatternMatchCallBack)(CCString name, uint32 nameLength, CCString 
  * 		   Inside the () or main sequence  only reserved characters are ()[]{}!*+\?
  * 		   In order to simply match one of these, the pattern must use a sequence \x where x is one of the above
  * 		   Example: \\ is the \ and \+ is the +.
- * 		   Note that when initialising a string in C additional excape charcters must be used
+ * 		   Note that when initialising a string in C additional escape characters must be used
  * 		   Example \\ becomes "\\\\" as in C \ is also a reserved character. so to match a \ one need to write 4 times \
  * 		   Let's indicate with <x> a matching atom.
  * 		   A matching atom can be a character, a block: (), a range: []
@@ -132,7 +133,7 @@ typedef void (*PatternMatchCallBack)(CCString name, uint32 nameLength, CCString 
  * 		   text is a sequence of any char terminated by the (
  * 		   *,+,?,{} cannot be used in front of a ?, but you can use *($text(<atom>))
  *
- * @param[in] pattern is a string contianing the pattern to match. see function details.
+ * @param[in] pattern is a string containing the pattern to match. see function details.
  * @param[in,out] input is the stream/string to be parsed to check the match with the pattern.
  * 			If the pattern is matched all necessary characters are consumed from the stream/string
  * 			If the pattern is not matched, or in case of errors, the stream/string position is returned
@@ -147,13 +148,13 @@ typedef void (*PatternMatchCallBack)(CCString name, uint32 nameLength, CCString 
 ErrorManagement::ErrorType Match(StreamI &input,CCString &pattern,CStringTool &matched);
 
 /**
- * @see Match(BufferedStreamI &input,CCString &pattern);
+ * @see Match(StreamI &input,CCString &pattern);
  */
 ErrorManagement::ErrorType Match(CCString &input,CCString &pattern,CStringTool &matched);
 
 /**
  * @brief Try matching one by one the rules in ruleSet until success or error.
- * @see Match(BufferedStreamI &input,CCString &pattern);
+ * @see Match(StreamI &input,CCString &pattern);
  * @param[in] ruleSet is a zero terminated array of PatterNInformation.
  * @param[out] selectedRule, upon success contains the rule that was matched.
  */
@@ -167,7 +168,7 @@ ErrorManagement::ErrorType MatchRules(CCString &input,const ZeroTerminatedArray<
 /**
  * @brief allow extracting matched named atoms from a stream
  *        everytime one is matched the callback is called
- * @see Match(BufferedStreamI &input,CCString &pattern);
+ * @see Match(StreamI &input,CCString &pattern);
  * @param[in] pattern needs to have some named atoms
  */
 ErrorManagement::ErrorType Scan(CCString &input,CCString &pattern,PatternMatchCallBack callBack);

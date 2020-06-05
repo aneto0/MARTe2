@@ -36,7 +36,7 @@
 #include "CompositeErrorManagement.h"
 #include "ProgressiveTypeCreator.h"
 #include "StreamString.h"
-#include "RegularExpression.h"
+#include <RegularExpression.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

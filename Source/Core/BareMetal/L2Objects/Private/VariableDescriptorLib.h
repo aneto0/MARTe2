@@ -112,10 +112,21 @@ DLL_API ErrorManagement::ErrorType GetSizeRecursive(
 DLL_API ErrorManagement::ErrorType ToString(
 		CCString 						modifiers,
 		const TypeDescriptor &			typeDescriptor,
-		CStringTool &           				string,
+		CStringTool &           		string,
 		CCString 						modifierString,
 		bool 							start,
 		int8 &							priority);
+
+/**
+ *
+ */
+DLL_API ErrorManagement::ErrorType FromString(
+		DynamicCString &				modifiers,
+		TypeDescriptor &				typeDescriptor,
+		CCString &						typeName,
+//		VariableDescriptor &			vd,
+		bool 							modifiersOnly);
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

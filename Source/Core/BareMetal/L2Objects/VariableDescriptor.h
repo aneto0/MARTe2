@@ -199,11 +199,12 @@ public:
      */
     inline ErrorManagement::ErrorType  ToString(DynamicCString &string,bool rawFormat=false) const;
 
+
     /**
      * @brief Converts C/c++ string to type descriptor
      * @return true if all ok
      */
-    //ErrorManagement::ErrorType  FromString(DynamicCString &string);
+    ErrorManagement::ErrorType  FromString(CCString typeName);
 
     /**
      * @brief provides a typeDescriptor for the overall variable.

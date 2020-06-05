@@ -576,6 +576,9 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 
 		// process A and P in reverse
 		if (ret){
+			if (modifier == 'p'){
+				string.Append(" * const");
+			} else
 			if (modifier == 'P'){
 				string.Append(" *");
 			} else
