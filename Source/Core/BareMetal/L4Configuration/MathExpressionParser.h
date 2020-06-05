@@ -1,8 +1,8 @@
 /**
  * @file MathExpressionParser.h
  * @brief Header file for class MathExpressionParser
- * @date Apr 7, 2020
- * @author RFX
+ * @date 07/04/2020
+ * @author nferron
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

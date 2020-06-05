@@ -1,8 +1,8 @@
 /**
  * @file ConfigurationParserI.h
  * @brief Header file for class ConfigurationParserI
- * @date 09/12/2015
- * @author RFX
+ * @date 06/05/2020
+ * @author nferron
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
