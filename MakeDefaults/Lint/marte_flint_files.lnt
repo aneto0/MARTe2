@@ -35,6 +35,7 @@ CircularStaticList.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
 ConfigurationDatabaseNode.cpp
+ConfigurationParserI.cpp
 ConsoleLogger.cpp
 CRC.h
 CString.h
@@ -182,6 +183,8 @@ ReferenceContainerNode.cpp
 ReferenceT.h
 RegisteredMethodsMessageFilter.cpp
 ReplyMessageCatcherMessageFilter.cpp
+RuntimeEvaluator.cpp
+RuntimeEvaluatorFunctions.cpp
 SafeMath.h
 SearchFilter.h
 SearchFilterT.h
@@ -236,6 +239,7 @@ TypeConversion.cpp
 TypeDescriptor.cpp
 UDPLogger.cpp
 ValidateBasicType.cpp
+VariableInformation.cpp
 Vector.h
 XMLParser.cpp
 XMLPrinter.cpp
