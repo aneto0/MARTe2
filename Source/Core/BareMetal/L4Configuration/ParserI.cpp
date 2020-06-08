@@ -169,14 +169,14 @@ void ParserI::PrintErrorLine() {
         
         const char8* errorLinePtr = StringHelper::SearchString(startLinePtr, GetCurrentTokenData(currentToken));
         
-        /*lint -e{946,947} Justification: Subtraction between pointers is allowed with pointers to elements of the same array [MISRA C++ Rule 5-0-17]."*/
+        /*lint -e{946,947} Justification: Subtraction between pointers is allowed when pointers point to elements of the same array [MISRA C++ Rule 5-0-17]."*/
         if (errorLinePtr != NULL) {
-            uint32 length = errorLinePtr - startLinePtr; // number of characters between start of line and error token
+            int32 length = (int32)(errorLinePtr - startLinePtr); // number of characters between start of line and error token
             char8 arrow[length + 2u];
             ok = StringHelper::SetChar(&arrow[0], length, ' ');
             if (ok) {
                 arrow[length] = '^';
-                arrow[length + 1u] = '\0';
+                arrow[length + 1] = '\0';
                 REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", arrow);
             }
         }
