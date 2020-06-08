@@ -80,13 +80,16 @@ ParserI::ParserI(StreamI &stream,
     currentToken = static_cast<Token*>(NULL);
     isError = false;
     
-    // create a local copy of the stream
-    
-    //inputStream=dynamic_cast<BufferedStreamI*>(&stream);
+    // create a local copy of the stream (used by PrintErrorLine)
     uint64 pos = stream.Position();
-    stream.Seek(0u);
-    inputStream.Copy(dynamic_cast<BufferedStreamI&>(stream));
-    stream.Seek(pos);
+    bool ok = stream.Seek(0U);
+    if (ok) {
+        inputStream.Copy(dynamic_cast<BufferedStreamI&>(stream));
+        ok = stream.Seek(pos);
+    }
+    if (!ok) {
+        inputStream = "";
+    }
 }
 
 ParserI::~ParserI() {
@@ -149,22 +152,26 @@ void ParserI::PrintErrorLine() {
     
     // retrieve the error line
     uint32 lineNumber = GetCurrentTokenLineNumber(currentToken);
-    char8 line[100];
-    inputStream.Seek(0u);
-    for (uint32 i = 0u; i < lineNumber; i++) {
-        inputStream.GetLine(line, 100u);
+    char8 line[200];
+    bool ok = inputStream.Seek(0U);
+    if (ok) {
+        for (uint32 i = 0u; (i < lineNumber) && (ok); i++) {
+            ok = inputStream.GetLine(line, 200u);
+        }
+        if (ok) {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", line);
+        }
     }
-    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", line);
     
     // create an arrow that points to the error
-    if (GetCurrentTokenData(currentToken)) {
+    if ((GetCurrentTokenData(currentToken) != NULL) && (ok)) {
         
         const char8* errorTokenPtr = StringHelper::SearchString(line, GetCurrentTokenData(currentToken));
         
-        if (errorTokenPtr) {
+        if (errorTokenPtr != NULL) {
             uint32 length = errorTokenPtr - line; // number of characters between start of line and error token
             char8 arrow[length + 2];
-            bool ok = StringHelper::SetChar(arrow, length, ' ');
+            ok = StringHelper::SetChar(arrow, length, ' ');
             if (ok) {
                 arrow[length] = '^';
                 arrow[length + 1] = '\0';
