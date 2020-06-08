@@ -135,7 +135,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(CCString name,Vari
     db.ListIterate(&finder);
     ret = finder.error;
 
-    if (!ret){
+    if (!ret.ErrorsCleared()){
         REPORT_ERROR_STATIC(ret, "Iteration failed");
     } else {
         variableInformation = finder.variable;
@@ -177,12 +177,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariable(DataMemoryAddress addr
     ret = finder.error;
 
     variableInformation = NULL;
-    if (ret){
+    if (ret.ErrorsCleared()){
         variableInformation = finder.variable;
         ret.unsupportedFeature = (variableInformation == NULL);
     }
 
-    if (!ret){
+    if (!ret.ErrorsCleared()){
         inputVariableInfo.ListIterate(&finder);
         ret = finder.error;
         if (ret){
@@ -217,7 +217,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     
     RPNCode.Seek(0);
     
-    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret){
+    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret.ErrorsCleared()){
 
         // extract command and parameter
         StreamString command;
@@ -242,7 +242,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
             if (command == readToken){
                 ret.illegalOperation = !hasParameter1 || hasParameter2;
 
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"%s without variable name", command.Buffer());
                 } else{
                     // if an output variable of this name is already present
@@ -251,14 +251,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                     VariableInformation *variableInformation;
                     ret = FindOutputVariable(parameter1.Buffer(),variableInformation);
 
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         ret = AddInputVariable(parameter1.Buffer());
                         if (ret.illegalOperation == true){
                             REPORT_ERROR_STATIC(ErrorManagement::Information,"variable %s already registered", parameter1.Buffer());
                             // mask out the case that we already registered this variable
                             ret.illegalOperation = false;
                         }
-                        if (!ret){
+                        if (!ret.ErrorsCleared()){
                             REPORT_ERROR_STATIC(ret,"Failed Adding input variable %s",parameter1.Buffer());
                         }
                     }
@@ -266,48 +266,48 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
             } else
             if (command == writeToken){
                 ret.illegalOperation = !hasParameter1 || hasParameter2;
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 }
 
-                if (ret){
+                if (ret.ErrorsCleared()){
                     ret = AddOutputVariable(parameter1.Buffer());
                     if (ret.illegalOperation == true){
                         REPORT_ERROR_STATIC(ret,"variable %s already registered", parameter1.Buffer());
                         // the error remains as we do not allow overwriting outputs
                     }
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"Failed Adding output variable %s",parameter1.Buffer());
                     }
                 }
             } else
             if (command == constToken){
                 ret.illegalOperation = !hasParameter1 || !hasParameter2 || hasParameter3;
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without type name", command.Buffer());
                 }
 
                 // transform the type name into a TypeDescriptor
                 // check it is one of the supported types
                 TypeDescriptor td;
-                if (ret){
+                if (ret.ErrorsCleared()){
                     td = TypeDescriptor::GetTypeDescriptorFromTypeName(parameter1.Buffer());
                     ret.unsupportedFeature = !td.IsNumericType();
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"type %s is not a numeric supported format", parameter1.Buffer());
                     }
 //printf("const type = %x\n",td.all);
                 }
                 // if supported add up the memory needs
-                if (ret){
+                if (ret.ErrorsCleared()){
                     StreamString constantName;
                     constantName.Printf("Constant@%u", nextConstantAddress);
                     ret = AddInputVariable(constantName.Buffer(),td,nextConstantAddress);
                 }
-                if (ret){
+                if (ret.ErrorsCleared()){
                     uint32 size = td.numberOfBits/8u;
                     ret.unsupportedFeature = (size == 0);
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"type %s has 0 storageSize", parameter1.Buffer());
                     }
 
@@ -566,14 +566,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     {
     uint32 index = 0;
     VariableInformation *var;
-    while(BrowseInputVariable(index,var) && ret){
+    while(BrowseInputVariable(index,var) && ret.ErrorsCleared()){
         ret.unsupportedFeature = !var->type.IsNumericType();
-        if (!ret){
+        if (!ret.ErrorsCleared()){
             REPORT_ERROR_STATIC(ret,"input variable %s has incompatible non-numeric type ", var->name.Buffer());
         }
 
         // skip constants are already allocated
-        if (ret && (var->location == MAXDataMemoryAddress)){
+        if (ret.ErrorsCleared() && (var->location == MAXDataMemoryAddress)){
             var->location = nextVariableAddress;
             if (var->externalLocation == NULL){
                 // if NULL variable is in DataMemory
@@ -587,18 +587,18 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     }
 
     index = 0;
-    while(BrowseOutputVariable(index,var) && ret){
+    while(BrowseOutputVariable(index,var) && ret.ErrorsCleared()){
         // local variable reserve 8 bytes for it
         if ((var->type == VoidType) && (var->externalLocation == NULL)){
             var->location = nextVariableAddress;
             nextVariableAddress += ByteSizeToDataMemorySize(sizeof(double));
         } else {
             ret.unsupportedFeature = !var->type.IsNumericType();
-            if (!ret){
+            if (!ret.ErrorsCleared()){
                 REPORT_ERROR_STATIC(ret, "output variable %s has incompatible non-numeric type", var->name.Buffer());
             }
 
-            if (ret){
+            if (ret.ErrorsCleared()){
                 var->location = nextVariableAddress;
                 if (var->externalLocation == NULL){
                     // if NULL variable is in DataMemory
@@ -661,7 +661,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             // matchOutput = true;
             if (command == castToken){
                 ret.illegalOperation = !hasParameter1 || hasParameter2;
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"%s without type name", command.Buffer());
                 } else{
                     // transform the type name into a TypeDescriptor
@@ -669,16 +669,16 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                     TypeDescriptor td;
                     td = TypeDescriptor::GetTypeDescriptorFromTypeName(parameter1.Buffer());
                     ret.unsupportedFeature = !td.IsNumericType();
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"type %s is not a numeric supported format", parameter1.Buffer());
                     } else{
                         ret.fatalError = !typeStack.Push(td);
-                        if (!ret){
+                        if (!ret.ErrorsCleared()){
                             REPORT_ERROR_STATIC(ret,"failed to push type into stack");
                         }
                     }
 
-                    if (ret){
+                    if (ret.ErrorsCleared()){
                         matchOutput = true;
                     }
                 }
@@ -694,16 +694,16 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                 VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
 
                 ret.illegalOperation = !hasParameter1 || hasParameter2;
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 } else{
                     ret = FindOutputVariable(parameter1.Buffer(),variableInformation);
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"output variable %s not found", parameter1.Buffer());
                     }
                 }
 
-                if (ret){
+                if (ret.ErrorsCleared()){
                     // change from WRITE to RWRITE
                     if (variableInformation->externalLocation != NULL){
                         command = remoteWriteToken;
@@ -713,34 +713,34 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                 }
 
                 TypeDescriptor td = InvalidType;
-                if (ret){
+                if (ret.ErrorsCleared()){
                     td = variableInformation->type;
 
                     // found local variable - allocate and give type here
                     if ((td == VoidType) && (variableInformation->externalLocation == NULL)){
                         ret.fatalError = !typeStack.Peek(0,td);
-                        if (!ret){
+                        if (!ret.ErrorsCleared()){
                             REPORT_ERROR_STATIC(ret,"expecting source type in stack");
                         }
                         variableInformation->type = td;
                     } else {
                         ret.unsupportedFeature = !td.IsNumericType();
-                        if (!ret){
+                        if (!ret.ErrorsCleared()){
                             REPORT_ERROR_STATIC(ret,"variable %s does not have a numeric supported format", parameter1.Buffer());
                         }
                     }
                 }
 
-                if (ret){
+                if (ret.ErrorsCleared()){
 //printf("Stack[%i].Push(%x) -->",typeStack.GetSize(),td.all);
                     ret.fatalError = !typeStack.Push(td);
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"failed to push type into stack");
                     }
 //printf("Stack[%i] \n",typeStack.GetSize());
                 }
 
-                if (ret){
+                if (ret.ErrorsCleared()){
                     matchOutput = true;
                     code2 = variableInformation->location;
                     variableInformation->variableUsed = true;
@@ -759,25 +759,25 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                 VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
 
                 ret.illegalOperation = !hasParameter1 || hasParameter2;
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 } else{
                     // try find an output variable with this name
                     ret = FindOutputVariable(parameter1.Buffer(),variableInformation);
-                    if (ret){
+                    if (ret.ErrorsCleared()){
                         // not set yet - cannot use
                         ret.notCompleted = (variableInformation->variableUsed != true);
                     }
                     // try to see if there is an input variable
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         ret = FindInputVariable(parameter1.Buffer(),variableInformation);
-                        if (!ret){
+                        if (!ret.ErrorsCleared()){
                             REPORT_ERROR_STATIC(ret,"input variable %s not found", parameter1.Buffer());
                         }
                     }
                 }
 
-                if (ret){
+                if (ret.ErrorsCleared()){
                     // change from READ to RREAD
                     if (variableInformation->externalLocation != NULL){
                         command = remoteReadToken;
@@ -787,22 +787,22 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                 }
 
                 TypeDescriptor td = InvalidType;
-                if (ret){
+                if (ret.ErrorsCleared()){
                     td = variableInformation->type;
                     ret.unsupportedFeature = !td.IsNumericType();
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"variable %s does not have a numeric supported format", parameter1.Buffer());
                     }
                 }
 //printf("read %s type = %x  type = %x\n",variableInformation->name.GetList(),td.all,variableInformation->type.all);
-                if (ret){
+                if (ret.ErrorsCleared()){
                     ret.fatalError = !typeStack.Push(td);
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"failed to push type into stack");
                     }
                 }
 
-                if (ret){
+                if (ret.ErrorsCleared()){
                     matchOutput = true;
                     code2 = variableInformation->location;
                 }
@@ -819,7 +819,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                 TypeDescriptor td;
 
                 ret.illegalOperation = !hasParameter1 || !hasParameter2 || hasParameter3;
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"%s without type name and value", command.Buffer());
                 } else{
                 // transform the type name into a TypeDescriptor
@@ -827,30 +827,30 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
 
                     td = TypeDescriptor::GetTypeDescriptorFromTypeName(parameter1.Buffer());
                     ret.unsupportedFeature = !td.IsNumericType();
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"type %s is not a numeric supported format", parameter1.Buffer());
                     }
                 }
 
                 // convert string to number and save value into memory
-                if (ret){
+                if (ret.ErrorsCleared()){
                     //nextConstantAddress
                     AnyType dest(td, 0,&variablesMemoryPtr[nextConstantAddress]);
                     ret.fatalError = !TypeConvert(dest, parameter2.Buffer());
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"TypeConvert failed ");
                     }
 
                 }
 
-                if (ret){
+                if (ret.ErrorsCleared()){
                     ret.fatalError = !typeStack.Push(td);
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"failed to push type into stack");
                     }
                 }
 
-                if (ret){
+                if (ret.ErrorsCleared()){
                     matchOutput = true;
                     code2 = nextConstantAddress;
                     nextConstantAddress += ByteSizeToDataMemorySize(td.numberOfBits/8u);
@@ -860,9 +860,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             }
 
             CodeMemoryElement code = 0;
-            if (ret){
+            if (ret.ErrorsCleared()){
                 ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command.Buffer(),typeStack,matchOutput,dataStackSize);
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     StreamString typeList;
                     uint32 n2scan = 2;
                     if (matchOutput) {
@@ -878,7 +878,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                         typeList += TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
                     }
                     typeList += ']';
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"command %s(%s) not found", command.Buffer(), typeList.Buffer());
                     }
                 }
@@ -886,20 +886,20 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             }
 
             // finally compile!
-            if (ret){
+            if (ret.ErrorsCleared()){
                 // update stackSize
                 if (dataStackSize > maxDataStackSize){
                     maxDataStackSize = dataStackSize;
                 }
 
                 ret.fatalError = !codeMemory.Add(code);
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"failed to add instruction to code");
                 }
 
-                if (ret && (code2 != TypeCharacteristics<CodeMemoryElement>::MaxValue())){
+                if (ret.ErrorsCleared() && (code2 != TypeCharacteristics<CodeMemoryElement>::MaxValue())){
                     ret.fatalError = !codeMemory.Add(code2);
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"failed to add instruction to code");
                     }
                 }
@@ -911,7 +911,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     }
 
     // final checks
-    if (ret){
+    if (ret.ErrorsCleared()){
 
         // assign the code pointer
         codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
@@ -924,9 +924,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     }
 
     // check that the TypeStack is empty
-    if (ret){
+    if (ret.ErrorsCleared()){
         ret.internalSetupError = (typeStack.GetSize() > 0);
-        if (!ret){
+        if (!ret.ErrorsCleared()){
             REPORT_ERROR_STATIC(ret,"operation sequence is incomplete: %u data left in stack", typeStack.GetSize());
         }
     }
@@ -945,7 +945,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
 
          VariableInformation *vi;
          ret = FindVariable(pCode2,vi);
-         if (!ret){
+         if (!ret.ErrorsCleared()){
             REPORT_ERROR_STATIC(ret,"No variable or constant @ %u",pCode2);
          } else{
             cst.Printf(" %s", vi->name.Buffer());
@@ -957,7 +957,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
     if (showData || showTypes){
         Vector<TypeDescriptor> functionInputTypes = functionInformation.GetInputTypes();
 
-        for(uint32 i=0;(i<functionInputTypes.GetNumberOfElements()) && ret;i++){
+        for(uint32 i=0; (i<functionInputTypes.GetNumberOfElements()) && (ret.ErrorsCleared()); i++){
             TypeDescriptor td = functionInputTypes[i];
 
             if (i!=0) {
@@ -1024,7 +1024,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
 
         VariableInformation *vi;
         ret = FindVariable(pCode2,vi);
-        if (!ret){
+        if (!ret.ErrorsCleared()){
             REPORT_ERROR_STATIC(ret,"No variable or constant @ %u",pCode2);
         } else{
             if (pCode2 < startOfVariables){
@@ -1038,7 +1038,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
                     ret.fatalError = true;
                 }
 
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"GetTypeNameFromTypeDescriptor failed ");
                 } else{
                     AnyType src(vi->type, 0, &variablesMemoryPtr[pCode2]);
@@ -1055,7 +1055,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
 
     if (showData || showTypes){
 
-        for(uint32 i=0;(i<functionOutputTypes.GetNumberOfElements()) && ret;i++){
+        for(uint32 i=0;(i<functionOutputTypes.GetNumberOfElements()) && (ret.ErrorsCleared()); i++){
             TypeDescriptor td = functionOutputTypes[i];
             if (i!=0) {
                 cst += ',';
@@ -1155,17 +1155,17 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
 
                 // show inputs
                 ret = FunctionRecordInputs2String(fr,debugMessage,true,true,true);
-                if (!ret){
+                if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"analysing input side of function call");
                 }
 
                 // executes code
                 fr.ExecuteFunction(*this);
 
-                if (ret){
+                if (ret.ErrorsCleared()){
                     // show outputs
                     ret = FunctionRecordOutputs2String(fr,debugMessage,true,true,true);
-                    if (!ret){
+                    if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"analysing input side of function call");
                     }
                 }
@@ -1219,7 +1219,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRP
 
     variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 
-    while((codeMemoryPtr < codeMemoryMaxPtr) && ret){
+    while((codeMemoryPtr < codeMemoryMaxPtr) && (ret.ErrorsCleared())){
         CodeMemoryElement pCode = GetPseudoCode();
         RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
         StreamString fName = fr.GetName();
@@ -1238,7 +1238,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRP
 
         ret = FunctionRecordInputs2String(fr,DeCompileRPNCode,false,false,showTypes);
 
-        if (ret){
+        if (ret.ErrorsCleared()){
             ret = FunctionRecordOutputs2String(fr,DeCompileRPNCode,false,false,showTypes);
         }
         DeCompileRPNCode += '\n';
