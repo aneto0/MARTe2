@@ -82,10 +82,10 @@ ParserI::ParserI(StreamI &stream,
     
     // create a local copy of the stream (used by PrintErrorLine)
     uint64 pos = stream.Position();
-    bool ok = stream.Seek(0U);
+    bool ok = stream.Seek(0ull);
     if (ok) {
-        inputStream.Copy(dynamic_cast<BufferedStreamI&>(stream));
-        ok = stream.Seek(pos);
+        ok = inputStream.Copy(dynamic_cast<BufferedStreamI&>(stream));
+        ok &= stream.Seek(pos);
     }
     if (!ok) {
         inputStream = "";
@@ -153,10 +153,11 @@ void ParserI::PrintErrorLine() {
     // retrieve the error line
     uint32 lineNumber = GetCurrentTokenLineNumber(currentToken);
     char8 line[200];
-    bool ok = inputStream.Seek(0U);
+    char8* startLinePtr = &line[0];
+    bool ok = inputStream.Seek(0ull);
     if (ok) {
         for (uint32 i = 0u; (i < lineNumber) && (ok); i++) {
-            ok = inputStream.GetLine(line, 200u);
+            ok = inputStream.GetLine(startLinePtr, 200u);
         }
         if (ok) {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", line);
@@ -166,10 +167,10 @@ void ParserI::PrintErrorLine() {
     // create an arrow that points to the error
     if ((GetCurrentTokenData(currentToken) != NULL) && (ok)) {
         
-        const char8* errorTokenPtr = StringHelper::SearchString(line, GetCurrentTokenData(currentToken));
+        const char8* errorLinePtr = StringHelper::SearchString(startLinePtr, GetCurrentTokenData(currentToken));
         
-        if (errorTokenPtr != NULL) {
-            uint32 length = errorTokenPtr - line; // number of characters between start of line and error token
+        if (errorLinePtr != NULL) {
+            uint32 length = errorLinePtr - startLinePtr; // number of characters between start of line and error token
             char8 arrow[length + 2];
             ok = StringHelper::SetChar(arrow, length, ' ');
             if (ok) {
