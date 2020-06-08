@@ -33,7 +33,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "LinkedListable.h"
 #include "StreamString.h"
 #include "TypeCharacteristics.h"
 #include "TypeDescriptor.h"
