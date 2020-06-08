@@ -171,7 +171,9 @@ void ParserI::PrintErrorLine() {
         
         /*lint -e{946,947} Justification: Subtraction between pointers is allowed when pointers point to elements of the same array [MISRA C++ Rule 5-0-17]."*/
         if (errorLinePtr != NULL) {
-            int32 length = (int32)(errorLinePtr - startLinePtr); // number of characters between start of line and error token
+
+            uint32 length = static_cast<uint32>(errorLinePtr - startLinePtr); // number of characters between start of line and error token
+
             char8 arrow[length + 2u];
             ok = StringHelper::SetChar(&arrow[0], length, ' ');
             if (ok) {
