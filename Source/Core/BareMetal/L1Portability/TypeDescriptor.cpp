@@ -106,7 +106,13 @@ bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
 }
 
 bool TypeDescriptor::IsNumericType() const {
-    bool isNumeric = (type == Float) || (type == SignedInteger) || (type == UnsignedInteger);
+
+    bool isFloat           = (type == Float);
+    bool isSignedInteger   = (type == SignedInteger);
+    bool isUnsignedInteger = (type == UnsignedInteger);
+    
+    bool isNumeric = (isFloat || isSignedInteger || isUnsignedInteger);
+    
     return ( (!isStructuredData) && (numberOfBits > 0u) && (isNumeric) );
 }
 
