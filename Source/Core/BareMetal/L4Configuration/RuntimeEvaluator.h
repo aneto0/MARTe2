@@ -410,13 +410,16 @@ public:
      *          scans RPNCode looking for READ, WRITE and CONST functions.
      *          Once this method has been called, variable management
      *          APIs are available.
+     * @returns ErrorManagement::NoError on success.
      */
     ErrorManagement::ErrorType ExtractVariables();
 
     /**
-     * @brief Returns a pointer to a RuntimeEvaluator variable.
+     * @brief      Returns a pointer to a RuntimeEvaluator variable.
      * @param[in]  index the index of the variable to be retrieved.
      * @param[out] variableInformation a pointer to the variable.
+     * @returns    ErrorManagement::NoError on success.
+     *             ErrorManagement::OutOfRange otherwise.
      */
     ErrorManagement::ErrorType BrowseInputVariable(uint32 index,VariableInformation *&variableInformation);
 
@@ -424,6 +427,8 @@ public:
      * @brief Returns a pointer to a RuntimeEvaluator variable.
      * @param[in]  index the index of the variable to be retrieved.
      * @param[out] variableInformation a pointer to the variable.
+     * @returns    ErrorManagement::NoError on success,
+     *             ErrorManagement::OutOfRange otherwise.
      */
     ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
     
