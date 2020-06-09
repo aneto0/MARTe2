@@ -236,10 +236,10 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
         bool hasParameter2   = line.GetToken(parameter2, " \t,", terminator," \t,");
         bool hasParameter3   = line.GetToken(parameter3, " \t,", terminator," \t,");
         
-        hasCommand    = ( (hasCommand)    && (command.Size() > 0)   );
-        hasParameter1 = ( (hasParameter1) && (parameter1.Size()> 0) );
-        hasParameter2 = ( (hasParameter2) && (parameter2.Size()> 0) );
-        hasParameter3 = ( (hasParameter2) && (parameter3.Size()> 0) );
+        hasCommand    = ( (command.Size()   > 0u) && (hasCommand)    );
+        hasParameter1 = ( (parameter1.Size()> 0u) && (hasParameter1) );
+        hasParameter2 = ( (parameter2.Size()> 0u) && (hasParameter2) );
+        hasParameter3 = ( (parameter3.Size()> 0u) && (hasParameter3) );
         
         // now analyse the command
         if (hasCommand){
@@ -652,10 +652,10 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
         bool hasParameter2   = line.GetToken(parameter2, " \t,", terminator," \t,");
         bool hasParameter3   = line.GetToken(parameter3, " \t,", terminator," \t,");
         
-        hasCommand    = ( (hasCommand)    && (command.Size() > 0)   );
-        hasParameter1 = ( (hasParameter1) && (parameter1.Size()> 0) );
-        hasParameter2 = ( (hasParameter2) && (parameter2.Size()> 0) );
-        hasParameter3 = ( (hasParameter2) && (parameter3.Size()> 0) );
+        hasCommand    = ( (command.Size()   > 0u) && (hasCommand)    );
+        hasParameter1 = ( (parameter1.Size()> 0u) && (hasParameter1) );
+        hasParameter2 = ( (parameter2.Size()> 0u) && (hasParameter2) );
+        hasParameter3 = ( (parameter3.Size()> 0u) && (hasParameter3) );
 
         // now analyze the command
         if (hasCommand){
