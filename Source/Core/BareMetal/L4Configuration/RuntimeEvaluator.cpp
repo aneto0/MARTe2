@@ -229,7 +229,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     StreamString line;
     char8 terminator;
     
-    RPNCode.Seek(0);
+    ret.exception = !RPNCode.Seek(0);
     
     while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret.ErrorsCleared()){
 
@@ -645,8 +645,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     StreamString line;
     char8 terminator;
     
-    RPNCode.Seek(0);
-    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret){
+    ret.exception = !RPNCode.Seek(0);
+    
+    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret.ErrorsCleared()){
 
         // extract command and parameter
         StreamString command;
@@ -891,7 +892,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                             typeList += '|';
                         }
                         TypeDescriptor td;
-                        typeStack.Peek(index,td);
+                        ret.unsupportedFeature = !typeStack.Peek(index,td);
                         typeList += TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
                     }
                     typeList += ']';
@@ -1004,13 +1005,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
             if (i == (functionInputTypes.GetNumberOfElements()-1U)){
                 cst += ')';
             }
-         }
-     }
+        }
+    }
 
-     // restore any used data
-     if (peekOnly){
-         codeMemoryPtr  = saveCodeMemoryPtr;
-     }
+    // restore any used data
+    if (peekOnly){
+        codeMemoryPtr  = saveCodeMemoryPtr;
+    }
 
      return ret;
 }
