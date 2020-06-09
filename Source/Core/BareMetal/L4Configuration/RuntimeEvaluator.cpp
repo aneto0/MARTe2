@@ -126,9 +126,18 @@ RuntimeEvaluator::RuntimeEvaluator(StreamString RPNCodeIn){
 
 RuntimeEvaluator::~RuntimeEvaluator(){
     
-    variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
-    stackPtr           = NULL_PTR(DataMemoryElement*);
-    codeMemoryPtr      = NULL_PTR(CodeMemoryElement*);
+    if (variablesMemoryPtr != NULL) {
+        variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
+    }
+    if (stackPtr != NULL) {
+        stackPtr = NULL_PTR(DataMemoryElement*);
+    }
+    if (codeMemoryPtr != NULL) {
+        codeMemoryPtr = NULL_PTR(CodeMemoryElement*);
+    }
+    
+    inputVariableInfo.CleanUp();
+    outputVariableInfo.CleanUp();
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
@@ -153,13 +162,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(CCString name,Linked
     VariableInformation *variableToSearch;
     ret = FindVariableinDB(name,variableToSearch,db);
 
-    // if it is already there we do not need to add
+    /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
     if (ret.unsupportedFeature){
+        // if it is already there we do not need to add
         VariableInformation *variableInfo = new VariableInformation;
         variableInfo->name = name;
         variableInfo->type = td;
         variableInfo->location = location;
-//printf("Add %s @ %i  --> %i\n",name.GetList(),location,variableInfo.location);
+
         db.ListAdd(variableInfo);
         ret.unsupportedFeature = false;
     } else {
