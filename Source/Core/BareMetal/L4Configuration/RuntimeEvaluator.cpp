@@ -185,7 +185,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariable(DataMemoryAddress addr
     if (!ret.ErrorsCleared()){
         inputVariableInfo.ListIterate(&finder);
         ret = finder.error;
-        if (ret){
+        if (ret.ErrorsCleared()){
             variableInformation = finder.variable;
             ret.unsupportedFeature = (variableInformation == NULL);
         }
@@ -320,7 +320,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
 
     }
 
-    if (ret){
+    if (ret.ErrorsCleared()){
         startOfVariables = nextConstantAddress;
     }
 
