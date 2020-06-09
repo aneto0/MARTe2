@@ -229,19 +229,20 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
         StreamString parameter2;
         StreamString parameter3;
 
-        // extract up to two tokens per line
+        // extract up to three tokens per line
         line.Seek(0u);
-        line.GetToken(command, " \t,", terminator," \t,");
-        line.GetToken(parameter1, " \t,", terminator," \t,");
-        line.GetToken(parameter2, " \t,", terminator," \t,");
-        line.GetToken(parameter3, " \t,", terminator," \t,");
-
-        bool hasParameter1 = (parameter1.Size()> 0);
-        bool hasParameter2 = (parameter2.Size()> 0);
-        bool hasParameter3 = (parameter3.Size()> 0);
-
+        bool hasCommand      = line.GetToken(command,    " \t,", terminator," \t,");
+        bool hasParameter1   = line.GetToken(parameter1, " \t,", terminator," \t,");
+        bool hasParameter2   = line.GetToken(parameter2, " \t,", terminator," \t,");
+        bool hasParameter3   = line.GetToken(parameter3, " \t,", terminator," \t,");
+        
+        hasCommand    = ( (hasCommand)    && (command.Size() > 0)   );
+        hasParameter1 = ( (hasParameter1) && (parameter1.Size()> 0) );
+        hasParameter2 = ( (hasParameter2) && (parameter2.Size()> 0) );
+        hasParameter3 = ( (hasParameter2) && (parameter3.Size()> 0) );
+        
         // now analyse the command
-        if (command.Size() > 0){
+        if (hasCommand){
 
             if (command == readToken){
                 ret.illegalOperation = !hasParameter1 || hasParameter2;
@@ -305,7 +306,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                 // if supported add up the memory needs
                 if (ret.ErrorsCleared()){
                     StreamString constantName;
-                    constantName.Printf("Constant@%u", nextConstantAddress);
+                    ret.illegalOperation = constantName.Printf("Constant@%u", nextConstantAddress);
                     ret = AddInputVariable(constantName.Buffer(),td,nextConstantAddress);
                 }
                 if (ret.ErrorsCleared()){
@@ -644,18 +645,20 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
         StreamString parameter3;
 
         // extract up to three tokens per line
+        // extract up to three tokens per line
         line.Seek(0u);
-        line.GetToken(command, " \t,", terminator, " \t,");
-        line.GetToken(parameter1, " \t,", terminator, " \t,");
-        line.GetToken(parameter2, " \t,", terminator, " \t,");
-        line.GetToken(parameter3, " \t,", terminator, " \t,");
-
-        bool hasParameter1 = (parameter1.Size()> 0);
-        bool hasParameter2 = (parameter2.Size()> 0);
-        bool hasParameter3 = (parameter3.Size()> 0);
+        bool hasCommand      = line.GetToken(command,    " \t,", terminator," \t,");
+        bool hasParameter1   = line.GetToken(parameter1, " \t,", terminator," \t,");
+        bool hasParameter2   = line.GetToken(parameter2, " \t,", terminator," \t,");
+        bool hasParameter3   = line.GetToken(parameter3, " \t,", terminator," \t,");
+        
+        hasCommand    = ( (hasCommand)    && (command.Size() > 0)   );
+        hasParameter1 = ( (hasParameter1) && (parameter1.Size()> 0) );
+        hasParameter2 = ( (hasParameter2) && (parameter2.Size()> 0) );
+        hasParameter3 = ( (hasParameter2) && (parameter3.Size()> 0) );
 
         // now analyze the command
-        if (command.Size() > 0){
+        if (hasCommand){
             // assign invalid value
             CodeMemoryElement code2 = TypeCharacteristics<CodeMemoryElement>::MaxValue();
             bool matchOutput = false;
