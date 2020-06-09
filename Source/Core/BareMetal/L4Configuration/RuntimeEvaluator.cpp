@@ -125,6 +125,10 @@ RuntimeEvaluator::RuntimeEvaluator(StreamString RPNCodeIn){
 }
 
 RuntimeEvaluator::~RuntimeEvaluator(){
+    
+    variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
+    stackPtr           = NULL_PTR(DataMemoryElement*);
+    codeMemoryPtr      = NULL_PTR(CodeMemoryElement*);
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
@@ -146,8 +150,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(CCString name,Vari
 
 ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location){
     ErrorManagement::ErrorType ret;
-    VariableInformation *variableInfo;
-    ret = FindVariableinDB(name,variableInfo,db);
+    VariableInformation *variableToSearch;
+    ret = FindVariableinDB(name,variableToSearch,db);
 
     // if it is already there we do not need to add
     if (ret.unsupportedFeature){
