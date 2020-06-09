@@ -341,7 +341,7 @@ void* RuntimeEvaluator::GetInputVariableMemory(StreamString varNameIn) {
     int32 index = 0;
     VariableInformation *var;
 
-    while(BrowseInputVariable(index,var) && !isFound){
+    while( (BrowseInputVariable(index,var) == ErrorManagement::NoError) && (!isFound)){
         if (var->name == varNameIn){
             if (var->externalLocation != NULL) {
                 retAddress = var->externalLocation;
@@ -364,7 +364,7 @@ void* RuntimeEvaluator::GetInputVariableMemory(uint32 varIndexIn) {
     
     VariableInformation *var;
     
-    if (BrowseInputVariable(varIndexIn,var)) {
+    if (BrowseInputVariable(varIndexIn,var) == ErrorManagement::NoError) {
         if (var->externalLocation != NULL) {
             retAddress = var->externalLocation;
         }
@@ -385,7 +385,7 @@ void* RuntimeEvaluator::GetOutputVariableMemory(StreamString varNameIn) {
     int32 index = 0;
     VariableInformation *var;
 
-    while(BrowseOutputVariable(index,var) && !isFound){
+    while( (BrowseOutputVariable(index,var) == ErrorManagement::NoError) && !isFound){
         if (var->name == varNameIn){
             if (var->externalLocation != NULL) {
                 retAddress = var->externalLocation;
@@ -408,7 +408,7 @@ void* RuntimeEvaluator::GetOutputVariableMemory(uint32 varIndexIn) {
     
     VariableInformation *var;
     
-    if (BrowseOutputVariable(varIndexIn,var)) {
+    if (BrowseOutputVariable(varIndexIn,var) == ErrorManagement::NoError) {
         if (var->externalLocation != NULL) {
             retAddress = var->externalLocation;
         }
@@ -428,7 +428,7 @@ bool RuntimeEvaluator::SetInputVariableMemory(StreamString varNameIn, void* exte
     int32 index = 0;
     VariableInformation *var;
 
-    while(BrowseInputVariable(index,var) && !isFound){
+    while( (BrowseInputVariable(index,var) == ErrorManagement::NoError) && (!isFound) ){
         if (var->name == varNameIn){
             var->externalLocation = externalLocationIn;
             isFound = true;
@@ -446,7 +446,7 @@ bool RuntimeEvaluator::SetInputVariableMemory(uint32 varIndexIn, void* externalL
     
     VariableInformation *var;
     
-    if (BrowseInputVariable(varIndexIn,var)) {
+    if (BrowseInputVariable(varIndexIn,var) == ErrorManagement::NoError) {
         var->externalLocation = externalLocationIn;
         isFound = true;
     }
@@ -462,7 +462,7 @@ bool RuntimeEvaluator::SetOutputVariableMemory(StreamString varNameIn, void* ext
     int32 index = 0;
     VariableInformation *var;
 
-    while(BrowseOutputVariable(index,var) && !isFound){
+    while( (BrowseOutputVariable(index,var) == ErrorManagement::NoError) && (!isFound)){
         if (var->name == varNameIn){
             var->externalLocation = externalLocationIn;
             isFound = true;
@@ -480,7 +480,7 @@ bool RuntimeEvaluator::SetOutputVariableMemory(uint32 varIndexIn, void* external
     
     VariableInformation *var;
     
-    if (BrowseOutputVariable(varIndexIn,var)) {
+    if (BrowseOutputVariable(varIndexIn,var) == ErrorManagement::NoError) {
         var->externalLocation = externalLocationIn;
         isFound = true;
     }
@@ -496,7 +496,7 @@ bool RuntimeEvaluator::SetInputVariableType(StreamString varNameIn, TypeDescript
     int32 index = 0;
     VariableInformation *var;
 
-    while(BrowseInputVariable(index,var) && !isFound){
+    while( (BrowseInputVariable(index,var) == ErrorManagement::NoError) && (!isFound) ){
         if (var->name == varNameIn){
             var->type = typeIn;
             isFound = true;
@@ -514,7 +514,7 @@ bool RuntimeEvaluator::SetInputVariableType(uint32 varIndexIn, TypeDescriptor ty
     
     VariableInformation *var;
     
-    if (BrowseInputVariable(varIndexIn,var)) {
+    if (BrowseInputVariable(varIndexIn,var) == ErrorManagement::NoError) {
         var->type = typeIn;
         isFound = true;
     }
@@ -530,7 +530,7 @@ bool RuntimeEvaluator::SetOutputVariableType(StreamString varNameIn, TypeDescrip
     int32 index = 0;
     VariableInformation *var;
 
-    while(BrowseOutputVariable(index,var) && !isFound){
+    while( (BrowseOutputVariable(index,var) == ErrorManagement::NoError) && (!isFound) ){
         if (var->name == varNameIn){
             var->type = typeIn;
             isFound = true;
@@ -548,7 +548,7 @@ bool RuntimeEvaluator::SetOutputVariableType(uint32 varIndexIn, TypeDescriptor t
     
     VariableInformation *var;
     
-    if (BrowseOutputVariable(varIndexIn,var)) {
+    if (BrowseOutputVariable(varIndexIn,var) == ErrorManagement::NoError) {
         var->type = typeIn;
         isFound = true;
     }
