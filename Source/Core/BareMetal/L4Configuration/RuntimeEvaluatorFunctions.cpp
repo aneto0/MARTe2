@@ -425,7 +425,7 @@ template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluat
 }
 
 template <typename T1,typename T2,typename Tout> void SAddition_3T(RuntimeEvaluator &context){
-    if (context.runtimeError){
+    if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3;
         T1 y1;
         T2 y2;
@@ -439,7 +439,7 @@ template <typename T1,typename T2,typename Tout> void SAddition_3T(RuntimeEvalua
 }
 
 template <typename T1,typename T2,typename Tout> void SSubtraction_3T(RuntimeEvaluator &context){
-    if (context.runtimeError){
+    if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3;
         T1 y1;
         T2 y2;
@@ -453,7 +453,7 @@ template <typename T1,typename T2,typename Tout> void SSubtraction_3T(RuntimeEva
 }
 
 template <typename T1,typename T2,typename Tout> void SMultiplication_3T(RuntimeEvaluator &context){
-    if (context.runtimeError){
+    if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3;
         T1 y1;
         T2 y2;
@@ -483,7 +483,7 @@ template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvalua
 }
 
 template <typename T1,typename T2,typename Tout> void SSAddition_3T(RuntimeEvaluator &context){
-    if (context.runtimeError){
+    if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3;
         T1 y1;
         T2 y2;
@@ -501,7 +501,7 @@ template <typename T1,typename T2,typename Tout> void SSAddition_3T(RuntimeEvalu
 }
 
 template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEvaluator &context){
-    if (context.runtimeError){
+    if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3 = 0;
         T1 y1;
         T2 y2;
@@ -519,7 +519,7 @@ template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEv
 }
 
 template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(RuntimeEvaluator &context){
-    if (context.runtimeError){
+    if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3=0;
         T1 y1;
         T2 y2;
