@@ -84,19 +84,19 @@ bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescr
         // remove first output type
         if (matchOutput){
             TypeDescriptor type;
-            typeStack.Pop(type);
+            ret = typeStack.Pop(type);
         }
 
         // remove inputs types
-        for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
+        for (uint16 i = 0U; ret && (i < numberOfInputs); i++){
             TypeDescriptor type;
-            typeStack.Pop(type);
+            ret = typeStack.Pop(type);
             dataStackSize -= ByteSizeToDataMemorySize(type.numberOfBits/8u);
         }
 
         // insert output types
-        for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
-            typeStack.Push(types[i+numberOfInputs]);
+        for (uint16 i = 0U; ret && (i < numberOfOutputs); i++){
+            ret = typeStack.Push(types[i + numberOfInputs]);
             dataStackSize += ByteSizeToDataMemorySize((types[i+numberOfInputs].numberOfBits)/8u);
         }
     }
