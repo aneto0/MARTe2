@@ -196,7 +196,7 @@ private:
 /**
  * @brief Max number of registered functions.
  */
-const uint32 maxFunctions = 16384;
+static const uint32 maxFunctions = 16384u;
 
 /**
  * @brief Number of currently available functions.
