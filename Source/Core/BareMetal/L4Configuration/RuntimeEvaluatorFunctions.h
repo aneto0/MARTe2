@@ -229,6 +229,7 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record);
  * @brief Generates boilerplate code to register a function.
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
+    /*lint -e{446} Justification: Type2TypeDescriptor<>() is know to have no side-effects and can thus be used safely in ..._FunctionTypes[] array initialization.*/ \
     static TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
     static const RuntimeEvaluatorFunctions name ## subName ## _RuntimeEvaluatorFunctions(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function); \
     static class name ## subName ## RegisterClass { \
