@@ -120,7 +120,7 @@ struct VariableInformation: public LinkedListable {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-inline VariableInformation::VariableInformation(){
+inline VariableInformation::VariableInformation() : LinkedListable() {
     type = VoidType;
     location = 0;
     variableUsed = false;
