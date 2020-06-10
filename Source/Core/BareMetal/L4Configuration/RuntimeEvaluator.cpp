@@ -240,11 +240,11 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
         StreamString parameter3;
 
         // extract up to three tokens per line
-        line.Seek(0u);
-        bool hasCommand      = line.GetToken(command,    " \t,", terminator," \t,");
-        bool hasParameter1   = line.GetToken(parameter1, " \t,", terminator," \t,");
-        bool hasParameter2   = line.GetToken(parameter2, " \t,", terminator," \t,");
-        bool hasParameter3   = line.GetToken(parameter3, " \t,", terminator," \t,");
+        ret.illegalOperation = !line.Seek(0u);
+        bool hasCommand      =  line.GetToken(command,    " \t,", terminator," \t,");
+        bool hasParameter1   =  line.GetToken(parameter1, " \t,", terminator," \t,");
+        bool hasParameter2   =  line.GetToken(parameter2, " \t,", terminator," \t,");
+        bool hasParameter3   =  line.GetToken(parameter3, " \t,", terminator," \t,");
         
         hasCommand    = ( (command.Size()   > 0u) && (hasCommand)    );
         hasParameter1 = ( (parameter1.Size()> 0u) && (hasParameter1) );
@@ -656,12 +656,11 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
         StreamString parameter3;
 
         // extract up to three tokens per line
-        // extract up to three tokens per line
-        line.Seek(0u);
-        bool hasCommand      = line.GetToken(command,    " \t,", terminator," \t,");
-        bool hasParameter1   = line.GetToken(parameter1, " \t,", terminator," \t,");
-        bool hasParameter2   = line.GetToken(parameter2, " \t,", terminator," \t,");
-        bool hasParameter3   = line.GetToken(parameter3, " \t,", terminator," \t,");
+        ret.illegalOperation = !line.Seek(0u);
+        bool hasCommand      =  line.GetToken(command,    " \t,", terminator," \t,");
+        bool hasParameter1   =  line.GetToken(parameter1, " \t,", terminator," \t,");
+        bool hasParameter2   =  line.GetToken(parameter2, " \t,", terminator," \t,");
+        bool hasParameter3   =  line.GetToken(parameter3, " \t,", terminator," \t,");
         
         hasCommand    = ( (command.Size()   > 0u) && (hasCommand)    );
         hasParameter1 = ( (parameter1.Size()> 0u) && (hasParameter1) );
@@ -953,22 +952,22 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool peekOnly,bool showData,bool showTypes){
-     ErrorManagement::ErrorType ret;
+    ErrorManagement::ErrorType ret;
 
-     const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
-     StreamString functionName = functionInformation.GetName();
+    const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
+    StreamString functionName = functionInformation.GetName();
 
-     if ((functionName == writeToken) || (functionName == remoteWriteToken)){
-         CodeMemoryElement pCode2 = GetPseudoCode();
+    if ((functionName == writeToken) || (functionName == remoteWriteToken)){
+        CodeMemoryElement pCode2 = GetPseudoCode();
 
-         VariableInformation *vi;
-         ret = FindVariable(pCode2,vi);
-         if (!ret.ErrorsCleared()){
+        VariableInformation *vi;
+        ret = FindVariable(pCode2,vi);
+        if (!ret.ErrorsCleared()){
             REPORT_ERROR_STATIC(ret,"No variable or constant @ %u",pCode2);
-         } else{
-            cst.Printf(" %s", vi->name.Buffer());
-         }
-     }
+        } else{
+            ret.exception = !cst.Printf(" %s", vi->name.Buffer());
+        }
+    }
 
      DataMemoryAddress dataStackIndex = 0;
 
@@ -1058,13 +1057,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
 
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"GetTypeNameFromTypeDescriptor failed ");
-                } else{
+                } else {
                     AnyType src(vi->type, 0, &variablesMemoryPtr[pCode2]);
-                    cst.Printf(" %!", src);
+                    ret.exception = !cst.Printf(" %!", src);
                 }
 
             } else {
-                cst.Printf(" %s", vi->name.Buffer());
+                ret.exception = !cst.Printf(" %s", vi->name.Buffer());
             }
         }
     }
@@ -1097,7 +1096,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
             if (showData){
                 dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits/8u);
                 AnyType src(td, 0, stackPtr - dataStackIndex);
-                cst.Printf("%!", src);
+                ret.exception = !cst.Printf("%!", src);
             }
             if (i == (functionOutputTypes.GetNumberOfElements()-1U)){
                 cst += ')';
@@ -1159,14 +1158,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
             while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
                 int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
                 int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-                debugMessage.Printf("%i - %i - %i :: ", lineCounter, stackOffset, codeOffset);
+                runtimeError.exception = !debugMessage.Printf("%i - %i - %i :: ", lineCounter, stackOffset, codeOffset);
 
                 CodeMemoryElement pCode = GetPseudoCode();
 
                 RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
 
                 // show update info
-                debugMessage.Printf("%s ", fr.GetName().Buffer());
+                runtimeError.exception = !debugMessage.Printf("%s ", fr.GetName().Buffer());
 
                 // errors due to debugging
                 ErrorManagement::ErrorType ret;
@@ -1195,20 +1194,20 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
                 debugMessage += '\n';
 
                 uint32 size = debugMessage.Size();
-                debugStream->Write(debugMessage.Buffer(),size);
+                runtimeError.exception = !debugStream->Write(debugMessage.Buffer(),size);
 
                 // reset line
-                debugMessage.SetSize(0);
+                runtimeError.exception = !debugMessage.SetSize(0);
                 lineCounter++;
 
             }
             if (runtimeError.ErrorsCleared()){
                 int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
                 int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-                debugMessage.Printf("%i - %i :: END", stackOffset, codeOffset);
+                runtimeError.exception = !debugMessage.Printf("%i - %i :: END", stackOffset, codeOffset);
 
                 uint32 size = debugMessage.Size();
-                debugStream->Write(debugMessage.Buffer(),size);
+                runtimeError.exception = !debugStream->Write(debugMessage.Buffer(),size);
             }
         }
     }
