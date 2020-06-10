@@ -374,49 +374,49 @@ REGISTER_OPERATOR(DIV, / ,Division)
 
 template <typename T1,typename T2,typename Tout> void Addition_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3;
-    T1 y1;
-    T2 y2;
-    context.Pop(y1);
-    context.Pop(y2);
-    x1 = static_cast<Tout>(y1);
-    x2 = static_cast<Tout>(y2);
+    T1 z1;
+    T2 z2;
+    context.Pop(z1);
+    context.Pop(z2);
+    x1 = static_cast<Tout>(z1);
+    x2 = static_cast<Tout>(z2);
     x3 = static_cast<Tout>(x2 + x1);
     context.Push(x3);
 }
 
 template <typename T1,typename T2,typename Tout> void Subtraction_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3;
-    T1 y1;
-    T2 y2;
-    context.Pop(y1);
-    context.Pop(y2);
-    x1 = static_cast<Tout>(y1);
-    x2 = static_cast<Tout>(y2);
+    T1 z1;
+    T2 z2;
+    context.Pop(z1);
+    context.Pop(z2);
+    x1 = static_cast<Tout>(z1);
+    x2 = static_cast<Tout>(z2);
     x3 = static_cast<Tout>(x2 - x1);
     context.Push(x3);
 }
 
 template <typename T1,typename T2,typename Tout> void Multiplication_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3;
-    T1 y1;
-    T2 y2;
-    context.Pop(y1);
-    context.Pop(y2);
-    x1 = static_cast<Tout>(y1);
-    x2 = static_cast<Tout>(y2);
+    T1 z1;
+    T2 z2;
+    context.Pop(z1);
+    context.Pop(z2);
+    x1 = static_cast<Tout>(z1);
+    x2 = static_cast<Tout>(z2);
     x3 = static_cast<Tout>(x2 * x1);
     context.Push(x3);
 }
 
 template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3=0;
-    T1 y1;
-    T2 y2;
-    context.Pop(y1);
-    context.Pop(y2);
-    if (y1 != 0) {
-        x1 = static_cast<Tout>(y1);
-        x2 = static_cast<Tout>(y2);
+    T1 z1;
+    T2 z2;
+    context.Pop(z1);
+    context.Pop(z2);
+    if (z1 != 0) {
+        x1 = static_cast<Tout>(z1);
+        x2 = static_cast<Tout>(z2);
         x3 = static_cast<Tout>(x2 / x1);
     } else {
         context.runtimeError.overflow = true;
@@ -427,12 +427,12 @@ template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluat
 template <typename T1,typename T2,typename Tout> void SAddition_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3;
-        T1 y1;
-        T2 y2;
-        context.Pop(y1);
-        context.Pop(y2);
-        x1 = static_cast<Tout>(y1);
-        x2 = static_cast<Tout>(y2);
+        T1 z1;
+        T2 z2;
+        context.Pop(z1);
+        context.Pop(z2);
+        x1 = static_cast<Tout>(z1);
+        x2 = static_cast<Tout>(z2);
         context.runtimeError = SafeMath::Addition(x2,x1,x3);
         context.Push(x3);
     }
@@ -441,12 +441,12 @@ template <typename T1,typename T2,typename Tout> void SAddition_3T(RuntimeEvalua
 template <typename T1,typename T2,typename Tout> void SSubtraction_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3;
-        T1 y1;
-        T2 y2;
-        context.Pop(y1);
-        context.Pop(y2);
-        x1 = static_cast<Tout>(y1);
-        x2 = static_cast<Tout>(y2);
+        T1 z1;
+        T2 z2;
+        context.Pop(z1);
+        context.Pop(z2);
+        x1 = static_cast<Tout>(z1);
+        x2 = static_cast<Tout>(z2);
         context.runtimeError = SafeMath::Subtraction(x2,x1,x3);
         context.Push(x3);
     }
@@ -455,12 +455,12 @@ template <typename T1,typename T2,typename Tout> void SSubtraction_3T(RuntimeEva
 template <typename T1,typename T2,typename Tout> void SMultiplication_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3;
-        T1 y1;
-        T2 y2;
-        context.Pop(y1);
-        context.Pop(y2);
-        x1 = static_cast<Tout>(y1);
-        x2 = static_cast<Tout>(y2);
+        T1 z1;
+        T2 z2;
+        context.Pop(z1);
+        context.Pop(z2);
+        x1 = static_cast<Tout>(z1);
+        x2 = static_cast<Tout>(z2);
         context.runtimeError = SafeMath::Multiplication(x2,x1,x3);
         context.Push(x3);
     }
@@ -468,13 +468,13 @@ template <typename T1,typename T2,typename Tout> void SMultiplication_3T(Runtime
 
 template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3=0;
-    T1 y1;
-    T2 y2;
-    context.Pop(y1);
-    context.Pop(y2);
-    bool sat1 = SafeNumber2Number(y1,x1);
-    bool sat2 = SafeNumber2Number(y2,x2);
-    if ((y1 != 0) && sat1 && sat2) {
+    T1 z1;
+    T2 z2;
+    context.Pop(z1);
+    context.Pop(z2);
+    bool sat1 = SafeNumber2Number(z1,x1);
+    bool sat2 = SafeNumber2Number(z2,x2);
+    if ((z1 != 0) && sat1 && sat2) {
         x3 = static_cast<Tout>(x2 / x1);
     } else {
         context.runtimeError.overflow = true;
@@ -485,12 +485,12 @@ template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvalua
 template <typename T1,typename T2,typename Tout> void SSAddition_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3;
-        T1 y1;
-        T2 y2;
-        context.Pop(y1);
-        context.Pop(y2);
-        bool sat1 = SafeNumber2Number(y1,x1);
-        bool sat2 = SafeNumber2Number(y2,x2);
+        T1 z1;
+        T2 z2;
+        context.Pop(z1);
+        context.Pop(z2);
+        bool sat1 = SafeNumber2Number(z1,x1);
+        bool sat2 = SafeNumber2Number(z2,x2);
         if (sat1 && sat2) {
             context.runtimeError = SafeMath::Addition(x2,x1,x3);
         } else {
@@ -503,12 +503,12 @@ template <typename T1,typename T2,typename Tout> void SSAddition_3T(RuntimeEvalu
 template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3 = 0;
-        T1 y1;
-        T2 y2;
-        context.Pop(y1);
-        context.Pop(y2);
-        bool sat1 = SafeNumber2Number(y1,x1);
-        bool sat2 = SafeNumber2Number(y2,x2);
+        T1 z1;
+        T2 z2;
+        context.Pop(z1);
+        context.Pop(z2);
+        bool sat1 = SafeNumber2Number(z1,x1);
+        bool sat2 = SafeNumber2Number(z2,x2);
         if (sat1 && sat2) {
             context.runtimeError = SafeMath::Subtraction(x2,x1,x3);
         } else {
@@ -521,12 +521,12 @@ template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEv
 template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
         Tout x1,x2,x3=0;
-        T1 y1;
-        T2 y2;
-        context.Pop(y1);
-        context.Pop(y2);
-        bool sat1 = SafeNumber2Number(y1,x1);
-        bool sat2 = SafeNumber2Number(y2,x2);
+        T1 z1;
+        T2 z2;
+        context.Pop(z1);
+        context.Pop(z2);
+        bool sat1 = SafeNumber2Number(z1,x1);
+        bool sat2 = SafeNumber2Number(z2,x2);
         if (sat1 && sat2) {
             context.runtimeError = SafeMath::Multiplication(x2,x1,x3);
         } else {
@@ -685,15 +685,15 @@ REGISTER_3T_OPERATOR(DIV, Division,uint32,uint64,uint64)
 template <typename T1,typename T2,typename Ttest> void Greater_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest y1,y2;
+    Ttest z1,z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
     bool ret1,ret2;
-    ret1 = SafeNumber2Number(x1,y1);
-    ret2 = SafeNumber2Number(x2,y2);
+    ret1 = SafeNumber2Number(x1,z1);
+    ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
-        result = y2 > y1;
+        result = z2 > z1;
     } else {
         context.runtimeError.outOfRange = true;
     }
@@ -703,15 +703,15 @@ template <typename T1,typename T2,typename Ttest> void Greater_3T(RuntimeEvaluat
 template <typename T1,typename T2,typename Ttest> void Lower_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest y1,y2;
+    Ttest z1,z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
     bool ret1,ret2;
-    ret1 = SafeNumber2Number(x1,y1);
-    ret2 = SafeNumber2Number(x2,y2);
+    ret1 = SafeNumber2Number(x1,z1);
+    ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
-        result = y2 < y1;
+        result = z2 < z1;
     } else {
         context.runtimeError.outOfRange = true;
     }
@@ -721,15 +721,15 @@ template <typename T1,typename T2,typename Ttest> void Lower_3T(RuntimeEvaluator
 template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest y1,y2;
+    Ttest z1,z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
     bool ret1,ret2;
-    ret1 = SafeNumber2Number(x1,y1);
-    ret2 = SafeNumber2Number(x2,y2);
+    ret1 = SafeNumber2Number(x1,z1);
+    ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
-        result = y2 >= y1;
+        result = z2 >= z1;
     } else {
         context.runtimeError.outOfRange = true;
     }
@@ -739,15 +739,15 @@ template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(RuntimeE
 template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest y1,y2;
+    Ttest z1,z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
     bool ret1,ret2;
-    ret1 = SafeNumber2Number(x1,y1);
-    ret2 = SafeNumber2Number(x2,y2);
+    ret1 = SafeNumber2Number(x1,z1);
+    ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
-        result = y2 <= y1;
+        result = z2 <= z1;
     } else {
         context.runtimeError.outOfRange = true;
     }
@@ -757,15 +757,15 @@ template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(RuntimeEva
 template <typename T1,typename T2,typename Ttest> void Same_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest y1,y2;
+    Ttest z1,z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
     bool ret1,ret2;
-    ret1 = SafeNumber2Number(x1,y1);
-    ret2 = SafeNumber2Number(x2,y2);
+    ret1 = SafeNumber2Number(x1,z1);
+    ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
-        result = y2 == y1;
+        result = z2 == z1;
     } else {
         context.runtimeError.outOfRange = true;
     }
@@ -775,15 +775,15 @@ template <typename T1,typename T2,typename Ttest> void Same_3T(RuntimeEvaluator 
 template <typename T1,typename T2,typename Ttest> void Different_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest y1,y2;
+    Ttest z1,z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
     bool ret1,ret2;
-    ret1 = SafeNumber2Number(x1,y1);
-    ret2 = SafeNumber2Number(x2,y2);
+    ret1 = SafeNumber2Number(x1,z1);
+    ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
-        result = y2 != y1;
+        result = z2 != z1;
     } else {
         context.runtimeError.outOfRange = true;
     }
