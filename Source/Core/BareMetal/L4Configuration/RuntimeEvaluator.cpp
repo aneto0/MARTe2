@@ -969,7 +969,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
         }
     }
 
-     DataMemoryAddress dataStackIndex = 0;
+    DataMemoryAddress dataStackIndex = 0;
 
     if (showData || showTypes){
         Vector<TypeDescriptor> functionInputTypes = functionInformation.GetInputTypes();
@@ -986,12 +986,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
                 cst += '(';
             }
             if (showTypes){
-                 CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
-                 if (typeName != NULL) {
+                CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
+                if (typeName != NULL) {
                     cst += typeName.GetList();
-                 } else {
+                } else {
                     ret.fatalError = true;
-                 }
+                }
             }
             if (showData && showTypes){
                 cst += ')';
@@ -999,7 +999,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
             if (showData){
                 dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits/8u);
                 AnyType src(td, 0, stackPtr - dataStackIndex);
-                cst.Printf("%!", src);
+                ret.exception = !cst.Printf("%!", src);
             }
             if (i == (functionInputTypes.GetNumberOfElements()-1U)){
                 cst += ')';
@@ -1012,7 +1012,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
         codeMemoryPtr  = saveCodeMemoryPtr;
     }
 
-     return ret;
+    return ret;
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool lookBack,bool showData,bool showTypes){
