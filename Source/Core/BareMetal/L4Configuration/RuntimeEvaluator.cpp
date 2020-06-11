@@ -1152,6 +1152,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
 
             debugMessage += "[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n";
             int32 lineCounter = 1;
+            StreamString currentFunctionName = "";
             while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
                 int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
                 int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
@@ -1162,7 +1163,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
                 RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
 
                 // show update info
-                runtimeError.exception = !debugMessage.Printf("%s ", (fr.GetName()).Buffer());
+                currentFunctionName = fr.GetName();
+                runtimeError.exception = !debugMessage.Printf("%s ", currentFunctionName.Buffer());
 
                 // errors due to debugging
                 ErrorManagement::ErrorType ret;
