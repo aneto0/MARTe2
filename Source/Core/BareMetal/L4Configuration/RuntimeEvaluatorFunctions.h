@@ -241,8 +241,8 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record);
  *          to be fed with the corresponding function via the
  *          RegisterFunction method.
  */
-/*lint -emacro( {446}, REGISTER_CAST_FUNCTION ) Type2TypeDescriptor<>() has no side-effects and can thus be used safely in  ..._FunctionTypes[] array initialization.*/
-/*lint --emacro( {1502}, REGISTER_CAST_FUNCTION ) Justification: the following class intentionally has no data member. */
+/*lint -emacro( {446}, REGISTER_PCODE_FUNCTION ) Type2TypeDescriptor<>() has no side-effects and can thus be used safely in  ..._FunctionTypes[] array initialization.*/
+/*lint --emacro( {1502}, REGISTER_PCODE_FUNCTION ) Justification: the following class intentionally has no data member. */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,functionIn,...)\
     static TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
     static const RuntimeEvaluatorFunctions name ## subName ## _RuntimeEvaluatorFunctions(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&functionIn); \
