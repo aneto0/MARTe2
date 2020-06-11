@@ -752,7 +752,7 @@ private:
     /**
      * @brief Implements FindOutputVariable
      */
-    ErrorManagement::ErrorType FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db);
+    const ErrorManagement::ErrorType FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db);
 
     /**
      * @brief expands function information input description into readable text

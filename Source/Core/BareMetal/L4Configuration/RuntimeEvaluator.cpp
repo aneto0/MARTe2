@@ -137,7 +137,7 @@ RuntimeEvaluator::~RuntimeEvaluator(){
     }
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
+const ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
     ErrorManagement::ErrorType ret;
 
     variableInformation = NULL;
@@ -1162,7 +1162,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
                 RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
 
                 // show update info
-                runtimeError.exception = !debugMessage.Printf("%s ", fr.GetName().Buffer());
+                runtimeError.exception = !debugMessage.Printf("%s ", (fr.GetName()).Buffer());
 
                 // errors due to debugging
                 ErrorManagement::ErrorType ret;
