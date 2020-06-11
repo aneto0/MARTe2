@@ -53,7 +53,7 @@ RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(CCString nameIn, uint16 num
     name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
     {}
 
-bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
+bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize) const {
     bool ret = false;
 
     // match function name

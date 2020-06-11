@@ -137,7 +137,7 @@ RuntimeEvaluator::~RuntimeEvaluator(){
     }
 }
 
-const ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
+ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db) const {
     ErrorManagement::ErrorType ret;
 
     variableInformation = NULL;
