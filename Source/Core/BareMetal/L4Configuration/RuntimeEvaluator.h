@@ -618,7 +618,7 @@ public:
         /**
          * Produces a step by step evolution of the stack following each function execution
          */
-        debugMode,
+        debugMode
     };
 
     /**
@@ -752,7 +752,7 @@ private:
     /**
      * @brief Implements FindOutputVariable
      */
-    const ErrorManagement::ErrorType FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db);
+    ErrorManagement::ErrorType FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db) const;
 
     /**
      * @brief expands function information input description into readable text
