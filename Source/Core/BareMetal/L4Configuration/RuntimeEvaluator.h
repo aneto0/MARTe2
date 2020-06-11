@@ -815,9 +815,8 @@ private:
 /*---------------------------------------------------------------------------*/
 
 
-static inline DataMemoryAddress ByteSizeToDataMemorySize(uint32 byteSize){
+static inline DataMemoryAddress ByteSizeToDataMemorySize(uint16 byteSize){
     return static_cast<DataMemoryAddress>((byteSize + sizeof(DataMemoryElement) - 1U)/sizeof(DataMemoryElement));
-//  return (static_cast<DataMemoryAddress>(byteSize)+static_cast<DataMemoryAddress>(sizeof(DataMemoryElement))-1U)/static_cast<DataMemoryAddress>(sizeof(DataMemoryElement));
 }
 
 template<typename T>
