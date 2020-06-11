@@ -147,7 +147,7 @@ public:
      * @returns `true` if the name and types matches.
      * @note    Also simulates variations on the dataStack.
      */
-    bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize) const;
+    bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32u> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize) const;
 
 private:
     /**

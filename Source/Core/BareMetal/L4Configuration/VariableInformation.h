@@ -70,7 +70,7 @@ typedef CodeMemoryElement DataMemoryAddress;
 /**
  * used to mark an address to be invalid
  */
-#define MAXDataMemoryAddress TypeCharacteristics<DataMemoryAddress>::MaxValue()
+#define MAXDataMemoryAddress (TypeCharacteristics<DataMemoryAddress>::MaxValue())
 
 
 /**

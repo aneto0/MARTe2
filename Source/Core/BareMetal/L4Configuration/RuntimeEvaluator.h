@@ -702,7 +702,7 @@ private:
     /**
      * @brief Stack and variable are allocated here.
      */
-    StaticList<CodeMemoryElement,32>   codeMemory;
+    StaticList<CodeMemoryElement,32u>   codeMemory;
     
     /**
      * @brief Address of first variable (after constants)
