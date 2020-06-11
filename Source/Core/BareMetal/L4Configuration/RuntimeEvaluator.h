@@ -815,8 +815,8 @@ private:
 /*---------------------------------------------------------------------------*/
 
 
-static inline DataMemoryAddress ByteSizeToDataMemorySize(uint16 byteSize){
-    return static_cast<DataMemoryAddress>((byteSize + sizeof(DataMemoryElement) - 1U)/sizeof(DataMemoryElement));
+static inline DataMemoryAddress ByteSizeToDataMemorySize(const uint16 byteSize){
+    return static_cast<DataMemoryAddress>((byteSize + sizeof(DataMemoryElement) - 1U)/(sizeof(DataMemoryElement)));
 }
 
 template<typename T>
@@ -856,10 +856,10 @@ T &RuntimeEvaluator::Variable(DataMemoryAddress variableIndex){
 }
 
 CodeMemoryElement RuntimeEvaluator::GetPseudoCode(){
-    return *codeMemoryPtr++;
+    return *(codeMemoryPtr++);
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(const CCString &name, const TypeDescriptor &td, DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(const CCString &name, const TypeDescriptor &td, const DataMemoryAddress location){
     return AddVariable2DB(name,inputVariableInfo,td,location);
 }
 
@@ -867,7 +867,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindInputVariable(const CCString &n
     return FindVariableinDB(name,variableInformation,inputVariableInfo);
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddOutputVariable(const CCString &name, const TypeDescriptor &td, DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddOutputVariable(const CCString &name, const TypeDescriptor &td, const DataMemoryAddress location){
     return AddVariable2DB(name,outputVariableInfo,td,location);
 }
 
