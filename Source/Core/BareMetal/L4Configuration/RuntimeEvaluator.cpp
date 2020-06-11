@@ -154,7 +154,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(const CCString &na
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name, LinkedListHolderT<VariableInformation> &db, const TypeDescriptor &td, DataMemoryAddress location){
     ErrorManagement::ErrorType ret;
     VariableInformation *variableToSearch;
     ret = FindVariableinDB(name,variableToSearch,db);
@@ -370,7 +370,7 @@ void* RuntimeEvaluator::GetInputVariableMemory(const StreamString &varNameIn) {
     
 }
 
-void* RuntimeEvaluator::GetInputVariableMemory(uint32 varIndexIn) {
+void* RuntimeEvaluator::GetInputVariableMemory(const uint32 &varIndexIn) {
     
     void* retAddress = NULL_PTR(void*);
     
@@ -414,7 +414,7 @@ void* RuntimeEvaluator::GetOutputVariableMemory(const StreamString &varNameIn) {
     
 }
 
-void* RuntimeEvaluator::GetOutputVariableMemory(uint32 varIndexIn) {
+void* RuntimeEvaluator::GetOutputVariableMemory(const uint32 &varIndexIn) {
     
     void* retAddress = NULL_PTR(void*);
     
@@ -452,7 +452,7 @@ bool RuntimeEvaluator::SetInputVariableMemory(const StreamString &varNameIn, voi
     
 }
 
-bool RuntimeEvaluator::SetInputVariableMemory(uint32 varIndexIn, void* externalLocationIn) {
+bool RuntimeEvaluator::SetInputVariableMemory(const uint32 &varIndexIn, void* externalLocationIn) {
     
     bool isFound = false;
     
@@ -486,7 +486,7 @@ bool RuntimeEvaluator::SetOutputVariableMemory(const StreamString &varNameIn, vo
     
 }
 
-bool RuntimeEvaluator::SetOutputVariableMemory(uint32 varIndexIn, void* externalLocationIn) {
+bool RuntimeEvaluator::SetOutputVariableMemory(const uint32 &varIndexIn, void* externalLocationIn) {
     
     bool isFound = false;
     
@@ -501,7 +501,7 @@ bool RuntimeEvaluator::SetOutputVariableMemory(uint32 varIndexIn, void* external
     
 }
 
-bool RuntimeEvaluator::SetInputVariableType(const StreamString &varNameIn, TypeDescriptor typeIn) {
+bool RuntimeEvaluator::SetInputVariableType(const StreamString &varNameIn, const TypeDescriptor &typeIn) {
     
     bool isFound = false;
     
@@ -520,7 +520,7 @@ bool RuntimeEvaluator::SetInputVariableType(const StreamString &varNameIn, TypeD
     
 }
 
-bool RuntimeEvaluator::SetInputVariableType(uint32 varIndexIn, TypeDescriptor typeIn) {
+bool RuntimeEvaluator::SetInputVariableType(const uint32 &varIndexIn, const TypeDescriptor &typeIn) {
     
     bool isFound = false;
     
@@ -535,7 +535,7 @@ bool RuntimeEvaluator::SetInputVariableType(uint32 varIndexIn, TypeDescriptor ty
     
 }
 
-bool RuntimeEvaluator::SetOutputVariableType(const StreamString &varNameIn, TypeDescriptor typeIn) {
+bool RuntimeEvaluator::SetOutputVariableType(const StreamString &varNameIn, const TypeDescriptor &typeIn) {
     
     bool isFound = false;
     
@@ -554,7 +554,7 @@ bool RuntimeEvaluator::SetOutputVariableType(const StreamString &varNameIn, Type
     
 }
 
-bool RuntimeEvaluator::SetOutputVariableType(uint32 varIndexIn, TypeDescriptor typeIn) {
+bool RuntimeEvaluator::SetOutputVariableType(const uint32 &varIndexIn, const TypeDescriptor &typeIn) {
     
     bool isFound = false;
     
