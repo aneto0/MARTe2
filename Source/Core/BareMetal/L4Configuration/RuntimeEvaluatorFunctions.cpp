@@ -193,12 +193,11 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,Sig
  *
  *********************************************************************************************************
  **********************************************************************************************************/
-
+/*lint -emacro( {446}, REGISTER_CAST_FUNCTION ) Type2TypeDescriptor<>() has no side-effects and can thus be used safely in  ..._FunctionTypes[] array initialization.*/
+/*lint --emacro( {1502}, REGISTER_CAST_FUNCTION ) Justification: the following class intentionally has no data member. */
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
-    /*lint --emacro(446) Type2TypeDescriptor<>() has no side-effects. */ \
     static TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
     static const RuntimeEvaluatorFunctions name ## type1 ## type2 ## _RuntimeEvaluatorFunctions(#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>); \
-    /*lint --emacro{1502} class intentionally has no data member. */ \
     static class name ## type1 ## type2 ## RegisterClass { \
     public: name ## type1 ## type2 ## RegisterClass(){\
             RegisterFunction(name ## type1 ## type2 ## _RuntimeEvaluatorFunctions);\
