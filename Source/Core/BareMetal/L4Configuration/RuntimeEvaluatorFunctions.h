@@ -108,12 +108,12 @@ public:
      * @param[in] functionIn        pointer to the actual C++ function
      *                              that will be executed.
      */
-    RuntimeEvaluatorFunctions(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn);
+    RuntimeEvaluatorFunctions(const CCString nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn);
     
     /**
      * @brief Get the name of the function.
      */
-    StreamString GetName(){return name;}
+    StreamString GetName() const {return name;}
     
     /**
      * @brief Get the input types set for the function
@@ -140,7 +140,7 @@ public:
      *            from the input RuntimeEvaluator, sum them and then
      *            push the result to the input RuntimeEvaluator stack.
      */
-    void ExecuteFunction(RuntimeEvaluator &context){function(context);}
+    void ExecuteFunction(RuntimeEvaluator &context) const {function(context);}
 
     /**
      * @brief   Replaces the type on the stack with the result type.
@@ -213,7 +213,7 @@ extern RuntimeEvaluatorFunctions functionRecords[maxFunctions];
 /**
  * @brief Finds a PCode elements and updates the typestack accordingly.
  */
-bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
+bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
 
 /**
  * @brief   Adds a function to #functionRecord.

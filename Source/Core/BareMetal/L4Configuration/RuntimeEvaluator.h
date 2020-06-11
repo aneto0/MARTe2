@@ -747,7 +747,7 @@ private:
     /**
      * @brief Implements AddOutputVariable and AddInputVariable
      */
-    ErrorManagement::ErrorType AddVariable2DB(const CCString &name,LinkedListHolderT<VariableInformation> &db, const TypeDescriptor &td,DataMemoryAddress location);
+    ErrorManagement::ErrorType AddVariable2DB(const CCString &name,LinkedListHolderT<VariableInformation> &db, const TypeDescriptor &td,DataMemoryAddress location) const;
 
     /**
      * @brief Implements FindOutputVariable
