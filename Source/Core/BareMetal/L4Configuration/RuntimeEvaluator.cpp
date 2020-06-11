@@ -226,7 +226,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     StreamString line;
     char8 terminator;
     
-    ret.exception = !RPNCode.Seek(0);
+    ret.exception = !RPNCode.Seek(0ull);
     
     while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret.ErrorsCleared()){
 
@@ -237,7 +237,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
         StreamString parameter3;
 
         // extract up to three tokens per line
-        ret.illegalOperation = !line.Seek(0u);
+        ret.illegalOperation = !line.Seek(0ull);
         bool hasCommand      =  line.GetToken(command,    " \t,", terminator," \t,");
         bool hasParameter1   =  line.GetToken(parameter1, " \t,", terminator," \t,");
         bool hasParameter2   =  line.GetToken(parameter2, " \t,", terminator," \t,");
