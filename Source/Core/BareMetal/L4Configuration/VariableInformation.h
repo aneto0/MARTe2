@@ -110,8 +110,8 @@ struct VariableInformation: public LinkedListable {
     inline VariableInformation();
 
     /**
-     * copies
-     */
+    * @brief Copy constructor.
+    */
     inline VariableInformation(const VariableInformation &in);
 };
 
@@ -127,15 +127,13 @@ inline VariableInformation::VariableInformation() : LinkedListable() {
     externalLocation=NULL;
 }
 
-/**
- * copies
- */
-inline VariableInformation::VariableInformation(const VariableInformation &in){
-    name = in.name;
-    type = in.type;
-    location = in.location;
+inline VariableInformation::VariableInformation(const VariableInformation &in) : LinkedListable() {
+    name             = in.name;
+    type             = in.type;
+    location         = in.location;
+    /*lint -e(1554) if the variable is external the new copy created by the copy constructor is expected to point to the same place as the old one. */
+    externalLocation = in.externalLocation;
     variableUsed = false;
-    externalLocation= in.externalLocation;
 }
 
 } // MARTe
