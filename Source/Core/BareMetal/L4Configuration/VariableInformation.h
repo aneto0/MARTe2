@@ -122,16 +122,17 @@ struct VariableInformation: public LinkedListable {
 
 inline VariableInformation::VariableInformation() : LinkedListable() {
     type = VoidType;
-    location = 0;
+    location = 0u;
     variableUsed = false;
     externalLocation=NULL;
 }
 
+/*lint -e{1738} LinkedListable has no copy constructor to be invoked in VariableInformation initializer list. */
 inline VariableInformation::VariableInformation(const VariableInformation &in) : LinkedListable() {
     name             = in.name;
     type             = in.type;
     location         = in.location;
-    /*lint -e(1554) if the variable is external the new copy created by the copy constructor is expected to point to the same place as the old one. */
+    /*lint -e{1554} if the variable is external the new copy created by the copy constructor is expected to point to the same place as the old one. */
     externalLocation = in.externalLocation;
     variableUsed = false;
 }
