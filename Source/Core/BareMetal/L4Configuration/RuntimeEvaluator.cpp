@@ -265,7 +265,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
 
                     if (!ret.ErrorsCleared()){
                         ret = AddInputVariable(parameter1.Buffer());
-                        if (ret.illegalOperation == true){
+                        if (ret.illegalOperation){
                             REPORT_ERROR_STATIC(ErrorManagement::Information,"variable %s already registered", parameter1.Buffer());
                             // mask out the case that we already registered this variable
                             ret.illegalOperation = false;
@@ -284,7 +284,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
 
                 if (ret.ErrorsCleared()){
                     ret = AddOutputVariable(parameter1.Buffer());
-                    if (ret.illegalOperation == true){
+                    if (ret.illegalOperation){
                         REPORT_ERROR_STATIC(ret,"variable %s already registered", parameter1.Buffer());
                         // the error remains as we do not allow overwriting outputs
                     }
@@ -350,7 +350,7 @@ void* RuntimeEvaluator::GetInputVariableMemory(const StreamString &varNameIn) {
     void* retAddress = NULL_PTR(void*);
     bool isFound = false;
     
-    int32 index = 0;
+    uint32 index = 0u;
     VariableInformation *var;
 
     while( (BrowseInputVariable(index,var) == ErrorManagement::NoError) && (!isFound)){
@@ -394,7 +394,7 @@ void* RuntimeEvaluator::GetOutputVariableMemory(const StreamString &varNameIn) {
     void* retAddress = NULL_PTR(void*);
     bool isFound = false;
     
-    int32 index = 0;
+    uint32 index = 0u;
     VariableInformation *var;
 
     while( (BrowseOutputVariable(index,var) == ErrorManagement::NoError) && !isFound){
@@ -437,7 +437,7 @@ bool RuntimeEvaluator::SetInputVariableMemory(const StreamString &varNameIn, voi
     
     bool isFound = false;
     
-    int32 index = 0;
+    uint32 index = 0u;
     VariableInformation *var;
 
     while( (BrowseInputVariable(index,var) == ErrorManagement::NoError) && (!isFound) ){
@@ -471,7 +471,7 @@ bool RuntimeEvaluator::SetOutputVariableMemory(const StreamString &varNameIn, vo
     
     bool isFound = false;
     
-    int32 index = 0;
+    uint32 index = 0u;
     VariableInformation *var;
 
     while( (BrowseOutputVariable(index,var) == ErrorManagement::NoError) && (!isFound)){
@@ -505,7 +505,7 @@ bool RuntimeEvaluator::SetInputVariableType(const StreamString &varNameIn, const
     
     bool isFound = false;
     
-    int32 index = 0;
+    uint32 index = 0u;
     VariableInformation *var;
 
     while( (BrowseInputVariable(index,var) == ErrorManagement::NoError) && (!isFound) ){
@@ -539,7 +539,7 @@ bool RuntimeEvaluator::SetOutputVariableType(const StreamString &varNameIn, cons
     
     bool isFound = false;
     
-    int32 index = 0;
+    uint32 index = 0u;
     VariableInformation *var;
 
     while( (BrowseOutputVariable(index,var) == ErrorManagement::NoError) && (!isFound) ){
@@ -780,7 +780,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                     ret = FindOutputVariable(parameter1.Buffer(),variableInformation);
                     if (ret.ErrorsCleared()){
                         // not set yet - cannot use
-                        ret.notCompleted = (variableInformation->variableUsed != true);
+                        ret.notCompleted = (!variableInformation->variableUsed);
                     }
                     // try to see if there is an input variable
                     if (!ret.ErrorsCleared()){
@@ -1132,7 +1132,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
             // note that the stackPtr will reach the max value - as it points to the next value to write
             runtimeError.outOfRange = ((runtimeError.outOfRange) || (stackPtr > stackMaxPtr) ||  (stackPtr < stackMinPtr));
             if (!runtimeError){
-                REPORT_ERROR_STATIC(runtimeError,"stack over/under flow %i [0 - %i]", (int64)(stackPtr-stackMinPtr), (int64)(stackMaxPtr- stackMinPtr));
+                REPORT_ERROR_STATIC(runtimeError,"stack over/under flow %i [0 - %i]", static_cast<int64>(stackPtr-stackMinPtr), static_cast<int64>(stackMaxPtr- stackMinPtr));
             }
         }
         runtimeError.notCompleted = (codeMemoryPtr < codeMemoryMaxPtr);
@@ -1192,7 +1192,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
 
                 debugMessage += '\n';
 
-                uint32 size = debugMessage.Size();
+                uint32 size = static_cast<uint32>(debugMessage.Size());
                 runtimeError.exception = !debugStream->Write(debugMessage.Buffer(),size);
 
                 // reset line
@@ -1205,7 +1205,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
                 int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
                 runtimeError.exception = !debugMessage.Printf("%i - %i :: END", stackOffset, codeOffset);
 
-                uint32 size = debugMessage.Size();
+                uint32 size = static_cast<uint32>(debugMessage.Size());
                 runtimeError.exception = !debugStream->Write(debugMessage.Buffer(),size);
             }
         }
