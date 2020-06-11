@@ -57,7 +57,7 @@ namespace MARTe {
 /**
  * used internally to describe and register functions
  */
-struct RuntimeEvaluatorFunctions;
+class RuntimeEvaluatorFunctions;
 
 /**
  * @brief Runtime mathematical expression evaluation engine.
@@ -720,24 +720,24 @@ private:
      * @details Checks existence of name using FindInputVariable.
      *          If not found add new variable to inputVariableInfo.
      */
-    inline ErrorManagement::ErrorType AddInputVariable(CCString name,TypeDescriptor td = VoidType,DataMemoryAddress location = MAXDataMemoryAddress);
+    inline ErrorManagement::ErrorType AddInputVariable(const CCString &name, const TypeDescriptor &td = VoidType, DataMemoryAddress location = MAXDataMemoryAddress);
 
     /**
      * @brief Looks for a variable of a given name
      */
-    inline ErrorManagement::ErrorType FindInputVariable(CCString name,VariableInformation *&variableInformation);
+    inline ErrorManagement::ErrorType FindInputVariable(const CCString &name, VariableInformation *&variableInformation);
 
     /**
      * @brief   Adds a new output variable.
      * @details Checks existence of name using FindInputVariable.
      *          If not found add new variable to outputVariableInfo.
      */
-    inline ErrorManagement::ErrorType AddOutputVariable(CCString name,TypeDescriptor td = VoidType,DataMemoryAddress location = MAXDataMemoryAddress);
+    inline ErrorManagement::ErrorType AddOutputVariable(const CCString &name, const TypeDescriptor &td = VoidType,DataMemoryAddress location = MAXDataMemoryAddress);
 
     /**
      * @brief Looks for a variable of a given name
      */
-    inline ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *&variableInformation);
+    inline ErrorManagement::ErrorType FindOutputVariable(const CCString &name, VariableInformation *&variableInformation);
 
     /**
      * @brief Looks for a variable of a given name
@@ -860,19 +860,19 @@ CodeMemoryElement RuntimeEvaluator::GetPseudoCode(){
     return *codeMemoryPtr++;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(const CCString &name, const TypeDescriptor &td, DataMemoryAddress location){
     return AddVariable2DB(name,inputVariableInfo,td,location);
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FindInputVariable(CCString name,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::FindInputVariable(const CCString &name, VariableInformation *&variableInformation){
     return FindVariableinDB(name,variableInformation,inputVariableInfo);
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddOutputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddOutputVariable(const CCString &name, const TypeDescriptor &td, DataMemoryAddress location){
     return AddVariable2DB(name,outputVariableInfo,td,location);
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::FindOutputVariable(const CCString &name, VariableInformation *&variableInformation){
     return FindVariableinDB(name,variableInformation,outputVariableInfo);
 }
 
