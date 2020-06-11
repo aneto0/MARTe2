@@ -317,7 +317,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                     ret = AddInputVariable(constantName.Buffer(),td,nextConstantAddress);
                 }
                 if (ret.ErrorsCleared()){
-                    uint32 size = td.numberOfBits/8u;
+                    uint16 size = td.numberOfBits/8u;
                     ret.unsupportedFeature = (size == 0);
                     if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"type %s has 0 storageSize", parameter1.Buffer());
@@ -585,7 +585,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
         }
 
         // skip constants are already allocated
-        if (ret.ErrorsCleared() && (var->location == MAXDataMemoryAddress)){
+        if ( (var->location == MAXDataMemoryAddress) && ret.ErrorsCleared() ){
             var->location = nextVariableAddress;
             if (var->externalLocation == NULL){
                 // if NULL variable is in DataMemory
