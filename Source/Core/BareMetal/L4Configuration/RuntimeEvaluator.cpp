@@ -578,7 +578,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     {
     uint32 index = 0;
     VariableInformation *var;
-    while(BrowseInputVariable(index,var) && ret.ErrorsCleared()){
+    while(BrowseInputVariable(index,var) && (ret == ErrorManagement::NoError) ){
         ret.unsupportedFeature = !var->type.IsNumericType();
         if (!ret.ErrorsCleared()){
             REPORT_ERROR_STATIC(ret,"input variable %s has incompatible non-numeric type ", var->name.Buffer());
