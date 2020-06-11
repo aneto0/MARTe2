@@ -123,8 +123,8 @@ struct VariableInformation: public LinkedListable {
 inline VariableInformation::VariableInformation() : LinkedListable() {
     type = VoidType;
     location = 0u;
+    externalLocation = NULL_PTR(void*);
     variableUsed = false;
-    externalLocation=NULL;
 }
 
 /*lint -e{1738} LinkedListable has no copy constructor to be invoked in VariableInformation initializer list. */
