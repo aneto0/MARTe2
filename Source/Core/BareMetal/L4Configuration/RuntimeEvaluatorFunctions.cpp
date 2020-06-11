@@ -54,10 +54,9 @@ RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(const CCString &nameIn, con
     {}
 
 bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize) const {
-    bool ret = false;
 
     // match function name
-    ret = (name == nameIn.GetList());
+    bool ret = (name == nameIn.GetList());
 
     // match first output if matchOutput is set
     uint32 index = 0U;
@@ -128,11 +127,8 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record){
  */
 bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
 
-    CodeMemoryElement i = 0;
-//printf("looking for %s within %i - %i funs\n",nameIn.GetList(),availableFunctions,maxFunctions);
-
     bool found = false;
-    for (i=0; (!found) && (i < availableFunctions);i++ ){
+    for (CodeMemoryElement i = 0; (!found) && (i < availableFunctions);i++ ){
         found = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
         if (found){
             code = i;
