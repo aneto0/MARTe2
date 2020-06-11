@@ -380,7 +380,7 @@ class RuntimeEvaluatorFunctions;
  * by using the command `NEWADD`.
  * 
  */
- /*lint -esym(9007, ret) */
+ /*lint -esym{9007, ret} */
 class RuntimeEvaluator {
 
 public:
