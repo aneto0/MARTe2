@@ -195,7 +195,7 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,Sig
  **********************************************************************************************************/
 
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
-    /*lint -e{446} Justification: Type2TypeDescriptor<>() is know to have no side-effects and can thus be used safely in  ..._FunctionTypes[] array initialization.*/ \
+    /*lint -e(446) Justification: Type2TypeDescriptor<>() is know to have no side-effects and can thus be used safely in  ..._FunctionTypes[] array initialization.*/ \
     static TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
     static const RuntimeEvaluatorFunctions name ## type1 ## type2 ## _RuntimeEvaluatorFunctions(#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>); \
     /*lint -e{1502} Justification: the following class intentionally has no data member. */ \
