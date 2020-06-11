@@ -135,9 +135,6 @@ RuntimeEvaluator::~RuntimeEvaluator(){
     if (codeMemoryPtr != NULL) {
         codeMemoryPtr = NULL_PTR(CodeMemoryElement*);
     }
-    
-    inputVariableInfo.CleanUp();
-    outputVariableInfo.CleanUp();
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
