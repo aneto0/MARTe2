@@ -154,7 +154,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(const CCString &na
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name, LinkedListHolderT<VariableInformation> &db, const TypeDescriptor &td, DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name, LinkedListHolderT<VariableInformation> &db, const TypeDescriptor &td, DataMemoryAddress location) const {
     ErrorManagement::ErrorType ret;
     VariableInformation *variableToSearch;
     ret = FindVariableinDB(name,variableToSearch,db);

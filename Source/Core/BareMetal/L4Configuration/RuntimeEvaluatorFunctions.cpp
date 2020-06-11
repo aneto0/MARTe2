@@ -49,7 +49,7 @@ RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions():
     name(""), numberOfInputs(0), numberOfOutputs(0), types(NULL_PTR(TypeDescriptor*)), function(NULL)
     {}
 
-RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn):
+RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(const CCString nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn):
     name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
     {}
 
@@ -126,7 +126,7 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record){
 /**
  * find the correct PCode and updates the type in the typestack
  */
-bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
+bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
 
     CodeMemoryElement i = 0;
 //printf("looking for %s within %i - %i funs\n",nameIn.GetList(),availableFunctions,maxFunctions);
