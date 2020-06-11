@@ -451,7 +451,7 @@ public:
      *            to the proper type before using it.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    void* GetInputVariableMemory(StreamString varNameIn);
+    void* GetInputVariableMemory(const StreamString &varNameIn);
     
     /**
      * @brief     Searches the address of an input variable in memory
@@ -477,7 +477,7 @@ public:
      *            to the proper type before using it.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    void* GetOutputVariableMemory(StreamString varNameIn);
+    void* GetOutputVariableMemory(const StreamString &varNameIn);
     
     /**
      * @brief     Retrieves the address of an output variable in memory
@@ -500,7 +500,7 @@ public:
      * @param[in] externalLocationIn the address that will hold the memory.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetInputVariableMemory(StreamString varNameIn, void* externalLocationIn);
+    bool SetInputVariableMemory(const StreamString &varNameIn, void* externalLocationIn);
     
     /**
      * @brief     Set the address of a variable to an external location.
@@ -518,7 +518,7 @@ public:
      * @param[in] externalLocationIn the address that will hold the memory.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetOutputVariableMemory(StreamString varNameIn, void* externalLocationIn);
+    bool SetOutputVariableMemory(const StreamString &varNameIn, void* externalLocationIn);
     
     /**
      * @brief     Set the address of a variable to an external location.
@@ -539,7 +539,7 @@ public:
      * @param[in] typeIn    the type to set the variable to.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetInputVariableType(StreamString varNameIn, TypeDescriptor typeIn);
+    bool SetInputVariableType(const StreamString &varNameIn, TypeDescriptor typeIn);
     
     /**
      * @brief     Set the type of an input variable.
@@ -565,7 +565,7 @@ public:
      * @param[in] typeIn    the type to set the variable to.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetOutputVariableType(StreamString varNameIn, TypeDescriptor typeIn);
+    bool SetOutputVariableType(const StreamString &varNameIn, TypeDescriptor typeIn);
     
     /**
      * @brief     Set the type of an output variable.
@@ -747,12 +747,12 @@ private:
     /**
      * @brief Implements AddOutputVariable and AddInputVariable
      */
-    ErrorManagement::ErrorType AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location);
+    ErrorManagement::ErrorType AddVariable2DB(const CCString &name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location);
 
     /**
      * @brief Implements FindOutputVariable
      */
-    ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db);
+    ErrorManagement::ErrorType FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db);
 
     /**
      * @brief expands function information input description into readable text
