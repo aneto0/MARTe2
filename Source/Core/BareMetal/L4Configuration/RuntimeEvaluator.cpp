@@ -601,7 +601,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                 nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
             } else {
                 // variable address is in DataMemory
-                nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+                nextVariableAddress += ByteSizeToDataMemorySize(static_cast<uint16>(sizeof (void *)));
             }
         }
         index++;
@@ -628,7 +628,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                     nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
                 } else {
                     // variable address is in DataMemory
-                    nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+                    nextVariableAddress += ByteSizeToDataMemorySize(static_cast<uint16>(sizeof (void *)));
                 }
             }
         }
