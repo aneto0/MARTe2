@@ -360,8 +360,7 @@ class RuntimeEvaluatorFunctions;
  * adding functions to the #functionRecords as follows:
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
- * 
- * void NewAddition(RuntimeEvaluator &evaluator) {
+ * void NewOperation(RuntimeEvaluator &evaluator) {
  *     float32 x1,x2,x3;
  *     evaluator.Pop(x1);
  *     evaluator.Pop(x2);
@@ -370,8 +369,8 @@ class RuntimeEvaluatorFunctions;
  * }
  * 
  * TypeDescriptor types[] = {Float32Bit, Float32Bit, Float32Bit};
- * RuntimeEvaluatorFunctions newAddition("NEWADD", 2, 1, types, NewAddition);
- * RegisterFunction(newAddition);
+ * RuntimeEvaluatorFunctions newAdd("NEWADD", 2, 1, types, NewOperation);
+ * RegisterFunction(newAdd);
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * The function above pops two float32 element from the stack,
@@ -816,7 +815,7 @@ private:
 
 
 static inline DataMemoryAddress ByteSizeToDataMemorySize(const uint16 byteSize){
-    return static_cast<DataMemoryAddress>((byteSize + sizeof(DataMemoryElement) - 1U)/(sizeof(DataMemoryElement)));
+    return static_cast<DataMemoryAddress>(((byteSize + sizeof(DataMemoryElement)) - 1U)/(sizeof(DataMemoryElement)));
 }
 
 template<typename T>
@@ -855,8 +854,10 @@ T &RuntimeEvaluator::Variable(DataMemoryAddress variableIndex){
     return (T&)variablesMemoryPtr[variableIndex];
 }
 
-CodeMemoryElement RuntimeEvaluator::GetPseudoCode(){
-    return *(codeMemoryPtr++);
+CodeMemoryElement RuntimeEvaluator::GetPseudoCode() {
+    const CodeMemoryElement* currentCodeMemoryPtr = codeMemoryPtr;
+    codeMemoryPtr++;
+    return *currentCodeMemoryPtr;
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(const CCString &name, const TypeDescriptor &td, const DataMemoryAddress location){
