@@ -614,7 +614,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
         // local variable reserve 8 bytes for it
         if ((var->type == VoidType) && (var->externalLocation == NULL)){
             var->location = nextVariableAddress;
-            nextVariableAddress += ByteSizeToDataMemorySize(sizeof(float64));
+            nextVariableAddress += ByteSizeToDataMemorySize(static_cast<uint16>(sizeof(float64)));
         } else {
             ret.unsupportedFeature = !var->type.IsNumericType();
             if (!ret.ErrorsCleared()){
@@ -665,7 +665,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
         StreamString parameter3;
 
         // extract up to three tokens per line
-        ret.illegalOperation = !line.Seek(0u);
+        ret.illegalOperation = !line.Seek(0ull);
         bool hasCommand      =  line.GetToken(command,    " \t,", terminator," \t,");
         bool hasParameter1   =  line.GetToken(parameter1, " \t,", terminator," \t,");
         bool hasParameter2   =  line.GetToken(parameter2, " \t,", terminator," \t,");
@@ -1153,7 +1153,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(const executionMode mode, S
     case safeMode:{
         DataMemoryElement *stackMinPtr = stackPtr;
         DataMemoryElement *stackMaxPtr = stackPtr + stack.GetNumberOfElements();
-        while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError.ErrorsCleared())){
+        
+        bool noErrors = runtimeError.ErrorsCleared();
+        while ((codeMemoryPtr < codeMemoryMaxPtr) && (noErrors)) {
             CodeMemoryElement pCode = GetPseudoCode();
             functionRecords[pCode].ExecuteFunction(*this);
             // note that the stackPtr will reach the max value - as it points to the next value to write
@@ -1161,6 +1163,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(const executionMode mode, S
             if (!runtimeError){
                 REPORT_ERROR_STATIC(runtimeError,"stack over/under flow %i [0 - %i]", static_cast<int64>(stackPtr-stackMinPtr), static_cast<int64>(stackMaxPtr- stackMinPtr));
             }
+            noErrors = runtimeError.ErrorsCleared();
         }
         runtimeError.notCompleted = (codeMemoryPtr < codeMemoryMaxPtr);
         if (!runtimeError){
@@ -1256,6 +1259,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(const executionMode mode, S
     return runtimeError;
 }
 
+/*lint -e{946, 947, 9016} codeMemoryMaxPtr is calculated from pointers pointing to the same array
+ * and is only used as a safety check and cannot go out of bounds */
 ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRPNCode, const bool showTypes) {
     
     ErrorManagement::ErrorType ret;
