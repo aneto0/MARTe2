@@ -386,7 +386,7 @@ public:
      * @brief     Default constructor.
      * @param[in] RPNCode the expression to be evaluated in stack machine form.
      */
-    RuntimeEvaluator(StreamString RPNCode);
+    RuntimeEvaluator(StreamString RPNCodeIn);
 
     /**
      * @brief Destructor.
