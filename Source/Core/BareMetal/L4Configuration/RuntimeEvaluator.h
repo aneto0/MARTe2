@@ -499,7 +499,7 @@ public:
      * @param[in] externalLocationIn the address that will hold the memory.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetInputVariableMemory(const StreamString &varNameIn, void* externalLocationIn);
+    bool SetInputVariableMemory(const StreamString &varNameIn, void* const externalLocationIn);
     
     /**
      * @brief     Set the address of a variable to an external location.
@@ -508,7 +508,7 @@ public:
      * @param[in] externalLocationIn the address that will hold the memory.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetInputVariableMemory(const uint32 &varIndexIn, void* externalLocationIn);
+    bool SetInputVariableMemory(const uint32 &varIndexIn, void* const externalLocationIn);
     
     /**
      * @brief     Set the address of a variable to an external location.
@@ -517,7 +517,7 @@ public:
      * @param[in] externalLocationIn the address that will hold the memory.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetOutputVariableMemory(const StreamString &varNameIn, void* externalLocationIn);
+    bool SetOutputVariableMemory(const StreamString &varNameIn, void* const externalLocationIn);
     
     /**
      * @brief     Set the address of a variable to an external location.
@@ -526,7 +526,7 @@ public:
      * @param[in] externalLocationIn the address that will hold the memory.
      * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    bool SetOutputVariableMemory(const uint32 &varIndexIn, void* externalLocationIn);
+    bool SetOutputVariableMemory(const uint32 &varIndexIn, void* const externalLocationIn);
     
     /**
      * @brief     Set the type of an input variable.
