@@ -77,7 +77,7 @@ public:
     /**
      *
      */
-    virtual void Do(VariableInformation *data) {
+    virtual void Do(VariableInformation* const data) {
         if (data == NULL_PTR(VariableInformation *)) {
             error = ErrorManagement::FatalError;
         }
@@ -88,14 +88,13 @@ public:
                     error = ErrorManagement::NoError;
                 }
             }
-            else if (variableAddress < MAXDataMemoryAddress) {
-                if (data->location == variableAddress) {
-                    variable = data;
-                    error = ErrorManagement::NoError;
-                }
-            }
             else {
-                // do nothing
+                if (variableAddress < MAXDataMemoryAddress) {
+                    if (data->location == variableAddress) {
+                        variable = data;
+                        error = ErrorManagement::NoError;
+                    }
+                }
             }
         }
     }
@@ -258,7 +257,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
         if (hasCommand){
 
             if (command == readToken){
-                ret.illegalOperation = !hasParameter1 || hasParameter2;
+                ret.illegalOperation = ( !hasParameter1 || hasParameter2 );
 
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"%s without variable name", command.Buffer());
@@ -281,9 +280,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                         }
                     }
                 }
-            } else
+            }
             if (command == writeToken){
-                ret.illegalOperation = !hasParameter1 || hasParameter2;
+                ret.illegalOperation = ( !hasParameter1 || hasParameter2 );
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 }
@@ -298,9 +297,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                         REPORT_ERROR_STATIC(ret,"Failed Adding output variable %s",parameter1.Buffer());
                     }
                 }
-            } else
+            }
             if (command == constToken){
-                ret.illegalOperation = !hasParameter1 || !hasParameter2 || hasParameter3;
+                ret.illegalOperation = ( !hasParameter1 || !hasParameter2 || hasParameter3 );
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without type name", command.Buffer());
                 }
@@ -324,7 +323,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                 }
                 if (ret.ErrorsCleared()){
                     uint16 size = td.numberOfBits/8u;
-                    ret.unsupportedFeature = (size == 0);
+                    ret.unsupportedFeature = (size == 0u);
                     if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"type %s has 0 storageSize", parameter1.Buffer());
                     }
@@ -347,7 +346,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
 
 void* RuntimeEvaluator::GetVariablesMemory() {
 
-    return reinterpret_cast<void*>(&dataMemory[0]);
+    return reinterpret_cast<void*>(&dataMemory[0u]);
     
 }
 
@@ -403,7 +402,7 @@ void* RuntimeEvaluator::GetOutputVariableMemory(const StreamString &varNameIn) {
     uint32 index = 0u;
     VariableInformation *var;
 
-    while( (BrowseOutputVariable(index,var) == ErrorManagement::NoError) && !isFound){
+    while( (BrowseOutputVariable(index,var) == ErrorManagement::NoError) && (!isFound) ){
         if (var->name == varNameIn){
             if (var->externalLocation != NULL) {
                 retAddress = var->externalLocation;
@@ -439,7 +438,7 @@ void* RuntimeEvaluator::GetOutputVariableMemory(const uint32 &varIndexIn) {
     
 }
 
-bool RuntimeEvaluator::SetInputVariableMemory(const StreamString &varNameIn, void* externalLocationIn) {
+bool RuntimeEvaluator::SetInputVariableMemory(const StreamString &varNameIn, void* const externalLocationIn) {
     
     bool isFound = false;
     
@@ -458,7 +457,7 @@ bool RuntimeEvaluator::SetInputVariableMemory(const StreamString &varNameIn, voi
     
 }
 
-bool RuntimeEvaluator::SetInputVariableMemory(const uint32 &varIndexIn, void* externalLocationIn) {
+bool RuntimeEvaluator::SetInputVariableMemory(const uint32 &varIndexIn, void* const externalLocationIn) {
     
     bool isFound = false;
     
@@ -473,7 +472,7 @@ bool RuntimeEvaluator::SetInputVariableMemory(const uint32 &varIndexIn, void* ex
     
 }
 
-bool RuntimeEvaluator::SetOutputVariableMemory(const StreamString &varNameIn, void* externalLocationIn) {
+bool RuntimeEvaluator::SetOutputVariableMemory(const StreamString &varNameIn, void* const externalLocationIn) {
     
     bool isFound = false;
     
@@ -492,7 +491,7 @@ bool RuntimeEvaluator::SetOutputVariableMemory(const StreamString &varNameIn, vo
     
 }
 
-bool RuntimeEvaluator::SetOutputVariableMemory(const uint32 &varIndexIn, void* externalLocationIn) {
+bool RuntimeEvaluator::SetOutputVariableMemory(const uint32 &varIndexIn, void* const externalLocationIn) {
     
     bool isFound = false;
     
@@ -583,7 +582,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
     DataMemoryAddress nextVariableAddress = startOfVariables;
     // check that all variables have a type and allocate variables + constants
 
-    uint32 index = 0;
+    uint32 index = 0u;
     VariableInformation *var;
     
     bool noErrors = ret.ErrorsCleared();
@@ -609,13 +608,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
         noErrors = ret.ErrorsCleared();
     }
 
-    index = 0;
+    index = 0u;
     noErrors = ret.ErrorsCleared();
     while(BrowseOutputVariable(index,var) && noErrors) {
         // local variable reserve 8 bytes for it
         if ((var->type == VoidType) && (var->externalLocation == NULL)){
             var->location = nextVariableAddress;
-            nextVariableAddress += ByteSizeToDataMemorySize(sizeof(double));
+            nextVariableAddress += ByteSizeToDataMemorySize(sizeof(float64));
         } else {
             ret.unsupportedFeature = !var->type.IsNumericType();
             if (!ret.ErrorsCleared()){
