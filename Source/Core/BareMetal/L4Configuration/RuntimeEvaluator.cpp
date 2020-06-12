@@ -299,7 +299,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                 }
             }
             if (command == constToken){
-                ret.illegalOperation = ( !hasParameter1 || !hasParameter2 || hasParameter3 );
+                ret.illegalOperation = ( (!hasParameter1) || (!hasParameter2) || (hasParameter3) );
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without type name", command.Buffer());
                 }
@@ -1129,7 +1129,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI *debugStream){
+/*lint -e{946, 947, 9016} codeMemoryMaxPtr is calculated from pointers pointing to the same array
+ * and is only used as a safety check and cannot go out of bounds */
+ErrorManagement::ErrorType RuntimeEvaluator::Execute(const executionMode mode, StreamI* const debugStream){
 
     stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
 
@@ -1178,7 +1180,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
             debugMessage += "[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n";
             int32 lineCounter = 1;
             StreamString currentFunctionName = "";
-            while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
+            
+            bool noErrors = runtimeError.ErrorsCleared();
+            while ((codeMemoryPtr < codeMemoryMaxPtr) && (noErrors)){
                 int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
                 int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
                 runtimeError.exception = !debugMessage.Printf("%i - %i - %i :: ", lineCounter, stackOffset, codeOffset);
@@ -1221,9 +1225,10 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
                 runtimeError.exception = !debugStream->Write(debugMessage.Buffer(),size);
 
                 // reset line
-                runtimeError.exception = !debugMessage.SetSize(0);
+                runtimeError.exception = !debugMessage.SetSize(0ull);
                 lineCounter++;
-
+                
+                noErrors = runtimeError.ErrorsCleared();
             }
             if (runtimeError.ErrorsCleared()){
                 int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
@@ -1251,7 +1256,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
     return runtimeError;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRPNCode, bool showTypes) {
+ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRPNCode, const bool showTypes) {
     
     ErrorManagement::ErrorType ret;
     

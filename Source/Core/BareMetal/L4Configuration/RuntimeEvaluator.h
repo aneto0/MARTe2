@@ -629,12 +629,12 @@ public:
      * @pre ExtractVariables() == true && Compile() == true && all
      *      variable types must be set.
      */
-    ErrorManagement::ErrorType Execute(executionMode mode = fastMode, StreamI *debugStream=NULL_PTR(StreamI *));
+    ErrorManagement::ErrorType Execute(const executionMode mode = fastMode, StreamI* const debugStream=NULL_PTR(StreamI *));
 
     /**
      * @brief Reconstruct the RPNCode with type information
      */
-    ErrorManagement::ErrorType DeCompile(StreamString &DeCompileRPNCode, bool showTypes);
+    ErrorManagement::ErrorType DeCompile(StreamString &DeCompileRPNCode, const bool showTypes);
     
     /**
      * @name    Members required by RuntimeEvaluatorFunctions
