@@ -708,7 +708,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                         matchOutput = true;
                     }
                 }
-            } else
+            }
 
             // PROCESS WRITE command
             // find_variable(parameter1) on outputs
@@ -772,7 +772,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                     variableInformation->variableUsed = true;
                 }
 
-            } else
+            }
 
             // PROCESS READ command
             // find_variable(parameter1)
@@ -833,7 +833,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                     code2 = variableInformation->location;
                 }
 
-            } else
+            }
 
             // PROCESS CONST command
             // PUSH type(parameter1) --> TypeStack
@@ -1031,23 +1031,27 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool lookBack,bool showData,bool showTypes){
+ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst, const bool lookBack, const bool showData, const bool showTypes){
     ErrorManagement::ErrorType ret;
     StreamString functionName = functionInformation.GetName();
     Vector<TypeDescriptor> functionOutputTypes = functionInformation.GetOutputTypes();
-
+    
+    bool isCastToken       = (functionName == castToken);
+    bool isReadToken       = (functionName == readToken);
+    bool isRemoteReadToken = (functionName == remoteReadToken);
+    
     // if already showing the types do not show the parameter of the CAST
-    if ((functionName == castToken) && (!showTypes)) {
+    if ( (isCastToken) && (!showTypes)) {
         cst += ' ';
-        CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(functionOutputTypes[0]);
+        CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(functionOutputTypes[0u]);
         if (typeName != NULL) {
             cst += typeName.GetList();
         } else {
             ret.fatalError = true;
         }
 
-    } else
-    if ((functionName == readToken)||(functionName == remoteReadToken)) {
+    }
+    if ( isReadToken || isRemoteReadToken ) {
         CodeMemoryElement pCode2;
         if (lookBack){
             pCode2 = codeMemoryPtr[-1];
@@ -1074,7 +1078,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"GetTypeNameFromTypeDescriptor failed ");
                 } else {
-                    AnyType src(vi->type, 0, &variablesMemoryPtr[pCode2]);
+                    AnyType src(vi->type, 0u, &variablesMemoryPtr[pCode2]);
                     ret.exception = !cst.Printf(" %!", src);
                 }
 
@@ -1084,13 +1088,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
         }
     }
 
-    DataMemoryAddress dataStackIndex = 0;
+    DataMemoryAddress dataStackIndex = 0u;
 
     if (showData || showTypes){
-
-        for(uint32 i=0;(i<functionOutputTypes.GetNumberOfElements()) && (ret.ErrorsCleared()); i++){
+        
+        bool noErrors = ret.ErrorsCleared();
+        for(uint32 i = 0u; (i<functionOutputTypes.GetNumberOfElements()) && (noErrors); i++) {
             TypeDescriptor td = functionOutputTypes[i];
-            if (i!=0) {
+            if (i != 0u) {
                 cst += ',';
             } else {
                 cst += " => (";
@@ -1111,12 +1116,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
             }
             if (showData){
                 dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits/8u);
-                AnyType src(td, 0, stackPtr - dataStackIndex);
+                AnyType src(td, 0u, stackPtr - dataStackIndex);
                 ret.exception = !cst.Printf("%!", src);
             }
             if (i == (functionOutputTypes.GetNumberOfElements()-1U)){
                 cst += ')';
             }
+            noErrors = ret.ErrorsCleared();
         }
     }
 

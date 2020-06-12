@@ -769,7 +769,7 @@ private:
      * it will access DataMemory as well to decode constants
      * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
      */
-    ErrorManagement::ErrorType FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
+    ErrorManagement::ErrorType FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst, const bool lookBack=true, const bool showData=true, const bool showTypes=true);
 
     /**
      * @brief   The list containing all input variables.
