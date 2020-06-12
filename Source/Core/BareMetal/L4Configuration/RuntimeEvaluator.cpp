@@ -219,6 +219,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::BrowseOutputVariable(uint32 index,V
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
+    
     ErrorManagement::ErrorType ret;
 
     DataMemoryAddress nextConstantAddress = 0;
@@ -228,7 +229,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     
     ret.exception = !RPNCode.Seek(0ull);
     
-    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret.ErrorsCleared()){
+    bool noErrors = ret.ErrorsCleared();
+    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && noErrors) {
 
         // extract command and parameter
         StreamString command;
@@ -329,7 +331,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
         }
 
         line = "";
-
+        noErrors = ret.ErrorsCleared();
     }
 
     if (ret.ErrorsCleared()){
@@ -569,23 +571,28 @@ bool RuntimeEvaluator::SetOutputVariableType(const uint32 &varIndexIn, const Typ
     
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
+ErrorManagement::ErrorType RuntimeEvaluator::Compile()
+{
+    
     ErrorManagement::ErrorType ret;
-
+    bool noErrors = ret.ErrorsCleared();
+    
     DataMemoryAddress nextVariableAddress = startOfVariables;
     // check that all variables have a type and allocate variables + constants
 
     {
     uint32 index = 0;
     VariableInformation *var;
-    while(BrowseInputVariable(index,var) && ret.ErrorsCleared()){
+    noErrors = ret.ErrorsCleared();
+    while(BrowseInputVariable(index,var) && noErrors) {
         ret.unsupportedFeature = !var->type.IsNumericType();
         if (!ret.ErrorsCleared()){
             REPORT_ERROR_STATIC(ret,"input variable %s has incompatible non-numeric type ", var->name.Buffer());
         }
 
         // skip constants are already allocated
-        if ( (var->location == MAXDataMemoryAddress) && ret.ErrorsCleared() ){
+        noErrors = ret.ErrorsCleared();
+        if ( (var->location == MAXDataMemoryAddress) && noErrors ){
             var->location = nextVariableAddress;
             if (var->externalLocation == NULL){
                 // if NULL variable is in DataMemory
@@ -596,10 +603,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             }
         }
         index++;
+        noErrors = ret.ErrorsCleared();
     }
 
     index = 0;
-    while(BrowseOutputVariable(index,var) && ret.ErrorsCleared()){
+    noErrors = ret.ErrorsCleared();
+    while(BrowseOutputVariable(index,var) && noErrors) {
         // local variable reserve 8 bytes for it
         if ((var->type == VoidType) && (var->externalLocation == NULL)){
             var->location = nextVariableAddress;
@@ -622,6 +631,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
             }
         }
         index++;
+        noErrors = ret.ErrorsCleared();
     }
     }
 
@@ -644,7 +654,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     
     ret.exception = !RPNCode.Seek(0);
     
-    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret.ErrorsCleared()){
+    noErrors = ret.ErrorsCleared();
+    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && noErrors) {
 
         // extract command and parameter
         StreamString command;
@@ -921,7 +932,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
         }
 
         line = "";
-
+        noErrors = ret.ErrorsCleared();
     }
 
     // final checks
@@ -1226,16 +1237,19 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
     return runtimeError;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRPNCode, bool showTypes){
-    ErrorManagement::ErrorType ret ;
+ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRPNCode, bool showTypes) {
+    
+    ErrorManagement::ErrorType ret;
+    bool noErrors = ret.ErrorsCleared();
     
     codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
     CodeMemoryAddress codeMaxIndex  = static_cast<CodeMemoryAddress>(codeMemory.GetSize());
     const CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
 
     variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
-
-    while((codeMemoryPtr < codeMemoryMaxPtr) && (ret.ErrorsCleared())){
+    
+    noErrors = ret.ErrorsCleared();
+    while((codeMemoryPtr < codeMemoryMaxPtr) && noErrors){
         CodeMemoryElement pCode = GetPseudoCode();
         RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
         StreamString fName = fr.GetName();
@@ -1258,6 +1272,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRP
             ret = FunctionRecordOutputs2String(fr,DeCompileRPNCode,false,false,showTypes);
         }
         DeCompileRPNCode += '\n';
+        noErrors = ret.ErrorsCleared();
     }
 
     return ret;
