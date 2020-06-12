@@ -163,7 +163,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name
     ret = FindVariableinDB(name,variableToSearch,db);
 
     /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-    if (ret.unsupportedFeature){
+    if (ret.unsupportedFeature == true){
         // if it is already there we do not need to add
         VariableInformation *variableInfo = new VariableInformation;
         variableInfo->name = name;
@@ -270,7 +270,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
 
                     if (!ret.ErrorsCleared()){
                         ret = AddInputVariable(parameter1.Buffer());
-                        if (ret.illegalOperation){
+                        if (ret.illegalOperation == true){
                             REPORT_ERROR_STATIC(ErrorManagement::Information,"variable %s already registered", parameter1.Buffer());
                             // mask out the case that we already registered this variable
                             ret.illegalOperation = false;
@@ -289,7 +289,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
 
                 if (ret.ErrorsCleared()){
                     ret = AddOutputVariable(parameter1.Buffer());
-                    if (ret.illegalOperation){
+                    if (ret.illegalOperation == true){
                         REPORT_ERROR_STATIC(ret,"variable %s already registered", parameter1.Buffer());
                         // the error remains as we do not allow overwriting outputs
                     }
