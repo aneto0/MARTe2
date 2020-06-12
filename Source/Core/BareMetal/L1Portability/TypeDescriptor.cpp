@@ -112,8 +112,9 @@ bool TypeDescriptor::IsNumericType() const {
     bool isUnsignedInteger = (type == UnsignedInteger);
     
     bool isNumeric = (isFloat || isSignedInteger || isUnsignedInteger);
+    bool isOk      = ( (numberOfBits > 0u) && (!isStructuredData) );
     
-    return ( (numberOfBits > 0u) && (!isStructuredData) && (isNumeric) );
+    return ( isOk && isNumeric );
 }
 
 TypeDescriptor TypeDescriptor::GetTypeDescriptorFromTypeName(const char8 * const typeName){
