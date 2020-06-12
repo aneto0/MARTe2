@@ -760,7 +760,7 @@ private:
      * it will access DataMemory as well to decode constants
      * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
      */
-    ErrorManagement::ErrorType FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool peekOnly=true,bool showData=true,bool showTypes=true);
+    ErrorManagement::ErrorType FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst, const bool peekOnly=true, const bool showData=true, const bool showTypes=true);
 
     /**
      * @brief expands function information output description into readable text

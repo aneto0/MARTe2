@@ -257,7 +257,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
         if (hasCommand){
 
             if (command == readToken){
-                ret.illegalOperation = ( !hasParameter1 || hasParameter2 );
+                ret.illegalOperation = ( (!hasParameter1) || (hasParameter2) );
 
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"%s without variable name", command.Buffer());
@@ -282,7 +282,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
                 }
             }
             if (command == writeToken){
-                ret.illegalOperation = ( !hasParameter1 || hasParameter2 );
+                ret.illegalOperation = ( (!hasParameter1) || (hasParameter2) );
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 }
@@ -641,11 +641,11 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
     variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 
     // initialise compilation memory
-    StaticStack<TypeDescriptor,32> typeStack;
-    DataMemoryAddress maxDataStackSize = 0;    // max value of dataStackSize
-    DataMemoryAddress dataStackSize = 0;       // current simulated value of data stack size
-//  startOfVariables = 0;                      // for now no constants - so variables start at 0
-    DataMemoryAddress nextConstantAddress = 0; // pointer to next constant memory area
+    StaticStack<TypeDescriptor,32u> typeStack;
+    DataMemoryAddress maxDataStackSize = 0u;    // max value of dataStackSize
+    DataMemoryAddress dataStackSize    = 0u;    // current simulated value of data stack size
+//  startOfVariables = 0;                       // for now no constants - so variables start at 0
+    DataMemoryAddress nextConstantAddress = 0u; // pointer to next constant memory area
 
     // clean all the memory
     codeMemory.Clean();
@@ -653,7 +653,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
     StreamString line;
     char8 terminator;
     
-    ret.exception = !RPNCode.Seek(0);
+    ret.exception = !RPNCode.Seek(0ull);
     
     noErrors = ret.ErrorsCleared();
     while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && noErrors) {
@@ -686,7 +686,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
             // PUSH type(parameter1) --> TypeStack
             // matchOutput = true;
             if (command == castToken){
-                ret.illegalOperation = !hasParameter1 || hasParameter2;
+                ret.illegalOperation = ( (!hasParameter1) || (hasParameter2) );
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"%s without type name", command.Buffer());
                 } else{
@@ -719,7 +719,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
             if (command == writeToken){
                 VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
 
-                ret.illegalOperation = !hasParameter1 || hasParameter2;
+                ret.illegalOperation = ( (!hasParameter1) || (hasParameter2) );
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 } else{
@@ -744,7 +744,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
 
                     // found local variable - allocate and give type here
                     if ((td == VoidType) && (variableInformation->externalLocation == NULL)){
-                        ret.fatalError = !typeStack.Peek(0,td);
+                        ret.fatalError = !typeStack.Peek(0u,td);
                         if (!ret.ErrorsCleared()){
                             REPORT_ERROR_STATIC(ret,"expecting source type in stack");
                         }
@@ -784,7 +784,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
             if (command == readToken){
                 VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
 
-                ret.illegalOperation = !hasParameter1 || hasParameter2;
+                ret.illegalOperation = ( (!hasParameter1) || (hasParameter2) );
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
                 } else{
@@ -844,7 +844,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
             if (command == constToken){
                 TypeDescriptor td;
 
-                ret.illegalOperation = !hasParameter1 || !hasParameter2 || hasParameter3;
+                ret.illegalOperation = ( (!hasParameter1) || (!hasParameter2) || (hasParameter3) );
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"%s without type name and value", command.Buffer());
                 } else{
@@ -861,7 +861,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                 // convert string to number and save value into memory
                 if (ret.ErrorsCleared()){
                     //nextConstantAddress
-                    AnyType dest(td, 0,&variablesMemoryPtr[nextConstantAddress]);
+                    AnyType dest(td, 0u, &variablesMemoryPtr[nextConstantAddress]);
                     ret.fatalError = !TypeConvert(dest, parameter2.Buffer());
                     if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"TypeConvert failed ");
@@ -885,18 +885,18 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                 }
             }
 
-            CodeMemoryElement code = 0;
+            CodeMemoryElement code = 0u;
             if (ret.ErrorsCleared()){
                 ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command.Buffer(),typeStack,matchOutput,dataStackSize);
                 if (!ret.ErrorsCleared()){
                     StreamString typeList;
-                    uint32 n2scan = 2;
+                    uint32 n2scan = 2u;
                     if (matchOutput) {
                         n2scan++;
                     }
                     typeList += '[';
-                    for(uint32 index = 0;index < n2scan;index++){
-                        if (index > 0){
+                    for(uint32 index = 0u; index < n2scan; index++){
+                        if (index > 0u){
                             typeList += '|';
                         }
                         TypeDescriptor td;
@@ -922,8 +922,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                 if (!ret.ErrorsCleared()){
                     REPORT_ERROR_STATIC(ret,"failed to add instruction to code");
                 }
-
-                if (ret.ErrorsCleared() && (code2 != TypeCharacteristics<CodeMemoryElement>::MaxValue())){
+                
+                noErrors = ret.ErrorsCleared();
+                if ( (code2 != TypeCharacteristics<CodeMemoryElement>::MaxValue()) && noErrors ){
                     ret.fatalError = !codeMemory.Add(code2);
                     if (!ret.ErrorsCleared()){
                         REPORT_ERROR_STATIC(ret,"failed to add instruction to code");
@@ -951,7 +952,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
 
     // check that the TypeStack is empty
     if (ret.ErrorsCleared()){
-        ret.internalSetupError = (typeStack.GetSize() > 0);
+        ret.internalSetupError = (typeStack.GetSize() > 0u);
         if (!ret.ErrorsCleared()){
             REPORT_ERROR_STATIC(ret,"operation sequence is incomplete: %u data left in stack", typeStack.GetSize());
         }
@@ -960,13 +961,16 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool peekOnly,bool showData,bool showTypes){
+ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,const bool peekOnly,const bool showData,const bool showTypes){
     ErrorManagement::ErrorType ret;
 
     const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
     StreamString functionName = functionInformation.GetName();
-
-    if ((functionName == writeToken) || (functionName == remoteWriteToken)){
+    
+    bool isWriteToken       = (functionName == writeToken);
+    bool isRemoteWriteToken = (functionName == remoteWriteToken);
+    
+    if ( isWriteToken || isRemoteWriteToken ){
         CodeMemoryElement pCode2 = GetPseudoCode();
 
         VariableInformation *vi;
@@ -978,15 +982,16 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
         }
     }
 
-    DataMemoryAddress dataStackIndex = 0;
+    DataMemoryAddress dataStackIndex = 0u;
 
     if (showData || showTypes){
         Vector<TypeDescriptor> functionInputTypes = functionInformation.GetInputTypes();
-
-        for(uint32 i=0; (i<functionInputTypes.GetNumberOfElements()) && (ret.ErrorsCleared()); i++){
+        
+        bool noErrors = ret.ErrorsCleared();
+        for(uint32 i = 0u; (i<functionInputTypes.GetNumberOfElements()) && (noErrors); i++){
             TypeDescriptor td = functionInputTypes[i];
 
-            if (i!=0) {
+            if (i != 0u) {
                 cst += ',';
             } else {
                 cst += '(';
@@ -1007,12 +1012,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
             }
             if (showData){
                 dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits/8u);
-                AnyType src(td, 0, stackPtr - dataStackIndex);
+                AnyType src(td, 0u, stackPtr - dataStackIndex);
                 ret.exception = !cst.Printf("%!", src);
             }
             if (i == (functionInputTypes.GetNumberOfElements()-1U)){
                 cst += ')';
             }
+            
+            noErrors = ret.ErrorsCleared();
         }
     }
 
