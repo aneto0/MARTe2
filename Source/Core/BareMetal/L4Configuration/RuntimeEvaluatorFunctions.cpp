@@ -41,19 +41,19 @@
 
 namespace MARTe {
 
-uint32 availableFunctions = 0;
+uint32 availableFunctions = 0u;
 
 RuntimeEvaluatorFunctions functionRecords[maxFunctions];
 
 RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions():
-    name(""), numberOfInputs(0), numberOfOutputs(0), types(NULL_PTR(TypeDescriptor*)), function(NULL)
+    name(""), numberOfInputs(0u), numberOfOutputs(0u), types(NULL_PTR(TypeDescriptor*)), function(NULL)
     {}
 
 RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn):
     name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
     {}
 
-bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize) const {
+bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32u> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize) const {
 
     // match function name
     bool ret = (name == nameIn.GetList());
@@ -128,7 +128,7 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record){
 bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn, StaticStack<TypeDescriptor,32u> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
 
     bool found = false;
-    for (CodeMemoryElement i = 0; (!found) && (i < availableFunctions);i++ ){
+    for (CodeMemoryElement i = 0u; (!found) && (i < availableFunctions);i++ ){
         found = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
         if (found){
             code = i;
@@ -160,27 +160,27 @@ template <typename T> void Write(RuntimeEvaluator &context){
     context.Pop(context.Variable<T>(index));
 }
 
-REGISTER_PCODE_FUNCTION(READ,double,0,1,Read<float64>,Float64Bit)
-REGISTER_PCODE_FUNCTION(READ,float,0,1,Read<float32>,Float32Bit)
-REGISTER_PCODE_FUNCTION(READ,uint64,0,1,Read<uint64>,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(READ,int64,0,1,Read<int64>,SignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(READ,uint32,0,1,Read<uint32>,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(READ,int32,0,1,Read<int32>,SignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(READ,uint16,0,1,Read<uint16>,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(READ,int16,0,1,Read<int16>,SignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(READ,uint8,0,1,Read<uint8>,UnsignedInteger8Bit)
-REGISTER_PCODE_FUNCTION(READ,int8,0,1,Read<int8>,SignedInteger8Bit)
+REGISTER_PCODE_FUNCTION(READ,double,0u,1u,Read<float64>,Float64Bit          )
+REGISTER_PCODE_FUNCTION(READ,float, 0u,1u,Read<float32>,Float32Bit          )
+REGISTER_PCODE_FUNCTION(READ,uint64,0u,1u,Read<uint64> ,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(READ,int64, 0u,1u,Read<int64>  ,SignedInteger64Bit  )
+REGISTER_PCODE_FUNCTION(READ,uint32,0u,1u,Read<uint32> ,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(READ,int32, 0u,1u,Read<int32>  ,SignedInteger32Bit  )
+REGISTER_PCODE_FUNCTION(READ,uint16,0u,1u,Read<uint16> ,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(READ,int16, 0u,1u,Read<int16>  ,SignedInteger16Bit  )
+REGISTER_PCODE_FUNCTION(READ,uint8, 0u,1u,Read<uint8>  ,UnsignedInteger8Bit )
+REGISTER_PCODE_FUNCTION(READ,int8,  0u,1u,Read<int8>   ,SignedInteger8Bit   )
 
-REGISTER_PCODE_FUNCTION(WRITE,double,1,0,Write<float64>,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(WRITE,float,1,0,Write<float32> ,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(WRITE,uint64,1,0,Write<uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(WRITE,int64,1,0,Write<int64>   ,SignedInteger64Bit  ,SignedInteger64Bit  )
-REGISTER_PCODE_FUNCTION(WRITE,uint32,1,0,Write<uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(WRITE,int32,1,0,Write<int32>   ,SignedInteger32Bit  ,SignedInteger32Bit  )
-REGISTER_PCODE_FUNCTION(WRITE,uint16,1,0,Write<uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(WRITE,int16,1,0,Write<int16>   ,SignedInteger16Bit  ,SignedInteger16Bit  )
-REGISTER_PCODE_FUNCTION(WRITE,uint8,1,0,Write<uint8>   ,UnsignedInteger8Bit ,UnsignedInteger8Bit )
-REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,SignedInteger8Bit   )
+REGISTER_PCODE_FUNCTION(WRITE,double,1u,0u,Write<float64>,Float64Bit          ,Float64Bit          )
+REGISTER_PCODE_FUNCTION(WRITE,float, 1u,0u,Write<float32>,Float32Bit          ,Float32Bit          )
+REGISTER_PCODE_FUNCTION(WRITE,uint64,1u,0u,Write<uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(WRITE,int64, 1u,0u,Write<int64>  ,SignedInteger64Bit  ,SignedInteger64Bit  )
+REGISTER_PCODE_FUNCTION(WRITE,uint32,1u,0u,Write<uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(WRITE,int32, 1u,0u,Write<int32>  ,SignedInteger32Bit  ,SignedInteger32Bit  )
+REGISTER_PCODE_FUNCTION(WRITE,uint16,1u,0u,Write<uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(WRITE,int16, 1u,0u,Write<int16>  ,SignedInteger16Bit  ,SignedInteger16Bit  )
+REGISTER_PCODE_FUNCTION(WRITE,uint8, 1u,0u,Write<uint8>  ,UnsignedInteger8Bit ,UnsignedInteger8Bit )
+REGISTER_PCODE_FUNCTION(WRITE,int8,  1u,0u,Write<int8>   ,SignedInteger8Bit   ,SignedInteger8Bit   )
 
 /*********************************************************************************************************
  *********************************************************************************************************
@@ -193,7 +193,7 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,Sig
 /*lint --emacro( {1502}, REGISTER_CAST_FUNCTION ) Justification: the following class intentionally has no data member. */
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
     static TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
-    static const RuntimeEvaluatorFunctions name ## type1 ## type2 ## _RuntimeEvaluatorFunctions(#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>); \
+    static const RuntimeEvaluatorFunctions name ## type1 ## type2 ## _RuntimeEvaluatorFunctions(#name,1u,1u,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>); \
     static class name ## type1 ## type2 ## RegisterClass { \
     public: name ## type1 ## type2 ## RegisterClass(){\
             RegisterFunction(name ## type1 ## type2 ## _RuntimeEvaluatorFunctions);\
@@ -250,8 +250,8 @@ REGISTER_CAST_FUNCTION_BLOCK(int8   ,Casting)
             res = fname (x);                                                        \
             context.Push(res);                                                      \
         }                                                                           \
-        REGISTER_PCODE_FUNCTION(name,float32,1,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit)  \
-        REGISTER_PCODE_FUNCTION(name,float64,1,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit)
+        REGISTER_PCODE_FUNCTION(name,float32,1u,1u,function ## fname ## ication <float32>,Float32Bit,Float32Bit)  \
+        REGISTER_PCODE_FUNCTION(name,float64,1u,1u,function ## fname ## ication <float64>,Float64Bit,Float64Bit)
 
 REGISTER_1_FUNCTION(SIN,sin)
 REGISTER_1_FUNCTION(COS,cos)
@@ -268,8 +268,8 @@ REGISTER_1_FUNCTION(LOG10,log10)
             res = fname (x2,x1);                                                    \
             context.Push(res);                                                      \
         }                                                                           \
-        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
-        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)
+        REGISTER_PCODE_FUNCTION(name,float32,2u,1u,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
+        REGISTER_PCODE_FUNCTION(name,float64,2u,1u,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)
 
 REGISTER_2_FUNCTION(POW,pow)
 
@@ -291,16 +291,16 @@ REGISTER_2_FUNCTION(POW,pow)
             ret = x2 oper x1;                                                       \
             context.Push(ret);                                                      \
         }                                                                           \
-        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit          ,Float64Bit             ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit          ,Float32Bit             ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit   ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit  ,SignedInteger64Bit     ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit   ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit  ,SignedInteger32Bit     ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit   ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit  ,SignedInteger16Bit     ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit     ,UnsignedInteger8Bit) \
-        REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit   ,SignedInteger8Bit      ,UnsignedInteger8Bit)
+        REGISTER_PCODE_FUNCTION(name,float64,2u,1u,function ## fname ## ication <float64>,Float64Bit          ,Float64Bit             ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,float32,2u,1u,function ## fname ## ication <float32>,Float32Bit          ,Float32Bit             ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint64 ,2u,1u,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int64  ,2u,1u,function ## fname ## ication <int64>  ,SignedInteger64Bit  ,SignedInteger64Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint32 ,2u,1u,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int32  ,2u,1u,function ## fname ## ication <int32>  ,SignedInteger32Bit  ,SignedInteger32Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint16 ,2u,1u,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int16  ,2u,1u,function ## fname ## ication <int16>  ,SignedInteger16Bit  ,SignedInteger16Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint8  ,2u,1u,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int8   ,2u,1u,function ## fname ## ication <int8>   ,SignedInteger8Bit   ,SignedInteger8Bit      ,UnsignedInteger8Bit)
 
 REGISTER_COMPARE_OPERATOR(EQ, == ,Equal)
 REGISTER_COMPARE_OPERATOR(NEQ, != ,Different)
@@ -326,7 +326,7 @@ REGISTER_COMPARE_OPERATOR(LTE, <= ,Small)
             ret = x2 oper x1;                                                       \
             context.Push(ret);                                                      \
         }                                                                           \
-        REGISTER_PCODE_FUNCTION(name,boolean,2,1,function ## fname ## ication,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
+        REGISTER_PCODE_FUNCTION(name,boolean,2u,1u,function ## fname ## ication,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
 
 REGISTER_LOGICAL_OPERATOR(AND, && ,And)
 REGISTER_LOGICAL_OPERATOR(OR, || ,Or)
@@ -352,8 +352,8 @@ REGISTER_LOGICAL_OPERATOR(XOR, ^ ,xor)
             x3 = static_cast<T>(x2 oper x1);                                        \
             context.Push(x3);                                                       \
         }                                                                           \
-        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
-        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
+        REGISTER_PCODE_FUNCTION(name,float64,2u,1u,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
+        REGISTER_PCODE_FUNCTION(name,float32,2u,1u,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
 
 REGISTER_OPERATOR(ADD, + ,Addition)
 REGISTER_OPERATOR(SUB, - ,Subtract)
@@ -405,12 +405,12 @@ template <typename T1,typename T2,typename Tout> void Multiplication_3T(RuntimeE
 }
 
 template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluator &context){
-    Tout x1,x2,x3=0;
+    Tout x1,x2,x3=0u;
     T1 z1;
     T2 z2;
     context.Pop(z1);
     context.Pop(z2);
-    if (z1 != 0) {
+    if (z1 != 0u) {
         x1 = static_cast<Tout>(z1);
         x2 = static_cast<Tout>(z2);
         x3 = static_cast<Tout>(x2 / x1);
@@ -463,14 +463,14 @@ template <typename T1,typename T2,typename Tout> void SMultiplication_3T(Runtime
 }
 
 template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvaluator &context){
-    Tout x1,x2,x3=0;
+    Tout x1,x2,x3=0u;
     T1 z1;
     T2 z2;
     context.Pop(z1);
     context.Pop(z2);
     bool sat1 = SafeNumber2Number(z1,x1);
     bool sat2 = SafeNumber2Number(z2,x2);
-    if ((z1 != 0) && sat1 && sat2) {
+    if ((z1 != 0u) && sat1 && sat2) {
         x3 = static_cast<Tout>(x2 / x1);
     } else {
         context.runtimeError.overflow = true;
@@ -535,14 +535,14 @@ template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(Runtim
 // register operators with no differences in input types (type1 op type1)==>typeOut
 #define REGISTER_2T_OPERATOR(name,fname,typeIn,typeOut)                                         \
     static Function functionP ## fname ## typeIn ## typeIn ## typeOut = & fname ## _3T<typeIn,typeIn,typeOut>;    \
-    REGISTER_PCODE_FUNCTION(name,typeIn ## typeIn ## typeOut,2,1,*functionP ## fname ## typeIn ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
+    REGISTER_PCODE_FUNCTION(name,typeIn ## typeIn ## typeOut,2u,1u,*functionP ## fname ## typeIn ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
 
 // register operators with differences in input types (type1 op type2)==>typeOut
 #define REGISTER_3T_OPERATOR(name,fname,typeIn1,typeIn2,typeOut)                                            \
     static Function functionP ## fname ## typeIn1 ## typeIn2 ## typeOut = & fname ## _3T<typeIn1,typeIn2,typeOut>;    \
     static Function functionP ## fname ## typeIn2 ## typeIn1 ## typeOut = & fname ## _3T<typeIn2,typeIn1,typeOut>;    \
-    REGISTER_PCODE_FUNCTION(name,typeIn1 ## typeIn2 ## typeOut,2,1,*functionP ## fname ## typeIn1 ## typeIn2 ## typeOut,Type2TypeDescriptor<typeIn1>(),Type2TypeDescriptor<typeIn2>(),Type2TypeDescriptor<typeOut>())   \
-    REGISTER_PCODE_FUNCTION(name,typeIn2 ## typeIn1 ## typeOut,2,1,*functionP ## fname ## typeIn2 ## typeIn1 ## typeOut,Type2TypeDescriptor<typeIn2>(),Type2TypeDescriptor<typeIn1>(),Type2TypeDescriptor<typeOut>())   \
+    REGISTER_PCODE_FUNCTION(name,typeIn1 ## typeIn2 ## typeOut,2u,1u,*functionP ## fname ## typeIn1 ## typeIn2 ## typeOut,Type2TypeDescriptor<typeIn1>(),Type2TypeDescriptor<typeIn2>(),Type2TypeDescriptor<typeOut>())   \
+    REGISTER_PCODE_FUNCTION(name,typeIn2 ## typeIn1 ## typeOut,2u,1u,*functionP ## fname ## typeIn2 ## typeIn1 ## typeOut,Type2TypeDescriptor<typeIn2>(),Type2TypeDescriptor<typeIn1>(),Type2TypeDescriptor<typeOut>())   \
 
 
 REGISTER_2T_OPERATOR(ADD, Addition,int8  ,int32)
@@ -791,8 +791,8 @@ template <typename T1,typename T2,typename Ttest> void Different_3T(RuntimeEvalu
 #define REGISTER_2T_COMP_OPERATOR(name,fname,type,typeTest)                                                          \
     static Function functionP ## fname ## type ## typeTest ## typeTestR = & fname ## _3T<type,typeTest,typeTest>;    \
     static Function functionP ## fname ## typeTest ## type ## typeTestL = & fname ## _3T<typeTest,type,typeTest>;    \
-    REGISTER_PCODE_FUNCTION(name,type ## typeTest ## typeTest,2,1,*functionP ## fname ## type ## typeTest ## typeTestR,Type2TypeDescriptor<type>(),Type2TypeDescriptor<typeTest>(),Type2TypeDescriptor<uint8>())\
-    REGISTER_PCODE_FUNCTION(name,typeTest ## type ## typeTest,2,1,*functionP ## fname ## typeTest ## type ## typeTestL,Type2TypeDescriptor<typeTest>(),Type2TypeDescriptor<type>(),Type2TypeDescriptor<uint8>())
+    REGISTER_PCODE_FUNCTION(name,type ## typeTest ## typeTest,2u,1u,*functionP ## fname ## type ## typeTest ## typeTestR,Type2TypeDescriptor<type>(),Type2TypeDescriptor<typeTest>(),Type2TypeDescriptor<uint8>())\
+    REGISTER_PCODE_FUNCTION(name,typeTest ## type ## typeTest,2u,1u,*functionP ## fname ## typeTest ## type ## typeTestL,Type2TypeDescriptor<typeTest>(),Type2TypeDescriptor<type>(),Type2TypeDescriptor<uint8>())
 
 #define REGISTER_2T_COMP_OPERATOR_BLOCK(name,fname)                \
   REGISTER_2T_COMP_OPERATOR(name,fname,int8  ,int32)               \
@@ -852,7 +852,7 @@ template <typename Tin,typename Tout> void Write_2T(RuntimeEvaluator &context){
 // register function with difference between input and outout type   fun(type1)==>typeOut
 #define REGISTER_WRITECONV(name,fname,typeIn,typeOut)                                           \
     static Function functionP ## fname ## typeIn ## typeOut = & fname ## _2T<typeIn,typeOut>;    \
-    REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1,0,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
+    REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1u,0u,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
 
 REGISTER_WRITECONV(WRITE,Write,uint64,uint8)
 REGISTER_WRITECONV(WRITE,Write,uint64,uint16)
@@ -895,27 +895,27 @@ template <typename T> void RWrite(RuntimeEvaluator &context){
     context.Pop(*x);
 }
 
-REGISTER_PCODE_FUNCTION(RREAD,double,0,1,RRead<float64> ,Float64Bit)
-REGISTER_PCODE_FUNCTION(RREAD,float ,0,1,RRead<float32> ,Float32Bit)
-REGISTER_PCODE_FUNCTION(RREAD,uint64,0,1,RRead<uint64>  ,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(RREAD,int64 ,0,1,RRead<int64>   ,SignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(RREAD,uint32,0,1,RRead<uint32>  ,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(RREAD,int32 ,0,1,RRead<int32>   ,SignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(RREAD,uint16,0,1,RRead<uint16>  ,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(RREAD,int16 ,0,1,RRead<int16>   ,SignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(RREAD,uint8 ,0,1,RRead<uint8>   ,UnsignedInteger8Bit)
-REGISTER_PCODE_FUNCTION(RREAD,int8  ,0,1,RRead<int8>    ,SignedInteger8Bit)
+REGISTER_PCODE_FUNCTION(RREAD,double,0u,1u,RRead<float64> ,Float64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,float ,0u,1u,RRead<float32> ,Float32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint64,0u,1u,RRead<uint64>  ,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int64 ,0u,1u,RRead<int64>   ,SignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint32,0u,1u,RRead<uint32>  ,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int32 ,0u,1u,RRead<int32>   ,SignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint16,0u,1u,RRead<uint16>  ,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int16 ,0u,1u,RRead<int16>   ,SignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint8 ,0u,1u,RRead<uint8>   ,UnsignedInteger8Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int8  ,0u,1u,RRead<int8>    ,SignedInteger8Bit)
 
-REGISTER_PCODE_FUNCTION(RWRITE,double,1,0,RWrite<float64>   ,Float64Bit             ,Float64Bit)
-REGISTER_PCODE_FUNCTION(RWRITE,float ,1,0,RWrite<float32>   ,Float32Bit             ,Float32Bit)
-REGISTER_PCODE_FUNCTION(RWRITE,uint64,1,0,RWrite<uint64>    ,UnsignedInteger64Bit   ,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(RWRITE,int64 ,1,0,RWrite<int64>     ,SignedInteger64Bit     ,SignedInteger64Bit  )
-REGISTER_PCODE_FUNCTION(RWRITE,uint32,1,0,RWrite<uint32>    ,UnsignedInteger32Bit   ,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(RWRITE,int32 ,1,0,RWrite<int32>     ,SignedInteger32Bit     ,SignedInteger32Bit  )
-REGISTER_PCODE_FUNCTION(RWRITE,uint16,1,0,RWrite<uint16>    ,UnsignedInteger16Bit   ,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(RWRITE,int16 ,1,0,RWrite<int16>     ,SignedInteger16Bit     ,SignedInteger16Bit  )
-REGISTER_PCODE_FUNCTION(RWRITE,uint8 ,1,0,RWrite<uint8>     ,UnsignedInteger8Bit    ,UnsignedInteger8Bit )
-REGISTER_PCODE_FUNCTION(RWRITE,int8  ,1,0,RWrite<int8>      ,SignedInteger8Bit      ,SignedInteger8Bit   )
+REGISTER_PCODE_FUNCTION(RWRITE,double,1u,0u,RWrite<float64>   ,Float64Bit             ,Float64Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,float ,1u,0u,RWrite<float32>   ,Float32Bit             ,Float32Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,uint64,1u,0u,RWrite<uint64>    ,UnsignedInteger64Bit   ,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int64 ,1u,0u,RWrite<int64>     ,SignedInteger64Bit     ,SignedInteger64Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint32,1u,0u,RWrite<uint32>    ,UnsignedInteger32Bit   ,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int32 ,1u,0u,RWrite<int32>     ,SignedInteger32Bit     ,SignedInteger32Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint16,1u,0u,RWrite<uint16>    ,UnsignedInteger16Bit   ,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int16 ,1u,0u,RWrite<int16>     ,SignedInteger16Bit     ,SignedInteger16Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint8 ,1u,0u,RWrite<uint8>     ,UnsignedInteger8Bit    ,UnsignedInteger8Bit )
+REGISTER_PCODE_FUNCTION(RWRITE,int8  ,1u,0u,RWrite<int8>      ,SignedInteger8Bit      ,SignedInteger8Bit   )
 
 template <typename Tin,typename Tout> void RWrite_2T(RuntimeEvaluator &context){
     CodeMemoryElement index;
@@ -933,7 +933,7 @@ template <typename Tin,typename Tout> void RWrite_2T(RuntimeEvaluator &context){
 // register function with difference between input and outout type   fun(type1)==>typeOut
 #define REGISTER_WRITECONV(name,fname,typeIn,typeOut)                                           \
     static Function functionP ## fname ## typeIn ## typeOut = & fname ## _2T<typeIn,typeOut>;    \
-    REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1,0,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
+    REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1u,0u,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
 
 REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint8)
 REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint16)
