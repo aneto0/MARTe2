@@ -70,28 +70,32 @@ public:
     /**
      *
      */
-    VariableFinder(DataMemoryAddress address) {
+    VariableFinder(const DataMemoryAddress address) {
         variable = NULL_PTR(VariableInformation*);
         variableAddress = address;
     }
     /**
      *
      */
-    void Do(VariableInformation *data) {
-        if (data == NULL_PTR(VariableInformation *)){
+    virtual void Do(VariableInformation *data) {
+        if (data == NULL_PTR(VariableInformation *)) {
             error = ErrorManagement::FatalError;
-        } else {
-            if (variableName.Size() > 0){
-                if (data->name == variableName){
+        }
+        else {
+            if (variableName.Size() > 0ull) {
+                if (data->name == variableName) {
                     variable = data;
                     error = ErrorManagement::NoError;
                 }
-            } else
-            if (variableAddress < MAXDataMemoryAddress){
-                if (data->location == variableAddress){
+            }
+            else if (variableAddress < MAXDataMemoryAddress) {
+                if (data->location == variableAddress) {
                     variable = data;
                     error = ErrorManagement::NoError;
                 }
+            }
+            else {
+                // do nothing
             }
         }
     }
@@ -121,7 +125,7 @@ RuntimeEvaluator::RuntimeEvaluator(StreamString RPNCodeIn){
     variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
     codeMemoryPtr = NULL_PTR(CodeMemoryElement*);
     stackPtr = NULL_PTR(DataMemoryElement*);
-    startOfVariables = 0;
+    startOfVariables = 0u;
 }
 
 RuntimeEvaluator::~RuntimeEvaluator(){
@@ -140,7 +144,7 @@ RuntimeEvaluator::~RuntimeEvaluator(){
 ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(const CCString &name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db) const {
     ErrorManagement::ErrorType ret;
 
-    variableInformation = NULL;
+    variableInformation = NULL_PTR(VariableInformation*);
     VariableFinder finder(name);
     db.ListIterate(&finder);
     ret = finder.error;
@@ -154,7 +158,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(const CCString &na
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name, LinkedListHolderT<VariableInformation> &db, const TypeDescriptor &td, DataMemoryAddress location) const {
+ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name, LinkedListHolderT<VariableInformation> &db, const TypeDescriptor &td, const DataMemoryAddress location) const {
     ErrorManagement::ErrorType ret;
     VariableInformation *variableToSearch;
     ret = FindVariableinDB(name,variableToSearch,db);
@@ -179,7 +183,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::FindVariable(const DataMemoryAddress address, VariableInformation *&variableInformation){
     ErrorManagement::ErrorType ret;
 
     VariableFinder finder(address);
@@ -187,7 +191,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariable(DataMemoryAddress addr
     outputVariableInfo.ListIterate(&finder);
     ret = finder.error;
 
-    variableInformation = NULL;
+    variableInformation = NULL_PTR(VariableInformation*);
     if (ret.ErrorsCleared()){
         variableInformation = finder.variable;
         ret.unsupportedFeature = (variableInformation == NULL);
@@ -204,14 +208,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariable(DataMemoryAddress addr
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::BrowseInputVariable(uint32 index,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::BrowseInputVariable(const uint32 index,VariableInformation *&variableInformation){
     ErrorManagement::ErrorType ret;
     variableInformation = inputVariableInfo.ListPeek(index);
     ret.outOfRange = (variableInformation == NULL);
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::BrowseOutputVariable(const uint32 index,VariableInformation *&variableInformation){
     ErrorManagement::ErrorType ret;
     variableInformation = outputVariableInfo.ListPeek(index);
     ret.outOfRange = (variableInformation == NULL);
@@ -222,7 +226,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     
     ErrorManagement::ErrorType ret;
 
-    DataMemoryAddress nextConstantAddress = 0;
+    DataMemoryAddress nextConstantAddress = 0u;
     
     StreamString line;
     char8 terminator;
@@ -575,15 +579,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
 {
     
     ErrorManagement::ErrorType ret;
-    bool noErrors = ret.ErrorsCleared();
     
     DataMemoryAddress nextVariableAddress = startOfVariables;
     // check that all variables have a type and allocate variables + constants
 
-    {
     uint32 index = 0;
     VariableInformation *var;
-    noErrors = ret.ErrorsCleared();
+    
+    bool noErrors = ret.ErrorsCleared();
     while(BrowseInputVariable(index,var) && noErrors) {
         ret.unsupportedFeature = !var->type.IsNumericType();
         if (!ret.ErrorsCleared()){
@@ -632,7 +635,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
         }
         index++;
         noErrors = ret.ErrorsCleared();
-    }
     }
 
     // already
@@ -1240,7 +1242,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode, StreamI
 ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRPNCode, bool showTypes) {
     
     ErrorManagement::ErrorType ret;
-    bool noErrors = ret.ErrorsCleared();
     
     codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
     CodeMemoryAddress codeMaxIndex  = static_cast<CodeMemoryAddress>(codeMemory.GetSize());
@@ -1248,7 +1249,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRP
 
     variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
     
-    noErrors = ret.ErrorsCleared();
+    bool noErrors = ret.ErrorsCleared();
     while((codeMemoryPtr < codeMemoryMaxPtr) && noErrors){
         CodeMemoryElement pCode = GetPseudoCode();
         RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
