@@ -245,7 +245,8 @@ REGISTER_CAST_FUNCTION_BLOCK(int8   ,Casting)
 
 #define REGISTER_1_FUNCTION(name,fname)                                 \
         template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
-            T x,res;                                                                \
+            T x;                                                                    \
+            T res;                                                                  \
             context.Pop(x);                                                         \
             res = fname (x);                                                        \
             context.Push(res);                                                      \
@@ -262,7 +263,9 @@ REGISTER_1_FUNCTION(LOG10,log10)
 
 #define REGISTER_2_FUNCTION(name,fname)                                 \
         template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
-            T x1,x2,res;                                                            \
+            T x1;                                                                   \
+            T x2;                                                                   \
+            T res;                                                                  \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
             res = fname (x2,x1);                                                    \
@@ -284,7 +287,8 @@ REGISTER_2_FUNCTION(POW,pow)
 
 #define REGISTER_COMPARE_OPERATOR(name,oper,fname)                                  \
         template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
-            T x1,x2;                                                                \
+            T x1;                                                                   \
+            T x2;                                                                   \
             bool ret;                                                               \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
@@ -319,8 +323,10 @@ REGISTER_COMPARE_OPERATOR(LTE, <= ,Small)
 
 
 #define REGISTER_LOGICAL_OPERATOR(name,oper,fname)                                  \
-        void function ## fname ## ication (RuntimeEvaluator &context){                       \
-            bool x1,x2,ret;                                                         \
+        void function ## fname ## ication (RuntimeEvaluator &context){              \
+            bool x1;                                                                \
+            bool x2;                                                                \
+            bool ret;                                                               \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
             ret = x2 oper x1;                                                       \
@@ -346,7 +352,9 @@ REGISTER_LOGICAL_OPERATOR(XOR, ^ ,xor)
 
 #define REGISTER_OPERATOR(name,oper,fname)                                          \
         template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
-            T x1,x2,x3;                                                             \
+            T x1;                                                                   \
+            T x2;                                                                   \
+            T x3;                                                                   \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
             x3 = static_cast<T>(x2 oper x1);                                        \
@@ -369,7 +377,9 @@ REGISTER_OPERATOR(DIV, / ,Division)
  **********************************************************************************************************/
 
 template <typename T1,typename T2,typename Tout> void Addition_3T(RuntimeEvaluator &context){
-    Tout x1,x2,x3;
+    Tout x1;
+    Tout x2;
+    Tout x3;
     T1 z1;
     T2 z2;
     context.Pop(z1);
@@ -381,7 +391,9 @@ template <typename T1,typename T2,typename Tout> void Addition_3T(RuntimeEvaluat
 }
 
 template <typename T1,typename T2,typename Tout> void Subtraction_3T(RuntimeEvaluator &context){
-    Tout x1,x2,x3;
+    Tout x1;
+    Tout x2;
+    Tout x3;
     T1 z1;
     T2 z2;
     context.Pop(z1);
@@ -393,7 +405,9 @@ template <typename T1,typename T2,typename Tout> void Subtraction_3T(RuntimeEval
 }
 
 template <typename T1,typename T2,typename Tout> void Multiplication_3T(RuntimeEvaluator &context){
-    Tout x1,x2,x3;
+    Tout x1;
+    Tout x2;
+    Tout x3;
     T1 z1;
     T2 z2;
     context.Pop(z1);
@@ -405,7 +419,9 @@ template <typename T1,typename T2,typename Tout> void Multiplication_3T(RuntimeE
 }
 
 template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluator &context){
-    Tout x1,x2,x3=0u;
+    Tout x1;
+    Tout x2;
+    Tout x3=0u;
     T1 z1;
     T2 z2;
     context.Pop(z1);
@@ -422,7 +438,9 @@ template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluat
 
 template <typename T1,typename T2,typename Tout> void SAddition_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
-        Tout x1,x2,x3;
+        Tout x1;
+        Tout x2;
+        Tout x3;
         T1 z1;
         T2 z2;
         context.Pop(z1);
@@ -436,7 +454,9 @@ template <typename T1,typename T2,typename Tout> void SAddition_3T(RuntimeEvalua
 
 template <typename T1,typename T2,typename Tout> void SSubtraction_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
-        Tout x1,x2,x3;
+        Tout x1;
+        Tout x2;
+        Tout x3;
         T1 z1;
         T2 z2;
         context.Pop(z1);
@@ -450,7 +470,9 @@ template <typename T1,typename T2,typename Tout> void SSubtraction_3T(RuntimeEva
 
 template <typename T1,typename T2,typename Tout> void SMultiplication_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
-        Tout x1,x2,x3;
+        Tout x1;
+        Tout x2;
+        Tout x3;
         T1 z1;
         T2 z2;
         context.Pop(z1);
@@ -463,7 +485,9 @@ template <typename T1,typename T2,typename Tout> void SMultiplication_3T(Runtime
 }
 
 template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvaluator &context){
-    Tout x1,x2,x3=0u;
+    Tout x1;
+    Tout x2;
+    Tout x3 = 0u;
     T1 z1;
     T2 z2;
     context.Pop(z1);
@@ -480,7 +504,9 @@ template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvalua
 
 template <typename T1,typename T2,typename Tout> void SSAddition_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
-        Tout x1,x2,x3;
+        Tout x1;
+        Tout x2;
+        Tout x3;
         T1 z1;
         T2 z2;
         context.Pop(z1);
@@ -498,7 +524,9 @@ template <typename T1,typename T2,typename Tout> void SSAddition_3T(RuntimeEvalu
 
 template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
-        Tout x1,x2,x3 = 0;
+        Tout x1;
+        Tout x2;
+        Tout x3 = 0u;
         T1 z1;
         T2 z2;
         context.Pop(z1);
@@ -516,7 +544,9 @@ template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEv
 
 template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(RuntimeEvaluator &context){
     if (context.runtimeError == ErrorManagement::NoError){
-        Tout x1,x2,x3=0;
+        Tout x1;
+        Tout x2;
+        Tout x3 = 0u;
         T1 z1;
         T2 z2;
         context.Pop(z1);
@@ -681,7 +711,8 @@ REGISTER_3T_OPERATOR(DIV, Division,uint32,uint64,uint64)
 template <typename T1,typename T2,typename Ttest> void Greater_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest z1,z2;
+    Ttest z1;
+    Ttest z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
@@ -699,7 +730,8 @@ template <typename T1,typename T2,typename Ttest> void Greater_3T(RuntimeEvaluat
 template <typename T1,typename T2,typename Ttest> void Lower_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest z1,z2;
+    Ttest z1;
+    Ttest z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
@@ -717,7 +749,8 @@ template <typename T1,typename T2,typename Ttest> void Lower_3T(RuntimeEvaluator
 template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest z1,z2;
+    Ttest z1;
+    Ttest z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
@@ -735,7 +768,8 @@ template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(RuntimeE
 template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest z1,z2;
+    Ttest z1;
+    Ttest z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
@@ -753,7 +787,8 @@ template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(RuntimeEva
 template <typename T1,typename T2,typename Ttest> void Same_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest z1,z2;
+    Ttest z1;
+    Ttest z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
@@ -771,7 +806,8 @@ template <typename T1,typename T2,typename Ttest> void Same_3T(RuntimeEvaluator 
 template <typename T1,typename T2,typename Ttest> void Different_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
-    Ttest z1,z2;
+    Ttest z1;
+    Ttest z2;
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
