@@ -429,7 +429,7 @@ template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluat
     T2 z2;
     context.Pop(z1);
     context.Pop(z2);
-    if (z1 != 0) {
+    if (z1 != static_cast<T2>(0)) {
         x1 = static_cast<Tout>(z1);
         x2 = static_cast<Tout>(z2);
         x3 = static_cast<Tout>(x2 / x1);
@@ -497,7 +497,7 @@ template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvalua
     context.Pop(z2);
     bool sat1 = SafeNumber2Number(z1,x1);
     bool sat2 = SafeNumber2Number(z2,x2);
-    if ((z1 != 0) && sat1 && sat2) {
+    if ((z1 != static_cast<T2>(0)) && sat1 && sat2) {
         x3 = static_cast<Tout>(x2 / x1);
     } else {
         context.runtimeError.overflow = true;
