@@ -895,12 +895,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                         n2scan++;
                     }
                     typeList += '[';
-                    for(uint32 index = 0u; index < n2scan; index++){
-                        if (index > 0u){
+                    for(uint32 typeIndex = 0u; typeIndex < n2scan; typeIndex++){
+                        if (typeIndex > 0u){
                             typeList += '|';
                         }
                         TypeDescriptor td;
-                        ret.unsupportedFeature = !typeStack.Peek(index,td);
+                        ret.unsupportedFeature = !typeStack.Peek(typeIndex,td);
                         typeList += TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
                     }
                     typeList += ']';
