@@ -49,7 +49,7 @@ RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions():
     name(""), numberOfInputs(0u), numberOfOutputs(0u), types(NULL_PTR(TypeDescriptor*)), function(NULL_PTR(Function))
     {}
 
-RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function functionIn):
+RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function &functionIn):
     name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
     {}
 
