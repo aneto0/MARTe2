@@ -160,7 +160,14 @@ template <typename T> void Write(RuntimeEvaluator &context){
     context.Pop(context.Variable<T>(index));
 }
 
-REGISTER_PCODE_FUNCTION(READ,double,0u,1u,Read<float64>,Float64Bit          )
+//REGISTER_PCODE_FUNCTION(READ,double,0u,1u,Read<float64>,Float64Bit          )
+    static TypeDescriptor READdouble_FunctionTypes[] = {Float64Bit}; 
+    static const RuntimeEvaluatorFunctions READdouble_RuntimeEvaluatorFunctions("READ",0u,1u, &READdouble_FunctionTypes[0u], &Read<float64>); 
+    static class READdoubleRegisterClass { 
+    public: READdoubleRegisterClass(){
+            RegisterFunction(READdouble_RuntimeEvaluatorFunctions);
+        }
+    } READdoubleRegisterClassInstance;
 REGISTER_PCODE_FUNCTION(READ,float, 0u,1u,Read<float32>,Float32Bit          )
 REGISTER_PCODE_FUNCTION(READ,uint64,0u,1u,Read<uint64> ,UnsignedInteger64Bit)
 REGISTER_PCODE_FUNCTION(READ,int64, 0u,1u,Read<int64>  ,SignedInteger64Bit  )
