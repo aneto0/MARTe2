@@ -49,40 +49,65 @@
 namespace MARTe {
 
 /**
- * @brief The type of the runtime function
+ * @brief   Pointer to a runtime function.
+ * @details Defines a pointer-to-function type named Function which
+ *          points to a function that takes a RuntimeEvaluator
+ *          as input and returns nothing.
+ *          Functions for runtime evaluation defined in
+ *          RuntimeEvaluatorFunctions.cpp are all of this kind (e.g.
+ *          Addition_3T, Subtraction_3T etc).
+ *          When invoked, these functions act on the input RuntimeEvaluator
+ *          object using RuntimeEvaluator::Push(), RuntimeEvaluator::Pop()
+ *          and RuntimeEvaluator::Peek() methods (see RuntimeEvaluator
+ *          and RuntimeEvaluatorFunctions documentation for details).
  */
 typedef void (*Function)(RuntimeEvaluator & context);
 
 /**
  * @brief   Function object required by RuntimeEvaluator.
  * 
- * @details This class holds the definition of a function class
+ * @details This file holds the definition of a function class
  *          as well as a bunch of macros and templates to register
  *          all combinations of functions and types required by
  *          RuntimeEvaluator during runtime execution.
  * 
+ * This class is a wrapper of the actual function which is defined
+ * elsewhere (often in a templated fashion). This class only holds
+ * a pointer to that function (the Function member, which is
+ * passed at construction time), and provides a number of helper
+ * methods that allows RuntimeEvaluator to manage the function (GetName(),
+ * GetInputTypes(), ExecuteFunction() etc).
+ * 
  * Each function is registerd and made available in the following way:
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * // Example function that multiplies a number by ten.
+ * void ExampleFunction(RuntimeEvaluator &evaluator) {
+ *     float32 x1;
+ *     evaluator.Pop(x1);
+ *     x1 = x1 * 10;
+ *     evaluator.Push(x1);
+ * }
+ * 
+ * // Registration of the function.
  * TypeDescriptor types[] = {Float32Bit, Float32Bit};
  * RuntimeEvaluatorFunctions exampleFunction("EXFUN", 1, 1, types, ExampleFunction);
  * RegisterFunction(exampleFunction);
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * This allows RuntimeEvaluator to call a function named `ExampleFunction`
- * (and defined elsewhere) by using the name `EXFUN`.
- * The `EXFUN` function is expected to pop exactely one `float32` element
- * from the RuntimeEvaluator stack and then push exactely one `float32`
+ * (which multiplies the first element on the stack by ten) by using the name `EXFUN`.
+ * The `EXFUN` function is expected to pop exactly one `float32` element
+ * from the RuntimeEvaluator stack and then push exactly one `float32`
  * element on the same stack.
  * 
- * After registration each function is added to the #functionRecords
- * array of RuntimeEvaluatorFunctions (see RuntimeEvaluatorFunctions.h,
+ * What happens behind the scenes is that upon registration each function
+ * is added to the #functionRecords array (see RuntimeEvaluatorFunctions.h,
  * outside the class definition).
- * 
- * RuntimeEvaluator calls a function by searching the #functionRecords
- * for the function its stack is currently pointing to, and then calling
- * the ExecuteFunction() method of that function and passing itself
- * as an argument so that the function can act on the stack of the
+ * When RuntimeEvaluator needs to call a function, it searches the #functionRecords
+ * for the function its stack is currently pointing to, and then calls
+ * the ExecuteFunction() method of that function passing itself
+ * as an argument so that the called function can act on the stack of the
  * calling RuntimeEvaluator.
  * 
  */
@@ -185,7 +210,7 @@ private:
     TypeDescriptor*   types;
 
     /**
-     * @brief The function code itself.
+     * @brief The pointer to the actual function code this class wraps.
      */
     Function                function;
 
@@ -219,7 +244,7 @@ bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn
  * @brief   Adds a function to #functionRecord.
  * @details This function is used to add a RuntimeEvaluatorFunctions
  *          function to the database of functions (#functionRecord)
- *          that can be called during runtime by RuntimeEvaluator.
+ *          that can be called at runtime by RuntimeEvaluator.
  */
 void RegisterFunction(const RuntimeEvaluatorFunctions &record);
 
