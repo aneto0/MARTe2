@@ -238,7 +238,7 @@ extern RuntimeEvaluatorFunctions functionRecords[maxFunctions];
 /**
  * @brief Finds a PCode elements and updates the typestack accordingly.
  */
-bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn, StaticStack<TypeDescriptor,32u> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
+bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn, StaticStack<TypeDescriptor,32u> &typeStack, const bool matchOutput,DataMemoryAddress &dataStackSize);
 
 /**
  * @brief   Adds a function to #functionRecord.

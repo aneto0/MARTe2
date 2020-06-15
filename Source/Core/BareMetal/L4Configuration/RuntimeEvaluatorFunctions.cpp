@@ -125,7 +125,7 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record){
 /**
  * find the correct PCode and updates the type in the typestack
  */
-bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn, StaticStack<TypeDescriptor,32u> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
+bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn, StaticStack<TypeDescriptor,32u> &typeStack, const bool matchOutput,DataMemoryAddress &dataStackSize){
 
     bool found = false;
     for (CodeMemoryElement i = 0u; (!found) && (i < availableFunctions);i++ ){
