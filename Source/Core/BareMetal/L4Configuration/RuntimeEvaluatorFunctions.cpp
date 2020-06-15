@@ -193,7 +193,7 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,  1u,0u,Write<int8>   ,SignedInteger8Bit   ,S
 /*lint --emacro( {1502}, REGISTER_CAST_FUNCTION ) Justification: the following class intentionally has no data member. */
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
     static TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
-    static const RuntimeEvaluatorFunctions name ## type1 ## type2 ## _RuntimeEvaluatorFunctions(#name,1u,1u,&name ## type1 ## type2 ## _FunctionTypes[0u],&function<type1,type2>); \
+    static const RuntimeEvaluatorFunctions name ## type1 ## type2 ## _RuntimeEvaluatorFunctions(#name,1u,1u,&name ## type1 ## type2 ## _FunctionTypes[0u],function<type1,type2>); \
     static class name ## type1 ## type2 ## RegisterClass { \
     public: name ## type1 ## type2 ## RegisterClass(){\
             RegisterFunction(name ## type1 ## type2 ## _RuntimeEvaluatorFunctions);\
