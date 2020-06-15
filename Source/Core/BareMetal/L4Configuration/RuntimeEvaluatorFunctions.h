@@ -108,7 +108,7 @@ public:
      * @param[in] functionIn        pointer to the actual C++ function
      *                              that will be executed.
      */
-    RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor typesIn[], Function functionIn);
+    RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function functionIn);
     
     /**
      * @brief Get the name of the function.
@@ -147,7 +147,7 @@ public:
      * @returns `true` if the name and types matches.
      * @note    Also simulates variations on the dataStack.
      */
-    bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32u> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize) const;
+    bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32u> &typeStack, const bool matchOutput,DataMemoryAddress &dataStackSize) const;
 
 private:
     /**
