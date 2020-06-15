@@ -165,7 +165,7 @@ template <typename T> void Write(RuntimeEvaluator &context){
     static const RuntimeEvaluatorFunctions READdouble_RuntimeEvaluatorFunctions("READ",0u,1u, &READdouble_FunctionTypes[0u], &Read<float64>); 
     static class READdoubleRegisterClass { 
     public: READdoubleRegisterClass(){
-            RegisterFunction(READdouble_RuntimeEvaluatorFunctions);
+            RegisterFunction(MARTe::READdouble_RuntimeEvaluatorFunctions);
         }
     } READdoubleRegisterClassInstance;
 REGISTER_PCODE_FUNCTION(READ,float, 0u,1u,Read<float32>,Float32Bit          )
