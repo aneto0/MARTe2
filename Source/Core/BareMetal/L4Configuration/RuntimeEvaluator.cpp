@@ -1130,7 +1130,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
 }
 
 /*lint -e{946, 947, 9016} codeMemoryMaxPtr is calculated from pointers pointing to the same array
- * and is only used as a safety check and cannot go out of bounds */
+ * and is only used as a safety check, thus it cannot go out of bounds */
 ErrorManagement::ErrorType RuntimeEvaluator::Execute(const executionMode mode, StreamI* const debugStream){
 
     stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
@@ -1260,7 +1260,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(const executionMode mode, S
 }
 
 /*lint -e{946, 947, 9016} codeMemoryMaxPtr is calculated from pointers pointing to the same array
- * and is only used as a safety check and cannot go out of bounds */
+ * and is only used as a safety check, thus it cannot go out of bounds */
 ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRPNCode, const bool showTypes) {
     
     ErrorManagement::ErrorType ret;

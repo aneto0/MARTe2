@@ -115,9 +115,6 @@ Vector<TypeDescriptor> RuntimeEvaluatorFunctions::GetOutputTypes(){
     return inputTypes;
 }
 
-/**
- * to register a function
- */
 void RegisterFunction(const RuntimeEvaluatorFunctions &record){
     if (availableFunctions < maxFunctions){
         functionRecords[availableFunctions] = record;
