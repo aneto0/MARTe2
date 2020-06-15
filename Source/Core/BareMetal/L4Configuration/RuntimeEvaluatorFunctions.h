@@ -270,7 +270,7 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record);
 /*lint --emacro( {1502}, REGISTER_PCODE_FUNCTION ) Justification: the following class intentionally has no data member. */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,functionIn,...)\
     static TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-    static const RuntimeEvaluatorFunctions name ## subName ## _RuntimeEvaluatorFunctions(#name,nInputs,nOutputs, &name ## subName ## _FunctionTypes[0u], functionIn); \
+    static const RuntimeEvaluatorFunctions name ## subName ## _RuntimeEvaluatorFunctions(#name,nInputs,nOutputs, &name ## subName ## _FunctionTypes[0u], &functionIn); \
     static class name ## subName ## RegisterClass { \
     public: name ## subName ## RegisterClass(){\
             RegisterFunction(name ## subName ## _RuntimeEvaluatorFunctions);\
