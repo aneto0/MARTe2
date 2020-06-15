@@ -46,14 +46,14 @@ uint32 availableFunctions = 0u;
 RuntimeEvaluatorFunctions functionRecords[maxFunctions];
 
 RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions():
-    name(""), numberOfInputs(0u), numberOfOutputs(0u), types(NULL_PTR(TypeDescriptor*)), function(NULL)
+    name(""), numberOfInputs(0u), numberOfOutputs(0u), types(NULL_PTR(TypeDescriptor*)), function(NULL_PTR(Function))
     {}
 
-RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn):
+RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function functionIn):
     name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
     {}
 
-bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32u> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize) const {
+bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32u> &typeStack, const bool matchOutput,DataMemoryAddress &dataStackSize) const {
 
     // match function name
     bool ret = (name == nameIn.GetList());
@@ -62,7 +62,8 @@ bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescr
     uint32 index = 0U;
     if (ret && matchOutput){
         TypeDescriptor type;
-        ret = typeStack.Peek(index++,type);
+        ret = typeStack.Peek(index,type);
+        index++;
         if (ret){
             ret = (type == types[numberOfInputs]);
         }
@@ -71,7 +72,8 @@ bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescr
     // match inputs types
     for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
         TypeDescriptor type;
-        ret = typeStack.Peek(index++,type);
+        ret = typeStack.Peek(index,type);
+        index++;
         if (ret){
             ret = (type == types[i]);
         }
@@ -118,7 +120,8 @@ Vector<TypeDescriptor> RuntimeEvaluatorFunctions::GetOutputTypes(){
  */
 void RegisterFunction(const RuntimeEvaluatorFunctions &record){
     if (availableFunctions < maxFunctions){
-        functionRecords[availableFunctions++] = record;
+        functionRecords[availableFunctions] = record;
+        availableFunctions++;
     }
 }
 
@@ -421,12 +424,12 @@ template <typename T1,typename T2,typename Tout> void Multiplication_3T(RuntimeE
 template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluator &context){
     Tout x1;
     Tout x2;
-    Tout x3=0u;
+    Tout x3;
     T1 z1;
     T2 z2;
     context.Pop(z1);
     context.Pop(z2);
-    if (z1 != 0u) {
+    if (z1 != 0) {
         x1 = static_cast<Tout>(z1);
         x2 = static_cast<Tout>(z2);
         x3 = static_cast<Tout>(x2 / x1);
@@ -487,14 +490,14 @@ template <typename T1,typename T2,typename Tout> void SMultiplication_3T(Runtime
 template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvaluator &context){
     Tout x1;
     Tout x2;
-    Tout x3 = 0u;
+    Tout x3;
     T1 z1;
     T2 z2;
     context.Pop(z1);
     context.Pop(z2);
     bool sat1 = SafeNumber2Number(z1,x1);
     bool sat2 = SafeNumber2Number(z2,x2);
-    if ((z1 != 0u) && sat1 && sat2) {
+    if ((z1 != 0) && sat1 && sat2) {
         x3 = static_cast<Tout>(x2 / x1);
     } else {
         context.runtimeError.overflow = true;
@@ -526,7 +529,7 @@ template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEv
     if (context.runtimeError == ErrorManagement::NoError){
         Tout x1;
         Tout x2;
-        Tout x3 = 0u;
+        Tout x3;
         T1 z1;
         T2 z2;
         context.Pop(z1);
@@ -546,7 +549,7 @@ template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(Runtim
     if (context.runtimeError == ErrorManagement::NoError){
         Tout x1;
         Tout x2;
-        Tout x3 = 0u;
+        Tout x3;
         T1 z1;
         T2 z2;
         context.Pop(z1);
@@ -716,7 +719,8 @@ template <typename T1,typename T2,typename Ttest> void Greater_3T(RuntimeEvaluat
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
-    bool ret1,ret2;
+    bool ret1;
+    bool ret2;
     ret1 = SafeNumber2Number(x1,z1);
     ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
@@ -735,7 +739,8 @@ template <typename T1,typename T2,typename Ttest> void Lower_3T(RuntimeEvaluator
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
-    bool ret1,ret2;
+    bool ret1;
+    bool ret2;
     ret1 = SafeNumber2Number(x1,z1);
     ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
@@ -754,7 +759,8 @@ template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(RuntimeE
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
-    bool ret1,ret2;
+    bool ret1;
+    bool ret2;
     ret1 = SafeNumber2Number(x1,z1);
     ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
@@ -773,7 +779,8 @@ template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(RuntimeEva
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
-    bool ret1,ret2;
+    bool ret1;
+    bool ret2;
     ret1 = SafeNumber2Number(x1,z1);
     ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
@@ -792,7 +799,8 @@ template <typename T1,typename T2,typename Ttest> void Same_3T(RuntimeEvaluator 
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
-    bool ret1,ret2;
+    bool ret1;
+    bool ret2;
     ret1 = SafeNumber2Number(x1,z1);
     ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
@@ -811,7 +819,8 @@ template <typename T1,typename T2,typename Ttest> void Different_3T(RuntimeEvalu
     context.Pop(x1);
     context.Pop(x2);
     bool result=false;
-    bool ret1,ret2;
+    bool ret1;
+    bool ret2;
     ret1 = SafeNumber2Number(x1,z1);
     ret2 = SafeNumber2Number(x2,z2);
     if (ret1 && ret2){
@@ -965,11 +974,6 @@ template <typename Tin,typename Tout> void RWrite_2T(RuntimeEvaluator &context){
         context.runtimeError.outOfRange = true;
     }
 }
-
-// register function with difference between input and outout type   fun(type1)==>typeOut
-#define REGISTER_WRITECONV(name,fname,typeIn,typeOut)                                           \
-    static Function functionP ## fname ## typeIn ## typeOut = & fname ## _2T<typeIn,typeOut>;    \
-    REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1u,0u,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
 
 REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint8)
 REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint16)
