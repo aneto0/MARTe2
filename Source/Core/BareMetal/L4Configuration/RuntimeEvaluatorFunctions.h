@@ -133,7 +133,7 @@ public:
      * @param[in] functionIn        pointer to the actual C++ function
      *                              that will be executed.
      */
-    RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function functionIn);
+    RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function &functionIn);
     
     /**
      * @brief Get the name of the function.
