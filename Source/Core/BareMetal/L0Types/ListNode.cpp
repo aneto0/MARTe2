@@ -61,7 +61,7 @@ ErrorManagement::ErrorType ListNode::InsertAfter(ListNode *node, uint32 skipNo){
 	}
 	ListNode *location = this;
 
-	while ((skipNo > 0) && (err.ErrorsCleared())){
+	while ((skipNo > 0) && (err)){
 		location = location->next;
 		skipNo--;
 		if (location == NULL){
@@ -69,7 +69,7 @@ ErrorManagement::ErrorType ListNode::InsertAfter(ListNode *node, uint32 skipNo){
 		}
 	}
 
-	if  (err.ErrorsCleared()){
+	if  (err){
 		node->next = location->next;
 		location->next = node;
 	}

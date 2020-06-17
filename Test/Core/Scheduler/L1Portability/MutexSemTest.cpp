@@ -109,7 +109,7 @@ void TestLockCallback(MutexSemTest *mt) {
         	COMPOSITE_REPORT_ERROR(err,"Mutex Lock(",mt->testMutexTimeout.GetTimeRaw(),") failed\n");
         }
 
-        mt->failed |= (err != ErrorManagement::NoError);
+        mt->failed |= (err != ErrorManagement::ErrorType(ErrorManagement::NoError));
         int32 state = mt->sharedVariable;
         mt->sharedVariable++;
         Sleep::Short(10,Units::ms);
@@ -178,7 +178,7 @@ void TestLockErrorCodeCallback(MutexSemTest *mt) {
     mt->failed = false;
     //This should fail because it was already locked in the TestLockErrorCode
     ErrorManagement::ErrorType err = mt->testMutex.Lock(mt->testMutexTimeout);
-    if (err != ErrorManagement::Timeout) {
+    if (err != ErrorManagement::ErrorType(ErrorManagement::Timeout)) {
         mt->failed = true;
     }
     Atomic::Decrement(&mt->nOfExecutingThreads);
@@ -189,7 +189,7 @@ void TestLockErrorCodeCallback(MutexSemTest *mt) {
 bool MutexSemTest::TestLockErrorCode() {
     bool ok = false;
     ErrorManagement::ErrorType err = testMutex.Lock();
-    if (err == ErrorManagement::NoError) {
+    if (err == ErrorManagement::ErrorType(ErrorManagement::NoError)) {
         ok = GenericMutexSemTestCaller(1, MilliSeconds(1,Units::ms), (ThreadFunctionType) TestLockErrorCodeCallback);
     }
     testMutex.UnLock();

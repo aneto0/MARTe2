@@ -23,6 +23,7 @@
 
 #include <math.h>
 #include <Private/RuntimeEvaluatorFunctions.h>
+#include <RuntimeEvaluator.h>
 #include "SafeMath.h"
 #include "ErrorManagement.h"
 #include "RuntimeEvaluator.h"
@@ -34,14 +35,13 @@ uint32 availableFunctions = 0;
 
 RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
-
+#if 0
 ErrorManagement::ErrorType  RuntimeEvaluatorFunction::TryConsume(
 		CCString 									nameIn,
 		Stack<VariableDescriptor> &					typeStack,
 		bool 										matchOutput,
 		RuntimeEvaluatorInfo::DataMemoryAddress &	dataStackSize
 ){
-    //bool ret = false;
 	ErrorManagement::ErrorType ret;
 
 	// match function name
@@ -101,6 +101,44 @@ ErrorManagement::ErrorType  RuntimeEvaluatorFunction::TryConsume(
 
     return ret;
 }
+#endif
+
+ErrorManagement::ErrorType  RuntimeEvaluatorFunction::Check(
+		CCString 									nameIn,
+		Stack<VariableDescriptor> &					typeStack,
+		bool 										matchOutput
+){
+	ErrorManagement::ErrorType ret;
+
+	// match function name
+    ret.comparisonFailure = !(name == nameIn);
+
+    VariableDescriptor vd;
+
+    // match first output if matchOutput is set
+    uint32 index = 0U;
+    if (ret && matchOutput){
+        ret = typeStack.Peek(vd,index++);
+        COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
+    }
+
+    if (ret && matchOutput){
+        ret.comparisonFailure = !types[numberOfInputs].SameAs(vd);
+    }
+
+    // match inputs types
+    for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
+        ret = typeStack.Peek(vd,index++);
+        COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
+        if (ret){
+            ret.comparisonFailure = !vd.SameAs(types[i]);
+        }
+    }
+
+    return ret;
+}
+
+
 
 /**
  * to register a function
@@ -111,7 +149,7 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record){
     }
 }
 
-
+#if 0
 ErrorManagement::ErrorType  FindPCodeAndUpdateTypeStack(
 		RuntimeEvaluatorInfo::CodeMemoryElement &code,
 		CCString 								nameIn,
@@ -124,33 +162,229 @@ ErrorManagement::ErrorType  FindPCodeAndUpdateTypeStack(
     RuntimeEvaluatorInfo::CodeMemoryElement i = 0;
 
     for (i=0; ret && (i < availableFunctions);i++ ){
-    	/*
-    	{
-        	DynamicCString cs;
-        	CStringTool cst = cs();
-        	cst.Append(" types[0]=");
-        	functionRecords[i].types[0].ToString(cst);
-        	cst.Append(" types[").Append(functionRecords[i].numberOfInputs).Append("]=");
-        	functionRecords[i].types[functionRecords[i].numberOfInputs].ToString(cst);
-            COMPOSITE_REPORT_ERROR(ErrorManagement::Debug,i," = ",functionRecords[i].name, cs, "stackSize = ",typeStack.Size());
-        }
-        */
-        ret = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
-        if (ret){
+//        ret = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
+    	ret = functionRecords[i].Check(nameIn,typeStack,matchOutput);
+
+    	if (ret){
             code = i;
             // force exit
             i = availableFunctions;
-        }
+        	ret = functionRecords[i].Consume(typeStack,matchOutput,dataStackSize);
+    	} else {
+            ret.comparisonFailure = false;
+    	}
+    }
 
-        ret.comparisonFailure = false;
+    return ret;
+}
+#endif
+
+ErrorManagement::ErrorType  FindPCode(
+		RuntimeEvaluatorInfo::CodeMemoryElement &code,
+		CCString 								nameIn,
+		Stack<VariableDescriptor> &				typeStack,
+		bool 									matchOutput
+)
+{
+	ErrorManagement::ErrorType ret;
+
+    RuntimeEvaluatorInfo::CodeMemoryElement i = 0;
+
+    for (i=0; ret && (i < availableFunctions);i++ ){
+//        ret = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
+    	ret = functionRecords[i].Check(nameIn,typeStack,matchOutput);
+
+    	if (ret){
+            code = i;
+            // force exit
+            i = availableFunctions;
+    	} else {
+            ret.comparisonFailure = false;
+    	}
+    }
+
+    return ret;
+}
+
+static inline int toDigit(char8 c){
+	int ret = -1;
+	if ((c <= '9') && (c >= '0')){
+		ret = static_cast<int>(c) - static_cast<int>('0');
+	}
+	return ret;
+}
+
+static inline uint32 toUint32(CCString &s){
+	uint32 ret = 0;
+
+	int digit = 0;
+	while ((digit = toDigit(s[0])) > 0) {
+		ret = ret *10 + static_cast<uint32>(digit);
+		s++;
+	}
+	return ret;
+}
+
+static ErrorManagement::ErrorType GetMatrixInfo(const VariableDescriptor &vd,uint32 &nRows, uint32 &nColumns){
+
+	ErrorManagement::ErrorType ret;
+    TypeDescriptor td 		= vd.GetFinalTypeDescriptor();
+    CCString modifiers 		= vd.GetModifiers();
+
+	ret.internalSetupError = (!td.SameAs(Float32Bit) ) && (!td.SameAs(Float64Bit));
+
+    if (ret){
+    	ret.internalSetupError = (modifiers[0] != 'A');
+    	modifiers++;
+    }
+    if (ret){
+        nRows = toUint32(modifiers);
+
+        ret.internalSetupError = (modifiers[0] != 'A');
+    	modifiers++;
+    }
+
+    if (ret){
+        nColumns = toUint32(modifiers);
+
+        ret.internalSetupError = (modifiers[0] != '\0');
     }
 
     return ret;
 }
 
 
+ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
+		Stack<VariableDescriptor> &							typeStack,
+		RuntimeEvaluatorInfo::DataMemoryAddress & 			dataStackSize,
+		List<RuntimeEvaluatorInfo::VariableInformation> &	db,
+		bool 												matchOutput,
+		uint32 &                                            dummyID){
 
+	ErrorManagement::ErrorType ret;
 
+	if (updateStackFun != NULL){
+		return updateStackFun(*this,typeStack,dataStackSize,db,dummyID);
+	}
+
+	// remove first element which is the matched output type
+    if (ret && matchOutput){
+        VariableDescriptor vd;
+        ret = typeStack.Pop(vd);
+        REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
+    }
+
+    // remove inputs types
+    for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
+    	VariableDescriptor vd;
+        ret = typeStack.Pop(vd);
+        REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
+        if (ret){
+        	uint32 nc=0,nr=0;
+        	if (GetMatrixInfo(vd,nc,nr)){
+                dataStackSize -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluatorInfo::DataMemoryAddress));
+        	} else {
+                dataStackSize -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
+        	}
+        }
+    }
+    // insert output types
+    for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
+    	VariableDescriptor vd = types[i+numberOfInputs];
+        ret = typeStack.Push(vd);
+        REPORT_ERROR(ret,"typeStack.Push(..) failed");
+        if (ret){
+        	uint32 nc=0,nr=0;
+        	// in this method we do not support matrices as output
+        	ret.unsupportedFeature = GetMatrixInfo(vd,nc,nr);
+            REPORT_ERROR(ret,"cannot handle matrices as output");
+        }
+        if (ret){
+            dataStackSize += RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
+        }
+    }
+
+    return ret;
+}
+
+ErrorManagement::ErrorType Matrix_Addition_UpdateStack(
+        const RuntimeEvaluatorFunction &                    ref,
+		Stack<VariableDescriptor> &							typeStack,
+		RuntimeEvaluatorInfo::DataMemoryAddress & 			dataStackSize,
+		List<RuntimeEvaluatorInfo::VariableInformation> &	db,
+		uint32 &                                            dummyID){
+
+	ErrorManagement::ErrorType ret;
+
+	VariableDescriptor vd1,vd2;
+    ret = typeStack.Pop(vd1);
+    REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
+    dataStackSize -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluatorInfo::DataMemoryAddress));
+
+    uint32 nRows 		= 0;
+    uint32 nColumns		= 0;
+
+    if (ret){
+    	ret = GetMatrixInfo(vd1,nRows, nColumns);
+    }
+
+    if (ret){
+        ret = typeStack.Pop(vd2);
+        REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
+        dataStackSize -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluatorInfo::DataMemoryAddress));
+    }
+
+    if (ret){
+    	ret.unsupportedFeature = !(vd1.SameAs(vd2));
+    }
+
+    // prepare the space for the intermediate results
+    RuntimeEvaluatorInfo::VariableInformation variableInfo;
+    if (ret){
+        ret = typeStack.Push(vd1);
+
+        dataStackSize += sizeof(RuntimeEvaluatorInfo::DataMemoryAddress);
+
+        // need to allocate variable and memory
+        variableInfo.name().Append("Temp").Append('@').Append(dummyID++);
+        variableInfo.type 		= vd1;
+        variableInfo.location 	= InvalidDataMemoryAddress;
+        variableInfo.external.dimensions[0] = nRows;
+        variableInfo.external.dimensions[1] = nColumns;
+
+        ret = variableInfo.AllocateMatrixMemory();
+    }
+
+    if (ret){
+    	ret = db.Insert(variableInfo );
+    }
+
+    return ret;
+}
+
+template <typename T> void Matrix_Addition(RuntimeEvaluator &context){
+	RuntimeEvaluatorInfo::DataMemoryAddress  y1,y2;
+    context.Pop(y1);
+    context.Pop(y2);
+    RuntimeEvaluatorInfo::CodeMemoryElement yOut;
+    yOut = context.GetPseudoCode();
+
+    RuntimeEvaluatorInfo::ExternalVariableInformation &z1   = context.Variable<RuntimeEvaluatorInfo::ExternalVariableInformation>(y1);
+    RuntimeEvaluatorInfo::ExternalVariableInformation &z2   = context.Variable<RuntimeEvaluatorInfo::ExternalVariableInformation>(y2);
+    RuntimeEvaluatorInfo::ExternalVariableInformation &zOut = context.Variable<RuntimeEvaluatorInfo::ExternalVariableInformation>(yOut);
+
+    Matrix<T> x1(reinterpret_cast<T *>(z1.location),z1.dimensions[0],z1.dimensions[1]);
+    Matrix<T> x2(reinterpret_cast<T *>(z2.location),z2.dimensions[0],z2.dimensions[1]);
+    Matrix<T> xOut(reinterpret_cast<T *>(zOut.location),zOut.dimensions[0],zOut.dimensions[1]);
+
+    if (!x1.Sum(x2,xOut)){
+    	context.runtimeError.internalSetupError = true;
+    }
+    context.Push(yOut);
+}
+
+REGISTER_PCODE_MATRIX_FUNCTION(ADD,float32_AAB,2,1,Matrix_Addition<float32>,Matrix_Addition_UpdateStack,Float32Bit,Float32Bit,Float32Bit)
+REGISTER_PCODE_MATRIX_FUNCTION(ADD,float64_AA,2,1,Matrix_Addition<float32>,Matrix_Addition_UpdateStack,Float32Bit,Float32Bit,Float32Bit)
 
 /*********************************************************************************************************
  *********************************************************************************************************
@@ -163,7 +397,7 @@ ErrorManagement::ErrorType  FindPCodeAndUpdateTypeStack(
 
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
     static const VariableDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
-    static const RuntimeEvaluatorFunction name ## type1 ## type2 ## _FunctionRecord={#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>}; \
+    static const RuntimeEvaluatorFunction name ## type1 ## type2 ## _FunctionRecord={#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>,NULLUpdateStackFun}; \
     static class name ## type1 ## type2 ## RegisterClass { \
     public: name ## type1 ## type2 ## RegisterClass(){\
             RegisterFunction(name ## type1 ## type2 ## _FunctionRecord);\

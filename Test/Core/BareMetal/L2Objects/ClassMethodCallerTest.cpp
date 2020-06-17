@@ -67,7 +67,7 @@ bool ClassMethodCallerTest::TestCall() {
         ErrorManagement::ErrorType status;
         Object context;
         status = target.Call(&context);
-        result &= (status == ErrorManagement::ParametersError);
+        result &= (status == ErrorManagement::ErrorType(ErrorManagement::ParametersError));
     }
     {
         ClassMethodCaller target;
@@ -75,7 +75,7 @@ bool ClassMethodCallerTest::TestCall() {
         Object context;
         ReferenceContainer param;
         status = target.Call(&context, param);
-        result &= (status == ErrorManagement::ParametersError);
+        result &= (status == ErrorManagement::ErrorType(ErrorManagement::ParametersError));
     }
     {
         ClassMethodCaller target;
@@ -83,7 +83,7 @@ bool ClassMethodCallerTest::TestCall() {
         Object context;
         SimpleStructuredData param;
         status = target.Call(&context, param);
-        result &= (status == ErrorManagement::ParametersError);
+        result &= (status == ErrorManagement::ErrorType(ErrorManagement::ParametersError));
     }
     {
         ClassMethodCaller target;
@@ -91,7 +91,7 @@ bool ClassMethodCallerTest::TestCall() {
         Object context;
         SimpleStream param;
         status = target.Call(&context, param);
-        result &= (status == ErrorManagement::ParametersError);
+        result &= (status == ErrorManagement::ErrorType(ErrorManagement::ParametersError));
     }
     return result;
 }

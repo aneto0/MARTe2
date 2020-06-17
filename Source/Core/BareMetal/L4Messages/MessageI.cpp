@@ -85,7 +85,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
     }
 
     // compute actual message parameters
-    if (ret.ErrorsCleared()) {
+    if (ret) {
 
         // is this is a reply (must be an indirect reply)
         // a direct reply does not need sending
@@ -143,7 +143,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
         }
     }
 
-    if (ret.ErrorsCleared()) {
+    if (ret) {
         // implicit dynamic cast here
         ReferenceT<MessageI> destinationObject = destination;
 
@@ -212,7 +212,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
         REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
     }
 
-    if (ret.ErrorsCleared()) {
+    if (ret) {
 
         // mark that reply is expected
         message->SetExpectsReply(true);
@@ -220,7 +220,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
         ret = SendMessage(message, sender);
     }
 
-    if (ret.ErrorsCleared()) {
+    if (ret) {
 
         ret = WaitForReply(message, maxWaitT, pollingTimeUsec);
 
@@ -258,7 +258,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
 
     ReferenceT<ReplyMessageCatcherMessageFilter> replyMessageCatcher;
     ReferenceT<MessageFilter> messageCatcher;
-    if (ret.ErrorsCleared()) {
+    if (ret) {
         //Install message catcher
         ReferenceT<ReplyMessageCatcherMessageFilter> rmc(HeapManager::standardHeapId);
         replyMessageCatcher = rmc;
@@ -266,7 +266,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
         ret.fatalError = !replyMessageCatcher.IsValid();
     }
 
-    if (ret.ErrorsCleared()) {
+    if (ret) {
         replyMessageCatcher->SetMessageToCatch(message);
 
         messageCatcher = replyMessageCatcher;
@@ -274,7 +274,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
         ret = InstallMessageFilter(messageCatcher);
     }
 
-    if (ret.ErrorsCleared()) {
+    if (ret) {
         /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: It is expected that the final class inherits both from MessageI and from Object. */
         Object *thisObject = dynamic_cast<Object *>(this);
 
@@ -282,7 +282,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
             ret = SendMessage(message, thisObject);
         }
 
-        if (ret.ErrorsCleared()) {
+        if (ret) {
             ret = replyMessageCatcher->Wait(maxWait, pollingTimeUsec);
         }
 

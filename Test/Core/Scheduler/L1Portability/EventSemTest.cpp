@@ -164,10 +164,10 @@ bool EventSemTest::TestWait(MilliSeconds timeoutTime) {
     EventSem newSem(eventSem);
     eventSem.Reset();
     ErrorManagement::ErrorType err = eventSem.Wait(timeoutTime);
-    if (err == ErrorManagement::NoError) {
+    if (err == ErrorManagement::ErrorType(ErrorManagement::NoError)) {
         err = newSem.ResetWait(timeoutTime);
     }
-    return (err == ErrorManagement::Timeout);
+    return (err == ErrorManagement::ErrorType(ErrorManagement::Timeout));
 }
 
 bool EventSemTest::TestPost() {

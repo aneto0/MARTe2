@@ -297,11 +297,11 @@ return 0;
                 while(context.BrowseInputVariable(index,var)){
                         if (var->name == "A"){
                                 var->type = TypeDescriptor("float32");
-                                var->externalLocation = &externalA;
+                                var->external.location = &externalA;
                         }
                         if (var->name == "B"){
                                 var->type = TypeDescriptor("float32");
-                                var->externalLocation = &externalB;
+                                var->external.location = &externalB;
                         }
                         if (var->name == "N1"){
                                 var->type = TypeDescriptor("int8");
@@ -333,7 +333,7 @@ return 0;
                         }
                         if (var->name == "F"){
                                 var->type = TypeDescriptor("uint8");
-                                var->externalLocation = &externalF;
+                                var->external.location = &externalF;
                         }
                         if (var->name == "N5"){
                                 var->type = TypeDescriptor("int8");

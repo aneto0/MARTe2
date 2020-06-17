@@ -121,7 +121,7 @@ bool ErrorManagementTest::TestErrorCodeToStream() {
 
     uint32 i = 0;
     bool ok = true;
-    while ((all[i] != ErrorManagement::UnsupportedFeature) && ok) {
+    while ((all[i] != ErrorManagement::ErrorType(ErrorManagement::UnsupportedFeature)) && ok) {
     	DynamicCString buffer;
     	CStringTool bufferCST = buffer();
         ErrorManagement::ErrorCodeToStream(all[i],bufferCST );

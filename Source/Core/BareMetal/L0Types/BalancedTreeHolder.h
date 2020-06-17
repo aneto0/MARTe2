@@ -119,7 +119,7 @@ inline ErrorManagement::ErrorType BalancedTreeHolder<loadClass,keyClass,loadKey>
 	ret.illegalOperation = (root == NULL);
 	if (ret){
 		ia = root->Iterate(iterator,0);
-		if (!ia.IsErrorCode()){
+		if (ia){
 			switch (ia.ActionCode()){
 			case noAction:{
 

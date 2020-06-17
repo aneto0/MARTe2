@@ -490,7 +490,7 @@ ErrorManagement::ErrorType VariableDescriptor::ToString(CStringTool &string,bool
 	if (rawFormat){
 		bool retbool = true;
 		ErrorManagement::ErrorType ret = string.Append(modifiers).Append(' ');
-		retbool = ret.ErrorsCleared();
+		retbool = ret;
 		retbool = retbool && typeDescriptor.ToString(string);
 		ret.fatalError = !retbool;
 	} else {

@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "IntrospectionTools.h"
+#include "../LXX_Concepts_related to introspection/IntrospectionTools.h"
 #include "Object.h"
 #include "AnyType.h"
 #include "HeapI.h"
@@ -56,12 +56,12 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
 
     err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
 
-    if (err.ErrorsCleared()) {
+    if (err) {
         caller = cri->FindMethod(methodName);
         err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
     }
 
-    if (err.ErrorsCleared()) {
+    if (err) {
         /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
         err = caller->Call(this);
     }
@@ -78,12 +78,12 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
 
     err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
 
-    if (err.ErrorsCleared()) {
+    if (err) {
         caller = cri->FindMethod(methodName);
         err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
     }
 
-    if (err.ErrorsCleared()) {
+    if (err) {
         /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
         err = caller->Call(this, parameters);
     }
@@ -100,12 +100,12 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
 
     err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
 
-    if (err.ErrorsCleared()) {
+    if (err) {
         caller = cri->FindMethod(methodName);
         err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
     }
 
-    if (err.ErrorsCleared()) {
+    if (err) {
         /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
         err = caller->Call(this, parameters);
     }
@@ -122,12 +122,12 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
 
     err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
 
-    if (err.ErrorsCleared()) {
+    if (err) {
         caller = cri->FindMethod(methodName);
         err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
     }
 
-    if (err.ErrorsCleared()) {
+    if (err) {
         /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
         err = caller->Call(this, stream);
     }

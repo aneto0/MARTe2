@@ -68,7 +68,7 @@ public:
         ok &= (lastErrorInfo.objectPointer != NULL_PTR(void *));
         ok &= (lastErrorInfo.hrtTime > 0u);
         ok &= (lastErrorInfo.header.isObject == true);
-        ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::Debug);
+        ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::ErrorType(MARTe::ErrorManagement::Debug));
         ok &= (lastErrorInfo.header.lineNumber == lineNumber);
         ok &= (lastErrorInfo.fileName == MARTe::CCString("AdvancedErrorManagementTest.cpp") );
         ok &= (lastErrorInfo.functionName.FindPattern(MARTe::CCString("TestLogging_NoParameters"))!= 0xFFFFFFFF);
@@ -86,7 +86,7 @@ public:
         ok &= (lastErrorInfo.objectPointer != NULL_PTR(void *));
         ok &= (lastErrorInfo.hrtTime > 0u);
         ok &= (lastErrorInfo.header.isObject == true);
-        ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::Debug);
+        ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::ErrorType(MARTe::ErrorManagement::Debug));
         ok &= (lastErrorInfo.header.lineNumber == lineNumber);
         ok &= (lastErrorInfo.fileName == MARTe::CCString("AdvancedErrorManagementTest.cpp") );
         ok &= (lastErrorInfo.functionName.FindPattern(MARTe::CCString("TestLogging_Parameters"))!= 0xFFFFFFFF);
@@ -116,7 +116,7 @@ bool AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_NoParameters() {
     ok &= (lastErrorInfo.objectPointer == NULL_PTR(void *));
     ok &= (lastErrorInfo.hrtTime > 0u);
     ok &= (lastErrorInfo.header.isObject == false);
-    ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::Debug);
+    ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::ErrorType(MARTe::ErrorManagement::Debug));
     ok &= (lastErrorInfo.header.lineNumber == lineNumber);
     ok &= (lastErrorInfo.fileName == "AdvancedErrorManagementTest.cpp");
     ok &= (lastErrorInfo.functionName.FindPattern(MARTe::CCString("TestREPORT_ERROR_STATIC_NoParameters")) != 0xFFFFFFFF);
@@ -139,7 +139,7 @@ bool AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters() {
     ok &= (lastErrorInfo.objectPointer == NULL_PTR(void *));
     ok &= (lastErrorInfo.hrtTime > 0u);
     ok &= (lastErrorInfo.header.isObject == false);
-    ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::Debug);
+    ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::ErrorType(MARTe::ErrorManagement::Debug));
     ok &= (lastErrorInfo.header.lineNumber == lineNumber);
     ok &= (lastErrorInfo.fileName == MARTe::CCString("AdvancedErrorManagementTest.cpp"));
     ok &= (lastErrorInfo.functionName.FindPattern(MARTe::CCString("TestREPORT_ERROR_STATIC_Parameters"))!=0xFFFFFFFF );

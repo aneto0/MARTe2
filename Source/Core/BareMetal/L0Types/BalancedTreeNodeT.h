@@ -70,7 +70,7 @@ public:
 		if (smaller != NULL){
 			IteratorAction ia;
 			ia = Smaller()->Iterate(iterator,depth+1);
-			if (!ia.IsErrorCode()){
+			if (ia){
 				switch (ia.ActionCode()){
 				case noAction:{
 
@@ -110,23 +110,21 @@ public:
 				if (!ia){
 					ret = ia;
 				} else {
-					if (!ia.IsErrorCode()){
-						switch (ia.ActionCode()){
-						case noAction:{
+					switch (ia.ActionCode()){
+					case noAction:{
 
-						}break;
-						case deleteNode:{
-							BalancedTreeNode *extracted;
-							BalancedTreeNodeKey dummy;
-							if (ExtractAVL(greater, extracted,dummy,0)){
-								delete extracted;
-							}
-						} break;
-						default:{
-							// overwrite the whole bitset to clear the not an error code bit
-							ret.format_as_integer = ErrorManagement::InvalidOperation;
+					}break;
+					case deleteNode:{
+						BalancedTreeNode *extracted;
+						BalancedTreeNodeKey dummy;
+						if (ExtractAVL(greater, extracted,dummy,0)){
+							delete extracted;
 						}
-						}
+					} break;
+					default:{
+						// overwrite the whole bitset to clear the not an error code bit
+						ret = ErrorManagement::InvalidOperation;
+					}
 					}
 				}
 			}
@@ -134,8 +132,6 @@ public:
 		UpdateStatistics();
 		return ret;
 	}
-
-
 
 	/**
 	 *

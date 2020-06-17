@@ -233,7 +233,7 @@ bool ObjectTest::TestCallRegisteredMethod() {
     using namespace MARTe;
     ReferenceT<ClassWithCallableMethods> target(HeapManager::standardHeapId);
     ErrorManagement::ErrorType err = target->CallRegisteredMethod("MethodWithVoidParameters");
-    bool result = err.ErrorsCleared();
+    bool result = err;
     return result;
 }
 
@@ -241,7 +241,7 @@ bool ObjectTest::TestCallRegisteredMethod_InvalidMethod() {
     using namespace MARTe;
     ReferenceT<ClassWithCallableMethods> target(HeapManager::standardHeapId);
     ErrorManagement::ErrorType err = target->CallRegisteredMethod("MethodWithVoidParametersE");
-    bool result = !err.ErrorsCleared();
+    bool result = !err;
     return result;
 }
 
@@ -251,7 +251,7 @@ bool ObjectTest::TestCallRegisteredMethod_StructuredDataI() {
     SimpleStructuredData config;
     config.Write("value", 30);
     ErrorManagement::ErrorType err = target->CallRegisteredMethod("MethodWithOutputStructuredDataI", config);
-    bool result = err.ErrorsCleared();
+    bool result = err;
     result &= (target->GetLastMethodExecuted()== "MethodWithOutputStructuredDataI(StructuredDataI)");
     return result;
 }
@@ -265,7 +265,7 @@ bool ObjectTest::TestCallRegisteredMethod_ReferenceContainer() {
     ReferenceContainer parameters;
     parameters.Insert(config);
     ErrorManagement::ErrorType err = target->CallRegisteredMethod("MethodWithOutputStructuredDataI", parameters);
-    bool result = err.ErrorsCleared();
+    bool result = err;
     result &= (target->GetLastMethodExecuted()== "MethodWithOutputStructuredDataI(StructuredDataI)");
     return result;
 }
@@ -276,7 +276,7 @@ bool ObjectTest::TestCallRegisteredMethod_StreamI() {
     SimpleStream parameters;
     parameters.Init("MethodWithConstInputStreamI");
     ErrorManagement::ErrorType err = target->CallRegisteredMethod("MethodWithOutputStreamI", parameters);
-    bool result = err.ErrorsCleared();
+    bool result = err;
     result &= (target->GetLastMethodExecuted()=="MethodWithOutputStreamI(StreamI&)");
     return result;
 }

@@ -44,26 +44,26 @@ using namespace MARTe;
 
 bool ErrorTypeTest::TestConstructor_Default() {
     ErrorManagement::ErrorType err;
-    return err.ErrorsCleared();
+    return err;
 }
 
 bool ErrorTypeTest::TestConstructor_False() {
     ErrorManagement::ErrorType err(false);
-    return !err.ErrorsCleared();
+    return !err;
 }
 
 bool ErrorTypeTest::TestConstructor_BitSet() {
     ErrorManagement::ErrorType err(ErrorManagement::Debug | ErrorManagement::ErrorSharing);
-    bool ret = !err.ErrorsCleared();
-    ret &= (err == (ErrorManagement::Debug | ErrorManagement::ErrorSharing));
+    bool ret = !err;
+    ret &= (err == ErrorManagement::ErrorType(ErrorManagement::Debug | ErrorManagement::ErrorSharing));
     return ret;
 }
 
 bool ErrorTypeTest::TestErrorsCleared() {
     ErrorManagement::ErrorType err(ErrorManagement::Debug | ErrorManagement::ErrorSharing);
-    bool ret = !err.ErrorsCleared();
+    bool ret = !err;
     err = false;
-    ret &= err.ErrorsCleared();
+    ret &= err;
     return ret;
 }
 
@@ -89,43 +89,43 @@ bool ErrorTypeTest::TestOperatorErrorIntegerFormat() {
 
 bool ErrorTypeTest::TestOperatorEquals() {
     ErrorManagement::ErrorType err = ErrorManagement::Debug;
-    return (err == ErrorManagement::Debug);
+    return (err == ErrorManagement::ErrorType(ErrorManagement::Debug));
 }
 
 bool ErrorTypeTest::TestOperatorNotEqual() {
     ErrorManagement::ErrorType err = ErrorManagement::Information;
-    return (err != ErrorManagement::Debug);
+    return (err != ErrorManagement::ErrorType(ErrorManagement::Debug));
 }
 
 bool ErrorTypeTest::TestOperatorAssignment() {
     ErrorManagement::ErrorType err = (ErrorManagement::Information | ErrorManagement::Exception);
-    return (err == (ErrorManagement::Information | ErrorManagement::Exception));
+    return (err == ErrorManagement::ErrorType(ErrorManagement::Information | ErrorManagement::Exception));
 }
 
 bool ErrorTypeTest::TestSetError() {
     ErrorManagement::ErrorType err;
-    err.SetError(ErrorManagement::Information | ErrorManagement::Exception);
-    return (err == (ErrorManagement::Information | ErrorManagement::Exception));
+    err = ErrorManagement::Information | ErrorManagement::Exception;
+    return (err == ErrorManagement::ErrorType(ErrorManagement::Information | ErrorManagement::Exception));
 }
 
 bool ErrorTypeTest::TestClearError() {
     ErrorManagement::ErrorType err;
-    err.SetError(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation);
-    bool ret = (err == (ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
-    err.ClearError(ErrorManagement::Exception | ErrorManagement::IllegalOperation);
-    ret &= (err != (ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
-    ret &= (err == (ErrorManagement::Information));
+    err = ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation;
+    bool ret = (err == ErrorManagement::ErrorType(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
+    err.ClearErrorBits(ErrorManagement::Exception_bit | ErrorManagement::IllegalOperation_bit);
+    ret &= (err != ErrorManagement::ErrorType(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
+    ret &= (err == ErrorManagement::ErrorType(ErrorManagement::Information));
     return ret;
 }
 
 bool ErrorTypeTest::TestContains() {
     ErrorManagement::ErrorType err;
-    err.SetError(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation);
-    bool ret = (err == (ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
+    err = ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation;
+    bool ret = (err == ErrorManagement::ErrorType(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
     ret &= (err.Contains(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation));
     ret &= !(err.Contains(ErrorManagement::Information | ErrorManagement::Exception | ErrorManagement::IllegalOperation | ErrorManagement::FatalError));
     ret &= (err.Contains(ErrorManagement::Information));
     err = ErrorManagement::Information;
-    ret &= (err == (ErrorManagement::Information));
+    ret &= (err == ErrorManagement::ErrorType(ErrorManagement::Information));
     return ret;
 }

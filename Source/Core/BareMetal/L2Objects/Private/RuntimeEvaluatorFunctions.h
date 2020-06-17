@@ -49,6 +49,16 @@ namespace MARTe{
 /** the type of the PCode function */
 typedef void (*Function)(RuntimeEvaluator & context);
 
+/** custom stack processing and variable allocation*/
+typedef ErrorManagement::ErrorType (*UpdateStackFun)(
+		const RuntimeEvaluatorFunction &					ref,
+		Stack<VariableDescriptor> &							typeStack,
+		RuntimeEvaluatorInfo::DataMemoryAddress & 			dataStackSize,
+		List<RuntimeEvaluatorInfo::VariableInformation> &	db,
+		uint32 &                                            dummyID);
+
+const UpdateStackFun NULLUpdateStackFun = NULL;
+
 /**
  * records information necessary to be able to use it during compilation
  */
@@ -80,6 +90,11 @@ struct RuntimeEvaluatorFunction{
     Function                 	ExecuteFunction;
 
     /**
+     * Custom UpdateStack
+     */
+    UpdateStackFun              updateStackFun;
+
+    /**
      * @brief returns true if the name and types matches
      * on success replaces the type on the stack with the result type
      * also simulates variations on the dataStack
@@ -88,7 +103,35 @@ struct RuntimeEvaluatorFunction{
 	 *  @param[in] 	typeStack the current stack of input types which need to be matched, consumed and replaced with the outputType
 	 *  @param[in,out] dataStackSize the amount of space needed in the dataStack (it gets updated by this function upon match)
 	 */
-    ErrorManagement::ErrorType TryConsume(CCString nameIn,Stack<VariableDescriptor> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize);
+//    ErrorManagement::ErrorType TryConsume(CCString nameIn,Stack<VariableDescriptor> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize);
+
+
+    /**
+     * @brief returns true if the name and types matches
+	 *  @param[out] code the address within functionRecords to the selected function
+	 *  @param[in] 	nameIn the function name to be matched
+	 *  @param[in] 	typeStack the current stack of input types which need to be matched, consumed and replaced with the outputType
+	 */
+    ErrorManagement::ErrorType  Check(
+    		CCString 									nameIn,
+    		Stack<VariableDescriptor> &					typeStack,
+    		bool 										matchOutput
+    );
+
+    /**
+     * @brief simulates execution of this P-code
+     * replaces the type on the stack with the result type
+     * also simulates variations on the dataStack
+	 *  @param[out] code the address within functionRecords to the selected function
+	 *  @param[in] 	typeStack the current stack of input types which need to be matched, consumed and replaced with the outputType
+	 *  @param[in,out] dataStackSize the amount of space needed in the dataStack (it gets updated by this function upon match)
+	 */
+    ErrorManagement::ErrorType UpdateStack(
+    		Stack<VariableDescriptor> &							typeStack,
+			RuntimeEvaluatorInfo::DataMemoryAddress & 			dataStackSize,
+    		List<RuntimeEvaluatorInfo::VariableInformation> &	db,
+    		bool 												matchOutput,
+    		uint32 &                                            dummyID);
 
 };
 
@@ -107,8 +150,9 @@ extern uint32 availableFunctions;
  */
 extern RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
+#if 0
 /**
- *  @brief Searches the list of functions for one matching the needs
+ *  @brief Searches the list of functions for one matching the needs and then simulates its effect on the stack of types and the dataStackSize
  *  @param[out] code the address within functionRecords to the selected function
  *  @param[in] 	nameIn the function name to be matched
  *  @param[in] 	typeStack the current stack of input types which need to be matched, consumed and replaced with the outputType
@@ -122,6 +166,22 @@ ErrorManagement::ErrorType FindPCodeAndUpdateTypeStack(
 		bool matchOutput,
 		RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize
 );
+#endif
+
+/**
+ *  @brief Searches the list of functions for one matching the needs
+ *  @param[out] code the address within functionRecords to the selected function
+ *  @param[in] 	nameIn the function name to be matched
+ *  @param[in] 	typeStack the current stack of input types which need to be matched, consumed and replaced with the outputType
+ *
+ */
+ErrorManagement::ErrorType  FindPCode(
+		RuntimeEvaluatorInfo::CodeMemoryElement &code,
+		CCString 								nameIn,
+		Stack<VariableDescriptor> &				typeStack,
+		bool 									matchOutput
+);
+
 
 /**
  * to register a function
@@ -133,7 +193,19 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record);
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
     static const VariableDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-    static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function}; \
+    static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function,NULLUpdateStackFun}; \
+    static class name ## subName ## RegisterClass { \
+    public: name ## subName ## RegisterClass(){\
+            RegisterFunction(name ## subName ## _FunctionRecord);\
+        }\
+    } name ## subName ## RegisterClassInstance;
+
+/**
+ * generates boiler plate code to register a function
+ */
+#define REGISTER_PCODE_MATRIX_FUNCTION(name,subName,nInputs,nOutputs,function,updateFunction,...)\
+    static const VariableDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
+    static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function,updateFunction}; \
     static class name ## subName ## RegisterClass { \
     public: name ## subName ## RegisterClass(){\
             RegisterFunction(name ## subName ## _FunctionRecord);\

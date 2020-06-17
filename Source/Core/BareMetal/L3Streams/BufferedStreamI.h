@@ -141,7 +141,7 @@ public:
      * @param[out] token is the substring between delimiters (including delimeters if not in skip).
      * @param[out] saveTerminator if not NULL the found terminator (from the
      * terminator list) is stored in this variable.
-     * @return false if no data is stored in the outputBuffer, true otherwise
+     * @return false if no data is stored in the outputBuffer, or if errors writing to token
      * (meaning that a token was found).
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief
@@ -166,7 +166,7 @@ public:
      * @param[out] token is the substring between delimiters (including delimeters if not in skip).
      * @param[out] saveTerminator if not NULL the found terminator (from the
      * terminator list) is stored in this variable.
-     * @return false if no data is stored in the outputBuffer, true otherwise
+     * @return false if no data is stored in the outputBuffer, or if errors writing to token
      * (meaning that a token was found).
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief

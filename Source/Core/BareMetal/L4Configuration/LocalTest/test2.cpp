@@ -434,12 +434,12 @@ ErrorManagement::ErrorType DereferenceAndCheckTypeAndSize(AnyType at,CCString ex
         ok2 = CheckType(at,typeCheck);
     	REPORT_ERROR(ok2,"CheckType error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
     	REPORT_ERROR(ok2,"CheckSize error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
     }
 
 
@@ -497,15 +497,15 @@ MARK
 MARK
 	    ok2 = CheckType(at,typeCheck);
     	REPORT_ERROR(ok2,"CheckType error");
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 MARK
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
     	REPORT_ERROR(ok2,"CheckSize error");
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 MARK
     	ok2 = CheckContent(at,contentCheck);
     	REPORT_ERROR(ok2,"CheckContent error");
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 	}
 MARK
     if (!ok){
@@ -558,17 +558,17 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
 	    ok2 = CheckType(at,typeCheck);
     	REPORT_ERROR(ok2,"CheckType error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
     	REPORT_ERROR(ok2,"CheckSize error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 
     	ok2=at.CompareWith(contentCheck);
     	REPORT_ERROR(ok2,"CompareWith error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
     }
 
 
@@ -839,7 +839,7 @@ ErrorManagement::ErrorType CopyCheck(bool expectSuccess, CCString type1S,CCStrin
 
     StreamString ss;
 
-	if (!ret.ErrorsCleared()){
+	if (!ret){
 		if (expectSuccess){
 		    ss.Printf(" NO = FAILED ! see log");
 		} else {

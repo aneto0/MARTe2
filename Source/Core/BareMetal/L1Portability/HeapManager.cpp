@@ -61,6 +61,11 @@ void * operator new(size_t size,MARTe::HeapManager::HeapId heapId){
     return ptr;
 }
 
+void * operator new(size_t size,void *address){
+    return address;
+}
+
+
 void operator delete(void * p){
 	MARTe::HeapManager::AllocationPointer ap(p);
 	ap.Free();

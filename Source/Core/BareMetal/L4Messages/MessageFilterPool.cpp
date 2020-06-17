@@ -61,10 +61,10 @@ ErrorManagement::ErrorType MessageFilterPool::ReceiveMessage(ReferenceT<Message>
 
         if (messageFilter.IsValid()) {
             err = messageFilter->ConsumeMessage(message);
-            matched = err.ErrorsCleared();
+            matched = err;
             //A filter has a partial match (i.e. the message was for this filter but its work is still not complete, e.g. needs another message).
             //By setting partialMatched to true will not allow to continue to test other filters.
-            partialMatched = (err == ErrorManagement::NotCompleted);
+            partialMatched = (err == ErrorManagement::ErrorType(ErrorManagement::NotCompleted));
         }
     }
 

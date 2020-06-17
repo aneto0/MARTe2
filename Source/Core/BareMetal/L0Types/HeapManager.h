@@ -126,9 +126,15 @@ extern uint32 allocatedBytes[MAX_HEAPS];
 void * operator new(size_t size);
 
 /**
- * @brief placement of new
+ * @brief replacement of new
  */
 void * operator new(size_t size,MARTe::HeapManager::HeapId heapId);
+
+/**
+ * @brief replacement of placement new --> just passes address out
+ * Cannot be freed using delete!
+ */
+void * operator new(size_t size,void *address);
 
 /**
  * @brief replacement of new[]

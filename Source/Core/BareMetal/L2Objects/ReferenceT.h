@@ -283,7 +283,7 @@ bool ReferenceT<T>::Initialise(StructuredDataI &data,
     }
 
     REPORT_ERROR(ret, "ReferenceT: Failed Reference::Initialise()");
-    return ret.ErrorsCleared();
+    return ret;
 }
 
 /*lint -e{1566} Init function initializes members */

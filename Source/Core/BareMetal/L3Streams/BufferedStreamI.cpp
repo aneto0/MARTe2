@@ -49,7 +49,6 @@ BufferedStreamI::BufferedStreamI() :
 BufferedStreamI::~BufferedStreamI() {
 }
 
-#if 1
 bool BufferedStreamI::GetToken(CStringTool &token,
                                CCString terminator,
                                char8 &saveTerminator,
@@ -65,7 +64,7 @@ bool BufferedStreamI::GetToken(CStringTool &token,
     }
     return retval;
 }
-#endif
+
 
 bool BufferedStreamI::GetToken(BufferedStreamI & token,
 							   CCString const   delimiters,

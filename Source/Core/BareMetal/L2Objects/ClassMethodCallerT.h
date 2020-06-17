@@ -543,7 +543,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     err.unsupportedFeature = (actual == static_cast<className*>(0));
     err.parametersError = false;//(&parameters == NULL_PTR(StructuredDataI *));
 
-    if (err.ErrorsCleared()) {
+    if (err) {
     	argType1 param1;
     	argType2 param2;
     	argType3 param3;
@@ -553,58 +553,60 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     	ErrorManagement::ErrorType err2 = parameters.Read("param2", param2);
     	ErrorManagement::ErrorType err3 = parameters.Read("param3", param3);
     	ErrorManagement::ErrorType err4 = parameters.Read("param4", param4);
-        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() || err3.IsErrorCode() || err4.IsErrorCode();
+    	// combines bits;
+    	err = err1 | err2 | err3 | err4;
+//        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() || err3.IsErrorCode() || err4.IsErrorCode();
 /*
     argType1 param1;
     argType2 param2;
     argType3 param3;
     argType4 param4;
-    if (err.ErrorsCleared()) {
+    if (err) {
         if (!parameters.Read("param1", param1)) {
             err.parametersError = true;
         }
     }
-    if (err.ErrorsCleared()) {
+    if (err) {
         if (!parameters.Read("param2", param2)) {
             err.parametersError = true;
         }
     }
-    if (err.ErrorsCleared()) {
+    if (err) {
         if (!parameters.Read("param3", param3)) {
             err.parametersError = true;
         }
     }
-    if (err.ErrorsCleared()) {
+    if (err) {
         if (!parameters.Read("param4", param4)) {
             err.parametersError = true;
         }
     }
     */
-        if (err.ErrorsCleared()) {
+        if (err) {
             err = (actual->*pFun)(param1, param2, param3, param4);
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
                 if (!parameters.Write("param1", param1)) {
                     err.parametersError = true;
                 }
             }
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
                 if (!parameters.Write("param2", param2)) {
                     err.parametersError = true;
                 }
             }
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM3_IS_REFERENCE) == PARAM3_IS_REFERENCE) {
                 if (!parameters.Write("param3", param3)) {
                     err.parametersError = true;
                 }
             }
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM4_IS_REFERENCE) == PARAM4_IS_REFERENCE) {
                 if (!parameters.Write("param4", param4)) {
                     err.parametersError = true;
@@ -622,7 +624,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     ReferenceT<StructuredDataI> sI = parameters.Get(0);
 
     err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
+    if (err) {
         err = Call(object, *(sI.operator->()));
     }
 
@@ -646,7 +648,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     err.unsupportedFeature = (actual == static_cast<className*>(0));
     err.parametersError = false;//(&parameters == NULL_PTR(StructuredDataI *));
 
-    if (err.ErrorsCleared()) {
+    if (err) {
     	argType1 param1;
     	argType2 param2;
     	argType3 param3;
@@ -654,43 +656,46 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     	ErrorManagement::ErrorType err1 = parameters.Read("param1", param1);
     	ErrorManagement::ErrorType err2 = parameters.Read("param2", param2);
     	ErrorManagement::ErrorType err3 = parameters.Read("param3", param3);
-        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() || err3.IsErrorCode();
+
+    	// combines bits;
+    	err = err1 | err2 | err3 ;
+//        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() || err3.IsErrorCode();
 
 /*
-    	if (err.ErrorsCleared()) {
+    	if (err) {
             if (!parameters.Read("param1", param1)) {
                 err.parametersError = true;
             }
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if (!parameters.Read("param2", param2)) {
                 err.parametersError = true;
             }
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if (!parameters.Read("param3", param3)) {
                 err.parametersError = true;
             }
         }
 */
-        if (err.ErrorsCleared()) {
+        if (err) {
             err = (actual->*pFun)(param1, param2, param3);
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
                 if (!parameters.Write("param1", param1)) {
                     err.parametersError = true;
                 }
             }
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
                 if (!parameters.Write("param2", param2)) {
                     err.parametersError = true;
                 }
             }
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM3_IS_REFERENCE) == PARAM3_IS_REFERENCE) {
                 if (!parameters.Write("param3", param3)) {
                     err.parametersError = true;
@@ -707,7 +712,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     ReferenceT<StructuredDataI> sI = parameters.Get(0);
 
     err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
+    if (err) {
         err = Call(object, *(sI.operator->()));
     }
 
@@ -732,37 +737,39 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     err.unsupportedFeature = (actual == static_cast<className*>(0));
     err.parametersError = false;//(&parameters == NULL_PTR(StructuredDataI *));
 
-    if (err.ErrorsCleared()) {
+    if (err) {
     	argType1 param1;
     	argType2 param2;
 
     	ErrorManagement::ErrorType err1 = parameters.Read("param1", param1);
     	ErrorManagement::ErrorType err2 = parameters.Read("param2", param2);
-        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() ;
+//        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() ;
+    	// combines bits;
+    	err = err1 | err2 ;
 
 /*
-    if (err.ErrorsCleared()) {
+    if (err) {
         if (!parameters.Read("param1", param1)) {
             err.parametersError = true;
         }
     }
-    if (err.ErrorsCleared()) {
+    if (err) {
         if (!parameters.Read("param2", param2)) {
             err.parametersError = true;
         }
     }
     */
-        if (err.ErrorsCleared()) {
+        if (err) {
             err = (actual->*pFun)(param1, param2);
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
                 if (!parameters.Write("param1", param1)) {
                     err.parametersError = true;
                 }
             }
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
                 if (!parameters.Write("param2", param2)) {
                     err.parametersError = true;
@@ -780,7 +787,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     ReferenceT<StructuredDataI> sI = parameters.Get(0);
 
     err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
+    if (err) {
         err = Call(object, *(sI.operator->()));
     }
 
@@ -807,22 +814,22 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     err.unsupportedFeature = (actual == static_cast<className*>(0));
 
 
-    if (err.ErrorsCleared()) {
+    if (err) {
     	argType1 param1;
 
     	err = parameters.Read("param1", param1);
 
     	/*
-    if (err.ErrorsCleared()) {
+    if (err) {
         if (!parameters.Read("param1", param1)) {
             err.parametersError = true;
         }
     }
     */
-        if (err.ErrorsCleared()) {
+        if (err) {
             err = (actual->*pFun)(param1);
         }
-        if (err.ErrorsCleared()) {
+        if (err) {
             if (mask != 0x0) {
                 err = !parameters.Write("param1", param1);
             }
@@ -897,7 +904,7 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, Structur
     ReferenceT<StructuredDataI> sI = parameters.Get(0);
 
     err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
+    if (err) {
         err = Call(object, *(sI.operator->()));
     }
 

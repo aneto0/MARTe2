@@ -173,7 +173,7 @@ bool HeapManagerTest::TestAddHeapNULL() {
 
     ret = InstallAllocator(NULL,customHeapId);
 
-    return ret.IsErrorCode();
+    return !ret;
 }
 
 bool HeapManagerTest::TestAddHeapRepetedHeap() {
@@ -194,7 +194,7 @@ bool HeapManagerTest::TestAddHeapRepetedHeap() {
     }
 
     // an error is needed here!
-    return ret2.IsErrorCode();
+    return !ret2;
 }
 
 bool HeapManagerTest::TestAddHeapTooMany() {
@@ -203,7 +203,7 @@ bool HeapManagerTest::TestAddHeapTooMany() {
     AuxHeap sh;
 
     ret = InstallAllocator(&sh,MAX_HEAPS);
-    return ret.IsErrorCode();
+    return !ret;
 }
 
 bool HeapManagerTest::TestFindHeapByName() {

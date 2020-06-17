@@ -544,12 +544,12 @@ ErrorManagement::ErrorType TestEnvironment::DereferenceAndCheckTypeAndSize(CCStr
         ok2 = CheckType(at,typeCheck,messageT);
     	REPORT_ERROR(ok2,"CheckType error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck,messageT);
     	REPORT_ERROR(ok2,"CheckSize error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
     }
 
 
@@ -605,13 +605,13 @@ ErrorManagement::ErrorType TestEnvironment::DereferenceAndCheckTypeSizeAndConten
 	    ErrorManagement::ErrorType ok2;
 	    ok2 = CheckType(at,typeCheck,messageT);
     	REPORT_ERROR(ok2,"CheckType error");
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck,messageT);
     	REPORT_ERROR(ok2,"CheckSize error");
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
     	ok2 = CheckContent(at,contentCheck);
     	REPORT_ERROR(ok2,"CheckContent error");
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 	}
     if (!ok){
 		REPORT_ERROR(ok,expression.GetList());
@@ -667,17 +667,17 @@ ErrorManagement::ErrorType TestEnvironment::DereferenceAndCheckTypeSizeAndConten
 	    ok2 = CheckType(at,typeCheck,messageT);
     	REPORT_ERROR(ok2,"CheckType error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck,messageT);
     	REPORT_ERROR(ok2,"CheckSize error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
 
     	ok2=at.CompareWith(contentCheck);
     	REPORT_ERROR(ok2,"CompareWith error");
 
-    	ok.SetError(ok2);
+    	ok = ok | ok2;
     }
 
 
@@ -970,7 +970,7 @@ ErrorManagement::ErrorType TestEnvironment::CopyToAndCompareWith(bool expectSucc
     	REPORT_ERROR(ret,"Compare failed");
     }
 
-	if (!ret.ErrorsCleared()){
+	if (!ret){
 		if (expectSuccess){
 			messageT.Append(" NO = FAILED ! see log");
 		} else {

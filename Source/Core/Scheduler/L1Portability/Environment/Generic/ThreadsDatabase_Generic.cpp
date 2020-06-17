@@ -146,7 +146,7 @@ ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId) {
 
 bool Lock() {
     ErrorManagement::ErrorType err = internalMutex.FastLock();
-    return (err == ErrorManagement::NoError);
+    return (err == ErrorManagement::ErrorType(ErrorManagement::NoError));
 }
 
 void UnLock() {

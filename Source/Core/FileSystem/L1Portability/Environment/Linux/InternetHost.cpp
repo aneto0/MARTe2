@@ -95,7 +95,7 @@ private:
     void Init() {
         if (!internetAddressInfoInitialised) {
 
-            if(internalFastSem.FastLock()!=ErrorManagement::NoError) {
+            if(internalFastSem.FastLock()!=ErrorManagement::ErrorType(ErrorManagement::NoError)) {
                 REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
             }
 
@@ -157,7 +157,7 @@ bool InternetHost::GetHostName(DynamicCString &hostName) const{
 
     hostnameFastSem.FastUnLock();
 
-    return ret.ErrorsCleared();
+    return ret;
 }
 
 CCString InternetHost::GetLocalHostName() {

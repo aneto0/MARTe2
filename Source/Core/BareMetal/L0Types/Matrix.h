@@ -71,7 +71,6 @@ public:
     Matrix(uint32 nOfRows,
            uint32 nOfColumns);
 
-
     /**
      * @brief initialises Matrix to point to the given memory area.
      * Use only as first initialisation as it will not check the allocation flag and try deallocating what the pointer addresses
@@ -101,7 +100,6 @@ public:
      */
     void SetSize(uint32 nOfRows,uint32 nOfColumns);
 
-
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
      * @param[in] existingArray The pointer to the existing array
@@ -115,6 +113,17 @@ public:
     Matrix(T *existingArray,
            uint32 nOfRows,
            uint32 nOfColumns);
+
+    /**
+     * @brief Constructs a new matrix by copying the information from an existing one.
+     * memory deallocation responsibility is moved from toCopy to this
+     * @param[in] toCopy the matrix to copy
+     * @post
+     *   GetNumberOfRows() 	  == toCopy.GetNumberOfRows() &&
+     *   GetNumberOfColumns() == toCopy.GetNumberOfColumns() &&
+     *   GetDataPointer()     == toCopy.GetDataPointer()
+     */
+    Matrix(Matrix<T> &toCopy);
 
     /**
      * @brief Constructs a new matrix from a statically declared table [][].
@@ -219,7 +228,7 @@ public:
      * @post
      *   *this[i][j] = matrixToCopy[i][j]
      */
-    bool Copy(Matrix<T> &matrixToCopy);
+    bool Copy(Matrix<T> const &matrixToCopy);
 
     /**
      * @brief Retrieves the sub matrix between the row and columns ranges ==23886==    at 0x4BF05E: MARTe::Matrix<int>::Product(MARTe::Matrix<int>&, MARTe::Matrix<int>&) const (Matrix.h:398)
@@ -288,7 +297,13 @@ public:
      */
     bool Inverse(Matrix<T> &inverse) const;
 
+    /**
+     */
+//    inline Matrix<T> operator= (Matrix<T> toCopy);
+
 private:
+
+
     /**
      * @brief Frees memory if necessary
      * @post
@@ -319,6 +334,17 @@ private:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+/*
+template<typename T>
+Matrix<T> Matrix<T>::operator= (Matrix<T> toCopy){
+    numberOfColumns = toCopy.numberOfColumns;
+    numberOfRows    = toCopy.numberOfRows;
+    allocationMode  = toCopy.allocationMode;
+    toCopy.allocationMode = heapStatic;
+
+    return *this;
+}
+*/
 
 template<typename T>
 Matrix<T>::Matrix(): Pointer() {
@@ -336,6 +362,15 @@ Matrix<T>::Matrix(uint32 nOfRows,
 }
 
 template<typename T>
+Matrix<T>::Matrix(Matrix<T> &toCopy){
+    numberOfColumns = toCopy.numberOfColumns;
+    numberOfRows    = toCopy.numberOfRows;
+    allocationMode  = toCopy.allocationMode;
+    toCopy.allocationMode = heapStatic;
+}
+
+
+template<typename T>
 void Matrix<T>::InitMatrix(T *existingArray,
                   uint32 nOfRows,
                   uint32 nOfColumns,
@@ -343,8 +378,8 @@ void Matrix<T>::InitMatrix(T *existingArray,
 	// does not check and deallocate (FreeMemory) as this is called to perform first initialisation and memory holds random values
 	Pointer::Set(existingArray);
     numberOfColumns = nOfColumns;
-    numberOfRows = nOfRows;
-    allocationMode = allocationModeIn;
+    numberOfRows 	= nOfRows;
+    allocationMode 	= allocationModeIn;
 }
 
 template<typename T>
@@ -487,7 +522,7 @@ bool Matrix<T>::Sum(Matrix<T> & addend, Matrix<T> &result) const {
 }
 
 template<typename T>
-bool Matrix<T>::Copy(Matrix<T> &matrixToCopy) {
+bool Matrix<T>::Copy(Matrix<T> const &matrixToCopy) {
     bool cond1 = (matrixToCopy.numberOfRows == numberOfRows);
     bool cond2 = (matrixToCopy.numberOfColumns == numberOfColumns);
     bool ret = cond1 && cond2;
@@ -562,160 +597,6 @@ template<>
 bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const ;
 
 
-#if 0
-
-template<> inline
-bool Matrix<float32>::Determinant(float32 &det) const {
-    bool ret = (numberOfRows == numberOfColumns);
-
-    if (ret) {
-        const Matrix<float32> &temp = *this;
-        if (numberOfRows == 1u) {
-            det = temp[0][0];
-        }
-        else {
-            det = 0.0f;
-            // loop on the first row
-            for (uint32 k = 0u; k < numberOfColumns; k++) {
-                Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
-                uint32 n = 0u;
-                for (uint32 i = 1u; i < numberOfRows; i++) {
-                    uint32 m = 0u;
-                    for (uint32 j = 0u; j < numberOfColumns; j++) {
-                        if (j != k) {
-                            subMatrix[n][m] = temp[i][j];
-                            m++;
-                        }
-                    }
-                    n++;
-                }
-                float32 subDet = 0.0f;
-                subMatrix.Determinant(subDet);
-                float32 sign = (((k) & (1u)) == 0u) ? (1.0f) : (-1.0f);
-                det += (sign * temp[0][k]) * subDet;
-            }
-        }
-    }
-
-    return ret;
-}
-
-template<> inline
-bool Matrix<float64>::Determinant(float64 &det) const {
-    bool ret = (numberOfRows == numberOfColumns);
-
-    if (ret) {
-        const Matrix<float64> &temp = *this;
-        if (numberOfRows == 1u) {
-            det = temp[0][0];
-        }
-        else {
-            det = 0.0;
-            // loop on the first row
-            for (uint32 k = 0u; k < numberOfColumns; k++) {
-                Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
-                uint32 n = 0u;
-                for (uint32 i = 1u; i < numberOfRows; i++) {
-                    uint32 m = 0u;
-                    for (uint32 j = 0u; j < numberOfColumns; j++) {
-                        if (j != k) {
-                            subMatrix[n][m] = temp[i][j];
-                            m++;
-                        }
-                    }
-                    n++;
-                }
-                float64 subDet = 0.0;
-                subMatrix.Determinant(subDet);
-                float64 sign = (((k) & (1u)) == 0u) ? (1.0) : (-1.0);
-                det += (sign * temp[0][k]) * subDet;
-            }
-        }
-    }
-    return ret;
-}
-
-template<> inline
-bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
-    bool cond1 = (numberOfColumns == numberOfRows);
-    bool cond2 = (inverse.numberOfRows == numberOfRows);
-    bool cond3 = (inverse.numberOfColumns == numberOfColumns);
-    float32 determinant = 0.0f;
-
-    bool cond4 = Determinant(determinant);
-    bool cond5 = (determinant != 0.0f);
-    bool ret = ((cond1) && (cond2) && (cond3) && (cond4) && (cond5));
-
-    if (ret) {
-        const Matrix<float32> &temp = *this;
-        Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
-        for (uint32 i = 0u; i < numberOfRows; i++) {
-            for (uint32 j = 0u; j < numberOfColumns; j++) {
-                Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
-                uint32 n = 0u;
-                for (uint32 h = 0u; h < numberOfRows; h++) {
-                    uint32 m = 0u;
-                    if (h != i) {
-                        for (uint32 k = 0u; k < numberOfColumns; k++) {
-                            if (k != j) {
-                                subMatrix[n][m] = temp[h][k];
-                                m++;
-                            }
-                        }
-                        n++;
-                    }
-                }
-                float32 subDet = 0.0f;
-                subMatrix.Determinant(subDet);
-                float32 sign = (((i + j) & (1u)) == 0u) ? (1.0) : (-1.0);
-                inverse[j][i] = (subDet * sign) / determinant;
-            }
-        }
-    }
-
-    return ret;
-}
-
-template<> inline
-bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
-    bool cond1 = (numberOfColumns == numberOfRows);
-    bool cond2 = (inverse.numberOfRows == numberOfRows);
-    bool cond3 = (inverse.numberOfColumns == numberOfColumns);
-    float64 determinant = 0.0;
-
-    bool cond4 = Determinant(determinant);
-    bool cond5 = (determinant != 0.0);
-    bool ret = ((cond1) && (cond2) && (cond3) && (cond4) && (cond5));
-
-    if (ret) {
-        const Matrix<float64> &temp = *this;
-        Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
-        for (uint32 i = 0u; i < numberOfRows; i++) {
-            for (uint32 j = 0u; j < numberOfColumns; j++) {
-                Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
-                uint32 n = 0u;
-                for (uint32 h = 0u; h < numberOfRows; h++) {
-                    uint32 m = 0u;
-                    if (h != i) {
-                        for (uint32 k = 0u; k < numberOfColumns; k++) {
-                            if (k != j) {
-                                subMatrix[n][m] = temp[h][k];
-                                m++;
-                            }
-                        }
-                        n++;
-                    }
-                }
-                float64 subDet = 0.0;
-                subMatrix.Determinant(subDet);
-                float64 sign = (((i + j) & (1u)) == 0u) ? (1.0) : (-1.0);
-                inverse[j][i] = (subDet * sign) / determinant;
-            }
-        }
-    }
-    return ret;
-}
-#endif
 
 }
 

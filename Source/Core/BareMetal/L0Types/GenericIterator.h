@@ -51,6 +51,14 @@ public:
 		format_as_integer = static_cast<ErrorManagement::ErrorIntegerFormat>(code)| ErrorManagement::NotAnErrorCode;
 	}
 
+    /**
+     * @brief copy operator. Copies all bits from one ErrorType to this
+     * @param[in] error the value to be copied.
+     */
+    inline ErrorType operator =(const ErrorManagement::ErrorType error){
+    	return ErrorManagement::ErrorType::operator =(error);
+    }
+
 	/**
 	 * checks first that this is not an error!
 	 */

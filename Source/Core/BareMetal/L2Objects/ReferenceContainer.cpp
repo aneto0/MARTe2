@@ -421,7 +421,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
 }
 
 bool ReferenceContainer::Lock() {
-    return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
+    return (mux.FastLock(muxTimeout) == ErrorManagement::ErrorType(ErrorManagement::NoError));
 }
 
 void ReferenceContainer::UnLock() {

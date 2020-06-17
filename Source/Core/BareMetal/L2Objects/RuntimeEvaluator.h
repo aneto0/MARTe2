@@ -538,7 +538,7 @@ private:
      * Checks existence of name using FindInputVariable
      * If not found add new variable
      */
-    inline ErrorManagement::ErrorType 	AddInputVariable(CCString name,VariableDescriptor vd = VoidType,RuntimeEvaluatorInfo::DataMemoryAddress location = MAXDataMemoryAddress);
+    inline ErrorManagement::ErrorType 	AddInputVariable(CCString name,VariableDescriptor vd = VoidType);
 
     /**
      * Looks for a variable of a given name
@@ -549,7 +549,7 @@ private:
      * Checks existence of name using FindOutputVariable
      * If not found add new variable
      */
-    inline ErrorManagement::ErrorType 	AddOutputVariable(CCString name,VariableDescriptor vd = VoidType,RuntimeEvaluatorInfo::DataMemoryAddress location = MAXDataMemoryAddress);
+    inline ErrorManagement::ErrorType 	AddOutputVariable(CCString name,VariableDescriptor vd = VoidType);
 
     /**
      * Looks for a variable of a given name
@@ -564,7 +564,7 @@ private:
     /**
      * implements AddOutputVariable and AddInputVariable
      */
-    ErrorManagement::ErrorType 			AddVariable2DB(CCString name,List<RuntimeEvaluatorInfo::VariableInformation> &db,VariableDescriptor vd,RuntimeEvaluatorInfo::DataMemoryAddress location);
+    ErrorManagement::ErrorType 			AddVariable2DB(CCString name,List<RuntimeEvaluatorInfo::VariableInformation> &db,VariableDescriptor vd/*,RuntimeEvaluatorInfo::DataMemoryAddress location*/);
 
     /**
      * implements FindOutputVariable
@@ -623,8 +623,10 @@ private:
 
     /**
      * used by Variable()
+     * allocated using Malloc() and Realloc
      */
-    RuntimeEvaluatorInfo::DataMemoryElement *               variablesMemoryPtr;
+    //RuntimeEvaluatorInfo::DataMemoryElement *               variablesMemoryPtr;
+    RuntimeEvaluatorInfo::VariablesMemory                   variablesMemory;
 
     /**
      * used by GetPseudoCode()
@@ -653,17 +655,13 @@ private:
      *                            INPUTS
      *                            OUTPUTS
      */
-    Vector<RuntimeEvaluatorInfo::DataMemoryElement> 		variablesMemory;
+//    Vector<RuntimeEvaluatorInfo::DataMemoryElement> 		variablesMemory;
 
     /**
      * stack is allocated here
      */
     Vector<RuntimeEvaluatorInfo::DataMemoryElement>         stack;
 
-    /**
-     * contains the memory used by large intermediate objects
-     */
-    List<Reference>											largeObjectPool;
     //@}
 
 };
@@ -674,17 +672,14 @@ private:
 /*---------------------------------------------------------------------------*/
 
 
-static inline RuntimeEvaluatorInfo::DataMemoryAddress ByteSizeToDataMemorySize(uint32 byteSize){
-    return static_cast<RuntimeEvaluatorInfo::DataMemoryAddress>((byteSize + sizeof(RuntimeEvaluatorInfo::DataMemoryElement) - 1U)/sizeof(RuntimeEvaluatorInfo::DataMemoryElement));
-}
-
 
 uint32 RuntimeEvaluator::GetSizeOfConstants(){
 	return startOfVariables;
 }
 
 uint32 RuntimeEvaluator::GetSizeOfVariables(){
-	return variablesMemory.GetNumberOfElements();
+//	return variablesMemory.GetNumberOfElements();
+    return variablesMemory.GetUsedSize();
 }
 
 uint32 RuntimeEvaluator::GetSizeOfCode(){
@@ -700,7 +695,7 @@ void RuntimeEvaluator::Pop(T &value){
     if (stackPtr){
         // adds granularity-1 so that also 1 byte uses 1 slot
         // stack points to the next free value. so one need to step back of the variable size
-        stackPtr -= ByteSizeToDataMemorySize(sizeof(T));
+        stackPtr -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(T));
         value = *((T *)stackPtr);
     }
 }
@@ -710,7 +705,7 @@ void RuntimeEvaluator::Peek(T &value){
     if (stackPtr){
         // adds granularity-1 so that also 1 byte uses 1 slot
         // stack points to the next free value. so one need to step back of the variable size
-    	RuntimeEvaluatorInfo::DataMemoryElement *p =  stackPtr- ByteSizeToDataMemorySize(sizeof(T));
+    	RuntimeEvaluatorInfo::DataMemoryElement *p =  stackPtr- RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(T));
         value = *((T *)p);
     }
 }
@@ -721,30 +716,31 @@ void RuntimeEvaluator::Push(T &value){
     if (stackPtr ){
         *((T *)stackPtr) = value;
         // adds granularity-1 so that also 1 byte uses 1 slot
-        stackPtr += ByteSizeToDataMemorySize(sizeof(T));
+        stackPtr += RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(T));
     }
 }
 
 template<typename T>
 T &RuntimeEvaluator::Variable(RuntimeEvaluatorInfo::DataMemoryAddress variableIndex){
     // note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
-    return (T&)variablesMemoryPtr[variableIndex];
+//    return (T&)RuntimeEvaluatorInfo::variablesMemoryPtr[variableIndex];
+    return variablesMemory.Variable<T>(variableIndex);
 }
 
 RuntimeEvaluatorInfo::CodeMemoryElement RuntimeEvaluator::GetPseudoCode(){
     return *codeMemoryPtr++;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(CCString name,VariableDescriptor vd,RuntimeEvaluatorInfo::DataMemoryAddress location){
-    return AddVariable2DB(name,inputVariableInfo,vd,location);
+ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(CCString name,VariableDescriptor vd){
+    return AddVariable2DB(name,inputVariableInfo,vd);
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::FindInputVariable(CCString name,RuntimeEvaluatorInfo::VariableInformation *&variableInformation){
     return FindVariableinDB(name,variableInformation,inputVariableInfo);
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::AddOutputVariable(CCString name,VariableDescriptor vd,RuntimeEvaluatorInfo::DataMemoryAddress location){
-    return AddVariable2DB(name,outputVariableInfo,vd,location);
+ErrorManagement::ErrorType RuntimeEvaluator::AddOutputVariable(CCString name,VariableDescriptor vd){
+    return AddVariable2DB(name,outputVariableInfo,vd);
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::FindOutputVariable(CCString name,RuntimeEvaluatorInfo::VariableInformation *&variableInformation){
