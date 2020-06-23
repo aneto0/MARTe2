@@ -39,6 +39,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/*lint -esym(793,"identifiers in one block") Justification: more than 1024 identifiers in one block are expected to be widely supported by any compiler. */
 namespace MARTe {
 
 uint32 availableFunctions = 0u;
