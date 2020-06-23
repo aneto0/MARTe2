@@ -1,6 +1,7 @@
 
 #include <RegularExpression.h>
 #include <RuntimeEvaluator.h>
+#include "Private/RuntimeEvaluatorVariableInformation.h"
 #include "StartupManager.h"
 #include "HighResolutionTimer.h"
 #include "BasicConsole.h"
@@ -291,58 +292,55 @@ return 0;
 
         if (ret){
                 uint32 index = 0U;
-                RuntimeEvaluatorInfo::VariableInformation *var;
+                RuntimeEvaluator::VariableInformation *var;
 
                 printf ("VAR SCAN RESULT\n");
                 while(context.BrowseInputVariable(index,var)){
-                        if (var->name == "A"){
-                                var->type = TypeDescriptor("float32");
-                                var->external.location = &externalA;
+                        if (var->GetName() == "A"){
+                            var->SetType(externalA);
                         }
-                        if (var->name == "B"){
-                                var->type = TypeDescriptor("float32");
-                                var->external.location = &externalB;
+                        if (var->GetName() == "B"){
+                            var->SetType(externalB);
                         }
-                        if (var->name == "N1"){
-                                var->type = TypeDescriptor("int8");
+                        if (var->GetName() == "N1"){
+                            var->SetType(TypeDescriptor("int8"));
                         }
-                        if (var->name == "N2"){
-                                var->type = TypeDescriptor("int8");
+                        if (var->GetName() == "N2"){
+                            var->SetType(TypeDescriptor("int8"));
                         }
-                        if (var->name == "N3"){
-                                var->type = TypeDescriptor("int8");
+                        if (var->GetName() == "N3"){
+                            var->SetType(TypeDescriptor("int8"));
                         }
-                        if (var->name == "N4"){
-                                var->type = TypeDescriptor("int8");
+                        if (var->GetName() == "N4"){
+                            var->SetType(TypeDescriptor("int8"));
                         }
             DynamicCString xx;
             CStringTool xxct = xx();
-            var->type.ToString(xxct);
+            var->GetType().ToString(xxct);
 
-            printf ("input  var %2i @%04x = %s type = %s\n",index,var->location,var->name.GetList(),xx.GetList());
+            printf ("input  var %2i @%04x = %s type = %s\n",index,var->GetLocation(),var->GetName().GetList(),xx.GetList());
                         index++;
                 }
 
                 index = 0;
                 while(context.BrowseOutputVariable(index,var)){
-                        if (var->name == "D"){
-                                var->type = TypeDescriptor("int32");
+                        if (var->GetName() == "D"){
+                                var->SetType(TypeDescriptor("int32"));
                         }
-                        if (var->name == "E"){
-                                var->type = TypeDescriptor("uint8");
+                        if (var->GetName() == "E"){
+                                var->SetType(TypeDescriptor("uint8"));
                         }
-                        if (var->name == "F"){
-                                var->type = TypeDescriptor("uint8");
-                                var->external.location = &externalF;
+                        if (var->GetName() == "F"){
+                                var->SetType(externalF);
                         }
-                        if (var->name == "N5"){
-                                var->type = TypeDescriptor("int8");
+                        if (var->GetName() == "N5"){
+                                var->SetType(TypeDescriptor("int8"));
                         }
             DynamicCString xx;
             CStringTool xxct = xx();
-            var->type.ToString(xxct);
+            var->GetType().ToString(xxct);
 
-            printf ("output var %2i @%04x = %s type = %s\n",index,var->location,var->name.GetList(),xx.GetList());
+            printf ("output var %2i @%04x = %s type = %s\n",index,var->GetLocation(),var->GetName().GetList(),xx.GetList());
                         index++;
                 }
         }
@@ -353,14 +351,14 @@ return 0;
         }
         if (ret){
                 uint32 index = 0U;
-                RuntimeEvaluatorInfo::VariableInformation *var;
+                RuntimeEvaluator::VariableInformation *var;
 
                 while(context.BrowseInputVariable(index,var)){
                 DynamicCString xx;
                 CStringTool xxct = xx();
-                var->type.ToString(xxct);
+                var->GetType().ToString(xxct);
 
-                printf ("input var %2i @%04x = %s type = %s\n",index,var->location,var->name.GetList(),xx.GetList());
+                printf ("input var %2i @%04x = %s type = %s\n",index,var->GetLocation(),var->GetName().GetList(),xx.GetList());
                         index++;
                 }
 
@@ -368,9 +366,9 @@ return 0;
                 while(context.BrowseOutputVariable(index,var)){
                 DynamicCString xx;
                 CStringTool xxct = xx();
-                var->type.ToString(xxct);
+                var->GetType().ToString(xxct);
 
-                printf ("output var %2i @%04x = %s type = %s\n",index,var->location,var->name.GetList(),xx.GetList());
+                printf ("output var %2i @%04x = %s type = %s\n",index,var->GetLocation(),var->GetName().GetList(),xx.GetList());
                         index++;
                 }
         }
@@ -386,31 +384,31 @@ return 0;
         if (ret){
                 printf ("ASSIGN INPUTS\n");
                 int32 index = 0;
-                RuntimeEvaluatorInfo::VariableInformation *var;
+                RuntimeEvaluator::VariableInformation *var;
 
                 while(context.BrowseInputVariable(index,var)){
                         index++;
 /*
-                        if (var->name == "A"){
+                        if (var->GetName() == "A"){
                                 float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
                                 *x = 1.0;
                         }
-                        if (var->name == "B"){
+                        if (var->GetName() == "B"){
                                 float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
                                 *x = 2.0;
                         }
 */
-                        if (var->name == "N1"){
-                                context.Variable<int8>(var->location) = 31;
+                        if (var->GetName() == "N1"){
+                                context.Variable<int8>(var->GetLocation()) = 31;
                         }
-                        if (var->name == "N2"){
-                                context.Variable<int8>(var->location) = 22;
+                        if (var->GetName() == "N2"){
+                                context.Variable<int8>(var->GetLocation()) = 22;
                         }
-                        if (var->name == "N3"){
-                                context.Variable<int8>(var->location) = 13;
+                        if (var->GetName() == "N3"){
+                                context.Variable<int8>(var->GetLocation()) = 13;
                         }
-                        if (var->name == "N4"){
-                                context.Variable<int8>(var->location) = 127;
+                        if (var->GetName() == "N4"){
+                                context.Variable<int8>(var->GetLocation()) = 127;
                         }
                 }
         }
@@ -418,16 +416,16 @@ return 0;
         if (ret){
                 printf ("VAR ALLOCATION RESULT\n");
                 uint32 index = 0;
-                RuntimeEvaluatorInfo::VariableInformation *var;
+                RuntimeEvaluator::VariableInformation *var;
 
                 while(context.BrowseInputVariable(index,var)){
-                        printf ("input  var %2i @%04x = %s \n",index,var->location,var->name.GetList());
+                        printf ("input  var %2i @%04x = %s \n",index,var->GetLocation(),var->GetName().GetList());
                         index++;
                 }
 
                 index = 0;
                 while(context.BrowseOutputVariable(index,var)){
-                        printf ("output var %2i @%04x = %s\n",index,var->location,var->name.GetList());
+                        printf ("output var %2i @%04x = %s\n",index,var->GetLocation(),var->GetName().GetList());
                         index++;
                 }
         }

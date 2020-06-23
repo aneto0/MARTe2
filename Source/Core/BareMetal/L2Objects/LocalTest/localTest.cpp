@@ -1,5 +1,6 @@
 
-#include <RuntimeEvaluator.h>
+#include "RuntimeEvaluator.h"
+#include "Private/RuntimeEvaluatorVariableInformation.h"
 #include "TestSupport.h"
 #include "StartupManager.h"
 
@@ -29,26 +30,26 @@ int main(){
 
 	if (ret){
 		uint32 index = 0;
-		RuntimeEvaluatorInfo::VariableInformation *var;
+		RuntimeEvaluator::VariableInformation *var;
 
 		printf ("VAR SCAN RESULT\n");
 		while(context.BrowseInputVariable(index,var)){
-			printf ("input  var %2i = %s\n",index,var->name.GetList());
+			printf ("input  var %2i = %s\n",index,var->GetName().GetList());
 			index++;
-			if (var->name == "A"){
-				var->type = TypeDescriptor("float32");
+			if (var->GetName() == "A"){
+				var->SetType(AnyType(TypeDescriptor("float32"),NULL));
 			}
-			if (var->name == "B"){
-				var->type = TypeDescriptor("float32");
+			if (var->GetName() == "B"){
+                var->SetType(TypeDescriptor("float32"));
 			}
 		}
 
 		index = 0;
 		while(context.BrowseOutputVariable(index,var)){
-			printf ("output var %2i = %s\n",index,var->name.GetList());
+			printf ("output var %2i = %s\n",index,var->GetName().GetList());
 			index++;
-			if (var->name == "C"){
-				var->type = TypeDescriptor("float32");
+			if (var->GetName() == "C"){
+                var->SetType(TypeDescriptor("float32"));
 			}
 		}
 

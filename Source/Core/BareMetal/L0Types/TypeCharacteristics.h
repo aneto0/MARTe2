@@ -95,6 +95,16 @@ static inline const T MinValue() {
 }
 
 /**
+ * @brief Returns the minimum distance between two floats. 0 for integers.
+ * @tparam T An integer/float type
+ * @return the minimum distance
+ */
+static inline const T Epsilon() {
+    T ret = std::numeric_limits<T>::epsilon();
+    return ret;
+}
+
+/**
  * @brief Returns the type usable bit size.
  * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1). For floats it is the exponent size
  * @tparam T An integer type

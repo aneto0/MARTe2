@@ -23,10 +23,12 @@
 
 #include <math.h>
 #include <Private/RuntimeEvaluatorFunctions.h>
+#include <Private/RuntimeEvaluatorVariableInformation.h>
 #include <RuntimeEvaluator.h>
 #include "SafeMath.h"
 #include "ErrorManagement.h"
 #include "RuntimeEvaluator.h"
+#include "AnyType.h"
 
 
 namespace MARTe{
@@ -35,77 +37,11 @@ uint32 availableFunctions = 0;
 
 RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
-#if 0
-ErrorManagement::ErrorType  RuntimeEvaluatorFunction::TryConsume(
-		CCString 									nameIn,
-		Stack<VariableDescriptor> &					typeStack,
-		bool 										matchOutput,
-		RuntimeEvaluatorInfo::DataMemoryAddress &	dataStackSize
-){
-	ErrorManagement::ErrorType ret;
 
-	// match function name
-    ret.comparisonFailure = !(name == nameIn);
-
-    VariableDescriptor vd;
-
-    // match first output if matchOutput is set
-    uint32 index = 0U;
-    if (ret && matchOutput){
-        ret = typeStack.Peek(vd,index++);
-        COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
-    }
-
-    if (ret && matchOutput){
-        ret.comparisonFailure = !types[numberOfInputs].SameAs(vd);
-    }
-
-    // match inputs types
-    for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
-        ret = typeStack.Peek(vd,index++);
-        COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
-        if (ret){
-            ret.comparisonFailure = !vd.SameAs(types[i]);
-        }
-    }
-
-    // found! commit changes
-    if (ret){
-
-    	// remove first output type
-        if (matchOutput){
-            VariableDescriptor vd;
-            ret = typeStack.Pop(vd);
-            REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
-        }
-
-        // remove inputs types
-        for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
-        	VariableDescriptor vd;
-            ret = typeStack.Pop(vd);
-            REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
-            if (ret){
-                dataStackSize -= ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
-            }
-        }
-
-        // insert output types
-        for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
-            ret = typeStack.Push(types[i+numberOfInputs]);
-            REPORT_ERROR(ret,"typeStack.Push(..) failed");
-            if (ret){
-                dataStackSize += ByteSizeToDataMemorySize(types[i+numberOfInputs].GetSummaryTypeDescriptor().StorageSize());
-            }
-        }
-    }
-
-    return ret;
-}
-#endif
 
 ErrorManagement::ErrorType  RuntimeEvaluatorFunction::Check(
 		CCString 									nameIn,
-		Stack<VariableDescriptor> &					typeStack,
+		Stack<AnyType> &					        typeStack,
 		bool 										matchOutput
 ){
 	ErrorManagement::ErrorType ret;
@@ -113,32 +49,32 @@ ErrorManagement::ErrorType  RuntimeEvaluatorFunction::Check(
 	// match function name
     ret.comparisonFailure = !(name == nameIn);
 
-    VariableDescriptor vd;
+    AnyType at;
 
     // match first output if matchOutput is set
     uint32 index = 0U;
     if (ret && matchOutput){
-        ret = typeStack.Peek(vd,index++);
-        COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
+        ret = typeStack.Peek(at,index++);
+        COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(at,",index-1,") failed");
     }
 
     if (ret && matchOutput){
+        VariableDescriptor vd = at.GetFullVariableDescriptor();
         ret.comparisonFailure = !types[numberOfInputs].SameAs(vd);
     }
 
     // match inputs types
     for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
-        ret = typeStack.Peek(vd,index++);
+        ret = typeStack.Peek(at,index++);
         COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
         if (ret){
+            VariableDescriptor vd = at.GetFullVariableDescriptor();
             ret.comparisonFailure = !vd.SameAs(types[i]);
         }
     }
 
     return ret;
 }
-
-
 
 /**
  * to register a function
@@ -149,46 +85,16 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record){
     }
 }
 
-#if 0
-ErrorManagement::ErrorType  FindPCodeAndUpdateTypeStack(
-		RuntimeEvaluatorInfo::CodeMemoryElement &code,
-		CCString 								nameIn,
-		Stack<VariableDescriptor> &				typeStack,
-		bool 									matchOutput,
-		RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize
-){
-	ErrorManagement::ErrorType ret;
-
-    RuntimeEvaluatorInfo::CodeMemoryElement i = 0;
-
-    for (i=0; ret && (i < availableFunctions);i++ ){
-//        ret = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
-    	ret = functionRecords[i].Check(nameIn,typeStack,matchOutput);
-
-    	if (ret){
-            code = i;
-            // force exit
-            i = availableFunctions;
-        	ret = functionRecords[i].Consume(typeStack,matchOutput,dataStackSize);
-    	} else {
-            ret.comparisonFailure = false;
-    	}
-    }
-
-    return ret;
-}
-#endif
-
 ErrorManagement::ErrorType  FindPCode(
-		RuntimeEvaluatorInfo::CodeMemoryElement &code,
+		RuntimeEvaluator::CodeMemoryElement &code,
 		CCString 								nameIn,
-		Stack<VariableDescriptor> &				typeStack,
+		Stack<AnyType> &				        typeStack,
 		bool 									matchOutput
 )
 {
 	ErrorManagement::ErrorType ret;
 
-    RuntimeEvaluatorInfo::CodeMemoryElement i = 0;
+    RuntimeEvaluator::CodeMemoryElement i = 0;
 
     for (i=0; ret && (i < availableFunctions);i++ ){
 //        ret = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
@@ -254,10 +160,36 @@ static ErrorManagement::ErrorType GetMatrixInfo(const VariableDescriptor &vd,uin
 }
 
 
+static inline ErrorManagement::ErrorType IsValidMatrix(bool& isValidMatrix,AnyType &at,uint32 &nRows, uint32 &nColumns){
+    ErrorManagement::ErrorType ret;
+    VariableDescriptor vd = at.GetFullVariableDescriptor();
+    CCString modifiers = CCString(vd.GetModifiers());
+
+    isValidMatrix = (( modifiers == "M") || (modifiers == "m"));
+
+    if (isValidMatrix){
+        isValidMatrix = ((vd.GetFinalTypeDescriptor().SameAs(Float32Bit)) || (vd.GetFinalTypeDescriptor().SameAs(Float64Bit)));
+    }
+
+    if (isValidMatrix){
+        ret.internalSetupError = (at.GetVariablePointer() == NULL);
+    }
+
+    if (isValidMatrix && ret){
+        const Matrix<float> *mf = reinterpret_cast<const Matrix<float> *> (at.GetVariablePointer());
+        nRows = mf->GetNumberOfRows();
+        nRows = mf->GetNumberOfColumns();
+    }
+
+    return ret;
+}
+
+
+
 ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
-		Stack<VariableDescriptor> &							typeStack,
-		RuntimeEvaluatorInfo::DataMemoryAddress & 			dataStackSize,
-		List<RuntimeEvaluatorInfo::VariableInformation> &	db,
+		Stack<AnyType> &							        typeStack,
+		RuntimeEvaluator::DataMemoryAddress & 			    dataStackSize,
+		List<RuntimeEvaluator::VariableInformation> &	    db,
 		bool 												matchOutput,
 		uint32 &                                            dummyID){
 
@@ -269,22 +201,29 @@ ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
 
 	// remove first element which is the matched output type
     if (ret && matchOutput){
-        VariableDescriptor vd;
-        ret = typeStack.Pop(vd);
+        AnyType at;
+        ret = typeStack.Pop(at);
         REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
     }
 
     // remove inputs types
     for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
-    	VariableDescriptor vd;
-        ret = typeStack.Pop(vd);
-        REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
+        AnyType at;
+        ret = typeStack.Pop(at);
+        REPORT_ERROR(ret,"typeStack.Pop(at) failed");
+
+        bool isValidMatrix = false;
+        uint32 nc=0,nr=0;
         if (ret){
-        	uint32 nc=0,nr=0;
-        	if (GetMatrixInfo(vd,nc,nr)){
-                dataStackSize -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluatorInfo::DataMemoryAddress));
+            ret = IsValidMatrix(isValidMatrix,at,nc,nr);
+            REPORT_ERROR(ret,"error in IsValidMatrix");
+        }
+
+        if (ret){
+        	if (isValidMatrix){
+                dataStackSize -= RuntimeEvaluator::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluator::DataMemoryAddress));
         	} else {
-                dataStackSize -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
+                dataStackSize -= RuntimeEvaluator::ByteSizeToDataMemorySize(at.GetFullVariableDescriptor().GetSummaryTypeDescriptor().StorageSize());
         	}
         }
     }
@@ -300,7 +239,7 @@ ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
             REPORT_ERROR(ret,"cannot handle matrices as output");
         }
         if (ret){
-            dataStackSize += RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
+            dataStackSize += RuntimeEvaluator::ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
         }
     }
 
@@ -309,75 +248,104 @@ ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
 
 ErrorManagement::ErrorType Matrix_Addition_UpdateStack(
         const RuntimeEvaluatorFunction &                    ref,
-		Stack<VariableDescriptor> &							typeStack,
-		RuntimeEvaluatorInfo::DataMemoryAddress & 			dataStackSize,
-		List<RuntimeEvaluatorInfo::VariableInformation> &	db,
+		Stack<AnyType> &							        typeStack,
+		RuntimeEvaluator::DataMemoryAddress & 			    dataStackSize,
+		List<RuntimeEvaluator::VariableInformation> &	    db,
 		uint32 &                                            dummyID){
 
 	ErrorManagement::ErrorType ret;
 
-	VariableDescriptor vd1,vd2;
-    ret = typeStack.Pop(vd1);
-    REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
-    dataStackSize -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluatorInfo::DataMemoryAddress));
-
-    uint32 nRows 		= 0;
-    uint32 nColumns		= 0;
+	AnyType at1,at2;
+    ret = typeStack.Pop(at1);
+    REPORT_ERROR(ret,"typeStack.Pop(at1) failed");
+    dataStackSize -= RuntimeEvaluator::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluator::DataMemoryAddress));
 
     if (ret){
-    	ret = GetMatrixInfo(vd1,nRows, nColumns);
+        ret = typeStack.Pop(at2);
+        REPORT_ERROR(ret,"typeStack.Pop(at2) failed");
+        dataStackSize -= RuntimeEvaluator::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluator::DataMemoryAddress));
     }
 
     if (ret){
-        ret = typeStack.Pop(vd2);
-        REPORT_ERROR(ret,"typeStack.Pop(vd) failed");
-        dataStackSize -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluatorInfo::DataMemoryAddress));
+    	ret.unsupportedFeature = !(at1.GetFullVariableDescriptor().SameAs(at2.GetFullVariableDescriptor()));
+        REPORT_ERROR(ret,"error expecting two matrices");
+    }
+
+    uint32 nRows        = 1;
+    uint32 nColumns     = 1;
+    bool isValidMatrix  = false;
+
+    if (ret){
+        ret = IsValidMatrix(isValidMatrix,at1,nColumns,nRows);
+        REPORT_ERROR(ret,"error first param not valid Matrix");
     }
 
     if (ret){
-    	ret.unsupportedFeature = !(vd1.SameAs(vd2));
+        ret.internalSetupError = !isValidMatrix;
+        REPORT_ERROR(ret,"error expecting valid matrix as param 1");
+    }
+
+    uint32 nRows2        = 1;
+    uint32 nColumns2     = 1;
+    if (ret){
+        ret = IsValidMatrix(isValidMatrix,at2,nColumns2,nRows2);
+        REPORT_ERROR(ret,"error second param not valid Matrix");
+    }
+
+    if (ret){
+        ret.internalSetupError = !isValidMatrix;
+        REPORT_ERROR(ret,"error expecting valid matrix as param 2");
+    }
+
+    if (ret){
+        ret.unsupportedFeature = (nRows != nRows2) || (nColumns != nColumns2);
+        REPORT_ERROR(ret,"error expecting matrices of same size");
     }
 
     // prepare the space for the intermediate results
-    RuntimeEvaluatorInfo::VariableInformation variableInfo;
+    RuntimeEvaluator::VariableInformation variableInformation;
     if (ret){
-        ret = typeStack.Push(vd1);
-
-        dataStackSize += sizeof(RuntimeEvaluatorInfo::DataMemoryAddress);
-
-        // need to allocate variable and memory
-        variableInfo.name().Append("Temp").Append('@').Append(dummyID++);
-        variableInfo.type 		= vd1;
-        variableInfo.location 	= InvalidDataMemoryAddress;
-        variableInfo.external.dimensions[0] = nRows;
-        variableInfo.external.dimensions[1] = nColumns;
-
-        ret = variableInfo.AllocateMatrixMemory();
+        ret = typeStack.Push(at1);
+        REPORT_ERROR(ret,"error adding result type to stack");
     }
 
     if (ret){
-    	ret = db.Insert(variableInfo );
+        dataStackSize += sizeof(RuntimeEvaluator::DataMemoryAddress);
+
+        // need to allocate variable and memory
+        DynamicCString name;
+        name().Append("Temp").Append('@').Append(dummyID++);
+        variableInformation.SetName(name);
+        // extracts matrix size from at1
+        ret = variableInformation.SetType(at1);
+        REPORT_ERROR(ret,"error setting type of variableInformation");
+    }
+
+    if (ret){
+        ret = variableInformation.AllocateMatrixMemory();
+        REPORT_ERROR(ret,"error variableInformation external memory");
+    }
+
+    if (ret){
+        // should move memory management responsibility to new member of database
+    	ret = db.Insert(variableInformation );
     }
 
     return ret;
 }
 
 template <typename T> void Matrix_Addition(RuntimeEvaluator &context){
-	RuntimeEvaluatorInfo::DataMemoryAddress  y1,y2;
+	RuntimeEvaluator::DataMemoryAddress  y1,y2;
     context.Pop(y1);
     context.Pop(y2);
-    RuntimeEvaluatorInfo::CodeMemoryElement yOut;
+    RuntimeEvaluator::CodeMemoryElement yOut;
     yOut = context.GetPseudoCode();
 
-    RuntimeEvaluatorInfo::ExternalVariableInformation &z1   = context.Variable<RuntimeEvaluatorInfo::ExternalVariableInformation>(y1);
-    RuntimeEvaluatorInfo::ExternalVariableInformation &z2   = context.Variable<RuntimeEvaluatorInfo::ExternalVariableInformation>(y2);
-    RuntimeEvaluatorInfo::ExternalVariableInformation &zOut = context.Variable<RuntimeEvaluatorInfo::ExternalVariableInformation>(yOut);
+    Matrix<T> &z1   = context.Variable< Matrix<T> >(y1);
+    Matrix<T> &z2   = context.Variable< Matrix<T> >(y2);
+    Matrix<T> &zOut = context.Variable< Matrix<T> >(yOut);
 
-    Matrix<T> x1(reinterpret_cast<T *>(z1.location),z1.dimensions[0],z1.dimensions[1]);
-    Matrix<T> x2(reinterpret_cast<T *>(z2.location),z2.dimensions[0],z2.dimensions[1]);
-    Matrix<T> xOut(reinterpret_cast<T *>(zOut.location),zOut.dimensions[0],zOut.dimensions[1]);
-
-    if (!x1.Sum(x2,xOut)){
+    if (!z1.Sum(z2,zOut)){
     	context.runtimeError.internalSetupError = true;
     }
     context.Push(yOut);
@@ -1033,13 +1001,13 @@ REGISTER_2T_COMP_OPERATOR_BLOCK(NEQ,Different)
  **********************************************************************************************************/
 
 template <typename T> void Read(RuntimeEvaluator &context){
-    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    RuntimeEvaluator::CodeMemoryElement index;
     index = context.GetPseudoCode();
     context.Push(context.Variable<T>(index));
 }
 
 template <typename T> void Write(RuntimeEvaluator &context){
-    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    RuntimeEvaluator::CodeMemoryElement index;
     index = context.GetPseudoCode();
     context.Pop(context.Variable<T>(index));
 }
@@ -1075,7 +1043,7 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,Sig
 
 
 template <typename Tin,typename Tout> void Write_2T(RuntimeEvaluator &context){
-    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    RuntimeEvaluator::CodeMemoryElement index;
     index = context.GetPseudoCode();
     Tin x1;
     Tout x2;
@@ -1121,13 +1089,13 @@ REGISTER_WRITECONV(WRITE,Write,int32 ,int16)
  **********************************************************************************************************/
 
 template <typename T> void RRead(RuntimeEvaluator &context){
-    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    RuntimeEvaluator::CodeMemoryElement index;
     index = context.GetPseudoCode();
     T *x = context.Variable<T *>(index);
     context.Push(*x);
 }
 template <typename T> void RWrite(RuntimeEvaluator &context){
-    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    RuntimeEvaluator::CodeMemoryElement index;
     index = context.GetPseudoCode();
     T *x = context.Variable<T *>(index);
     context.Pop(*x);
@@ -1156,7 +1124,7 @@ REGISTER_PCODE_FUNCTION(RWRITE,uint8 ,1,0,RWrite<uint8>   ,UnsignedInteger8Bit ,
 REGISTER_PCODE_FUNCTION(RWRITE,int8  ,1,0,RWrite<int8>     ,SignedInteger8Bit   ,SignedInteger8Bit   )
 
 template <typename Tin,typename Tout> void RWrite_2T(RuntimeEvaluator &context){
-    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    RuntimeEvaluator::CodeMemoryElement index;
     index = context.GetPseudoCode();
     Tin x1;
     context.Pop(x1);

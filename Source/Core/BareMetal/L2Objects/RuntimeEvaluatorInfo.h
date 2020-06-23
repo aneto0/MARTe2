@@ -47,6 +47,7 @@
 namespace MARTe{
 namespace RuntimeEvaluatorInfo{
 
+#if 0
 /**
  * type used to store 1 PseudoCode element
  */
@@ -299,6 +300,7 @@ struct VariableInformation {
 	mutable bool 				memoryAllocated;
 
 	/**
+        RuntimeEvaluatorFunction &fr = functionRecords[pCode];
 	 * initialises data
 	 */
 	inline                              VariableInformation();
@@ -418,6 +420,7 @@ inline VariableInformation::VariableInformation(const VariableInformation &in){
 	external		= in.external;
 	in.memoryAllocated = false;
 }
+#endif
 
 } // PseudoCode
 } // MARTe

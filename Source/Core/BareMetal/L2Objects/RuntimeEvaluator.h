@@ -37,10 +37,9 @@
 #include "Vector.h"
 #include "List.h"
 #include "CCString.h"
-#include "TypeDescriptor.h"
 #include "CompositeErrorManagement.h"
-#include "RuntimeEvaluatorInfo.h"
 #include "Reference.h"
+#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -363,6 +362,11 @@ class RuntimeEvaluator {
 
 public:
     /**
+     *  Forward declaration of the record used to store variable information obtained from the compilation
+     */
+    class VariableInformation;
+
+    /**
      * constructor
      */
     RuntimeEvaluator();
@@ -381,15 +385,21 @@ public:
      */
     ErrorManagement::ErrorType 						ExtractVariables(CCString RPNCode);
 
-    /**
-     * Looks for a variable at a given location
-     */
-    ErrorManagement::ErrorType 						BrowseInputVariable(uint32 index,RuntimeEvaluatorInfo::VariableInformation *&variableInformation);
+    VariableInformation *                           SelectVariable(uint32 index,bool input);
+    VariableInformation *                           SelectVariable(CCString name,bool input);
+    ErrorManagement::ErrorType                      ReadVariable(VariableInformation *vi,AnyType x);
+    ErrorManagement::ErrorType                      WriteVariable(VariableInformation *vi,AnyType x);
+
 
     /**
      * Looks for a variable at a given location
      */
-    ErrorManagement::ErrorType 						BrowseOutputVariable(uint32 index,RuntimeEvaluatorInfo::VariableInformation *&variableInformation);
+    ErrorManagement::ErrorType 						BrowseInputVariable(uint32 index,VariableInformation *&variableInformation);
+
+    /**
+     * Looks for a variable at a given location
+     */
+    ErrorManagement::ErrorType 						BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
 
     /**
      * @brief   Compiles the expression and prepares it for execution.
@@ -482,15 +492,50 @@ public:
      */
     //@{
 
+        /**
+         * type used to store 1 PseudoCode element
+         */
+        typedef uint16 CodeMemoryElement;
+
+        /**
+         * type used to address 1 PseudoCode element
+         */
+        typedef uint16 CodeMemoryAddress;
+
+        /**
+         * type used to store 1 Data element in the stack and data area
+         */
+        typedef uint32 DataMemoryElement;
+
+        /**
+         * type used to address 1 Data element MUST be the same as a CodeMemoryElement
+         */
+        typedef CodeMemoryElement DataMemoryAddress;
+
+        /**
+         *
+         */
+        static const DataMemoryAddress                  InvalidDataMemoryAddress;
+
+        /**
+         * used to mark an address to be invalid
+         */
+        static const CodeMemoryElement                  InvalidCodeMemoryElement;
+
+        /**
+         * converts bytes to number of Data Memory elements
+         */
+        static inline DataMemoryAddress                 ByteSizeToDataMemorySize(uint32 byteSize);
+
     	/**
     	 * Reads from code memory
     	 */
-    	inline RuntimeEvaluatorInfo::CodeMemoryElement  GetPseudoCode();
+    	inline CodeMemoryElement                        GetPseudoCode();
 
     	/**
     	 * Reads from Data Memory
     	 */
-    	template<typename T>T &     					Variable(RuntimeEvaluatorInfo::DataMemoryAddress variableIndex);
+    	template<typename T>T &     					Variable(DataMemoryAddress variableIndex);
 
         /**
         * @brief      Get the value on the top of the stack and then move the pointer.
@@ -532,6 +577,8 @@ public:
 
     //@}
 
+
+
 private:
 
     /**
@@ -543,7 +590,7 @@ private:
     /**
      * Looks for a variable of a given name
      */
-    inline ErrorManagement::ErrorType	FindInputVariable(CCString name,RuntimeEvaluatorInfo::VariableInformation *&variableInformation);
+    inline ErrorManagement::ErrorType	FindInputVariable(CCString name,VariableInformation *&variableInformation);
 
     /**
      * Checks existence of name using FindOutputVariable
@@ -554,22 +601,22 @@ private:
     /**
      * Looks for a variable of a given name
      */
-    inline ErrorManagement::ErrorType 	FindOutputVariable(CCString name,RuntimeEvaluatorInfo::VariableInformation *&variableInformation);
+    inline ErrorManagement::ErrorType 	FindOutputVariable(CCString name,VariableInformation *&variableInformation);
 
     /**
      * Looks for a variable of a given name
      */
-    ErrorManagement::ErrorType 			FindVariable(RuntimeEvaluatorInfo::DataMemoryAddress address,RuntimeEvaluatorInfo::VariableInformation *&variableInformation);
+    ErrorManagement::ErrorType 			FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation);
 
     /**
      * implements AddOutputVariable and AddInputVariable
      */
-    ErrorManagement::ErrorType 			AddVariable2DB(CCString name,List<RuntimeEvaluatorInfo::VariableInformation> &db,VariableDescriptor vd/*,RuntimeEvaluatorInfo::DataMemoryAddress location*/);
+    ErrorManagement::ErrorType 			AddVariable2DB(CCString name,List<VariableInformation> &db,VariableDescriptor vd/*,DataMemoryAddress location*/);
 
     /**
      * implements FindOutputVariable
      */
-    ErrorManagement::ErrorType 			FindVariableinDB(CCString name,RuntimeEvaluatorInfo::VariableInformation *&variableInformation,List<RuntimeEvaluatorInfo::VariableInformation> &db);
+    ErrorManagement::ErrorType 			FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
 
     /**
      * expands function information input description into readable text
@@ -596,19 +643,18 @@ private:
     /**
      * the input variable names
      */
-    List<RuntimeEvaluatorInfo::VariableInformation>         inputVariableInfo;
+    List<VariableInformation>         inputVariableInfo;
 
-    /**
+    /***
      * the output variable names
      */
-    List<RuntimeEvaluatorInfo::VariableInformation>         outputVariableInfo;
+    List<VariableInformation>         outputVariableInfo;
 
     /**
      * address of first variable (after constants) or how many MemoryElement are used for constants
      */
-    RuntimeEvaluatorInfo::DataMemoryAddress                 startOfVariables;
+    DataMemoryAddress                 startOfVariables;
     //@}
-
 
     /**
      * @name    Members reinitialized every Execute()
@@ -619,31 +665,12 @@ private:
     /**
      * used by Push/Pop/Peek
      */
-    RuntimeEvaluatorInfo::DataMemoryElement *               stackPtr;
-
-    /**
-     * used by Variable()
-     * allocated using Malloc() and Realloc
-     */
-    //RuntimeEvaluatorInfo::DataMemoryElement *               variablesMemoryPtr;
-    RuntimeEvaluatorInfo::VariablesMemory                   variablesMemory;
+    DataMemoryElement *               stackPtr;
 
     /**
      * used by GetPseudoCode()
      */
-    const RuntimeEvaluatorInfo::CodeMemoryElement *         codeMemoryPtr;
-    //@}
-
-    /**
-     * @name    Members generated by Compile()
-     * @details this is the code execution context.
-     */
-    //@{
-
-    /**
-     * code instructions  are allocated here
-     */
-    StaticList<RuntimeEvaluatorInfo::CodeMemoryElement,32>  codeMemory;
+    const CodeMemoryElement *         codeMemoryPtr;
 
     /**
      * @brief   Variable and constants are allocated here.
@@ -655,12 +682,30 @@ private:
      *                            INPUTS
      *                            OUTPUTS
      */
-//    Vector<RuntimeEvaluatorInfo::DataMemoryElement> 		variablesMemory;
+    DataMemoryElement *               variablesMemoryPtr;
+
+    //@}
+
+    /**
+     * @name    Members generated by Compile()
+     * @details this is the code execution context.
+     */
+    //@{
+
+    /**
+     * code instructions  are allocated here
+     */
+    StaticList<CodeMemoryElement,32>  codeMemory;
+
+    /**
+     * number of DataMemoryElement
+     */
+    uint32                            sizeOfVariablesMemory;
 
     /**
      * stack is allocated here
      */
-    Vector<RuntimeEvaluatorInfo::DataMemoryElement>         stack;
+    Vector<DataMemoryElement>         stack;
 
     //@}
 
@@ -679,7 +724,8 @@ uint32 RuntimeEvaluator::GetSizeOfConstants(){
 
 uint32 RuntimeEvaluator::GetSizeOfVariables(){
 //	return variablesMemory.GetNumberOfElements();
-    return variablesMemory.GetUsedSize();
+//    return variablesMemory.GetUsedSize();
+    return sizeOfVariablesMemory;
 }
 
 uint32 RuntimeEvaluator::GetSizeOfCode(){
@@ -695,7 +741,7 @@ void RuntimeEvaluator::Pop(T &value){
     if (stackPtr){
         // adds granularity-1 so that also 1 byte uses 1 slot
         // stack points to the next free value. so one need to step back of the variable size
-        stackPtr -= RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(T));
+        stackPtr -= ByteSizeToDataMemorySize(sizeof(T));
         value = *((T *)stackPtr);
     }
 }
@@ -705,7 +751,7 @@ void RuntimeEvaluator::Peek(T &value){
     if (stackPtr){
         // adds granularity-1 so that also 1 byte uses 1 slot
         // stack points to the next free value. so one need to step back of the variable size
-    	RuntimeEvaluatorInfo::DataMemoryElement *p =  stackPtr- RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(T));
+    	DataMemoryElement *p =  stackPtr- ByteSizeToDataMemorySize(sizeof(T));
         value = *((T *)p);
     }
 }
@@ -716,18 +762,18 @@ void RuntimeEvaluator::Push(T &value){
     if (stackPtr ){
         *((T *)stackPtr) = value;
         // adds granularity-1 so that also 1 byte uses 1 slot
-        stackPtr += RuntimeEvaluatorInfo::ByteSizeToDataMemorySize(sizeof(T));
+        stackPtr += ByteSizeToDataMemorySize(sizeof(T));
     }
 }
 
 template<typename T>
-T &RuntimeEvaluator::Variable(RuntimeEvaluatorInfo::DataMemoryAddress variableIndex){
+T &RuntimeEvaluator::Variable(DataMemoryAddress variableIndex){
     // note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
-//    return (T&)RuntimeEvaluatorInfo::variablesMemoryPtr[variableIndex];
-    return variablesMemory.Variable<T>(variableIndex);
+    return (T&)variablesMemoryPtr[variableIndex];
+//    return variablesMemory.Variable<T>(variableIndex);
 }
 
-RuntimeEvaluatorInfo::CodeMemoryElement RuntimeEvaluator::GetPseudoCode(){
+RuntimeEvaluator::CodeMemoryElement RuntimeEvaluator::GetPseudoCode(){
     return *codeMemoryPtr++;
 }
 
@@ -735,7 +781,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(CCString name,Vari
     return AddVariable2DB(name,inputVariableInfo,vd);
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FindInputVariable(CCString name,RuntimeEvaluatorInfo::VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::FindInputVariable(CCString name,VariableInformation *&variableInformation){
     return FindVariableinDB(name,variableInformation,inputVariableInfo);
 }
 
@@ -743,9 +789,14 @@ ErrorManagement::ErrorType RuntimeEvaluator::AddOutputVariable(CCString name,Var
     return AddVariable2DB(name,outputVariableInfo,vd);
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FindOutputVariable(CCString name,RuntimeEvaluatorInfo::VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
     return FindVariableinDB(name,variableInformation,outputVariableInfo);
 }
+
+RuntimeEvaluator::DataMemoryAddress RuntimeEvaluator::ByteSizeToDataMemorySize(uint32 byteSize) {
+    return static_cast<DataMemoryAddress>((byteSize + sizeof(DataMemoryElement) - 1U)/sizeof(DataMemoryElement));
+}
+
 
 } // MARTe
 

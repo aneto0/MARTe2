@@ -52,9 +52,9 @@ typedef void (*Function)(RuntimeEvaluator & context);
 /** custom stack processing and variable allocation*/
 typedef ErrorManagement::ErrorType (*UpdateStackFun)(
 		const RuntimeEvaluatorFunction &					ref,
-		Stack<VariableDescriptor> &							typeStack,
-		RuntimeEvaluatorInfo::DataMemoryAddress & 			dataStackSize,
-		List<RuntimeEvaluatorInfo::VariableInformation> &	db,
+		Stack<AnyType> &							        typeStack,
+		RuntimeEvaluator::DataMemoryAddress & 			    dataStackSize,
+		List<RuntimeEvaluator::VariableInformation> &	    db,
 		uint32 &                                            dummyID);
 
 const UpdateStackFun NULLUpdateStackFun = NULL;
@@ -114,7 +114,7 @@ struct RuntimeEvaluatorFunction{
 	 */
     ErrorManagement::ErrorType  Check(
     		CCString 									nameIn,
-    		Stack<VariableDescriptor> &					typeStack,
+    		Stack<AnyType> &					        typeStack,
     		bool 										matchOutput
     );
 
@@ -127,9 +127,9 @@ struct RuntimeEvaluatorFunction{
 	 *  @param[in,out] dataStackSize the amount of space needed in the dataStack (it gets updated by this function upon match)
 	 */
     ErrorManagement::ErrorType UpdateStack(
-    		Stack<VariableDescriptor> &							typeStack,
-			RuntimeEvaluatorInfo::DataMemoryAddress & 			dataStackSize,
-    		List<RuntimeEvaluatorInfo::VariableInformation> &	db,
+    		Stack<AnyType> &							        typeStack,
+			RuntimeEvaluator::DataMemoryAddress & 			    dataStackSize,
+    		List<RuntimeEvaluator::VariableInformation> &	    db,
     		bool 												matchOutput,
     		uint32 &                                            dummyID);
 
@@ -150,23 +150,6 @@ extern uint32 availableFunctions;
  */
 extern RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
-#if 0
-/**
- *  @brief Searches the list of functions for one matching the needs and then simulates its effect on the stack of types and the dataStackSize
- *  @param[out] code the address within functionRecords to the selected function
- *  @param[in] 	nameIn the function name to be matched
- *  @param[in] 	typeStack the current stack of input types which need to be matched, consumed and replaced with the outputType
- *  @param[out] dataStackSize the amount of space needed in the dataStack
- *
- */
-ErrorManagement::ErrorType FindPCodeAndUpdateTypeStack(
-		RuntimeEvaluatorInfo::CodeMemoryElement &code,
-		CCString nameIn,
-		Stack<VariableDescriptor> &typeStack,
-		bool matchOutput,
-		RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize
-);
-#endif
 
 /**
  *  @brief Searches the list of functions for one matching the needs
@@ -176,9 +159,9 @@ ErrorManagement::ErrorType FindPCodeAndUpdateTypeStack(
  *
  */
 ErrorManagement::ErrorType  FindPCode(
-		RuntimeEvaluatorInfo::CodeMemoryElement &code,
+		RuntimeEvaluator::CodeMemoryElement &   code,
 		CCString 								nameIn,
-		Stack<VariableDescriptor> &				typeStack,
+		Stack<AnyType> &				        typeStack,
 		bool 									matchOutput
 );
 

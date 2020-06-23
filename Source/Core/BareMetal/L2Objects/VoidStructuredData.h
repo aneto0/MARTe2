@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef SOURCE_CORE_BAREMETAL_L2OBJECTS_VOIDSTRUCTUREDDATA_H_
-#define SOURCE_CORE_BAREMETAL_L2OBJECTS_VOIDSTRUCTUREDDATA_H_
+#ifndef VOIDSTRUCTUREDDATA_H_
+#define VOIDSTRUCTUREDDATA_H_
 
 
 /*---------------------------------------------------------------------------*/
@@ -153,4 +153,4 @@ public:
 
 } // MARTe
 
-#endif /* SOURCE_CORE_BAREMETAL_L2OBJECTS_VOIDSTRUCTUREDDATA_H_ */
+#endif /* VOIDSTRUCTUREDDATA_H_ */

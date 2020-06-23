@@ -164,6 +164,12 @@ public:
     inline uint32 GetNumberOfElements() const;
 
     /**
+     * @brief Gets the allocation mode.
+     * @return the allocation mode.
+     */
+    inline AllocationMode GetAllocationMode() const ;
+
+    /**
      * @brief Returns the vector associated to the specified row.
      * @param[in] rows The row to retrieve.
      * @return the vector associated to the specified row.
