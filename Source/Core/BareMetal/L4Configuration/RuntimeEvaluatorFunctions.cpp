@@ -248,7 +248,12 @@ REGISTER_CAST_FUNCTION_BLOCK(int8   ,Casting)
             T x;                                                                    \
             T res;                                                                  \
             context.Pop(x);                                                         \
-            res = fname (x);                                                        \
+            /* sin, cos etc. are defined on double only  */                         \
+            float64 x_double;                                                       \
+            float64 res_double;                                                     \
+            x_double = static_cast<T>(x);                                           \
+            res_double = fname (x_double);                                          \
+            res = static_cast<T>(res_double);                                       \
             context.Push(res);                                                      \
         }                                                                           \
         REGISTER_PCODE_FUNCTION(name,float32,1u,1u,function ## fname ## ication <float32>,Float32Bit,Float32Bit)  \
@@ -306,12 +311,12 @@ REGISTER_2_FUNCTION(POW,pow)
         REGISTER_PCODE_FUNCTION(name,uint8  ,2u,1u,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit     ,UnsignedInteger8Bit) \
         REGISTER_PCODE_FUNCTION(name,int8   ,2u,1u,function ## fname ## ication <int8>   ,SignedInteger8Bit   ,SignedInteger8Bit      ,UnsignedInteger8Bit)
 
-REGISTER_COMPARE_OPERATOR(EQ, == ,Equal)
+REGISTER_COMPARE_OPERATOR(EQ,  == ,Equal    )
 REGISTER_COMPARE_OPERATOR(NEQ, != ,Different)
-REGISTER_COMPARE_OPERATOR(GT, > ,Greater)
-REGISTER_COMPARE_OPERATOR(LT, < ,Smaller)
-REGISTER_COMPARE_OPERATOR(GTE, >= ,Great)
-REGISTER_COMPARE_OPERATOR(LTE, <= ,Small)
+REGISTER_COMPARE_OPERATOR(GT,  >  ,Greater  )
+REGISTER_COMPARE_OPERATOR(LT,  <  ,Smaller  )
+REGISTER_COMPARE_OPERATOR(GTE, >= ,Great    )
+REGISTER_COMPARE_OPERATOR(LTE, <= ,Small    )
 
 /*********************************************************************************************************
  *********************************************************************************************************
@@ -334,9 +339,9 @@ REGISTER_COMPARE_OPERATOR(LTE, <= ,Small)
         }                                                                           \
         REGISTER_PCODE_FUNCTION(name,boolean,2u,1u,function ## fname ## ication,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
 
-REGISTER_LOGICAL_OPERATOR(AND, && ,And)
-REGISTER_LOGICAL_OPERATOR(OR, || ,Or)
-REGISTER_LOGICAL_OPERATOR(XOR, != ,xor)
+REGISTER_LOGICAL_OPERATOR(AND, &&, And)
+REGISTER_LOGICAL_OPERATOR(OR,  ||, Or )
+REGISTER_LOGICAL_OPERATOR(XOR, !=, xor)
 
 
 
