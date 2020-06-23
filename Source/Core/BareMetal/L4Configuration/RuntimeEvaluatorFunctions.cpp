@@ -251,7 +251,7 @@ REGISTER_CAST_FUNCTION_BLOCK(int8   ,Casting)
             /* sin, cos etc. are defined on double only  */                         \
             float64 x_double;                                                       \
             float64 res_double;                                                     \
-            x_double = static_cast<float64>(x);                                           \
+            x_double = static_cast<float64>(x);                                     \
             res_double = fname (x_double);                                          \
             res = static_cast<T>(res_double);                                       \
             context.Push(res);                                                      \
@@ -273,7 +273,12 @@ REGISTER_1_FUNCTION(LOG10,log10)
             T res;                                                                  \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
-            res = fname (x2,x1);                                                    \
+            /* pow is defined on double only */                                     \
+            float64 x1_double = static_cast<float64>(x1);                           \
+            float64 x2_double = static_cast<float64>(x2);                           \
+            float64 res_double;                                                     \
+            res_double = fname (x2_double, x1_double);                              \
+            res = static_cast<T>(res_double);                                       \
             context.Push(res);                                                      \
         }                                                                           \
         REGISTER_PCODE_FUNCTION(name,float32,2u,1u,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
