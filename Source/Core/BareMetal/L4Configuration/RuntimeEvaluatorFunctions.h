@@ -111,6 +111,7 @@ typedef void (*Function)(RuntimeEvaluator & context);
  * calling RuntimeEvaluator.
  * 
  */
+/*lint -e(9109) Forward declaration in RuntimeEvaluator.h is required (RuntimeEvaluator and RuntimeEvaluatorFunction are circular-dependant). */
 class RuntimeEvaluatorFunctions {
 public:
 

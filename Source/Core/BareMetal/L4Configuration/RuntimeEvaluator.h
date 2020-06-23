@@ -54,7 +54,7 @@
 
 namespace MARTe {
 
-/*lint -e(9109) Forward declaration required (RuntimeEvaluator and RuntimeEvaluatorFunction are circular-dependant). */
+// Forward declaration required (RuntimeEvaluator and RuntimeEvaluatorFunction are circular-dependant).
 class RuntimeEvaluatorFunctions;
 
 /**
