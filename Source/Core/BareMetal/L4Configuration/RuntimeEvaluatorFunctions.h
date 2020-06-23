@@ -220,7 +220,7 @@ private:
 /**
  * @brief Max number of registered functions.
  */
- /*lint -e(551) Variable is accessed when functionRecords array is created. */
+ /*lint -e{551} Variable is accessed when functionRecords array is created. */
 static const uint32 maxFunctions = 16384u;
 
 /**
