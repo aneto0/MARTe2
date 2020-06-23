@@ -54,9 +54,7 @@
 
 namespace MARTe {
 
-/**
- * used internally to describe and register functions
- */
+/*lint -e(9109) Forward declaration required (RuntimeEvaluator and RuntimeEvaluatorFunction are circular-dependant). */
 class RuntimeEvaluatorFunctions;
 
 /**
