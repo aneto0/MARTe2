@@ -249,8 +249,8 @@ REGISTER_CAST_FUNCTION_BLOCK(int8   ,Casting)
             T res;                                                                  \
             context.Pop(x);                                                         \
             /* sin, cos etc. are defined on double only  */                         \
-            float64 x_double;                                                       \
-            float64 res_double;                                                     \
+            float32 x_double;                                                       \
+            float32 res_double;                                                     \
             x_double = static_cast<T>(x);                                           \
             res_double = fname (x_double);                                          \
             res = static_cast<T>(res_double);                                       \
