@@ -163,8 +163,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(const CCString &name
     ret = FindVariableinDB(name,variableToSearch,db);
     
     /*lint -e(909) . Justification: the conversion of unsupportedFeature to bool is handled. */
-    if (ret.unsupportedFeature){
-        // if it is already there we do not need to add
+    if (ret.unsupportedFeature) { // if it is already there we do not need to add
         /*lint --e{429} . Justification: the allocated memory is freed by the class destructor. */
         VariableInformation *variableInfo = new VariableInformation;
         variableInfo->name = name;
