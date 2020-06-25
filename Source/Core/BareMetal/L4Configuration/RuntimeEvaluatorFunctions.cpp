@@ -314,12 +314,35 @@ REGISTER_2_FUNCTION(POW,pow)
         REGISTER_PCODE_FUNCTION(name,uint8  ,2u,1u,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit     ,UnsignedInteger8Bit) \
         REGISTER_PCODE_FUNCTION(name,int8   ,2u,1u,function ## fname ## ication <int8>   ,SignedInteger8Bit   ,SignedInteger8Bit      ,UnsignedInteger8Bit)
 
-REGISTER_COMPARE_OPERATOR(EQ,  == ,Equal    )
-REGISTER_COMPARE_OPERATOR(NEQ, != ,Different)
 REGISTER_COMPARE_OPERATOR(GT,  >  ,Greater  )
 REGISTER_COMPARE_OPERATOR(LT,  <  ,Smaller  )
 REGISTER_COMPARE_OPERATOR(GTE, >= ,Great    )
 REGISTER_COMPARE_OPERATOR(LTE, <= ,Small    )
+
+// MISRA rules require equality check to be performed safely, so a different macro is defined that uses the SafeMath::IsEqual method.
+#define REGISTER_EQUALITY_OPERATOR(name,oper,fname)                                  \
+        template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
+            T x1;                                                                   \
+            T x2;                                                                   \
+            bool ret;                                                               \
+            context.Pop(x1);                                                        \
+            context.Pop(x2);                                                        \
+            ret = (SafeMath::IsEqual(x1, x2) oper true);                            \
+            context.Push(ret);                                                      \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,float64,2u,1u,function ## fname ## ication <float64>,Float64Bit          ,Float64Bit             ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,float32,2u,1u,function ## fname ## ication <float32>,Float32Bit          ,Float32Bit             ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint64 ,2u,1u,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int64  ,2u,1u,function ## fname ## ication <int64>  ,SignedInteger64Bit  ,SignedInteger64Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint32 ,2u,1u,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int32  ,2u,1u,function ## fname ## ication <int32>  ,SignedInteger32Bit  ,SignedInteger32Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint16 ,2u,1u,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int16  ,2u,1u,function ## fname ## ication <int16>  ,SignedInteger16Bit  ,SignedInteger16Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint8  ,2u,1u,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int8   ,2u,1u,function ## fname ## ication <int8>   ,SignedInteger8Bit   ,SignedInteger8Bit      ,UnsignedInteger8Bit)
+
+REGISTER_EQUALITY_OPERATOR(EQ,  == ,Equal    )
+REGISTER_EQUALITY_OPERATOR(NEQ, != ,Different)
 
 /*********************************************************************************************************
  *********************************************************************************************************
