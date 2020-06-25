@@ -220,7 +220,8 @@ private:
 /**
  * @brief Max number of registered functions.
  */
-static const uint32 /*lint -e(551) */ maxFunctions = 16384u;
+/*lint -esym( 551, maxFunctions ) */
+static const uint32 maxFunctions = 16384u;
 
 /**
  * @brief Number of currently available functions.
