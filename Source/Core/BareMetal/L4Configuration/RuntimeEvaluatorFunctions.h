@@ -46,6 +46,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+ /*lint -e{551} maxFunctions is used when initializing functionRecords array */
 namespace MARTe {
 
 /**
@@ -224,7 +225,6 @@ private:
  *          stored in the functionRecords array which is of
  *          maxFunctions length.
  */
- /*lint --e{551} used by functionRecords[] */
 const uint32 maxFunctions = 16384u;
 
 /**
