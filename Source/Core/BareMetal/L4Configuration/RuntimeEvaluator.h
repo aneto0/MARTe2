@@ -291,7 +291,6 @@ class RuntimeEvaluatorFunctions;
  * if (y == 1.0) {
  *     REPORT_ERROR(ErrorManagement::Information, "OK!");
  * }
- * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * Further details
@@ -342,7 +341,7 @@ class RuntimeEvaluatorFunctions;
  * | `GTE`            | Greater or equal operation between top two elements of the stack       |
  * | `LTE`            | Less or equal operation between top two elements of the stack          |
  * | `EQ`             | Equal operation between top two elements of the stack                  |
- * | `NE`             | Not equal operation between top two elements of the stack              |
+ * | `NEQ`            | Not equal operation between top two elements of the stack              |
  * | `ADD`            | Sum between top two elements of the stack                              |
  * | `SUB`            | Subtraction between top two elements of the stack                      |
  * | `MUL`            | Multiplication between top two elements of the stack                   |
@@ -350,7 +349,14 @@ class RuntimeEvaluatorFunctions;
  * | `SIN`            | Sine operation on the top of the stack                                 |
  * | `COS`            | Cosine operation on the top of the stack                               |
  * | `POW`            | Power operation between top two elements of the stack                  |
- *  
+ * 
+ * @note Comparison of floating-point types may often be implementation-dependent.
+ *       The `EQ` and `NEQ` operators use the SafeMath::IsEqual()
+ *       instead of the standard `==` operator in order to be safely
+ *       portable: this implementation of the comparison operation takes
+ *       into account the floating-point operand granularity
+ *       (machine epsilon) to achieve a safely portable equality check.
+ * 
  * Adding new functions
  * --------------------
  * 
