@@ -220,7 +220,7 @@ private:
 /**
  * @brief Max number of registered functions.
  */
-static const uint32 maxFunctions = 16384u; /*lint --e(551) maxFunctions is accessed when functionRecords array is created. */
+static const uint32 maxFunctions /*lint -e(551) used in functionRecords[] */ = 16384u;
 
 /**
  * @brief Number of currently available functions.
