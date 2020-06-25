@@ -209,5 +209,7 @@ TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSaturableIntegerLessThan2) {
     ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLessThan2());
 }
 
-
-	
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestEpsilon) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestEpsilon());
+}
