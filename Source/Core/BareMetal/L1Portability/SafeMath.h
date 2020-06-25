@@ -36,7 +36,7 @@
 #include "FastMath.h"
 #include "TypeCharacteristics.h"
 #include "ErrorManagement.h"
-
+#include <cstdio>
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -98,6 +98,22 @@ namespace MARTe{
          * @brief Template specialization for int64.
          */
         template <> inline const int64 AllOnes<int64>();
+
+        /**
+         * @brief     Template implementation to safely check equality
+         *            between two numbers.
+         * @tparam    T   type of numbers undergoing equality check operation.
+         * @param[in] a1  first operation argument.
+         * @param[in] a2  second operation argument.
+         * @details   Comparison of floating-point types may often be
+         *            implementation-dependent. This implementation 
+         *            of the comparison operation takes into account
+         *            the floating-point granularity (machine epsilon)
+         *            to achieve a safely portable equality check.  
+         * @return    `true` if difference between the two numbers is
+         *            less than the machine epsilon.
+         */
+        template <typename T> inline bool IsEqual(T a1, T a2);
 
         /**
          * @brief Generic template implementation to compute addition of two numbers.
@@ -192,6 +208,30 @@ namespace MARTe{
             return static_cast<int64>(0xFFFFFFFFFFFFFFFFULL);
         }
 
+        template <typename T>
+        inline bool IsEqual(T a1, T a2) {
+            return (a1 == a2);
+        }
+
+        template <>
+        inline bool IsEqual(float32 a1, float32 a2) {
+            bool result = false;
+            float32 difference = a1 - a2;
+            printf("a1: %.20f, a2: %.20f\n", a1, a2);
+            printf("diff: %.20f, epsilon32: %.20f\n", difference, TypeCharacteristics<float32>::Epsilon());
+            result = (difference < TypeCharacteristics<float32>::Epsilon()) && (difference > -TypeCharacteristics<float32>::Epsilon());
+            return result;
+        }
+
+        template <>
+        inline bool IsEqual(float64 a1, float64 a2) {
+            bool result = false;
+            float64 difference = a1 - a2;
+            printf("a1: %.20f, a2: %.20f\n", a1, a2);
+            printf("diff: %.20f, epsilon64: %.20f\n", difference, TypeCharacteristics<float64>::Epsilon());
+            result = (difference < TypeCharacteristics<float64>::Epsilon()) && (difference > -TypeCharacteristics<float64>::Epsilon());
+            return result;
+        }
 
         template <typename T>
         ErrorManagement::ErrorType Addition(T a1, T a2, T &sum){
