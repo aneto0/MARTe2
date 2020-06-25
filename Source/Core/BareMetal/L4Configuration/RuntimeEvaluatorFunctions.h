@@ -224,7 +224,7 @@ private:
  *          stored in the functionRecords array which is of
  *          maxFunctions length.
  */
- /*lint -e(551) used by functionRecords[] */
+ /*lint --e{551} used by functionRecords[] */
 const uint32 maxFunctions = 16384u;
 
 /**
