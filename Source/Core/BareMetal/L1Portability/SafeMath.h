@@ -36,7 +36,7 @@
 #include "FastMath.h"
 #include "TypeCharacteristics.h"
 #include "ErrorManagement.h"
-#include <cstdio>
+
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -217,8 +217,6 @@ namespace MARTe{
         inline bool IsEqual(float32 a1, float32 a2) {
             bool result = false;
             float32 difference = a1 - a2;
-            printf("a1: %.20f, a2: %.20f\n", a1, a2);
-            printf("diff: %.20f, epsilon32: %.20f\n", difference, TypeCharacteristics<float32>::Epsilon());
             result = (difference < TypeCharacteristics<float32>::Epsilon()) && (difference > -TypeCharacteristics<float32>::Epsilon());
             return result;
         }
@@ -227,8 +225,6 @@ namespace MARTe{
         inline bool IsEqual(float64 a1, float64 a2) {
             bool result = false;
             float64 difference = a1 - a2;
-            printf("a1: %.20f, a2: %.20f\n", a1, a2);
-            printf("diff: %.20f, epsilon64: %.20f\n", difference, TypeCharacteristics<float64>::Epsilon());
             result = (difference < TypeCharacteristics<float64>::Epsilon()) && (difference > -TypeCharacteristics<float64>::Epsilon());
             return result;
         }
