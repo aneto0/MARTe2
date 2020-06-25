@@ -289,3 +289,43 @@ TEST(BareMetal_L1Portability_SafeMathGTest,TestMultiplicationInt64_underflow) {
     SafeMathTest mathTest;
     ASSERT_TRUE(mathTest.TestMultiplicationUnderflow<int64>());
 }
+
+TEST(BareMetal_L1Portability_SafeMathGTest,TestIsEqualUint8) {
+    SafeMathTest mathTest;
+    ASSERT_TRUE(mathTest.TestIsEqual<uint8>());
+}
+
+TEST(BareMetal_L1Portability_SafeMathGTest,TestIsEqualInt8) {
+    SafeMathTest mathTest;
+    ASSERT_TRUE(mathTest.TestIsEqual<int8>());
+}
+
+TEST(BareMetal_L1Portability_SafeMathGTest,TestIsEqualUint64) {
+    SafeMathTest mathTest;
+    ASSERT_TRUE(mathTest.TestIsEqual<uint64>());
+}
+
+TEST(BareMetal_L1Portability_SafeMathGTest,TestIsEqualInt64) {
+    SafeMathTest mathTest;
+    ASSERT_TRUE(mathTest.TestIsEqual<int64>());
+}
+
+TEST(BareMetal_L1Portability_SafeMathGTest,TestIsEqualFloat32) {
+    SafeMathTest mathTest;
+    ASSERT_TRUE(mathTest.TestIsEqual<float32>());
+}
+
+TEST(BareMetal_L1Portability_SafeMathGTest,TestIsEqualFloat64) {
+    SafeMathTest mathTest;
+    ASSERT_TRUE(mathTest.TestIsEqual<float64>());
+}
+
+TEST(BareMetal_L1Portability_SafeMathGTest,TestIsEqualEpsilonFloat32) {
+    SafeMathTest mathTest;
+    ASSERT_TRUE(mathTest.TestIsEqualEpsilon<float32>());
+}
+
+TEST(BareMetal_L1Portability_SafeMathGTest,TestIsEqualEpsilonFloat64) {
+    SafeMathTest mathTest;
+    ASSERT_TRUE(mathTest.TestIsEqualEpsilon<float64>());
+}

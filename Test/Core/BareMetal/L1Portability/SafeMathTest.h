@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include <cstdio>
 #include "SafeMath.h"
 using namespace MARTe;
 
@@ -120,6 +120,16 @@ public:
      * @brief Tests Multiplication with result underflowing type T
      */
     template<typename T> bool TestMultiplicationUnderflow();
+
+    /**
+     * @brief Tests IsEqual
+     */
+    template<typename T> bool TestIsEqual();
+
+    /**
+     * @brief Tests IsEqual for floating-point values using machine epsilon
+     */
+    template<typename T> bool TestIsEqualEpsilon();
 
 };
 
@@ -261,6 +271,41 @@ template<typename T> bool SafeMathTest::TestMultiplicationUnderflow(){
 
     actualError = SafeMath::Multiplication<T>((min / 3) - 1, 3, actualProduct);
     return ((actualError == ErrorManagement::Underflow) && (actualProduct == max));
+}
+
+template<typename T> bool SafeMathTest::TestIsEqual(){
+    T min, max, minDelta, maxDelta;
+    bool ret = false;
+
+    min = TypeCharacteristics<T>::MinValue();
+    max = TypeCharacteristics<T>::MaxValue();
+    minDelta = min/10;
+    maxDelta = max/10;
+    
+    ret = (SafeMath::IsEqual(min, min) && SafeMath::IsEqual(max, max));
+    
+    if (ret) {
+        ret = (!SafeMath::IsEqual(min + 1, min + minDelta) && !SafeMath::IsEqual(max - 1, max - maxDelta));
+    }
+    
+    return ret;
+}
+
+template<typename T> bool SafeMathTest::TestIsEqualEpsilon(){
+    T epsilon, one;
+    bool ret = false;
+    
+    one = 1;
+    epsilon = TypeCharacteristics<T>::Epsilon();
+    
+    ret = (SafeMath::IsEqual(one, one));
+    
+    if (ret) {
+        ret = ( !SafeMath::IsEqual(one, one + epsilon) && !SafeMath::IsEqual(one, one - epsilon));
+        
+    }
+    
+    return ret;
 }
 
 #endif /* SAFEMATHTEST_H_ */
