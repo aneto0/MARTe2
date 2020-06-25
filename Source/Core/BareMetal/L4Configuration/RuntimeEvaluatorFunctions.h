@@ -218,10 +218,13 @@ private:
 }; /* class RuntimeEvaluatorFunctions */
 
 /**
- * @brief Max number of registered functions.
+ * @brief   Max number of functions that can be registered.
+ * @details RuntimeEvaluator uses a set of functions to evaluate
+ *          mathematical expression in real-time. These functions are
+ *          stored in the functionRecords array which is of
+ *          maxFunctions length.
  */
-/*lint -esym( 551, maxFunctions ) */
-static const uint32 maxFunctions = 16384u;
+const uint32 maxFunctions = 16384u;
 
 /**
  * @brief Number of currently available functions.
