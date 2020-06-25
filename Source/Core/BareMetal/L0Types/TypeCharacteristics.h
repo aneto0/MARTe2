@@ -169,8 +169,7 @@ static inline const uint16 UsableNegativeBitSize() {
  * @brief   Returns the machine epsilon for type T.
  * @details In case of a floating point type, the method returns
  *          the minimum distance between two floats. In case of an
- *          integer type, the method returns 0 (which is the machine
- *          epsilon for integers).
+ *          integer type, the method returns 0.
  * @tparam  T   An integer or floating point type
  * @return  the machine epsilon for type T.
  */
