@@ -320,6 +320,7 @@ REGISTER_COMPARE_OPERATOR(GTE, >= ,Great    )
 REGISTER_COMPARE_OPERATOR(LTE, <= ,Small    )
 
 // MISRA rules require equality check to be performed safely, so a different macro is defined that uses the SafeMath::IsEqual method.
+/*lint -emacro( {731}, REGISTER_EQUALITY_OPERATOR ) Bool used as operand of == and != to avoid code duplication. */
 #define REGISTER_EQUALITY_OPERATOR(name,oper,fname)                                  \
         template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
             T x1;                                                                   \
