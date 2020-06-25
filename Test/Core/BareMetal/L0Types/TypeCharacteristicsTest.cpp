@@ -181,3 +181,20 @@ bool TypeCharacteristicsTest::TestSaturableIntegerLessThan2(){
     return retVal;
 }
 
+bool TypeCharacteristicsTest::TestEpsilon(){
+    bool retVal = false;
+    
+    float32 epsilon32 = TypeCharacteristics<float32>::Epsilon();
+    float64 epsilon64 = TypeCharacteristics<float64>::Epsilon();
+    
+    float32 testValue32 = 1.0f;
+    float64 testValue64 = 1.0;
+    
+    retVal = (epsilon32 < 0.000000120f && testValue32 - epsilon32 != 1.0f && testValue32 + epsilon32 != 1.0f);
+    if (retVal) {
+        retVal = (epsilon64 < 0.000000000000000223 && testValue64 - epsilon64 != 1.0 && testValue64 + epsilon64 != 1.0);
+    }
+    
+    return retVal;
+}
+

@@ -222,6 +222,12 @@ public:
      */
     bool TestSaturableIntegerLessThan2();
 
+    /**
+     * @brief Test that Epsilon() returns the correct machine epsilon value.
+     */
+    bool TestEpsilon();
+    
+
 private:
 
     /**
