@@ -144,8 +144,9 @@ namespace MARTe{
          */
         template <typename T> bool                       IsEqual(T a1, T a2);
 
-        template <> bool                                 IsEqual(float a1, float a2);
-        template <> bool                                 IsEqual(double a1, double a2);
+        template <> inline bool                          IsEqual(float a1, float a2);
+
+        template <> inline bool                          IsEqual(double a1, double a2);
 
 
     } // SafeMath
@@ -293,30 +294,14 @@ namespace MARTe{
 
     template <>
     bool IsEqual(float a1, float a2){
-        ErrorManagement::ErrorType ret;
-        bool result = false;
-
-        float difference = 0;
-        ret = a1-a2;
-
-        if (ret){
-            result = (difference < TypeCharacteristics<float>::Epsilon()) && (difference > -TypeCharacteristics<float>::Epsilon());
-        }
-        return result;
+        float difference = a1-a2;
+        return  (difference < TypeCharacteristics<float>::Epsilon()) && (difference > -TypeCharacteristics<double>::Epsilon());
     }
 
     template <>
     bool IsEqual(double a1, double a2){
-        ErrorManagement::ErrorType ret;
-        bool result = false;
-
-        double difference = 0;
-        ret = a1-a2;
-
-        if (ret){
-            result = (difference < TypeCharacteristics<float>::Epsilon()) && (difference > -TypeCharacteristics<double>::Epsilon());
-        }
-        return result;
+        double difference = a1-a2;
+        return  (difference < TypeCharacteristics<float>::Epsilon()) && (difference > -TypeCharacteristics<double>::Epsilon());
     }
 
 

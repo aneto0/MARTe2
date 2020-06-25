@@ -86,16 +86,16 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record){
 }
 
 ErrorManagement::ErrorType  FindPCode(
-		RuntimeEvaluator::CodeMemoryElement &code,
-		CCString 								nameIn,
+		RuntimeEvaluator::CodeMemoryElement &   code,
+		CCString 					            nameIn,
 		Stack<AnyType> &				        typeStack,
-		bool 									matchOutput
+		bool 								    matchOutput
 )
 {
 	ErrorManagement::ErrorType ret;
 
     RuntimeEvaluator::CodeMemoryElement i = 0;
-
+    code = RuntimeEvaluator::InvalidCodeMemoryElement;
     for (i=0; ret && (i < availableFunctions);i++ ){
 //        ret = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
     	ret = functionRecords[i].Check(nameIn,typeStack,matchOutput);
@@ -108,6 +108,7 @@ ErrorManagement::ErrorType  FindPCode(
             ret.comparisonFailure = false;
     	}
     }
+    ret.comparisonFailure = (code == RuntimeEvaluator::InvalidCodeMemoryElement);
 
     return ret;
 }
@@ -131,6 +132,7 @@ static inline uint32 toUint32(CCString &s){
 	return ret;
 }
 
+#if 0
 static ErrorManagement::ErrorType GetMatrixInfo(const VariableDescriptor &vd,uint32 &nRows, uint32 &nColumns){
 
 	ErrorManagement::ErrorType ret;
@@ -138,6 +140,10 @@ static ErrorManagement::ErrorType GetMatrixInfo(const VariableDescriptor &vd,uin
     CCString modifiers 		= vd.GetModifiers();
 
 	ret.internalSetupError = (!td.SameAs(Float32Bit) ) && (!td.SameAs(Float64Bit));
+
+	if (ret){
+
+	}
 
     if (ret){
     	ret.internalSetupError = (modifiers[0] != 'A');
@@ -158,14 +164,19 @@ static ErrorManagement::ErrorType GetMatrixInfo(const VariableDescriptor &vd,uin
 
     return ret;
 }
+#endif
 
-
-static inline ErrorManagement::ErrorType IsValidMatrix(bool& isValidMatrix,AnyType &at,uint32 &nRows, uint32 &nColumns){
+static inline ErrorManagement::ErrorType IsValidMatrix(bool& isValidMatrix,const AnyType &at,uint32 &nRows, uint32 &nColumns){
     ErrorManagement::ErrorType ret;
     VariableDescriptor vd = at.GetFullVariableDescriptor();
     CCString modifiers = CCString(vd.GetModifiers());
 
-    isValidMatrix = (( modifiers == "M") || (modifiers == "m"));
+    // to avoid accessing NULL ptrs
+    isValidMatrix = (modifiers.GetSize() != 0);
+
+    if (isValidMatrix){
+        isValidMatrix = (( modifiers == "M") || (modifiers == "m"));
+    }
 
     if (isValidMatrix){
         isValidMatrix = ((vd.GetFinalTypeDescriptor().SameAs(Float32Bit)) || (vd.GetFinalTypeDescriptor().SameAs(Float64Bit)));
@@ -230,12 +241,13 @@ ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
     // insert output types
     for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
     	VariableDescriptor vd = types[i+numberOfInputs];
-        ret = typeStack.Push(vd);
+        ret = typeStack.Push(AnyType(vd,NULL));
         REPORT_ERROR(ret,"typeStack.Push(..) failed");
         if (ret){
         	uint32 nc=0,nr=0;
         	// in this method we do not support matrices as output
-        	ret.unsupportedFeature = GetMatrixInfo(vd,nc,nr);
+        	bool isValidMatrix = true;
+        	ret = IsValidMatrix(isValidMatrix,AnyType(vd),nr,nc);
             REPORT_ERROR(ret,"cannot handle matrices as output");
         }
         if (ret){
@@ -1079,6 +1091,7 @@ REGISTER_WRITECONV(WRITE,Write,int32 ,uint16)
 REGISTER_WRITECONV(WRITE,Write,int32 ,uint32)
 REGISTER_WRITECONV(WRITE,Write,int32 ,int8)
 REGISTER_WRITECONV(WRITE,Write,int32 ,int16)
+REGISTER_WRITECONV(WRITE,Write,uint8 ,int8)
 
 /*********************************************************************************************************
  *********************************************************************************************************

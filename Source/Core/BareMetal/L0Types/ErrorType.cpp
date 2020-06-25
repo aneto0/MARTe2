@@ -44,9 +44,9 @@ namespace MARTe {
 namespace ErrorManagement {
 
 struct ErrorTypeLookup errorTypeLookup[] = {
-        { "NoError", NoError },
+        { "NoError", NoError_bit },
 		ERROR_CONSTANT_MACRO(GENERATE_ERROR_LOOKUP)
-        { static_cast<const char8 *>(NULL), NoError }
+        { static_cast<const char8 *>(NULL), NoError_bit }
 };
 
 

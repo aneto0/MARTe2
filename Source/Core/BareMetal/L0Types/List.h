@@ -209,6 +209,8 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 				ListNodeT<loadClass> *target = static_cast<ListNodeT<loadClass>*>(current->next);
 
 				ia = iterator.Do(target->load);
+                REPORT_ERROR(ia,"iterator.Do failed");
+
 				if (ia.notAnErrorCode){
 					switch(ia.ActionCode()){
 					case isCompleted: {
@@ -227,14 +229,14 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 					case replaceNode:{
 						loadClass lc;
 						if (!iterator.GetNodeToInsert(lc)){
-							ret.format_as_integer = ErrorManagement::InvalidOperation;
+							ret.invalidOperation = true;
+                            REPORT_ERROR(ret,"GetNodeToInsert returns false");
 						}
 						ListNode *rep = NULL_PTR(ListNode *);
 						if (ret){
 							rep = new ListNodeT<loadClass>(lc);
-							if (rep == NULL){
-								ret.format_as_integer = ErrorManagement::FatalError;
-							}
+                            ret.outOfMemory = (rep == NULL);
+                            REPORT_ERROR(ret,"new ListNode failed");
 						}
 						if (ret){
 							ListNode *sav = current->next;
@@ -248,14 +250,13 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 					case insertNodeBefore:{
 						loadClass lc;
 						if (!iterator.GetNodeToInsert(lc)){
-							ret.format_as_integer = ErrorManagement::InvalidOperation;
+							ret.invalidOperation = true;
 						}
 						ListNode *rep = NULL_PTR(ListNode *);
 						if (ret){
 							rep = new ListNodeT<loadClass>(lc);
-							if (rep == NULL){
-								ret.format_as_integer = ErrorManagement::FatalError;
-							}
+                            ret.outOfMemory = (rep == NULL);
+                            REPORT_ERROR(ret,"new ListNodeT failed");
 						}
 						if (ret){
 							rep->next = current->next;
@@ -269,15 +270,14 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 					}break;
 					case insertNodeAfter:{
 						loadClass lc;
-						if (!iterator.GetNodeToInsert(lc)){
-							ret.format_as_integer = ErrorManagement::InvalidOperation;
-						}
+						ret.invalidOperation = !iterator.GetNodeToInsert(lc);
+                        REPORT_ERROR(ret,"GetNodeToInsert returned false");
+
 						ListNode *rep = NULL_PTR(ListNode *);
 						if (ret){
 							rep = new ListNodeT<loadClass>(lc);
-							if (rep == NULL){
-								ret.format_as_integer = ErrorManagement::FatalError;
-							}
+                            ret.fatalError = (rep == NULL);
+                            REPORT_ERROR(ret,"new ListNodeT failed");
 						}
 						if (ret){
 							// skip to next and then insert
@@ -292,6 +292,7 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 					}break;
 					default:{
 						ret.unsupportedFeature = true;
+                        REPORT_ERROR(ret,"default use case reached");
 					}
 					} // end case
 
@@ -302,7 +303,6 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 					}
 				}
 			}
-
 		}
 		return ret;
 	}

@@ -47,8 +47,12 @@ enum IA_ActionCodes{
 class IteratorAction: public ErrorManagement::ErrorType{
 public:
 
+    /**
+     * @creates a custom non error code
+     * @param[in] code  is the custom code to be used
+     */
 	inline void SetActionCode(IA_ActionCodes code){
-		format_as_integer = static_cast<ErrorManagement::ErrorIntegerFormat>(code)| ErrorManagement::NotAnErrorCode;
+		format_as_integer = static_cast<ErrorManagement::ErrorIntegerFormat>(code)| ErrorManagement::NotAnErrorCode_bit;
 	}
 
     /**

@@ -273,84 +273,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
     return ret;
 }
 
-#if 0
-static inline int toDigit(char8 c){
-	int ret = -1;
-	if ((c <= '9') && (c >= '0')){
-		ret = static_cast<int>(c) - static_cast<int>('0');
-	}
-	return ret;
-}
-#endif
-#if 0
-static inline uint32 toUint32(CCString &s){
-	uint32 ret = 0;
-
-	int digit = 0;
-	while ((digit = toDigit(s[0])) > 0) {
-		ret = ret *10 + static_cast<uint32>(digit);
-		s++;
-	}
-	return ret;
-}
-#endif
-#if 0
-static inline ErrorManagement::ErrorType GetMatrixInfo(const VariableDescriptor &vd,uint32 &nRows, uint32 &nColumns){
-
-	ErrorManagement::ErrorType ret;
-    TypeDescriptor td 		= vd.GetFinalTypeDescriptor();
-    CCString modifiers 		= vd.GetModifiers();
-
-	ret.internalSetupError = (!td.SameAs(Float32Bit) ) && (!td.SameAs(Float64Bit));
-
-	if (ret){
-    	ret.internalSetupError = (modifiers[0] != 'A');
-    	modifiers++;
-    }
-    if (ret){
-        nRows = toUint32(modifiers);
-
-        ret.internalSetupError = (modifiers[0] != 'A');
-    	modifiers++;
-    }
-
-    if (ret){
-        nColumns = toUint32(modifiers);
-
-        ret.internalSetupError = (modifiers[0] != '\0');
-    }
-
-    return ret;
-}
-#endif
-#if 0
-static bool isVoid(const VariableDescriptor &vd){
-	bool ret = false;
-    TypeDescriptor td 		= vd.GetFinalTypeDescriptor();
-    CCString modifiers 		= vd.GetModifiers();
-
-	ret = td.SameAs(VoidType) ;
-
-    if (ret){
-    	ret = (modifiers.GetSize() == 0);
-    }
-	return ret;
-}
-#endif
-#if 0
-static bool isNumeric(const VariableDescriptor &vd){
-	bool ret = false;
-    TypeDescriptor td 		= vd.GetFinalTypeDescriptor();
-    CCString modifiers 		= vd.GetModifiers();
-
-	ret = td.IsNumericType();
-
-    if (ret){
-    	ret = (modifiers.GetSize() == 0);
-    }
-	return ret;
-}
-#endif
 
 static inline void ShowStack(CStringTool cst,bool matchOutput,const Stack<AnyType> &typeStack){
     uint32 n2scan = 2;
@@ -528,6 +450,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             // matchOutput = true;
             // assign code2 to address of variable
             if (command == writeToken){
+
                 ret.invalidOperation = !hasParameter1 || hasParameter2;
                 COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
 
@@ -537,6 +460,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     ret = FindOutputVariable(parameter1,variableInformation);
                     COMPOSITE_REPORT_ERROR(ret,"output variable ",parameter1, " not found");
                 }
+printf("W%s:%p ",variableInformation->GetName().GetList(),variableInformation->GetExternalMemoryPtr());
 
                 //   MAKE SURE WE ARE NOT OVERWRITING
                 if (ret){
@@ -567,8 +491,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                 // we cannot overwrite so they are not allocated at this stage
                 // earlier this condition was checked
                 if (ret){
-
+printf("?");
                     if (variableInformation->IsValidReferencedNumber()){
+printf("R+");
                         command = remoteWriteToken;
                     }
 
@@ -644,6 +569,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     // to specify the input Type
                     ret.fatalError = !typeStack.Push(at);
                     REPORT_ERROR(ret,"failed to push type into stack");
+/*
+DynamicCString cs;
+CStringTool cst = cs();
+at.GetFullVariableDescriptor().ToString(cst);
+printf("pushed %s to stack\n",cs.GetList());
+*/
                 }
 
                 if (ret){
@@ -730,6 +661,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                 }
             }
 
+printf("%s\n",command.GetList());
+
             CodeMemoryElement code = InvalidCodeMemoryElement;
             /**
              * FIND A MATCHING PCODE
@@ -741,6 +674,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                 ret.unsupportedFeature = !FindPCode(code,command,typeStack,matchOutput);
                 COMPOSITE_REPORT_ERROR(ret,"command ",command, "(",typeList,") not found");
             }
+
+            if (ret){
+                ret.internalSetupError = (code >= availableFunctions);
+                COMPOSITE_REPORT_ERROR(ret,"invalid code ",code,"selected");
+            }
+
 
             List<VariableInformation> db2;
             /**

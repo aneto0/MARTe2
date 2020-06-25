@@ -52,7 +52,7 @@ namespace MARTe{
  * depends from the ERROR_CONSTANT_MACRO(GENERATE_ERROR_CONSTANTS)
  */
 #define GENERATE_ERROR_LOOKUP(ErrorName,errorName,bit)    \
-        { #ErrorName, ErrorName},
+        { #ErrorName, ErrorName ## _bit},
 
 
 namespace ErrorManagement {
