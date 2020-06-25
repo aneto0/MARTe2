@@ -80,7 +80,7 @@ static inline bool IsSigned() {
  * @return 0xffff...f if type T is unsigned, 0x7fff...f if it is signed.
  */
 static inline const T MaxValue() {
-	return std::numeric_limits<T>::max();
+    return std::numeric_limits<T>::max();
 }
 
 /**
@@ -134,7 +134,7 @@ static inline const T MinValue() {
 static inline const uint16 UsableBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
     const uint16 nOfBits = (IsFloat()) ? static_cast<uint16>((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
-    		((IsSigned()) ? static_cast<uint16>(sizeof(T) * 8u - 1u) : static_cast<uint16>(sizeof(T) * 8u));
+            ((IsSigned()) ? static_cast<uint16>(sizeof(T) * 8u - 1u) : static_cast<uint16>(sizeof(T) * 8u));
     return nOfBits;
 }
 
@@ -161,20 +161,34 @@ static inline const uint8 UsableBitSize() {
 static inline const uint16 UsableNegativeBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
     const uint16 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
-    		((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : 0u);
+            ((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : 0u);
     return nOfBits;
+}
+
+/**
+ * @brief   Returns the machine epsilon for type T.
+ * @details In case of a floating point type, the method returns
+ *          the minimum distance between two floats. In case of an
+ *          integer type, the method returns 0 (which is the machine
+ *          epsilon for integers).
+ * @tparam  T   An integer or floating point type
+ * @return  the machine epsilon for type T.
+ */
+static inline const T Epsilon() {
+    T ret = std::numeric_limits<T>::epsilon();
+    return ret;
 }
 
 };
 
 template <>
 inline const float TypeCharacteristics<float>::MinValue(){
-	return -std::numeric_limits<float>::max();
+    return -std::numeric_limits<float>::max();
 }
 
 template <>
 inline const double TypeCharacteristics<double>::MinValue(){
-	return -std::numeric_limits<double>::max();
+    return -std::numeric_limits<double>::max();
 }
 
 /**
@@ -188,27 +202,27 @@ inline const double TypeCharacteristics<double>::MinValue(){
  */
 template <typename inputType,typename outputType>
 inline bool SafeNumber2Number(inputType src,outputType &dest){
-	 bool ret = true;
-     // more bits in the input format. Might need to saturate
-     if (TypeCharacteristics<inputType>::UsableBitSize() > TypeCharacteristics<outputType>::UsableBitSize()){
-         const inputType maxSource = static_cast<inputType>(TypeCharacteristics<outputType>::MaxValue());
-         if (src > maxSource) {
-             dest = TypeCharacteristics<outputType>::MaxValue();
-			 ret = false;
-		 }
-	 }
-     if (TypeCharacteristics<inputType>::UsableNegativeBitSize() > TypeCharacteristics<outputType>::UsableNegativeBitSize()){
-		 const inputType minSource = static_cast<inputType>(TypeCharacteristics<outputType>::MinValue());
-         if (src < minSource) {
-             dest = TypeCharacteristics<outputType>::MinValue();
-			 ret = false;
-		 }
-     }
-     if (ret) {
+    bool ret = true;
+    // more bits in the input format. Might need to saturate
+    if (TypeCharacteristics<inputType>::UsableBitSize() > TypeCharacteristics<outputType>::UsableBitSize()){
+        const inputType maxSource = static_cast<inputType>(TypeCharacteristics<outputType>::MaxValue());
+        if (src > maxSource) {
+            dest = TypeCharacteristics<outputType>::MaxValue();
+            ret = false;
+        }
+    }
+    if (TypeCharacteristics<inputType>::UsableNegativeBitSize() > TypeCharacteristics<outputType>::UsableNegativeBitSize()){
+        const inputType minSource = static_cast<inputType>(TypeCharacteristics<outputType>::MinValue());
+        if (src < minSource) {
+            dest = TypeCharacteristics<outputType>::MinValue();
+            ret = false;
+        }
+    }
+    if (ret) {
         dest = static_cast<outputType>(src);
-     }
+    }
 
-	 return ret;
+    return ret;
 }
 
 /**
@@ -226,8 +240,8 @@ outputType SaturateInteger(const inputType input) {
 
     const bool isSigned = TypeCharacteristics<outputType>::IsSigned();
 
-	const outputType minValue = (isSigned)?static_cast<outputType>(std::numeric_limits<outputType>::min()>>(sizeof(outputType)*8u - bitSize)):static_cast<outputType>(0);
-	const outputType maxValue = static_cast<outputType>(std::numeric_limits<outputType>::max()>>(sizeof(outputType)*8u - bitSize));
+    const outputType minValue = (isSigned)?static_cast<outputType>(std::numeric_limits<outputType>::min()>>(sizeof(outputType)*8u - bitSize)):static_cast<outputType>(0);
+    const outputType maxValue = static_cast<outputType>(std::numeric_limits<outputType>::max()>>(sizeof(outputType)*8u - bitSize));
 
     //default assignment
     outputType value = static_cast<outputType>(input);
