@@ -65,16 +65,18 @@ class RuntimeEvaluatorFunction;
  * Summary
  * =======
  * 
- * Runtime evaluator takes an expression in stack machine form at
+ * RuntimeEvaluator takes an expression in stack machine form at
  * construction time and is then capable of compiling and executing it.
  * The expression in stack machine form can be used straight away or
  * be derived from an infix expression (a mathematical expression
  * in the usual form) by using MARTe::MathExpressionParser.
  * 
+ * RuntimeEvaluator supports scalar operands of any type.
+ * 
  * Usage
  * =====
  * 
- * To use the evaluator, the following steps must be followed:
+ * The steps required to use the evaluator are the following:
  * - the evaluator is instantiated and fed with the expression
  *   it will be required to evaluate
  * - the evaluator internal variable database is initialised by
@@ -361,7 +363,7 @@ class RuntimeEvaluatorFunction;
  * --------------------
  * 
  * New operations can be made available to RuntimeEvaluator by
- * adding functions to the #functionRecords as follows:
+ * adding a RuntimeEvaluatorFunction to the #functionRecords as follows:
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
  * void NewOperation(RuntimeEvaluator &evaluator) {
@@ -378,7 +380,7 @@ class RuntimeEvaluatorFunction;
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * The function above pops two float32 element from the stack,
- * sum them and then pushes the result to the stack. Upon `RegisterFunction`ing
+ * sums them and then pushes the result to the stack. Upon `RegisterFunction`ing
  * the function, the function itself becomes available to the RuntimeEvaluator
  * by using the command `NEWADD`.
  * 

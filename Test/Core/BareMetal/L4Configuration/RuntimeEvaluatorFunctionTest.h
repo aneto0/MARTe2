@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef RUNTIMEEVALUATORFUNCTIONSTEST_H_
-#define RUNTIMEEVALUATORFUNCTIONSTEST_H_
+#ifndef RUNTIMEEVALUATORFUNCTIONTEST_H_
+#define RUNTIMEEVALUATORFUNCTIONTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -249,5 +249,5 @@ inline bool RuntimeEvaluatorFunctionTest::TestFloatFunctionExecution(RuntimeEval
     return ok;
 }
 
-#endif /* RUNTIMEEVALUATORFUNCTIONSTEST_H_ */
+#endif /* RUNTIMEEVALUATORFUNCTIONTEST_H_ */
 
