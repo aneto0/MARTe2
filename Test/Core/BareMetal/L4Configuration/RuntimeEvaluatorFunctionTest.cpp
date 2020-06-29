@@ -1,6 +1,6 @@
 /**
- * @file RuntimeEvaluatorFunctionsTest.cpp
- * @brief Source file for class RuntimeEvaluatorFunctionsTest
+ * @file RuntimeEvaluatorFunctionTest.cpp
+ * @brief Source file for class RuntimeEvaluatorFunctionTest
  * @date 06/05/2020
  * @author Didac Magrinya
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RuntimeEvaluatorFunctionsTest (public, protected, and private). Be aware that some
+ * the class RuntimeEvaluatorFunctionTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RuntimeEvaluatorFunctionsTest.h"
+#include "RuntimeEvaluatorFunctionTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,9 +41,9 @@
 
 using namespace MARTe;
 
-bool RuntimeEvaluatorFunctionsTest::TestDefaultConstructor() {
+bool RuntimeEvaluatorFunctionTest::TestDefaultConstructor() {
 
-    RuntimeEvaluatorFunctions functionUT;
+    RuntimeEvaluatorFunction functionUT;
     bool ok;
 
     ok = (functionUT.GetName() == "");
@@ -54,13 +54,13 @@ bool RuntimeEvaluatorFunctionsTest::TestDefaultConstructor() {
 }
 
 
-bool RuntimeEvaluatorFunctionsTest::TestFullConstructor() {
+bool RuntimeEvaluatorFunctionTest::TestFullConstructor() {
 
     TypeDescriptor types[] = {UnsignedInteger8Bit, Float64Bit};
     bool ok;
     RuntimeEvaluator context("");
 
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, types, MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, types, MockFunction);
 
     ok = (functionUT.GetName() == "Test");
 
@@ -79,11 +79,11 @@ bool RuntimeEvaluatorFunctionsTest::TestFullConstructor() {
     return ok;
 }
 
-bool RuntimeEvaluatorFunctionsTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
+bool RuntimeEvaluatorFunctionTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
     bool ok = true;
 
     for (uint32 i = 0; (i < availableFunctions) && (ok); ++i) {
-        RuntimeEvaluatorFunctions functionRecord = functionRecords[i];
+        RuntimeEvaluatorFunction functionRecord = functionRecords[i];
         Vector<TypeDescriptor> inputTypes = functionRecord.GetInputTypes();
         Vector<TypeDescriptor> outputTypes = functionRecord.GetOutputTypes();
 
@@ -105,7 +105,7 @@ bool RuntimeEvaluatorFunctionsTest::TestFunctionTypes(CCString functionName, uin
 
 }
 
-bool RuntimeEvaluatorFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &typesCdb) {
+bool RuntimeEvaluatorFunctionTest::FindTypesInCdb(CCString &foundName, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &typesCdb) {
 
     bool found = false, moved = false;
 
@@ -142,7 +142,7 @@ bool RuntimeEvaluatorFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<T
     return found;
 }
 
-void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In(StreamString inputTypeName) {
+void RuntimeEvaluatorFunctionTest::AddExpectedFunction1In(StreamString inputTypeName) {
 
     StreamString inputs[] = {inputTypeName};
     StreamString outputs[] = {};
@@ -150,7 +150,7 @@ void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In(StreamString inputTyp
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1Out(StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionTest::AddExpectedFunction1Out(StreamString outputTypeName) {
 
     StreamString inputs[] = {};
     StreamString outputs[] = {outputTypeName};
@@ -158,7 +158,7 @@ void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1Out(StreamString outputT
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In1Out(StreamString inputTypeName, StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionTest::AddExpectedFunction1In1Out(StreamString inputTypeName, StreamString outputTypeName) {
 
     StreamString inputs[] = {inputTypeName};
     StreamString outputs[] = {outputTypeName};
@@ -166,7 +166,7 @@ void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In1Out(StreamString inpu
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddExpectedFunction2In1Out(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionTest::AddExpectedFunction2In1Out(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
 
     StreamString inputs[] = {input1TypeName, input2TypeName};
     StreamString outputs[] = {outputTypeName};
@@ -174,7 +174,7 @@ void RuntimeEvaluatorFunctionsTest::AddExpectedFunction2In1Out(StreamString inpu
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In2Out(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName) {
+void RuntimeEvaluatorFunctionTest::AddExpectedFunction1In2Out(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName) {
 
     StreamString inputs[] = {inputTypeName};
     StreamString outputs[] = {output1TypeName, output2TypeName};
@@ -182,7 +182,7 @@ void RuntimeEvaluatorFunctionsTest::AddExpectedFunction1In2Out(StreamString inpu
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddExpectedFunctionCombinedInputs(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionTest::AddExpectedFunctionCombinedInputs(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
 
     StreamString inputs1[] = {input1TypeName, input2TypeName};
     StreamString inputs2[] = {input2TypeName, input1TypeName};
@@ -192,7 +192,7 @@ void RuntimeEvaluatorFunctionsTest::AddExpectedFunctionCombinedInputs(StreamStri
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddExpectedFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]) {
+void RuntimeEvaluatorFunctionTest::AddExpectedFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]) {
     uint32 lastExistentFunction = expectedFunctionTypesCdb.GetNumberOfChildren();
     StreamString functionName;
 
@@ -221,7 +221,7 @@ void RuntimeEvaluatorFunctionsTest::AddExpectedFunction(uint8 numberOfInputs, St
     expectedFunctionTypesCdb.MoveToRoot();
 }
 
-bool RuntimeEvaluatorFunctionsTest::TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize) {
+bool RuntimeEvaluatorFunctionTest::TestTryConsume(RuntimeEvaluatorFunction &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize) {
 
     bool ok = true;
 
@@ -274,7 +274,7 @@ bool RuntimeEvaluatorFunctionsTest::TestTryConsume(RuntimeEvaluatorFunctions &fu
     return ok;
 }
 
-bool RuntimeEvaluatorFunctionsTest::TestFunctionExecution(RuntimeEvaluator &context, ErrorManagement::ErrorType expectedReturn) {
+bool RuntimeEvaluatorFunctionTest::TestFunctionExecution(RuntimeEvaluator &context, ErrorManagement::ErrorType expectedReturn) {
 
     ErrorManagement::ErrorType ret;
     bool ok = true;
@@ -290,7 +290,7 @@ bool RuntimeEvaluatorFunctionsTest::TestFunctionExecution(RuntimeEvaluator &cont
     return ok;
 }
 
-bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType, void *inputExternalLocation, void *outputExternalLocation) {
+bool RuntimeEvaluatorFunctionTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType, void *inputExternalLocation, void *outputExternalLocation) {
 
     ErrorManagement::ErrorType ret;
     VariableInformation *var;
@@ -322,7 +322,7 @@ bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, Ty
     return ret;
 }
 
-bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor input1Type, TypeDescriptor input2Type, TypeDescriptor outputType) {
+bool RuntimeEvaluatorFunctionTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor input1Type, TypeDescriptor input2Type, TypeDescriptor outputType) {
 
     ErrorManagement::ErrorType ret;
     VariableInformation *var;

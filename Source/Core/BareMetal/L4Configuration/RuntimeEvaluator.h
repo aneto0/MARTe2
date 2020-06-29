@@ -55,7 +55,7 @@
 namespace MARTe {
 
 // Forward declaration required (RuntimeEvaluator and RuntimeEvaluatorFunction are circular-dependant).
-class RuntimeEvaluatorFunctions;
+class RuntimeEvaluatorFunction;
 
 /**
  * @brief Runtime mathematical expression evaluation engine.
@@ -311,15 +311,15 @@ class RuntimeEvaluatorFunctions;
  * Functions that will be called must be present in the #functionRecords
  * array, an array that holds all the available functions that
  * RuntimeEvaluator can call. #functionRecords is an array of
- * RuntimeEvaluatorFunctions objects.
+ * RuntimeEvaluatorFunction objects.
  * 
  * When RuntimeEvaluator executes an operation, it actually calls the
  * corresponding function in #functionRecords, or better calls the
- * RuntimeEvaluatorFunctions::ExecuteFunction() method of that function
+ * RuntimeEvaluatorFunction::ExecuteFunction() method of that function
  * and passes itself to the method as the argument.
- * The operation is then executed by RuntimeEvaluatorFunctions, which is
+ * The operation is then executed by RuntimeEvaluatorFunction, which is
  * responsible for managing RuntimeEvaluator internal stack by using
- * Pop(), Push() and Peek() methods. See RuntimeEvaluatorFunctions
+ * Pop(), Push() and Peek() methods. See RuntimeEvaluatorFunction
  * documentation for further details.
  * 
  * Supported operators
@@ -373,7 +373,7 @@ class RuntimeEvaluatorFunctions;
  * }
  * 
  * TypeDescriptor types[] = {Float32Bit, Float32Bit, Float32Bit};
- * RuntimeEvaluatorFunctions newAdd("NEWADD", 2, 1, types, NewOperation);
+ * RuntimeEvaluatorFunction newAdd("NEWADD", 2, 1, types, NewOperation);
  * RegisterFunction(newAdd);
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
@@ -641,11 +641,11 @@ public:
     ErrorManagement::ErrorType DeCompile(StreamString &DeCompileRPNCode, const bool showTypes);
     
     /**
-     * @name    Members required by RuntimeEvaluatorFunctions
-     * @details These methods allow RuntimeEvaluatorFunctions to manage
+     * @name    Members required by RuntimeEvaluatorFunction
+     * @details These methods allow RuntimeEvaluatorFunction to manage
      *          RuntimeEvaluator internal stack so that they can execute
      *          operations on the stack itself when required by the code.
-     * @note    These members are public since RuntimeEvaluatorFunctions
+     * @note    These members are public since RuntimeEvaluatorFunction
      *          need to access them.
      */
     //@{
@@ -764,7 +764,7 @@ private:
      * it will access DataMemory as well to decode constants
      * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
      */
-    ErrorManagement::ErrorType FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst, const bool peekOnly=true, const bool showData=true, const bool showTypes=true);
+    ErrorManagement::ErrorType FunctionRecordInputs2String(RuntimeEvaluatorFunction &functionInformation,StreamString &cst, const bool peekOnly=true, const bool showData=true, const bool showTypes=true);
 
     /**
      * @brief expands function information output description into readable text
@@ -773,7 +773,7 @@ private:
      * it will access DataMemory as well to decode constants
      * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
      */
-    ErrorManagement::ErrorType FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst, const bool lookBack=true, const bool showData=true, const bool showTypes=true);
+    ErrorManagement::ErrorType FunctionRecordOutputs2String(RuntimeEvaluatorFunction &functionInformation,StreamString &cst, const bool lookBack=true, const bool showData=true, const bool showTypes=true);
 
     /**
      * @brief   The list containing all input variables.

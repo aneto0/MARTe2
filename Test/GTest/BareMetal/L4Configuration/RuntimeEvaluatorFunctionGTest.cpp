@@ -1,6 +1,6 @@
 /**
- * @file RuntimeEvaluatorFunctionsGTest.cpp
- * @brief Source file for class RuntimeEvaluatorFunctionsGTest
+ * @file RuntimeEvaluatorFunctionGTest.cpp
+ * @brief Source file for class RuntimeEvaluatorFunctionGTest
  * @date 06/05/2020
  * @author Didac Magrinya
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RuntimeEvaluatorFunctionsGTest (public, protected, and private). Be aware that some
+ * the class RuntimeEvaluatorFunctionGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "RuntimeEvaluatorFunctionsTest.h"
+#include "RuntimeEvaluatorFunctionTest.h"
 #include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -44,13 +44,13 @@
 /*                             Constructors                                  */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDefaultConstructor) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestDefaultConstructor) {
+    RuntimeEvaluatorFunctionTest test;
     ASSERT_TRUE(test.TestDefaultConstructor());
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestFullConstructor) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestFullConstructor) {
+    RuntimeEvaluatorFunctionTest test;
     ASSERT_TRUE(test.TestFullConstructor());
 }
 
@@ -58,8 +58,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestFullConstructo
 /*                              READ/RREAD                                   */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestReadFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1Out("float64");
     test.AddExpectedFunction1Out("float32");
@@ -75,8 +75,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTy
     ASSERT_TRUE(test.TestFunctionTypes("READ", 0, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestReadExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -92,8 +92,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadExecution)
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -152.3));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRReadFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRReadFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1Out("float64");
     test.AddExpectedFunction1Out("float32");
@@ -109,8 +109,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRReadFunctionT
     ASSERT_TRUE(test.TestFunctionTypes("RREAD", 0, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRReadExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRReadExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -127,8 +127,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRReadExecution
 /*                             WRITE/RWRITE                                  */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestWriteFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1In("float64");
     test.AddExpectedFunction1In("float32");
@@ -152,8 +152,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionT
     ASSERT_TRUE(test.TestFunctionTypes("WRITE", 1, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestWriteExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 -152.3\n"
@@ -165,8 +165,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteExecution
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -152.3));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteConvExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestWriteConvExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int64 -115\n"
@@ -179,8 +179,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteConvExecu
     ASSERT_TRUE(test.TestIntFunctionExecution<int8>(context, -115));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteConvExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestWriteConvExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int64 -152\n"
@@ -193,8 +193,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteConvExecu
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0, ErrorManagement::OutOfRange));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRWriteFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1In("float64");
     test.AddExpectedFunction1In("float32");
@@ -218,8 +218,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteFunction
     ASSERT_TRUE(test.TestFunctionTypes("RWRITE", 1, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRWriteExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 -152.3\n"
@@ -233,8 +233,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteExecutio
     ASSERT_TRUE(output == -152.3);
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteConvExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRWriteConvExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int64 -112\n"
@@ -248,8 +248,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteConvExec
     ASSERT_TRUE(output == -112);
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteConvExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRWriteConvExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int64 -112\n"
@@ -266,8 +266,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestRWriteConvExec
 /*                                 CAST                                      */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestCastFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
     CCString typeNames[] = {"float64", "float32", "uint64", "int64", "uint32", "int32", "uint16", "int16", "uint8", "int8"};
 
     for (uint8 i = 0; i < 10; ++i) {
@@ -279,8 +279,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTy
     ASSERT_TRUE(test.TestFunctionTypes("CAST", 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestCastExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 1.57079\n"
@@ -293,8 +293,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestCastExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint16 256\n"
@@ -311,8 +311,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastExecution_
 /*                                 MATH                                      */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSinFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1In1Out("float32", "float32");
     test.AddExpectedFunction1In1Out("float64", "float64");
@@ -320,8 +320,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("SIN", 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSinExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 1.57079\n"
@@ -334,8 +334,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinExecution) 
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestCosFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1In1Out("float32", "float32");
     test.AddExpectedFunction1In1Out("float64", "float64");
@@ -343,8 +343,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("COS", 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestCosExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 0\n"
@@ -357,8 +357,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosExecution) 
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTanFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1In1Out("float32", "float32");
     test.AddExpectedFunction1In1Out("float64", "float64");
@@ -366,8 +366,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("TAN", 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTanExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 0.78539816339\n"
@@ -380,8 +380,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanExecution) 
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestExpFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1In1Out("float32", "float32");
     test.AddExpectedFunction1In1Out("float64", "float64");
@@ -389,8 +389,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("EXP", 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestExpExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 0\n"
@@ -403,8 +403,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpExecution) 
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLogFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1In1Out("float32", "float32");
     test.AddExpectedFunction1In1Out("float64", "float64");
@@ -412,8 +412,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("LOG", 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLogExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 1\n"
@@ -426,8 +426,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogExecution) 
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10FunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLog10FunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction1In1Out("float32", "float32");
     test.AddExpectedFunction1In1Out("float64", "float64");
@@ -435,8 +435,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10FunctionT
     ASSERT_TRUE(test.TestFunctionTypes("LOG10", 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10Execution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLog10Execution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 1000\n"
@@ -449,8 +449,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10Execution
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 3));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestPowFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float32",  "float32",  "float32");
     test.AddExpectedFunction2In1Out("float64",  "float64",  "float64");
@@ -458,8 +458,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("POW", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestPowExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 10.2\n"
@@ -477,8 +477,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowExecution) 
 /*                              COMPARISON                                   */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestEqFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64",  "float64",  "uint8");
     test.AddExpectedFunction2In1Out("float32",  "float32",  "uint8");
@@ -515,8 +515,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqFunctionType
     ASSERT_TRUE(test.TestFunctionTypes("EQ", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestEqExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -539,8 +539,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqExecution) {
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqDiffTypesExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestEqDiffTypesExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -563,8 +563,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqDiffTypesExe
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqDiffTypesExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestEqDiffTypesExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -582,8 +582,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqDiffTypesExe
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0, ErrorManagement::OutOfRange));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNeqFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64",  "float64",  "uint8");
     test.AddExpectedFunction2In1Out("float32",  "float32",  "uint8");
@@ -620,8 +620,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("NEQ", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNeqExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -644,8 +644,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqExecution) 
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqDiffTypesExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNeqDiffTypesExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -668,8 +668,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqDiffTypesEx
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqDiffTypesExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNeqDiffTypesExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -687,8 +687,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqDiffTypesEx
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0, ErrorManagement::OutOfRange));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGtFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64",  "float64",  "uint8");
     test.AddExpectedFunction2In1Out("float32",  "float32",  "uint8");
@@ -725,8 +725,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtFunctionType
     ASSERT_TRUE(test.TestFunctionTypes("GT", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGtExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -754,8 +754,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtExecution) {
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtDiffTypesExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGtDiffTypesExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -783,8 +783,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtDiffTypesExe
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtDiffTypesExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGtDiffTypesExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -813,8 +813,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtDiffTypesExe
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context2, 0, ErrorManagement::OutOfRange));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLtFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64",  "float64",  "uint8");
     test.AddExpectedFunction2In1Out("float32",  "float32",  "uint8");
@@ -851,8 +851,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtFunctionType
     ASSERT_TRUE(test.TestFunctionTypes("LT", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLtExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -880,8 +880,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtExecution) {
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtDiffTypesExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLtDiffTypesExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -909,8 +909,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtDiffTypesExe
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtDiffTypesExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLtDiffTypesExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -939,8 +939,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtDiffTypesExe
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context2, 0, ErrorManagement::OutOfRange));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGteFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64",  "float64",  "uint8");
     test.AddExpectedFunction2In1Out("float32",  "float32",  "uint8");
@@ -977,8 +977,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("GTE", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGteExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1006,8 +1006,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteExecution) 
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteDiffTypesExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGteDiffTypesExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1035,8 +1035,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteDiffTypesEx
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteDiffTypesExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGteDiffTypesExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1065,8 +1065,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteDiffTypesEx
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context2, 0, ErrorManagement::OutOfRange));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLteFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64",  "float64",  "uint8");
     test.AddExpectedFunction2In1Out("float32",  "float32",  "uint8");
@@ -1103,8 +1103,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("LTE", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLteExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1132,8 +1132,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteExecution) 
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteDiffTypesExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLteDiffTypesExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1161,8 +1161,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteDiffTypesEx
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteDiffTypesExecution_FailedOutOfRange) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLteDiffTypesExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1195,16 +1195,16 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteDiffTypesEx
 /*                                LOGICAL                                    */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAndFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestAndFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("uint8", "uint8", "uint8");
 
     ASSERT_TRUE(test.TestFunctionTypes("AND", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAndExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestAndExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1232,16 +1232,16 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAndExecution) 
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestOrFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestOrFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("uint8", "uint8", "uint8");
 
     ASSERT_TRUE(test.TestFunctionTypes("OR", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestOrExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestOrExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1269,16 +1269,16 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestOrExecution) {
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestXorFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestXorFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("uint8", "uint8", "uint8");
 
     ASSERT_TRUE(test.TestFunctionTypes("XOR", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestXorExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestXorExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "READ IN1\n"
@@ -1310,8 +1310,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestXorExecution) 
 /*                                  ADD                                      */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestAddFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64", "float64", "float64");
     test.AddExpectedFunction2In1Out("float32", "float32", "float32");
@@ -1354,8 +1354,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("ADD", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFloatExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestAddFloatExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 10.65\n"
@@ -1369,8 +1369,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFloatExecut
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 7.5));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestAddExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -128\n"
@@ -1384,8 +1384,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddExecution) 
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -256));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSAddExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSAddExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -1\n"
@@ -1399,8 +1399,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSAddExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSAddExecution_FailedUnderflow) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSAddExecution_FailedUnderflow) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -1\n"
@@ -1414,8 +1414,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSAddExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647, ErrorManagement::Underflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSAddExecution_FailedPreviousError) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSAddExecution_FailedPreviousError) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -1\n"
@@ -1431,8 +1431,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSAddExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647, ErrorManagement::Underflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 1\n"
@@ -1446,8 +1446,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution_FailedOverflow) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_FailedOverflow) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 1\n"
@@ -1461,8 +1461,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648, ErrorManagement::Overflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution_FailedPreviousError) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_FailedPreviousError) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 1\n"
@@ -1478,8 +1478,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648, ErrorManagement::Overflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution_FailedSaturated) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_FailedSaturated) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2147483648\n"
@@ -1497,8 +1497,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSAddExecution
 /*                                   SUB                                     */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSubFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64",  "float64",  "float64");
     test.AddExpectedFunction2In1Out("float32",  "float32",  "float32");
@@ -1535,8 +1535,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("SUB", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubFloatExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSubFloatExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 -47\n"
@@ -1550,8 +1550,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubFloatExecut
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -80.48));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSubExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -128\n"
@@ -1565,8 +1565,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubExecution) 
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -255));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSubExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -1\n"
@@ -1580,8 +1580,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSubExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSubExecution_FailedUnderflow) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_FailedUnderflow) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -2\n"
@@ -1595,8 +1595,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSubExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647, ErrorManagement::Underflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSubExecution_FailedPreviousError) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_FailedPreviousError) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -10\n"
@@ -1612,8 +1612,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSubExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647, ErrorManagement::Underflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2147483646\n"
@@ -1627,8 +1627,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution_FailedOverflow) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_FailedOverflow) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2147483647\n"
@@ -1642,8 +1642,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648, ErrorManagement::Overflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution_FailedPreviousError) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_FailedPreviousError) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 1\n"
@@ -1659,8 +1659,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648, ErrorManagement::Overflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution_FailedSaturated) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_FailedSaturated) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2147483648\n"
@@ -1678,8 +1678,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution
 /*                                   MUL                                     */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestMulFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64", "float64", "float64");
     test.AddExpectedFunction2In1Out("float32", "float32", "float32");
@@ -1722,8 +1722,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("MUL", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulFloatExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestMulFloatExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 10.32\n"
@@ -1737,8 +1737,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulFloatExecut
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -25.8));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestMulExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 2\n"
@@ -1752,8 +1752,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulExecution) 
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -256));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSMulExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSMulExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -2\n"
@@ -1767,8 +1767,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSMulExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSMulExecution_FailedUnderflow) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSMulExecution_FailedUnderflow) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -2\n"
@@ -1782,8 +1782,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSMulExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483646, ErrorManagement::Underflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSMulExecution_FailedPreviousError) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSMulExecution_FailedPreviousError) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -1\n"
@@ -1799,8 +1799,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSMulExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483646, ErrorManagement::Underflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2\n"
@@ -1814,8 +1814,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution_FailedOverflow) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_FailedOverflow) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2\n"
@@ -1829,8 +1829,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483646, ErrorManagement::Overflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution_FailedPreviousError) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_FailedPreviousError) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2\n"
@@ -1846,8 +1846,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483646, ErrorManagement::Overflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution_FailedSaturated) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_FailedSaturated) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2147483648\n"
@@ -1865,8 +1865,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSMulExecution
 /*                                   DIV                                     */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestDivFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
 
     test.AddExpectedFunction2In1Out("float64", "float64", "float64");
     test.AddExpectedFunction2In1Out("float32", "float32", "float32");
@@ -1905,8 +1905,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("DIV", 2, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFloatExecution) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestDivFloatExecution) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST float64 48.26\n"
@@ -1920,8 +1920,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFloatExecut
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -24.13));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestDivExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -84\n"
@@ -1935,8 +1935,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivExecution_S
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 21));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivExecution_FailedOverflow) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestDivExecution_FailedOverflow) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST int8 -84\n"
@@ -1950,8 +1950,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivExecution_F
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_Successful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSDivExecution_Successful) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 915\n"
@@ -1965,8 +1965,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -305));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_FailedOverflow) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSDivExecution_FailedOverflow) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 84\n"
@@ -1980,8 +1980,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_
     ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_FailedSaturated) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSDivExecution_FailedSaturated) {
+    RuntimeEvaluatorFunctionTest test;
 
     StreamString rpnCode=
             "CONST uint32 2147483648\n"
@@ -1999,11 +1999,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_
 /*                                TryConsume                                 */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeSuccessful) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(Float32Bit);
@@ -2011,21 +2011,21 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSucc
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 2));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_NoInputs) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeSuccessful_NoInputs) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 0, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 0, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, false, true, 0, 2));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_NoOutputs) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeSuccessful_NoOutputs) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 0, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 0, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(Float32Bit);
@@ -2033,11 +2033,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSucc
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_MultipleInputs) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeSuccessful_MultipleInputs) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, UnsignedInteger64Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 2, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 2, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(UnsignedInteger64Bit);
@@ -2046,11 +2046,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSucc
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, false, true, 3, 2));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_MultipleOutputs) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeSuccessful_MultipleOutputs) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit, UnsignedInteger32Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 2, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 2, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(Float32Bit);
@@ -2058,11 +2058,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSucc
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 3));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_StackLeftover) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeSuccessful_StackLeftover) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(UnsignedInteger8Bit);
@@ -2071,11 +2071,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSucc
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, false, true, 2, 3));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_MatchOutput) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeSuccessful_MatchOutput) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(Float32Bit);
@@ -2084,11 +2084,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSucc
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, true, true, 1, 2));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_WrongName) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeFailed_WrongName) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(Float32Bit);
@@ -2096,21 +2096,21 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFail
     ASSERT_TRUE(test.TestTryConsume(functionUT, "WrongName", typeStack, false, false, 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_MissingInput) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeFailed_MissingInput) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, false, false, 0, 0));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_WrongInputType) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeFailed_WrongInputType) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(SignedInteger32Bit);
@@ -2118,11 +2118,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFail
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, false, false, 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_MatchOutputMissingOutput) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeFailed_MatchOutputMissingOutput) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(Float32Bit);
@@ -2130,11 +2130,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFail
     ASSERT_TRUE(test.TestTryConsume(functionUT, "Test", typeStack, true, false, 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_MatchOutputWrongOutput) {
-    RuntimeEvaluatorFunctionsTest test;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestTryConsumeFailed_MatchOutputWrongOutput) {
+    RuntimeEvaluatorFunctionTest test;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
-    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
     typeStack.Push(Float32Bit);

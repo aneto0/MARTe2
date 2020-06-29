@@ -33,7 +33,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "RuntimeEvaluator.h"
-#include "RuntimeEvaluatorFunctions.h"
+#include "RuntimeEvaluatorFunction.h"
 #include "LinkedListHolderT.h"
 #include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
@@ -96,7 +96,7 @@ public:
     /**
      * @brief   Tests Push(), Pop() and Peek() methods.
      * @details RuntimeEvaluator has an internal #stack. The #stack is
-     *          public since it's managed mostly by RuntimeEvaluatorFunctions.
+     *          public since it's managed mostly by RuntimeEvaluatorFunction.
      *          The stack size is increased by compiling a long sequence
      *          of `READ` and `ADD` operations. Push(), Pop() and Peek()
      *          methods are then tested on the allocated space.
@@ -198,7 +198,7 @@ private:
      * @pre functionRecord has at at most 1 input/output
      * @return true if functionRecord has expected name, input and output type
      */
-    bool RecordMatchesExpectedFunction(RuntimeEvaluatorFunctions &functionRecord);
+    bool RecordMatchesExpectedFunction(RuntimeEvaluatorFunction &functionRecord);
 
     /**
      * @brief LinkedList that holds the expected input VariableInformation by the test.
@@ -241,7 +241,7 @@ private:
 };
 
 /**
- * @brief   Custom RuntimeEvaluatorFunctions function 
+ * @brief   Custom RuntimeEvaluatorFunction function 
  * @details This function intentionally pushes to the stack without
  *          declaring to do so when registered in order to reach Execute()
  *          safeMode checks. 
@@ -249,7 +249,7 @@ private:
 void MockRead(RuntimeEvaluator &context);
 
 /**
- * @brief   Custom RuntimeEvaluatorFunctions function 
+ * @brief   Custom RuntimeEvaluatorFunction function 
  * @details This function intentionally pops from the stack without
  *          declaring to do so when registered in order to reach Execute()
  *          safeMode checks. 
@@ -257,14 +257,14 @@ void MockRead(RuntimeEvaluator &context);
 void MockWrite(RuntimeEvaluator &context);
 
 /**
- * @brief   Custom RuntimeEvaluatorFunctions function 
+ * @brief   Custom RuntimeEvaluatorFunction function 
  * @details This function intentionally raises an error during
  *          execution in order to reach Execute() safeMode checks. 
  */
 void MockExecutionError(RuntimeEvaluator &context);
 
 /**
- * @brief   Custom RuntimeEvaluatorFunctions function 
+ * @brief   Custom RuntimeEvaluatorFunction function 
  * @details This function intentionally raises an ErrorManagement::OutOfRange
  *          error during execution in order to reach Execute() safeMode checks. 
  */

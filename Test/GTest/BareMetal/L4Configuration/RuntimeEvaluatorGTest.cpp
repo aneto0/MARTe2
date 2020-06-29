@@ -295,7 +295,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Faile
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedGeneralExecutionError) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
-    RuntimeEvaluatorFunctions mockGeneralExecErr("MGENEXECERR", 0, 0, types, MockExecutionError);
+    RuntimeEvaluatorFunction mockGeneralExecErr("MGENEXECERR", 0, 0, types, MockExecutionError);
     RegisterFunction(mockGeneralExecErr);
     
     RuntimeEvaluatorTest evaluatorTest;
@@ -323,7 +323,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Faile
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedOutOfRangeExecutionError) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
-    RuntimeEvaluatorFunctions mockExecErr("MEXECERR", 0, 0, types, MockOutOfRangeExecutionError);
+    RuntimeEvaluatorFunction mockExecErr("MEXECERR", 0, 0, types, MockOutOfRangeExecutionError);
     RegisterFunction(mockExecErr);
     
     RuntimeEvaluatorTest evaluatorTest;
@@ -351,7 +351,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Faile
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedStackOverflow) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
-    RuntimeEvaluatorFunctions mockRead("MREAD", 0, 1, types, MockRead);
+    RuntimeEvaluatorFunction mockRead("MREAD", 0, 1, types, MockRead);
     RegisterFunction(mockRead);
     
     RuntimeEvaluatorTest evaluatorTest;
@@ -379,7 +379,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Faile
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_FailedStackUnderflow) {
     
     TypeDescriptor types[] = {Float32Bit, Float32Bit};
-    RuntimeEvaluatorFunctions mockWrite("MWRITE", 0, 1, types, MockWrite);
+    RuntimeEvaluatorFunction mockWrite("MWRITE", 0, 1, types, MockWrite);
     RegisterFunction(mockWrite);
     
     RuntimeEvaluatorTest evaluatorTest;

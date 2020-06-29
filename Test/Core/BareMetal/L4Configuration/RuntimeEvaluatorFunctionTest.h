@@ -1,6 +1,6 @@
 /**
- * @file RuntimeEvaluatorFunctionsTest.h
- * @brief Header file for class RuntimeEvaluatorFunctionsTest
+ * @file RuntimeEvaluatorFunctionTest.h
+ * @brief Header file for class RuntimeEvaluatorFunctionTest
  * @date 06/05/2020
  * @author Didac Magrinya
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RuntimeEvaluatorFunctionsTest
+ * @details This header file contains the declaration of the class RuntimeEvaluatorFunctionTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "RuntimeEvaluatorFunctions.h"
+#include "RuntimeEvaluatorFunction.h"
 #include "RuntimeEvaluator.h"
 #include "ConfigurationDatabase.h"
 
@@ -45,9 +45,9 @@
 using namespace MARTe;
 
 /**
- * @brief Tests all the RuntimeEvaluatorFunctions functions.
+ * @brief Tests all the RuntimeEvaluatorFunction functions.
  */
-class RuntimeEvaluatorFunctionsTest {
+class RuntimeEvaluatorFunctionTest {
 
 public:
 
@@ -62,8 +62,8 @@ public:
     bool TestFullConstructor();
 
     /**
-     * @brief   Tests types of registered RuntimeEvaluatorFunctions.
-     * @details Checks that all RuntimeEvaluatorFunctions in FunctionRecords
+     * @brief   Tests types of registered RuntimeEvaluatorFunction.
+     * @details Checks that all RuntimeEvaluatorFunction in FunctionRecords
      *          with functionName, numberOfInputs, and numberOfOutputs match
      *          with a set of types in expectedFunctionTypesCdb. It also checks
      *          that there is a FunctionRecord for each set of types in
@@ -117,7 +117,7 @@ public:
      *          - checks that dataStackSize is set to expectedDataStackSize
      *          - checks that typeStack is left untouched
      */
-    bool TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize);
+    bool TestTryConsume(RuntimeEvaluatorFunction &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize);
 
     /**
      * @brief Adds sets of input-output types to expectedFunctionTypesCdb with all possible
@@ -178,7 +178,7 @@ void MockFunction(RuntimeEvaluator &evaluator);
 /*---------------------------------------------------------------------------*/
 
 template <typename T>
-void RuntimeEvaluatorFunctionsTest::SetInputs(RuntimeEvaluator &context, T inputs[]) {
+void RuntimeEvaluatorFunctionTest::SetInputs(RuntimeEvaluator &context, T inputs[]) {
 
     VariableInformation *var;
     T *inputPointer;
@@ -190,7 +190,7 @@ void RuntimeEvaluatorFunctionsTest::SetInputs(RuntimeEvaluator &context, T input
 }
 
 template <typename T>
-inline bool RuntimeEvaluatorFunctionsTest::TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn) {
+inline bool RuntimeEvaluatorFunctionTest::TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn) {
 
     VariableInformation *var;
     T *resultPointer;
@@ -208,7 +208,7 @@ inline bool RuntimeEvaluatorFunctionsTest::TestIntFunctionExecution(RuntimeEvalu
 }
 
 template <typename T>
-inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn) {
+inline bool RuntimeEvaluatorFunctionTest::TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn) {
 
     VariableInformation *var;
     T *resultPointer;
@@ -228,7 +228,7 @@ inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEva
 }
 
 template <typename T>
-inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn) {
+inline bool RuntimeEvaluatorFunctionTest::TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn) {
 
     VariableInformation *var;
     T *resultPointer;

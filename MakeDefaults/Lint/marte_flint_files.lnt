@@ -184,7 +184,7 @@ ReferenceT.h
 RegisteredMethodsMessageFilter.cpp
 ReplyMessageCatcherMessageFilter.cpp
 RuntimeEvaluator.cpp
-RuntimeEvaluatorFunctions.cpp
+RuntimeEvaluatorFunction.cpp
 SafeMath.h
 SearchFilter.h
 SearchFilterT.h

@@ -31,7 +31,7 @@ OBJSX=  AnyObjectGTest.x \
 		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
 		RuntimeEvaluatorGTest.x \
-		RuntimeEvaluatorFunctionsGTest.x \
+		RuntimeEvaluatorFunctionGTest.x \
 		StandardParserGTest.x \
 		TokenGTest.x \
 		TokenInfoGTest.x \

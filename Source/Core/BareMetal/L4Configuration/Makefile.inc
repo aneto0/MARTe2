@@ -36,7 +36,7 @@ OBJSX=	AnyObject.x \
 		LexicalAnalyzer.x \
 		MathExpressionParser.x \
 		RuntimeEvaluator.x \
-		RuntimeEvaluatorFunctions.x \
+		RuntimeEvaluatorFunction.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		TypeConversion.x \

@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RuntimeEvaluator.h"
-#include "RuntimeEvaluatorFunctions.h"
+#include "RuntimeEvaluatorFunction.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -963,7 +963,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,const bool peekOnly,const bool showData,const bool showTypes){
+ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(RuntimeEvaluatorFunction &functionInformation,StreamString &cst,const bool peekOnly,const bool showData,const bool showTypes){
     ErrorManagement::ErrorType ret;
 
     const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
@@ -1033,7 +1033,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
     return ret;
 }
 
-ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst, const bool lookBack, const bool showData, const bool showTypes){
+ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(RuntimeEvaluatorFunction &functionInformation,StreamString &cst, const bool lookBack, const bool showData, const bool showTypes){
     ErrorManagement::ErrorType ret;
     StreamString functionName = functionInformation.GetName();
     Vector<TypeDescriptor> functionOutputTypes = functionInformation.GetOutputTypes();
@@ -1194,7 +1194,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(const executionMode mode, S
 
                 CodeMemoryElement pCode = GetPseudoCode();
 
-                RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
+                RuntimeEvaluatorFunction &fr = functionRecords[pCode];
 
                 // show update info
                 currentFunctionName = fr.GetName();
@@ -1276,7 +1276,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRP
     bool noErrors = ret.ErrorsCleared();
     while((codeMemoryPtr < codeMemoryMaxPtr) && noErrors){
         CodeMemoryElement pCode = GetPseudoCode();
-        RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
+        RuntimeEvaluatorFunction &fr = functionRecords[pCode];
         StreamString fName = fr.GetName();
 
         if ((fName == readToken) && (codeMemoryPtr[0] < startOfVariables)){
