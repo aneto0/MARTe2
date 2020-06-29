@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef RUNTIMEEVALUATORFUNCTIONS_H_
-#define RUNTIMEEVALUATORFUNCTIONS_H_
+#ifndef RUNTIMEEVALUATORFUNCTION_H_
+#define RUNTIMEEVALUATORFUNCTION_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -289,4 +289,4 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record);
 
 } // MARTe
 
-#endif /* RUNTIMEEVALUATORFUNCTIONS_H_ */
+#endif /* RUNTIMEEVALUATORFUNCTION_H_ */
