@@ -1,5 +1,5 @@
 /**
- * @file RuntimeEvaluatorFunctions.cpp
+ * @file RuntimeEvaluatorFunction.cpp
  * @brief Header file for class AnyType
  * @date 08/04/2020
  * @author Filippo Sartori
@@ -29,7 +29,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "RuntimeEvaluatorFunctions.h"
+#include "RuntimeEvaluatorFunction.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -44,17 +44,17 @@ namespace MARTe {
 
 uint32 availableFunctions = 0u;
 
-RuntimeEvaluatorFunctions functionRecords[maxFunctions];
+RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
-RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions():
+RuntimeEvaluatorFunction::RuntimeEvaluatorFunction():
     name(""), numberOfInputs(0u), numberOfOutputs(0u), types(NULL_PTR(TypeDescriptor*)), function(NULL_PTR(Function))
     {}
 
-RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function functionIn):
+RuntimeEvaluatorFunction::RuntimeEvaluatorFunction(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function functionIn):
     name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
     {}
 
-bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32u> &typeStack, const bool matchOutput,DataMemoryAddress &dataStackSize) const {
+bool RuntimeEvaluatorFunction::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32u> &typeStack, const bool matchOutput,DataMemoryAddress &dataStackSize) const {
 
     // match function name
     bool ret = (name == nameIn.GetList());
@@ -106,17 +106,17 @@ bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescr
     return ret;
 }
 
-Vector<TypeDescriptor> RuntimeEvaluatorFunctions::GetInputTypes(){
+Vector<TypeDescriptor> RuntimeEvaluatorFunction::GetInputTypes(){
     Vector<TypeDescriptor> inputTypes(types, numberOfInputs);
     return inputTypes;
 }
 
-Vector<TypeDescriptor> RuntimeEvaluatorFunctions::GetOutputTypes(){
+Vector<TypeDescriptor> RuntimeEvaluatorFunction::GetOutputTypes(){
     Vector<TypeDescriptor> inputTypes(&(types[numberOfInputs]), numberOfOutputs);
     return inputTypes;
 }
 
-void RegisterFunction(const RuntimeEvaluatorFunctions &record){
+void RegisterFunction(const RuntimeEvaluatorFunction &record){
     if (availableFunctions < maxFunctions){
         functionRecords[availableFunctions] = record;
         availableFunctions++;
@@ -194,10 +194,10 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,  1u,0u,Write<int8>   ,SignedInteger8Bit   ,S
 /*lint --emacro( {1502}, REGISTER_CAST_FUNCTION ) Justification: name ## subName ## RegisterClass class intentionally has no data member. */
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
     static TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
-    static const RuntimeEvaluatorFunctions name ## type1 ## type2 ## _RuntimeEvaluatorFunctions(#name,1u,1u,&name ## type1 ## type2 ## _FunctionTypes[0u], static_cast<Function>(&function<type1,type2>)); \
+    static const RuntimeEvaluatorFunction name ## type1 ## type2 ## _RuntimeEvaluatorFunction(#name,1u,1u,&name ## type1 ## type2 ## _FunctionTypes[0u], static_cast<Function>(&function<type1,type2>)); \
     static class name ## type1 ## type2 ## RegisterClass { \
     public: name ## type1 ## type2 ## RegisterClass(){\
-            RegisterFunction(name ## type1 ## type2 ## _RuntimeEvaluatorFunctions);\
+            RegisterFunction(name ## type1 ## type2 ## _RuntimeEvaluatorFunction);\
         }\
     } name ## type1 ## type2 ## RegisterClassInstance;
 

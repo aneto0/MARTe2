@@ -1,5 +1,5 @@
 /**
- * @file RuntimeEvaluatorFunctions.h
+ * @file RuntimeEvaluatorFunction.h
  * @brief Header file for class AnyType
  * @date 08/04/2020
  * @author Filippo Sartori
@@ -54,12 +54,12 @@ namespace MARTe {
  *          points to a function that takes a RuntimeEvaluator
  *          as input and returns nothing.
  *          Functions for runtime evaluation defined in
- *          RuntimeEvaluatorFunctions.cpp are all of this kind (e.g.
+ *          RuntimeEvaluatorFunction.cpp are all of this kind (e.g.
  *          Addition_3T, Subtraction_3T etc).
  *          When invoked, these functions act on the input RuntimeEvaluator
  *          object using RuntimeEvaluator::Push(), RuntimeEvaluator::Pop()
  *          and RuntimeEvaluator::Peek() methods (see RuntimeEvaluator
- *          and RuntimeEvaluatorFunctions documentation for details).
+ *          and RuntimeEvaluatorFunction documentation for details).
  */
 typedef void (*Function)(RuntimeEvaluator & context);
 
@@ -91,7 +91,7 @@ typedef void (*Function)(RuntimeEvaluator & context);
  * 
  * // Registration of the function.
  * TypeDescriptor types[] = {Float32Bit, Float32Bit};
- * RuntimeEvaluatorFunctions exampleFunction("EXFUN", 1, 1, types, ExampleFunction);
+ * RuntimeEvaluatorFunction exampleFunction("EXFUN", 1, 1, types, ExampleFunction);
  * RegisterFunction(exampleFunction);
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
@@ -102,7 +102,7 @@ typedef void (*Function)(RuntimeEvaluator & context);
  * element on the same stack.
  * 
  * What happens behind the scenes is that upon registration each function
- * is added to the #functionRecords array (see RuntimeEvaluatorFunctions.h,
+ * is added to the #functionRecords array (see RuntimeEvaluatorFunction.h,
  * outside the class definition).
  * When RuntimeEvaluator needs to call a function, it searches the #functionRecords
  * for the function its stack is currently pointing to, and then calls
@@ -112,13 +112,13 @@ typedef void (*Function)(RuntimeEvaluator & context);
  * 
  */
 /*lint -e(9109) Forward declaration in RuntimeEvaluator.h is required (RuntimeEvaluator and RuntimeEvaluatorFunction are circular-dependant). */
-class RuntimeEvaluatorFunctions {
+class RuntimeEvaluatorFunction {
 public:
 
     /**
      * @brief Default constructor.
      */
-    RuntimeEvaluatorFunctions();
+    RuntimeEvaluatorFunction();
 
     /**
      * @brief     Full constructor.
@@ -134,7 +134,7 @@ public:
      * @param[in] functionIn        pointer to the actual C++ function
      *                              that will be executed.
      */
-    RuntimeEvaluatorFunctions(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function functionIn);
+    RuntimeEvaluatorFunction(const CCString &nameIn, const uint16 numberOfInputsIn, const uint16 numberOfOutputsIn, TypeDescriptor* const typesIn, const Function functionIn);
     
     /**
      * @brief Get the name of the function.
@@ -215,7 +215,7 @@ private:
      */
     Function                function;
 
-}; /* class RuntimeEvaluatorFunctions */
+}; /* class RuntimeEvaluatorFunction */
 
 /**
  * @brief   Max number of functions that can be registered.
@@ -233,12 +233,12 @@ extern uint32 availableFunctions;
 
 /**
  * @brief   Database of all registered functions to be used by RuntimeEvaluator.
- * @details This array holds all RuntimeEvaluatorFunctions objects
+ * @details This array holds all RuntimeEvaluatorFunction objects
  *          used by RuntimeEvaluator.
  *          To add a function to this database the RegisterFunction()
  *          method shall be used.
  */
-extern RuntimeEvaluatorFunctions functionRecords[maxFunctions];
+extern RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
 /**
  * @brief Finds a PCode elements and updates the typestack accordingly.
@@ -247,11 +247,11 @@ bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, const CCString &nameIn
 
 /**
  * @brief   Adds a function to #functionRecord.
- * @details This function is used to add a RuntimeEvaluatorFunctions
+ * @details This function is used to add a RuntimeEvaluatorFunction
  *          function to the database of functions (#functionRecord)
  *          that can be called at runtime by RuntimeEvaluator.
  */
-void RegisterFunction(const RuntimeEvaluatorFunctions &record);
+void RegisterFunction(const RuntimeEvaluatorFunction &record);
 
 /**
  * @brief   Generates boilerplate code to register a function.
@@ -259,7 +259,7 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record);
  *          1. creates a TypeDescriptor array of types (passed to the 
  *             macro via the variable size input ... and catched by the
  *             __VA_ARGS__ keyword)
- *          2. creates a RuntimeEvaluatorFunctions function that points
+ *          2. creates a RuntimeEvaluatorFunction function that points
  *             to the function passed as 5th input to the macro
  *          3. creates a class that wraps the function and provides it
  *             with a constructor who is responsible for calling the
@@ -275,10 +275,10 @@ void RegisterFunction(const RuntimeEvaluatorFunctions &record);
 /*lint --emacro( {1502}, REGISTER_PCODE_FUNCTION ) Justification: name ## subName ## RegisterClass class intentionally has no data member. */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,functionIn,...)\
     static TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-    static const RuntimeEvaluatorFunctions name ## subName ## _RuntimeEvaluatorFunctions(#name,nInputs,nOutputs, &name ## subName ## _FunctionTypes[0u], static_cast<Function>(&functionIn)); \
+    static const RuntimeEvaluatorFunction name ## subName ## _RuntimeEvaluatorFunction(#name,nInputs,nOutputs, &name ## subName ## _FunctionTypes[0u], static_cast<Function>(&functionIn)); \
     static class name ## subName ## RegisterClass { \
     public: name ## subName ## RegisterClass(){\
-            RegisterFunction(name ## subName ## _RuntimeEvaluatorFunctions);\
+            RegisterFunction(name ## subName ## _RuntimeEvaluatorFunction);\
         }\
     } name ## subName ## RegisterClassInstance;
 

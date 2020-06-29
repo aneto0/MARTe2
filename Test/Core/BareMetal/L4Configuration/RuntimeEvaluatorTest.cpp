@@ -979,7 +979,7 @@ void RuntimeEvaluatorTest::AddExpectedVariable(LinkedListHolderT<VariableInforma
     varList.ListAdd(var);
 }
 
-bool RuntimeEvaluatorTest::RecordMatchesExpectedFunction(RuntimeEvaluatorFunctions &functionRecord) {
+bool RuntimeEvaluatorTest::RecordMatchesExpectedFunction(RuntimeEvaluatorFunction &functionRecord) {
     bool match = true;
     StreamString expectedName, expectedInput, expectedOutput;
     Vector<TypeDescriptor> inputs, outputs;
