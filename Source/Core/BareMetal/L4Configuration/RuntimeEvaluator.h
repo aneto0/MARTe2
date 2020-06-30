@@ -92,7 +92,6 @@ class RuntimeEvaluatorFunction;
  * construction time, either typed directly:
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
- * 
  * StreamString rpnCode = "READ A\n"
  *                        "READ B\n"
  *                        "ADD\n"
@@ -100,20 +99,17 @@ class RuntimeEvaluatorFunction;
  * ;
  * 
  * RuntimeEvaluator expression(rpnCode);
- * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * or by converting an infix expression (e.g. via the MathExpressionParser):
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
- * 
  * StreamString infixExpr = "ret = A + B;"
  * 
  * MathExpressionParser parser(infixExpr);
  * parser.Parse();
  * 
  * RuntimeEvaluator expression(parser.GetStackMachineExpression());
- * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * Initialising the evaluator
