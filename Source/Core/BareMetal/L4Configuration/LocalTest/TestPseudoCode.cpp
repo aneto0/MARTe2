@@ -76,10 +76,12 @@ CCString MATHExpr= "X=Z,Y=B , X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z; \n";
 //CCString MATHExpr= "pipX=pipZ,A=B;";
 
 CCString RPNCode=
+        "READ M1\n"
+        "WRITE Mo\n"
         "READ A\n"
         "READ B\n"
         "SUB\n"
-        "CONST float32 3.140000\n"
+        "CONST float32 0.360000\n"
         "MUL\n"
         "WRITE C\n"
         "READ C\n"
@@ -287,9 +289,12 @@ int main(){
         //    External variables
         //####################################################
 
-        float externalA = 1.0;
-        float externalB = 2.0;
+        float externalA = 2.0;
+        float externalB = 1.0;
         uint8 externalF = 0;
+
+        float M1[3][4];
+        float Mo[3][4];
 
         if (ret){
             uint32 index = 0U;
@@ -297,6 +302,9 @@ int main(){
 
             printf ("VAR SCAN RESULT\n");
             while(context.BrowseInputVariable(index,var)){
+                if (var->GetName() == "M1"){
+                    var->SetType(M1);
+                }
                 if (var->GetName() == "A"){
                     var->SetType(externalA);
                 }
@@ -321,7 +329,7 @@ int main(){
 
                 printf ("input  var %2i @%04x = %s type = %s",index,var->GetLocation(),var->GetName().GetList(),xx.GetList());
                 if (var->GetExternalMemoryPtr() != NULL){
-                    printf ("externPtr = 0x%p",var->GetExternalMemoryPtr());
+                    printf (" externPtr = 0x%p",var->GetExternalMemoryPtr());
                 }
                 printf ("\n");
                 index++;
@@ -329,6 +337,9 @@ int main(){
 
             index = 0;
             while(context.BrowseOutputVariable(index,var)){
+                if (var->GetName() == "Mo"){
+                    var->SetType(Mo);
+                }
                 if (var->GetName() == "D"){
                     var->SetType(AnyType(SignedInteger32Bit,NULL));
                 }

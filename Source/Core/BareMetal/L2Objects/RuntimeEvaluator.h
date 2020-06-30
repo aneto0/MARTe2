@@ -653,7 +653,7 @@ private:
     /**
      * address of first variable (after constants) or how many MemoryElement are used for constants
      */
-    DataMemoryAddress                 startOfVariables;
+//    DataMemoryAddress                 startOfVariables;
     //@}
 
     /**
@@ -719,7 +719,7 @@ private:
 
 
 uint32 RuntimeEvaluator::GetSizeOfConstants(){
-	return startOfVariables;
+	return 0;
 }
 
 uint32 RuntimeEvaluator::GetSizeOfVariables(){

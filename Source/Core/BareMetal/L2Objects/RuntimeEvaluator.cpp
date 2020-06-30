@@ -122,7 +122,7 @@ RuntimeEvaluator::RuntimeEvaluator(){
     sizeOfVariablesMemory = 0;
     codeMemoryPtr = NULL_PTR(CodeMemoryElement*);
     stackPtr = NULL_PTR(DataMemoryElement*);
-    startOfVariables = 0;
+//    startOfVariables = 0;
 }
 
 RuntimeEvaluator::~RuntimeEvaluator(){
@@ -203,7 +203,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::BrowseOutputVariable(uint32 index,V
 ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
     ErrorManagement::ErrorType ret;
 
-    DataMemoryAddress nextConstantAddress = 0;
+//    DataMemoryAddress nextConstantAddress = 0;
 
     bool finished = false;
     while (!finished  && ret){
@@ -267,7 +267,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(CCString RPNCode){
     }
 
     if (ret){
-        startOfVariables = nextConstantAddress;
+//        startOfVariables = nextConstantAddress;
     }
 
     return ret;
@@ -289,6 +289,19 @@ static inline void ShowStack(CStringTool cst,bool matchOutput,const Stack<AnyTyp
                 cst.Append('|');
             }
         	at.GetFullVariableDescriptor().ToString(cst);
+        	if (at.GetVariablePointer() != NULL){
+        	    TypeDescriptor td;
+        	    uint32 n=3,dims[3];
+        	    at.GetVariableInformation(td,n,dims);
+                cst.Append('(');
+        	    for (uint32 ix = 0;ix < n;ix++ ){
+                    if (ix > 0){
+                        cst.Append(',');
+                    }
+                    cst.Append(dims[ix]);
+        	    }
+                cst.Append(')');
+        	}
         }
     }
     cst.Append(']');
@@ -323,6 +336,7 @@ static inline ErrorManagement::ErrorType Allocate(
 
             // saves the information about the variable size and position
             variablesMemory.Variable<Matrix<float> >(variableLocation).InitMatrix(reinterpret_cast<float *>(variableInformation.GetExternalMemoryPtr()),variableInformation.GetDimension(0),variableInformation.GetDimension(1));
+printf("allocated matrix to [%i][%i]\n",variablesMemory.Variable<Matrix<float> >(variableLocation).GetNumberOfRows(),variablesMemory.Variable<Matrix<float> >(variableLocation).GetNumberOfColumns());
         }
     }
     else  // external referenced numbers
@@ -460,7 +474,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     ret = FindOutputVariable(parameter1,variableInformation);
                     COMPOSITE_REPORT_ERROR(ret,"output variable ",parameter1, " not found");
                 }
-printf("W%s:%p ",variableInformation->GetName().GetList(),variableInformation->GetExternalMemoryPtr());
+//printf("W%s:%p ",variableInformation->GetName().GetList(),variableInformation->GetExternalMemoryPtr());
 
                 //   MAKE SURE WE ARE NOT OVERWRITING
                 if (ret){
@@ -491,9 +505,9 @@ printf("W%s:%p ",variableInformation->GetName().GetList(),variableInformation->G
                 // we cannot overwrite so they are not allocated at this stage
                 // earlier this condition was checked
                 if (ret){
-printf("?");
+//printf("?");
                     if (variableInformation->IsValidReferencedNumber()){
-printf("R+");
+//printf("R+");
                         command = remoteWriteToken;
                     }
 
@@ -501,9 +515,7 @@ printf("R+");
                 }
 
                 if (ret){
-                    void *ptr = reinterpret_cast<void *>(variablesMemory.Variable<int>(variableInformation->GetLocation()));
-
-                    AnyType at(variableInformation->GetType(),ptr);
+                    AnyType at(variableInformation->GetType(),variablesMemory.Address<void>(variableInformation->GetLocation()));
 
                 	// to specify the output Type
                     ret = typeStack.Push(at);
@@ -556,25 +568,22 @@ printf("R+");
                         command = remoteReadToken;
                     }
 
-                    if (ret){
-                        ret = Allocate(*variableInformation,variablesMemory);
-                    }
+                    ret = Allocate(*variableInformation,variablesMemory);
                 }
 
                 if (ret){
-                    void *ptr = reinterpret_cast<void *>(variablesMemory.Variable<int>(variableInformation->GetLocation()));
 
-                    AnyType at(variableInformation->GetType(),ptr);
-
+                    AnyType at(variableInformation->GetType(),variablesMemory.Address<void>(variableInformation->GetLocation()));
+//printf("pushing to stack address of Variable(%i): %p \n",variableInformation->GetLocation(),variablesMemory.Address<void>(variableInformation->GetLocation()));
                     // to specify the input Type
                     ret.fatalError = !typeStack.Push(at);
                     REPORT_ERROR(ret,"failed to push type into stack");
-/*
+#if 0
 DynamicCString cs;
 CStringTool cst = cs();
 at.GetFullVariableDescriptor().ToString(cst);
 printf("pushed %s to stack\n",cs.GetList());
-*/
+#endif
                 }
 
                 if (ret){
@@ -644,9 +653,7 @@ printf("pushed %s to stack\n",cs.GetList());
                 }
 
                 if (ret){
-                    void *ptr = reinterpret_cast<void *>(variablesMemory.Variable<int>(variableInformation->GetLocation()));
-
-                    AnyType at(variableInformation->GetType(),ptr);
+                    AnyType at(variableInformation->GetType(),variablesMemory.Address<void>(variableInformation->GetLocation()));
 
                     // to specify the input Type
                     ret.fatalError = !typeStack.Push(at);
@@ -661,7 +668,7 @@ printf("pushed %s to stack\n",cs.GetList());
                 }
             }
 
-printf("%s\n",command.GetList());
+//printf("%s\n",command.GetList());
 
             CodeMemoryElement code = InvalidCodeMemoryElement;
             /**
@@ -673,6 +680,10 @@ printf("%s\n",command.GetList());
                 ShowStack(typeList(),matchOutput,typeStack);
                 ret.unsupportedFeature = !FindPCode(code,command,typeStack,matchOutput);
                 COMPOSITE_REPORT_ERROR(ret,"command ",command, "(",typeList,") not found");
+printf("stack before search: %s\n",typeList.GetList());fflush(stdout);
+typeList = "";
+//ShowStack(typeList(),matchOutput,typeStack);
+//printf("stack after search: %s\n",typeList.GetList());fflush(stdout);
             }
 
             if (ret){
@@ -688,6 +699,9 @@ printf("%s\n",command.GetList());
              */
             if (ret){
             	ret = functionRecords[code].UpdateStack(typeStack,dataStackSize,db2,matchOutput,dummyID);
+DynamicCString typeList;
+ShowStack(typeList(),matchOutput,typeStack);
+printf("stack after update stack: %s\n",typeList.GetList());fflush(stdout);
             }
 
             // COMPILE
@@ -727,7 +741,15 @@ printf("%s\n",command.GetList());
 
                 if (ret){
                 	ret = outputVariableInfo.Insert(variableInformation);
+                    REPORT_ERROR(ret,"failed to add new output variable");
                 }
+
+                if (ret){
+                    AnyType at(variableInformation.GetType(),reinterpret_cast<const void *>(&Variable<Matrix<float> >(variableInformation.GetLocation())));
+                    ret = typeStack.Push(at);
+                    REPORT_ERROR(ret,"error adding result type to stack");
+                }
+
             }
         }
     }
@@ -786,6 +808,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
             }
             if (showTypes){
                  ret.fatalError = !vd.ToString(cst);
+                 REPORT_ERROR(ret,"failed converting type 2 string");
             }
             if (showData && showTypes){
                 cst.Append(')');
@@ -797,6 +820,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
                 AnyType src(vd,stackPtr - dataStackIndex);
                 AnyType dest(value);
                 ret = src.CopyTo(dest);
+                REPORT_ERROR(ret,"failed converting 2 string");
 
                 cst.Append(value.GetList());
 
@@ -836,7 +860,10 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
         COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
 
         if (ret){
-            if (pCode2 < startOfVariables){
+            CCString varName = variableInformation->GetName();
+
+            if (varName.CompareContent("Constant@",9)==0){
+//            if (pCode2 < startOfVariables){
 
                 cst.Append(' ');
                 ret.fatalError = !variableInformation->GetType().ToString(cst);
@@ -848,12 +875,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
 //                AnyType src(vi->type,&variablesMemory.Variable<uint8>(pCode2));
                 AnyType src(variableInformation->GetType(),&Variable<uint8>(pCode2));
                 ret = src.CopyTo(dest);
-                REPORT_ERROR(ret,"CopyTo failed ");
+                REPORT_ERROR(ret,"failed converting 2 string");
                 if (ret){
                     cst.Append(value);
                 }
             } else {
-                cst.Append(' ').Append(variableInformation->GetName());
+                cst.Append(' ').Append(varName);
             }
         }
     }
@@ -1001,6 +1028,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
     return runtimeError;
 }
 
+
 ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(DynamicCString &RPNCode,bool showTypes){
     ErrorManagement::ErrorType ret ;
 
@@ -1016,13 +1044,26 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(DynamicCString &RPNCode,b
         CodeMemoryElement pCode = GetPseudoCode();
         RuntimeEvaluatorFunction &fr = functionRecords[pCode];
 
-        if ((fr.name == readToken) && (codeMemoryPtr[0] < startOfVariables)){
+        VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
+
+        bool isRead = (fr.name == readToken);
+        bool isRRead = (fr.name == remoteReadToken);
+        bool isRWrite = (fr.name == remoteWriteToken);
+        bool isConstant = false;
+        if (isRead) {
+            ret = FindVariable(codeMemoryPtr[0],variableInformation);
+            if (ret){
+                isConstant = (variableInformation->GetName().CompareContent("Constant@",9)==0);
+            }
+        }
+
+        if (isConstant){
             cst.Append(constToken);
         } else
-        if (fr.name == remoteReadToken) {
+        if (isRRead) {
             cst.Append(readToken);
         } else
-        if (fr.name == remoteWriteToken) {
+        if (isRWrite) {
             cst.Append(writeToken);
         } else {
             cst.Append(fr.name);

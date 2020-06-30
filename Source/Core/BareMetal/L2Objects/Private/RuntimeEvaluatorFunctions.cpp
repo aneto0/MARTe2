@@ -57,10 +57,21 @@ ErrorManagement::ErrorType  RuntimeEvaluatorFunction::Check(
         ret = typeStack.Peek(at,index++);
         COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(at,",index-1,") failed");
     }
-
+    VariableDescriptor vd;
     if (ret && matchOutput){
-        VariableDescriptor vd = at.GetFullVariableDescriptor();
+        vd = at.GetFullVariableDescriptor();
         ret.comparisonFailure = !types[numberOfInputs].SameAs(vd);
+#if 0
+if (ret){
+    DynamicCString cs;
+    CStringTool cst = cs();
+    cst.Append("(vd:)");
+    vd.ToString(cst);
+    cst.Append("==(types[i]:)");
+    types[numberOfInputs].ToString(cst);
+    printf("%i outputMatch=%s\n",(types[numberOfInputs].GetModifiers() == vd.GetModifiers()),cs.GetList());
+}
+#endif
     }
 
     // match inputs types
@@ -68,9 +79,20 @@ ErrorManagement::ErrorType  RuntimeEvaluatorFunction::Check(
         ret = typeStack.Peek(at,index++);
         COMPOSITE_REPORT_ERROR(ret,"typeStack.Peek(vd,",index-1,") failed");
         if (ret){
-            VariableDescriptor vd = at.GetFullVariableDescriptor();
+            vd = at.GetFullVariableDescriptor();
             ret.comparisonFailure = !vd.SameAs(types[i]);
         }
+#if 0
+if (ret){
+    DynamicCString cs;
+    CStringTool cst = cs();
+    cst.Append("(vd:)");
+    vd.ToString(cst);
+    cst.Append("==(types[i]:)");
+    types[i].ToString(cst);
+    printf("inputMatch=%s\n",cs.GetList());
+}
+#endif
     }
 
     return ret;
@@ -112,7 +134,7 @@ ErrorManagement::ErrorType  FindPCode(
 
     return ret;
 }
-
+#if 0
 static inline int toDigit(char8 c){
 	int ret = -1;
 	if ((c <= '9') && (c >= '0')){
@@ -120,7 +142,8 @@ static inline int toDigit(char8 c){
 	}
 	return ret;
 }
-
+#endif
+#if 0
 static inline uint32 toUint32(CCString &s){
 	uint32 ret = 0;
 
@@ -131,7 +154,7 @@ static inline uint32 toUint32(CCString &s){
 	}
 	return ret;
 }
-
+#endif
 #if 0
 static ErrorManagement::ErrorType GetMatrixInfo(const VariableDescriptor &vd,uint32 &nRows, uint32 &nColumns){
 
@@ -245,9 +268,10 @@ ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
         REPORT_ERROR(ret,"typeStack.Push(..) failed");
         if (ret){
         	uint32 nc=0,nr=0;
+        	// TODO FIX
         	// in this method we do not support matrices as output
         	bool isValidMatrix = true;
-        	ret = IsValidMatrix(isValidMatrix,AnyType(vd),nr,nc);
+        	ret = IsValidMatrix(isValidMatrix,AnyType(vd,NULL),nr,nc);
             REPORT_ERROR(ret,"cannot handle matrices as output");
         }
         if (ret){
@@ -257,6 +281,115 @@ ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
 
     return ret;
 }
+
+static const VariableDescriptor Float32BitMatrix = VariableDescriptor(Float32Bit,"M");
+static const VariableDescriptor Float64BitMatrix = VariableDescriptor(Float64Bit,"M");
+
+ErrorManagement::ErrorType Matrix_Write_UpdateStack(
+        const RuntimeEvaluatorFunction &                    ref,
+        Stack<AnyType> &                                    typeStack,
+        RuntimeEvaluator::DataMemoryAddress &               dataStackSize,
+        List<RuntimeEvaluator::VariableInformation> &       db,
+        uint32 &                                            dummyID){
+
+    ErrorManagement::ErrorType ret;
+
+    AnyType at1,at2;
+    ret = typeStack.Pop(at1);
+    REPORT_ERROR(ret,"typeStack.Pop(at1) failed");
+    dataStackSize -= RuntimeEvaluator::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluator::DataMemoryAddress));
+
+    if (ret){
+        ret = typeStack.Pop(at2);
+        REPORT_ERROR(ret,"typeStack.Pop(at2) failed");
+        dataStackSize -= RuntimeEvaluator::ByteSizeToDataMemorySize(sizeof(RuntimeEvaluator::DataMemoryAddress));
+    }
+
+    if (ret){
+        ret.unsupportedFeature = !(at1.GetFullVariableDescriptor().SameAs(at2.GetFullVariableDescriptor()));
+        REPORT_ERROR(ret,"error expecting two matrices");
+    }
+
+    uint32 nRows        = 1;
+    uint32 nColumns     = 1;
+    bool isValidMatrix  = false;
+
+    if (ret){
+        ret = IsValidMatrix(isValidMatrix,at1,nColumns,nRows);
+        REPORT_ERROR(ret,"error first param not valid Matrix");
+    }
+
+    if (ret){
+        ret.internalSetupError = !isValidMatrix;
+        REPORT_ERROR(ret,"error expecting valid matrix as param 1");
+    }
+
+    uint32 nRows2        = 1;
+    uint32 nColumns2     = 1;
+    if (ret){
+        ret = IsValidMatrix(isValidMatrix,at2,nColumns2,nRows2);
+        REPORT_ERROR(ret,"error second param not valid Matrix");
+    }
+
+    if (ret){
+        ret.internalSetupError = !isValidMatrix;
+        REPORT_ERROR(ret,"error expecting valid matrix as param 2");
+    }
+
+    if (ret){
+        ret.unsupportedFeature = (nRows != nRows2) || (nColumns != nColumns2);
+        REPORT_ERROR(ret,"error expecting matrices of same size");
+    }
+
+    return ret;
+}
+
+
+template <typename T> void MatrixWrite(RuntimeEvaluator &context){
+    RuntimeEvaluator::CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    context.Push(index);
+
+    RuntimeEvaluator::DataMemoryAddress  y1;
+    context.Pop(y1);
+    RuntimeEvaluator::CodeMemoryElement yOut;
+    yOut = context.GetPseudoCode();
+
+    Matrix<T> &z1   = context.Variable< Matrix<T> >(y1);
+    Matrix<T> &zOut = context.Variable< Matrix<T> >(yOut);
+
+    if (!zOut.Copy(z1)){
+        context.runtimeError.internalSetupError = true;
+    }
+    context.Push(yOut);
+}
+
+
+REGISTER_PCODE_MATRIX_FUNCTION(WRITE,float32_M,1,0,MatrixWrite<float32>,Matrix_Write_UpdateStack,Float32BitMatrix,Float32BitMatrix)
+REGISTER_PCODE_MATRIX_FUNCTION(WRITE,float64_M,1,0,MatrixWrite<float64>,Matrix_Write_UpdateStack,Float64BitMatrix,Float64BitMatrix)
+
+ErrorManagement::ErrorType Matrix_Read_UpdateStack(
+        const RuntimeEvaluatorFunction &                    ref,
+        Stack<AnyType> &                                    typeStack,
+        RuntimeEvaluator::DataMemoryAddress &               dataStackSize,
+        List<RuntimeEvaluator::VariableInformation> &       db,
+        uint32 &                                            dummyID){
+
+    ErrorManagement::ErrorType ret;
+
+    return ret;
+}
+
+void MatrixRead(RuntimeEvaluator &context){
+    RuntimeEvaluator::CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    context.Push(index);
+}
+
+
+REGISTER_PCODE_MATRIX_FUNCTION(READ,float32_M,0,1,MatrixRead,Matrix_Read_UpdateStack,Float32BitMatrix)
+REGISTER_PCODE_MATRIX_FUNCTION(READ,float64_M,0,1,MatrixRead,Matrix_Read_UpdateStack,Float64BitMatrix)
+
 
 ErrorManagement::ErrorType Matrix_Addition_UpdateStack(
         const RuntimeEvaluatorFunction &                    ref,
@@ -316,10 +449,6 @@ ErrorManagement::ErrorType Matrix_Addition_UpdateStack(
 
     // prepare the space for the intermediate results
     RuntimeEvaluator::VariableInformation variableInformation;
-    if (ret){
-        ret = typeStack.Push(at1);
-        REPORT_ERROR(ret,"error adding result type to stack");
-    }
 
     if (ret){
         dataStackSize += sizeof(RuntimeEvaluator::DataMemoryAddress);
@@ -337,7 +466,13 @@ ErrorManagement::ErrorType Matrix_Addition_UpdateStack(
         ret = variableInformation.AllocateMatrixMemory();
         REPORT_ERROR(ret,"error variableInformation external memory");
     }
-
+#if 0
+    if (ret){
+        AnyType at(at1.GetFullVariableDescriptor(),);
+        ret = typeStack.Push(at);
+        REPORT_ERROR(ret,"error adding result type to stack");
+    }
+#endif
     if (ret){
         // should move memory management responsibility to new member of database
     	ret = db.Insert(variableInformation );
@@ -363,8 +498,8 @@ template <typename T> void Matrix_Addition(RuntimeEvaluator &context){
     context.Push(yOut);
 }
 
-REGISTER_PCODE_MATRIX_FUNCTION(ADD,float32_AAB,2,1,Matrix_Addition<float32>,Matrix_Addition_UpdateStack,Float32Bit,Float32Bit,Float32Bit)
-REGISTER_PCODE_MATRIX_FUNCTION(ADD,float64_AA,2,1,Matrix_Addition<float32>,Matrix_Addition_UpdateStack,Float32Bit,Float32Bit,Float32Bit)
+REGISTER_PCODE_MATRIX_FUNCTION(ADD,float32_M,2,1,Matrix_Addition<float32>,Matrix_Addition_UpdateStack,Float32BitMatrix,Float32BitMatrix,Float32BitMatrix)
+REGISTER_PCODE_MATRIX_FUNCTION(ADD,float64_M,2,1,Matrix_Addition<float64>,Matrix_Addition_UpdateStack,Float64BitMatrix,Float64BitMatrix,Float64BitMatrix)
 
 /*********************************************************************************************************
  *********************************************************************************************************

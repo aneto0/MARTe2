@@ -29,6 +29,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include <string.h>
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -420,8 +421,42 @@ void ZeroTerminatedArray<T>::operator++(int) {//int is for postfix operator!
 
 template<typename T>
 bool ZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) const {
-	bool same = true;
-    if ((array != NULL_PTR(T*))&&(arrayIn != NULL_PTR(T*))) {
+    const T * list1P     = array;
+    const T * list2P     = arrayIn;
+    bool same = true;
+
+    if (list1P != list2P){
+        bool end1 = (list1P == NULL_PTR(T*));
+        bool end2 = (list2P == NULL_PTR(T*));
+
+        // note that end1 and2 cannot both be true!
+        // so either list1P or list2P can be NULL not both
+        if (end1){
+            same = IsZero(list2P[0]);
+        } else
+        if (end2){
+            same = IsZero(list1P[0]);
+        } else {
+            bool limitNotReached = (limit > 0);
+            while (same && !end1 && limitNotReached) {
+                same = (list1P[0] == list2P[0]);
+                end1 = IsZero(list1P[0]);
+                limitNotReached = (--limit > 0);
+                list1P++;
+                list2P++;
+            }
+            // if the loop above is broken because IsZero(list1P[0])
+//            if (same && (limit > 0)){
+//                same = IsZero(list2P[0]);
+//            }
+        }
+    }
+
+#if 0
+
+	bool same = (array == arrayIn);
+    if (!same && (array != NULL_PTR(T*))&&(arrayIn != NULL_PTR(T*))) {
+        same = true;
         const T * listP = array;
         const T * list2P = arrayIn;
         while (!IsZero(*listP) && same && (limit > 0)) {
@@ -430,11 +465,12 @@ bool ZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) const {
             list2P++;
             limit--;
         }
-        // if sane and limit > 0 it means we reached a terminator on listP. Check list2P
+        // if same and limit > 0 it means we reached a terminator on listP. Check list2P
         if (same && (limit > 0)){
         	same = ZTAIsZero((const uint8 *)list2P,sizeof(T));
         }
     }
+#endif
     return same;
 }
 
