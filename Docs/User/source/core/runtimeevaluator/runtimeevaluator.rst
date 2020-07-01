@@ -1,5 +1,4 @@
-.. date: 27/03/2018
-   author: Andre' Neto
+.. date: 30/06/2020
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
    Licensed under the EUPL, Version 1.1 or - as soon they will be approved
@@ -11,31 +10,18 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Core library
-============
+Runtime evaluation
+=================
 
-The following chapters describe in detail the main concepts behind the MARTe core library.
-
-The core library API can be found `here <https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/annotated.html>`_.
+The runtime evaluator (see :vcisdoxygencl:`RuntimeEvaluator`) is an
+engine to evaluate mathematical expressions at runtime. In tandem with
+:vcisdoxygencl:`MathExpressionParser`, it can read and evaluate systems
+of scalar mathematical expressions of any complexity.
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
-   structure/code
-   makefile/makefile
-   types/types
-   objects/objectsintro
-   streams/streams
-   configuration/configuration
-   logging/logging
-   messages/messages
-   statemachine/statemachine   
-   gams/rtapp
-   scheduling/services
-   scheduling/threads
-   http/http
-   runtimeevaluator/runtimeevaluator
-   app/app
-   examples
+   mathexpressionparser
+   evaluator
    

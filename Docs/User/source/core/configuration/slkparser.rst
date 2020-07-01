@@ -53,7 +53,7 @@ A parser for a new configuration language can be implemented following these ste
 2. Create your parser class copying from an existent parser (:vcisdoxygencl:`StandardParser`, :vcisdoxygencl:`XMLParser`, :vcisdoxygencl:`JSonParser`).
 3. Type on the console ``slk -C++ grammar_file_name.ll`` to generate the parser files.
 4. Open the generated file ``SlkParse.cpp`` and copy the arrays at the beginning, in the source file of your parser class (the array named ``Parse[]`` should be renamed to ``ParseArray[]`` to avoid conflicts with the function ``ParserI::Parse()``.
-5. Copy the constants defined in ``SlkParse.cpp``(just after the arrays) in the ``Constants[]`` array maintaining the same order: ``{ START_SYMBOL, END_OF_SLK_INPUT_, START_STATE, START_CONFLICT,END_CONFLICT, START_ACTION, END_ACTION, TOTAL_CONFLICTS }``
+5. Copy the constants defined in ``SlkParse.cpp`` (just after the arrays) in the ``Constants[]`` array maintaining the same order: ``{ START_SYMBOL, END_OF_SLK_INPUT_, START_STATE, START_CONFLICT,END_CONFLICT, START_ACTION, END_ACTION, TOTAL_CONFLICTS }``
 6. Open the generated file ``SlkString.cpp`` and copy the array ``Terminal_name[]`` in the source file of your parser class.
 7. Open the generated file ``SlkTable.cpp`` and copy the content of the function ``initialize_table()`` inside your parser constructor changing the namespace ``SlkAction`` with the name of your parser class.
 8. Make a ParserGrammar constant structure with the separators, terminals and comment patterns of the language to be parsed and use it to initialize the parent class :vcisdoxygencl:`ParserI` in your parser constructor.

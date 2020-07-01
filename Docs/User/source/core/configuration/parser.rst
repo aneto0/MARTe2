@@ -15,17 +15,19 @@
 Parsers
 =======
 
-The core of the framework offers three parsers. 
+The core of the framework offers four parsers. 
 
-All the parsers implement the :vcisdoxygencl:`ParserI` interface and are capable of transforming an input stream, encoded in any of the supported languages, into a :vcisdoxygencl:`ConfigurationDatabase`. 
+All the parsers implement the :vcisdoxygencl:`ParserI` interface. Three of the parsers implement the :vcisdoxygencl:`ConfigurationParserI` interface and are capable of transforming an input stream, encoded in any of the supported languages, into a :vcisdoxygencl:`ConfigurationDatabase`. 
+One parser is capable of transforming a mathematical expression into stack machine instruction to be used by :vcisdoxygencl:`RuntimeEvaluator`.
 
-==================================== =======
-Type                                 Meaning
-==================================== =======
-:vcisdoxygencl:`StandardParser`      The :ref:`MARTeConfigurationLanguage`.
-:vcisdoxygencl:`XmlParser`           `XML <https://www.w3.org/TR/xml>`_.
-:vcisdoxygencl:`JsonParser`          `JSON <https://www.json.org/>`_.
-==================================== =======  
+====================================== =======
+Type                                   Meaning
+====================================== =======
+:vcisdoxygencl:`StandardParser`        The :ref:`MARTeConfigurationLanguage`.
+:vcisdoxygencl:`XmlParser`             `XML <https://www.w3.org/TR/xml>`_.
+:vcisdoxygencl:`JsonParser`            `JSON <https://www.json.org/>`_.
+:vcisdoxygencl:`MathExpressionParser`  Mathematical expressions.
+====================================== =======  
 
 .. _MARTeConfigurationLanguage:
 
