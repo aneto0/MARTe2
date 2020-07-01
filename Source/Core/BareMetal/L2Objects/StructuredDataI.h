@@ -129,7 +129,7 @@ public:
     /**
      * @brief Writes an AnyType against the provided \a name and adds it to the current node.
      * @details If the name already exists the value will be overridden.
-     * @param[in] name the name of the leaf against which the AnyType will be stored.
+     * @param[in] name the name of the leaf against which the AnyType will be stored. NOTE name is not a path
      * @param[in] value the AnyType to store.
      * @return true if the AnyType is successfully stored.
      * @pre
