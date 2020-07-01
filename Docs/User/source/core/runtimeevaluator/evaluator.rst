@@ -286,6 +286,8 @@ Examples
 Example usage with the following expression:
 ``y = pow(sin(theta), 2) + pow(cos(theta), 2)``
 
+(for a more extendive example see below).
+
 .. code-block:: c++
     #include "RuntimeEvaluator.h"
 
@@ -336,3 +338,11 @@ Example usage with the following expression:
         REPORT_ERROR(ErrorManagement::Information, "OK!");
     }
 
+The following example shows how to use RuntimeEvaluator to perform runtime calculations. 
+
+.. literalinclude:: /_static/examples/Core/RuntimeEvaluatorExample1.cpp
+   :language: c++   
+   :caption: Runtime evaluator example (RuntimeEvaluatorExample1)
+   :linenos:
+
+Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.
