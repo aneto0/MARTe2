@@ -51,12 +51,15 @@ int main(int argc, char **argv) {
     bool ok;
     StreamString expression, stackMachineExpr;
     float64 F, m1, m2, G;
-    float64 sunMass   = 1.988435e+30;
-    float64 earthMass = 5.97e+24;
-    float64 moonMass  = 7.3459e+22;
+    float64 sunMass   = 1.988e+30;
+    float64 earthMass = 5.972e+24;
+    float64 moonMass  = 7.346e+22;
     RuntimeEvaluator* evaluator;
 
     expression = "F = G*((m1*m2)/pow(d, 2));";
+    
+    REPORT_ERROR_STATIC(ErrorManagement::Information,
+        "Expression:\n%s", expression.Buffer());
     
     // RuntimeEvaluator accepts expressions in stack machine instructions
     expression.Seek(0u);
@@ -75,8 +78,8 @@ int main(int argc, char **argv) {
         ok = evaluator->ExtractVariables();
     }
     
-    // Now the evaluator is told where to look for variable values
     if (ok) {
+        // Types of all variables must be specified
         ok &= evaluator->SetOutputVariableType("F", Float64Bit);
         
         ok &= evaluator->SetInputVariableType("G",  Float64Bit);
@@ -84,12 +87,13 @@ int main(int argc, char **argv) {
         ok &= evaluator->SetInputVariableType("m2", Float64Bit);
         ok &= evaluator->SetInputVariableType("d",  Float64Bit);
         
+        // A variable can be set to an external location
         ok &= evaluator->SetOutputVariableMemory("F", &F);
         
         ok &= evaluator->SetInputVariableMemory("G",  &G);
         ok &= evaluator->SetInputVariableMemory("m1", &m1);
         ok &= evaluator->SetInputVariableMemory("m2", &m2);
-        // Noticed that address of variable d is not set and will have to be retrieved
+        // Notice that address of variable d is not set and will have to be retrieved
     }
     
     // Now the expression can be compiled
@@ -100,11 +104,11 @@ int main(int argc, char **argv) {
     // From now on, values can be updated at any time
     if (ok) {
         // External variables (G, m1, m2)
-        G = 6.674e-11;
+        G  = 6.674e-11;
         m1 = earthMass;
         m2 = sunMass;
         
-        // Internal variables (d)
+        // Internal variable (d)
         *((float64*)evaluator->GetInputVariableMemory("d")) = 1.496e+11;
     }
     
@@ -115,7 +119,7 @@ int main(int argc, char **argv) {
     
     if (ok) {
         REPORT_ERROR_STATIC(ErrorManagement::Information,
-            "Avg. gravitational force between Sun and Earth is: %f N.", F);
+            "Avg. gravitational force between Sun and Earth is: %.4e N.", F);
     }
     
     // Values can be changed and the expression evaluated again
@@ -130,7 +134,7 @@ int main(int argc, char **argv) {
     
     if (ok) {
         REPORT_ERROR_STATIC(ErrorManagement::Information,
-            "Avg. gravitational force between Moon and Earth is: %f N.", F);
+            "Avg. gravitational force between Moon and Earth is: %.4e N.", F);
     }
     
     if (!ok) {
