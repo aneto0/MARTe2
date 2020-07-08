@@ -112,12 +112,12 @@ public:
     /**
      * @see StructuredDataI
      */
-    virtual CCString GetName();
+    virtual ErrorManagement::ErrorType GetName(DynamicCString &name);
 
     /**
      * @see StructuredDataI
      */
-    virtual CCString GetChildName(const uint32 index);
+    virtual ErrorManagement::ErrorType GetChildName(const uint32 index,DynamicCString &name);
 
     /**
      * @see StructuredDataI

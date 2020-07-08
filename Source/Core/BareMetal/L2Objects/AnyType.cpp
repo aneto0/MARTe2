@@ -67,7 +67,6 @@ ErrorManagement::ErrorType AnyType::Dereference (uint32 index){
 	return ret;
 }
 
-
 ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 
 	ErrorManagement::ErrorType ret;
@@ -88,7 +87,6 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 		ret.invalidOperation = !td.IsStructuredData();
 		COMPOSITE_REPORT_ERROR(ret,"cannot switch to ",field," in a non structured variable");
 	}
-
 
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
 	if (ret){

@@ -434,8 +434,12 @@ ErrorManagement::ErrorType  ConfigurationDatabase::AddToCurrentNode(Reference no
 
 	ReferenceT < ReferenceContainer > nodeToAdd = node;
 
-	ret.parametersError = !nodeToAdd.IsValid();
-    REPORT_ERROR(ret,"node is not a valid ReferenceContainer");
+    ret.fatalError = !currentNode.IsValid();
+
+    if (ret){
+        ret.parametersError = !nodeToAdd.IsValid();
+        REPORT_ERROR(ret,"node is not a valid ReferenceContainer");
+    }
 
     if (ret) {
         ret.fatalError = !currentNode->Insert(nodeToAdd);
@@ -444,13 +448,34 @@ ErrorManagement::ErrorType  ConfigurationDatabase::AddToCurrentNode(Reference no
     return ret;
 }
 
-CCString ConfigurationDatabase::GetName() {
-    return (currentNode.IsValid()) ? (currentNode->GetName()) : (emptyString);
+ErrorManagement::ErrorType ConfigurationDatabase::GetName(DynamicCString &name) {
+    ErrorManagement::ErrorType ret;
+
+    ret.fatalError = !currentNode.IsValid();
+
+    if (ret){
+        name = currentNode->GetName();
+    }
+
+    return ret;
 }
 
-CCString ConfigurationDatabase::GetChildName(const uint32 index) {
-    Reference foundReference = currentNode->Get(index);
-    return (foundReference.IsValid()) ? (foundReference->GetName()) : (emptyString);
+ErrorManagement::ErrorType ConfigurationDatabase::GetChildName(const uint32 index,DynamicCString &name) {
+    ErrorManagement::ErrorType ret;
+
+    ret.fatalError = !currentNode.IsValid();
+
+    Reference foundReference;
+    if (ret){
+        foundReference = currentNode->Get(index);
+        ret.fatalError = !foundReference.IsValid();
+    }
+
+    if (ret){
+        name = foundReference->GetName();
+    }
+
+    return ret;
 }
 
 uint32 ConfigurationDatabase::GetNumberOfChildren() {

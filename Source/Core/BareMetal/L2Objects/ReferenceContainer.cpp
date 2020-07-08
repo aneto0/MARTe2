@@ -387,9 +387,14 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
 
     uint32 numberOfChildren = data.GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-        CCString childName = data.GetChildName(i);
+        DynamicCString childName;
+        ret = data.GetChildName(i,childName);
+//        CCString childName = data.GetChildName(i);
 
-        ret.internalSetupError = childName.IsNullPtr();
+        if (ret){
+            ret.internalSetupError = (childName.GetSize()==0);
+        }
+
         if (ret) {
             // case object
             //lint -e{9007} there are no side-effects on IsBuildToken or IsDomainToken, but these cannot be declared const.

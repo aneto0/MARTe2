@@ -25,23 +25,18 @@
 #include "CompositeErrorManagement.h"
 #include "AnyObject.h"
 #include "DynamicCString.h"
+#include "ClassMember.h"
 
 namespace MARTe{
 
 
 template <class T >
-AnyTypeStructuredData::AnyTypeStructuredData(T &data){
+AnyTypeStructuredData::AnyTypeStructuredData(T &data,CCString name){
     AnyType at(data);
     referencesHistory.Push(at);
-    pathLengthHistory.Push(0);
+    navigationPath = name;
+    pathLengthHistory.Push(navigationPath.GetSize());
 }
-
-AnyTypeStructuredData::AnyTypeStructuredData(const AnyTypeStructuredData *data){
-    AnyType at(data);
-    referencesHistory.Push(at);
-    pathLengthHistory.Push(0);
-}
-
 
 AnyTypeStructuredData::~AnyTypeStructuredData(){
 
@@ -62,7 +57,7 @@ ErrorManagement::ErrorType AnyTypeStructuredData::Read(CCString path,const AnyTy
     return ret;
 }
 
-ErrorManagement::ErrorType AnyTypeStructuredData::Read(CCString path,Reference &object,bool borrow=true) {
+ErrorManagement::ErrorType AnyTypeStructuredData::Read(CCString path,Reference &object,bool borrow) {
     ErrorManagement::ErrorType ret;
 
     AnyType toClone;
@@ -286,29 +281,70 @@ ErrorManagement::ErrorType AnyTypeStructuredData::MoveToChild(const uint32 child
     return ret;
 }
 
-CCString AnyTypeStructuredData::GetName(){
-    return navigationPath;
-}
-
-CCString AnyTypeStructuredData::GetChildName(const uint32 childIdx){
+ErrorManagement::ErrorType AnyTypeStructuredData::GetName(DynamicCString &name){
     ErrorManagement::ErrorType ret;
 
-    DynamicCString name;
+    uint32 pathLength =  pathLengthHistory.Size();
+    ret.internalSetupError = (pathLength == 0);
+    bool isRoot = (pathLength == 1);
+
+    if (isRoot){
+        name = navigationPath;
+    } else {
+        uint32 start = 0;
+        if (ret ){
+            ret = pathLengthHistory.Peek(start,1);
+        }
+
+        if (ret ){
+            name = CCString(navigationPath.GetList()+start+1);
+        }
+    }
+    return ret;
+}
+
+ErrorManagement::ErrorType AnyTypeStructuredData::GetChildName(const uint32 childIdx,DynamicCString &name){
+    ErrorManagement::ErrorType ret;
     AnyType at;
     ret = Access(childIdx,at,name);
     COMPOSITE_REPORT_ERROR(ret,"failed Access(",childIdx,")");
-
-    //TODO change API
 
     return ret;
 }
 
 uint32 AnyTypeStructuredData::GetNumberOfChildren(){
     ErrorManagement::ErrorType ret;
+    uint32 nOfChildren = 1;
 
-    //TODO
+    AnyType at;
+    ret = referencesHistory.Peek(at,0);
+    REPORT_ERROR(ret,"failed Peek(0)");
 
-    return ret;
+    TypeDescriptor td;
+    uint32 nOfDimensions = 1;
+    uint32 dimensionSizes[1];
+    if (ret){
+        ret = at.GetVariableInformation(td,nOfDimensions,&dimensionSizes[0]);
+        REPORT_ERROR(ret,"AnyType GetVariableInformation failed");
+    }
+
+    if (ret && (nOfDimensions==1)){
+        nOfChildren = dimensionSizes[0];
+    } else
+    if (ret && td.IsStructuredData()){
+        ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+        {
+            cri = ClassRegistryDatabase::Find(td);
+            ret.unsupportedFeature = (cri == NULL_PTR(ClassRegistryItem *));
+            REPORT_ERROR(ret,"Cannot access ClassRegistryitem for class");
+        }
+
+        if (ret){
+            nOfChildren= cri->NumberOfMembers();
+        }
+    }
+
+    return nOfChildren;
 }
 
 ErrorManagement::ErrorType AnyTypeStructuredData::AddToCurrentNode(Reference node) {
@@ -391,11 +427,36 @@ ErrorManagement::ErrorType AnyTypeStructuredData::Access(uint32 childIdx,AnyType
     REPORT_ERROR(ret,"failed Peek(0)");
 
     if (ret){
-        uint32 index = childIdx;
-        name().Truncate(0);
-        // SmartDereference(uint32 &,DynamicCString &)
-        ret = at.SmartDereference(index,name);
-        COMPOSITE_REPORT_ERROR(ret,"failed SmartDereference(",index,")");
+
+        TypeDescriptor td = at.GetFullVariableDescriptor().GetSummaryTypeDescriptor();
+
+        if (td.IsStructuredData()){
+
+            ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+            if (ret){
+                cri = ClassRegistryDatabase::Find(td);
+                ret.unsupportedFeature = (cri == NULL_PTR(ClassRegistryItem *));
+                REPORT_ERROR(ret,"Cannot access ClassRegistryitem for class");
+            }
+
+            ClassMember const *cm = NULL_PTR(ClassMember const *);
+            if (ret){
+                cm = cri->FindMember(childIdx);
+                ret.unsupportedFeature = (cm == NULL_PTR(ClassMember const *));
+                COMPOSITE_REPORT_ERROR(ret,"Cannot get ",childIdx,"-th field for class ",cri->GetClassName())
+            }
+
+            if (ret){
+                name = cm->GetName();
+                ret = at.Dereference(name);
+                COMPOSITE_REPORT_ERROR(ret,"failed Dereference(",name,")");
+            }
+
+        } else {
+            ret = at.Dereference(childIdx);
+            COMPOSITE_REPORT_ERROR(ret,"failed Dereference(",childIdx,")");
+            name().Append(childIdx);
+        }
     }
 
     if (ret){

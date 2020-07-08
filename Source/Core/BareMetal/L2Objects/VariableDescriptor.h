@@ -130,7 +130,9 @@ public:
     ErrorManagement::ErrorType GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *overHeadSize=NULL) const;
 
     /**
-     * @brief removes one indirection layer and update variable pointer
+     * @brief removes one indirection layer and update variable pointer and type.
+     * Can be used to navigate into arrays of all types, pointers
+     * (NEW OPTION) to be enabled in c++ also into structure members (order not necessary following memory address)
      * @param[in,out] pointer, the pointer to the variable
      * @param[in] index the offset
      * @param[in] modifierString, used internally to perform recursion

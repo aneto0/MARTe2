@@ -204,16 +204,21 @@ public:
 
     /**
      * @brief Retrieves the name of the current node.
-     * @return the name of the current node.
+     * The name of the node, not the full path within the database.
+     * @param[out] name is the name of the current node.
+     * @return any error that might have occurred.
      */
-    virtual CCString GetName()=0;
+    virtual ErrorManagement::ErrorType GetName(DynamicCString &name) = 0;
+    //virtual CCString GetName()=0;
 
     /**
      * @brief Retrieves the name of the child in the specified index.
      * @param[in] index is the index of the current node child.
-     * @return the name of the child in the specified index.
+     * @param[out] name of the child at the specified index.
+     * @return any error that might have occurred.
      */
-    virtual CCString GetChildName(const uint32 index)=0;
+//    virtual CCString GetChildName(const uint32 index)=0;
+    virtual ErrorManagement::ErrorType GetChildName(const uint32 index,DynamicCString &name) = 0;
 
     /**
      * @brief Retrieves the number of children of the current node.

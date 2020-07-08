@@ -65,9 +65,7 @@ public:
 	 * Any variable can be used.
 	 */
 	template <class T >
-	AnyTypeStructuredData(T &data);
-
-    AnyTypeStructuredData(const AnyTypeStructuredData *data);
+	AnyTypeStructuredData(T &data,CCString name);
 
 	/**
 	 * virtual destructor
@@ -146,12 +144,12 @@ public:
     /**
      * @see StructuredDataI
      */
-    virtual CCString GetName();
+    virtual ErrorManagement::ErrorType GetName(DynamicCString &name);
 
     /**
      * @see StructuredDataI
      */
-    virtual CCString GetChildName(const uint32 childIdx);
+    virtual ErrorManagement::ErrorType GetChildName(const uint32 childIdx,DynamicCString &name);
 
     /**
      * @see StructuredDataI

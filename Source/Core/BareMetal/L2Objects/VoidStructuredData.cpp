@@ -108,18 +108,20 @@ ErrorManagement::ErrorType VoidStructuredData::MoveToChild(const uint32 childIdx
 	return ret;
 }
 
-CCString VoidStructuredData::GetName(){
+ErrorManagement::ErrorType VoidStructuredData::GetName(DynamicCString &name){
 	ErrorManagement::ErrorType ret;
 	ret.unsupportedFeature = true;
 	REPORT_ERROR(ret,"VoidStructuredData::GetName");
-	return emptyString;
+	name().SetSize(0);
+	return ret;
 }
 
-CCString VoidStructuredData::GetChildName(const uint32 index){
+ErrorManagement::ErrorType VoidStructuredData::GetChildName(const uint32 index,DynamicCString &name){
 	ErrorManagement::ErrorType ret;
 	ret.unsupportedFeature = true;
 	REPORT_ERROR(ret,"VoidStructuredData::GetChildName");
-	return emptyString;
+    name().SetSize(0);
+	return ret;
 }
 
 uint32 VoidStructuredData::GetNumberOfChildren(){

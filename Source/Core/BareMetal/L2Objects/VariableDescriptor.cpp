@@ -705,6 +705,35 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 
 	 	}break;
 	 	case 'O':{
+#if 0   // OPTION TBD
+	 	    // **NEW** allow browsing structures
+	 	    if (typeDescriptor.IsStructuredData()){
+
+	 	       ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+	 	       if (ret){
+	 	           cri = ClassRegistryDatabase::Find(typeDescriptor);
+	 	           ret.unsupportedFeature = (cri == NULL_PTR(ClassRegistryItem *));
+	 	           REPORT_ERROR(ret,"Cannot access ClassRegistryitem for class");
+	 	       }
+
+	 	       ClassMember const *cm = NULL_PTR(ClassMember const *);
+	 	       if (ret){
+	 	           cm = cri->FindMember(index);
+	 	           ret.unsupportedFeature = (cm == NULL_PTR(ClassMember const *));
+	 	           COMPOSITE_REPORT_ERROR(ret,"Cannot get ",index,"-th field for class ",cri->GetClassName())
+	 	       }
+
+	 	       if (ret){
+	 	           //bool isConst = td.dataIsConstant;
+	 	           const char8 *newPointer2Variable = static_cast<const char8 *>(pointer);
+	 	           newPointer2Variable += cm->GetOffset();
+	 	           pointer = newPointer2Variable;
+
+	 	           *this = cm->GetDescriptor();
+	 	       }
+	 	    } else
+#endif
+	 	    // can browse into char arrays
 	 		if (typeDescriptor.IsCharStreamType()){
 
 	 			if (typeDescriptor.IsCharString()){
@@ -726,34 +755,6 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 			 		ret.illegalOperation = true;
 			        REPORT_ERROR(ret, "can only redirect Zero Term Char streams");
 	 			}
-#if 0
-	 			TD_FullType fullType = static_cast<TD_FullType>(typeDescriptor.fullType);
-	 			switch (fullType){
-	 			case TDF_DynamicCString:
-	 			case TDF_CString:
-	 			case TDF_CCString:{
-	 				CCString *string = reinterpret_cast<CCString *>(const_cast<uint8 *>(pointer));
-	 				uint32 size = string->GetSize();
-	 				ret.outOfRange = (size <= index);
- 			        REPORT_ERROR(ret, "index >= string size");
-	 				if (ret){
-	 					pointer = reinterpret_cast<const uint8 *>(string->GetList()+index);
-
-	 					if (fullType == TDF_CCString){
-			 				typeDescriptor = ConstCharacter8Bit;
-		 				} else {
-			 				typeDescriptor = Character8Bit;
-		 				}
-	 				}
-
-	 			} break;
-	 			default :{
-			 		ret.illegalOperation = true;
-			        REPORT_ERROR(ret, "can only redirect Zero Term Char streams");
-	 			} break;
-	 			}
-#endif
-
 	 		} else {
 		 		ret.illegalOperation = true;
 		        REPORT_ERROR(ret, "cannot redirect a basic type");

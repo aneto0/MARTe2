@@ -179,6 +179,7 @@ public:
     /**
      * @brief moves the pointer to referencing the a variable that is referenced to by the current variable (if pointer)
      * @param[in] index allows addressing arrays
+     * (NEW OPTION) if enabled in VariableDescriptor  addresses structure members in the order of introspection
      * @return ErrorType::ErrorsCleared()= true if operation successful
      * @post
      *   if all ok pointer2Variable and variableDescriptor are updated
@@ -195,6 +196,14 @@ public:
      *   otherwise the object potentially becomes invalid and cannot be used anymore
      */
     ErrorManagement::ErrorType  	Dereference (CCString field);
+
+    /**
+     * can navigate by string or by index
+     * if fieldName is empty then it will use the index to perform a Dereference
+     * fieldName can be a
+     *
+     */
+    ErrorManagement::ErrorType      SmartDereference (uint32 &index, DynamicCString &fieldName);
 
     /**
      * @see TypeDescriptor::SetFormattedStreamType

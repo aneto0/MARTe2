@@ -208,12 +208,12 @@ public:
     /**
      * @brief StructuredDataI::GetName
      */
-    virtual CCString GetName();
+    virtual ErrorManagement::ErrorType GetName(DynamicCString &name);
 
     /**
      * @brief StructuredDataI::GetChildName
      */
-    virtual CCString GetChildName(const uint32 index);
+    virtual ErrorManagement::ErrorType  GetChildName(const uint32 index,DynamicCString &name);
 
     /**
      * @brief StructuredDataI::GetNumberOfChildren

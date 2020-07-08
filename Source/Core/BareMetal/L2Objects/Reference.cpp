@@ -123,9 +123,13 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
         }
     }
 
+    DynamicCString name;
     if (ok) {
-    	CCString name = data.GetName();
-        if (!name.IsNullPtr()) {
+        ok = data.GetName(name);
+    }
+
+    if (ok){
+        if (name.GetSize() > 0) {
             /*lint -e{613} checking of NULL pointer done before entering here. */
             objectPointer->SetName(name.GetList()+1);
         }
