@@ -198,14 +198,6 @@ public:
     ErrorManagement::ErrorType  	Dereference (CCString field);
 
     /**
-     * can navigate by string or by index
-     * if fieldName is empty then it will use the index to perform a Dereference
-     * fieldName can be a
-     *
-     */
-    ErrorManagement::ErrorType      SmartDereference (uint32 &index, DynamicCString &fieldName);
-
-    /**
      * @see TypeDescriptor::SetFormattedStreamType
      * @return unsupportedFeature if type is not compatible
      */
