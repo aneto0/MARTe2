@@ -1,7 +1,7 @@
 /**
  * @file StaticStack.h
  * @brief Header file for class AnyType
- * @date Apr 1, 2020
+ * @date 01/04/2020
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

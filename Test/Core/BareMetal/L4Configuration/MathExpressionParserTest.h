@@ -2,7 +2,7 @@
  * @file MathExpressionParserTest.h
  * @brief Header file for class MathExpressionParserTest
  * @date 21/04/2020
- * @author nferron
+ * @author Nicolo Ferron
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -28,9 +28,10 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "MathExpressionParser.h"
-#include "ConfigurationDatabase.h"
 #include "AdvancedErrorManagement.h"
+#include "ConfigurationDatabase.h"
+#include "MathExpressionParser.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
