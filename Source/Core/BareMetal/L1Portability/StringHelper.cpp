@@ -1,7 +1,7 @@
 /**
  * @file StringHelper.cpp
  * @brief Source file for module StringHelper
- * @date Aug 13, 2015
+ * @date 13/04/2015
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

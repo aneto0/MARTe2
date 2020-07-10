@@ -2,7 +2,7 @@
  * @file ConfigurationParserI.h
  * @brief Header file for class ConfigurationParserI
  * @date 06/05/2020
- * @author nferron
+ * @author Nicolo Ferron
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -64,7 +64,7 @@ namespace MARTe {
  * - An output stream of characters where the parser will write all the errors
  * found on the input stream of characters.
  *
- * At construction time, too, the parser is initialized with the lexical
+ * At construction time the parser is initialized with the lexical
  * elements that the language used in the input stream of characters needs,
  * while the grammar of that language is expected to be implemented in
  * subclasses.

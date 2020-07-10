@@ -2,7 +2,7 @@
  * @file RuntimeEvaluator.h
  * @brief Header file for class PseudoCodeTest
  * @date 04/05/2020
- * @author RFX
+ * @author Nicolo Ferron
  * @author Didac Magrinya
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

@@ -2,7 +2,7 @@
  * @file MathExpressionParserGTest.cpp
  * @brief Source file for class MathExpressionParserGTest
  * @date 21/04/2020
- * @author nferron
+ * @author Nicolo Ferron
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

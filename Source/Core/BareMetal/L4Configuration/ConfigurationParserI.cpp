@@ -2,7 +2,7 @@
  * @file ConfigurationParserI.cpp
  * @brief Source file for class ConfigurationParserI
  * @date 06/05/2020
- * @author nferron
+ * @author Nicolo Ferron
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

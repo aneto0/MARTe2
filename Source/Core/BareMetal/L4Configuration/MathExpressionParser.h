@@ -2,7 +2,7 @@
  * @file MathExpressionParser.h
  * @brief Header file for class MathExpressionParser
  * @date 07/04/2020
- * @author nferron
+ * @author Nicolo Ferron
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -230,7 +230,7 @@ protected:
         virtual void PopTypecast();
         
         /**
-         * @brief   Append an encountered operand (constant or variable)
+         * @brief   Appends an encountered operand (constant or variable)
          *          to the output expression.
          * @details This method gets called whenever the parser hits an
          *          operand (that is, an isolated `STRING` or `NUMBER` token).
@@ -244,7 +244,7 @@ protected:
         virtual void AddOperand();
         
         /**
-         * @brief   Append an encountered constant to the output expression.
+         * @briefs   Append an encountered constant to the output expression.
          * @details This method gets called whenever the parser hits an
          *          isolated NUMBER token for which store type has been
          *          specified in the input expression with the syntax
