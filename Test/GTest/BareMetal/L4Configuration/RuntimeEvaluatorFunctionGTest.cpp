@@ -59,6 +59,29 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGetName) {
     ASSERT_TRUE(test.TestGetName());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGetTypesInputsAndOutputs) {
+    TypeDescriptor types[] = {UnsignedInteger8Bit, Float64Bit, SignedInteger32Bit, CharString, PointerType};
+    RuntimeEvaluatorFunctionTest test;
+    ASSERT_TRUE(test.TestGetTypes(2, 3, types));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGetTypesNoInputs) {
+    TypeDescriptor types[] = {VoidType, ConstCharString, Character8Bit, Float32Bit, UnsignedInteger16Bit};
+    RuntimeEvaluatorFunctionTest test;
+    ASSERT_TRUE(test.TestGetTypes(0, 5, types));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGetTypesNoOutputs) {
+    TypeDescriptor types[] = {SignedInteger64Bit, SignedInteger64Bit, UnsignedInteger64Bit, UnsignedInteger8Bit};
+    RuntimeEvaluatorFunctionTest test;
+    ASSERT_TRUE(test.TestGetTypes(4, 0, types));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGetTypesNone) {
+    RuntimeEvaluatorFunctionTest test;
+    ASSERT_TRUE(test.TestGetTypes(0, 0, NULL_PTR(TypeDescriptor*)));
+}
+
 /*---------------------------------------------------------------------------*/
 /*                              READ/RREAD                                   */
 /*---------------------------------------------------------------------------*/

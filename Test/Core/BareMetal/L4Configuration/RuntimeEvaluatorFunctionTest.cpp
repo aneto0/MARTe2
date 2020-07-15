@@ -90,6 +90,27 @@ bool RuntimeEvaluatorFunctionTest::TestGetName() {
     return ok;
 }
 
+bool RuntimeEvaluatorFunctionTest::TestGetTypes(uint16 numberOfInputs, uint16 numberOfOutputs, TypeDescriptor* types) {
+
+    bool ok;
+
+    RuntimeEvaluatorFunction functionUT("Test", numberOfInputs, numberOfOutputs, types, NULL_PTR(Function));
+
+    Vector<TypeDescriptor> inputTypes = functionUT.GetInputTypes();
+    ok = (inputTypes.GetNumberOfElements() == numberOfInputs);
+    for (uint16 i = 0; (ok) && (i < numberOfInputs); ++i) {
+        ok &= (inputTypes[i] == types[i]);
+    }
+
+    Vector<TypeDescriptor> outputTypes = functionUT.GetOutputTypes();
+    ok &= (outputTypes.GetNumberOfElements() == numberOfOutputs);
+    for (uint16 i = 0; (ok) && (i < numberOfOutputs); ++i) {
+        ok &= (outputTypes[i] == types[numberOfInputs + i]);
+    }
+
+    return ok;
+}
+
 bool RuntimeEvaluatorFunctionTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
     bool ok = true;
 
