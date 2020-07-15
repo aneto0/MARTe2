@@ -180,11 +180,11 @@ TEST(BareMetal_L1Portability_StaticListGTest,TestSet) {
 }
 
 TEST(BareMetal_L1Portability_StaticListGTest,TestCleanOnEmptyList) {
-    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, 0> tester;
     ASSERT_TRUE(tester.TestClean());
 }
 
 TEST(BareMetal_L1Portability_StaticListGTest,TestCleanOnNonEmptyList) {
-    StaticListTest<uint32, 10, demoValues, 0> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestClean());
 }
