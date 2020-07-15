@@ -194,6 +194,11 @@ public:
      */
     bool TestClean();
 
+    /**
+     * @brief Tests that pointer to memory const is retrieved correctly
+     */
+    bool TestGetAllocatedMemoryConst();
+
 };
 
 }
@@ -786,6 +791,30 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
 
     ok &= (targetList.GetSize() == 0);
     ok &= (targetList.GetCapacity() == initialCapacity);
+
+    return ok;
+}
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestGetAllocatedMemoryConst() {
+    bool ok = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Initializes the target list with the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+    }
+
+    const elementType* allocatedMem = targetList.GetAllocatedMemoryConst();
+
+    if (maxDemoValues == 0) {
+        ok &= (allocatedMem == NULL_PTR(elementType));
+    }
+    else {
+        for (uint32 i = 0; (ok) && (i < maxDemoValues); i++) {
+            ok &= (allocatedMem[i] == demoValues[i]);
+        }
+    }
 
     return ok;
 }
