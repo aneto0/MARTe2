@@ -93,6 +93,16 @@ TEST(BareMetal_L1Portability_StaticStackGTest,TestCleanOnNonEmptyStack) {
     ASSERT_TRUE(tester.TestClean());
 }
 
+TEST(BareMetal_L1Portability_StaticStackGTest,TestGetAllocatedMemoryConstOnEmptyStack) {
+    StaticStackTest<uint32, 10, demoValues, 0> tester;
+    ASSERT_TRUE(tester.TestGetAllocatedMemoryConst());
+}
+
+TEST(BareMetal_L1Portability_StaticStackGTest,TestGetAllocatedMemoryConstOnNonEmptyStack) {
+    StaticStackTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
+    ASSERT_TRUE(tester.TestGetAllocatedMemoryConst());
+}
+
 TEST(BareMetal_L1Portability_StaticStackGTest,TestPeek) {
     StaticStackTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestPeek());
