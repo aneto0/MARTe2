@@ -61,6 +61,12 @@ public:
      */
     bool TestFullConstructor();
 
+
+    /**
+     * @brief Tests GetName().
+     */
+    bool TestGetName();
+
     /**
      * @brief   Tests types of registered RuntimeEvaluatorFunction.
      * @details Checks that all RuntimeEvaluatorFunction in FunctionRecords

@@ -54,6 +54,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestFullConstructor
     ASSERT_TRUE(test.TestFullConstructor());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGetName) {
+    RuntimeEvaluatorFunctionTest test;
+    ASSERT_TRUE(test.TestGetName());
+}
+
 /*---------------------------------------------------------------------------*/
 /*                              READ/RREAD                                   */
 /*---------------------------------------------------------------------------*/
