@@ -79,6 +79,17 @@ bool RuntimeEvaluatorFunctionTest::TestFullConstructor() {
     return ok;
 }
 
+bool RuntimeEvaluatorFunctionTest::TestGetName() {
+
+    bool ok;
+
+    RuntimeEvaluatorFunction functionUT("MyFunction", 0, 0, NULL_PTR(TypeDescriptor*), NULL_PTR(Function));
+
+    ok = (functionUT.GetName() == "MyFunction");
+
+    return ok;
+}
+
 bool RuntimeEvaluatorFunctionTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
     bool ok = true;
 
