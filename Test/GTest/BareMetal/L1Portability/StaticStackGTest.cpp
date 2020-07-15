@@ -83,7 +83,12 @@ TEST(BareMetal_L1Portability_StaticStackGTest,TestGetSize) {
     ASSERT_TRUE(tester.TestGetSize());
 }
 
-TEST(BareMetal_L1Portability_StaticStackGTest,TestClean) {
+TEST(BareMetal_L1Portability_StaticStackGTest,TestCleanOnEmptyStack) {
+    StaticStackTest<uint32, 10, demoValues, 0> tester;
+    ASSERT_TRUE(tester.TestClean());
+}
+
+TEST(BareMetal_L1Portability_StaticStackGTest,TestCleanOnNonEmptyStack) {
     StaticStackTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestClean());
 }
