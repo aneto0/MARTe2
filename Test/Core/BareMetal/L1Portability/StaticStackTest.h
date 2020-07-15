@@ -71,6 +71,11 @@ public:
     bool TestClean(void);
 
     /**
+     * @brief Tests that pointer to memory const is retrieved correctly
+     */
+    bool TestGetAllocatedMemoryConst(void);
+
+    /**
      * @brief Tests pushing an element on an empty stack
      */
     template<elementType addValue>
@@ -175,6 +180,34 @@ bool StaticStackTest<elementType, listAllocationGranularity, demoValues, maxDemo
     //Tests if size is zero after cleaning stack
     targetStack.Clean();
     result = (targetStack.GetSize() == 0);
+
+    return result;
+}
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticStackTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestGetAllocatedMemoryConst(void) {
+    bool result = true;
+    StaticStack<elementType, listAllocationGranularity> targetStack;
+
+    //Initialize stack:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetStack.Push(demoValues[i]);
+    }
+
+
+    const elementType* allocatedMem = targetStack.GetAllocatedMemoryConst();
+
+    if (maxDemoValues == 0) {
+        // Maybe interface could be improved. When size==0 GetAllocatedMemoryConst returns "slh.GetAllocatedMemoryConst() - 1"
+        result &= ((allocatedMem + 1) == NULL_PTR(elementType));
+    }
+
+    else {
+        for (uint32 i = 0; (i < maxDemoValues); i++) {
+            uint32 listIndex = maxDemoValues - 1 - i;
+            result &= (*(allocatedMem - i) == demoValues[listIndex]);
+        }
+    }
 
     return result;
 }
