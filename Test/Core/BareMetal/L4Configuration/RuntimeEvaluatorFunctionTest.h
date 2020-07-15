@@ -68,6 +68,11 @@ public:
     bool TestGetName();
 
     /**
+     * @brief Tests GetInputTypes() and GetOutputTypes().
+     */
+    bool TestGetTypes(uint16 numberOfInputs, uint16 numberOfOutputs, TypeDescriptor* types);
+
+    /**
      * @brief   Tests types of registered RuntimeEvaluatorFunction.
      * @details Checks that all RuntimeEvaluatorFunction in FunctionRecords
      *          with functionName, numberOfInputs, and numberOfOutputs match
