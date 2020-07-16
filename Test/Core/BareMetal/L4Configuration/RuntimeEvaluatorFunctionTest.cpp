@@ -70,12 +70,11 @@ bool RuntimeEvaluatorFunctionTest::TestRegisterFunction() {
     lastFunctionRecord.ExecuteFunction(context);
     ok &= (context.runtimeError.ErrorsCleared());
 
-    //Prevent functions registered in this test affect following tests
+    //Prevent that functions registered in this test affect following tests
     availableFunctions = initialAvailableFunctions;
 
     return ok;
 }
-
 
 bool RuntimeEvaluatorFunctionTest::TestRegisterFunctionMaxFunctions() {
 
@@ -99,8 +98,23 @@ bool RuntimeEvaluatorFunctionTest::TestRegisterFunctionMaxFunctions() {
         ok &= (expectedfunctionName == functionRecords[i].GetName());
     }
 
-    //Prevent functions registered in this test affect following tests
+    //Prevent that functions registered in this test affect following tests
     availableFunctions = initialAvailableFunctions;
+
+    return ok;
+}
+
+bool RuntimeEvaluatorFunctionTest::TestFindPCodeAndUpdateTypeStack(const CCString functionName, bool expectedReturn, CodeMemoryElement expectedCode) {
+
+    bool ok;
+    CodeMemoryElement code;
+    DataMemoryAddress dataStackSize;
+    StaticStack<TypeDescriptor,32> typeStack;
+
+    ok = (FindPCodeAndUpdateTypeStack(code, functionName, typeStack, false, dataStackSize) == expectedReturn);
+    if (expectedReturn) {
+        ok &= (code == expectedCode);
+    }
 
     return ok;
 }
@@ -116,7 +130,6 @@ bool RuntimeEvaluatorFunctionTest::TestDefaultConstructor() {
 
     return ok;
 }
-
 
 bool RuntimeEvaluatorFunctionTest::TestFullConstructor() {
 

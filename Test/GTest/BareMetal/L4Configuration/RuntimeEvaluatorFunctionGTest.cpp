@@ -54,6 +54,24 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRegisterFunctio
     ASSERT_TRUE(test.TestRegisterFunctionMaxFunctions());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestFindPCodeAndUpdateTypeStack_Found) {
+    RuntimeEvaluatorFunctionTest test;
+    RuntimeEvaluatorFunction functionUT("Test", 0, 0, NULL_PTR(TypeDescriptor*), MockFunction);
+
+    uint32 initialAvailableFunctions = availableFunctions;
+    RegisterFunction(functionUT);
+
+    ASSERT_TRUE(test.TestFindPCodeAndUpdateTypeStack("Test", true, availableFunctions - 1));
+
+    //Prevent that functions registered in this test affect following tests
+    availableFunctions = initialAvailableFunctions;
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestFindPCodeAndUpdateTypeStack_NotFound) {
+    RuntimeEvaluatorFunctionTest test;
+    ASSERT_TRUE(test.TestFindPCodeAndUpdateTypeStack("Test", false, 0));
+}
+
 /*---------------------------------------------------------------------------*/
 /*                          Constructors/Getters                             */
 /*---------------------------------------------------------------------------*/

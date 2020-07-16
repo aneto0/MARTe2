@@ -62,6 +62,11 @@ public:
     bool TestRegisterFunctionMaxFunctions();
 
     /**
+     * @brief Tests FindPCodeAndUpdateTypeStack.
+     */
+    bool TestFindPCodeAndUpdateTypeStack(const CCString functionName, bool expectedReturn, CodeMemoryElement expectedCode);
+
+    /**
      * @brief Tests the default constructor.
      */
     bool TestDefaultConstructor();
