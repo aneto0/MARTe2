@@ -66,9 +66,14 @@ public:
     bool TestGetPseudoCode();
 
     /**
-     * @brief   Tests BrowseInputVariables.
+     * @brief   Tests BrowseInputVariable.
      */
-    bool TestBrowseInputVariables(RuntimeEvaluator &evaluator, uint32 index, ErrorManagement::ErrorType expectedError, CCString expectedName);
+    bool TestBrowseInputVariable(RuntimeEvaluator &evaluator, uint32 index, ErrorManagement::ErrorType expectedError, CCString expectedName);
+
+    /**
+     * @brief   Tests BrowseOutputVariable.
+     */
+    bool TestBrowseOutputVariable(RuntimeEvaluator &evaluator, uint32 index, ErrorManagement::ErrorType expectedError, CCString expectedName);
     
     /**
      * @brief   Tests all methods to get the memory address

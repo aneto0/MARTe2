@@ -304,7 +304,7 @@ bool RuntimeEvaluatorTest::TestGetPseudoCode() {
     return ok;
 }
 
-bool RuntimeEvaluatorTest::TestBrowseInputVariables(RuntimeEvaluator &evaluator, uint32 index, ErrorManagement::ErrorType expectedError, CCString expectedName) {
+bool RuntimeEvaluatorTest::TestBrowseInputVariable(RuntimeEvaluator &evaluator, uint32 index, ErrorManagement::ErrorType expectedError, CCString expectedName) {
 
     bool ok = false;
     VariableInformation *var;
@@ -317,6 +317,21 @@ bool RuntimeEvaluatorTest::TestBrowseInputVariables(RuntimeEvaluator &evaluator,
 
     return ok;
 }
+
+bool RuntimeEvaluatorTest::TestBrowseOutputVariable(RuntimeEvaluator &evaluator, uint32 index, ErrorManagement::ErrorType expectedError, CCString expectedName) {
+
+    bool ok = false;
+    VariableInformation *var;
+
+    ok = (expectedError == evaluator.BrowseOutputVariable(index, var));
+
+    if (expectedError) {
+        ok &= (var->name == expectedName.GetList());
+    }
+
+    return ok;
+}
+
 
 bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
     

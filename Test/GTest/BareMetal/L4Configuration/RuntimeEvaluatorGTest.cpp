@@ -74,8 +74,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestBrowseInputVariables_S
 
     ASSERT_TRUE(evaluator.ExtractVariables() == ErrorManagement::NoError);
 
-    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariables(evaluator, 0, ErrorManagement::NoError, "A"));
-    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariables(evaluator, 1, ErrorManagement::NoError, "B"));
+    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariable(evaluator, 0, ErrorManagement::NoError, "A"));
+    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariable(evaluator, 1, ErrorManagement::NoError, "B"));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestBrowseInputVariables_OutOfRange) {
@@ -90,7 +90,42 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestBrowseInputVariables_O
 
     ASSERT_TRUE(evaluator.ExtractVariables() == ErrorManagement::NoError);
 
-    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariables(evaluator, 2, ErrorManagement::OutOfRange, "C"));
+    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariable(evaluator, 2, ErrorManagement::OutOfRange, "C"));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestBrowseOutputVariables_Successful) {
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode = "READ A\n"
+                       "READ B\n"
+                       "READ C\n"
+                       "ADD\n"
+                       "WRITE D\n"
+                       "WRITE E\n"
+    ;
+    RuntimeEvaluator evaluator(rpnCode);
+
+    ASSERT_TRUE(evaluator.ExtractVariables() == ErrorManagement::NoError);
+
+    ASSERT_TRUE(evaluatorTest.TestBrowseOutputVariable(evaluator, 0, ErrorManagement::NoError, "D"));
+    ASSERT_TRUE(evaluatorTest.TestBrowseOutputVariable(evaluator, 1, ErrorManagement::NoError, "E"));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestBrowseOutputVariables_OutOfRange) {
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode = "READ A\n"
+                       "READ B\n"
+                       "READ C\n"
+                       "ADD\n"
+                       "WRITE D\n"
+                       "WRITE E\n"
+    ;
+    RuntimeEvaluator evaluator(rpnCode);
+
+    ASSERT_TRUE(evaluator.ExtractVariables() == ErrorManagement::NoError);
+
+    ASSERT_TRUE(evaluatorTest.TestBrowseOutputVariable(evaluator, 2, ErrorManagement::OutOfRange, "C"));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetInputVariableMemory) {
