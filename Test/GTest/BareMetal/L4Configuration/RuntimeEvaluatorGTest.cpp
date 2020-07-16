@@ -57,6 +57,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestConstructor) {
     ASSERT_TRUE(evaluatorTest.TestConstructor());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetPseudoCode) {
+    RuntimeEvaluatorTest evaluatorTest;
+    ASSERT_TRUE(evaluatorTest.TestGetPseudoCode());
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetInputVariableMemory) {
     RuntimeEvaluatorTest evaluatorTest;
     ASSERT_TRUE(evaluatorTest.TestGetInputVariableMemory());

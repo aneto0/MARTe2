@@ -59,6 +59,11 @@ public:
      *          with a rich RPN Code.
      */
     bool TestIntegration();
+
+    /**
+     * @brief   Tests GetPseudoCode.
+     */
+    bool TestGetPseudoCode();
     
     /**
      * @brief   Tests all methods to get the memory address
