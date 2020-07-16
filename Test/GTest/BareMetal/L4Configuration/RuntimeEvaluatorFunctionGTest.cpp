@@ -41,7 +41,21 @@
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                             Constructors                                  */
+/*                           Non-class functions                             */
+/*---------------------------------------------------------------------------*/
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRegisterFunction) {
+    RuntimeEvaluatorFunctionTest test;
+    ASSERT_TRUE(test.TestRegisterFunction());
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestRegisterFunction_MaxFunctions) {
+    RuntimeEvaluatorFunctionTest test;
+    ASSERT_TRUE(test.TestRegisterFunctionMaxFunctions());
+}
+
+/*---------------------------------------------------------------------------*/
+/*                          Constructors/Getters                             */
 /*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestDefaultConstructor) {

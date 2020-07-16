@@ -52,6 +52,16 @@ class RuntimeEvaluatorFunctionTest {
 public:
 
     /**
+     * @brief Tests RegisterFunction.
+     */
+    bool TestRegisterFunction();
+
+    /**
+     * @brief Tests multiple calls to RegisterFunction until maxFunctions reached.
+     */
+    bool TestRegisterFunctionMaxFunctions();
+
+    /**
      * @brief Tests the default constructor.
      */
     bool TestDefaultConstructor();
@@ -60,7 +70,6 @@ public:
      * @brief Tests the full constructor.
      */
     bool TestFullConstructor();
-
 
     /**
      * @brief Tests GetName().

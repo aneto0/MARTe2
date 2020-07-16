@@ -41,6 +41,70 @@
 
 using namespace MARTe;
 
+bool RuntimeEvaluatorFunctionTest::TestRegisterFunction() {
+
+    TypeDescriptor types[] = {UnsignedInteger8Bit, Float64Bit};
+    bool ok;
+    RuntimeEvaluator context("");
+
+    RuntimeEvaluatorFunction functionUT("Test", 1, 1, types, MockFunction);
+
+    uint32 initialAvailableFunctions = availableFunctions;
+    RegisterFunction(functionUT);
+
+    ok = (availableFunctions == initialAvailableFunctions + 1);
+
+    RuntimeEvaluatorFunction lastFunctionRecord = functionRecords[availableFunctions - 1];
+
+    ok &= (lastFunctionRecord.GetName() == "Test");
+
+    Vector<TypeDescriptor> inputs = lastFunctionRecord.GetInputTypes();
+    ok &= (inputs.GetNumberOfElements() == 1);
+    ok &= (inputs[0] == UnsignedInteger8Bit);
+
+    Vector<TypeDescriptor> outputs = lastFunctionRecord.GetOutputTypes();
+    ok &= (outputs.GetNumberOfElements() == 1);
+    ok &= (outputs[0] == Float64Bit);
+
+    context.runtimeError = ErrorManagement::FatalError;
+    lastFunctionRecord.ExecuteFunction(context);
+    ok &= (context.runtimeError.ErrorsCleared());
+
+    //Prevent functions registered in this test affect following tests
+    availableFunctions = initialAvailableFunctions;
+
+    return ok;
+}
+
+
+bool RuntimeEvaluatorFunctionTest::TestRegisterFunctionMaxFunctions() {
+
+    TypeDescriptor types[] = {UnsignedInteger8Bit, Float64Bit};
+    bool ok;
+
+    uint32 initialAvailableFunctions = availableFunctions;
+
+    for (uint32 i = initialAvailableFunctions; i <= maxFunctions; ++i) {
+        StreamString functionName;
+        functionName.Printf("Test%u", i);
+        RuntimeEvaluatorFunction functionUT(functionName.Buffer(), 1, 1, types, MockFunction);
+        RegisterFunction(functionUT);
+    }
+
+    ok = (availableFunctions == maxFunctions);
+
+    for (uint32 i = initialAvailableFunctions; i < maxFunctions; ++i) {
+        StreamString expectedfunctionName;
+        expectedfunctionName.Printf("Test%u", i);
+        ok &= (expectedfunctionName == functionRecords[i].GetName());
+    }
+
+    //Prevent functions registered in this test affect following tests
+    availableFunctions = initialAvailableFunctions;
+
+    return ok;
+}
+
 bool RuntimeEvaluatorFunctionTest::TestDefaultConstructor() {
 
     RuntimeEvaluatorFunction functionUT;
