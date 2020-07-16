@@ -62,6 +62,37 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetPseudoCode) {
     ASSERT_TRUE(evaluatorTest.TestGetPseudoCode());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestBrowseInputVariables_Successful) {
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode = "READ A\n"
+                       "READ B\n"
+                       "ADD\n"
+                       "WRITE C\n"
+    ;
+    RuntimeEvaluator evaluator(rpnCode);
+
+    ASSERT_TRUE(evaluator.ExtractVariables() == ErrorManagement::NoError);
+
+    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariables(evaluator, 0, ErrorManagement::NoError, "A"));
+    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariables(evaluator, 1, ErrorManagement::NoError, "B"));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestBrowseInputVariables_OutOfRange) {
+    RuntimeEvaluatorTest evaluatorTest;
+
+    CCString rpnCode = "READ A\n"
+                       "READ B\n"
+                       "ADD\n"
+                       "WRITE C\n"
+    ;
+    RuntimeEvaluator evaluator(rpnCode);
+
+    ASSERT_TRUE(evaluator.ExtractVariables() == ErrorManagement::NoError);
+
+    ASSERT_TRUE(evaluatorTest.TestBrowseInputVariables(evaluator, 2, ErrorManagement::OutOfRange, "C"));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestGetInputVariableMemory) {
     RuntimeEvaluatorTest evaluatorTest;
     ASSERT_TRUE(evaluatorTest.TestGetInputVariableMemory());

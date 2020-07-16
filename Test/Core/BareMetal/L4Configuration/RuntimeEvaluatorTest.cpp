@@ -286,7 +286,6 @@ bool RuntimeEvaluatorTest::TestConstructor() {
 bool RuntimeEvaluatorTest::TestGetPseudoCode() {
 
     bool ok = false;
-
     StreamString rpnCode = "CONST uint8 2\n"
                            "WRITE A\n";
 
@@ -301,6 +300,20 @@ bool RuntimeEvaluatorTest::TestGetPseudoCode() {
     ok &= (evaluator.GetPseudoCode() == 8);  //READ OPERATION MEMORY POSITION
     ok &= (evaluator.GetPseudoCode() == 0);  //CONSTANT MEMORY POSITION
     ok &= (evaluator.GetPseudoCode() == 18); //WRITE OPERATION MEMORY POSITION
+
+    return ok;
+}
+
+bool RuntimeEvaluatorTest::TestBrowseInputVariables(RuntimeEvaluator &evaluator, uint32 index, ErrorManagement::ErrorType expectedError, CCString expectedName) {
+
+    bool ok = false;
+    VariableInformation *var;
+
+    ok = (expectedError == evaluator.BrowseInputVariable(index, var));
+
+    if (expectedError) {
+        ok &= (var->name == expectedName.GetList());
+    }
 
     return ok;
 }
