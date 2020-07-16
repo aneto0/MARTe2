@@ -283,6 +283,28 @@ bool RuntimeEvaluatorTest::TestConstructor() {
     return ok;
 }
 
+bool RuntimeEvaluatorTest::TestGetPseudoCode() {
+
+    bool ok = false;
+
+    StreamString rpnCode = "CONST uint8 2\n"
+                           "WRITE A\n";
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    ok = (evaluator.ExtractVariables() == ErrorManagement::NoError);
+
+    ok &= evaluator.SetOutputVariableType("A", UnsignedInteger8Bit);
+
+    ok &= (evaluator.Compile() == ErrorManagement::NoError);
+
+    ok &= (evaluator.GetPseudoCode() == 8);  //READ OPERATION MEMORY POSITION
+    ok &= (evaluator.GetPseudoCode() == 0);  //CONSTANT MEMORY POSITION
+    ok &= (evaluator.GetPseudoCode() == 18); //WRITE OPERATION MEMORY POSITION
+
+    return ok;
+}
+
 bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
     
     bool ret;
