@@ -109,6 +109,11 @@ public:
     bool TestSetVariableMemory();
     
     /**
+     * @brief   Tests Variable.
+     */
+    bool TestVariable();
+
+    /**
      * @brief   Tests Push(), Pop() and Peek() methods.
      * @details RuntimeEvaluator has an internal #stack. The #stack is
      *          public since it's managed mostly by RuntimeEvaluatorFunction.
