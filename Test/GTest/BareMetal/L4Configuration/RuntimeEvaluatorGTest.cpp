@@ -148,6 +148,12 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestSetVariableMemory) {
     ASSERT_TRUE(evaluatorTest.TestSetVariableMemory());
 }
 
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestVariable) {
+    RuntimeEvaluatorTest evaluatorTest;
+    ASSERT_TRUE(evaluatorTest.TestVariable());
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestPushPopPeek) {
     RuntimeEvaluatorTest evaluatorTest;
     ASSERT_TRUE(evaluatorTest.TestPushPopPeek());

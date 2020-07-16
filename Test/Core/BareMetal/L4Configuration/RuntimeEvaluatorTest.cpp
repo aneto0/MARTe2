@@ -332,7 +332,6 @@ bool RuntimeEvaluatorTest::TestBrowseOutputVariable(RuntimeEvaluator &evaluator,
     return ok;
 }
 
-
 bool RuntimeEvaluatorTest::TestGetInputVariableMemory() {
     
     bool ret;
@@ -602,6 +601,28 @@ bool RuntimeEvaluatorTest::TestSetVariableMemory() {
     }
     
     return ret;
+}
+
+bool RuntimeEvaluatorTest::TestVariable() {
+
+    bool ok = false;
+    StreamString rpnCode = "CONST uint8 2\n"
+                           "CONST int64 5\n"
+                           "ADD\n"
+                           "WRITE A\n";
+
+    RuntimeEvaluator evaluator(rpnCode);
+
+    ok = (evaluator.ExtractVariables() == ErrorManagement::NoError);
+
+    ok &= evaluator.SetOutputVariableType("A", SignedInteger64Bit);
+
+    ok &= (evaluator.Compile() == ErrorManagement::NoError);
+
+    ok &= (evaluator.Variable<uint8>(0) == 2);
+    ok &= (evaluator.Variable<int64>(1) == 5);
+
+    return ok;
 }
 
 bool RuntimeEvaluatorTest::TestPushPopPeek() {
