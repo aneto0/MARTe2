@@ -129,7 +129,7 @@ private:
 template<typename elementType, uint32 listAllocationGranularity>
 inline const elementType* StaticStack<elementType, listAllocationGranularity>::GetAllocatedMemoryConst() const{
 	const elementType* p = static_cast<const elementType*>(slh.GetAllocatedMemoryConst());
-	return p + slh.GetSize() -1;
+    return (p == NULL_PTR(elementType*)) ? p : (p + slh.GetSize() -1);
 }
 
 template<typename elementType, uint32 listAllocationGranularity>
