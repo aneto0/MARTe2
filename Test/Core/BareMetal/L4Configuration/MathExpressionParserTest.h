@@ -66,6 +66,20 @@ public:
      */
     bool PopOperatorHelperTest();
     
+    /**
+     * @brief Gives access to MathExpressionParser::PopOperatorAlternate() method for testing.
+     */
+    bool PopOperatorAlternateHelperTest();
+    
+    /**
+     * @brief Gives access to MathExpressionParser::PushTypecast() method for testing.
+     */
+    bool PushTypecastHelperTest();
+    
+    /**
+     * @brief Gives access to MathExpressionParser::PopTypecast() method for testing.
+     */
+    bool PopTypecastHelperTest();
 };
 
 class MathExpressionParserTest {
@@ -111,6 +125,20 @@ public:
      */
      bool TestPopOperator();
     
+    /**
+     * @brief Test PopOperatorAlternate method.
+     */
+     bool TestPopOperatorAlternate();
+    
+    /**
+     * @brief Test PushOperator method.
+     */
+     bool TestPushTypecast();
+    
+    /**
+     * @brief Test PopOperator method.
+     */
+     bool TestPopTypecast();
     /**
      * @brief Tests the parsing of an expression by comparing the result with the expected output.
      */
