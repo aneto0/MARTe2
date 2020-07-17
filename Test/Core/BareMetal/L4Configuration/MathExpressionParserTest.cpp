@@ -92,6 +92,70 @@ bool MathExpressionParserHelperTest::PopOperatorHelperTest() {
     
     return ok;
     
+}
+
+bool MathExpressionParserHelperTest::PopOperatorAlternateHelperTest() {
+    
+    bool ok = true;
+        
+    StreamString* tokenData = new StreamString("+");
+    ok &= operatorStack.Add(tokenData);
+    PopOperatorAlternate();
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "") == 0u);
+    
+    tokenData = new StreamString("-");
+    ok &= operatorStack.Add(tokenData);
+    PopOperatorAlternate();
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "NEG\n") == 0u);
+    
+    tokenData = new StreamString("/");
+    ok &= operatorStack.Add(tokenData);
+    PopOperatorAlternate();
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "NEG\n") == 0u);
+    
+    // Now the stack is empty so it should fail
+    PopOperatorAlternate();
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "NEG\nERR\n") == 0u);
+    
+    return ok;
+    
+    
+}
+
+bool MathExpressionParserHelperTest::PushTypecastHelperTest() {
+    
+    bool ok = true;
+    
+    Token customToken(1u, "STRING", "type", 1u);
+    currentToken = &customToken;
+    PushTypecast();
+    
+    StreamString* tokenData;
+    ok &= typecastStack.Peek(0u, tokenData);
+    
+    ok &= (StringHelper::Compare(tokenData->Buffer(), "type") == 0u);
+    
+    return ok;
+    
+}
+
+bool MathExpressionParserHelperTest::PopTypecastHelperTest() {
+    
+    bool ok = true;
+        
+    StreamString* tokenData = new StreamString("type");
+    ok &= typecastStack.Add(tokenData);
+    
+    PopTypecast();
+    
+    // Now the operator should be in stackMachineExpr
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "CAST type\n") == 0u);
+    
+    // Now the stack is empty so it should fail
+    PopTypecast();
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "CAST type\nERR\n") == 0u);
+    
+    return ok;
     
 }
 
@@ -210,6 +274,30 @@ bool MathExpressionParserTest::TestPopOperator() {
     
     MathExpressionParserHelperTest helperParser("");
     bool ok = helperParser.PopOperatorHelperTest();
+    
+    return ok;
+}
+
+bool MathExpressionParserTest::TestPopOperatorAlternate() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    bool ok = helperParser.PopOperatorAlternateHelperTest();
+    
+    return ok;
+}
+
+bool MathExpressionParserTest::TestPushTypecast() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    bool ok = helperParser.PushTypecastHelperTest();
+    
+    return ok;
+}
+
+bool MathExpressionParserTest::TestPopTypecast() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    bool ok = helperParser.PopTypecastHelperTest();
     
     return ok;
 }
