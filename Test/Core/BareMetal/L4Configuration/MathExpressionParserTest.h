@@ -31,7 +31,7 @@
 #include "AdvancedErrorManagement.h"
 #include "ConfigurationDatabase.h"
 #include "MathExpressionParser.h"
-
+#include "Token.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -39,10 +39,39 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Class for testing MathExpressionParser protected methods.
+ */
+class MathExpressionParserHelperTest : public MathExpressionParser {
+   
+public:
+    
+    /**
+     * @brief Constructor.
+     */
+    MathExpressionParserHelperTest(StreamString inputString);
+    
+    /**
+     * @brief Gives access to MathExpressionParser::OperatorFormatting() method for testing.
+     */
+    bool OperatorFormattingHelperTest(char8* operatorIn, const char8* expectedOutput);
+    
+    /**
+     * @brief Gives access to MathExpressionParser::PushOperator() method for testing.
+     */
+    bool PushOperatorHelperTest();
+    
+    /**
+     * @brief Gives access to MathExpressionParser::PopOperator() method for testing.
+     */
+    bool PopOperatorHelperTest();
+    
+};
+
 class MathExpressionParserTest {
 
 public:
-
+    
     /**
      * @brief Tests the constructor.
      */
@@ -66,6 +95,21 @@ public:
      * @brief Tests GetStackMachineExpression() method.
      */
     bool TestGetStackMachineExpression();
+    
+    /**
+     * @brief Test OperatorFormatting method.
+     */
+    bool TestOperatorFormatting();
+    
+    /**
+     * @brief Test PushOperator method.
+     */
+     bool TestPushOperator();
+    
+    /**
+     * @brief Test PopOperator method.
+     */
+     bool TestPopOperator();
     
     /**
      * @brief Tests the parsing of an expression by comparing the result with the expected output.
