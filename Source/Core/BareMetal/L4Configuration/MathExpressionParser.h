@@ -251,7 +251,8 @@ protected:
          *          `(type) CONSTANT` (e.g. `(float32) 1.52`).
          *          The constant is immediately added to the #stackMachineExpr
          *          in the syntax required by the expression evaluator
-         *          engine (that is `CONST type NUMBER`).
+         *          engine (that is `CONST type NUMBER`), with `type`
+         *          retrieved from the #typecastStack.
          */
         virtual void AddOperandTypecast();
         
