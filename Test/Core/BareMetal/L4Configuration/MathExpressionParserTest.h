@@ -42,6 +42,7 @@ using namespace MARTe;
 class MathExpressionParserTest {
 
 public:
+
     /**
      * @brief Tests the constructor.
      */
@@ -62,7 +63,12 @@ public:
     bool TestGetGrammarInfo();
     
     /**
-     * @brief Tests the parsing of expression by comparing the result with the expected output.
+     * @brief Tests GetStackMachineExpression() method.
+     */
+    bool TestGetStackMachineExpression();
+    
+    /**
+     * @brief Tests the parsing of an expression by comparing the result with the expected output.
      */
     bool TestExpression(const char8* expressionIn, const char8* expectedOutputString);
     

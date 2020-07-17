@@ -76,6 +76,49 @@ bool MathExpressionParserTest::TestGetGrammarInfo() {
     return TestConstructor();
 }
 
+bool MathExpressionParserTest::TestGetStackMachineExpression() {
+    
+    StreamString errors;
+    StreamString exprString = "Z = (float)12; X = 5 + B*(float)C*!(X - Y) + sin(X + Y) + Z;";
+    StreamString compString = "CONST float 12\n"
+                              "WRITE Z\n"
+                              "CONST float64 5\n"
+                              "READ B\n"
+                              "READ C\n"
+                              "CAST float\n"
+                              "MUL\n"
+                              "READ X\n"
+                              "READ Y\n"
+                              "SUB\n"
+                              "FACT\n"
+                              "MUL\n"
+                              "ADD\n"
+                              "READ X\n"
+                              "READ Y\n"
+                              "ADD\n"
+                              "SIN\n"
+                              "ADD\n"
+                              "READ Z\n"
+                              "ADD\n"
+                              "WRITE X\n";
+
+    exprString.Seek(0);
+    compString.Seek(0);
+    MathExpressionParser myParser(exprString, &errors);
+    
+    if (!myParser.Parse()) {
+        return false;
+    }
+    
+    StreamString outputString = myParser.GetStackMachineExpression();
+    
+    if (StringHelper::Compare(compString.Buffer(), outputString.Buffer()) != 0) {
+       return false;
+    }
+    
+    return true;
+}
+
 bool MathExpressionParserTest::TestExpression(const char8* expressionIn, const char8* expectedOutputString)
 {
     StreamString errors;

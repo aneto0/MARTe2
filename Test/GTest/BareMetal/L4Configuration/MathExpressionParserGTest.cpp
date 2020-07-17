@@ -56,6 +56,11 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestGetGrammarInfo) {
     ASSERT_TRUE(parserTest.TestGetGrammarInfo());
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestGetStackMachineExpression) {
+    MathExpressionParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetStackMachineExpression());
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Logic_1)
 {
     MathExpressionParserTest parserTest;
