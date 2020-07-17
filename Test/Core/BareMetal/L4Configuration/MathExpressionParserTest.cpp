@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <cstdio>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -38,7 +38,66 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 using namespace MARTe;
+
+/*---------------------------------------------------------------------------*/
+/*                      MathExpressionParserHelperTest                       */
+/*---------------------------------------------------------------------------*/
+
+MathExpressionParserHelperTest::MathExpressionParserHelperTest(StreamString inputString) :
+        MathExpressionParser(inputString) {
+    
+}
+
+bool MathExpressionParserHelperTest::OperatorFormattingHelperTest(char8* operatorIn, const char8* expectedOutput) {
+    
+    bool ok = (StringHelper::Compare(OperatorFormatting(operatorIn), expectedOutput) == 0u);
+    
+    return ok;
+}
+
+bool MathExpressionParserHelperTest::PushOperatorHelperTest() {
+    
+    bool ok = true;
+    
+    Token customToken(1u, "STRING", "TOKEN", 1u);
+    currentToken = &customToken;
+    PushOperator();
+    
+    StreamString* tokenData;
+    ok &= operatorStack.Peek(0u, tokenData);
+    
+    ok &= (StringHelper::Compare(tokenData->Buffer(), "TOKEN") == 0u);
+    
+    return ok;
+    
+}
+
+bool MathExpressionParserHelperTest::PopOperatorHelperTest() {
+    
+    bool ok = true;
+        
+    StreamString* tokenData = new StreamString("TOKEN");
+    ok &= operatorStack.Add(tokenData);
+    
+    PopOperator();
+    
+    // Now the operator should be in stackMachineExpr
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "TOKEN\n") == 0u);
+    
+    // Now the stack is empty so it should fail
+    PopOperator();
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "TOKEN\nERR\n") == 0u);
+    
+    return ok;
+    
+    
+}
+
+/*---------------------------------------------------------------------------*/
+/*                        MathExpressionParserTest                           */
+/*---------------------------------------------------------------------------*/
 
 bool MathExpressionParserTest::TestConstructor() {
 
@@ -61,8 +120,7 @@ bool MathExpressionParserTest::TestConstructor() {
 
 bool MathExpressionParserTest::TestDestructor() {
 
-    StreamString configString = "C = A + (float64) B"
-                                ;
+    StreamString configString = "C = A + (float64) B";
     
     configString.Seek(0);
     MathExpressionParser myParser(configString);
@@ -117,6 +175,43 @@ bool MathExpressionParserTest::TestGetStackMachineExpression() {
     }
     
     return true;
+}
+
+bool MathExpressionParserTest::TestOperatorFormatting() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    
+    bool ok = true;
+    StreamString  operatorIn[14u] = {"&&", "||", "^", "==", "!=", ">", "<", ">=", "<=", "+", "-", "*", "/", "!"};
+    StreamString operatorOut[14u] = {"AND", "OR", "XOR", "EQ", "NEQ", "GT", "LT", "GTE", "LTE", "ADD", "SUB", "MUL", "DIV", "FACT"};
+    
+    for (uint32 idx = 0u; idx < 14u; idx++) {
+        ok &= helperParser.OperatorFormattingHelperTest(operatorIn[idx].BufferReference(), operatorOut[idx].Buffer());
+    }
+    
+    // Now test an illegal case
+    char8* nullChar = NULL_PTR(char8*);
+    const char8* errString = "ERR";
+    ok &= helperParser.OperatorFormattingHelperTest(nullChar, errString);
+
+    return ok;
+    
+}
+
+bool MathExpressionParserTest::TestPushOperator() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    bool ok = helperParser.PushOperatorHelperTest();
+    
+    return ok;
+}
+
+bool MathExpressionParserTest::TestPopOperator() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    bool ok = helperParser.PopOperatorHelperTest();
+    
+    return ok;
 }
 
 bool MathExpressionParserTest::TestExpression(const char8* expressionIn, const char8* expectedOutputString)
