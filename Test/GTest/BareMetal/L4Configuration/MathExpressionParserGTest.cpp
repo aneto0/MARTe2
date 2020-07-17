@@ -91,6 +91,11 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestPopTypecast) {
     ASSERT_TRUE(parserTest.TestPopTypecast());
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestAddOperand) {
+    MathExpressionParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestAddOperand());
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Logic_1)
 {
     MathExpressionParserTest parserTest;

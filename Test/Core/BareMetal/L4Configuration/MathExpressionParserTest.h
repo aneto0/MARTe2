@@ -80,6 +80,16 @@ public:
      * @brief Gives access to MathExpressionParser::PopTypecast() method for testing.
      */
     bool PopTypecastHelperTest();
+    
+    /**
+     * @brief Gives access to MathExpressionParser::AddOperand() method for testing.
+     */
+    bool AddOperandHelperTest();
+    
+    /**
+     * @brief Gives access to MathExpressionParser::AddOperandTypecast() method for testing.
+     */
+    bool AddOperandTypecastHelperTest();
 };
 
 class MathExpressionParserTest {
@@ -118,27 +128,33 @@ public:
     /**
      * @brief Test PushOperator method.
      */
-     bool TestPushOperator();
+    bool TestPushOperator();
     
     /**
      * @brief Test PopOperator method.
      */
-     bool TestPopOperator();
+    bool TestPopOperator();
     
     /**
      * @brief Test PopOperatorAlternate method.
      */
-     bool TestPopOperatorAlternate();
+    bool TestPopOperatorAlternate();
     
     /**
      * @brief Test PushOperator method.
      */
-     bool TestPushTypecast();
+    bool TestPushTypecast();
     
     /**
      * @brief Test PopOperator method.
      */
-     bool TestPopTypecast();
+    bool TestPopTypecast();
+    
+    /**
+     * @brief Test AddOperand method.
+     */
+    bool TestAddOperand();
+    
     /**
      * @brief Tests the parsing of an expression by comparing the result with the expected output.
      */
