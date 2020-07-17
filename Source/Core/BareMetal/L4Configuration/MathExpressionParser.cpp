@@ -231,14 +231,6 @@ const char8* MathExpressionParser::OperatorFormatting(char8* const operatorIn) c
     
 }
 
-void MathExpressionParser::PopAssignment() {
-    
-    // Write in the stack machine expression
-    stackMachineExpr += "WRITE ";
-    stackMachineExpr += assignmentVarName.Buffer();
-    stackMachineExpr += "\n";
-}
-
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void MathExpressionParser::PushOperator() {
     
@@ -395,6 +387,15 @@ void MathExpressionParser::AddOperandTypecast() {
 void MathExpressionParser::StoreAssignment() {
     
     assignmentVarName = currentToken->GetData();
+}
+
+
+void MathExpressionParser::PopAssignment() {
+    
+    // Write in the stack machine expression
+    stackMachineExpr += "WRITE ";
+    stackMachineExpr += assignmentVarName.Buffer();
+    stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::Execute(const uint32 number) {
