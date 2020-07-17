@@ -434,15 +434,6 @@ public:
     ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
     
     /**
-     * @brief     Returns a pointer to the beginning of the variable memory.
-     * @returns   a pointer to the beginning of the input variable memory.
-     * @warning   the return address is `void*` and needs to be casted
-     *            to the proper type before using it.
-     * @pre       RuntimeEvaluator::ExtractVariables() == true
-     */
-    void* GetVariablesMemory();
-    
-    /**
      * @brief     Searches the address of an input variable in memory
      *            by variable name.
      * @returns   the address of the variable in memory. `NULL_PTR(void*)`

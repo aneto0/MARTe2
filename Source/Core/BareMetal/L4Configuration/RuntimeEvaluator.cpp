@@ -346,12 +346,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     return ret;
 }
 
-void* RuntimeEvaluator::GetVariablesMemory() {
-
-    return reinterpret_cast<void*>(&dataMemory[0u]);
-    
-}
-
 void* RuntimeEvaluator::GetInputVariableMemory(const StreamString &varNameIn) {
     
     void* retAddress = NULL_PTR(void*);
