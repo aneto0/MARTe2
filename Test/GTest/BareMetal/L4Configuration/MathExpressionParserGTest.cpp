@@ -96,6 +96,21 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestAddOperand) {
     ASSERT_TRUE(parserTest.TestAddOperand());
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestAddOperandTypecast) {
+    MathExpressionParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestAddOperandTypecast());
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestStoreAssignment) {
+    MathExpressionParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestStoreAssignment());
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestPopAssignment) {
+    MathExpressionParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestPopAssignment());
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Logic_1)
 {
     MathExpressionParserTest parserTest;

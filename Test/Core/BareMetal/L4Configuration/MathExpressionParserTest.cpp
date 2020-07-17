@@ -186,6 +186,52 @@ bool MathExpressionParserHelperTest::AddOperandHelperTest() {
     
 }
 
+bool MathExpressionParserHelperTest::AddOperandTypecastHelperTest() {
+    
+    bool ok = true;
+    
+    StreamString* tokenData = new StreamString("uint32");
+    ok &= typecastStack.Add(tokenData);
+    
+    Token customToken(1u, "NUMBER", "10", 1u);
+    currentToken = &customToken;
+    
+    AddOperandTypecast();
+    
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "CONST uint32 10\n") == 0u);
+    
+    // Now the stack is empty and AddOperandTypecast should fail
+    stackMachineExpr = "";
+    
+    AddOperandTypecast();
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "ERR\n") == 0u);
+    
+    return ok;
+    
+}
+
+bool MathExpressionParserHelperTest::StoreAssignmentHelperTest() {
+    
+    Token customToken(1u, "STRING", "returnValue", 1u);
+    currentToken = &customToken;
+    
+    StoreAssignment();
+    
+    return ( StringHelper::Compare(assignmentVarName.Buffer(), "returnValue") == 0u );
+    
+}
+
+bool MathExpressionParserHelperTest::PopAssignmentHelperTest() {
+    
+    Token customToken(1u, "STRING", "returnValue", 1u);
+    currentToken = &customToken;
+    StoreAssignment();
+    PopAssignment();
+    
+    return ( StringHelper::Compare(stackMachineExpr.Buffer(), "WRITE returnValue\n") == 0u );
+    
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        MathExpressionParserTest                           */
 /*---------------------------------------------------------------------------*/
@@ -333,6 +379,30 @@ bool MathExpressionParserTest::TestAddOperand() {
     
     MathExpressionParserHelperTest helperParser("");
     bool ok = helperParser.AddOperandHelperTest();
+    
+    return ok;
+}
+
+bool MathExpressionParserTest::TestAddOperandTypecast() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    bool ok = helperParser.AddOperandTypecastHelperTest();
+    
+    return ok;
+}
+
+bool MathExpressionParserTest::TestStoreAssignment() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    bool ok = helperParser.StoreAssignmentHelperTest();
+    
+    return ok;
+}
+
+bool MathExpressionParserTest::TestPopAssignment() {
+    
+    MathExpressionParserHelperTest helperParser("");
+    bool ok = helperParser.PopAssignmentHelperTest();
     
     return ok;
 }
