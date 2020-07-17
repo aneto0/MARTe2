@@ -199,7 +199,7 @@ bool StaticStackTest<elementType, listAllocationGranularity, demoValues, maxDemo
 
     if (maxDemoValues == 0) {
         // Maybe interface could be improved. When size==0 GetAllocatedMemoryConst returns "slh.GetAllocatedMemoryConst() - 1"
-        result &= ((allocatedMem + 1) == NULL_PTR(elementType));
+        result &= (allocatedMem == NULL_PTR(elementType*));
     }
 
     else {
