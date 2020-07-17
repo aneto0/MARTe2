@@ -254,16 +254,23 @@ void MathExpressionParser::PushOperator() {
 void MathExpressionParser::PopOperator() {
     
     uint32 top = operatorStack.GetSize() - 1u;
-    StreamString* currentOperator;
+    StreamString* currentOperator = NULL_PTR(StreamString*);
     
-    if (!operatorStack.Extract(top, currentOperator)) {
+    bool ok = operatorStack.Extract(top, currentOperator);
+    
+    if (!ok) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
             "StaticList<currentOperator *>: Failed Extract() of the operator from the operator stack."
             );
     }
     
     // Write in the stack machine expression
-    stackMachineExpr += OperatorFormatting(currentOperator->BufferReference());
+    if (ok) {
+        stackMachineExpr += OperatorFormatting(currentOperator->BufferReference());
+    }
+    else {
+        stackMachineExpr += "ERR";
+    }
     stackMachineExpr += "\n";
     
     if (currentOperator != NULL) {
@@ -274,7 +281,7 @@ void MathExpressionParser::PopOperator() {
 void MathExpressionParser::PopOperatorAlternate() {
     
     uint32 top = operatorStack.GetSize() - 1u;
-    StreamString* currentOperator;
+    StreamString* currentOperator = NULL_PTR(StreamString*);
     
     if (!operatorStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -315,17 +322,24 @@ void MathExpressionParser::PushTypecast() {
 void MathExpressionParser::PopTypecast() {
     
     uint32 top = typecastStack.GetSize() - 1u;
-    StreamString* currentOperator;
+    StreamString* currentOperator = NULL_PTR(StreamString*);
     
-    if (!typecastStack.Extract(top, currentOperator)) {
+    bool ok = typecastStack.Extract(top, currentOperator);
+    
+    if (!ok) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
             "StaticList<currentOperator *>: Failed Extract() of the typecast type from the typecast stack."
             );
     }
     
     // Write in the stack machine expression
-    stackMachineExpr += "CAST ";
-    stackMachineExpr += currentOperator->Buffer();
+    if (ok) {
+        stackMachineExpr += "CAST ";
+        stackMachineExpr += currentOperator->Buffer();
+    }
+    else {
+        stackMachineExpr += "ERR";
+    }
     stackMachineExpr += "\n";
     
     if (currentOperator != NULL) {
@@ -352,7 +366,7 @@ void MathExpressionParser::AddOperand() {
 void MathExpressionParser::AddOperandTypecast() {
     
     uint32 top = typecastStack.GetSize() - 1u;
-    StreamString* currentOperator;
+    StreamString* currentOperator = NULL_PTR(StreamString*);
     
     if (!typecastStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
