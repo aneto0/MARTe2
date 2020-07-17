@@ -180,7 +180,7 @@ bool MathExpressionParserHelperTest::AddOperandHelperTest() {
     Token customToken3(1u, "INVALID", "invalid", 1u);
     currentToken = &customToken3;
     AddOperand();
-    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "ERR invalid\n") == 0u);
+    ok &= (StringHelper::Compare(stackMachineExpr.Buffer(), "ERR\n") == 0u);
     
     return ok;
     

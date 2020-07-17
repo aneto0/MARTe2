@@ -350,14 +350,15 @@ void MathExpressionParser::AddOperand() {
     // Write in the stack machine expression
     if (StringHelper::Compare(currentToken->GetDescription(), "STRING") == 0) {
         stackMachineExpr += "READ ";
+        stackMachineExpr += currentToken->GetData();
     }
     else if (StringHelper::Compare(currentToken->GetDescription(), "NUMBER") == 0) {
         stackMachineExpr += "CONST float64 ";
+        stackMachineExpr += currentToken->GetData();
     }
     else {
-        stackMachineExpr += "ERR ";
+        stackMachineExpr += "ERR";
     }
-    stackMachineExpr += currentToken->GetData();
     stackMachineExpr += "\n";
 }
 
