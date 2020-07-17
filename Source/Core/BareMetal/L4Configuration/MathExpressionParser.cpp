@@ -283,22 +283,28 @@ void MathExpressionParser::PopOperatorAlternate() {
     uint32 top = operatorStack.GetSize() - 1u;
     StreamString* currentOperator = NULL_PTR(StreamString*);
     
-    if (!operatorStack.Extract(top, currentOperator)) {
+    bool ok = operatorStack.Extract(top, currentOperator);
+    if (!ok) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
             "StaticList<currentOperator *>: Failed Extract() of the operator from the operator stack."
             );
     }
     
-    if (StringHelper::Compare(currentOperator->Buffer(), "+") == 0) {
-        // prefix + operator is implied
-    }
-    else if (StringHelper::Compare(currentOperator->Buffer(), "-") == 0) {
-        stackMachineExpr += "NEG\n";
+    if (ok) {
+        if (StringHelper::Compare(currentOperator->Buffer(), "+") == 0) {
+            // prefix + operator is implied
+        }
+        else if (StringHelper::Compare(currentOperator->Buffer(), "-") == 0) {
+            stackMachineExpr += "NEG\n";
+        }
+        else {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                "PopOperatorAlternat(): operator %s has no alternative form.", currentOperator->Buffer()
+                );
+        }
     }
     else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-            "PopOperatorAlternat(): operator %s has no alternative form.", currentOperator->Buffer()
-            );
+        stackMachineExpr += "ERR\n";
     }
     
     if (currentOperator != NULL) {
