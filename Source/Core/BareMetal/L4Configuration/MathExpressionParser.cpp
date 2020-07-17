@@ -290,7 +290,7 @@ void MathExpressionParser::PopOperatorAlternate() {
     }
     
     if (StringHelper::Compare(currentOperator->Buffer(), "+") == 0) {
-        // nothing
+        // prefix + operator is implied
     }
     else if (StringHelper::Compare(currentOperator->Buffer(), "-") == 0) {
         stackMachineExpr += "NEG\n";
