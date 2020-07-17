@@ -90,6 +90,16 @@ public:
      * @brief Gives access to MathExpressionParser::AddOperandTypecast() method for testing.
      */
     bool AddOperandTypecastHelperTest();
+    
+    /**
+     * @brief Gives access to MathExpressionParser::StoreAssignment() method for testing.
+     */
+    bool StoreAssignmentHelperTest();
+    
+    /**
+     * @brief Gives access to MathExpressionParser::PopAssignment() method for testing.
+     */
+    bool PopAssignmentHelperTest();
 };
 
 class MathExpressionParserTest {
@@ -154,6 +164,21 @@ public:
      * @brief Test AddOperand method.
      */
     bool TestAddOperand();
+    
+    /**
+     * @brief Test AddOperand method.
+     */
+    bool TestAddOperandTypecast();
+    
+    /**
+     * @brief Test StoreAssignment method.
+     */
+    bool TestStoreAssignment();
+    
+    /**
+     * @brief Test PopAssignment method.
+     */
+    bool TestPopAssignment();
     
     /**
      * @brief Tests the parsing of an expression by comparing the result with the expected output.
