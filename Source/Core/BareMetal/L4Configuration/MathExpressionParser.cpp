@@ -366,19 +366,25 @@ void MathExpressionParser::AddOperandTypecast() {
     uint32 top = typecastStack.GetSize() - 1u;
     StreamString* currentOperator = NULL_PTR(StreamString*);
     
-    if (!typecastStack.Extract(top, currentOperator)) {
+    bool ok = typecastStack.Extract(top, currentOperator);
+    if (!ok) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
             "StaticList<currentOperator *>: Failed Extract() of the typecast type from the typecast stack."
             );
     }
     
     // Write in the stack machine expression
-    stackMachineExpr += "CONST ";
-    stackMachineExpr += currentOperator->Buffer();
-    stackMachineExpr += " ";
-    stackMachineExpr += currentToken->GetData();
-    stackMachineExpr += "\n";
-    
+    if (ok) {
+        stackMachineExpr += "CONST ";
+        stackMachineExpr += currentOperator->Buffer();
+        stackMachineExpr += " ";
+        stackMachineExpr += currentToken->GetData();
+        stackMachineExpr += "\n";
+    }
+    else {
+        stackMachineExpr += "ERR\n";
+    }
+
     if (currentOperator != NULL) {
         delete currentOperator;
     }

@@ -237,23 +237,21 @@ protected:
          *          The operand is immediately added to the #stackMachineExpr
          *          in the syntax required by the expression evaluator
          *          engine (that is, as `READ STRING` for `STRING`
-         *          tokens and as `CONST float64 NUMBER` for `NUMBER` tokens.
+         *          tokens and as `CONST float64 NUMBER` for `NUMBER` tokens).
          * @warning Note that when no type is specified for `NUMBER`
          *          token, `float64` type is assumed.
          */
         virtual void AddOperand();
         
         /**
-         * @briefs   Append an encountered constant to the output expression.
+         * @brief   Append an encountered constant to the output expression.
          * @details This method gets called whenever the parser hits an
          *          isolated NUMBER token for which store type has been
          *          specified in the input expression with the syntax
          *          `(type) CONSTANT` (e.g. `(float32) 1.52`).
          *          The constant is immediately added to the #stackMachineExpr
          *          in the syntax required by the expression evaluator
-         *          engine (that is, as `READ STRING` for STRING
-         *          tokens and as `CONST type NUMBER` for NUMBER tokens.
-         * @warning NUMBER tokens should be handled by AddOperandTypecast().
+         *          engine (that is `CONST type NUMBER`).
          */
         virtual void AddOperandTypecast();
         
