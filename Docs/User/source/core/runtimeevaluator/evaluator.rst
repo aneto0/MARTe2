@@ -21,20 +21,18 @@ Summary
 
 RuntimeEvaluator takes an expression in stack machine form at
 construction time and is then capable of compiling and executing it.
-The expression in stack machine form can be written straight away or
+The expression can be directly supplied in stack machine form, or it
 be derived from an infix expression (a mathematical expression
 in the usual form) by using :vcisdoxygencl:`MathExpressionParser`.
 
-RuntimeEvaluator supports scalar operands of any type.
+The RuntimeEvaluator supports scalar operands of any type.
 
 Usage
 -----
 
 The steps required to use the evaluator are the following:
-- the evaluator is instantiated and fed with the expression
-  it will be required to evaluate
-- the evaluator internal variable database is initialised by
-  calling the ExtractVariable method
+- the evaluator is instantiated and fed with the expression it will be required to evaluate
+- the evaluator internal variable database is initialised by calling the ExtractVariable method
 - variable properties are set by using the APIs
 - the expression is compiled by calling the Compile() method
 - the expression is executed by calling the Execute() method
@@ -46,6 +44,7 @@ The expression must first be fed to the RuntimeEvaluator at
 construction time, either typed directly:
 
 .. code-block:: c++
+
     StreamString rpnCode = "READ A\n"
                            "READ B\n"
                            "ADD\n"
@@ -58,6 +57,7 @@ construction time, either typed directly:
 or by converting an infix expression (e.g. via the :vcisdoxygencl:`MathExpressionParser`):
 
 .. code-block:: c++
+
     StreamString infixExpr = "ret = A + B;"
 
     MathExpressionParser parser(infixExpr);
@@ -69,12 +69,13 @@ or by converting an infix expression (e.g. via the :vcisdoxygencl:`MathExpressio
 Initialising the evaluator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First of all, RuntimeEvaluator must know what variables are contained
+First of all, the RuntimeEvaluator must know what variables are contained
 in the expression. This is done by calling the ``ExtractVariables()``
 method. After that, variable properties can be set by using
 RuntimeEvaluator variable managing APIs.
 
 .. code-block:: c++
+
     ret = expression.ExtractVariables();
 
 
@@ -89,17 +90,19 @@ Types *must* be set for every input variable by using the
 ``SetInputVariableType`` and ``SetOutputVaribleType`` methods:
 
 .. code-block:: c++
+
     ret = expression.SetInputVariableType("theta", Float64Bit);
 
 
 Output variable types *can* be set with SetOutputVariableType if needed.
 However, this is not compulsory as RuntimeEvaluator will assign them
-the output type of last operation.
+the output type of the last operation.
 
 Memory locations *can* be set by using the SetInputVariableMemory and
 SetOutputVariableMemory methods.
 
 .. code-block:: c++
+
     float64 y;
     ret = expression.SetOutputVariableMemory("y", &y);
 
@@ -109,9 +112,9 @@ SetOutputVariableMemory methods.
   happen to the specified memory address.
 - In case an external location for a variable is not set, the variable
   is considered *internal* (this is the default behavior).
-  RuntimeEvaluator will be responsible of allocating space for all
+  The RuntimeEvaluator will be responsible for allocating space for all the
   internal variables. The memory location of internal variables will
-  be available after compilation by calling GetInputVariableMemory and
+  be available after compilation by calling the GetInputVariableMemory and
   GetOutputVariableMemory methods.
 
 Compiling
@@ -121,6 +124,7 @@ After setting up the desired properties for variables, the expression
 can be compiled:
 
 .. code-block:: c++
+
     ret = expression.Compile();
 
 
@@ -135,6 +139,7 @@ variable values are updated simply by updating the memory they have
 been set to follow:
 
 .. code-block:: c++
+
     float64 theta = 5.0;
     ret = expression.SetInputVariableMemory("theta", &theta);
     ret = expression.Compile();
@@ -144,6 +149,7 @@ been set to follow:
 Internal variables can be modified by retrieving a pointer to them:
 
 .. code-block:: c++
+
     ret = expression.SetInputVariableType("theta", Float64Bit);
 
     float64* ptr;
@@ -157,6 +163,7 @@ are updated. If they have been set external, their values are
 directly available:
 
 .. code-block:: c++
+
     float64 y;
     expression.SetOutputVariableMemory("y", &y);
     ...
@@ -172,6 +179,7 @@ retrieve their addresses and obtain the final value.
 Variable values can also be updated in the middle of the expression:
 
 .. code-block:: c++
+
     StreamString rpnCode = "READ A\n"      // first
                            "READ B\n"
                            "ADD\n"
@@ -199,7 +207,7 @@ retrieved from the stack and results are placed in the stack.
 Working principle
 ~~~~~~~~~~~~~~~~~
 
-RuntimeEvaluator scans the input stack machine code and the variable
+The RuntimeEvaluator scans the input stack machine code and the variable
 types. Combination of code and types during ``Compile()`` produces
 a list of calls to functions with specific types (the "pseudocode")
 that will be executed during ``Execute()``.
@@ -208,7 +216,7 @@ array, an array that holds all the available functions that
 RuntimeEvaluator can call. ``functionRecords`` is an array of
 :vcisdoxygencl:`RuntimeEvaluatorFunction` objects.
 
-When RuntimeEvaluator executes an operation, it actually calls the
+When the RuntimeEvaluator executes an operation, it actually calls the
 corresponding function in ``functionRecords``, or better calls the
 ``RuntimeEvaluatorFunction::ExecuteFunction()`` method of that function
 and passes itself to the method as the argument.
@@ -222,30 +230,30 @@ Supported operators
 
 This is a table of all supported operators:
 
-+--------------------+------------------------------------------------------------------------+
-| Operator           | Meaning                                                                |
-|====================|========================================================================|
-| ``READ  var``      | Pushes the value of variable `var` from memory to the top of the stack |
-| ``WRITE var``      | Pops the top of the stack and writes its value to variable `var`       |
-| ``CONST type val`` | Push a constant of value `val` and type `type` to the top of the stack |
-| ``CAST type``      | Casts the top of the stack to type `type`                              |
-| ``AND``            | AND operation between top two elements of the stack                    |
-| ``OR``             | OR operation between top two elements of the stack                     |
-| ``XOR``            | XOR operation between top two elements of the stack                    |
-| ``GT``             | Greater than operation between top two elements of the stack           |
-| ``LT``             | Less than operation between top two elements of the stack              |
-| ``GTE``            | Greater or equal operation between top two elements of the stack       |
-| ``LTE``            | Less or equal operation between top two elements of the stack          |
-| ``EQ``             | Equal operation between top two elements of the stack                  |
-| ``NEQ``            | Not equal operation between top two elements of the stack              |
-| ``ADD``            | Sum between top two elements of the stack                              |
-| ``SUB``            | Subtraction between top two elements of the stack                      |
-| ``MUL``            | Multiplication between top two elements of the stack                   |
-| ``DIV``            | Division between top two elements of the stack                         |
-| ``SIN``            | Sine operation on the top of the stack                                 |
-| ``COS``            | Cosine operation on the top of the stack                               |
-| ``POW``            | Power operation between top two elements of the stack                  |
-+--------------------+------------------------------------------------------------------------+
+==================== ========================================================================
+ Operator             Meaning                                                                
+==================== ========================================================================
+ ``READ  var``        Pushes the value of variable `var` from memory to the top of the stack 
+ ``WRITE var``        Pops the top of the stack and writes its value to variable `var`       
+ ``CONST type val``   Push a constant of value `val` and type `type` to the top of the stack 
+ ``CAST type``        Casts the top of the stack to type `type`                              
+ ``AND``              AND operation between top two elements of the stack                    
+ ``OR``               OR operation between top two elements of the stack                     
+ ``XOR``              XOR operation between top two elements of the stack                    
+ ``GT``               Greater than operation between top two elements of the stack           
+ ``LT``               Less than operation between top two elements of the stack              
+ ``GTE``              Greater or equal operation between top two elements of the stack       
+ ``LTE``              Less or equal operation between top two elements of the stack          
+ ``EQ``               Equal operation between top two elements of the stack                  
+ ``NEQ``              Not equal operation between top two elements of the stack              
+ ``ADD``              Sum between top two elements of the stack                              
+ ``SUB``              Subtraction between top two elements of the stack                      
+ ``MUL``              Multiplication between top two elements of the stack                   
+ ``DIV``              Division between top two elements of the stack                         
+ ``SIN``              Sine operation on the top of the stack                                 
+ ``COS``              Cosine operation on the top of the stack                               
+ ``POW``              Power operation between top two elements of the stack                  
+==================== ========================================================================
 
 .. hint::
       Comparison of floating-point types may often be implementation-dependent.
@@ -258,10 +266,11 @@ This is a table of all supported operators:
 Adding new functions
 ~~~~~~~~~~~~~~~~~~~~
 
-New operations can be made available to RuntimeEvaluator by
+New operations can be made available to the RuntimeEvaluator by
 adding a RuntimeEvaluatorFunction to the ``functionRecords`` as follows:
 
 .. code-block:: c++
+
     void NewOperation(RuntimeEvaluator &evaluator) {
         float32 x1,x2,x3;
         evaluator.Pop(x1);
@@ -275,10 +284,7 @@ adding a RuntimeEvaluatorFunction to the ``functionRecords`` as follows:
     RegisterFunction(newAdd);
 
 
-The function above pops two ``float32`` element from the stack,
-sums them and then pushes the result to the stack. Upon ``RegisterFunction``ing
-the function, the function itself becomes available to the RuntimeEvaluator
-by using the command ``NEWADD``.
+The function above pops two ``float32`` element from the stack, sums them and then pushes the result to the stack. Upon calling the ``RegisterFunction`` function, the function itself becomes available to the RuntimeEvaluator by using the command ``NEWADD``.
 
 Examples
 --------
@@ -289,6 +295,7 @@ Example usage with the following expression:
 (for a more extendive example see below).
 
 .. code-block:: c++
+
     #include "RuntimeEvaluator.h"
 
     bool ret;

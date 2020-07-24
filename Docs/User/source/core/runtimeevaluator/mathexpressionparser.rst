@@ -37,26 +37,26 @@ Each expression must be terminated with a comma or a semicolon.
 Multiple expressions are allowed (provided that each is terminated
 with a comma or semicolon). Accepted operators are the following:
 
-+----------+-------------------+
-| Operator | Meaning           |
-|==========|===================|
-| ``=``    | Assignment        |
-| ``&&``   | AND               |
-| ``||``   | OR                |
-| ``^``    | Exclusive OR      |
-| ``!``    | NOT               |
-| ``<``    | Less than         |
-| ``>``    | Greater than      |
-| ``<=``   | Less ot equal     |
-| ``>=``   | Greater or equal  |
-| ``==``   | Equal             |
-| ``!=``   | Not equal         |
-| ``+``    | Sum               |
-| ``-``    | Subtraction       |
-| ``*``    | Multiplication    |
-| ``/``    | Division          |
-| ``, ;``  | End of expression |
-+----------+-------------------+
+======== =================
+Operator Meaning          
+======== =================
+``=``    Assignment       
+``&&``   AND              
+``||``   OR               
+``^``    Exclusive OR     
+``!``    NOT              
+``<``    Less than        
+``>``    Greater than     
+``<=``   Less ot equal    
+``>=``   Greater or equal 
+``==``   Equal            
+``!=``   Not equal        
+``+``    Sum              
+``-``    Subtraction      
+``*``    Multiplication   
+``/``    Division         
+``, ;``  End of expression
+======== =================
 
 Functions in the form ``sin(x)``, ``pow(x,y)`` etc are supported.
 However, the function name is passed as-is to the evaluation engine,
@@ -67,11 +67,10 @@ The mathematical expression must be provided to the parser at
 construction time. The instance of the parser is then bound to that
 specific expression. 
 
-Constructor requires:
-- an input stream of characters containing the mathematical
-  expression in infix form,
-- an output stream of characters where the parser will write all
-  the errors found on the input stream of characters (optional).
+The constructor requires:
+
+- an input stream of characters containing the mathematical expression in infix form,
+- an output stream of characters where the parser will write all the errors found on the input stream of characters (optional).
 
 To make the parser parse the expression, users should call the Parse()
 method. Provided that the Parse() method was called, the expression

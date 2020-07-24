@@ -11,7 +11,7 @@
    or implied. See the Licence permissions and limitations under the Licence.
 
 Runtime evaluation
-=================
+==================
 
 The runtime evaluator (see :vcisdoxygencl:`RuntimeEvaluator`) is an
 engine to evaluate mathematical expressions at runtime. In tandem with
@@ -24,4 +24,3 @@ of scalar mathematical expressions of any complexity.
 
    mathexpressionparser
    evaluator
-   

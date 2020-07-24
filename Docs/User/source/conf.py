@@ -40,9 +40,9 @@ release = u'v1.0.0'
 # ones.
 extensions = [
     'sphinx.ext.todo',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.extlinks', 
-    'rst2pdf.pdfbuilder',
+    #'sphinx.ext.githubpages',
+    'sphinx.ext.extlinks'
+    #'rst2pdf.pdfbuilder',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
