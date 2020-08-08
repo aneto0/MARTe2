@@ -1,6 +1,6 @@
 /**
  * @file GrammarInfo.h
- * @brief Source file for class GrammarInfo
+ * @brief Header file for class GrammarInfo
  * @date 18/12/2015
  * @author Giuseppe Ferrò
  *

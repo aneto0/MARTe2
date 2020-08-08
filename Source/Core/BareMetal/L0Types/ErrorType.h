@@ -1,8 +1,8 @@
 /**
  * @file ErrorType.h
- * @brief Header file for class Errors
+ * @brief Header file for class ErrorType
  * @date 06/07/2015
- * @author Andre' Neto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

@@ -1,6 +1,6 @@
 /**
  * @file RuntimeEvaluator.h
- * @brief Header file for class PseudoCodeEngine
+ * @brief Header file for class RuntimeEvaluator
  * @date 23/03/2020
  * @author Filippo Sartori
  *

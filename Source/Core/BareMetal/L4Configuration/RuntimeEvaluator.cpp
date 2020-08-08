@@ -1,6 +1,6 @@
 /**
  * @file RuntimeEvaluator.cpp
- * @brief Header file for class AnyType
+ * @brief Source file for class RuntimeEvaluator
  * @date 26/03/2020
  * @author Filippo Sartori
  *
@@ -33,11 +33,11 @@
 #include "RuntimeEvaluatorFunction.h"
 
 /*---------------------------------------------------------------------------*/
-/*                          Forward declarations                             */
+/*                          Static definitions                               */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {

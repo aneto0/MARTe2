@@ -1,6 +1,6 @@
 /**
  * @file VariableInformation.h
- * @brief Header file for class AnyType
+ * @brief Header file for class VariableInformation
  * @date 08/04/2020
  * @author Filippo Sartori
  *

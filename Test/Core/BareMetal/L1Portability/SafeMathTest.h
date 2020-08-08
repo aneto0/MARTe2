@@ -2,7 +2,7 @@
  * @file SafeMathTest.h
  * @brief Header file for class SafeMathTest
  * @date 17/04/2020
- * @author Didac Magrinya
+ * @author Dídac Magriñá
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

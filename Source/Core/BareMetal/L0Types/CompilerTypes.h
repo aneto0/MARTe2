@@ -1,6 +1,6 @@
 /**
  * @file CompilerTypes.h
- * @brief Header file for CompilerTypes
+ * @brief Header file for class CompilerTypes
  * @date 17/06/2015
  * @author Giuseppe Ferrò
  *

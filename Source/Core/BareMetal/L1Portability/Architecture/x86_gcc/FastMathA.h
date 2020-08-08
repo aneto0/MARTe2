@@ -1,6 +1,6 @@
 /**
  * @file FastMathA.h
- * @brief Header file for module FastMathA
+ * @brief Header file for class FastMathA
  * @date 26/06/2015
  * @author Giuseppe Ferrò
  *

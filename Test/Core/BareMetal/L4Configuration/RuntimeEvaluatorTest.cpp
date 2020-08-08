@@ -1,9 +1,9 @@
 /**
- * @file RuntimeEvaluator.cpp
- * @brief Source file for class PseudoCode
- * @date 04/05/2015
- * @author nferron
- * @author Didac Magrinya
+ * @file RuntimeEvaluatorTest.cpp
+ * @brief Source file for class RuntimeEvaluatorTest
+ * @date 04/05/2020
+ * @author Nicolo Ferron
+ * @author Dídac Magriñá
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -18,7 +18,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class PseudoCodeTest (public, protected, and private). Be aware that some
+ * the class RuntimeEvaluatorTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
