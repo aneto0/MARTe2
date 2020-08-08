@@ -1,6 +1,6 @@
 /**
  * @file GeneralDefinitions.h
- * @brief Header file for GeneralDefinitions
+ * @brief Header file for class GeneralDefinitions
  * @date 17/06/2015
  * @author Giuseppe Ferrò
  *

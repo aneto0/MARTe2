@@ -317,7 +317,7 @@ static const TypeDescriptor InvalidType(false, Invalid, 0u);
 /**
  * @return for the unsupported types just report the size
  */
-template <typename T> static inline const TypeDescriptor Type2TypeDescriptor(){
+template <typename T> inline const TypeDescriptor Type2TypeDescriptor(){
     return InvalidType;
 }
 

@@ -1,6 +1,6 @@
 /**
  * @file TypeCharacteristics.h
- * @brief Header file for module TypeCharacteristics
+ * @brief Header file for class TypeCharacteristics
  * @date 28/08/2015
  * @author Giuseppe Ferrò
  *

@@ -1,9 +1,9 @@
 /**
  * @file RuntimeEvaluatorGTest.cpp
- * @brief Source file for class PseudoCodeGTest
+ * @brief Source file for class RuntimeEvaluatorGTest
  * @date 04/05/2020
- * @author nferron
- * @author Didac Magrinya
+ * @author Nicolo Ferron
+ * @author Dídac Magriñá
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

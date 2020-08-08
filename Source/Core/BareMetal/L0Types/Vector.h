@@ -2,7 +2,7 @@
  * @file Vector.h
  * @brief Header file for class Vector
  * @date 04/11/2015
- * @author Andre' Neto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

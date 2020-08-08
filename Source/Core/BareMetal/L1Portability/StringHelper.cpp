@@ -1,6 +1,6 @@
 /**
  * @file StringHelper.cpp
- * @brief Source file for module StringHelper
+ * @brief Source file for class StringHelper
  * @date 13/04/2015
  * @author Filippo Sartori
  *

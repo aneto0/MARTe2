@@ -1,6 +1,6 @@
 /**
  * @file RuntimeEvaluatorFunction.cpp
- * @brief Header file for class AnyType
+ * @brief Source file for class RuntimeEvaluatorFunction
  * @date 08/04/2020
  * @author Filippo Sartori
  *
@@ -32,11 +32,11 @@
 #include "RuntimeEvaluatorFunction.h"
 
 /*---------------------------------------------------------------------------*/
-/*                          Forward declarations                             */
+/*                          Static definitions                               */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 /*lint -esym(793,"identifiers in one block") Justification: more than 1024 identifiers in one block are expected to be widely supported by any compiler. */

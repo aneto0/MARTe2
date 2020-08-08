@@ -1,7 +1,7 @@
 /**
  * @file SafeMath.h
  * @brief Header file for class SafeMath
- * @date Apr 14, 2020
+ * @date 14/04/2020
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

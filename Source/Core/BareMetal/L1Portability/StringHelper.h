@@ -1,6 +1,6 @@
 /**
  * @file StringHelper.h
- * @brief Header file for module StringHelper
+ * @brief Header file for class StringHelper
  * @date 30/06/2015
  * @author Giuseppe Ferrò
  *

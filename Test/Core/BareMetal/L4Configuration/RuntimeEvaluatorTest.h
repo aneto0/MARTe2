@@ -1,9 +1,9 @@
 /**
- * @file RuntimeEvaluator.h
- * @brief Header file for class PseudoCodeTest
+ * @file RuntimeEvaluatorTest.h
+ * @brief Header file for class RuntimeEvaluatorTest
  * @date 04/05/2020
  * @author Nicolo Ferron
- * @author Didac Magrinya
+ * @author Dídac Magriñá
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class PseudoCodeTest
+ * @details This header file contains the declaration of the class RuntimeEvaluatorTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -43,7 +43,7 @@
 using namespace MARTe;
 
 /**
- * @brief Tests all the PseudoCode functions
+ * @brief Tests all the RuntimeEvaluator functions
  */
 class RuntimeEvaluatorTest {
 public:
