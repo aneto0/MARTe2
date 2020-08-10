@@ -208,6 +208,9 @@ void PrepareTestObject(){
     test1Class.test3.bitset7 = 7;
     test1Class.test3.bitset8 = 8;
 
+    test1Class.VCharVar.SetSize(3);
+    test1Class.MFloatVar.SetSize(3,3);
+
     for (int i=0;i<12;i++) {
     	test1Class.int16Arr[i] = 16*i;
     }
@@ -1252,6 +1255,13 @@ int main(int argc, char **argv){
 	MARTe::StartupManager::Initialise();
 #if 1
 	MARTe::PrepareTestObject();
+
+	{
+	    MARTe::StreamString dump;
+	    dump.Printf("%!",MARTe::test1Class);
+	    printf("[[\n%s\n]]\n",dump.Buffer().GetList());
+	}
+
     MARTe::Test();
 
 //    MARTe::Vector<float32> *p = new MARTe::Vector<float32>[4];

@@ -71,9 +71,22 @@ public:
      * @param[in] data the current LinkedListable element to be tested.
      * @return true if \a data meets the search criteria.
      */
-    virtual bool Test(T *data)=0;
+    virtual bool TestMod(T *data){
+        return Test((const T *)data);
+    };
 
-    virtual bool Test(LinkedListable *data);
+    /**
+     * @brief LinkedListable searching callback function.
+     * @details This function is called for every element in the list being searched (i.e. traversed).
+     * @param[in] data the current LinkedListable element to be tested.
+     * @return true if \a data meets the search criteria.
+     */
+    virtual bool Test(const T *data)=0;
+
+    virtual bool TestMod(LinkedListable *data);
+
+    virtual bool Test(const LinkedListable *data);
+
 };
 
 }
@@ -89,16 +102,29 @@ SearchFilterT<T>::~SearchFilterT() {
 }
 
 template<typename T>
-bool SearchFilterT<T>::Test(LinkedListable *data) {
+bool SearchFilterT<T>::TestMod(LinkedListable *data) {
 	bool ret = true;
 	T* target = dynamic_cast<T*>(data);
 	if (target == NULL_PTR(T*)) {
 		ret = false;
 	}
 	if (ret) {
-		ret = Test(target);
+		ret = TestMod(target);
 	}
 	return ret;
+}
+
+template<typename T>
+bool SearchFilterT<T>::Test(const LinkedListable *data) {
+    bool ret = true;
+    const T* target = dynamic_cast<const T*>(data);
+    if (target == NULL_PTR(T*)) {
+        ret = false;
+    }
+    if (ret) {
+        ret = Test(target);
+    }
+    return ret;
 }
 
 }

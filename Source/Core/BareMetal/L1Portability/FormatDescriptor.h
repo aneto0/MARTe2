@@ -47,7 +47,7 @@ namespace MARTe {
 /**
  * Notations used for float types representation.
  */
-typedef uint3 FloatNotation;
+typedef uint32 FloatNotation;
 
 /**
  * Fixed point notation.
@@ -89,7 +89,7 @@ const FloatNotation CompactNotation = 7u;
 /**
  * Notations used for binary representations.
  */
-typedef uint2 BinaryNotation;
+typedef uint32 BinaryNotation;
 
 /**
  * Decimal notation.
@@ -113,7 +113,7 @@ const BinaryNotation OctalNotation = 3u;
 
 /**
  * Enumeration-like type for encoding the desired printing action */
-typedef uint3 DesiredAction;
+typedef uint32 DesiredAction;
 
 /**
  * The user intention was to print whatever is passed
@@ -142,14 +142,44 @@ const DesiredAction PrintPointer = 3u;
 const DesiredAction PrintString = 4u;
 
 /**
- * The user intention was to print information about the object
+ * The user intention was to print information about the object including structures
  */
 const DesiredAction PrintInfo = 5u;
 
 /**
+ * The user intention was to print information about the object including structures
+ */
+const DesiredAction PrintInfoRecursive = 6u;
+
+/**
  * The user intention was to print structural information about object
  */
-const DesiredAction PrintStruct = 6u;
+const DesiredAction PrintStructRecursive = 7u;
+
+/**
+ * The user intention was to print the object type
+ */
+const DesiredAction PrintTypeInformation = 8u;
+
+/**
+ * Enumeration-like type for encoding the desired printing grammar
+ */
+typedef uint32 DesiredGrammar;
+
+/**
+ * Print in the standard MARTe grammar
+ */
+const DesiredGrammar PrintInStandardGrammar = 0u;
+
+/**
+ * Print using the json grammar
+ */
+const DesiredGrammar PrintInJsonGrammar = 1u;
+
+/**
+ * Print using the XML grammar
+ */
+const DesiredGrammar PrintInXMLGrammar = 2u;
 
 /**
  * @brief Definition of a format descriptor.
@@ -157,7 +187,7 @@ const DesiredAction PrintStruct = 6u;
  * The format representation is made by:
  *   - the user-selected output format (e.g. integer, string...);
  *   - the maximum size (in characters);
- *   - the precision (for float values);
+ *   - the precision (for float values) or the depth for structures;
  *   - a set of flags to fine tune white space padding;
  *   - a set of flags to define the output notation (fixed point, hexadecimal...).
  *
@@ -166,9 +196,9 @@ const DesiredAction PrintStruct = 6u;
  * in a printf-like fashion.
  *
  * @remark The FormatDescriptor is internally represented as a 32-bit bitfield-like union with the following structure:
- * | size   | precision  | padded  | leftAligned | floatNotation | binaryNotation | binaryPadded | fullNotation | desiredAction | spareBits |
- * | :----: | :----:     | :----:  | :----:      | :----:        | :----:         | :----:       | :----:       | :----:        | :----:    |
- * |  8     | 8          | 1       | 1           | 3             | 2              | 1            | 1            | 3             | 4         |
+ * | size   | precision  | padded  | leftAligned | floatNotation | binaryNotation | binaryPadded | fullNotation | desiredAction | desiredGrammar |
+ * | :----: | :----:     | :----:  | :----:      | :----:        | :----:         | :----:       | :----:       | :----:        | :----:         |
+ * |  8     | 8          | 1       | 1           | 3             | 2              | 1            | 1            | 4             | 3              |
  */
 class DLL_API FormatDescriptor {
 public:
@@ -192,6 +222,9 @@ public:
      *     - + in front of integers
      *     - 0x/0b/0o in front of Hex/octal/binary
      *   - '0': prepends zeros for Hex Octal and Binary notations.\n
+     * * ######## NON STANDARD
+     *   - 'J': will use json style to describe structures and arrays
+     *   - 'X': will use XML style  to describe structures and arrays
      *     The number of zeros depends on precision and chosen notation (64 bit int and binary notation = up to 64 zeros)
      *
      * <tt>[width].[precision]</tt> are two integer numbers.
@@ -216,23 +249,21 @@ public:
      * - G: compact format;
      * - x,p: hexadecimal display (p activates full notation: header+trailing zeros);
      * - p: pointer format (not compatible with integers);
-     * - o: octal format;
-     * - b: binary format;
-     * - !: AnyType - prints the default value;
-     * - ?: AnyType - prints information about the type;
-     * - @: AnyType - prints full content in case of known structures.
+     * - o: integer in octal format;
+     * - b: integer in binary format;
+     * * ######## NON STANDARD
+     * - !: AnyType - prints the value in its default format;
+     * - Q: AnyType - prints information about the type; (will expand structures one level)
+     * - ?: AnyType - prints information about the type; (will expand structures recursively)
+     * - t: AnyType - prints the type;
+     * - &: AnyType - prints full content in case of known structures (expanding one level).
+     * - @: AnyType - prints full content in case of known structures (expanding recursively).
      *
-     * @remark Note that if the data type does not match <tt>type</tt> a warning will be issued but the correct print will be performed.
+     * @remark Note that if the data type does not match <tt>type</tt> (NEW) NO warning will be issued and the correct print will be performed.
      *
      * @warning Note that the full printf syntax is:\n
      * @verbatim %[parameter][flags][width][.precision][length]type @endverbatim
      * This syntax is not supported by this function.\n
-     */
-    /*
-     * * ######## NON STANDARD TBD
-     * ! --> Any type is fine - prints the default value
-     * ? --> Any type is fine - prints information about the type
-     * @ --> Any type is fine - prints full content in case of known structures
      */
     bool InitialiseFromString(CCString &string);
 
@@ -272,16 +303,18 @@ public:
      * @param[in] binaryNotationToSet specifies the desired notation for integer numbers (decimal, exadecimal, ...)
      * @param[in] isBinaryPadded specifies if the trailing zeros must be added for integer prints.
      * @param[in] isFullNotation specifies if the header (0x, 0o, 0b) must be added for integer prints.
+     * @param[in] grammarToSet specifies the syntax to use when printing structures or arrays.
      */
-    inline FormatDescriptor(const DesiredAction &desiredActionToSet,
-                            const uint8 		sizeToSet,
-                            const uint8 		precisionToSet,
-                            const bool 			isPadded,
-                            const bool 			isLeftAligned,
-                            const FloatNotation  &floatNotationToSet,
+    inline FormatDescriptor(const DesiredAction & desiredActionToSet,
+                            const uint8 		  sizeToSet,
+                            const uint8 		  precisionToSet,
+                            const bool 			  isPadded,
+                            const bool 			  isLeftAligned,
+                            const FloatNotation & floatNotationToSet,
                             const BinaryNotation &binaryNotationToSet,
-                            const bool 			isBinaryPadded,
-                            const bool 			isFullNotation);
+                            const bool 			  isBinaryPadded,
+                            const bool 			  isFullNotation,
+                            const DesiredGrammar &grammarToSet);
 
     /* @union
      * @brief Prova descrizione
@@ -353,12 +386,15 @@ public:
          * This can be different from what the system can do,
          * i.e. print an integer when a float is passed.
          */
-        BitRange<uint32, 3u, 25u> desiredAction;
+        BitRange<uint32, 4u, 25u> desiredAction;
 
         /**
-         * Extra bits.
+         * Specifies the desired grammar, i.e:
+         *   Standard MARTe grammar
+         *   Json grammar
+         *   XML grammar
          */
-        BitRange<uint32, 4u, 28u> spareBits;
+        BitRange<uint32, 3u, 29u> desiredGrammar;
 
     };
 
@@ -373,7 +409,7 @@ const uint32 defaultPrecision = 0xffu;
 /**
  * Default Format Descriptor.
  */
-static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false);
+static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false,PrintInStandardGrammar);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -389,7 +425,7 @@ FormatDescriptor::FormatDescriptor() {
     binaryNotation = DecimalNotation;
     binaryPadded = false;
     fullNotation = false;
-    spareBits = 0u;
+    desiredGrammar = PrintInStandardGrammar;
 }
 
 FormatDescriptor::FormatDescriptor(const uint32 x) {
@@ -411,7 +447,8 @@ FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
                                    const FloatNotation &floatNotationToSet,
                                    const BinaryNotation &binaryNotationToSet,
                                    const bool isBinaryPadded,
-                                   const bool isFullNotation) {
+                                   const bool isFullNotation,
+                                   const DesiredGrammar &grammarToSet) {
 
     desiredAction = desiredActionToSet;
     size = sizeToSet;
@@ -422,7 +459,7 @@ FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
     binaryNotation = binaryNotationToSet;
     binaryPadded = isBinaryPadded;
     fullNotation = isFullNotation;
-    spareBits = 0u;
+    desiredGrammar = grammarToSet;
 }
 
 }

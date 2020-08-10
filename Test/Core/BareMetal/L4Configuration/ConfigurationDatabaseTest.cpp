@@ -549,7 +549,9 @@ bool ConfigurationDatabaseTest::TestGetChildName() {
     ok &= cdb.MoveToRoot();
     i = 0u;
     while (childNames[i] != NULL) {
-        ok &= StringHelper::Compare(childNames[i], cdb.GetChildName(i)) == 0;
+        DynamicCString name;
+        ok = cdb.GetChildName(i,name);
+        ok &= StringHelper::Compare(childNames[i], name) == 0;
         i++;
     }
     ok &= cdb.MoveAbsolute(childNames[0]);

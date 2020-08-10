@@ -81,6 +81,13 @@ public:
      * @details If the return value is NULL this object is the last element in the list.
      * @return a pointer to the next element in the list.
      */
+    const LinkedListable * Next() const;
+
+    /**
+     * @brief Returns the next element of the list.
+     * @details If the return value is NULL this object is the last element in the list.
+     * @return a pointer to the next element in the list.
+     */
     LinkedListable * Next();
 
     /**
@@ -151,6 +158,13 @@ public:
     LinkedListable *Search(SearchFilter * const filter);
 
     /**
+     * @brief Searches an element using a specific criteria in the sub-list to the right of this element.
+     * @param[in] filter defines the search criteria.
+     * @return a pointer to the LinkedListable member or NULL if the element was not found.
+     */
+    const LinkedListable *Search(SearchFilter * const filter) const;
+
+    /**
      * @brief Removes the requested element \a p from list.
      * @details Searching starts from the next element.
      * @param[in] p the pointer to the element to be removed.
@@ -187,7 +201,15 @@ public:
      * @param[in] index is the position of the requested element (0 is the current).
      * @return the pointer to the desired element.
      */
+    const LinkedListable *Peek(uint32 index) const ;
+
+    /**
+     * @brief Returns a pointer to the element at position \a index.
+     * @param[in] index is the position of the requested element (0 is the current).
+     * @return the pointer to the desired element.
+     */
     LinkedListable *Peek(uint32 index) ;
+
 
     /**
      * @brief For each item in the list perform the action defined by the Iterator.

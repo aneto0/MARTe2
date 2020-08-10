@@ -24,14 +24,14 @@
 
 #include "TypeConversionFactoryI.h"
 #include "TypeConversionManager.h"
-#include "IOBuffer.h"
+#include "IOBufferWrappers.h"
 #include "IOBufferPrivate.h"
 #include "StreamString.h"
 #include "CompositeErrorManagement.h"
 
 namespace MARTe{
 
-
+#if 0
 /*********************************************************************************************************/
 /*                                                                                                       */
 /*                                write WRAPPER OF IoBuffer                                              */
@@ -438,6 +438,8 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
     }
 	return retval;
 }
+
+#endif
 /*********************************************************************************************************/
 /*                                                                                                       */
 /*                                TYPE CONVERSION OPERATORS                                              */

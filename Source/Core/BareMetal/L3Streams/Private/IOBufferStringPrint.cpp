@@ -144,6 +144,13 @@ namespace MARTe{
 	 uint32 len = string.GetSize();
 	 bool ret = true;
 
+	 bool needsQuotes = (fd.desiredGrammar == PrintInJsonGrammar);
+
+	 if (needsQuotes){
+	     len+=2;
+	     ret = iobuff.PutC('"');
+	 }
+
 	 // fits
 	 if ((fd.size > len) || (fd.size == 0)){
 
@@ -167,6 +174,10 @@ namespace MARTe{
  		ret = ret && iobuff.WriteAll(string.GetList(),fd.size-1);
  		ret = ret && iobuff.PutC('?');
  	 }
+
+	 if (needsQuotes){
+         ret = ret && iobuff.PutC('"');
+     }
 
 	 return ret;
 

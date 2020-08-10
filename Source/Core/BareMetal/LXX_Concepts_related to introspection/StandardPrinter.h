@@ -1,8 +1,8 @@
 /**
- * @file StreamStringIOBufferTest.h
- * @brief Header file for class StreamStringIOBufferTest
- * @date 26/10/2015
- * @author Giuseppe Ferrò
+ * @file StandardPrinter.h
+ * @brief Header file for class StandardPrinter
+ * @date 07/09/2018
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,14 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StreamStringIOBufferTest
+ * @details This header file contains the declaration of the class StandardPrinter
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STRINGIOBUFFERTEST_H_
-#define STRINGIOBUFFERTEST_H_
-
+#ifndef STANDARDPRINTER_H_
+#define STANDARDPRINTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,66 +31,108 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Private/StreamStringIOBuffer.h"
+#include "PrinterI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-using namespace MARTe;
 
-class StreamStringIOBufferTest {
+namespace MARTe{
 
+/**
+ * @brief The MARTe standard (configuration database) language printer.
+ * @see PrinterI
+ */
+class StandardPrinter: public PrinterI {
 public:
 
     /**
-     * @brief Tests if the default constructor initializes position=0 and used size=0. The granularity should be 64 by default.
+     * @brief Default constructor
      */
-    bool TestDefaultConstructor();
+    StandardPrinter();
 
     /**
-     * @brief Tests if the granularity is initialized to the first 2**x minor than the specified value.
+     * @brief Constructor
      */
-    bool TestGranularityConstructor(uint32 granularity,
-                                    uint32 expected);
+    StandardPrinter(BufferedStreamI & streamIn);
 
     /**
-     * @brief Tests if the constructor set the buffer pointer to null.
+     * @brief Destructor
      */
-    bool TestDestructor();
+    virtual ~StandardPrinter();
 
     /**
-     * @brief Tests if the function allocates the first multiple of granularity greater than the specified size.
+     * @see PrinterI::PrintOpenMatrix
      */
-    bool TestSetBufferAllocationSize(uint32 size,
-                                     uint32 granularity);
+    virtual bool PrintOpenMatrix();
 
     /**
-     * @brief Tests if the function writes all the string passed by argument on the buffer.
+     * @see PrinterI::PrintCloseMatrix
      */
-    bool TestWrite(uint32 writeSize,
-                   const char8 *string);
+    virtual bool PrintCloseMatrix();
 
     /**
-     * @brief Tests if the function return false passing a null input.
+     * @see PrinterI::PrintScalarSeparator
      */
-    bool TestWrite_NULL_Buffer();
+    virtual bool PrintScalarSeparator();
 
     /**
-     * @brief Tests if the function puts a '\0' at the end of the filled memory.
+     * @see PrinterI::PrintVectorSeparator
      */
-    bool TestTerminate(uint32 writeSize,
-                       const char8 *string);
+    virtual bool PrintVectorSeparator();
 
     /**
-     * @brief Tests if the function writes all the passed string on the buffer.
+     * @see PrinterI::PrintVariableSeparator
      */
-    bool TestWriteAll(uint32 writeSize,
-                      const char8 *string);
+    virtual bool PrintVariableSeparator();
+
+    /**
+     * @see PrinterI::PrintBlockSeparator
+     */
+    virtual bool PrintBlockSeparator();
+
+    /**
+     * @see PrinterI::PrintOpenVector
+     */
+    virtual bool PrintOpenVector();
+
+    /**
+     * @see PrinterI::PrintCloseVector
+     */
+    virtual bool PrintCloseVector();
+
+    /**
+     * @see PrinterI::PrintOpenBlock
+     */
+    virtual bool PrintOpenBlock(const char8 *const blockName);
+
+    /**
+     * @see PrinterI::PrintCloseBlock
+     */
+    virtual bool PrintCloseBlock(const char8 *const blockName);
+
+    /**
+     * @see PrinterI::PrintOpenAssignment
+     */
+    virtual bool PrintOpenAssignment(const char8 *const varName);
+
+    /**
+     * @see PrinterI::PrintCloseAssignment
+     */
+    virtual bool PrintCloseAssignment(const char8 *const varName);
+
+    /**
+     * @see PrinterI::PrintVariable
+     */
+    virtual bool PrintVariable(const AnyType &var);
 
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STRINGIOBUFFERTEST_H_ */
+#endif /* STANDARDPRINTER_H_ */
 

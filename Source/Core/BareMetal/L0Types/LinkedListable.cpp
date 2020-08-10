@@ -60,6 +60,12 @@ LinkedListable *LinkedListable::Next() {
     return next;
 }
 
+
+const LinkedListable *LinkedListable::Next() const{
+    return next;
+}
+
+
 void LinkedListable::SetNext(LinkedListable * const p) {
     next = p;
 }
@@ -201,6 +207,23 @@ LinkedListable *LinkedListable::Search(SearchFilter * const filter) {
 
         LinkedListable *q = this;
         while (q != NULL) {
+            if (filter->TestMod(q)) {
+                ret = q;
+                break;
+            }
+            q = q->next;
+        }
+    }
+    return ret;
+}
+
+const LinkedListable *LinkedListable::Search(SearchFilter * const filter) const {
+
+    const LinkedListable *ret = NULL_PTR(LinkedListable *);
+    if (filter != NULL) {
+
+        const LinkedListable *q = this;
+        while (q != NULL) {
             if (filter->Test(q)) {
                 ret = q;
                 break;
@@ -210,6 +233,7 @@ LinkedListable *LinkedListable::Search(SearchFilter * const filter) {
     }
     return ret;
 }
+
 
 bool LinkedListable::Extract(LinkedListable * const p) {
 
@@ -281,6 +305,15 @@ uint32 LinkedListable::Delete(SearchFilter * const filter) {
         }
     }
     return deleted;
+}
+
+const LinkedListable *LinkedListable::Peek(uint32 index)  const {
+    const LinkedListable *p = this;
+    while ((p != NULL) && (index > 0u)) {
+        p = p->next;
+        index--;
+    }
+    return p;
 }
 
 LinkedListable *LinkedListable::Peek(uint32 index)  {

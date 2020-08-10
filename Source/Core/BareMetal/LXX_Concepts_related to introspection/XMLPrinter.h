@@ -1,8 +1,8 @@
 /**
- * @file SearchFilter.h
- * @brief Header file for class SearchFilter
- * @date 06/08/2015
- * @author Giuseppe Ferrò
+ * @file XMLPrinter.h
+ * @brief Header file for class XMLPrinter
+ * @date 07/09/2018
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SearchFilter
+ * @details This header file contains the declaration of the class XMLPrinter
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SEARCHFILTER_H_
-#define SEARCHFILTER_H_
+#ifndef XMLPRINTER_H_
+#define XMLPRINTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,54 +33,101 @@
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Forward declarations                              */
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-    class LinkedListable;
-}
-
+#include "PrinterI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
+
+namespace MARTe{
 
 /**
- * @brief Interface which defines a functor responsible of answering if an
- * instance of LinkedListable meets a given criteria.
- * @details The classes that realise this interface will implement the checking
- * of the criteria into the Test method, assuming that the parameter will be
- * an object of type LinkedListable.
- * @remark In order to search on all items of a list, the user will have to call
- * the Test method for each element of the list and recall which of them have
- * returned true.
+ * @brief The XML language printer.
+ * @see PrinterI
  */
-class SearchFilter {
+class XMLPrinter: public PrinterI {
 public:
     /**
-     * @brief Destructor.
+     * @brief Default constructor
      */
-    virtual ~SearchFilter() {
-
-    }
+    XMLPrinter();
 
     /**
-     * @brief LinkedListable searching callback function.
-     * @details This function is called for every element in the list being searched (i.e. traversed).
-     * @param[in] data the current LinkedListable element to be tested.
-     * @return true if \a data meets the search criteria.
+     * @brief Constructor
      */
-    virtual bool TestMod(LinkedListable *data){
-        return Test(data);
-    };
+    XMLPrinter(BufferedStreamI & streamIn);
 
     /**
-     * @brief LinkedListable searching callback function.
-     * @details This function is called for every element in the list being searched (i.e. traversed).
-     * @param[in] data the current LinkedListable element to be tested.
-     * @return true if \a data meets the search criteria.
+     * @brief Destructor
      */
-    virtual bool Test(const LinkedListable *data) = 0;
+    virtual ~XMLPrinter();
+
+    /**
+     * @see PrinterI::PrintOpenMatrix
+     */
+    virtual bool PrintOpenMatrix();
+
+    /**
+     * @see PrinterI::PrintCloseMatrix
+     */
+    virtual bool PrintCloseMatrix();
+
+    /**
+     * @see PrinterI::PrintScalarSeparator
+     */
+    virtual bool PrintScalarSeparator();
+
+    /**
+     * @see PrinterI::PrintVectorSeparator
+     */
+    virtual bool PrintVectorSeparator();
+
+    /**
+     * @see PrinterI::PrintVariableSeparator
+     */
+    virtual bool PrintVariableSeparator();
+
+    /**
+     * @see PrinterI::PrintBlockSeparator
+     */
+    virtual bool PrintBlockSeparator();
+
+    /**
+     * @see PrinterI::PrintOpenVector
+     */
+    virtual bool PrintOpenVector();
+
+    /**
+     * @see PrinterI::PrintCloseVector
+     */
+    virtual bool PrintCloseVector();
+
+    /**
+     * @see PrinterI::PrintOpenBlock
+     */
+    virtual bool PrintOpenBlock(const char8 *const blockName);
+
+    /**
+     * @see PrinterI::PrintCloseBlock
+     */
+    virtual bool PrintCloseBlock(const char8 *const blockName);
+
+    /**
+     * @see PrinterI::PrintOpenAssignment
+     */
+    virtual bool PrintOpenAssignment(const char8 *const varName);
+
+    /**
+     * @see PrinterI::PrintCloseAssignment
+     */
+    virtual bool PrintCloseAssignment(const char8 *const varName);
+
+    /**
+     * @see PrinterI::PrintVariable
+     */
+    virtual bool PrintVariable(const AnyType &var);
+
 
 };
 
@@ -89,5 +136,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SEARCHFILTER_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L3STREAMS_XMLPRINTER_H_ */
 

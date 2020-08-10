@@ -37,7 +37,7 @@
 #include "CharBuffer.h"
 #include "BufferedStreamI.h"
 #include "AnyType.h"
-#include "StreamStringIOBuffer.h"
+#include "Private/StreamStringIOBuffer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

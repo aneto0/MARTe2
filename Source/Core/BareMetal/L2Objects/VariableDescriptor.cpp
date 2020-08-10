@@ -266,8 +266,13 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     				uint32 layerSize = 0;
     				if (ret){
     					VariableDescriptorLib::DimensionSize ds = VariableDescriptorLib::LayerSize(modifiersCopy,td);
-    					ret.internalStateError = ds.ToNumber(layerSize);
+    					ret = ds.ToNumber(layerSize);
     					REPORT_ERROR(ret,"layer size error");
+    				}
+
+    				if (ret){
+    				    ret.internalSetupError = (layerSize == 0);
+                        REPORT_ERROR(ret,"layer size 0");
     				}
 
     				if (ret){

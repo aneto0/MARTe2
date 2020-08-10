@@ -134,7 +134,7 @@ public:
      * @param[in] data is the element to be tested.
      * @return true if data is equal to the number to be searched, false otherwise.
      */
-    bool Test(LinkedListable *data) {
+    bool Test(const LinkedListable *data) {
         return ((IntegerList*) (data))->intNumber == searchIntNumber;
     }
 };

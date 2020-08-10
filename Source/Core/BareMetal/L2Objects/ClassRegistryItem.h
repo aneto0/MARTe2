@@ -168,14 +168,14 @@ public:
      * @param[in] memberName the name of the member.
      * @return the ClassMember associated to the member with name = memberName.
      */
-    ClassMember const *     FindMember(CCString memberName);
+    ClassMember const *     FindMember(CCString memberName) const;
 
     /**
      * @brief Gets the index-th ClassMember .
      * @param[in] index the ordinal number of the member.
      * @return the ClassMember description.
      */
-    ClassMember const *     FindMember(uint32 index);
+    ClassMember const *     FindMember(uint32 index) const;
 
     /**
      * @brief Registers a member that can be later retrieved with FindMethod.

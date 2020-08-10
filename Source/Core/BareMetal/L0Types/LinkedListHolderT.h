@@ -124,6 +124,11 @@ public:
     inline T *ListSearch(SearchFilterT<T> * const filter);
 
     /**
+     * @brief @see LinkedListHolder::ListSearch()
+     */
+    inline const T *ListSearch(SearchFilterT<T> * const filter) const ;
+
+    /**
      * @brief @see LinkedListHolder::ListExtract()
      */
     inline bool ListExtract(T * const p);
@@ -152,6 +157,11 @@ public:
      * @brief @see LinkedListHolder::ListBSort()
      */
     inline void ListBSort(SortFilterT<T> * const sorter);
+
+    /**
+     * @brief @see LinkedListHolder::ListPeek()
+     */
+    inline const T *ListPeek(const uint32 index) const;
 
     /**
      * @brief @see LinkedListHolder::ListPeek()
@@ -251,6 +261,12 @@ T *LinkedListHolderT<T, canDestroy>::ListSearch(SearchFilterT<T> * const filter)
 }
 
 template <class T, bool canDestroy>
+const T *LinkedListHolderT<T, canDestroy>::ListSearch(SearchFilterT<T> * const filter) const {
+    const LinkedListable *ll = LinkedListHolder::ListSearch(filter);
+    return static_cast<const T*>(ll);
+}
+
+template <class T, bool canDestroy>
 bool LinkedListHolderT<T, canDestroy>::ListExtract(T * const p) {
     return LinkedListHolder::ListExtract(p);
 }
@@ -278,6 +294,11 @@ bool LinkedListHolderT<T, canDestroy>::ListSafeDelete(SearchFilterT<T> * const f
 template <class T, bool canDestroy>
 void LinkedListHolderT<T, canDestroy>::ListBSort(SortFilterT<T> * const sorter) {
     LinkedListHolder::ListBSort(sorter);
+}
+
+template <class T, bool canDestroy>
+const T *LinkedListHolderT<T, canDestroy>::ListPeek(const uint32 index) const {
+    return static_cast<const T*>(LinkedListHolder::ListPeek(index));
 }
 
 template <class T, bool canDestroy>

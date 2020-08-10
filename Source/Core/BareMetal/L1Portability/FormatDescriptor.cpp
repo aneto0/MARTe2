@@ -59,34 +59,39 @@ struct FDLookup {
  * 0 terminated vector of FDLookups
  */
 static const FDLookup flagsLookup[] = {
-		{ ' ', FormatDescriptor(0u, 0u, 0u, true,  false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
-        { '-', FormatDescriptor(0u, 0u, 0u, true,  true,  FixedPointNotation, DecimalNotation, false, false) },  // '-'
-        { '0', FormatDescriptor(0u, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, true, false) },  // '0'
-        { '#', FormatDescriptor(0u, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, true) },  // '#'
+		{ ' ', FormatDescriptor(0u, 0u, 0u, true,  false, FixedPointNotation, DecimalNotation, false, false, PrintInStandardGrammar) },  // ' '
+        { '-', FormatDescriptor(0u, 0u, 0u, true,  true,  FixedPointNotation, DecimalNotation, false, false, PrintInStandardGrammar) },  // '-'
+        { '0', FormatDescriptor(0u, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, true,  false, PrintInStandardGrammar) },  // '0'
+        { '#', FormatDescriptor(0u, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, true , PrintInStandardGrammar) },  // '#'
+        { 'J', FormatDescriptor(0u, 0u, 0u, true,  false, FixedPointNotation, DecimalNotation, false, false, PrintInJsonGrammar)     },  // 'J'
+        { 'X', FormatDescriptor(0u, 0u, 0u, true,  false, FixedPointNotation, DecimalNotation, false, false, PrintInXMLGrammar)      },  // 'X'
         { static_cast<char8>(0), FormatDescriptor(0u) } };
 
 /**
  * 0 terminated vector of FDLookups
  */
 static const FDLookup typesLookup[] = {
-		{ '!', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) }, // ' '
-        { '?', FormatDescriptor(PrintInfo,     0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) }, // ' '
-        { '@', FormatDescriptor(PrintStruct,   0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) }, // ' '
-        { 'd', FormatDescriptor(PrintInteger,  0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) }, // ' '
-        { 'i', FormatDescriptor(PrintInteger,  0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) }, // ' '
-        { 'u', FormatDescriptor(PrintInteger,  0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) }, // ' '
-        { 's', FormatDescriptor(PrintString,   0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) }, // ' '
-        { 'c', FormatDescriptor(PrintString,   0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) }, // ' '
-        { 'f', FormatDescriptor(PrintFloat,    0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false) },  //f
-        { 'F', FormatDescriptor(PrintFloat,    0u, 0u, false, false, FixedPointRNotation, DecimalNotation, false, false) },  //F
-        { 'e', FormatDescriptor(PrintFloat,    0u, 0u, false, false, ExponentNotation,    DecimalNotation, false, false) },  //e
-        { 'E', FormatDescriptor(PrintFloat,    0u, 0u, false, false, EngineeringNotation, DecimalNotation, false, false) },  //E
-        { 'g', FormatDescriptor(PrintFloat,    0u, 0u, false, false, SmartNotation,       DecimalNotation, false, false) },  //g
-        { 'G', FormatDescriptor(PrintFloat,    0u, 0u, false, false, CompactNotation,     DecimalNotation, false, false) },  //
-        { 'x', FormatDescriptor(PrintInteger,  0u, 0u, false, false, FixedPointNotation,  HexNotation,     false, false) },  //x
-        { 'p', FormatDescriptor(PrintPointer,  0u, 0u, false, false, FixedPointNotation,  HexNotation,     true,  true ) },  //p
-        { 'o', FormatDescriptor(PrintInteger,  0u, 0u, false, false, FixedPointNotation,  OctalNotation,   false, false) },  //o
-        { 'b', FormatDescriptor(PrintInteger,  0u, 0u, false, false, FixedPointNotation,  BitNotation,     false, false) },  //b
+		{ '!', FormatDescriptor(PrintAnything,          0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { '?', FormatDescriptor(PrintInfo,              0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { 'Q', FormatDescriptor(PrintInfoRecursive,     0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { 't', FormatDescriptor(PrintTypeInformation,   0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { '&', FormatDescriptor(PrintAnything,          0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { '@', FormatDescriptor(PrintStructRecursive,   0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { 'd', FormatDescriptor(PrintInteger,           0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { 'i', FormatDescriptor(PrintInteger,           0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { 'u', FormatDescriptor(PrintInteger,           0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { 's', FormatDescriptor(PrintString,            0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { 'c', FormatDescriptor(PrintString,            0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) }, // ' '
+        { 'f', FormatDescriptor(PrintFloat,             0u, 0u, false, false, FixedPointNotation,  DecimalNotation, false, false, PrintInStandardGrammar) },  //f
+        { 'F', FormatDescriptor(PrintFloat,             0u, 0u, false, false, FixedPointRNotation, DecimalNotation, false, false, PrintInStandardGrammar) },  //F
+        { 'e', FormatDescriptor(PrintFloat,             0u, 0u, false, false, ExponentNotation,    DecimalNotation, false, false, PrintInStandardGrammar) },  //e
+        { 'E', FormatDescriptor(PrintFloat,             0u, 0u, false, false, EngineeringNotation, DecimalNotation, false, false, PrintInStandardGrammar) },  //E
+        { 'g', FormatDescriptor(PrintFloat,             0u, 0u, false, false, SmartNotation,       DecimalNotation, false, false, PrintInStandardGrammar) },  //g
+        { 'G', FormatDescriptor(PrintFloat,             0u, 0u, false, false, CompactNotation,     DecimalNotation, false, false, PrintInStandardGrammar) },  //
+        { 'x', FormatDescriptor(PrintInteger,           0u, 0u, false, false, FixedPointNotation,  HexNotation,     false, false, PrintInStandardGrammar) },  //x
+        { 'p', FormatDescriptor(PrintPointer,           0u, 0u, false, false, FixedPointNotation,  HexNotation,     true,  true , PrintInStandardGrammar) },  //p
+        { 'o', FormatDescriptor(PrintInteger,           0u, 0u, false, false, FixedPointNotation,  OctalNotation,   false, false, PrintInStandardGrammar) },  //o
+        { 'b', FormatDescriptor(PrintInteger,           0u, 0u, false, false, FixedPointNotation,  BitNotation,     false, false, PrintInStandardGrammar) },  //b
         { static_cast<char8>(0), FormatDescriptor(0u) } };
 
 /**
@@ -191,6 +196,7 @@ bool FormatDescriptor::InitialiseFromString(CCString &string) {
                 temporaryFormat.precision = defaultPrecision;
             }
             else {
+
                 // get any integer number from string if any
                 temporaryFormat.precision = GetIntegerNumber(string);
             }

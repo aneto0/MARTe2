@@ -59,7 +59,7 @@ bool FormatDescriptorTest::TestInitialiseFromString(){
     retVal &= (formatDescriptor.binaryNotation == DecimalNotation);
     retVal &= (formatDescriptor.binaryPadded == false);
     retVal &= (formatDescriptor.fullNotation == true);
-    retVal &= (formatDescriptor.spareBits == 0u);
+    retVal &= (formatDescriptor.desiredGrammar == 0u);
 
     return retVal;
 }
@@ -84,7 +84,7 @@ bool FormatDescriptorTest::TestDefaultConstructor(){
     retVal &= (fdDefaultConst.binaryNotation == DecimalNotation);
     retVal &= (fdDefaultConst.binaryPadded == false);
     retVal &= (fdDefaultConst.fullNotation == false);
-    retVal &= (fdDefaultConst.spareBits == 0u);
+    retVal &= (fdDefaultConst.desiredGrammar == 0u);
 
     return retVal;
 }
@@ -99,7 +99,7 @@ bool FormatDescriptorTest::TestIntConstructor(){
 }
 
 bool FormatDescriptorTest::TestConstructor(){
-    FormatDescriptor fdDefaultConst(PrintAnything, 0u, defaultPrecision, false, false, FixedPointNotation, DecimalNotation, false, false);
+    FormatDescriptor fdDefaultConst(PrintAnything, 0u, defaultPrecision, false, false, FixedPointNotation, DecimalNotation, false, false,0);
 
     retVal = (fdDefaultConst.desiredAction == PrintAnything);
     retVal &= (fdDefaultConst.size == 0u);
@@ -110,13 +110,13 @@ bool FormatDescriptorTest::TestConstructor(){
     retVal &= (fdDefaultConst.binaryNotation == DecimalNotation);
     retVal &= (fdDefaultConst.binaryPadded == false);
     retVal &= (fdDefaultConst.fullNotation == false);
-    retVal &= (fdDefaultConst.spareBits == 0u);
+    retVal &= (fdDefaultConst.desiredGrammar == 0u);
 
     return retVal;
 }
 
 bool FormatDescriptorTest::TestAssignOperator(){
-    FormatDescriptor formatDescriptor1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true);
+    FormatDescriptor formatDescriptor1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true,0);
 
     formatDescriptor = formatDescriptor1;
     retVal = (formatDescriptor.padded == true);

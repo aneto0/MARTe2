@@ -30,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <StreamStringIOBuffer.h>
+#include <Private/StreamStringIOBuffer.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

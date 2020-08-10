@@ -193,7 +193,7 @@ class ClassRegistryItemFindMember: public SearchFilterT<ClassMember>{
 
 public:
 	ClassRegistryItemFindMember(CCString const memberNameIn): memberName(memberNameIn){}
-	bool Test(ClassMember *data){
+	bool Test(const ClassMember *data){
 	    bool ret = (data != NULL);
 	    if (ret){
 	    	CCString name = data->GetName();
@@ -221,7 +221,7 @@ public:
 		return actualMember;
 	}
 
-	bool Test(ClassMember *data){
+	bool Test(const ClassMember *data) {
 	    if (data != NULL) {
 	    	CCString name = data->GetName();
 	    	if (name.GetSize() == 0){
@@ -242,7 +242,7 @@ private:
 };
 
 
-ClassMember const *ClassRegistryItem::FindMember(CCString memberName) {
+ClassMember const *ClassRegistryItem::FindMember(CCString memberName) const {
 	ClassRegistryItemFindMember crifm (memberName);
 	const ClassMember *found = classMembers.ListSearch(&crifm);
 	if (found == NULL_PTR(ClassMember *)){
@@ -256,7 +256,7 @@ ClassMember const *ClassRegistryItem::FindMember(CCString memberName) {
 	return found;
 }
 
-ClassMember const *ClassRegistryItem::FindMember(uint32 index) {
+ClassMember const *ClassRegistryItem::FindMember(uint32 index) const{
 
     ClassMember const *member = NULL_PTR(ClassMember const *);
     if  (index < classMembers.ListSize()){

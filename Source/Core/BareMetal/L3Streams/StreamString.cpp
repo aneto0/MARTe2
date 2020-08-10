@@ -32,6 +32,8 @@
 
 #include "StreamString.h"
 #include "AdvancedErrorManagement.h"
+#include "Private/StreamStringIOBuffer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

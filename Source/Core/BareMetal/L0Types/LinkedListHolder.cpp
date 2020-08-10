@@ -142,6 +142,12 @@ LinkedListable *LinkedListHolder::ListSearch(SearchFilter * const filter) {
     return (llhRoot.Next() == NULL) ? NULL_PTR(LinkedListable *) : llhRoot.Next()->Search(filter);
 }
 
+const LinkedListable *LinkedListHolder::ListSearch(SearchFilter * const filter) const {
+
+    return (llhRoot.Next() == NULL) ? NULL_PTR(LinkedListable *) : llhRoot.Next()->Search(filter);
+}
+
+
 bool LinkedListHolder::ListExtract(LinkedListable * const p) {
 
     bool ret = false;
@@ -205,6 +211,10 @@ bool LinkedListHolder::ListSafeDelete(SearchFilter * const filter) {
 
 void LinkedListHolder::ListBSort(SortFilter * const sorter) {
     llhRoot.BSort(sorter);
+}
+
+const LinkedListable *LinkedListHolder::ListPeek(const uint32 index)   const {
+    return (llhRoot.Next() == NULL) ? (NULL_PTR(LinkedListable *)) : (llhRoot.Next()->Peek(index));
 }
 
 LinkedListable *LinkedListHolder::ListPeek(const uint32 index)   {

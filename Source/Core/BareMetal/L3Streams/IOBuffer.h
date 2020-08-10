@@ -552,6 +552,10 @@ private:
      */
     char8 *positionPtr;
 
+    /**
+     * prevent copying it!
+     */
+    void operator=(IOBuffer &){}
 };
 
 /*---------------------------------------------------------------------------*/

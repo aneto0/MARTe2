@@ -162,6 +162,13 @@ public:
     LinkedListable *ListSearch(SearchFilter * const filter);
 
     /**
+     * @brief Searches an element using a SearchFilter.
+     * @param[in] filter defines the search criteria.
+     * @return a pointer to the element if it is found in the list, NULL otherwise.
+     */
+    const LinkedListable *ListSearch(SearchFilter * const filter) const;
+
+    /**
      * @brief Removes the requested element from the list.
      * @param[in] p the element to be removed.
      * @return true if \a p was in the list, false otherwise.
@@ -202,6 +209,13 @@ public:
      * @param[in] sorter defines the comparison criteria.
      */
     void ListBSort(SortFilter * const sorter);
+
+    /**
+     * @brief Browses the list.
+     * @param[in] index the position of the requested element (0 means the first element).
+     * @return a pointer to the element at index position.
+     */
+    const LinkedListable *ListPeek(const uint32 index)  const;
 
     /**
      * @brief Browses the list.
