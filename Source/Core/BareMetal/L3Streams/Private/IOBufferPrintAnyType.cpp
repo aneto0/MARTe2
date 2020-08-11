@@ -42,7 +42,7 @@ namespace MARTe{
  * @param[in] parIn is the generic object to be printed.
  * @param[in] fd specifies the desired printing format.
  */
-static bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn);
+static ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn);
 
 /**
  * @brief Prints an object. Assumes that the parIn has a valid pointer and is a structure
@@ -93,19 +93,36 @@ ErrorManagement::ErrorType PrintObject(IOBuffer &iobuff, FormatDescriptor fd, Ty
         ret.internalSetupError = (cm == NULL);
         COMPOSITE_REPORT_ERROR(ret,"Class ",item->GetClassName()," member ", i, "is  NULL? " );
 
-        AnyType at = parIn;
-        if (ret){
-            ret = at.Dereference(cm->GetName());
+        // empty name means inheritance
+        if (ret && (cm->GetName().GetSize() == 0)){
+            const uint8* ptr = static_cast<const uint8*>(parIn.GetVariablePointer());
+            ptr += cm->GetOffset();
+            AnyType at(cm->GetDescriptor(),ptr += cm->GetOffset());
+
+            ret.fatalError = !IOBuffer::PrintAnyType(iobuff,fd,at);
+            REPORT_ERROR(ret,"PrintAnyType Failed");
+        } else {
+            AnyType at = parIn;
+            if (ret){
+                ret = at.Dereference(cm->GetName());
+                COMPOSITE_REPORT_ERROR(ret,"Failed dereferencing element ",i," name = (",cm->GetName(),") " );
+            }
+
+            if (ret){
+                ret = PrintFormatter::OpenAssignMent(fd.desiredGrammar,cm->GetName(),iobuff);
+            }
+
+            if (ret){
+                ret.fatalError = !IOBuffer::PrintAnyType(iobuff,fd,at);
+                REPORT_ERROR(ret,"PrintAnyType Failed");
+            }
+
+            if (ret){
+                ret = PrintFormatter::CloseAssignMent(fd.desiredGrammar,cm->GetName(),iobuff);
+            }
+
         }
 
-        if (ret){
-            ret = PrintFormatter::OpenAssignMent(fd.desiredGrammar,cm->GetName(),iobuff);
-
-            ret.fatalError = ret.fatalError || !IOBuffer::PrintAnyType(iobuff,fd,at);
-            ret = ret & PrintFormatter::CloseAssignMent(fd.desiredGrammar,cm->GetName(),iobuff);
-            REPORT_ERROR(ret,"Failed writing classname");
-
-        }
     }
 
     // write start of block
@@ -117,17 +134,19 @@ ErrorManagement::ErrorType PrintObject(IOBuffer &iobuff, FormatDescriptor fd, Ty
 
 }
 
-bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
-
-    bool ret = true;
+ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
+    ErrorManagement::ErrorType ret;
+//    bool ret = true;
     // void anytype
     AnyType par = parIn;
 
     if (fd.desiredAction == PrintTypeInformation) {
-        ret = IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
+        ret.fatalError = !IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
+        REPORT_ERROR(ret,"PrintAnyTypeInfo  failed");
     } else
     if ((fd.desiredAction == PrintInfo)|| (fd.desiredAction == PrintInfoRecursive)) {
-        ret = IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
+        ret.fatalError = !IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
+        REPORT_ERROR(ret,"PrintAnyTypeInfo  failed");
     } else {
         // extract variable descriptor
         const VariableDescriptor &vd = parIn.GetFullVariableDescriptor();
@@ -138,7 +157,8 @@ bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & p
 
         if (ret){
             dataPointer = parIn.GetVariablePointer();
-            ret = (dataPointer != NULL);
+            ret.fatalError = (dataPointer == NULL);
+            REPORT_ERROR(ret,"dataPointer == NULL");
         }
 
         if (ret) {  // main block
@@ -147,6 +167,7 @@ bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & p
             //if the element is structured, the print is not supported.
             if (td.IsStructuredData()){
                 ret = PrintObject(iobuff, fd, td, parIn);
+                REPORT_ERROR(ret,"PrintObject failed");
             } else
             if (td.IsSpecialType())  //Stream,StructuredData,..
             {
@@ -165,27 +186,32 @@ bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & p
 
                         // use native standard integer
                         const uint32 *number = static_cast<const uint32 *>(dataPointer);
-                        ret = BitSetToStream(iobuff, number, bitOffset_, numberOfBits_, false, fd);
+                        ret.fatalError = !BitSetToStream(iobuff, number, bitOffset_, numberOfBits_, false, fd);
+                        REPORT_ERROR(ret,"BitSetToStream failed");
                     } else {
                         switch (storageSize) {
                         case 1: {
                             const uint8 *data = static_cast<const uint8 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
+                            ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                            REPORT_ERROR(ret,"IntegerToStream failed");
+                       }
                         break;
                         case 2: {
                             const uint16 *data = static_cast<const uint16 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                            REPORT_ERROR(ret,"IntegerToStream failed");
                         }
                         break;
                         case 4: {
                             const uint32 *data = static_cast<const uint32 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                            REPORT_ERROR(ret,"IntegerToStream failed");
                         }
                         break;
                         case 8: {
                             const uint64 *data = static_cast<const uint64 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                            REPORT_ERROR(ret,"IntegerToStream failed");
                         }
                         break;
                         default: {
@@ -201,27 +227,32 @@ bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & p
 
                         // use native standard integer
                         const uint32 *number = static_cast<const uint32 *>(dataPointer);
-                        ret = BitSetToStream(iobuff, number, bitOffset_, numberOfBits_, true, fd);
+                        ret.fatalError = !BitSetToStream(iobuff, number, bitOffset_, numberOfBits_, true, fd);
+                        REPORT_ERROR(ret,"BitSetToStream failed");
                     } else {
                         switch (storageSize) {
                         case 1: {
                             const int8 *data = static_cast<const int8 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                            REPORT_ERROR(ret,"IntegerToStream failed");
                         }
                         break;
                         case 2: {
                             const int16 *data = static_cast<const int16 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                            REPORT_ERROR(ret,"IntegerToStream failed");
                         }
                         break;
                         case 4: {
                             const int32 *data = static_cast<const int32 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                            REPORT_ERROR(ret,"IntegerToStream failed");
                         }
                         break;
                         case 8: {
                             const int64 *data = static_cast<const int64 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                            REPORT_ERROR(ret,"IntegerToStream failed");
                         }
                         break;
                         default: {
@@ -235,12 +266,14 @@ bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & p
                     switch (storageSize){
                     case 4: {
                         const float32 *data = static_cast<const float32 *>(dataPointer);
-                        ret = FloatToStream(iobuff, *data, fd);
+                        ret.fatalError = !FloatToStream(iobuff, *data, fd);
+                        REPORT_ERROR(ret,"FloatToStream failed");
                     }
                     break;
                     case 8: {
                         const float64 *data = static_cast<const float64 *>(dataPointer);
-                        ret = FloatToStream(iobuff, *data, fd);
+                        ret.fatalError = !FloatToStream(iobuff, *data, fd);
+                        REPORT_ERROR(ret,"FloatToStream failed");
                     }
                     break;
                     default:{
@@ -257,7 +290,8 @@ bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & p
 //                        ret = PrintFormatter::CharField(fd.desiredGrammar,*data,iobuff);
                         //iobuff.PutC(*data);
                         char8 miniString[2] = {*data,'\0' };
-                        ret = PrintCCStringFit(iobuff,&miniString[0],fd);
+                        ret.fatalError = !PrintCCStringFit(iobuff,&miniString[0],fd);
+                        REPORT_ERROR(ret,"PrintCCStringFit failed");
                     }
                     break;
                     default:{
@@ -270,11 +304,13 @@ bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & p
                 case TDF_CCString:{
                     const CCString *data = static_cast<const CCString *>(dataPointer);
 //                    ret = PrintFormatter::StringField(fd.desiredGrammar,*data,iobuff);
-                    ret = PrintCCStringFit(iobuff,*data,fd);
+                    ret.fatalError = !PrintCCStringFit(iobuff,*data,fd);
+                    REPORT_ERROR(ret,"PrintCCStringFit failed");
                 }break;
                 case TDF_Pointer:{
                     const uintp *data = static_cast<const uintp *>(dataPointer);
-                    ret = IntegerToStream(iobuff, *data, fd);
+                    ret.fatalError = !IntegerToStream(iobuff, *data, fd);
+                    REPORT_ERROR(ret,"IntegerToStream failed");
                 }break;
                 default:{
                     printTypeInformation = true;
@@ -283,7 +319,8 @@ bool PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & p
             }
             // print this as default
             if (printTypeInformation){
-                ret = IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
+                ret.fatalError = !IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
+                REPORT_ERROR(ret,"PrintAnyTypeInfo  failed");
             }
         } // main block
 
@@ -310,7 +347,7 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
     REPORT_ERROR(ret,"GetVariableInformation failed");
 
     if (ret && (nDims == 0) ){
-        ret.fatalError = ! PrintAnySimpleType(iobuff, fd, parIn);
+        ret = PrintAnySimpleType(iobuff, fd, parIn);
         REPORT_ERROR(ret,"PrintAnySimpleType failed");
     } else
     if (ret ){
@@ -323,6 +360,9 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
             ret = PrintFormatter::OpenArray(fd.desiredGrammar,iobuff);
         }
 
+        if (ret && (dims[0] == 0)){
+            ret = PrintCCStringFit(iobuff,"null",fd);
+        }
 
         for (uint32 i = 0;ret && (i < dims[0]); i++){
             AnyType at = parIn;
@@ -343,14 +383,14 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 
             if (ret && (nDims >= 1)){
                 ret.OSError = !PrintAnyType(iobuff, fd, at);
-                REPORT_ERROR(ret,"PrintToStream recursion failed");
+                REPORT_ERROR(ret,"PrintAnyType  failed");
             } else
             if (ret){
-                ret.OSError = ! PrintAnySimpleType(iobuff, fd, at);
-                REPORT_ERROR(ret,"PrintAnyType failed");
+                ret = PrintAnySimpleType(iobuff, fd, at);
+                REPORT_ERROR(ret,"PrintAnySimpleType failed");
             }
 
-            if (nDims > 2){
+            if (ret && (nDims > 2)){
                 // structure field N =
                 ret = PrintFormatter::CloseAssignMent(fd.desiredGrammar,ns,iobuff);
             }

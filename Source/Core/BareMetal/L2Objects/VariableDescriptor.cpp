@@ -235,7 +235,26 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     		}
     	}break;
     	case 'f':
-    	case 'F':
+    	case 'F':{
+            if ((nOfDimensions == 0) && (varPtr != NULL)){
+                // only at first level we read the size from memory.
+                // this is because the size is unique only at this level
+                const uint8 *ptr = static_cast<const uint8 *>(varPtr);
+                ret = VariableDescriptorLib::RedirectP(ptr,true);
+                REPORT_ERROR(ret," redirection failed");
+
+                if (!ret || (ptr == NULL)){
+                    size = 0;
+                }
+            } else {
+                // size = 0 here means 0
+                size = 0;
+            }
+            if ((nOfDimensions < maxDepth) && (dimensionSizes != NULL)) {
+                dimensionSizes[nOfDimensions] = size;
+            }
+
+    	}break;
     	case 'A':{
     		//depth > 0;
     		//sizes[*] set to actual value
@@ -265,7 +284,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
 
     				uint32 layerSize = 0;
     				if (ret){
-    					VariableDescriptorLib::DimensionSize ds = VariableDescriptorLib::LayerSize(modifiersCopy,td);
+    					VariableDescriptorLib::DimensionSize ds = VariableDescriptorLib::LayerSize(modifiersCopy,typeDescriptor);
     					ret = ds.ToNumber(layerSize);
     					REPORT_ERROR(ret,"layer size error");
     				}
@@ -291,6 +310,8 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     		COMPOSITE_REPORT_ERROR(ret, "Incorrect modifier: ",modifier);
     	}
     	}
+
+
    	   	nOfDimensions++;
     } // while
 
@@ -540,7 +561,11 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 		if (redirSet.In(modifier)){
 			const uint8 **pp = (const uint8 **)(pointer);
 			const uint8 *p = *pp;
-			ret.exception = !MemoryCheck::Check(p);
+
+			ret.exception = (p == NULL);
+			if (ret){
+	            ret.exception = !MemoryCheck::Check(p);
+			}
 		    REPORT_ERROR(ret, "bad pointer");
 		    if (ret){
 				pointer = p;
@@ -693,19 +718,18 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 				ret = step.ToNumber(step32);
 		        REPORT_ERROR(ret, "step >= 32bit");
 
-				if (ret){
-					pointer = p;
-					pointer = pointer + step32;
-					modifiers().Remove(static_cast<uint32>(modifierString.GetList()-modifiers.GetList()));
-				}
+                if (ret){
+                    pointer = p;
+                    pointer = pointer + step32;
 
-				// add missing dimension
-				DynamicCString modifiersTemp;
-				modifiersTemp().Append(modifierString);
-				modifiers().Truncate(0);
-				modifiers().Append('A');
-				modifiers().Append(pm[0].GetNumberOfColumns());
-				modifiers().Append(modifiersTemp);
+                    DynamicCString modifiersTemp;
+                    modifiersTemp().Append(modifierString);
+                    modifiers().Truncate(0);
+                    modifiers().Append('A');
+                    modifiers().Append(pm[0].GetNumberOfColumns());
+                    modifiers().Append(modifiersTemp);
+                }
+
 			}
 
 	 	}break;

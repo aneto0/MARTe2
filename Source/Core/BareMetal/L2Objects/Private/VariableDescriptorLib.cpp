@@ -83,11 +83,11 @@ uint32 ReadNumber(CCString &buffer){
 void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 &size ){
 	if (modifierString.IsNullPtr()){
 		modifier = 'O';
-		size = 0;
+		size = 1;
 	} else {
 		modifier = modifierString[0];
 		if (modifier == '\0'){
-			size = 0;
+			size = 1;
 			modifier = 'O';
 		} else {
 			modifierString++;
@@ -151,8 +151,8 @@ uint32 Type2Size(char8 c,const TypeDescriptor &tdIn) {
 
 
 VariableDescriptorLib::DimensionSize LayerSize(CCString modifierString,TypeDescriptor td){
-	char8 type;
-	uint32 size;
+	char8 type = 'O';
+	uint32 size = 0;
 
 	VariableDescriptorLib::DimensionSize ds(1);
 	VariableDescriptorLib::GetLayerInfo(modifierString,type,size);
@@ -177,7 +177,7 @@ ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL){
 
 //printf("redirecting %p -> %p\n",ptr,p);   //TODO remove
 
-if ((p == NULL) && (allowNULL)){
+	if ((p == NULL) && (allowNULL)){
 		ptr = p;
 	} else
 	if ((p == NULL) || (!MemoryCheck::Check(p))){
@@ -565,8 +565,8 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 	if (modifierString.IsNullPtr()){
 		modifierString = modifiers;
 	}
-	char8 modifier;
-	uint32 size;
+	char8 modifier = 'O';
+	uint32 size = 0;
 	VariableDescriptorLib::GetLayerInfo(modifierString,modifier,size );
 
 
@@ -631,7 +631,7 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 			}
 		}
 	} else {
-		// when encountering 0 or a template MVZSDmvzsd start new sequence for goes inside the template
+		// when encountering 0 or a template MVZSDmvzsd start new sequence that goes inside the template
 		if (modifier == 'O'){
 			typeDescriptor.ToString(string);
 		} else {

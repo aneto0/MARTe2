@@ -55,7 +55,7 @@ namespace VariableDescriptorLib{
 /**
  * @brief parses a modifierString extracting the top modifier and associated number,
  * modifierString is modified to point to the next modifier
- * at the end of the string it returns 'O' to indicate the termination
+ * at the end of the string it returns 'O' to indicate the termination. In this case size is set to 1
  */
 DLL_API void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 &size );
 

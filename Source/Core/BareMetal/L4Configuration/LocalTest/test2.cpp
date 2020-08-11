@@ -209,7 +209,20 @@ void PrepareTestObject(){
     test1Class.test3.bitset8 = 8;
 
     test1Class.VCharVar.SetSize(3);
+    test1Class.VCharVar[0]= 'a';
+    test1Class.VCharVar[1]= 'b';
+    test1Class.VCharVar[2]= 'c';
+
     test1Class.MFloatVar.SetSize(3,3);
+    test1Class.MFloatVar[0][0]= 1.0;
+    test1Class.MFloatVar[1][0]= 2.0;
+    test1Class.MFloatVar[2][0]= 3.0;
+    test1Class.MFloatVar[0][1]= 4.0;
+    test1Class.MFloatVar[1][1]= 5.0;
+    test1Class.MFloatVar[2][1]= 6.0;
+    test1Class.MFloatVar[0][2]= 7.0;
+    test1Class.MFloatVar[1][2]= 8.0;
+    test1Class.MFloatVar[2][2]= 9.0;
 
     for (int i=0;i<12;i++) {
     	test1Class.int16Arr[i] = 16*i;
@@ -283,7 +296,7 @@ void PrepareTestObject(){
     	arrayP10[i][j] = NULL;
     }
 
-    static float arrayF[10];
+    static float arrayF[10]= {1,2,3,4,5,6,7,8,9,10};
     arrayP10[1][1] = &arrayF;
     test1Class.MFloat10 = arrayP10;
 
@@ -1022,8 +1035,8 @@ void Test(){
     DEREF_CHECK(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr)/* cannot clone pointers*/);
     DEREF_CHECK(at,".int64PArr[4]","int64( *)[21]",176,8); // cannot clone pointers
     DEREF_CHECK(at,".int32PVar","int32 *",8,0);  // cannot clone pointers
-    DEREF_CHECK(at,".VCharVar","Vector<char8>",16,16/* clone creates only const structures*/);
-    DEREF_CHECK(at,".MFloatVar","Matrix<float32>",24,24/* clone creates only const structures*/);
+    DEREF_CHECK(at,".VCharVar","Vector<char8>",19,16/* clone creates only const structures*/);
+    DEREF_CHECK(at,".MFloatVar","Matrix<float32>",60,24/* clone creates only const structures*/);
     DEREF_CHECK(at,".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56/* clone converts ZTA to vector */);
     DEREF_CHECK(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",904,648/* cloning changes type*/);
     DEREF_CHECK(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144);
@@ -1045,8 +1058,8 @@ void Test(){
     DEREF_CLONE_CHECK(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);     //
     DEREF_CLONE_CHECK(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
     DEREF_CLONE_CHECK(at,".int32PVar*","int32",4,0);
-    DEREF_CLONE_CHECK(at,".VCharVar","const Vector<char8>",16,16/* clone creates only const structures*/);
-    DEREF_CLONE_CHECK(at,".MFloatVar","const Matrix<float32>",24,24);
+    DEREF_CLONE_CHECK(at,".VCharVar","const Vector<char8>",19,16/* clone creates only const structures*/);
+    DEREF_CLONE_CHECK(at,".MFloatVar","const Matrix<float32>",60,24);
     DEREF_CLONE_CHECK(at,".CStringZTAVar","const Vector<CCString>",83,56/* clone converts ZTA to vector */);
     DEREF_CLONE_CHECK(at,".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",848,592/* cloning changes to const Vector*/);
     DEREF_CLONE_CHECK(at,".CStringVAZTAVar[1]","const Vector<CCString>[4]",208,144/* cloning changes to const Vector*/);

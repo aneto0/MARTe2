@@ -153,11 +153,11 @@ DLL_API bool IOBuffer::PrintAnyTypeInfo(IOBuffer &iobuff, FormatDescriptor fd, c
     } else {
         DynamicCString line;
         ret = vd.ToString(line);
+        REPORT_ERROR(ret,"ToString failed");
 
         if (ret){
             CCString lineC = line.GetList();
-            ret.fatalError = PrintCCStringFit(iobuff,lineC,fd);
-//            ret.fatalError = PrintFormatter::StringField(fd.desiredGrammar,line,iobuff);
+            ret.fatalError = !PrintCCStringFit(iobuff,lineC,fd);
 
         }
     }
