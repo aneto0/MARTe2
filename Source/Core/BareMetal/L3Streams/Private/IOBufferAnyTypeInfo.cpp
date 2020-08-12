@@ -29,7 +29,7 @@
 #include "FormatDescriptor.h"
 #include "DynamicCString.h"
 #include "CompositeErrorManagement.h"
-#include "PrintFormatter.h"
+#include "Private/PrintFormatter.h"
 #include "ClassMember.h"
 
 
@@ -72,17 +72,16 @@ ErrorManagement::ErrorType PrintObjectIntrospection(IOBuffer &iobuff, FormatDesc
     }
 
     if (ret){
-        ret = PrintFormatter::OpenBlock(fd.desiredGrammar,iobuff);
+        ret = PrintFormatter::OpenBlock(fd,iobuff);
 
         // write class name assignment
-        ret = ret & PrintFormatter::OpenAssignMent(fd.desiredGrammar,"class",iobuff);
+        ret = ret & PrintFormatter::OpenAssignMent(fd,"class",iobuff);
         ret.OSError = ret.OSError || !PrintCCStringFit(iobuff,item->GetClassName(),fd);
-//        error = error && PrintFormatter::StringField(fd.desiredGrammar,item->GetClassName(),iobuff);
-        ret = ret & PrintFormatter::CloseAssignMent(fd.desiredGrammar,"class",iobuff);
+        ret = ret & PrintFormatter::CloseAssignMent(fd,"class",iobuff);
 
-    // write members start assignment
-        ret = ret & PrintFormatter::OpenAssignMent(fd.desiredGrammar,"members",iobuff);
-        ret = ret & PrintFormatter::OpenBlock(fd.desiredGrammar,iobuff);
+        // write members start assignment
+        ret = ret & PrintFormatter::OpenAssignMent(fd,"members",iobuff);
+        ret = ret & PrintFormatter::OpenBlock(fd,iobuff);
         REPORT_ERROR(ret,"Error writing to iobuff ");
     }
 
@@ -92,13 +91,23 @@ ErrorManagement::ErrorType PrintObjectIntrospection(IOBuffer &iobuff, FormatDesc
         ret.internalSetupError = (cm == NULL);
         COMPOSITE_REPORT_ERROR(ret,"Class ",item->GetClassName()," member ", i, "is NULL? " );
 
-        AnyType at = parIn;
-        if (ret){
-            ret = at.Dereference(cm->GetName());
-        }
+        // empty name means inheritance
+        if (ret && (cm->GetName().GetSize() == 0)){
+            const uint8* ptr = static_cast<const uint8*>(parIn.GetVariablePointer());
+            ptr += cm->GetOffset();
+            AnyType at(cm->GetDescriptor(),ptr += cm->GetOffset());
 
-        if (ret){
-            ret = PrintFormatter::OpenAssignMent(fd.desiredGrammar,cm->GetName(),iobuff);
+            ret.OSError = !IOBuffer::PrintAnyTypeInfo(iobuff,fd,at);
+            REPORT_ERROR(ret,"PrintAnyTypeInfoS Failed");
+        } else {
+            AnyType at = parIn;
+            if (ret){
+                ret = at.Dereference(cm->GetName());
+            }
+
+            if (ret){
+                ret = PrintFormatter::OpenAssignMent(fd,cm->GetName(),iobuff);
+            }
 
             // unless a recursive description is requested
             // just show the type of the members
@@ -109,24 +118,25 @@ ErrorManagement::ErrorType PrintObjectIntrospection(IOBuffer &iobuff, FormatDesc
 
             if (ret){
                 ret.OSError = !IOBuffer::PrintAnyTypeInfo(iobuff,fd,at);
+                REPORT_ERROR(ret,"PrintAnyTypeInfoS Failed");
+            }
 
-                ret = ret & PrintFormatter::CloseAssignMent(fd.desiredGrammar,cm->GetName(),iobuff);
-
-                REPORT_ERROR(ret,"Failed writing classname");
+            if (ret){
+                ret = ret & PrintFormatter::CloseAssignMent(fd,cm->GetName(),iobuff);
             }
         }
     }
 
     // write members end assignment
     if (ret){
-        ret = PrintFormatter::CloseBlock(fd.desiredGrammar,iobuff);
-        ret = ret & PrintFormatter::CloseAssignMent(fd.desiredGrammar,"members",iobuff);
+        ret = PrintFormatter::CloseBlock(fd,iobuff);
+        ret = ret & PrintFormatter::CloseAssignMent(fd,"members",iobuff);
     }
 
 
     // write end of block
     if (ret){
-        ret = PrintFormatter::CloseBlock(fd.desiredGrammar,iobuff);
+        ret = PrintFormatter::CloseBlock(fd,iobuff);
     }
 
     return ret;
@@ -156,8 +166,8 @@ DLL_API bool IOBuffer::PrintAnyTypeInfo(IOBuffer &iobuff, FormatDescriptor fd, c
         REPORT_ERROR(ret,"ToString failed");
 
         if (ret){
-            CCString lineC = line.GetList();
-            ret.fatalError = !PrintCCStringFit(iobuff,lineC,fd);
+//            CCString lineC = line.GetList();
+            ret.fatalError = !PrintCCStringFit(iobuff,line,fd);
 
         }
     }

@@ -44,6 +44,8 @@
 
 namespace MARTe {
 
+#define FormatDescriptorWord uint64
+
 /**
  * Notations used for float types representation.
  */
@@ -182,6 +184,32 @@ const DesiredGrammar PrintInJsonGrammar = 1u;
 const DesiredGrammar PrintInXMLGrammar = 2u;
 
 /**
+ * Enumeration-like type for encoding the desired printing grammar
+ */
+typedef uint32 IndentationStyle;
+
+/**
+ * no indentation
+ */
+const DesiredGrammar NoIndentation = 0u;
+
+/**
+ * 2 char indentation
+ */
+const DesiredGrammar Indentation2Chars = 1u;
+
+/**
+ * 4 char indentation
+ */
+const DesiredGrammar Indentation4Chars = 2u;
+
+/**
+ * 8 char indentation
+ */
+const DesiredGrammar Indentation8Chars = 3u;
+
+
+/**
  * @brief Definition of a format descriptor.
  * @details This class is used to describe the output format of a variable.\n
  * The format representation is made by:
@@ -284,7 +312,7 @@ public:
      * @details Simply copies bit by bit the content of x.
      * @param[in] x contains the bits for the FormatDescriptor structure.
      */
-    inline FormatDescriptor(const uint32 x);
+    inline FormatDescriptor(const FormatDescriptorWord x);
 
     /**
      * @brief Copy operator.
@@ -316,6 +344,11 @@ public:
                             const bool 			  isFullNotation,
                             const DesiredGrammar &grammarToSet);
 
+
+    uint32 nOfIndentationCharacters();
+    void IncreaseIndentation();
+    void DecreaseIndentation();
+
     /* @union
      * @brief Prova descrizione
      */
@@ -323,15 +356,15 @@ public:
     union {
 
         /**
-         * The whole set of bits fits in a 32 bit unsigned
+         * The whole set of bits fits in a FormatDescriptorWord bit unsigned
          */
-        uint32 format_as_uint32;
+        FormatDescriptorWord format_as_integer;
 
         /**
          * The maximum size of representation.
          * 0 = unlimited, maximum size = 255.
          */
-        BitRange<uint32, 8u, 0u> size;
+        BitRange<FormatDescriptorWord, 8u, 0u> size;
 
         /**
          * The minimum (whenever applicable) number of meaningful digits (unless overridden by <tt>width</tt>)\n
@@ -345,48 +378,48 @@ public:
          *   - 234 (int) has precision 3   -> (precision =8) unchanged  still precision 3\n
          *   - 0x4ABCD has precision 5     -> (precision =8) unchanged  still precision 5\n
          */
-        BitRange<uint32, 8u, 8u> precision;
+        BitRange<FormatDescriptorWord, 8u, 8u> precision;
 
         /**
          * Setting this to true means printing a number of characters equal to <tt>width</tt>
          * fill up using spaces.
          */
-        BitBoolean<uint32, 16u> padded;
+        BitBoolean<FormatDescriptorWord, 16u> padded;
 
         /**
          * Setting this to true will print the padding spaces at the right of the value, so that the resulting output
          * will be left-aligned.
          */
-        BitBoolean<uint32, 17u> leftAligned;
+        BitBoolean<FormatDescriptorWord, 17u> leftAligned;
 
         /**
          * In case of a float, this field is used to determine how to print it (see the FloatNotation constants).
          */
-        BitRange<uint32, 3u, 18u> floatNotation;
+        BitRange<FormatDescriptorWord, 3u, 18u> floatNotation;
 
         /**
          * The notation used for binary representation (see the BinaryNotation constants).
          */
-        BitRange<uint32, 2u, 21u> binaryNotation;
+        BitRange<FormatDescriptorWord, 2u, 21u> binaryNotation;
 
         /**
          * Fills the number on the left with 0s up to the full representation.\n
          * Number of zeros depends on the size of the number (hex 64 bit ==> numbers+trailing zero = 16).\n
          */
-        BitBoolean<uint32, 23u> binaryPadded;
+        BitBoolean<FormatDescriptorWord, 23u> binaryPadded;
 
         /**
          * Only meaningful for numbers.
          * Adds the missing + or 0x 0B or 0o as header.
          */
-        BitBoolean<uint32, 24u> fullNotation;
+        BitBoolean<FormatDescriptorWord, 24u> fullNotation;
 
         /**
          * Specifies the type that the user wants to print.
          * This can be different from what the system can do,
          * i.e. print an integer when a float is passed.
          */
-        BitRange<uint32, 4u, 25u> desiredAction;
+        BitRange<FormatDescriptorWord, 4u, 25u> desiredAction;
 
         /**
          * Specifies the desired grammar, i.e:
@@ -394,7 +427,18 @@ public:
          *   Json grammar
          *   XML grammar
          */
-        BitRange<uint32, 3u, 29u> desiredGrammar;
+        BitRange<FormatDescriptorWord, 3u, 29u> desiredGrammar;
+
+
+        /**
+         * Specifies the indentationStyle:
+         */
+        BitRange<FormatDescriptorWord, 2u, 46u> indentationStyle;
+
+        /**
+         * Specifies the indentationLevel:
+         */
+        BitRange<FormatDescriptorWord, 8u, 48u> indentationLevel;
 
     };
 
@@ -428,13 +472,13 @@ FormatDescriptor::FormatDescriptor() {
     desiredGrammar = PrintInStandardGrammar;
 }
 
-FormatDescriptor::FormatDescriptor(const uint32 x) {
-    format_as_uint32 = x;
+FormatDescriptor::FormatDescriptor(const FormatDescriptorWord x) {
+    format_as_integer = x;
 }
 
 FormatDescriptor& FormatDescriptor::operator=(const FormatDescriptor &src) {
     if (this != &src) {
-        format_as_uint32 = src.format_as_uint32;
+        format_as_integer = src.format_as_integer;
     }
     return *this;
 }
@@ -460,6 +504,9 @@ FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
     binaryPadded = isBinaryPadded;
     fullNotation = isFullNotation;
     desiredGrammar = grammarToSet;
+
+    this->indentationStyle = Indentation4Chars;
+    this->indentationLevel = 0;
 }
 
 }

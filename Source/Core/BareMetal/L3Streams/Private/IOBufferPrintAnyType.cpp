@@ -23,7 +23,7 @@
 #define DLL_API
 #include "AnyType.h"
 #include "IOBufferPrivate.h"
-#include "PrintFormatter.h"
+#include "Private/PrintFormatter.h"
 #include "ClassRegistryDatabase.h"
 #include "CompositeErrorManagement.h"
 #include "ClassMember.h"
@@ -37,7 +37,7 @@ namespace MARTe{
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Prints a generic scalar AnyType object on a buffer.
+ * @brief Prints a generic scalar AnyType .
  * @param[out] iobuff is the stream buffer output.
  * @param[in] parIn is the generic object to be printed.
  * @param[in] fd specifies the desired printing format.
@@ -53,6 +53,14 @@ static ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDes
  *   The object represented by parIn must be introspectable.
  */
 static ErrorManagement::ErrorType PrintObject(IOBuffer & iobuff, FormatDescriptor fd,TypeDescriptor &td, const AnyType & parIn);
+
+/**
+ * @brief Prints any type.
+ * @param[out] iobuff is the output stream buffer.
+ * @param[in] is the input.
+ * @return errors in case something went wrong.....
+ */
+static ErrorManagement::ErrorType PrintAnyTypeS(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn);
 
 /*---------------------------------------------------------------------------*/
 /*                           Static implementations                          */
@@ -76,14 +84,14 @@ ErrorManagement::ErrorType PrintObject(IOBuffer &iobuff, FormatDescriptor fd, Ty
 
     // write start of block
     if (ret){
-        ret = PrintFormatter::OpenBlock(fd.desiredGrammar,iobuff);
+        ret = PrintFormatter::OpenBlock(fd,iobuff);
     }
 
     // write class name
     if (ret){
-        ret = PrintFormatter::OpenAssignMent(fd.desiredGrammar,"Class",iobuff);
-        ret.OSError = ret.OSError || !iobuff.PutS(item->GetClassName().GetList());
-        ret = ret & PrintFormatter::CloseAssignMent(fd.desiredGrammar,"Class",iobuff);
+        ret = PrintFormatter::OpenAssignMent(fd,"Class",iobuff);
+        ret.OSError = ret.OSError || !PrintCCStringFit(iobuff,item->GetClassName(),fd);
+        ret = ret & PrintFormatter::CloseAssignMent(fd,"Class",iobuff);
         REPORT_ERROR(ret,"Failed writing classname");
     }
 
@@ -99,8 +107,8 @@ ErrorManagement::ErrorType PrintObject(IOBuffer &iobuff, FormatDescriptor fd, Ty
             ptr += cm->GetOffset();
             AnyType at(cm->GetDescriptor(),ptr += cm->GetOffset());
 
-            ret.fatalError = !IOBuffer::PrintAnyType(iobuff,fd,at);
-            REPORT_ERROR(ret,"PrintAnyType Failed");
+            ret = PrintAnyTypeS(iobuff,fd,at);
+            REPORT_ERROR(ret,"PrintAnyTypeS Failed");
         } else {
             AnyType at = parIn;
             if (ret){
@@ -109,16 +117,16 @@ ErrorManagement::ErrorType PrintObject(IOBuffer &iobuff, FormatDescriptor fd, Ty
             }
 
             if (ret){
-                ret = PrintFormatter::OpenAssignMent(fd.desiredGrammar,cm->GetName(),iobuff);
+                ret = PrintFormatter::OpenAssignMent(fd,cm->GetName(),iobuff);
             }
 
             if (ret){
-                ret.fatalError = !IOBuffer::PrintAnyType(iobuff,fd,at);
+                ret = PrintAnyTypeS(iobuff,fd,at);
                 REPORT_ERROR(ret,"PrintAnyType Failed");
             }
 
             if (ret){
-                ret = PrintFormatter::CloseAssignMent(fd.desiredGrammar,cm->GetName(),iobuff);
+                ret = PrintFormatter::CloseAssignMent(fd,cm->GetName(),iobuff);
             }
 
         }
@@ -127,7 +135,7 @@ ErrorManagement::ErrorType PrintObject(IOBuffer &iobuff, FormatDescriptor fd, Ty
 
     // write start of block
     if (ret){
-        ret = PrintFormatter::CloseBlock(fd.desiredGrammar,iobuff);
+        ret = PrintFormatter::CloseBlock(fd,iobuff);
     }
 
     return ret;
@@ -287,8 +295,6 @@ ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor
                     switch (storageSize){
                     case 1: {
                         const char8 *data = static_cast<const char8 *>(dataPointer);
-//                        ret = PrintFormatter::CharField(fd.desiredGrammar,*data,iobuff);
-                        //iobuff.PutC(*data);
                         char8 miniString[2] = {*data,'\0' };
                         ret.fatalError = !PrintCCStringFit(iobuff,&miniString[0],fd);
                         REPORT_ERROR(ret,"PrintCCStringFit failed");
@@ -303,7 +309,6 @@ ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor
                 case TDF_CString:
                 case TDF_CCString:{
                     const CCString *data = static_cast<const CCString *>(dataPointer);
-//                    ret = PrintFormatter::StringField(fd.desiredGrammar,*data,iobuff);
                     ret.fatalError = !PrintCCStringFit(iobuff,*data,fd);
                     REPORT_ERROR(ret,"PrintCCStringFit failed");
                 }break;
@@ -330,14 +335,7 @@ ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor
 
 }
 
-
-/*---------------------------------------------------------------------------*/
-/*                           Member implementations                          */
-/*---------------------------------------------------------------------------*/
-
-
-
-DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
+ErrorManagement::ErrorType PrintAnyTypeS(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
     ErrorManagement::ErrorType ret;
 
     TypeDescriptor td;
@@ -354,10 +352,10 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 
         // open block
         if (nDims > 2){
-            ret = PrintFormatter::OpenBlock(fd.desiredGrammar,iobuff);
+            ret = PrintFormatter::OpenBlock(fd,iobuff);
             // structure field N =
         } else {
-            ret = PrintFormatter::OpenArray(fd.desiredGrammar,iobuff);
+            ret = PrintFormatter::OpenArray(fd,nDims-1,iobuff);
         }
 
         if (ret && (dims[0] == 0)){
@@ -369,21 +367,21 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
             ret = at.Dereference(i);
             REPORT_ERROR(ret,"Dereference failed");
 
-            if ((i > 0) && ret){
+            if (ret && (nDims <= 2)){
                 // separator
-                ret = PrintFormatter::Separator(fd.desiredGrammar,i,iobuff);
+                ret = PrintFormatter::Separator(fd,i,nDims-1,iobuff);
             }
 
             DynamicCString ns;
             if ((nDims > 2) && ret){
                 ns().Append(i);
                 // structure field N =
-                ret = PrintFormatter::OpenAssignMent(fd.desiredGrammar,ns,iobuff);
+                ret = PrintFormatter::OpenAssignMent(fd,ns,iobuff);
             }
 
             if (ret && (nDims >= 1)){
-                ret.OSError = !PrintAnyType(iobuff, fd, at);
-                REPORT_ERROR(ret,"PrintAnyType  failed");
+                ret = PrintAnyTypeS(iobuff, fd, at);
+                REPORT_ERROR(ret,"PrintAnyTypeS  failed");
             } else
             if (ret){
                 ret = PrintAnySimpleType(iobuff, fd, at);
@@ -392,20 +390,34 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 
             if (ret && (nDims > 2)){
                 // structure field N =
-                ret = PrintFormatter::CloseAssignMent(fd.desiredGrammar,ns,iobuff);
+                ret = PrintFormatter::CloseAssignMent(fd,ns,iobuff);
             }
         }
 
         if (ret){
             // close block
             if (nDims > 2){
-                ret = PrintFormatter::CloseBlock(fd.desiredGrammar,iobuff);
+                ret = PrintFormatter::CloseBlock(fd,iobuff);
                 // structure field N =
             } else {
-                ret = PrintFormatter::CloseArray(fd.desiredGrammar,iobuff);
+                ret = PrintFormatter::CloseArray(fd,nDims-1,iobuff);
             }
         }
     }
+
+    return ret;
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Member implementations                          */
+/*---------------------------------------------------------------------------*/
+
+
+
+DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
+    ErrorManagement::ErrorType ret;
+
+    ret = PrintAnyTypeS(iobuff,fd,parIn);
 
     return ret;
 }

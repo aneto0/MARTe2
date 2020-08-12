@@ -1270,9 +1270,11 @@ int main(int argc, char **argv){
 	MARTe::PrepareTestObject();
 
 	{
-	    MARTe::StreamString dump;
-	    dump.Printf("%!",MARTe::test1Class);
-	    printf("[[\n%s\n]]\n",dump.Buffer().GetList());
+	    MARTe::StreamString dump,structure;
+	    dump.Printf("%J!",MARTe::test1Class);
+	    printf("DUMP:\n%s\n\n",dump.Buffer().GetList());
+        structure.Printf("%?",MARTe::test1Class);
+        printf("STRUCTURE:\n%s\n\n",structure.Buffer().GetList());
 	}
 
     MARTe::Test();

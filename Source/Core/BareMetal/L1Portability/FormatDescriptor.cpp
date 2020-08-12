@@ -126,7 +126,7 @@ static bool ParseCharacter(const char8 c,
     if (ret) {
 
         // add the missing bits
-        format.format_as_uint32 |= found->format.format_as_uint32;
+        format.format_as_integer |= found->format.format_as_integer;
     }
     return ret;
 }
@@ -216,5 +216,29 @@ bool FormatDescriptor::InitialiseFromString(CCString &string) {
     }
     return ret;
 }
+
+uint32 FormatDescriptor::nOfIndentationCharacters(){
+    uint32 indentation = indentationStyle * 2;
+    if (indentation == 6){
+        indentation = 8;
+    }
+    indentation *= indentationLevel;
+    return     indentation;
+}
+
+void FormatDescriptor::IncreaseIndentation(){
+    uint32 temp = indentationLevel;
+    if (temp < 255){
+        indentationLevel = temp+1;
+    }
+}
+
+void FormatDescriptor::DecreaseIndentation(){
+    uint32 temp = indentationLevel;
+    if (temp > 0){
+        indentationLevel = temp-1;
+    }
+}
+
 
 }

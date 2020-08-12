@@ -148,7 +148,6 @@ namespace MARTe{
 
 	 if (needsQuotes){
 	     len+=2;
-	     ret = iobuff.PutC('"');
 	 }
 
 	 // fits
@@ -161,7 +160,13 @@ namespace MARTe{
 			 }
 		 }
 
-		 ret = ret && iobuff.WriteAll(string.GetList(),len);
+         if (needsQuotes){
+             ret = ret && iobuff.PutC('"');
+             ret = ret && iobuff.WriteAll(string.GetList(),len-2);
+             ret = ret && iobuff.PutC('"');
+         } else {
+             ret = ret && iobuff.WriteAll(string.GetList(),len);
+         }
 
          // wants padding and have a size to pad to
 		 if ((fd.padded) && (fd.size != 0) && (fd.leftAligned)){
@@ -174,10 +179,6 @@ namespace MARTe{
  		ret = ret && iobuff.WriteAll(string.GetList(),fd.size-1);
  		ret = ret && iobuff.PutC('?');
  	 }
-
-	 if (needsQuotes){
-         ret = ret && iobuff.PutC('"');
-     }
 
 	 return ret;
 

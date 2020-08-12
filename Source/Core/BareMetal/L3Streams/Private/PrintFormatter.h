@@ -54,90 +54,71 @@ namespace PrintFormatter{
 /*
  * @brief prints the characters needed to start a group of objects
  * @details CFG '{' XML ,JSON '{'.
- * @param[in] grammar is the constant that defines the chosen grammar to use
+ * @param[in,out] fd indentation level is updated
  * @param[in] out is the stream to print into.
  * @return false in case of errors.
  */
-inline ErrorManagement::ErrorType OpenBlock(DesiredGrammar grammar,IOBuffer &out);
+inline ErrorManagement::ErrorType OpenBlock(FormatDescriptor & fd,IOBuffer &out);
 
 /*
  * @brief prints the characters needed to end a group of objects
  * @details CFG '}' XML "",JSON '}'.
- * @param[in] grammar is the constant that defines the chosen grammar to use
+ * @param[in,out] fd indentation level is updated
  * @param[in] out is the stream to print into.
  * @return false in case of errors.
  */
-inline ErrorManagement::ErrorType CloseBlock(DesiredGrammar grammar,IOBuffer &out);
+inline ErrorManagement::ErrorType CloseBlock(FormatDescriptor & fd,IOBuffer &out);
 
 /*
  * @brief prints the characters needed to start an array of objects
  * @details  CFG '{' JSON,XML '['.
- * @param[in] grammar is the constant that defines the chosen grammar to use
+ * @param[in] fd.desiredGrammar is the constant that defines the chosen fd.desiredGrammar to use
  * @param[in] out is the stream to print into.
+ * @param[in] level 0 means the start of the row, 1 the start of the columns.
  * @return false in case of errors.
  */
-inline ErrorManagement::ErrorType OpenArray(DesiredGrammar grammar,IOBuffer &out);
+inline ErrorManagement::ErrorType OpenArray(FormatDescriptor & fd,uint32 level,IOBuffer &out);
 
 /*
  * @brief prints the characters needed to end an array of objects
  * @details  CFG '}' JSON XML ']'.
- * @param[in] grammar is the constant that defines the chosen grammar to use
+ * @param[in] fd.desiredGrammar is the constant that defines the chosen fd.desiredGrammar to use
  * @param[in] out is the stream to print into.
  * @return false in case of errors.
  */
-inline ErrorManagement::ErrorType CloseArray(DesiredGrammar grammar,IOBuffer &out);
+inline ErrorManagement::ErrorType CloseArray(FormatDescriptor & fd,uint32 level,IOBuffer &out);
 
 /*
  * @brief prints the characters needed to separate objects
  * @details CFG ',' XML ',' ,JSON ','. introduces also a space after the first element and a newline every ten elements
- * @param[in] grammar is the constant that defines the chosen grammar to use
+ * @param[in] fd.desiredGrammar is the constant that defines the chosen fd.desiredGrammar to use
  * @param[in] number is the element number before which to put the separator.
  * @param[in] out is the stream to print into.
  * @return false in case of errors.
  */
-inline ErrorManagement::ErrorType Separator(DesiredGrammar grammar,uint32 number,IOBuffer &out);
+inline ErrorManagement::ErrorType Separator(FormatDescriptor fd,uint32 number,uint32 level,IOBuffer &out);
 
 /*
  * @brief prints the characters needed to start an assignment
  * @details CFG ' name =' XML '<name>' ,JSON '"name" :'.
- * @param[in] grammar is the constant that defines the chosen grammar to use
+ * @param[in] fd.desiredGrammar is the constant that defines the chosen fd.desiredGrammar to use
  * @param[in] name is the name used in the assignment left side.
  * @param[in] out is the stream to print into.
  * @return false in case of errors.
  */
-inline ErrorManagement::ErrorType OpenAssignMent(DesiredGrammar grammar,CCString name,IOBuffer &out);
+inline ErrorManagement::ErrorType OpenAssignMent(FormatDescriptor fd,CCString name,IOBuffer &out);
 
 /*
  * @brief prints the characters needed to  end an assignment
  * @details CFG '' XML '<\name>' ,JSON ''.
- * @param[in] grammar is the constant that defines the chosen grammar to use
+ * @param[in] fd.desiredGrammar is the constant that defines the chosen fd.desiredGrammar to use
  * @param[in] name is the name used in the assignment left side.
  * @param[in] out is the stream to print into.
  * @return false in case of errors.
  */
-inline ErrorManagement::ErrorType CloseAssignMent(DesiredGrammar grammar,CCString name,IOBuffer &out);
+inline ErrorManagement::ErrorType CloseAssignMent(FormatDescriptor fd,CCString name,IOBuffer &out);
 
-#if 0
-/*
- * @brief prints the characters needed to emit a string
- * @details CFG XML verbatim ,JSON adds ""
- * @param[in] grammar is the constant that defines the chosen grammar to use
- * @param[in] string is the string to print.
- * @param[in] out is the stream to print into.
- * @return false in case of errors.
- */
-inline bool StringField(DesiredGrammar grammar,CCString string,IOBuffer &out);
-
-/*
- * @brief prints the characters needed to emit a single character string
- * @details CFG XML verbatim ,JSON adds ""
- * @param[in] grammar is the constant that defines the chosen grammar to use
- * @param[in] c is the charcter to print.
- * @param[in] out is the stream to print into.
- * @return false in case of errors.
- */
-inline bool CharField(DesiredGrammar grammar,char8 c,IOBuffer &out);
-#endif
+inline void Indent(FormatDescriptor fd,IOBuffer &out);
 
 };
 
@@ -146,26 +127,39 @@ inline bool CharField(DesiredGrammar grammar,char8 c,IOBuffer &out);
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-ErrorManagement::ErrorType PrintFormatter::OpenBlock(DesiredGrammar grammar,IOBuffer &out){
+void PrintFormatter::Indent(FormatDescriptor fd,IOBuffer &out){
+    for (uint32 i = 0; i < fd.nOfIndentationCharacters(); i++){
+        out.PutC(' ');
+    }
+}
+
+
+ErrorManagement::ErrorType PrintFormatter::OpenBlock(FormatDescriptor & fd,IOBuffer &out){
     ErrorManagement::ErrorType ret;
 
-    switch(grammar){
+    switch(fd.desiredGrammar){
     case PrintInXMLGrammar:{
-
     } break;
     case PrintInJsonGrammar:
     default:{
         ret.OSError = !out.PutC('{');
     }
     };
+    ret.OSError = !out.PutC('\n');
+    fd.IncreaseIndentation();
+    Indent(fd,out);
 
     return ret;
 }
 
-ErrorManagement::ErrorType PrintFormatter::CloseBlock(DesiredGrammar grammar,IOBuffer &out){
+ErrorManagement::ErrorType PrintFormatter::CloseBlock(FormatDescriptor & fd,IOBuffer &out){
     ErrorManagement::ErrorType ret;
 
-    switch(grammar){
+    ret.OSError = !out.PutC('\n');
+    fd.DecreaseIndentation();
+    Indent(fd,out);
+
+    switch(fd.desiredGrammar){
     case PrintInXMLGrammar:{
 
     } break;
@@ -178,10 +172,10 @@ ErrorManagement::ErrorType PrintFormatter::CloseBlock(DesiredGrammar grammar,IOB
     return ret;
 }
 
-ErrorManagement::ErrorType PrintFormatter::OpenArray(DesiredGrammar grammar,IOBuffer &out){
+ErrorManagement::ErrorType PrintFormatter::OpenArray(FormatDescriptor & fd,uint32 level,IOBuffer &out){
     ErrorManagement::ErrorType ret;
 
-    switch(grammar){
+    switch(fd.desiredGrammar){
     case PrintInJsonGrammar:
     case PrintInXMLGrammar:{
         ret.OSError = !out.PutC('[');
@@ -191,41 +185,54 @@ ErrorManagement::ErrorType PrintFormatter::OpenArray(DesiredGrammar grammar,IOBu
     }
     };
 
+    if ((level != 0)&& ret){
+        ret.OSError = !out.PutC('\n');
+        fd.IncreaseIndentation();
+        Indent(fd,out);
+    }
+
     return ret;
 }
 
-ErrorManagement::ErrorType PrintFormatter::CloseArray(DesiredGrammar grammar,IOBuffer &out){
+ErrorManagement::ErrorType PrintFormatter::CloseArray(FormatDescriptor & fd,uint32 level,IOBuffer &out){
     ErrorManagement::ErrorType ret;
 
-    switch(grammar){
+    if ((level != 0)&& ret){
+        ret.OSError = !out.PutC('\n');
+        fd.DecreaseIndentation();
+        Indent(fd,out);
+    }
+
+    switch(fd.desiredGrammar){
     case PrintInJsonGrammar:
     case PrintInXMLGrammar:{
         ret.OSError = !out.PutC(']');
     } break;
     default:{
-        ret.OSError = !out.PutS("}\n");
+        ret.OSError = !out.PutC('}');
     }
     };
 
     return ret;
 }
 
-ErrorManagement::ErrorType PrintFormatter::Separator(DesiredGrammar grammar,uint32 nEl,IOBuffer &out){
+ErrorManagement::ErrorType PrintFormatter::Separator(FormatDescriptor fd,uint32 elementNumber,uint32 level,IOBuffer &out){
     ErrorManagement::ErrorType ret;
 
-    if (nEl > 0){
+    if (elementNumber > 0){
         ret.OSError = !out.PutC(',');
-        if (ret && ((nEl % 10)==9)) {
+        if (ret && (((elementNumber % 20)== 0) || (level > 0))) {
             ret.OSError = !out.PutC('\n');
+            Indent(fd,out);
         }
      }
     return ret;
 }
 
-ErrorManagement::ErrorType PrintFormatter::OpenAssignMent(DesiredGrammar grammar,CCString name,IOBuffer &out){
+ErrorManagement::ErrorType PrintFormatter::OpenAssignMent(FormatDescriptor fd,CCString name,IOBuffer &out){
     ErrorManagement::ErrorType ret;
 
-    switch(grammar){
+    switch(fd.desiredGrammar){
     case PrintInJsonGrammar:{
         bool ret2 = out.PutC('"');
         ret2 = ret2 && out.PutS(name);
@@ -248,10 +255,10 @@ ErrorManagement::ErrorType PrintFormatter::OpenAssignMent(DesiredGrammar grammar
     return ret;
 }
 
-ErrorManagement::ErrorType PrintFormatter::CloseAssignMent(DesiredGrammar grammar,CCString name,IOBuffer &out){
+ErrorManagement::ErrorType PrintFormatter::CloseAssignMent(FormatDescriptor fd,CCString name,IOBuffer &out){
     ErrorManagement::ErrorType ret;
 
-    switch(grammar){
+    switch(fd.desiredGrammar){
     case PrintInXMLGrammar:{
         bool ret2 = out.PutS("</");
         ret2 = ret2 && out.PutS(name);
@@ -262,50 +269,14 @@ ErrorManagement::ErrorType PrintFormatter::CloseAssignMent(DesiredGrammar gramma
 
     }break;
     default:{
-        ret.OSError = !out.PutC('\n');
     }
     };
 
-    return ret;
-}
-
-#if 0
-bool PrintFormatter::StringField(DesiredGrammar grammar,CCString string,IOBuffer &out){
-    bool ret = true;
-
-    switch(grammar){
-    case PrintInJsonGrammar:{
-        ret = ret && out.PutC('"');
-        ret = ret && out.PutS(string);
-        ret = ret && out.PutC('"');
-    } break;
-    case PrintInXMLGrammar:
-    default:{
-        ret = out.PutS(string);
-    }
-    };
+    ret.OSError = !out.PutC('\n');
+    Indent(fd,out);
 
     return ret;
 }
-
-bool PrintFormatter::CharField(DesiredGrammar grammar,char8 c,IOBuffer &out){
-    bool ret = true;
-
-    switch(grammar){
-    case PrintInJsonGrammar:{
-        ret = ret && out.PutC('"');
-        ret = ret && out.PutC(c);
-        ret = ret && out.PutC('"');
-    } break;
-    case PrintInXMLGrammar:
-    default:{
-        ret = out.PutC(c);
-    }
-    };
-
-    return ret;
-}
-#endif
 
 } // MARTe
 

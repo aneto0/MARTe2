@@ -90,10 +90,10 @@ bool FormatDescriptorTest::TestDefaultConstructor(){
 }
 
 bool FormatDescriptorTest::TestIntConstructor(){
-    const uint32 aux = 7;
+    const FormatDescriptorWord aux = 7;
     FormatDescriptor fdIntConst(aux);
 
-    retVal = (fdIntConst.format_as_uint32 == aux);
+    retVal = (fdIntConst.format_as_integer == aux);
 
     return retVal;
 }
