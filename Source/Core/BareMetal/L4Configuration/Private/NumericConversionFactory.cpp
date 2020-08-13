@@ -364,7 +364,7 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 *
 	 */
-	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isReader);
+	TypeConversionOperatorI *GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isReader);
 
 
 private:
@@ -571,8 +571,11 @@ public:
 	}
 };
 
-TypeConversionOperatorI *NumericConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
+TypeConversionOperatorI *NumericConversionFactory::GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
+
+    TypeDescriptor sourceTd = sourceVd.GetFinalTypeDescriptor();
+    TypeDescriptor destTd   = destVd.GetFinalTypeDescriptor();
 
 	if (!destTd.SameTypeAndSizeAs(sourceTd))
 		if (destTd.IsBasicType() && sourceTd.IsBasicType()){

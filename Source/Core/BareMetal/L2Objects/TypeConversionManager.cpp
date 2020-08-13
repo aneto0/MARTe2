@@ -25,6 +25,7 @@
 #define DLL_API
 
 #include "TypeConversionManager.h"
+#include "VariableDescriptor.h"
 
 
 namespace MARTe{
@@ -36,12 +37,29 @@ namespace TypeConversionManager{
      */
     SimpleStaticListT<TypeConversionFactoryI*,MaximumNumberOfFactories> factories;
 
+    const TypeConversionOperatorI *GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare){
+        uint32 ix = 0;
+        TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
+        while ( (ix < factories.NumberOfUsedElements()) && (tco == NULL)){
+            TypeConversionFactoryI *tcf = factories.Get(ix);
+            tco = tcf->GetOperator(destVd,sourceVd,isCompare);
+            ix++;
+        }
+
+        return tco;
+
+    }
+
+
     const TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) {
     	uint32 ix = 0;
     	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
     	while ( (ix < factories.NumberOfUsedElements()) && (tco == NULL)){
     		TypeConversionFactoryI *tcf = factories.Get(ix);
-    		tco = tcf->GetOperator(destTd,sourceTd,isCompare);
+    		// I can use these dummies and not pass back the result as they are VariableDescriptors with no modifiers and the GetOperator will not modify them
+    		VariableDescriptor destVd(destTd);
+            VariableDescriptor sourceVd(sourceTd);
+    		tco = tcf->GetOperator(destVd,sourceVd,isCompare);
     		ix++;
     	}
 

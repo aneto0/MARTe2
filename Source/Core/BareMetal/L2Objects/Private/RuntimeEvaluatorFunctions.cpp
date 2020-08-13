@@ -346,10 +346,6 @@ ErrorManagement::ErrorType Matrix_Write_UpdateStack(
 
 
 template <typename T> void MatrixWrite(RuntimeEvaluator &context){
-    RuntimeEvaluator::CodeMemoryElement index;
-    index = context.GetPseudoCode();
-    context.Push(index);
-
     RuntimeEvaluator::DataMemoryAddress  y1;
     context.Pop(y1);
     RuntimeEvaluator::CodeMemoryElement yOut;
@@ -357,6 +353,7 @@ template <typename T> void MatrixWrite(RuntimeEvaluator &context){
 
     Matrix<T> &z1   = context.Variable< Matrix<T> >(y1);
     Matrix<T> &zOut = context.Variable< Matrix<T> >(yOut);
+printf ("[%i %i %f %f %p,%i,%i]\n",z1.GetNumberOfColumns(),z1.GetNumberOfRows(),z1[0][0],z1[1][1],&z1,y1,yOut);
 
     if (!zOut.Copy(z1)){
         context.runtimeError.internalSetupError = true;

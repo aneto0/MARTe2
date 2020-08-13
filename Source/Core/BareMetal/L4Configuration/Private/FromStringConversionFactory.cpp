@@ -376,7 +376,7 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 *
 	 */
-	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isReader);
+	TypeConversionOperatorI *GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isReader);
 
 
 private:
@@ -389,9 +389,12 @@ FromStringConversionFactory::FromStringConversionFactory(){
 FromStringConversionFactory::~FromStringConversionFactory(){
 }
 
-TypeConversionOperatorI *FromStringConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
+TypeConversionOperatorI *FromStringConversionFactory::GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 	StringReader *reader = NULL_PTR(StringReader *);
+
+    TypeDescriptor sourceTd = sourceVd.GetFinalTypeDescriptor();
+    TypeDescriptor destTd   = destVd.GetFinalTypeDescriptor();
 
 	if (sourceTd.IsCharStreamType() && !sourceTd.IsFormattedCharStreamType()){
 		if (sourceTd.SameTypeAs(StreamIType(0))){

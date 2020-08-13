@@ -35,7 +35,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CompilerTypes.h"
-#include "TypeDescriptor.h"
+#include "VariableDescriptor.h"
 #include "SimpleStaticListT.h"
 #include "TypeConversionFactoryI.h"
 
@@ -64,6 +64,24 @@ namespace TypeConversionManager{
 	 * The operator must be destroyed at the end of its use
 	 */
 	const TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) ;
+
+    /**
+     * @brief allow access to optimal functor for data conversion
+     * The operator must be destroyed at the end of its use
+     * @param[in,out] destVd is the type of the destination variable to write to.
+     * as output a potentially different VariableDescriptor is returned corresponding
+     * to the part of the variable structure the copy cannot handle
+     * for instance if the operator can handle a vector of variables, in case of an array of
+     * integers as input the output will be  a vector of generic arrays
+     * AnnAnn(int32) --> Ann(generic array)
+     * @param[in,out] sourceVd is the type of the source variable to write from.
+     * as output a potentially different VariableDescriptor is returned corresponding
+     * to the part of the variable structure the copy cannot handle
+     * for instance if the operator can handle a vector of variables, in case of an array of
+     * integers as input the output will be  a vector of generic arrays
+     * AnnAnn(int32) --> Ann(generic array)
+     */
+    const TypeConversionOperatorI *GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare) ;
 
     /**
      * @brief allows registering a factory to the manager

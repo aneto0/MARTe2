@@ -293,7 +293,7 @@ int main(){
         float externalB = 1.0;
         uint8 externalF = 0;
 
-        float M1[3][4];
+        float M1[3][4] = { { 1,2,3,4},{5,6,7,8},{9,10,11,12}};
         float Mo[3][4];
 
         if (ret){

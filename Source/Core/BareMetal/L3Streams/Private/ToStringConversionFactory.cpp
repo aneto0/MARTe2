@@ -31,415 +31,6 @@
 
 namespace MARTe{
 
-#if 0
-/*********************************************************************************************************/
-/*                                                                                                       */
-/*                                write WRAPPER OF IoBuffer                                              */
-/*                                                                                                       */
-/*********************************************************************************************************/
-
-
-
-/**
- * @brief provides a generic interface between IOBuffer and arrays of character streams
- */
-class IOBufferWrapper;
-/**
- * @brief connects IOBuffer to a single Stream
- */
-class IOBufferWrapperStream;
-/**
- * @brief connects IOBuffer to a SStrings
- */
-class IOBufferWrapperSString;
-
-
-/**
- * @brief provides a generic interface between IOBuffer and arrays of character streams
- */
-class IOBufferWrapper: public IOBuffer{
-
-public:
-	/**
-	 * @brief interface to this stream
-	 */
-	virtual void Wrap(void *ptr)=0;
-
-	/**
-	 * @brief flush the IOBuffer
-	 */
-	ErrorManagement::ErrorType  Flush();
-
-	/**
-	 * @brief constructor
-	 */
-	IOBufferWrapper();
-
-	/**
-	 * @brief switch to next stream
-	 */
-	virtual ErrorManagement::ErrorType  Next();
-
-	/**
-	 * @brief check for any error
-	 */
-	virtual ErrorManagement::ErrorType  Check(){
-		ErrorManagement::ErrorType  ret;
-		return ret;
-	}
-
-
-private:
-	/**
-	 * @brief buffer for the IOBuffer
-	 */
-	char buffer[32];
-
-};
-
-/**
- * @brief connects IOBuffer to a single Stream
- */
-class IOBufferWrapperStream: public IOBufferWrapper{
-public:
-	/**
-	 * @brief constructor
-	 */
-	IOBufferWrapperStream(uint32 sizeIn);
-
-	/**
-	 * @brief interfaces to the Stream
-	 */
-	virtual void Wrap(void *ptr);
-
-	/**
-	 * @brief switch to next stream
-	 */
-	virtual ErrorManagement::ErrorType Next();
-
-protected:
-	/** pointer to the current output */
-	uint8 *pointer;
-
-	/** the stream */
-	StreamI *stream;
-
-	/** the size of the object StreamI derived */
-	uint32 size;
-
-	/**
-	 * @brief dumps the IOBuffer to the Stream
-	 * */
-	virtual bool NoMoreSpaceToWrite() ;
-};
-
-/**
- * @brief connects IOBuffer to a SStrings
- */
-class IOBufferWrapperSString: public IOBufferWrapperStream{
-public:
-
-	/**
-	 * @brief constructor
-	 */
-	IOBufferWrapperSString();
-
-	/**
-	 * @brief interfaces to the Stream
-	 */
-	virtual void Wrap(void *ptr);
-
-	/**
-	 * @brief switch to next stream
-	 */
-	virtual ErrorManagement::ErrorType  Next();
-
-protected:
-	/**
-	 *
-	 */
-	StreamString *ss;
-};
-
-/**
- * @brief connects IOBuffer to a DynamicCString
- */
-class IOBufferDynStringWrapper: public IOBufferWrapper{
-public:
-
-	/**
-	 * @brief constructor
-	 */
-	IOBufferDynStringWrapper();
-
-	/**
-	 * @brief interfaces to the Stream
-	 */
-	virtual void Wrap(void *ptr);
-
-	/**
-	 * @brief switch to next stream
-	 */
-	virtual ErrorManagement::ErrorType  Next();
-
-protected:
-
-	/**
-	 * @brief dumps the IOBuffer to the Stream
-	 * */
-	virtual bool NoMoreSpaceToWrite();
-
-private:
-	/**
-	 * @brief pointer to array of DynamicCString
-	 */
-	DynamicCString *string;
-};
-
-/**
- *
- */
-class IOBufferCStringCompareWrapper: public IOBufferWrapper{
-public:
-
-	/**
-	 * @brief constructor
-	 */
-	IOBufferCStringCompareWrapper();
-
-	/**
-	 * @brief interfaces to the Stream
-	 */
-	virtual void Wrap(void *ptr);
-
-	/**
-	 * @brief switch to next stream
-	 */
-	virtual ErrorManagement::ErrorType  Next();
-
-	/**
-	 * @brief check for any error
-	 */
-	virtual ErrorManagement::ErrorType  Check();
-protected:
-
-	/**
-	 * @brief dumps the IOBuffer to the Stream
-	 * */
-	virtual bool NoMoreSpaceToWrite();
-
-private:
-	/**
-	 * @brief pointer to array of CCString
-	 */
-	CCString *string;
-
-	/**
-	 * @brief pointer to current comparison point
-	 */
-	CCString currentString;
-
-	/**
-	 * the result
-	 */
-	bool IsSame;
-};
-
-
-ErrorManagement::ErrorType  IOBufferWrapper::Next(){
-//printf(">>\n");
-	ErrorManagement::ErrorType  ret;
-	ret.notCompleted = !NoMoreSpaceToWrite();
-	return ret;
-}
-
-ErrorManagement::ErrorType  IOBufferWrapper::Flush(){
-	return NoMoreSpaceToWrite();
-}
-
-IOBufferWrapper::IOBufferWrapper() {
-    SetBufferReferencedMemory(&buffer[0],sizeof(buffer),0);
-}
-
-IOBufferWrapperStream::IOBufferWrapperStream(uint32 sizeIn): IOBufferWrapper(),size(sizeIn){
-	stream = NULL;
-	pointer = NULL;
-}
-
-void IOBufferWrapperStream::Wrap(void *ptr){
-	pointer = reinterpret_cast<uint8 *>(ptr);
-	stream = reinterpret_cast<StreamI *>(pointer);
-}
-
-ErrorManagement::ErrorType IOBufferWrapperStream::Next(){
-	ErrorManagement::ErrorType  ret;
-
-	ret.notCompleted= !NoMoreSpaceToWrite();
-
-	Empty();
-
-	if (ret && (size != 0)){
-		pointer += size;
-		stream = reinterpret_cast<StreamI *>(pointer);
-	} else {
-		ret.illegalOperation = true;
-        REPORT_ERROR(ErrorManagement::FatalError, "size is not known. cannot handle arrays of StreamI");
-	}
-	// do not know how to skip to next object
-	return ret;
-}
-
-bool IOBufferWrapperStream::NoMoreSpaceToWrite() {
-    bool retval = false;
-	if (stream != NULL) {
-        // no buffering!
-        if (Buffer() != NULL) {
-
-            // how much was written?
-            uint32 writeSize = UsedSize();
-            if (writeSize == 0u) {
-                retval = true;
-            }
-            // write
-            else {
-                if (stream->Write(Buffer(), writeSize)) {
-                    retval = true;
-                    Empty();
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "StreamToIOBuffer: Failed Write");
-                    retval = false;
-                }
-            }
-        }
-    }
-	return retval;
-}
-
-IOBufferWrapperSString::IOBufferWrapperSString():IOBufferWrapperStream(sizeof(StreamString)){
-	ss = NULL_PTR(StreamString*);
-}
-
-void IOBufferWrapperSString::Wrap(void *ptr){
-	ss = reinterpret_cast<StreamString *>(ptr);
-	stream = ss;
-}
-
-ErrorManagement::ErrorType  IOBufferWrapperSString::Next(){
-	ErrorManagement::ErrorType  ret;
-	ret.notCompleted= !NoMoreSpaceToWrite();
-	Empty();
-
-	ss++;
-	stream = ss;
-	return ret;
-}
-
-IOBufferDynStringWrapper::IOBufferDynStringWrapper(): IOBufferWrapper(){
-	string = NULL;
-}
-
-void IOBufferDynStringWrapper::Wrap(void *ptr){
-	string = reinterpret_cast<DynamicCString *>(ptr);
-}
-
-ErrorManagement::ErrorType  IOBufferDynStringWrapper::Next(){
-	ErrorManagement::ErrorType  ret;
-	ret.notCompleted= !NoMoreSpaceToWrite();
-	Empty();
-	string++;
-	return ret;
-}
-
- bool IOBufferDynStringWrapper::NoMoreSpaceToWrite() {
-    bool retval = false;
-	if (string != NULL) {
-        // no buffering!
-        if (Buffer() != NULL) {
-
-            // how much was written?
-            uint32 writeSize = UsedSize();
-            if (writeSize == 0u) {
-                retval = true;
-            }
-            // write
-            else {
-            	ErrorManagement::ErrorType ret;
-            	ret = (*string)().Append(Buffer(), writeSize);
-
-                if (ret) {
-                    retval = true;
-                    Empty();
-                }
-                else {
-                    REPORT_ERROR(ret, "IOBufferDynStringWrapper: Failed Write");
-                }
-            }
-        }
-    }
-	return retval;
-}
-
-IOBufferCStringCompareWrapper::IOBufferCStringCompareWrapper(): IOBufferWrapper(){
-	string = NULL;
-	IsSame = false;
-}
-
-void IOBufferCStringCompareWrapper::Wrap(void *ptr){
-	string = reinterpret_cast<CCString *>(ptr);
-	currentString = string[0];
-	IsSame = true;
-}
-
-ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Check(){
-	ErrorManagement::ErrorType  ret;
-	if (!IsSame){
-		ret.comparisonFailure = true;
-	}
-	return ret;
-}
-
-ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
-	ErrorManagement::ErrorType  ret;
-	NoMoreSpaceToWrite();
-	if (!IsSame){
-		ret.comparisonFailure = true;
-	}
-	string++;
-	currentString = string[0];
-	return ret;
-}
-
- bool IOBufferCStringCompareWrapper::NoMoreSpaceToWrite() {
-    bool retval = false;
-	if (!currentString.IsNullPtr() && IsSame) {
-        // no buffering!
-        if (Buffer() != NULL) {
-
-            // how much was written?
-            uint32 writeSize = UsedSize();
-            if (writeSize == 0u) {
-                retval = true;
-            }
-            // write
-            else {
-            	if (currentString.IsSameAs(Buffer(),writeSize)){
-                    retval = true;
-                    Empty();
-                } else {
-                	DynamicCString string;
-                	string().Append(Buffer(),writeSize);
-        			COMPOSITE_REPORT_ERROR(ErrorManagement::ComparisonFailure,
-                        	"String (",string,") != (",currentString.GetList(),") ");
-                	IsSame = false;
-                }
-            }
-        }
-    }
-	return retval;
-}
-
-#endif
 /*********************************************************************************************************/
 /*                                                                                                       */
 /*                                TYPE CONVERSION OPERATORS                                              */
@@ -459,31 +50,42 @@ class IntegerToStringTCO;
  * @brief copies integer to strings
  */
 class CharToStringTCO;
+
 /**
  * @brief copies bitset integers to strings
  */
 class BitSetToStringTCO;
+
 /**
  * @brief copies bitset integers to strings
  */
 class PointerToStringTCO;
+
 /**
  * @brief copies floats to strings
  */
 template <typename floatType>
 class FloatToStringTCO;
+
 /**
  * @brief copies integer to strings
  */
 class CCStringToStringTCO;
+
 /**
  * @brief copies stream to strings
  */
 class StreamToStringTCO;
+
 /**
  * @brief copies integer to strings
  */
 class SStringToStringTCO;
+
+/**
+ * @brief copies AnyType to strings
+ */
+class AnyTypeToStringTCO;
 
 /**
  * @brief copies to strings
@@ -747,6 +349,32 @@ public:
 
 };
 
+
+class AnyTypeToStringTCO: public StringTCO{
+    VariableDescriptor sourceVd;
+public:
+
+    /**
+     * @brief constructor
+     */
+    AnyTypeToStringTCO(IOBufferWrapper *writerIn,const VariableDescriptor &sourceVd);
+
+    /**
+     * @brief destructor
+     */
+    virtual  ~AnyTypeToStringTCO();
+
+    /**
+     * @brief data conversion method
+     */
+    virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const;
+
+    /**
+     * @brief data conversion method
+     */
+    virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
+
+};
 /***************************************************************************************************************/
 /*  IMPLEMENTATION */
 /***************************************************************************************************************/
@@ -767,37 +395,37 @@ IntegerToStringTCO<integerType>::~IntegerToStringTCO(){}
 
 template <typename integerType>
 ErrorManagement::ErrorType IntegerToStringTCO<integerType>::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-	ErrorManagement::ErrorType  ok;
+	ErrorManagement::ErrorType  ret;
 	if (writer != NULL){
 		writer->Wrap(dest);
 		uint32 ix = 0;
 		const integerType *pIn = (reinterpret_cast<const integerType *>(source));
 		if (!IntegerToStream(*writer,*pIn++,fd)){
-			ok.fatalError = true;
-			REPORT_ERROR(ok,"IntegerToStream Failed");
+			ret.fatalError = true;
+			REPORT_ERROR(ret,"IntegerToStream Failed");
 		}
-		for (ix = 1;(ix<numberOfElements) && ok;ix++){
-			ok = writer->Next();
-			if (!ok){
-				COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
+		for (ix = 1;(ix<numberOfElements) && ret;ix++){
+			ret = writer->Next();
+			if (!ret){
+				COMPOSITE_REPORT_ERROR(ret,"switch to element ",ix," failed");
 			}
 
-			if (ok){
+			if (ret){
 				if (!IntegerToStream(*writer,*pIn++,fd)){
-					ok.fatalError = true;
-					REPORT_ERROR(ok,"IntegerToStream Failed");
+					ret.fatalError = true;
+					REPORT_ERROR(ret,"IntegerToStream Failed");
 				}
 			}
 		}
 		writer->Flush();
-		if (ok){
-			ok = writer->Check();
+		if (ret){
+			ret = writer->Check();
 		}
 	} else {
-		ok.internalSetupError = true;
+		ret.internalSetupError = true;
 	}
 
-	return ok;
+	return ret;
 }
 
 template <typename integerType>
@@ -811,37 +439,37 @@ CharToStringTCO::CharToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn)
 CharToStringTCO::~CharToStringTCO(){}
 
 ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-	ErrorManagement::ErrorType  ok;
+	ErrorManagement::ErrorType  ret;
 	if (writer != NULL){
 		writer->Wrap(dest);
 		uint32 ix = 0;
 		const char *pIn = (reinterpret_cast<const char *>(source));
 		if (!writer->PutC(*pIn)){
-			ok.fatalError = true;
-			REPORT_ERROR(ok,"PutC Failed");
+			ret.fatalError = true;
+			REPORT_ERROR(ret,"PutC Failed");
 		}
-		for (ix = 1;(ix<numberOfElements) && ok;ix++){
-			ok = writer->Next();
-			if (!ok){
-				COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
+		for (ix = 1;(ix<numberOfElements) && ret;ix++){
+			ret = writer->Next();
+			if (!ret){
+				COMPOSITE_REPORT_ERROR(ret,"switch to element ",ix," failed");
 			}
 
-			if (ok){
+			if (ret){
 				if (!writer->PutC(*pIn)){
-					ok.fatalError = true;
-					REPORT_ERROR(ok,"PutC Failed");
+					ret.fatalError = true;
+					REPORT_ERROR(ret,"PutC Failed");
 				}
 			}
 		}
 		writer->Flush();
-		if (ok){
-			ok = writer->Check();
+		if (ret){
+			ret = writer->Check();
 		}
 	} else {
-		ok.internalSetupError = true;
+		ret.internalSetupError = true;
 	}
 
-	return ok;
+	return ret;
 }
 
 ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
@@ -858,34 +486,34 @@ BitSetToStringTCO::BitSetToStringTCO(IOBufferWrapper *writerIn,TypeDescriptor td
 BitSetToStringTCO::~BitSetToStringTCO(){}
 
 ErrorManagement::ErrorType BitSetToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &td) const{
-	ErrorManagement::ErrorType  ok;
+	ErrorManagement::ErrorType  ret;
 	writer->Wrap(dest);
 
 	if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
-		ok.fatalError = true;
-		REPORT_ERROR(ok,"BitSetToStream Failed");
+		ret.fatalError = true;
+		REPORT_ERROR(ret,"BitSetToStream Failed");
 	}
 
-	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-		ok = writer->Next();
-		if (!ok){
-			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
+	for (uint32 ix = 1; (ix < numberOfElements) && ret;ix++){
+		ret = writer->Next();
+		if (!ret){
+			COMPOSITE_REPORT_ERROR(ret,"switch to element ",ix," failed");
 		}
 
 		source += byteSize;
-		if (ok){
+		if (ret){
 			if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
-				ok.fatalError = true;
-    			REPORT_ERROR(ok,"BitSetToStream Failed");
+				ret.fatalError = true;
+    			REPORT_ERROR(ret,"BitSetToStream Failed");
 			}
 		}
 	}
 	writer->Flush();
-	if (ok){
-		ok = writer->Check();
+	if (ret){
+		ret = writer->Check();
 	}
 
-	return ok;
+	return ret;
 }
 
 ErrorManagement::ErrorType BitSetToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
@@ -897,31 +525,31 @@ PointerToStringTCO::PointerToStringTCO(IOBufferWrapper *writerIn): StringTCO(wri
 PointerToStringTCO::~PointerToStringTCO(){}
 
 ErrorManagement::ErrorType PointerToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-	ErrorManagement::ErrorType  ok;
+	ErrorManagement::ErrorType  ret;
 	writer->Wrap(dest);
 
 	uint8 *source1 = const_cast<uint8 * >(source);
 	const void **src = reinterpret_cast<const void ** >(source1);
 
 	if (!PointerToStream(*writer,*src)){
-		ok.fatalError = true;
+		ret.fatalError = true;
 	}
-	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-		ok = writer->Next();
-		if (!ok){
-			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
+	for (uint32 ix = 1; (ix < numberOfElements) && ret;ix++){
+		ret = writer->Next();
+		if (!ret){
+			COMPOSITE_REPORT_ERROR(ret,"switch to element ",ix," failed");
 		}
 		src++;
-		if (ok){
-			ok.fatalError = PointerToStream(*writer,*src);
+		if (ret){
+			ret.fatalError = PointerToStream(*writer,*src);
 		}
 	}
 	writer->Flush();
-	if (ok){
-		ok = writer->Check();
+	if (ret){
+		ret = writer->Check();
 	}
 
-	return ok;
+	return ret;
 }
 
 template <typename floatType>
@@ -933,34 +561,34 @@ FloatToStringTCO<floatType>::~FloatToStringTCO(){}
 
 template <typename floatType>
 ErrorManagement::ErrorType FloatToStringTCO<floatType>::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-	ErrorManagement::ErrorType  ok;
+	ErrorManagement::ErrorType  ret;
 	writer->Wrap(dest);
 
 	const floatType *src = reinterpret_cast<const floatType *>(source);
 	if (!FloatToStream(*writer,*src,fd)){
-		ok.fatalError = true;
-		REPORT_ERROR(ok,"FloatToStream Failed");
+		ret.fatalError = true;
+		REPORT_ERROR(ret,"FloatToStream Failed");
 	}
 
-	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-		ok = writer->Next();
-		if (!ok){
-			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
+	for (uint32 ix = 1; (ix < numberOfElements) && ret;ix++){
+		ret = writer->Next();
+		if (!ret){
+			COMPOSITE_REPORT_ERROR(ret,"switch to element ",ix," failed");
 		}
 		src++;
-		if (ok){
+		if (ret){
 			if (!FloatToStream(*writer,*src,fd)){
-				ok.fatalError = true;
-    			REPORT_ERROR(ok,"FloatToStream Failed");
+				ret.fatalError = true;
+    			REPORT_ERROR(ret,"FloatToStream Failed");
 			}
 		}
 	}
 	writer->Flush();
-	if (ok){
-		ok = writer->Check();
+	if (ret){
+		ret = writer->Check();
 	}
 
-	return ok;
+	return ret;
 }
 
 template <typename floatType>
@@ -975,41 +603,34 @@ CCStringToStringTCO::CCStringToStringTCO(IOBufferWrapper *writerIn): StringTCO(w
 CCStringToStringTCO::~CCStringToStringTCO(){}
 
 ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-	ErrorManagement::ErrorType  ok;
+	ErrorManagement::ErrorType  ret;
 	writer->Wrap(dest);
 
 	const CCString *src = reinterpret_cast<const CCString *>(source);
 
-//{ // TODO remove
-//printf("@ %p string[%i]\n",src,numberOfElements);
-//for (uint32 ix = 0; (ix < numberOfElements) && ok;ix++){
-//	printf("%i @%p string \n",ix,src[ix].GetList());
-//}
-//}
-
 	if (!PrintCCString(*writer,*src,fd)){
-		ok.fatalError = true;
-		REPORT_ERROR(ok,"PrintCCString Failed");
+		ret.fatalError = true;
+		REPORT_ERROR(ret,"PrintCCString Failed");
 	}
-	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-		ok = writer->Next();
-		if (!ok){
-			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
+	for (uint32 ix = 1; (ix < numberOfElements) && ret;ix++){
+		ret = writer->Next();
+		if (!ret){
+			COMPOSITE_REPORT_ERROR(ret,"switch to element ",ix," failed");
 		}
 		src++;
-		if (ok){
+		if (ret){
 			if (!PrintCCString(*writer,*src,fd)){
-				ok.fatalError = true;
-    			REPORT_ERROR(ok,"PrintCCString Failed");
+				ret.fatalError = true;
+    			REPORT_ERROR(ret,"PrintCCString Failed");
 			}
 		}
 	}
 	writer->Flush();
-	if (ok){
-		ok = writer->Check();
+	if (ret){
+		ret = writer->Check();
 	}
 
-	return ok;
+	return ret;
 }
 
 ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
@@ -1022,40 +643,40 @@ StreamToStringTCO::StreamToStringTCO(IOBufferWrapper *writerIn): StringTCO(write
 StreamToStringTCO::~StreamToStringTCO(){}
 
 ErrorManagement::ErrorType StreamToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-	ErrorManagement::ErrorType  ok;
+	ErrorManagement::ErrorType  ret;
 //TODO manage more elements by using their size
-	ok.unsupportedFeature = (numberOfElements!= 1);
+	ret.unsupportedFeature = (numberOfElements!= 1);
 
-	if (ok){
+	if (ret){
 		writer->Wrap(dest);
 
 		uint8 *srcc = const_cast<uint8 *>(source);
 		StreamString *src = reinterpret_cast<StreamString *>(srcc);
 
 		if (!PrintStream(*writer,src,fd)){
-			ok.fatalError = true;
-			REPORT_ERROR(ok,"PrintStream Failed");
+			ret.fatalError = true;
+			REPORT_ERROR(ret,"PrintStream Failed");
 		}
-		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok = writer->Next();
-			if (!ok){
-				COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
+		for (uint32 ix = 1; (ix < numberOfElements) && ret;ix++){
+			ret = writer->Next();
+			if (!ret){
+				COMPOSITE_REPORT_ERROR(ret,"switch to element ",ix," failed");
 			}
 			src++;
-			if (ok){
+			if (ret){
 				if (!PrintStream(*writer,src,fd)){
-					ok.fatalError = true;
-	    			REPORT_ERROR(ok,"PrintStream Failed");
+					ret.fatalError = true;
+	    			REPORT_ERROR(ret,"PrintStream Failed");
 				}
 			}
 		}
 		writer->Flush();
-		if (ok){
-			ok = writer->Check();
+		if (ret){
+			ret = writer->Check();
 		}
 	}
 
-	return ok;
+	return ret;
 }
 
 ErrorManagement::ErrorType StreamToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
@@ -1069,39 +690,71 @@ SStringToStringTCO::SStringToStringTCO(IOBufferWrapper *writerIn): StringTCO(wri
 SStringToStringTCO::~SStringToStringTCO(){}
 
 ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-	ErrorManagement::ErrorType  ok;
+	ErrorManagement::ErrorType  ret;
 	writer->Wrap(dest);
 
 	uint8 *sourceD = const_cast<uint8 *>(source);
 	StreamString *ss = reinterpret_cast<StreamString *>(sourceD);
 
 	if (!PrintCCString(*writer,ss->Buffer(),fd)){
-		ok.fatalError = true;
-		REPORT_ERROR(ok,"PrintCCString Failed");
+		ret.fatalError = true;
+		REPORT_ERROR(ret,"PrintCCString Failed");
 	}
-	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-		ok = writer->Next();
-		if (!ok){
-			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
+	for (uint32 ix = 1; (ix < numberOfElements) && ret;ix++){
+		ret = writer->Next();
+		if (!ret){
+			COMPOSITE_REPORT_ERROR(ret,"switch to element ",ix," failed");
 		}
 		ss++;
-		if (ok){
+		if (ret){
 			if (!PrintCCString(*writer,ss->Buffer(),fd)){
-				ok.fatalError = true;
-				REPORT_ERROR(ok,"PrintCCString Failed");
+				ret.fatalError = true;
+				REPORT_ERROR(ret,"PrintCCString Failed");
 			}
 		}
 	}
 	writer->Flush();
-	if (ok){
-		ok = writer->Check();
+	if (ret){
+		ret = writer->Check();
 	}
 
-	return ok;
+	return ret;
 }
 
 ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
 	return Convert(dest,source,numberOfElements,format);
+}
+
+
+AnyTypeToStringTCO::AnyTypeToStringTCO(IOBufferWrapper *writerIn, const VariableDescriptor &sourceVdIn): StringTCO(writerIn),sourceVd(sourceVdIn){
+}
+
+AnyTypeToStringTCO::~AnyTypeToStringTCO(){}
+
+ErrorManagement::ErrorType AnyTypeToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
+    ErrorManagement::ErrorType  ret;
+
+    ret.internalSetupError = (numberOfElements != 1);
+    COMPOSITE_REPORT_ERROR(ret,"only supports 1 element not ",numberOfElements," failed");
+
+    if (ret){
+        writer->Wrap(dest);
+
+        AnyType at(sourceVd,source);
+        ret.fatalError = !IOBuffer::PrintAnyType(*writer, fd, at);
+
+        writer->Flush();
+    }
+
+    if (ret){
+        ret = writer->Check();
+    }
+
+    return ret;
+}
+
+ErrorManagement::ErrorType AnyTypeToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+    return Convert(dest,source,numberOfElements,format);
 }
 
 
@@ -1130,7 +783,7 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 *
 	 */
-	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare);
+	TypeConversionOperatorI *GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare);
 
 private:
 
@@ -1143,8 +796,13 @@ ToStringConversionFactory::~ToStringConversionFactory(){
 }
 
 
-TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
+TypeConversionOperatorI *ToStringConversionFactory::GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
+
+    TypeDescriptor sourceTd = sourceVd.GetFinalTypeDescriptor();
+    TypeDescriptor destTd   = destVd.GetFinalTypeDescriptor();
+    sourceTd.SetDataConstant(false);
+    bool destHasNoModifiers = (CCString(destVd.GetModifiers()).GetSize() == 0);
 
 	IOBufferWrapper *wrapper = NULL_PTR(IOBufferWrapper *);
 	if (isCompare){
@@ -1168,10 +826,14 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
 	if (wrapper != NULL){
 		TD_FullType fullType = sourceTd.GetFullTypeCode();
-//		uint32 basicTypeSize = sourceTd.basicTypeSize;
 		uint32 storageSize = sourceTd.StorageSize();
 		bool hasBitSize = sourceTd.IsBitType();
 		bool isStructuredData = sourceTd.IsStructuredData();
+
+		if (destHasNoModifiers){
+            tco = new AnyTypeToStringTCO(wrapper,sourceVd);
+            sourceVd = VariableDescriptor(GenericType);
+		} else
 		if (!isStructuredData){
 			switch(fullType){
 			case TDF_Char:{

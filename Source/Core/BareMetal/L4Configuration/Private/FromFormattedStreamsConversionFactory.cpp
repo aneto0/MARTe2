@@ -229,7 +229,7 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 *
 	 */
-	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isReader);
+	TypeConversionOperatorI *GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isReader);
 
 
 private:
@@ -243,12 +243,14 @@ FromFormattedStreamsConversionFactory::~FromFormattedStreamsConversionFactory(){
 }
 
 //#include <stdio.h>
-TypeConversionOperatorI *FromFormattedStreamsConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
+TypeConversionOperatorI *FromFormattedStreamsConversionFactory::GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare){
 	ErrorManagement::ErrorType  ret;
 
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
-//REPORT_ERROR(ErrorManagement::FatalError,"came here");
-//printf ("%i %i %i ",destTd.SameTypeAs(StructuredDataIType(0)),sourceTd.IsFormattedCharStreamType(),(isCompare == false));
+
+    TypeDescriptor sourceTd = sourceVd.GetFinalTypeDescriptor();
+    TypeDescriptor destTd   = destVd.GetFinalTypeDescriptor();
+
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
 	if (destTd.SameTypeAs(StructuredDataIType(0)) && sourceTd.IsFormattedCharStreamType() && (isCompare == false)){
 		DynamicCString format;

@@ -342,13 +342,40 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	ErrorManagement::ErrorType ret;
 
 	const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
-	VariableDescriptorLib::Variable sourceHandler(this->modifiers,this->typeDescriptor);
-	VariableDescriptorLib::Variable destHandler(destVd.modifiers,destVd.typeDescriptor);
-//	uint32 nDim = sourceHandler.NDimensions();
 
 	ret.parametersError = ((destPtr == NULL) || (sourcePtr == NULL));
 	REPORT_ERROR(ret, "NULL inputs");
 
+#if 1
+	VariableDescriptor sourceVdCopy = *this;
+    VariableDescriptor destVdCopy = destVd;
+	if (ret){
+        tco = TypeConversionManager::GetOperator(destVdCopy,sourceVdCopy,isCompare);
+        ret.unsupportedFeature = ( tco == NULL_PTR(TypeConversionOperatorI *));
+    }
+
+    if (!ret){
+        DynamicCString s1,s2;
+        CStringTool cst1= s1();
+        CStringTool cst2= s2();
+        destVd.ToString(cst2);
+        this->ToString(cst1);
+        COMPOSITE_REPORT_ERROR(ret, "Conversion Operator from ",s1," to ",s2," not found");
+    }
+
+    if (ret){
+        VariableDescriptorLib::Variable sourceHandler(sourceVdCopy.modifiers,sourceVdCopy.typeDescriptor);
+        VariableDescriptorLib::Variable destHandler(destVdCopy.modifiers,destVdCopy.typeDescriptor);
+
+        ret = VariableDescriptorLib::CopyToRecursive(&sourceHandler[0],sourcePtr,&destHandler[0],destPtr,*tco,!isCompare);
+        REPORT_ERROR(ret, "CopyToRecursive failed");
+        if (tco != NULL_PTR(TypeConversionOperatorI *)){
+            delete tco;
+        }
+    }
+
+
+#else
 	if (ret){
 		tco = TypeConversionManager::GetOperator(destVd.typeDescriptor,this->typeDescriptor,isCompare);
     	ret.unsupportedFeature = ( tco == NULL_PTR(TypeConversionOperatorI *));
@@ -364,17 +391,16 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	}
 
 	if (ret){
+	    VariableDescriptorLib::Variable sourceHandler(this->modifiers,this->typeDescriptor);
+	    VariableDescriptorLib::Variable destHandler(destVd.modifiers,destVd.typeDescriptor);
 
     	ret = VariableDescriptorLib::CopyToRecursive(&sourceHandler[0],sourcePtr,&destHandler[0],destPtr,*tco,!isCompare);
     	REPORT_ERROR(ret, "CopyToRecursive failed");
 	    if (tco != NULL_PTR(TypeConversionOperatorI *)){
 	    	delete tco;
 	    }
-
 	}
-
-
-
+#endif
     return ret;
 }
 

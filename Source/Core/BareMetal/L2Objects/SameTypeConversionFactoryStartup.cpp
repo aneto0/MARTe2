@@ -88,7 +88,7 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 *
 	 */
-	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare);
+	TypeConversionOperatorI *GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare);
 
 private:
 
@@ -125,19 +125,20 @@ SameTypeConversionFactory::SameTypeConversionFactory(){
 SameTypeConversionFactory::~SameTypeConversionFactory(){
 }
 
-TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
+TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(VariableDescriptor &destVd,VariableDescriptor &sourceVd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
 	// sets the sourceTd dataIsConstant to be false
 	// this way if the test passes we are also sure that we can write to
 	// also the test works whatever the const status of the source
-	TypeDescriptor td = sourceTd;
-	td.SetDataConstant(false);
+	TypeDescriptor sourceTd = sourceVd.GetFinalTypeDescriptor();
+    TypeDescriptor destTd   = destVd.GetFinalTypeDescriptor();
+    sourceTd.SetDataConstant(false);
 
 	//compare source and dest
-	if (destTd.SameTypeAndSizeAs(td)){
+	if (destTd.SameTypeAndSizeAs(sourceTd)){
 		if (destTd.IsBasicType() || destTd.IsStructuredData()){
-			tco = new CopyTCO(td.StorageSize(),isCompare);
+			tco = new CopyTCO(sourceTd.StorageSize(),isCompare);
 		}
 	}
 

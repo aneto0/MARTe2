@@ -776,23 +776,23 @@ printf("stack after update stack: %s\n",typeList.GetList());fflush(stdout);
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(RuntimeEvaluatorFunction &functionInformation,CStringTool &cst,bool peekOnly,bool showData,bool showTypes){
-     ErrorManagement::ErrorType ret;
+    ErrorManagement::ErrorType ret;
 
-     const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
+    const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
 
-     if ((functionInformation.name == writeToken) || (functionInformation.name == remoteWriteToken)){
-         CodeMemoryElement pCode2 = GetPseudoCode();
+    if ((functionInformation.name == writeToken) || (functionInformation.name == remoteWriteToken)){
+        CodeMemoryElement pCode2 = GetPseudoCode();
 
-         VariableInformation *variableInformation;
-         ret = FindVariable(pCode2,variableInformation);
-         COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
+        VariableInformation *variableInformation;
+        ret = FindVariable(pCode2,variableInformation);
+        COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
 
-         if (ret){
-            cst.Append(' ').Append(variableInformation->GetName());
-         }
-     }
+        if (ret){
+           cst.Append(' ').Append(variableInformation->GetName());
+        }
+    }
 
-     DataMemoryAddress dataStackIndex = 0;
+    DataMemoryAddress dataStackIndex = 0;
 
     if (showData || showTypes){
         for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
@@ -814,10 +814,31 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
                 cst.Append(')');
             }
             if (showData){
+                DynamicCString value;
+                AnyType dest(value);
+                AnyType src;
+                // complex variables
+                if (CCString(vd.GetModifiers()).GetSize() != 0){
+                    DataMemoryAddress  y1 = *((DataMemoryAddress *)stackPtr);
+                    const void * p = (const void *)&Variable<uint8>(y1);
+                    src = AnyType (vd,p);
+
+                } else // scalars
+                {
+                    dataStackIndex += ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
+                    src = AnyType (vd,stackPtr - dataStackIndex);
+                }
+                ret = src.CopyTo(dest);
+
+                cst.Append(value.GetList());
+            }
+#if 0
+            if (showData){
 
                 dataStackIndex += ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
                 DynamicCString value;
                 AnyType src(vd,stackPtr - dataStackIndex);
+
                 AnyType dest(value);
                 ret = src.CopyTo(dest);
                 REPORT_ERROR(ret,"failed converting 2 string");
@@ -825,6 +846,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
                 cst.Append(value.GetList());
 
             }
+#endif
             if (i == (functionInformation.numberOfInputs-1U)){
                 cst.Append(')');
             }
@@ -863,16 +885,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
             CCString varName = variableInformation->GetName();
 
             if (varName.CompareContent("Constant@",9)==0){
-//            if (pCode2 < startOfVariables){
 
                 cst.Append(' ');
                 ret.fatalError = !variableInformation->GetType().ToString(cst);
                 cst.Append(' ');
-
                 // Converts the value to a string
                 DynamicCString value;
                 AnyType dest(value);
-//                AnyType src(vi->type,&variablesMemory.Variable<uint8>(pCode2));
                 AnyType src(variableInformation->GetType(),&Variable<uint8>(pCode2));
                 ret = src.CopyTo(dest);
                 REPORT_ERROR(ret,"failed converting 2 string");
@@ -905,10 +924,20 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
                 cst.Append(')');
             }
             if (showData){
-                dataStackIndex += ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
                 DynamicCString value;
-                AnyType src(vd,stackPtr - dataStackIndex);
                 AnyType dest(value);
+                AnyType src;
+                // complex variables
+                if (CCString(vd.GetModifiers()).GetSize() != 0){
+                    DataMemoryAddress  y1 = *((DataMemoryAddress *)stackPtr);
+                    const void * p = (const void *)&Variable<uint8>(y1);
+                    src = AnyType (vd,p);
+
+                } else // scalars
+                {
+                    dataStackIndex += ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
+                    src = AnyType (vd,stackPtr - dataStackIndex);
+                }
                 ret = src.CopyTo(dest);
 
                 cst.Append(value.GetList());

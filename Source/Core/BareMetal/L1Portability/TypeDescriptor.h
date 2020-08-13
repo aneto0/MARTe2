@@ -208,6 +208,11 @@ const TD_FullType  TDF_GenericPointer   = TDF_SummaryType + 3u;
  */
 const TD_FullType  TDF_Structure        = TDF_SummaryType + 4u;
 
+/**
+ * @brief  can be anything...
+ */
+const TD_FullType  TDF_AnyType         = TDF_SummaryType + 5u;
+
 
 /**
  * @brief Definition of BasicArrayType
@@ -593,6 +598,7 @@ const CCString xmlFormat("XML");
 #define  ObjectType(size)            TypeDescriptor(TDRANGE(fullType,TDF_Object)          | TDRANGE(objectSize,size))
 #define  InvalidType(size)           TypeDescriptor(TDRANGE(fullType,TDF_Invalid)         | TDRANGE(objectSize,size))
 #define  GenericArray                TypeDescriptor(TDRANGE(fullType,TDF_GenericArray)    | TDRANGE(objectSize,0))
+#define  GenericType                 TypeDescriptor(TDRANGE(fullType,TDF_AnyType)         | TDRANGE(objectSize,0))
 
 /**
  * @return returns the TDBasicTypeSize of any type
