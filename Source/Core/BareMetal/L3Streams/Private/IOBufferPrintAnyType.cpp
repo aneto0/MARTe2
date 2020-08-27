@@ -147,7 +147,7 @@ ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor
 //    bool ret = true;
     // void anytype
     AnyType par = parIn;
-
+#if 0
     if (fd.desiredAction == PrintTypeInformation) {
         ret.fatalError = !IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
         REPORT_ERROR(ret,"PrintAnyTypeInfo  failed");
@@ -155,7 +155,9 @@ ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor
     if ((fd.desiredAction == PrintInfo)|| (fd.desiredAction == PrintInfoRecursive)) {
         ret.fatalError = !IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
         REPORT_ERROR(ret,"PrintAnyTypeInfo  failed");
-    } else {
+    } else
+#endif
+    {
         // extract variable descriptor
         const VariableDescriptor &vd = parIn.GetFullVariableDescriptor();
         const void* dataPointer = NULL;
@@ -312,7 +314,8 @@ ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor
                     ret.fatalError = !PrintCCStringFit(iobuff,*data,fd);
                     REPORT_ERROR(ret,"PrintCCStringFit failed");
                 }break;
-                case TDF_Pointer:{
+                case TDF_Pointer:
+                case TDF_GenericPointer:{
                     const uintp *data = static_cast<const uintp *>(dataPointer);
                     ret.fatalError = !IntegerToStream(iobuff, *data, fd);
                     REPORT_ERROR(ret,"IntegerToStream failed");
@@ -338,72 +341,86 @@ ErrorManagement::ErrorType PrintAnySimpleType(IOBuffer &iobuff, FormatDescriptor
 ErrorManagement::ErrorType PrintAnyTypeS(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
     ErrorManagement::ErrorType ret;
 
-    TypeDescriptor td;
-    uint32 nDims = 3;
-    uint32 dims[3];
-    ret = parIn.GetVariableInformation(td,nDims,dims );
-    REPORT_ERROR(ret,"GetVariableInformation failed");
-
-    if (ret && (nDims == 0) ){
-        ret = PrintAnySimpleType(iobuff, fd, parIn);
-        REPORT_ERROR(ret,"PrintAnySimpleType failed");
+    if (fd.desiredAction == PrintTypeInformation) {
+        ret.fatalError = !IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
+        REPORT_ERROR(ret,"PrintAnyTypeInfo  failed");
     } else
-    if (ret ){
+    if ((fd.desiredAction == PrintInfo)|| (fd.desiredAction == PrintInfoRecursive)) {
+        ret.fatalError = !IOBuffer::PrintAnyTypeInfo(iobuff, fd, parIn);
+        REPORT_ERROR(ret,"PrintAnyTypeInfo  failed");
+    } else
+    if (!parIn.IsValid()){
+        ret = PrintCCStringFit(iobuff,"nil",fd);
+    } else
+    {
+        TypeDescriptor td;
+        uint32 nDims = 3;
+        uint32 dims[3];
+        ret = parIn.GetVariableInformation(td,nDims,dims );
+        REPORT_ERROR(ret,"GetVariableInformation failed");
 
-        // open block
-        if (nDims > 2){
-            ret = PrintFormatter::OpenBlock(fd,iobuff);
-            // structure field N =
-        } else {
-            ret = PrintFormatter::OpenArray(fd,nDims-1,iobuff);
-        }
+        if (ret && (nDims == 0) ){
+            ret = PrintAnySimpleType(iobuff, fd, parIn);
+            REPORT_ERROR(ret,"PrintAnySimpleType failed");
+        } else
+        if (ret ){
 
-        if (ret && (dims[0] == 0)){
-            ret = PrintCCStringFit(iobuff,"null",fd);
-        }
-
-        for (uint32 i = 0;ret && (i < dims[0]); i++){
-            AnyType at = parIn;
-            ret = at.Dereference(i);
-            REPORT_ERROR(ret,"Dereference failed");
-
-            if (ret && (nDims <= 2)){
-                // separator
-                ret = PrintFormatter::Separator(fd,i,nDims-1,iobuff);
-            }
-
-            DynamicCString ns;
-            if ((nDims > 2) && ret){
-                ns().Append(i);
-                // structure field N =
-                ret = PrintFormatter::OpenAssignMent(fd,ns,iobuff);
-            }
-
-            if (ret && (nDims >= 1)){
-                ret = PrintAnyTypeS(iobuff, fd, at);
-                REPORT_ERROR(ret,"PrintAnyTypeS  failed");
-            } else
-            if (ret){
-                ret = PrintAnySimpleType(iobuff, fd, at);
-                REPORT_ERROR(ret,"PrintAnySimpleType failed");
-            }
-
-            if (ret && (nDims > 2)){
-                // structure field N =
-                ret = PrintFormatter::CloseAssignMent(fd,ns,iobuff);
-            }
-        }
-
-        if (ret){
-            // close block
+            // open block
             if (nDims > 2){
-                ret = PrintFormatter::CloseBlock(fd,iobuff);
+                ret = PrintFormatter::OpenBlock(fd,iobuff);
                 // structure field N =
             } else {
-                ret = PrintFormatter::CloseArray(fd,nDims-1,iobuff);
+                ret = PrintFormatter::OpenArray(fd,nDims-1,iobuff);
+            }
+
+            if (ret && (dims[0] == 0)){
+                ret = PrintCCStringFit(iobuff,"nil",fd);
+            }
+
+            for (uint32 i = 0;ret && (i < dims[0]); i++){
+                AnyType at = parIn;
+                ret = at.Dereference(i);
+                REPORT_ERROR(ret,"Dereference failed");
+
+                if (ret && (nDims <= 2)){
+                    // separator
+                    ret = PrintFormatter::Separator(fd,i,nDims-1,iobuff);
+                }
+
+                DynamicCString ns;
+                if ((nDims > 2) && ret){
+                    ns().Append(i);
+                    // structure field N =
+                    ret = PrintFormatter::OpenAssignMent(fd,ns,iobuff);
+                }
+
+                if (ret && (nDims >= 1)){
+                    ret = PrintAnyTypeS(iobuff, fd, at);
+                    REPORT_ERROR(ret,"PrintAnyTypeS  failed");
+                } else
+                if (ret){
+                    ret = PrintAnySimpleType(iobuff, fd, at);
+                    REPORT_ERROR(ret,"PrintAnySimpleType failed");
+                }
+
+                if (ret && (nDims > 2)){
+                    // structure field N =
+                    ret = PrintFormatter::CloseAssignMent(fd,ns,iobuff);
+                }
+            }
+
+            if (ret){
+                // close block
+                if (nDims > 2){
+                    ret = PrintFormatter::CloseBlock(fd,iobuff);
+                    // structure field N =
+                } else {
+                    ret = PrintFormatter::CloseArray(fd,nDims-1,iobuff);
+                }
             }
         }
     }
+
 
     return ret;
 }

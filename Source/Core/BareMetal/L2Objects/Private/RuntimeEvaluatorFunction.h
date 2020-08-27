@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef RUNTIMEEVALUATORFUNCTIONS_H_
-#define RUNTIMEEVALUATORFUNCTIONS_H_
+#ifndef RUNTIMEEVALUATORFUNCTION_H_
+#define RUNTIMEEVALUATORFUNCTION_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,7 +33,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Stack.h"
-#include "RuntimeEvaluatorInfo.h"
+#include "Queue.h"
+#include "Matrix.h"
+#include "Private/MatrixSize.h"
 #include "RuntimeEvaluator.h"
 
 /*---------------------------------------------------------------------------*/
@@ -49,15 +51,31 @@ namespace MARTe{
 /** the type of the PCode function */
 typedef void (*Function)(RuntimeEvaluator & context);
 
+
+
+/** custom stack processing and variable allocation*/
+/**
+ * the input Q contains the sizes of each input matrix used in the operation
+ * the output shall conyain the size of each input matrix that need to be built as a temporary output
+ * if the output is an existing matrix than its size will not be here
+ * note that this means that any pass-through matrix need to be at the end of the output list
+ * note that READ simply copies the position of the Matrix within Variables to the stack. For this reason READ will not produce a MatrixSize in the outputTypeQueue
+ */
+typedef ErrorManagement::ErrorType (*CheckMatrixSizesFun)(
+        Queue<MatrixSize> &                                 inputTypeQueue,
+        Queue<MatrixSize> &                                 outputTypeQueue
+);
+static const CheckMatrixSizesFun NULLCheckMatrixSizesFun = NULL;
+
 /** custom stack processing and variable allocation*/
 typedef ErrorManagement::ErrorType (*UpdateStackFun)(
 		const RuntimeEvaluatorFunction &					ref,
 		Stack<AnyType> &							        typeStack,
 		RuntimeEvaluator::DataMemoryAddress & 			    dataStackSize,
-		List<RuntimeEvaluator::VariableInformation> &	    db,
+		List<RuntimeEvaluator::VariableInformation> &	    intermediateResultVariablesdb,
 		uint32 &                                            dummyID);
 
-const UpdateStackFun NULLUpdateStackFun = NULL;
+static const UpdateStackFun NULLUpdateStackFun = NULL;
 
 /**
  * records information necessary to be able to use it during compilation
@@ -87,12 +105,64 @@ struct RuntimeEvaluatorFunction{
     /**
      * The function code itself
      */
-    Function                 	ExecuteFunction;
+    Function                 	executeFunction;
 
     /**
-     * Custom UpdateStack
+     * Custom UpdateStackFun
      */
     UpdateStackFun              updateStackFun;
+
+    /**
+     * Custom CheckMatrixSizesFun
+     */
+    CheckMatrixSizesFun        checkMatrixSizeFunction;
+
+
+    RuntimeEvaluatorFunction()    :
+        name(""),
+        numberOfInputs(0),
+        numberOfOutputs(0),
+        types(NULL),
+        executeFunction(NULL),
+        updateStackFun(NULL),
+        checkMatrixSizeFunction(NULL)
+    {
+    }
+
+    RuntimeEvaluatorFunction(
+            CCString                    nameIn,
+            uint16                      numberOfInputsIn,
+            uint16                      numberOfOutputsIn,
+            const VariableDescriptor *  typesIn,
+            Function                    executeFunctionIn,
+            CheckMatrixSizesFun         checkMatrixSizeFunctionIn):
+                name(nameIn),
+                numberOfInputs(numberOfInputsIn),
+                numberOfOutputs(numberOfOutputsIn),
+                types(typesIn),
+                executeFunction(executeFunctionIn),
+                checkMatrixSizeFunction(checkMatrixSizeFunctionIn)
+                {
+        updateStackFun = NULL;
+    }
+
+    RuntimeEvaluatorFunction(
+            CCString                    nameIn,
+            uint16                      numberOfInputsIn,
+            uint16                      numberOfOutputsIn,
+            const VariableDescriptor *  typesIn,
+            Function                    executeFunctionIn,
+            UpdateStackFun              updateStackFunIn):
+                name(nameIn),
+                numberOfInputs(numberOfInputsIn),
+                numberOfOutputs(numberOfOutputsIn),
+                types(typesIn),
+                executeFunction(executeFunctionIn),
+                updateStackFun(updateStackFunIn)
+                {
+        checkMatrixSizeFunction = NULL;
+    }
+
 
     /**
      * @brief returns true if the name and types matches
@@ -176,7 +246,7 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record);
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
     static const VariableDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-    static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function,NULLUpdateStackFun}; \
+    static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord=RuntimeEvaluatorFunction(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function,NULLCheckMatrixSizesFun); \
     static class name ## subName ## RegisterClass { \
     public: name ## subName ## RegisterClass(){\
             RegisterFunction(name ## subName ## _FunctionRecord);\
@@ -184,16 +254,19 @@ void RegisterFunction(const RuntimeEvaluatorFunction &record);
     } name ## subName ## RegisterClassInstance;
 
 /**
- * generates boiler plate code to register a function
+ * generates boiler plate code to register a matrix processing function
+ * allows specifying custom matrix size checks or a custom UpdateStack function
  */
-#define REGISTER_PCODE_MATRIX_FUNCTION(name,subName,nInputs,nOutputs,function,updateFunction,...)\
+#define REGISTER_PCODE_MATRIX_FUNCTION(name,subName,nInputs,nOutputs,function,checkFunction,...)\
     static const VariableDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-    static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function,updateFunction}; \
+    static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord= RuntimeEvaluatorFunction(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function,checkFunction); \
     static class name ## subName ## RegisterClass { \
     public: name ## subName ## RegisterClass(){\
             RegisterFunction(name ## subName ## _FunctionRecord);\
         }\
     } name ## subName ## RegisterClassInstance;
+
+
 
 
 /*---------------------------------------------------------------------------*/

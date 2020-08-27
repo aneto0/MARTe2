@@ -22,31 +22,75 @@
 */
 
 #include "AnyType.h"
-#include "RuntimeEvaluatorVariableInformation.h"
+#include "Private/RuntimeEvaluatorFunction.h"
+#include "Private/RuntimeEvaluatorVariableInformation.h"
+#include "RuntimeEvaluator.h"
+#include "AnyObject.h"
+
 
 
 namespace MARTe{
 
 
 RuntimeEvaluator::VariableInformation::VariableInformation(){
-    type                    =   VoidType;
-    location                =   InvalidDataMemoryAddress;
-    memoryAllocated         =   false;
-    externalMemory          =   NULL;
-    dimensions[0]           =  1;
-    dimensions[1]           =  1;
+    type                       =   VoidType;
+    location                   =   InvalidDataMemoryAddress;
+    externalMemory             =   NULL;
+    dimensions.numberOfColumns =  1;
+    dimensions.numberOfRows    =  1;
 }
 
-void RuntimeEvaluator::VariableInformation::Free(){
-    if (memoryAllocated  && (externalMemory != NULL)){
-        HeapManager::Free(externalMemory);
-        memoryAllocated = true;
-    }
+
+RuntimeEvaluator::VariableInformation::VariableInformation(CCString nameIn, const VariableDescriptor &vd){
+    name            = nameIn;
+    type            = vd;
+    location        = InvalidDataMemoryAddress;
+    externalMemory  = NULL;
 }
+
+RuntimeEvaluator::VariableInformation::VariableInformation(const VariableInformation &vi){
+    *this = vi;
+}
+
+void RuntimeEvaluator::VariableInformation::operator= (const VariableInformation &vi){
+    name                    =   vi.name;
+    type                    =   vi.type;
+    location                =   vi.location;
+    externalMemory          =   vi.externalMemory;
+    dimensions              =   vi.dimensions;
+    memory                  =   vi.memory;
+}
+
 
 RuntimeEvaluator::VariableInformation::~VariableInformation(){
     Free();
 }
+
+
+void RuntimeEvaluator::VariableInformation::Free(){
+    memory.RemoveReference();
+    externalMemory = NULL;
+}
+
+AnyType RuntimeEvaluator::VariableInformation::GetAnyType( RuntimeEvaluator &context) const{
+    AnyType at;
+
+    if (location == InvalidDataMemoryAddress){
+        at = AnyType(type,NULL);
+    } else
+    if (externalMemory == NULL){
+        at = AnyType(type,&context.Variable<int>(location));
+    } else {
+        if (CCString(type.GetModifiers()).GetSize() == 0){
+            at = AnyType(type,externalMemory);
+        } else {
+            at = AnyType(type,&context.Variable<int>(location));
+        }
+    }
+
+    return at;
+}
+
 
 ErrorManagement::ErrorType RuntimeEvaluator::VariableInformation::AllocateMatrixMemory(){
     ErrorManagement::ErrorType ret;
@@ -55,11 +99,23 @@ ErrorManagement::ErrorType RuntimeEvaluator::VariableInformation::AllocateMatrix
 
     SaturatedInteger<uint32>  size;
     size = type.GetFinalTypeDescriptor().StorageSize();
-    size *= dimensions[0];
-    size *= dimensions[1];
+    size *= dimensions.numberOfColumns;
+    size *= dimensions.numberOfRows;
     uint32 bytesToAllocate;
     ret = size.ToNumber(bytesToAllocate);
+    REPORT_ERROR(ret,"size overflow");
 
+    if (ret){
+        memory = AnyObject::Allocate(bytesToAllocate,type);
+        ret.outOfMemory = !memory.IsValid();
+        REPORT_ERROR(ret,"allocation failure");
+    }
+
+    if (ret){
+        externalMemory = memory.operator ->();
+    }
+
+/*
     void * address;
     if (ret){
         address = HeapManager::Malloc(bytesToAllocate);
@@ -70,9 +126,36 @@ ErrorManagement::ErrorType RuntimeEvaluator::VariableInformation::AllocateMatrix
         externalMemory = address;
         memoryAllocated = true;
     }
+*/
     return ret;
 }
 
+
+ErrorManagement::ErrorType RuntimeEvaluator::VariableInformation::CreateTemporaryResultMatrix(CCString nameIn,const MatrixSize & ms,const TypeDescriptor &td){
+    ErrorManagement::ErrorType ret;
+
+    bool isVoid;
+    ret = IsValidVoid(isVoid);
+
+    if (ret){
+        ret.unsupportedFeature = !isVoid;
+        REPORT_ERROR(ret,"already initialised");
+    }
+
+    if (ret){
+        type = VariableDescriptor(td,"M");
+        externalMemory = NULL;
+        dimensions = ms;
+        ret = AllocateMatrixMemory();
+        REPORT_ERROR(ret,"AllocateMatrixMemory failed");
+    }
+
+    if (ret){
+        name = nameIn;
+    }
+
+    return ret;
+}
 
 ErrorManagement::ErrorType  RuntimeEvaluator::VariableInformation::SetType( AnyType at){
     ErrorManagement::ErrorType ret;
@@ -82,24 +165,20 @@ ErrorManagement::ErrorType  RuntimeEvaluator::VariableInformation::SetType( AnyT
 
     if (ret){
         ret.unsupportedFeature = !isVoid;
+        REPORT_ERROR(ret,"already initialised");
     }
 
     if (ret){
         type = at.GetFullVariableDescriptor();
-    }
-
-    if (ret){
         externalMemory = const_cast<void *>(at.GetVariablePointer());
     }
 
     if (IsValidMatrix() && ret){
         ret.internalSetupError = (externalMemory == NULL);
         REPORT_ERROR(ret,"Matrix type without address");
-
         if (ret){
             const Matrix<float> *mf = reinterpret_cast<const Matrix<float> *>(externalMemory);
-            dimensions[0] = mf->GetNumberOfRows();
-            dimensions[1] = mf->GetNumberOfColumns();
+            dimensions = MatrixSize(*mf);
             externalMemory = mf->GetDataPointer();
 
             // TODO - probably not needed
@@ -116,20 +195,12 @@ ErrorManagement::ErrorType  RuntimeEvaluator::VariableInformation::SetType( AnyT
         // TODO - probably not needed
         ret.internalSetupError = (externalMemory == NULL);
         REPORT_ERROR(ret,"2D array type with no address");
-printf("[%i][%i]\n",dimensions[0],dimensions[1]);
+printf("[%i][%i]\n",dimensions.numberOfColumns,dimensions.numberOfRows);
     }
 
     return ret;
 }
 
-
-RuntimeEvaluator::VariableInformation::VariableInformation(CCString nameIn, const VariableDescriptor &vd){
-    name            = nameIn;
-    type            = vd;
-    location        = InvalidDataMemoryAddress;
-    memoryAllocated = false;
-    externalMemory  = NULL;
-}
 
 bool RuntimeEvaluator::VariableInformation::IsValidNumber(){
     TypeDescriptor td       = type.GetFinalTypeDescriptor();
@@ -244,8 +315,8 @@ bool RuntimeEvaluator::VariableInformation::IsValidArray2D(){
     }
 
     if (isArray2D){
-        dimensions[0] = nRows;
-        dimensions[1] = nColumns;
+        dimensions.numberOfRows = nRows;
+        dimensions.numberOfColumns = nColumns;
     }
 
     return (isArray2D);

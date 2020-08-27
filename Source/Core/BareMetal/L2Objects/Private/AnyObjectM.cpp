@@ -46,7 +46,9 @@ void AnyObjectM::Setup(uint32 sizeToCopy,const void *pointer,const VariableDescr
 		REPORT_ERROR(ErrorManagement::OutOfMemory,"Malloc failed");
 		vd = VariableDescriptor();
 	} else {
-		Memory::Copy(data,pointer,sizeToCopy);
+	    if (pointer != NULL){
+	        Memory::Copy(data,pointer,sizeToCopy);
+	    }
 	}
 }
 

@@ -79,15 +79,25 @@ bool IOBuffer::PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars
                         quit = true;
                     }
                     else {
-
-                        // if void simply skip and continue
+                        if (!PrintAnyType(iob, fd, pars[parsIndex])){
+                            ret = false;
+                            quit = true;
+                        }
+#if 0
+                        // if void simply show type
                         if (pars[parsIndex].IsValid()) {
                             // use it to process parameters
                             if (!PrintAnyType(iob, fd, pars[parsIndex])){
                                 ret = false;
                                 quit = true;
                             }
+                        } else {
+                            if (!PrintAnyTypeInfo(iob, fd, pars[parsIndex])){
+                                ret = false;
+                                quit = true;
+                            }
                         }
+#endif
                         parsIndex++;
                     }
                 }

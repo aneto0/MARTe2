@@ -194,7 +194,6 @@ public:
      */
     T& operator()(const uint32 row, const uint32 col);
 
-	
     /**
      * @brief Performs the matrix product.
      * @param[in] factor is the matrix to be multiplied with.
@@ -208,6 +207,16 @@ public:
      *   result holds the product matrix between *this and factor
      */
     bool Product(Matrix<T> &factor, Matrix<T> &result) const;
+
+    /**
+     * @brief Performs the matrix with scalar product.
+     * @param[in] factor is the matrix to be multiplied with.
+     * @param[out] result is the matrix product result.
+     * @return true if the dimensions of \a factor and \a result are correct, false otherwise.
+     * @post
+     *   result holds the product matrix between *this and factor
+     */
+    bool Product(T factor, Matrix<T> &result) const;
 
     /**
      * @brief Performs the matrix sum.
@@ -303,10 +312,6 @@ public:
      */
     bool Inverse(Matrix<T> &inverse) const;
 
-    /**
-     */
-//    inline Matrix<T> operator= (Matrix<T> toCopy);
-
 private:
 
 
@@ -340,17 +345,7 @@ private:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/*
-template<typename T>
-Matrix<T> Matrix<T>::operator= (Matrix<T> toCopy){
-    numberOfColumns = toCopy.numberOfColumns;
-    numberOfRows    = toCopy.numberOfRows;
-    allocationMode  = toCopy.allocationMode;
-    toCopy.allocationMode = heapStatic;
 
-    return *this;
-}
-*/
 
 template<typename T>
 Matrix<T>::Matrix(): Pointer() {
@@ -505,6 +500,22 @@ bool Matrix<T>::Product(Matrix<T> &factor,
                 for (uint32 k = 0u; k < numberOfColumns; k++) {
                     result[i][j] += (*this)[i][k] * factor[k][j];
                 }
+            }
+        }
+    }
+    return ret;
+}
+
+template<typename T>
+bool Matrix<T>::Product(T factor, Matrix<T> &result) const {
+    bool cond2 = (result.numberOfRows == numberOfRows);
+    bool cond3 = (result.numberOfColumns == numberOfColumns);
+    bool ret = ((cond2) && (cond3));
+    if (ret) {
+
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                result[i][j] = (*this)[i][j] * factor;
             }
         }
     }

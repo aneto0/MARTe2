@@ -77,6 +77,8 @@ CCString MATHExpr= "X=Z,Y=B , X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z; \n";
 
 CCString RPNCode=
         "READ M1\n"
+        "READ A\n"
+        "MUL\n"
         "WRITE Mo\n"
         "READ A\n"
         "READ B\n"
@@ -139,6 +141,34 @@ void MyCallBack(CCString name, uint32 nameLength, CCString value, uint32 valueLe
     printf("\n");
 }
 
+
+void ShowVariables(RuntimeEvaluator & context){
+    uint32 index = 0;
+    RuntimeEvaluator::VariableInformation *var;
+
+    while(context.BrowseInputVariable(index,var)){
+        StreamString ss;
+        AnyType at = var->GetAnyType(context);
+        ss.Printf("input  var % 3i @%04x (% 16t) % 16s = %10! ",index,var->GetLocation(),at,var->GetName(),at);
+        if (var->GetExternalMemoryPtr() != NULL){
+            ss.Printf ("@@%p",var->GetExternalMemoryPtr());
+        }
+        printf ("%s\n",ss.Buffer().GetList());
+        index++;
+    }
+
+    index = 0;
+    while(context.BrowseOutputVariable(index,var)){
+        StreamString ss;
+        AnyType at = var->GetAnyType(context);
+        ss.Printf("input  var % 3i @%04x (% 16t) % 16s = %10! ",index,var->GetLocation(),at,var->GetName(),at);
+        if (var->GetExternalMemoryPtr() != NULL){
+            ss.Printf ("@@%p",var->GetExternalMemoryPtr());
+        }
+        printf ("%s\n",ss.Buffer().GetList());
+        index++;
+    }
+}
 
 int main(){
 
@@ -323,6 +353,7 @@ int main(){
                 if (var->GetName() == "N4"){
                     var->SetType(AnyType(TypeDescriptor("int8"),NULL));
                 }
+#if 0
                 DynamicCString xx;
                 CStringTool xxct = xx();
                 var->GetType().ToString(xxct);
@@ -332,6 +363,7 @@ int main(){
                     printf (" externPtr = 0x%p",var->GetExternalMemoryPtr());
                 }
                 printf ("\n");
+#endif
                 index++;
             }
 
@@ -352,6 +384,7 @@ int main(){
                 if (var->GetName() == "N5"){
                     var->SetType(AnyType(TypeDescriptor("int8"),NULL));
                 }
+#if 0
                 DynamicCString xx;
                 CStringTool xxct = xx();
                 var->GetType().ToString(xxct);
@@ -361,14 +394,24 @@ int main(){
                     printf (" externPtr = 0x%p",var->GetExternalMemoryPtr());
                 }
                 printf ("\n");
+#endif
                 index++;
             }
         }
 
+        printf ("VAR SCAN RESULT\n"); fflush(stdout);
+        ShowVariables(context);
+
+
         if (ret){
-            printf ("COMPILE\n");
+            printf ("COMPILE\n");fflush(stdout);
             ret = context.Compile(RPNCode);
         }
+
+        printf ("COMPILE RESULT\n");fflush(stdout);
+        ShowVariables(context);
+
+#if 0
         if (ret){
             uint32 index = 0U;
             RuntimeEvaluator::VariableInformation *var;
@@ -392,7 +435,7 @@ int main(){
                 index++;
             }
         }
-
+#endif
         if (ret){
             printf("SUCCESSFUL\n");
             printf("size of constant area = %i\n",context.GetSizeOfConstants());
@@ -433,21 +476,47 @@ int main(){
             }
         }
 
+        printf ("VAR ALLOCATION RESULT\n");fflush(stdout);
+        ShowVariables(context);
+#if 0
         if (ret){
             printf ("VAR ALLOCATION RESULT\n");
             uint32 index = 0;
             RuntimeEvaluator::VariableInformation *var;
 
             while(context.BrowseInputVariable(index,var)){
-                printf ("input  var %2i @%04x = %s \n",index,var->GetLocation(),var->GetName().GetList());
+                StreamString ss;
+                AnyType at(var->GetType(),&context.Variable<int>(var->GetLocation()));
+                ss.Printf("input  var %2i @%04x %s = %!\n",index,var->GetLocation(),var->GetName(),var->GetAnyType(context));
+//                printf ("input  var %2i @%04x = %s \n",index,var->GetLocation(),var->GetName().GetList());
+                printf ("%s",ss.Buffer().GetList());
+                if (var->GetExternalMemoryPtr() != NULL){
+                    printf ("@%p -> %p\n",var->GetAnyType(context).GetVariablePointer(),var->GetExternalMemoryPtr());
+                }
                 index++;
             }
 
             index = 0;
             while(context.BrowseOutputVariable(index,var)){
-                printf ("output var %2i @%04x = %s\n",index,var->GetLocation(),var->GetName().GetList());
+                StreamString ss;
+                AnyType at(var->GetType(),&context.Variable<int>(var->GetLocation()));
+                ss.Printf("output var %2i @%04x %s = %!\n",index,var->GetLocation(),var->GetName(),var->GetAnyType(context));
+//                printf ("output var %2i @%04x = %s\n",index,var->GetLocation(),var->GetName().GetList());
+                printf ("%s",ss.Buffer().GetList());
+                if (var->GetExternalMemoryPtr() != NULL){
+                    printf ("@%p -> %p\n",var->GetAnyType(context).GetVariablePointer(),var->GetExternalMemoryPtr());
+                }
                 index++;
             }
+        }
+#endif
+
+        if (ret){
+            printf("SUCCESSFUL\n");
+            printf("size of constant area = %i\n",context.GetSizeOfConstants());
+            printf("size of data area = %i\n",context.GetSizeOfVariables());
+            printf("size of code area = %i\n",context.GetSizeOfCode());
+            printf("size of stack area = %i\n",context.GetSizeOfStack());
         }
 
         if (ret){
@@ -483,6 +552,42 @@ int main(){
                 printf("%s\n",dcs.GetList());
             }
         }
+
+        printf ("DEBUG RUN RESULTS\n");fflush(stdout);
+        ShowVariables(context);
+
+#if 0
+        if (1){
+            printf ("DEBUG RUN RESULTS\n");
+            uint32 index = 0;
+            RuntimeEvaluator::VariableInformation *var;
+
+            while(context.BrowseInputVariable(index,var)){
+                StreamString ss;
+                AnyType at(var->GetType(),&context.Variable<int>(var->GetLocation()));
+                ss.Printf("input  var %2i @%04x %s = %!\n",index,var->GetLocation(),var->GetName(),var->GetAnyType(context));
+//                printf ("input  var %2i @%04x = %s \n",index,var->GetLocation(),var->GetName().GetList());
+                printf ("%s",ss.Buffer().GetList());
+                if (var->GetExternalMemoryPtr() != NULL){
+                    printf ("@%p -> %p\n",var->GetAnyType(context).GetVariablePointer(),var->GetExternalMemoryPtr());
+                }
+                index++;
+            }
+
+            index = 0;
+            while(context.BrowseOutputVariable(index,var)){
+                StreamString ss;
+                AnyType at(var->GetType(),&context.Variable<int>(var->GetLocation()));
+                ss.Printf("output var %2i @%04x %s = %!\n",index,var->GetLocation(),var->GetName(),var->GetAnyType(context));
+//                printf ("output var %2i @%04x = %s\n",index,var->GetLocation(),var->GetName().GetList());
+                printf ("%s",ss.Buffer().GetList());
+                if (var->GetExternalMemoryPtr() != NULL){
+                    printf ("@%p -> %p\n",var->GetAnyType(context).GetVariablePointer(),var->GetExternalMemoryPtr());
+                }
+                index++;
+            }
+        }
+#endif
 
         //for (int kk = 0;(kk<1000) && ret;kk++)
         if (ret){

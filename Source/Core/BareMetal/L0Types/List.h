@@ -110,9 +110,9 @@ public:
 	 */
 	inline uint32 Size() const;
 
-private:
+protected:
 	/**
-	 * TODO
+	 * a counter of how many element in the list
 	 */
 	uint32 		size;
 };
@@ -122,18 +122,11 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-/**
- *
- */
 template <class loadClass>
 List<loadClass>::List():ListNode(){
 	size = 0;
 }
 
-/**
- *
- */
 template <class loadClass>
 List<loadClass>::~List(){
 }
@@ -142,7 +135,6 @@ template <class loadClass>
 inline uint32 List<loadClass>::Size() const{
 	return size;
 };
-
 
 template <class loadClass>
 template <class compatible>

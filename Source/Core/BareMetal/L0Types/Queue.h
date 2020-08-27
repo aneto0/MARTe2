@@ -45,7 +45,7 @@
 namespace MARTe{
 
 /**
- * @brief Simplified implementation of a list.
+ * @brief Simplified implementation of a queue.
  * Does not expose internals. user interacts only with payload type loadClass.
  * Implementation strongly hinges on iterator.
  * To implement complex functionalities simply implement appropriate iterators
@@ -94,7 +94,7 @@ private:
 	/**
 	 * @ to improve efficiency in adding to the queue
 	 */
-	ListNode lastAdded;
+	ListNode *lastAdded;
 };
 
 
@@ -120,11 +120,11 @@ ErrorManagement::ErrorType Queue<loadClass>::Insert( loadClass &data){
 	ErrorManagement::ErrorType ret;
 	ListNodeT<loadClass> *newNode = new ListNodeT<loadClass>(data);
 
-	ret = lastAdded.InsertAfter(newNode,0);
+	ret = lastAdded->InsertAfter(newNode,0);
 
 	if (ret){
 		lastAdded = newNode;
-		size++;
+		List<loadClass>::size++;
 	}
 
 	return ret;

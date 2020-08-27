@@ -57,12 +57,25 @@ namespace AnyObject{
  */
 Reference Clone(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor);
 
+/**
+ *  @brief Creates an Object of the specified size and labels it descriptor.
+ *  Note it is the caller responsibility to make sure that the descriptor is appropriate for the size of the object
+ *  @param[in] size is the amount of bytes to be allocated
+ *  @param[in] descriptor is the variable descriptor to be used to describe this variable,
+ */
+inline Reference Allocate(uint32 size,const VariableDescriptor &descriptor);
+
 };
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+Reference AnyObject::Allocate(uint32 size,const VariableDescriptor &descriptor){
+    return Clone(size,NULL,descriptor);
+}
+
 
 } // MARTe
 

@@ -68,7 +68,7 @@ public:
 
     /**
      * @brief Allows to setup an Anytype of any type....
-     * @param[in] pointer is the address of the memory to be copied
+     * @param[in] pointer is the address of the memory to be copied (if NULL the memory will be left non-initialised)
      * @param[in] sizeToCopy is the amount of bytes to be copied
      * @param[in] descriptor is the variable descriptor to be used to describe this variable,
     */
@@ -119,7 +119,9 @@ void AnyObjectT<objectSize>::Setup(uint32 sizeToCopy,const void *pointer,const V
 	if (sizeToCopy > objectSize){
 		sizeToCopy = objectSize;
 	}
-	Memory::Copy(data,pointer,sizeToCopy);
+	if (pointer != NULL){
+	    Memory::Copy(data,pointer,sizeToCopy);
+	}
 }
 
 

@@ -20,15 +20,16 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
-#include <Private/RuntimeEvaluatorFunctions.h>
-#include <Private/RuntimeEvaluatorVariables.h>
-#include <Private/RuntimeEvaluatorVariableInformation.h>
+#include "Private/RuntimeEvaluatorVariables.h"
+#include "Private/RuntimeEvaluatorVariableInformation.h"
 
-#include <RuntimeEvaluator.h>
+#include "RuntimeEvaluator.h"
 #include <stdio.h>
 
 #include "Stack.h"
 #include "StaticStack.h"
+
+#include "../Private/RuntimeEvaluatorFunction.h"
 #include "AnyType.h"
 
 namespace MARTe{
@@ -334,9 +335,10 @@ static inline ErrorManagement::ErrorType Allocate(
         if (ret){
             variableInformation.GetLocation() = variableLocation;
 
+            MatrixSize ms = variableInformation.GetDimension();
             // saves the information about the variable size and position
-            variablesMemory.Variable<Matrix<float> >(variableLocation).InitMatrix(reinterpret_cast<float *>(variableInformation.GetExternalMemoryPtr()),variableInformation.GetDimension(0),variableInformation.GetDimension(1));
-printf("allocated matrix to [%i][%i]\n",variablesMemory.Variable<Matrix<float> >(variableLocation).GetNumberOfRows(),variablesMemory.Variable<Matrix<float> >(variableLocation).GetNumberOfColumns());
+            variablesMemory.Variable<Matrix<float> >(variableLocation).InitMatrix(reinterpret_cast<float *>(variableInformation.GetExternalMemoryPtr()),ms.numberOfRows,ms.numberOfColumns);
+//printf("allocated-x matrix to [%i][%i]\n",variablesMemory.Variable<Matrix<float> >(variableLocation).GetNumberOfRows(),variablesMemory.Variable<Matrix<float> >(variableLocation).GetNumberOfColumns());
         }
     }
     else  // external referenced numbers
@@ -537,6 +539,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
             // matchOutput = true;
             // assign code2 to address of variable
             if (command == readToken){
+                bool isAlreadyAllocated = false;
                 ret.invalidOperation = !hasParameter1 || hasParameter2;
                 COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
 
@@ -558,16 +561,16 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     }
                 }
 
-                bool isAlreadyAllocated = variableInformation->IsAllocated();
-
-                // ALLOCATE VARIABLE IF NOT ALREADY
-                if (ret && !isAlreadyAllocated){
-
+                if (ret){
                     // USE RREAD FOR NUMERIC REFERENCED
                     if (variableInformation->IsValidReferencedNumber()){
                         command = remoteReadToken;
                     }
+                    isAlreadyAllocated = variableInformation->IsAllocated();
+                }
 
+                // ALLOCATE VARIABLE IF NOT ALREADY
+                if (ret && !isAlreadyAllocated){
                     ret = Allocate(*variableInformation,variablesMemory);
                 }
 
@@ -680,7 +683,7 @@ printf("pushed %s to stack\n",cs.GetList());
                 ShowStack(typeList(),matchOutput,typeStack);
                 ret.unsupportedFeature = !FindPCode(code,command,typeStack,matchOutput);
                 COMPOSITE_REPORT_ERROR(ret,"command ",command, "(",typeList,") not found");
-printf("stack before search: %s\n",typeList.GetList());fflush(stdout);
+printf("%s:\n stack before search: %s\n",command.GetList(),typeList.GetList());fflush(stdout);
 typeList = "";
 //ShowStack(typeList(),matchOutput,typeStack);
 //printf("stack after search: %s\n",typeList.GetList());fflush(stdout);
@@ -692,13 +695,13 @@ typeList = "";
             }
 
 
-            List<VariableInformation> db2;
+            List<VariableInformation> intermediateResultVariablesdb;
             /**
              * UPDATE TYPE STACK
              * this call may be calling PCODE specialised update function
              */
             if (ret){
-            	ret = functionRecords[code].UpdateStack(typeStack,dataStackSize,db2,matchOutput,dummyID);
+            	ret = functionRecords[code].UpdateStack(typeStack,dataStackSize,intermediateResultVariablesdb,matchOutput,dummyID);
 DynamicCString typeList;
 ShowStack(typeList(),matchOutput,typeStack);
 printf("stack after update stack: %s\n",typeList.GetList());fflush(stdout);
@@ -723,14 +726,15 @@ printf("stack after update stack: %s\n",typeList.GetList());fflush(stdout);
             /**
              * HANDLE TEMPORARY MATRIX VARIABLES
              */
-            bool hasNewVariables = (db2.Size() > 0);
-            while (ret && hasNewVariables){
+            while (ret && (intermediateResultVariablesdb.Size() > 0)){
             	VariableInformation variableInformation;
-            	ret = db2.Remove(variableInformation);
+            	ret = intermediateResultVariablesdb.Remove(variableInformation);
+                REPORT_ERROR(ret,"intermediateResultVariablesdb.Remove failed ");
 
             	// ALLOCATE new variables
                 if (ret){
                     ret = Allocate(variableInformation,variablesMemory);
+                    REPORT_ERROR(ret,"Allocate failed ");
                 }
 
                 // ADD ADDITIONAL PCODE INFO
@@ -749,8 +753,11 @@ printf("stack after update stack: %s\n",typeList.GetList());fflush(stdout);
                     ret = typeStack.Push(at);
                     REPORT_ERROR(ret,"error adding result type to stack");
                 }
-
             }
+DynamicCString typeList;
+ShowStack(typeList(),matchOutput,typeStack);
+printf("stack after allocation: %s\n",typeList.GetList());fflush(stdout);
+
         }
     }
 
@@ -819,14 +826,19 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
                 AnyType src;
                 // complex variables
                 if (CCString(vd.GetModifiers()).GetSize() != 0){
-                    DataMemoryAddress  y1 = *((DataMemoryAddress *)stackPtr);
+                    dataStackIndex += ByteSizeToDataMemorySize(sizeof(RuntimeEvaluator::DataMemoryAddress));
+                    DataMemoryElement *pY = stackPtr- dataStackIndex;
+                    DataMemoryAddress  y1 = pY[0];
                     const void * p = (const void *)&Variable<uint8>(y1);
                     src = AnyType (vd,p);
+ //                   src = AnyType (vd,NULL);
 
+//printf("IN: dataStackIndex = %i y1 = %i stack = %li %p\n",dataStackIndex,y1, stackPtr-(DataMemoryElement *)stack.GetDataPointer(),pY);
                 } else // scalars
                 {
                     dataStackIndex += ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
                     src = AnyType (vd,stackPtr - dataStackIndex);
+//printf("IN: dataStackIndex = %i %i stack = %li \n",dataStackIndex,vd.GetSummaryTypeDescriptor().StorageSize(),stackPtr-(DataMemoryElement *)stack.GetDataPointer());
                 }
                 ret = src.CopyTo(dest);
 
@@ -929,14 +941,19 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
                 AnyType src;
                 // complex variables
                 if (CCString(vd.GetModifiers()).GetSize() != 0){
-                    DataMemoryAddress  y1 = *((DataMemoryAddress *)stackPtr);
+                    dataStackIndex += ByteSizeToDataMemorySize(sizeof(RuntimeEvaluator::DataMemoryAddress));
+                    DataMemoryElement *pY = stackPtr- dataStackIndex;
+                    DataMemoryAddress  y1 = pY[0];
                     const void * p = (const void *)&Variable<uint8>(y1);
                     src = AnyType (vd,p);
-
-                } else // scalars
+//                    src = AnyType (vd,NULL);
+//printf("OUT: dataStackIndex = %i y1 = %i stack = %li %p\n",dataStackIndex,y1, stackPtr-(DataMemoryElement *)stack.GetDataPointer(),pY);
+                }
+                else // scalars
                 {
                     dataStackIndex += ByteSizeToDataMemorySize(vd.GetSummaryTypeDescriptor().StorageSize());
                     src = AnyType (vd,stackPtr - dataStackIndex);
+//printf("OUT: dataStackIndex = %i %i stack = %li \n",dataStackIndex,vd.GetSummaryTypeDescriptor().StorageSize(),stackPtr-(DataMemoryElement *)stack.GetDataPointer());
                 }
                 ret = src.CopyTo(dest);
 
@@ -966,7 +983,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
     case fastMode:{
         while(codeMemoryPtr < codeMemoryMaxPtr){
             CodeMemoryElement pCode = GetPseudoCode();
-            functionRecords[pCode].ExecuteFunction(*this);
+            functionRecords[pCode].executeFunction(*this);
         }
     }break;
     case safeMode:{
@@ -974,7 +991,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
         DataMemoryElement *stackMaxPtr = stackPtr + stack.GetNumberOfElements();
         while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
             CodeMemoryElement pCode = GetPseudoCode();
-            functionRecords[pCode].ExecuteFunction(*this);
+            functionRecords[pCode].executeFunction(*this);
             // note that the syackPtr will reach the max value - as it points to the next value to write
             runtimeError.outOfRange = ((stackPtr > stackMaxPtr) ||  (stackPtr < stackMinPtr));
             COMPOSITE_REPORT_ERROR(runtimeError,"stack over/under flow ", (int64)(stackPtr-stackMinPtr), " [0 - ", (int64)(stackMaxPtr- stackMinPtr), "]");
@@ -1013,7 +1030,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
                 REPORT_ERROR(ret,"analysing input side of function call");
 
                 // executes code
-                fr.ExecuteFunction(*this);
+                fr.executeFunction(*this);
 
                 if (ret){
                     // show outputs

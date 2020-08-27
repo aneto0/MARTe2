@@ -36,7 +36,9 @@
 
 #include "RuntimeEvaluator.h"
 #include "AnyType.h"
+#include "AnyObject.h"
 #include "VariableDescriptor.h"
+#include "Private/MatrixSize.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -58,80 +60,86 @@ public:
          RuntimeEvaluatorFunction &fr = functionRecords[pCode];
       * initialises data
       */
-                                    VariableInformation();
+                                        VariableInformation();
 
      /**
-      * frees memory
+      * frees memory if necessary
       */
-                                    ~VariableInformation();
+                                        ~VariableInformation();
+
+     /**
+      * sets name and type
+     */
+                                        VariableInformation(CCString name,const VariableDescriptor &vd);
 
      /**
       * copies from and takes memory freeing responsibilities from in
-     */
-                                    VariableInformation(CCString name,const VariableDescriptor &vd);
+      */
+                                        VariableInformation(const VariableInformation &vi);
 
      /**
       * allocates memory
       */
-     ErrorManagement::ErrorType     AllocateMatrixMemory();
+     ErrorManagement::ErrorType         AllocateMatrixMemory();
 
      /**
       *
       */
-     inline bool                    IsAllocated();
+     inline bool                        IsAllocated();
 
      /**
       *
       */
-     bool                           IsValidMatrix();
+     bool                               IsValidMatrix();
 
      /**
       * a number without a reference to an external memory
       */
-     bool                           IsValidNumber();
+     bool                               IsValidNumber();
 
      /**
       * a number with a reference to an external memory
       */
-     bool                           IsValidReferencedNumber();
+     bool                               IsValidReferencedNumber();
 
      /**
       * externalMemory is NULL and Type is void
       */
-     ErrorManagement::ErrorType     IsValidVoid(bool& isVoid);
-     /**
-      *
-      */
-     inline bool                    IsExternalMemoryAllocated();
+     ErrorManagement::ErrorType         IsValidVoid(bool& isVoid);
 
      /**
       *
       */
-     inline void *                  GetExternalMemoryPtr();
+     inline void *                      GetExternalMemoryPtr();
 
      /**
       *
       */
-     inline CCString                GetName() const;
+     inline CCString                    GetName() const;
 
      /**
       *
       */
-     inline void                    SetName(CCString name);
+     inline void                        SetName(CCString name);
 
      /**
       *
       */
-     inline DataMemoryAddress &     GetLocation() ;
+     inline DataMemoryAddress &         GetLocation() ;
      /**
       *
       */
-     inline uint32                  GetDimension(int nDim);
+     inline MatrixSize                  GetDimension();
 
      /**
       *
       */
      inline const VariableDescriptor &  GetType() const;
+
+     /**
+      *
+      */
+     AnyType                            GetAnyType(RuntimeEvaluator &context) const;
 
      /**
       * copies the type information from at.
@@ -145,8 +153,18 @@ public:
       * SetType(VariableDescriptor(variable)) --> will set the type to VariableDescriptor !!
       * SetType(TypeDescriptor(xxxType)) --> will set the type to TypeDescriptor !!
       */
-     ErrorManagement::ErrorType     SetType(AnyType at);
+     ErrorManagement::ErrorType         SetType(AnyType at);
 
+
+     /**
+      * setups the VariableInformation for an empty matrix
+      * memory will be allocated using AllocateMatrixMemory according to the TypeDescriptor and the MatrixSize
+      */
+     ErrorManagement::ErrorType         CreateTemporaryResultMatrix(CCString name,const MatrixSize & ms,const TypeDescriptor &td);
+
+
+     /* prevent use of = */
+     void                               operator= (const VariableInformation &vi);
 
 private:
 
@@ -154,29 +172,29 @@ private:
       * Detects a Variable description pattern AnnnAmmm
       * On success extracts nnn and mmm and initialises dimensions
       */
-     bool                           IsValidArray2D();
+     bool                               IsValidArray2D();
 
      /**
       *
       */
-     void                           Free();
+     void                               Free();
 
      /**
       * name of the variable.
       */
-     DynamicCString                 name;
+     DynamicCString                     name;
 
      /**
       * either a numeric type or a Matrix<float> or Matrix<double>
       */
-     VariableDescriptor             type;
+     VariableDescriptor                 type;
 
      /**
       * location of the variable in the variable area.
       * if location is below the start of the variables then
       * it is a constant
       */
-     DataMemoryAddress              location;
+     DataMemoryAddress                  location;
 
      /**
       * NULL if the variable is local
@@ -184,18 +202,19 @@ private:
       * the address of a remotely address array for Matrix<>  if memoryAllocated = false
       * the address of a local  Matrix<>  if memoryAllocated = true
       */
-     void *                         externalMemory;
+     void *                             externalMemory;
 
      /**
       *
       */
-     uint32                         dimensions[2];
+     MatrixSize                         dimensions;
+
 
      /**
-      * The memory pointed to by matrix has been allocated
-      * and needs to be freed
+      * keep a reference to the memory allocated
+      * so when all the copies of this object are deleted this also is deallocated
       */
-     mutable bool                   memoryAllocated;
+     Reference                          memory;
 };
 
 
@@ -207,9 +226,6 @@ bool RuntimeEvaluator::VariableInformation::IsAllocated(){
     return (location != InvalidDataMemoryAddress);
 }
 
-bool RuntimeEvaluator::VariableInformation::IsExternalMemoryAllocated(){
-    return (externalMemory != NULL) && (memoryAllocated);
-}
 
 void *RuntimeEvaluator::VariableInformation::GetExternalMemoryPtr(){
     return externalMemory;
@@ -233,18 +249,9 @@ RuntimeEvaluator::DataMemoryAddress & RuntimeEvaluator::VariableInformation::Get
     return location;
 }
 
-
-uint32 RuntimeEvaluator::VariableInformation::GetDimension(int nDim){
-    uint32 dim = 1;
-    if (nDim == 0){
-        dim = dimensions[0];
-    } else
-    if (nDim == 1){
-        dim = dimensions[1];
-    }
-    return dim;
+MatrixSize RuntimeEvaluator::VariableInformation::GetDimension(){
+    return dimensions;
 }
-
 
 
 
