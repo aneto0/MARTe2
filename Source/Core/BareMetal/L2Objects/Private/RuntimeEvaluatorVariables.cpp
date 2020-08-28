@@ -30,7 +30,6 @@ RuntimeEvaluatorVariables::RuntimeEvaluatorVariables(RuntimeEvaluator::DataMemor
     allocatedSize   = 0;
     usedSize        = 0;
     DeAllocate();
-//    memory = NULL_PTR(DataMemoryElement *);
 }
 
 void RuntimeEvaluatorVariables::DeAllocate(){

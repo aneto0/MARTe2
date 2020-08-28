@@ -47,6 +47,9 @@ namespace MARTe{
 
 /**
  *
+ * manages the variablesMemoryPtr variable during compilation.
+ * after destruction the variablesMemoryPtr is left with the ptr of the final buffer
+ *
  */
 class RuntimeEvaluatorVariables {
 
@@ -61,7 +64,6 @@ public:
      * does not call destructors of objects created in this
      */
                                               ~RuntimeEvaluatorVariables();
-
 
     /**
      * allocates the object T using the memory of this pool
@@ -135,7 +137,6 @@ RuntimeEvaluator::DataMemoryAddress RuntimeEvaluatorVariables::GetUsedSize(){
 template <class T>
 ErrorManagement::ErrorType RuntimeEvaluatorVariables::Allocate(RuntimeEvaluator::DataMemoryAddress &location){
     ErrorManagement::ErrorType ret;
-//    DataMemoryAddress ret = (DataMemoryAddress)-1;
     RuntimeEvaluator::DataMemoryAddress  size = RuntimeEvaluator::ByteSizeToDataMemorySize(sizeof(T));
 
     ret = RequestMemory(size);

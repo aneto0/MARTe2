@@ -461,12 +461,6 @@ public:
      *  TODO
      *  size of constants area
      */
-    inline uint32 									GetSizeOfConstants();
-
-    /**
-     *  TODO
-     *  size of constants area
-     */
     inline uint32 									GetSizeOfVariables();
 
     /**
@@ -651,12 +645,6 @@ private:
     List<VariableInformation>         outputVariableInfo;
 
     /**
-     * address of first variable (after constants) or how many MemoryElement are used for constants
-     */
-//    DataMemoryAddress                 startOfVariables;
-    //@}
-
-    /**
      * @name    Members reinitialized every Execute()
      * @details These variables allow rapid access to stack,variableMemory and codeMemory.
      */
@@ -716,15 +704,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-
-uint32 RuntimeEvaluator::GetSizeOfConstants(){
-	return 0;
-}
-
 uint32 RuntimeEvaluator::GetSizeOfVariables(){
-//	return variablesMemory.GetNumberOfElements();
-//    return variablesMemory.GetUsedSize();
     return sizeOfVariablesMemory;
 }
 
@@ -770,7 +750,6 @@ template<typename T>
 T &RuntimeEvaluator::Variable(DataMemoryAddress variableIndex){
     // note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
     return (T&)variablesMemoryPtr[variableIndex];
-//    return variablesMemory.Variable<T>(variableIndex);
 }
 
 RuntimeEvaluator::CodeMemoryElement RuntimeEvaluator::GetPseudoCode(){

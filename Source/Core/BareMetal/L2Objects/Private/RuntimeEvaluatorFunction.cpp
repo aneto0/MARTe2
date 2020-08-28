@@ -153,7 +153,6 @@ ErrorManagement::ErrorType RuntimeEvaluatorFunction::UpdateStack(
         return updateStackFun(*this,typeStack,dataStackSize,intermediateResultVariablesdb,dummyID);
     }
 
-
     Queue<MatrixSize> mSizeInputQueue;
     Queue<MatrixSize> mSizeOutputQueue;
 //printf("\n [S] size = %i \n",mSizeInputQueue.Size());

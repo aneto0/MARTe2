@@ -53,8 +53,6 @@ int main(){
 			}
 		}
 
-		printf("size of constant area = %i\n",context.GetSizeOfConstants());
-
 	}
 
 	if (ret){
