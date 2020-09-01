@@ -702,6 +702,11 @@ public:
     inline TypeDescriptor GetTypeDescriptor() const;
 
     /**
+     * @brief Sets the pointed data TypeDescriptor.
+     */
+    inline void SetTypeDescriptor(const TypeDescriptor dataDescriptorIn);
+
+    /**
      * @brief Returns the data bit address (i.e  the bit shift respect to the data pointer).
      * @return the data bit address.
      */
@@ -788,6 +793,12 @@ public:
      * @return the bit size of this type.
      */
     inline uint32 GetBitSize() const;
+
+    /**
+     * @brief Retrieves the total size in byte of the memory associated to this AnyType.
+     * @return the byte size of the memory associated to this AnyType.
+     */
+    inline uint32 GetDataSize() const;
 
     /**
      * @brief Retrieves the element in the specified position.
@@ -1341,6 +1352,10 @@ TypeDescriptor AnyType::GetTypeDescriptor() const {
     return dataDescriptor;
 }
 
+void AnyType::SetTypeDescriptor(const TypeDescriptor dataDescriptorIn) {
+    dataDescriptor = dataDescriptorIn;
+}
+
 uint8 AnyType::GetBitAddress() const {
     return bitAddress;
 }
@@ -1387,6 +1402,22 @@ uint32 AnyType::GetByteSize() const {
 
 uint32 AnyType::GetBitSize() const {
     return (dataDescriptor.numberOfBits + bitAddress);
+}
+
+uint32 AnyType::GetDataSize() const {
+
+    uint32 totalDataSize = 0u;
+    uint32 arrayLength   = 1u;
+    uint32 dataByteSize  = GetByteSize();
+
+    for (uint32 dimIdx = 0u; dimIdx < numberOfDimensions; dimIdx++) {
+
+        arrayLength = arrayLength*numberOfElements[dimIdx];
+    }
+
+    totalDataSize = arrayLength*dataByteSize;
+
+    return totalDataSize;
 }
 
 /**
