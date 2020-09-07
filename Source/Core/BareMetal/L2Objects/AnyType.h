@@ -702,7 +702,7 @@ public:
     inline TypeDescriptor GetTypeDescriptor() const;
 
     /**
-     * @brief Sets the pointed data TypeDescriptor.
+     * @brief Sets the TypeDescriptor of the data pointed by this AnyType.
      */
     inline void SetTypeDescriptor(const TypeDescriptor dataDescriptorIn);
 
