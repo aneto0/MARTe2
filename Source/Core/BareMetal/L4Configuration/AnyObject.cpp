@@ -45,6 +45,60 @@
 
 namespace MARTe {
 
+static bool SerializeStaticTensor(const AnyType &typeIn,
+                                  AnyType &typeOut) {
+    uint32 numberOfColumns = typeIn.GetNumberOfElements(0u);
+    uint32 numberOfRows    = typeIn.GetNumberOfElements(1u);
+    uint32 numberOfPages   = typeIn.GetNumberOfElements(2u);
+    TypeDescriptor sourceDescriptor = typeIn.GetTypeDescriptor();
+    void *sourcePointer = typeIn.GetDataPointer();
+
+    bool ret = true;
+
+    // allocate the memory block on destination
+    uint32 memoryAllocationSize = 0u;
+    bool isString   = (sourceDescriptor.type == SString);
+    bool isCCString = (sourceDescriptor.type == BT_CCString);
+
+    // the SString will be changed into a CCString
+    if (isString) {
+        memoryAllocationSize = static_cast<uint32>(sizeof(char8 *) * numberOfRows * numberOfColumns * numberOfPages);
+    }
+    else {
+        memoryAllocationSize = typeIn.GetByteSize() * numberOfRows * numberOfColumns * numberOfPages;
+    }
+
+    void* destPointer = HeapManager::Malloc(memoryAllocationSize);
+    typeOut = typeIn;
+    typeOut.SetDataPointer(destPointer);
+
+    if ((isString) || (isCCString)) {
+        // matrix of pointers; copy element by element
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Serialisation of string AnyType with dimension > 2 not supported!");
+        ret = false;
+    }
+    else {
+        // copy all the block
+        ret = MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+    }
+    
+    return ret;
+}
+
+static bool SerializeTensor(const AnyType &typeIn,
+                            AnyType &typeOut) {
+    bool ret = false;
+    if (typeIn.IsStaticDeclared()) {
+        ret = SerializeStaticTensor(typeIn, typeOut);
+    }
+    else {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Serialisation of non-static AnyType with dimension > 2 not supported!");
+        ret = false;
+    }
+
+    return ret;
+}
+
 static bool SerializeStaticMatrix(const AnyType &typeIn,
                                   AnyType &typeOut) {
     uint32 numberOfColumns = typeIn.GetNumberOfElements(0u);
@@ -325,8 +379,11 @@ bool AnyObject::Serialise(const AnyType &typeIn) {
         else if (nOfDimensions == 2u) {
             ok = SerializeMatrix(typeIn, type);
         }
+        else if (nOfDimensions == 3u) {
+            ok = SerializeTensor(typeIn, type);
+        }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Serialisation of AnyType with dimension > 2 not supported!");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Serialisation of AnyType with dimension > 3 not supported!");
             ok = false;
         }
 
