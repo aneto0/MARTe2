@@ -135,7 +135,6 @@ bool RuntimeEvaluatorTest::TestIntegration() {
 
         //VAR SCAN RESULT
         while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i @%04x = %s \n",index,var->location,var->name.Buffer());
             index++;
             if (var->name == "A"){
                 var->type = Float32Bit;
@@ -159,7 +158,6 @@ bool RuntimeEvaluatorTest::TestIntegration() {
 
         index = 0;
         while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i @%04x = %s\n",index,var->location,var->name.Buffer());
             index++;
             if (var->name == "C"){
                 var->type = Float32Bit;
