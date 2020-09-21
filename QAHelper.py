@@ -235,9 +235,8 @@ def CheckHeaders(files):
 
     return headersStatus 
 
-def GetChangedFiles(branch):
+def GetChangedFiles(repo, branch):
     changedFiles = []
-    repo = git.Repo('.')
     index = repo.index
     diffs = index.diff(branch)
     for diff in diffs:
@@ -270,26 +269,46 @@ def ParseLCovFile(lines):
     return coverage
 
 #Allow to keep enviroment variables and wait for the command to complete while printing to the screen
-def ExecShellCommand(command):
+def ExecShellCommand(command, logOutput = True, logErrors = True):
     logger.info('Calling command {0}'.format(command))
-    process = subprocess.Popen([command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
-    for outLine in iter(process.stdout.readline, ''):
-        logger.debug(outLine)
-    for errLine in iter(process.stderr.readline, ''):
-        logger.critical(outLine)
+    if not isinstance(command, list):
+        command = [command]
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
+    if (logOutput):
+        for outLine in iter(process.stdout.readline, ''):
+            logger.debug(outLine)
+    if (logErrors):
+        for errLine in iter(process.stderr.readline, ''):
+            logger.critical(errLine)
     process.wait()
+    return process
 
-def ExecLCov(clean):
+def ExecLCov(clean, lcovBuildDir, lcovBuildPrefix, gtestExec, gtestFilters):
+    #Build with coverage enabled
     if (clean):
         ExecShellCommand('make -f Makefile.cov clean')
 
     ExecShellCommand('make -f Makefile.cov')
-    #process = subprocess.Popen(['make', '-f', 'Makefile.cov'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
+   
+    #Run baseline coverage
+    ExecShellCommand('lcov --capture --initial --directory . --no-external --output-file {0}/{1}.initial'.format(lcovBuildDir, lcovBuildPrefix))
+    
+    #Execute the tests
+    for f in gtestFilters:
+        ExecShellCommand('{0} --gtest_filter={1}'.format(gtestExec, f))
 
-def GetLCovOutput():
-    process = subprocess.Popen(['lcov', '-l', 'Build/MARTe2.coverage.info'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-    #Popen is not blocking. Could also have used subprocess.call
-    process.wait()
+    #Create test coverage data file
+    ExecShellCommand('lcov --capture --directory . --no-external --output-file {0}/{1}.tests'.format(lcovBuildDir, lcovBuildPrefix))
+
+    #Combine baseline and test coverage data
+    ExecShellCommand('lcov --add-tracefile {0}/{1}.initial --add-tracefile {0}/{1}.tests --output-file {0}/{1}.1'.format(lcovBuildDir, lcovBuildPrefix))
+
+    #Remove false positives
+    ExecShellCommand('lcov --remove {0}/{1}.1 "/Test*" --output-file {0}/{1}.2'.format(lcovBuildDir, lcovBuildPrefix))
+    ExecShellCommand('lcov --remove {0}/{1}.2 "*gtest*" --output-file {0}/{1}'.format(lcovBuildDir, lcovBuildPrefix))
+
+def GetLCovOutput(lcovBuildDir, lcovBuildPrefix):
+    process = ExecShellCommand('lcov -l {0}/{1}'.format(lcovBuildDir,lcovBuildPrefix), False, False)
     errLines = process.stderr.readlines()
     ok = True
     for line in errLines:
@@ -303,6 +322,18 @@ def GetLCovOutput():
         
     return lcovLines
 
+def ChangeBranch(repo, targetBranch):
+    ok = True
+    currentBranch = repo.active_branch.name
+    try:
+        logger.debug('Checking out to branch {0} from branch {1}'.format(targetBranch, currentBranch))
+        repo.git.checkout(targetBranch)
+    except Exception as e:
+        ok = False
+        logger.critical('Failed checkout to branch {0} from branch {1}'.format(targetBranch, currentBranch))
+
+    return ok
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Script to support the QA activities')
     logOptions = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
@@ -310,6 +341,10 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--branch', type=str, help='Target branch against which the changes should be validated', default='develop')
     parser.add_argument('-df', '--dfile', type=str, help='Validate a specific file (mostly for debug)', default='')
     parser.add_argument('-af', '--allfiles', action='store_true', help='Validates all source files (mostly for debug)', default='')
+    parser.add_argument('-lg', '--gtestlcov', type=str, help='Lcov GTest executor location', default='Test/GTest/cov/MainGTest.ex')
+    parser.add_argument('-lf', '--gtestlcovfilter', type=str, help='Lcov GTest filters', nargs='*', default=['*'])
+    parser.add_argument('-ld', '--gtestlcovdir', type=str, help='Lcov GTest build directory', default='Build')
+    parser.add_argument('-lp', '--gtestlcovprefix', type=str, help='Lcov GTest build file prefix', default='MARTe2.coverage.info')
 
     args = parser.parse_args()
     
@@ -318,32 +353,49 @@ if __name__ == '__main__':
     logger.setLevel(logCriticality)
     consoleHandler.setLevel(logCriticality)
 
-    if (len(args.dfile) != 0):
-        changedFiles = [args.dfile]
-    elif (args.allfiles):
-        changedFiles = [f for f in glob.glob('Source/**/*.h', recursive=True)]
-    else:
-        changedFiles = GetChangedFiles(args.branch)
-    CheckLint(['MARTeApp.cpp', 'Bootstrap.cpp'])
-   
-    functionalTestStatus = CheckFunctionalTests(changedFiles)
-    for ft in functionalTestStatus:
-        if (len(functionalTestStatus[ft]['untested']) > 0):
-            logger.info('Class: {0} Untested functions: {1}'.format(functionalTestStatus[ft]['class'], functionalTestStatus[ft]['untested']))
+    repo = git.Repo('.')
+#    if (len(args.dfile) != 0):
+#        changedFiles = [args.dfile]
+#    elif (args.allfiles):
+#        changedFiles = [f for f in glob.glob('Source/**/*.h', recursive=True)]
+#    else:
+#        changedFiles = GetChangedFiles(repo, args.branch)
+#    CheckLint(['MARTeApp.cpp', 'Bootstrap.cpp'])
+#   
+#    functionalTestStatus = CheckFunctionalTests(changedFiles)
+#    for ft in functionalTestStatus:
+#        if (len(functionalTestStatus[ft]['untested']) > 0):
+#            logger.info('Class: {0} Untested functions: {1}'.format(functionalTestStatus[ft]['class'], functionalTestStatus[ft]['untested']))
+#
+#    headersStatus = CheckHeaders(changedFiles)
+#    for hs in headersStatus:
+#        logger.debug('File: {0} header status: {1}'.format(hs, headersStatus[hs]))
+#        for status in headersStatus[hs]:
+#            if (status != 'allok'):
+#                if (not headersStatus[hs][status]):
+#                    logger.critical('Invalid {0} in file {1}'.format(status, hs))
 
-    headersStatus = CheckHeaders(changedFiles)
-    for hs in headersStatus:
-        logger.debug('File: {0} header status: {1}'.format(hs, headersStatus[hs]))
-        for status in headersStatus[hs]:
-            if (status != 'allok'):
-                if (not headersStatus[hs][status]):
-                    logger.critical('Invalid {0} in file {1}'.format(status, hs))
-
-    ExecLCov(True)
-    lcovLines = GetLCovOutput()
+    #Execute LCov in current branch
+    #ExecLCov(True, args.gtestlcovdir, args.gtestlcovprefix, args.gtestlcov, args.gtestlcovfilter)
+    lcovLines = GetLCovOutput(args.gtestlcovdir, args.gtestlcovprefix)
     if (len(lcovLines) == 0):
         logger.critical('Failed to read coverage file')
     else:
-        covResults = ParseLCovFile(lcovLines)
-        #logger.debug(covResults)
+        covResultsCurrentBranch = ParseLCovFile(lcovLines)
+        logger.debug(covResultsCurrentBranch)
+
+    #Execute LCov in target branch
+    lcovPrefixTargetBranch = '{0}_to_compare'.format(args.gtestlcovprefix)
+    ok = ChangeBranch(repo, args.branch)
+    if (ok):
+        ExecLCov(True, args.gtestlcovdir, lcovPrefixTargetBranch, args.gtestlcov, args.gtestlcovfilter)
+        lcovLines = GetLCovOutput(args.gtestlcovdir, lcovPrefixTargetBranch)
+        if (len(lcovLines) == 0):
+            logger.critical('Failed to read coverage file')
+        else:
+            covResultsCurrentBranch = ParseLCovFile(lcovLines)
+            logger.debug(covResultsCurrentBranch)
+    else:
+        logger.critical('Failed to change branch')
+
 
