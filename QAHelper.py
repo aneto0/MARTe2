@@ -385,6 +385,7 @@ if __name__ == '__main__':
         logger.debug(covResultsCurrentBranch)
 
     #Execute LCov in target branch
+    currentBranch = repo.active_branch.name
     lcovPrefixTargetBranch = '{0}_to_compare'.format(args.gtestlcovprefix)
     ok = ChangeBranch(repo, args.branch)
     if (ok):
@@ -397,5 +398,6 @@ if __name__ == '__main__':
             logger.debug(covResultsCurrentBranch)
     else:
         logger.critical('Failed to change branch')
-
+    if (ok):
+        ok = ChangeBranch(repo, currentBranch)
 
