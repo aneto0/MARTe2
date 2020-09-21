@@ -206,13 +206,13 @@ public:
      * @verbatim %[flags][width][.precision]type @endverbatim
      *
      * The <tt>[flags]</tt> notation is slightly different from the standard printf notation:
-     *   - ' ': activates padding (fills up to width using spaces);
+     *   - ' ': activates padding with spaces (fills up to width using spaces);
+     *   - '0': activates padding with zeroes (fills up to width using zeroes);
      *   - '-': left-align (put padding spaces after printing the object);
      *   - '#': activates fullNotation, i.e.:
      *     - " enclosing strings
-     *     - 0x/0b/0o in front of Hex/octal/binary
-     *   - '0': prepends zeros for Hex Octal and Binary notations.\n
-     *     The number of zeros depends on precision and chosen notation (64 bit int and binary notation = up to 64 zeros)
+     *     - 0x/0b/0o add zeroes in front of Hex/octal/binary
+     *       The number of zeros depends on precision and chosen notation (64 bit int and binary notation = up to 64 zeros)
      *
      * <tt>[width].[precision]</tt> are two integer numbers.
      *
