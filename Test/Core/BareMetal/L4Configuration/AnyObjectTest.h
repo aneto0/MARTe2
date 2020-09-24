@@ -173,6 +173,11 @@ public:
     bool TestSerialise_MatrixString();
 
     /**
+     * @brief Tests the Serialise function with a uint32[][]
+     */
+    bool TestSerialise_StaticTensor();
+
+    /**
      * @brief Tests the GetClassProperties (from Object)
      */
     bool TestGetClassProperties();

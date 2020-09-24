@@ -263,6 +263,34 @@ bool AnyObjectTest::TestSerialise_MatrixString() {
 
     return ok;
 }
+#include <stdio.h>
+bool AnyObjectTest::TestSerialise_StaticTensor() {
+    uint32 nOfRows = 2;
+    uint32 nOfColumns = 3;
+    uint32 nOfPages = 3;
+    const uint32 intArrWrite[3][2][3] = { { {1 , 2 , 3 }, {4 , 5 , 6 } },
+                                          { {7 , 8 , 9 }, {10, 11, 12} },
+                                          { {13, 14, 15}, {16, 17, 18} }
+                                        };
+    AnyType at(UnsignedInteger32Bit, 0u, intArrWrite);
+    at.SetNumberOfDimensions(3u);
+    at.SetNumberOfElements(0u, nOfRows);
+    at.SetNumberOfElements(1u, nOfColumns);
+    at.SetNumberOfElements(2u, nOfPages);
+    
+    AnyObject anyObj;
+    bool ok = anyObj.Serialise(at);
+    uint32* testTensor = reinterpret_cast<uint32*>(anyObj.GetType().GetDataPointer());
+    for (uint32 k = 0; ok && (k < nOfPages); k++) {
+        for (uint32 i = 0; ok && (i < nOfRows); i++) {
+            for (uint32 j = 0; ok && (j < nOfColumns); j++) {
+                ok = (MemoryOperationsHelper::Compare( testTensor + (j + nOfColumns*(i + nOfRows*k)) , (void*) &intArrWrite[k][i][j], 4u) == 0u);
+            }
+        }
+    }
+
+    return ok;
+}
 
 bool AnyObjectTest::TestGetClassProperties() {
     AnyObject anyObj;

@@ -601,6 +601,11 @@ TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_MatrixString) {
     ASSERT_TRUE(anyObjTest.TestSerialise_MatrixString());
 }
 
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticTensor) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_StaticTensor());
+}
+
 TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetClassProperties) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetClassProperties());
