@@ -612,6 +612,30 @@ bool AnyTypeTest::TestGetTypeDescriptor() {
     return at.GetTypeDescriptor() == tdes;
 }
 
+bool AnyTypeTest::TestSetTypeDescriptor() {
+    bool ok = true;
+    AnyType at;
+    uint32 numberOfTypes = 11u;
+    TypeDescriptor types[] = {
+        SignedInteger8Bit,
+        SignedInteger16Bit,
+        SignedInteger32Bit,
+        SignedInteger64Bit,
+        UnsignedInteger8Bit,
+        UnsignedInteger16Bit,
+        UnsignedInteger32Bit,
+        UnsignedInteger64Bit,
+        Float32Bit,
+        Float64Bit,
+        InvalidType
+        };
+    for (uint32 typeIdx = 0u; (typeIdx < numberOfTypes) && ok; typeIdx++) {
+        at.SetTypeDescriptor(types[typeIdx]);
+        ok = ( at.GetTypeDescriptor() == types[typeIdx] );
+    }
+    return ok;
+}
+
 bool AnyTypeTest::TestGetBitAddress() {
     uint32 bitAddr = 10;
     AnyType at(InvalidType, bitAddr, (void*) NULL);
@@ -686,6 +710,23 @@ bool AnyTypeTest::TestGetByteSize() {
 
     return true;
 }
+
+bool AnyTypeTest::TestGetDataSize() {
+    TypeDescriptor type = UnsignedInteger64Bit;
+    uint32 numberOfDimensions = 3u;
+    uint32 numberOfElements[] = { 1u, 2u, 3u };
+    uint32 totalSize = (64u / 8u) * numberOfElements[0u] * numberOfElements[1u] * numberOfElements[2u];
+    
+    AnyType at;
+    at.SetTypeDescriptor(type);
+    at.SetNumberOfDimensions(numberOfDimensions);
+    at.SetNumberOfElements(0u, numberOfElements[0u]);
+    at.SetNumberOfElements(1u, numberOfElements[1u]);
+    at.SetNumberOfElements(2u, numberOfElements[2u]);
+    
+    return at.GetDataSize() == totalSize;
+}
+
 #include "stdio.h"
 bool AnyTypeTest::TestPositionOperator_MatrixStructuredStaticDeclared() {
 

@@ -389,6 +389,10 @@ TEST(BareMetal_L2Objects_AnyTypeGTest, TestGetTypeDescriptor) {
     ASSERT_TRUE(myAnyTypeTest.TestGetTypeDescriptor());
 }
 
+TEST(BareMetal_L2Objects_AnyTypeGTest, TestSetTypeDescriptor) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestSetTypeDescriptor());
+}
 
 TEST(BareMetal_L2Objects_AnyTypeGTest, TestGetBitAddress) {
     AnyTypeTest myAnyTypeTest;
@@ -433,6 +437,11 @@ TEST(BareMetal_L2Objects_AnyTypeGTest, TestGetBitSize) {
 TEST(BareMetal_L2Objects_AnyTypeGTest, TestGetByteSize) {
     AnyTypeTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestGetByteSize());
+}
+
+TEST(BareMetal_L2Objects_AnyTypeGTest, TestGetDataSize) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestGetDataSize());
 }
 
 

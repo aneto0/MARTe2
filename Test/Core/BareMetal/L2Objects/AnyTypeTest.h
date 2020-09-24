@@ -256,6 +256,11 @@ public:
     bool TestGetTypeDescriptor();
 
     /**
+     * @brief Tests if the function sets the type descriptor.
+     */
+    bool TestSetTypeDescriptor();
+
+    /**
      * @brief Tests if the function returns the bit address.
      */
     bool TestGetBitAddress();
@@ -299,6 +304,11 @@ public:
      * @brief Tests if the function returns correctly the byte size.
      */
     bool TestGetByteSize();
+    
+    /**
+     * @brief Tests if the function returns correctly the total size of the data.
+     */
+    bool TestGetDataSize();
 
     /**
      * @brief Tests if the operator works for matrix of structures static declared
