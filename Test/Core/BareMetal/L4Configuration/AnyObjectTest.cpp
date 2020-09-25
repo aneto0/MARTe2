@@ -263,7 +263,7 @@ bool AnyObjectTest::TestSerialise_MatrixString() {
 
     return ok;
 }
-#include <stdio.h>
+
 bool AnyObjectTest::TestSerialise_StaticTensor() {
     uint32 nOfRows = 2;
     uint32 nOfColumns = 3;
