@@ -224,6 +224,7 @@ private:
  *          stored in the functionRecords array which is of
  *          maxFunctions length.
  */
+/*lint -esym(551,MARTe::maxFunctions) the symbol is access in the cpp file*/
 static const uint32 maxFunctions = 16384u;
 
 /**
