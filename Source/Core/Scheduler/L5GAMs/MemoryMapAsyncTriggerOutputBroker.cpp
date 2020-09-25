@@ -403,7 +403,7 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(Executi
             err = sem.Wait(TTInfiniteWait);
         }
         else {
-            Sleep::Sec(0.1f);
+            Sleep::Sec(0.1F);
         }
         if (err.ErrorsCleared()) {
             //Only reset the semaphore if it was not posted in-between the Wait exit and now...
