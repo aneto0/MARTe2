@@ -56,8 +56,8 @@ typedef unsigned __int128 uint128;
 typedef __int128 int128;
 
 #else
-typedef unsigned int64 int128;
-typedef unsigned uint64 uint128;
+typedef int64 int128;
+typedef uint64 uint128;
 #endif
 
 inline float Sin(const float angle) {
