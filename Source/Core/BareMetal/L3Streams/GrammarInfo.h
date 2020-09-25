@@ -1,6 +1,6 @@
 /**
  * @file GrammarInfo.h
- * @brief Source file for class GrammarInfo
+ * @brief Header file for class GrammarInfo
  * @date 18/12/2015
  * @author Giuseppe Ferrò
  *
@@ -68,6 +68,14 @@ struct GrammarInfo {
      * Multiple line comment end pattern.
      */
     const char8 *endMultipleLinesComment;
+    
+    /**
+     * Multi-character terminals.
+     * @details Holds multicharacter terminals separated by spaces
+     *          (e.g. `"if && =="`).
+     * @warning Keywords with more than 2 characters are not supported
+     */
+    const char8 *keywords;
 
     /**
      * Assignment operator
@@ -118,25 +126,40 @@ struct GrammarInfo {
      * Allows to get the terminals as a C-string.
      */
     char8 terminal;
+    
+    char8 spare[64];
 
 };
 
 /**
  * The lexical elements for MARTe configuration streams encoded in standard MARTe configuration language.
  */
-static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
+static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", "", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
 
 /**
  * The lexical elements for MARTe configuration streams encoded in JSON language.
  */
-static const GrammarInfo JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', '[', ']', '[', ']', '\0', '\0', '\0' };
+static const GrammarInfo JsonGrammar = { "\n\r\t, ", "", "", "", "", ':', '{', '}', '[', ']', '[', ']', '\0', '\0', '\0' };
 
 
 /**
  * The lexical elements for MARTe configuration streams encoded in XML language.
  */
-static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
+static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", "", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
+
+/**
+ * @brief Lexical elements for infix mathematical expressions.
+ * @details To be compatible with LexicalAnalyzer, rule to compile the grammar are the following:
+ *          - single-character terminals shall go in one of the char8 element
+ *          - single-character terminals that are also the first character of
+ *            a multiple-character terminal shall go in #keywords
+ *          - multiple-character terminals shall go in #keywords
+ * @warning Keywords with more than 2 characters are not supported
+ */
+static const GrammarInfo MathGrammar = { "\n\r\t ", "//", "/*", "*/",                                // sep
+	                                     "|| && ^ < > <= >= == !=",                              // keywords
+	                                     '+', '-', '*', '/', '=', '(', ')', '(', ')', ')', ",;\0" }; // term
 
 }
 

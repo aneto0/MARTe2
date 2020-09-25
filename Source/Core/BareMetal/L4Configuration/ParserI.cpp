@@ -48,17 +48,13 @@ static void PrintErrorOnStream(const char8 * const format,
         if (!err->Printf(format, lineNumber)) {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
         }
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError, format, lineNumber);
     }
+    
+    REPORT_ERROR_STATIC(ErrorManagement::FatalError,  format, lineNumber);
 }
 
 static const char8* GetCurrentTokenData(Token * const token) {
-
     return (token != NULL)?(token->GetData()):(static_cast<const char8*>(NULL));
-}
-
-static uint32 GetCurrentTokenId(const Token * const token) {
-    return (token != NULL)?(token->GetId()):(ERROR_TOKEN);
 }
 
 static uint32 GetCurrentTokenLineNumber(const Token * const token) {
@@ -74,28 +70,31 @@ static uint32 GetCurrentTokenLineNumber(const Token * const token) {
 namespace MARTe {
 
 ParserI::ParserI(StreamI &stream,
-                 StructuredDataI &databaseIn,
                  BufferedStreamI * const err,
                  const GrammarInfo &grammarIn) :
         tokenProducer(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment, grammarIn.beginMultipleLinesComment,
-                      grammarIn.endMultipleLinesComment),
-        memory(1u) {
-    numberOfColumns = 0u;
-    firstNumberOfColumns = 0u;
-    numberOfRows = 0u;
-    database = &databaseIn;
+                      grammarIn.endMultipleLinesComment, grammarIn.keywords) {
+    
     errorStream = err;
-    tokenType = 0u;
-    numberOfDimensions = 0u;
     grammar = grammarIn;
     currentToken = static_cast<Token*>(NULL);
     isError = false;
+    
+    // create a local copy of the stream (used by PrintErrorLine)
+    uint64 pos = stream.Position();
+    bool ok = stream.Seek(0ull);
+    if (ok) {
+        ok = inputStream.Copy(dynamic_cast<BufferedStreamI&>(stream));
+        ok = ( (stream.Seek(pos)) && (ok) );
+    }
+    if (!ok) {
+        inputStream = "";
+    }
 }
 
 ParserI::~ParserI() {
     currentToken = static_cast<Token*>(NULL);
     errorStream=static_cast<BufferedStreamI*>(NULL);
-    database=static_cast<StructuredDataI*>(NULL);
 }
 
 uint32 ParserI::GetNextTokenType() {
@@ -149,132 +148,62 @@ GrammarInfo ParserI::GetGrammarInfo() const {
     return grammar;
 }
 
-void ParserI::GetTypeCast() {
-    typeName = GetCurrentTokenData(currentToken);
-}
-
-void ParserI::BlockEnd() {
-    if (!database->MoveToAncestor(1u)) {
-        PrintErrorOnStream("\nFailed StructuredDataI::MoveToAncestor(1)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-}
-
-void ParserI::CreateNode() {
-    if (!database->CreateRelative(GetCurrentTokenData(currentToken))) {
-        PrintErrorOnStream("\nFailed StructuredDataI::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-}
-
-void ParserI::AddLeaf() {
-    // use numberOfRows and numberOfColumns as dimensions # elements
-    if (numberOfDimensions == 1u) {
-        numberOfRows = 1u;
-    }
-    // a scalar
-    if (numberOfDimensions == 0u) {
-        numberOfRows = 1u;
-        numberOfColumns = firstNumberOfColumns;
-    }
-
-    ;
-    uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
-    /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-    AnyType element = memory.Create(numberOfDimensions, &dimSizes[0]);
-    bool ret = (element.GetDataPointer() != NULL);
-    if (ret) {
-        ret = database->Write(nodeName.Buffer(), element);
-        if (!ret) {
-            PrintErrorOnStream("\nFailed adding a leaf to the configuration database! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
+void ParserI::PrintErrorLine() {
+    
+    // retrieve the error line
+    uint32 lineNumber = GetCurrentTokenLineNumber(currentToken);
+    char8 line[200];
+    char8* startLinePtr = &line[0];
+    bool ok = inputStream.Seek(0ull);
+    if (ok) {
+        for (uint32 i = 0u; (i < lineNumber) && (ok); i++) {
+            ok = inputStream.GetLine(startLinePtr, 200u);
+        }
+        if (ok) {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", line);
         }
     }
-    else {
-        PrintErrorOnStream("\nPossible empty vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-    typeName = defaultTypeName;
-    numberOfColumns = 0u;
-    firstNumberOfColumns = 0u;
-    numberOfRows = 0u;
-    tokenType = 0u;
-    numberOfDimensions = 0u;
-    memory.CleanUp(1u);
-}
+    
+    // create an arrow that points to the error
+    if ((GetCurrentTokenData(currentToken) != NULL) && (ok)) {
+        
+        const char8* errorLinePtr = StringHelper::SearchString(startLinePtr, GetCurrentTokenData(currentToken));
+        
+        /*lint -e{946,947} Justification: Subtraction between pointers is allowed when pointers point to elements of the same array [MISRA C++ Rule 5-0-17]."*/
+        if (errorLinePtr != NULL) {
+            
+            int32 tempLength = errorLinePtr - startLinePtr;   // number of characters between start of line and error token
+            uint32 length = static_cast<uint32>(tempLength);  // conversion is required by MISRA compliance
 
-void ParserI::GetNodeName() {
-    nodeName = GetCurrentTokenData(currentToken);
-}
-
-void ParserI::AddScalar() {
-    if (tokenType == 0u) {
-        tokenType = GetCurrentTokenId(currentToken);
-    }
-
-    if (tokenType == GetCurrentTokenId(currentToken)) {
-        bool ret = memory.Add(typeName.Buffer(), GetCurrentTokenData(currentToken));
-
-        if (ret) {
-            firstNumberOfColumns++;
+            char8 arrow[length + 2u];
+            ok = StringHelper::SetChar(&arrow[0], length, ' ');
+            if (ok) {
+                arrow[length] = '^';
+                arrow[length + 1ul] = '\0';
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", arrow);
+            }
         }
-        else {
-            PrintErrorOnStream("\nFailed read or conversion! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    else {
-        PrintErrorOnStream("\nCannot mix different types in a vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-}
-
-void ParserI::EndVector() {
-    if (numberOfColumns == 0u) {
-        numberOfColumns = firstNumberOfColumns;
-    }
-    else {
-        if (numberOfColumns != firstNumberOfColumns) {
-            PrintErrorOnStream("\nIncorrect matrix format! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    firstNumberOfColumns = 0u;
-    numberOfRows++;
-    if (numberOfDimensions == 0u) {
-        numberOfDimensions = 1u;
-    }
-}
-
-void ParserI::EndMatrix() {
-    numberOfDimensions = 2u;
-}
-
-void ParserI::End() {
-    if (!database->MoveToRoot()) {
-        PrintErrorOnStream("\nFailed StructuredDataI::MoveToRoot() at the end! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
+        
     }
 }
 
 bool ParserI::Parse() {
-    typeName = defaultTypeName;
-
+    
     bool isEOF = false;
-
+    
     while ((!isError) && (!isEOF)) {
-
+        
         uint32 stackArray[ParserConstant::PARSE_STACK_SIZE];
         uint32 *stack = &stackArray[0];
-
+        
         uint32 *top = &stackArray[ParserConstant::PARSE_STACK_SIZE - 1u];
         *top = 0u;
         uint32 start_symbol = GetConstant(ParserConstant::START_SYMBOL);
-
+        
         StackPush(start_symbol, stack, top);
         uint32 token = GetNextTokenType();
         uint32 new_token = token;
-
+        
         for (uint32 symbol = StackPop(top); (symbol > 0u) && (!isError);) {
             if (symbol >= GetConstant(ParserConstant::START_ACTION)) {
                 Execute(symbol - (GetConstant(ParserConstant::START_ACTION) - 1u));
@@ -308,7 +237,8 @@ bool ParserI::Parse() {
                     else {
                         (token == 0u) ? (isEOF = true) : (isError = true);
                         if (isError) {
-                            PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+                            PrintErrorOnStream("Syntax error 1. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                            PrintErrorLine();
                         }
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
@@ -316,7 +246,8 @@ bool ParserI::Parse() {
                 else {
                     (token == 0u) ? (isEOF = true) : (isError = true);
                     if (isError) {
-                        PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorOnStream("Syntax error 2. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorLine();
                     }
                     new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                 }
@@ -329,7 +260,8 @@ bool ParserI::Parse() {
                     }
                     else {
                         isError = true;
-                        PrintErrorOnStream("\nInvalid Expression! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorOnStream("Syntax error 3. Invalid expression on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorLine();
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
                 }
@@ -344,12 +276,13 @@ bool ParserI::Parse() {
             }
             symbol = StackPop(top);
         }
+        
         if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
             PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
             isError = true;
         }
     }
-
+    
     return !isError;
 }
 

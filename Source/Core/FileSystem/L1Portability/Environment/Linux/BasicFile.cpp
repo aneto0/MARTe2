@@ -464,7 +464,7 @@ bool BasicFile::Seek(const uint64 pos) {
         }
         else {
             int64 localPos;
-            uint64 size = Size();
+            uint64 size = BasicFile::Size();
             if (size < pos) {
                 localPos = static_cast<int64>(size);
             }
@@ -489,7 +489,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
     bool retVal = true;
     if (CanSeek()) {
         int64 localPos;
-        int64 size = static_cast<int64>(Size());
+        int64 size = static_cast<int64>(BasicFile::Size());
         int64 position = static_cast<int64>(Position());
         if ((deltaPos + position) > size) {
             localPos = size;

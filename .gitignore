@@ -16,3 +16,4 @@ dependsRaw.*
 *.o
 *.a
 GTestDirectoryTest/*
+__pycache__

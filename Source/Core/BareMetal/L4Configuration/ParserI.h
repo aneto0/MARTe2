@@ -46,7 +46,7 @@ namespace MARTe {
 
 /**
  * @brief Abstract parser which allows to transform a stream of characters
- * into a structured data store, applying lexical rules set at instance level
+ * into a data store, applying lexical rules set at instance level
  * and parsing rules implemented into subclasses.
  *
  * @details This class is a partial abstract class providing the generic
@@ -56,14 +56,14 @@ namespace MARTe {
  *
  * Each instance of the parser is bound when it is constructed, with all the
  * objects involved in the parsing analysis, as follows:
- * - An input stream of characters that contains the serialization of a
- * hierarchy of objects, encoded into a given language (e.g. XML, JSON, etc).
- * - An output structured data store where the parser will build the in-
- * memory objects defined into the input stream of characters.
+ * - An input stream of characters encoded into a given language (XML, JSON,
+ * math expressions, etc).
  * - An output stream of characters where the parser will write all the errors
  * found on the input stream of characters.
  *
- * At construction time, too, the parser is initialized with the lexical
+ * Storage of the output is up to subclasses. 
+ * 
+ * At construction time the parser is initialized with the lexical
  * elements that the language used in the input stream of characters needs,
  * while the grammar of that language is expected to be implemented in
  * subclasses.
@@ -71,16 +71,6 @@ namespace MARTe {
  * After being properly created, each instance is ready to parse the input
  * stream of characters, whenever the user calls the method Parse().
  *
- * Notes about the input stream of characters:
- * - All the elements of a vector or matrix must be of the same token type
- * (NUMBER or STRING).
- * - Variables cannot be empty (i.e "scalar = " or vector = {}" or
- * "matrix = {{}}").
- * - If the type specified in the TYPE CAST expression is invalid, the value
- * will be saved in the database as a C-string (default), otherwise the token
- * will be converted to the specified type and then saved in the database.
- * - The error messages printed on the \a err stream are in the format
- * "error description [line number]".
  */
 class DLL_API ParserI {
 
@@ -90,7 +80,6 @@ public:
      * @brief Constructor which initializes the instance with all the items
      * involved into the parsing (input, output, and grammar configuration).
      * @param[in] stream is the stream to be read and parsed.
-     * @param[in,out] databaseIn is the StructuredData in output.
      * @param[out] err is a stream where parse error messages are written into.
      * @param[in] grammarIn contains the comments patterns, the separator and
      * terminal characters.
@@ -98,10 +87,9 @@ public:
      *   GetGrammar() == grammarIn
      */
     ParserI(StreamI &stream,
-            StructuredDataI &databaseIn,
             BufferedStreamI * const err,
             const GrammarInfo &grammarIn);
-
+            
     /**
      * @brief Destructor.
      */
@@ -123,53 +111,16 @@ public:
     GrammarInfo GetGrammarInfo() const;
 
 protected:
-
+    
     /**
-     * @brief Moves into the built structured data to the root.
+     * @brief   Prints the line where the syntax error was found.
+     * @details This method uses the tokenLine property of currentToken
+     *          to retrieve the exact line where the parsing of the input
+     *          stream has failed. The token that generated the error
+     *          is then looked for the line is printed on screen.
      */
-    virtual void End();
-
-    /**
-     * @brief Gets the node or the variable name.
-     */
-    virtual void GetNodeName();
-
-    /**
-     * @brief Adds a leaf in the StructuredData.
-     */
-    virtual void AddLeaf();
-
-    /**
-     * @brief Gets the variable type.
-     */
-    virtual void GetTypeCast();
-
-    /**
-     * @brief Creates a new node in the StructuredData.
-     */
-    virtual void CreateNode();
-
-    /**
-     * @brief Stores a read scalar in the memory.
-     */
-    virtual void AddScalar();
-
-    /**
-     * @brief Sets the number of dimensions to one and checks if
-     * the matrix is well formed.
-     */
-    virtual void EndVector();
-
-    /**
-     * @brief Sets the number of dimensions to two.
-     */
-    virtual void EndMatrix();
-
-    /**
-     * @brief Moves into the structuredData to the father.
-     */
-    virtual void BlockEnd();
-
+    void PrintErrorLine();
+    
     /**
      * @brief Retrieves the next expected token identifiers to be
      * pushed on the stack.
@@ -268,24 +219,7 @@ protected:
      * A pointer to the last token produced by the lexical analyzer.
      */
     Token *currentToken;
-
-private:
-
-    /**
-     * The type name.
-     */
-    StreamString typeName;
-
-    /**
-     * The StructuredData node or leaf name.
-     */
-    StreamString nodeName;
-
-    /**
-     * The StructuredData to be built
-     */
-    StructuredDataI *database;
-
+    
     /**
      * A flag to specify if an error occurred.
      */
@@ -297,40 +231,15 @@ private:
     LexicalAnalyzer tokenProducer;
 
     /**
-     * The number of columns in case of read of vector.
-     */
-    uint32 numberOfColumns;
-
-    /**
-     * The number of elements read before the vector close terminal.
-     */
-    uint32 firstNumberOfColumns;
-
-    /**
-     * The number of rows in case of read of matrix.
-     */
-    uint32 numberOfRows;
-
-    /**
-     * The object used to store the read element and create the AnyType leaf.
-     */
-    AnyTypeCreator memory;
-
-    /**
      * The stream to print the error messages.
      */
     BufferedStreamI *errorStream;
-
+    
     /**
-     * The token id.
+     * A copy of the input stream.
      */
-    uint32 tokenType;
-
-    /**
-     * The number of dimensions of the variable (0=scalar, 1=vector, 2=matrix)
-     */
-    uint8 numberOfDimensions;
-
+    StreamString inputStream;
+    
     /**
      * Stores the information about the language to be parsed.
      */

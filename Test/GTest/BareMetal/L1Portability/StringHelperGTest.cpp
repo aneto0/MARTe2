@@ -2,7 +2,7 @@
  * @file StringHelperGTest.cpp
  * @brief Source file for class StringHelperGTest
  * @date 30/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -53,6 +53,16 @@ TEST(BareMetal_L1Portability_StringHelperGTest,TestCompare) {
 TEST(BareMetal_L1Portability_StringHelperGTest,TestCompareN) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCompareN());
+}
+
+TEST(BareMetal_L1Portability_StringHelperGTest,TestToUpper) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestToUpper());
+}
+
+TEST(BareMetal_L1Portability_StringHelperGTest,TestToLower) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestToLower());
 }
 
 TEST(BareMetal_L1Portability_StringHelperGTest,TestCopy) {

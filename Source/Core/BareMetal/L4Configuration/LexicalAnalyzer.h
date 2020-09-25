@@ -97,7 +97,16 @@ public:
             const char8 * const oneLineCommentBeginIn,
             const char8 * const multipleLineCommentBeginIn,
             const char8 * const multipleLineCommentEndIn);
-
+    
+          
+    LexicalAnalyzer(StreamI &stream,
+            const char8 * const terminalsIn,
+            const char8 * const separatorsIn,
+            const char8 * const oneLineCommentBeginIn,
+            const char8 * const multipleLineCommentBeginIn,
+            const char8 * const multipleLineCommentEndIn,
+            const char8 * const keywordsIn);
+    
     /**
      * @brief Destructor.
      */
@@ -142,7 +151,13 @@ private:
      * @param[in] terminal is the terminal character.
      */
     void AddTerminal(const char8 terminal);
-
+    
+    /**
+     * @brief Adds a terminal to the internal queue (multicharacter terminal).
+     * @param[in] terminalBuffer is the terminal data.
+     */
+    void AddTerminal(const char8* const terminalBuffer);
+    
     /**
      * Internal token queue
      */
@@ -172,6 +187,11 @@ private:
      * The end of multiple line comment pattern.
      */
     StreamString multipleLineCommentEnd;
+    
+    /**
+     * Keywords to be detected as terminals.
+     */
+    StreamString keywords;
 
     /**
      * Default token types

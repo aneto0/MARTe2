@@ -28,11 +28,15 @@ OBJSX=	AnyObject.x \
 		AnyTypeCreator.x \
 		ConfigurationDatabase.x\
 		ConfigurationDatabaseNode.x\
+		ConfigurationParserI.x \
 		FloatToInteger.x \
 		IntegerToFloat.x \
 		IntrospectionStructure.x \
 		JsonParser.x \
 		LexicalAnalyzer.x \
+		MathExpressionParser.x \
+		RuntimeEvaluator.x \
+		RuntimeEvaluatorFunction.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		TypeConversion.x \

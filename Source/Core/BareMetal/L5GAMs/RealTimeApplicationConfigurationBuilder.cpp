@@ -1315,7 +1315,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
 
                     //Do this only for structured types.
                     TypeDescriptor td = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
-                    if (td == VoidType) {
+                    if (td == InvalidType) {
                         // check if it is a partial definition. Delete if the type is not specified, error otherwise (empty node)
                         ConfigurationDatabase dataSourcesDatabaseBeforeSignalMoveOther = dataSourcesDatabase;
                         for (uint32 k = 0u; (k < numberOfSignals) && (!signalFound) && (ret); k++) {

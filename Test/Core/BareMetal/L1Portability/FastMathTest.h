@@ -2,7 +2,7 @@
  * @file FastMathTest.h
  * @brief Header file for class FastMathTest
  * @date 26/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -27,6 +27,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include <limits>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -90,52 +91,92 @@ public:
 
     /**
      * @brief Tests the SquareRoot function for uint8.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootUint8(const uint8 testVal, const uint8 expectedRes);
 
     /**
      * @brief Tests the SquareRoot function for uint16.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootUint16(const uint16 testVal, const uint16 expectedRes);
 
     /**
      * @brief Tests the SquareRoot function for uint32.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootUint32(const uint32 testVal, const uint32 expectedRes);
     /**
      * @brief Tests the SquareRoot function for uint64.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootUint64(const uint64 testVal, const uint64 expectedRes);
 
     /**
      * @brief Tests the SquareRoot function for int8.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootInt8(const int8 testVal, const int8 expectedRes);
 
     /**
      * @brief Tests the SquareRoot function for int16.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootInt16(const int16 testVal, const int16 expectedRes);
 
     /**
      * @brief Tests the SquareRoot function for int32.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootInt32(const int32 testVal, const int32 expectedRes);
 
     /**
      * @brief Tests the SquareRoot function for int64.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootInt64(const int64 testVal, const int64 expectedRes);
 
     /**
      * @brief Tests the SquareRoot function for float32.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootFloat32(const float32 testVal, const float32 expectedRes);
 
     /**
      * @brief Tests the SquareRoot function for float64.
+     * @param[in] testVal is the number input.
+     * @param[in] expectedRes is the expected result value after the operation.
+     * @return true if the result is equal to the expected value.
      */
     bool TestSquareRootFloat64(const float64 testVal, const float64 expectedRes);
+
+    /**
+     * @brief Tests the CompleteMultiply function
+     * @param[in] testX1 is the first factor input.
+     * @param[in] testX2 is the second factor input.
+     * @param[in] expectedHigh is the expected high word value after the operation.
+     * @param[in] expectedRes is the expected returned value after the operation.
+     * @return true if high word matches expectedHigh, and return value matches expectedRes.
+     */
+    template<typename T> bool TestCompleteMultiply(const T testX1, const T testX2, const T expectedHigh, const T expectedRes);
 
 private:
 
@@ -155,6 +196,17 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
+template<typename T> bool FastMathTest::TestCompleteMultiply(const T testX1, const T testX2, const T expectedHigh, const T expectedRes){
+    T actualHigh, actualRes;
+
+    //Make sure actualHigh is different from expectedHigh before running test
+    actualHigh = expectedHigh + 1;
+
+    actualRes = FastMath::CompleteMultiply(testX1, testX2, actualHigh);
+    return ((actualRes == expectedRes) && (actualHigh == expectedHigh));
+}
 
 #endif /* FASTMATHTEST_H_ */
 

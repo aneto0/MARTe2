@@ -198,7 +198,30 @@ public:
      */
     static const char8 *GetTypeNameFromStaticTable(const uint32 index);
 
+    /**
+     * @brief Returns boolean conveying whether this TypeDescriptor represents a numeric type.
+     * @return true if it represents a numeric type.
+     */
+    bool IsNumericType() const;
+
 };
+
+/**
+ * @return returns the TypeDescriptor from a type
+ * support only integers and floats
+ */
+template <typename T> const TypeDescriptor Type2TypeDescriptor();
+
+template <> inline const TypeDescriptor Type2TypeDescriptor<int8>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<int16>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<int32>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<int64>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<uint8>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<uint16>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<uint32>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<uint64>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<float32>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<float64>();
 
 /**
  * 8 bit Character.
@@ -288,7 +311,46 @@ static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
 /**
  * Invalid type descriptor
  */
-static const TypeDescriptor InvalidType(0u);
+static const TypeDescriptor InvalidType(false, Invalid, 0u);
+
+
+/**
+ * @return for the unsupported types just report the size
+ */
+template <typename T> inline const TypeDescriptor Type2TypeDescriptor(){
+    return InvalidType;
+}
+
+template <> const TypeDescriptor Type2TypeDescriptor<int8>(){
+    return SignedInteger8Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<int16>(){
+    return SignedInteger16Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<int32>(){
+    return SignedInteger32Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<int64>(){
+    return SignedInteger64Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<uint8>(){
+    return UnsignedInteger8Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<uint16>(){
+    return UnsignedInteger16Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<uint32>(){
+    return UnsignedInteger32Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<uint64>(){
+    return UnsignedInteger64Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<float32>(){
+    return Float32Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<float64>(){
+    return Float64Bit;
+}
 
 }
 /*---------------------------------------------------------------------------*/

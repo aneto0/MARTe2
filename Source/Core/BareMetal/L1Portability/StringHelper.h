@@ -1,6 +1,6 @@
 /**
  * @file StringHelper.h
- * @brief Header file for module StringHelper
+ * @brief Header file for class StringHelper
  * @date 30/06/2015
  * @author Giuseppe Ferrò
  *
@@ -119,6 +119,20 @@ DLL_API int32 CompareN(const char8* const string1,
 DLL_API int32 CompareNoCaseSensN(const char8* const string1,
                                  const char8* const string2,
                                  const uint32 size);
+
+/**
+ * @brief Converts all lowercase characters in a string to uppercase.
+ * @param[in,out] string the string to be converted.
+ * @return true if everything went fine.
+ */
+DLL_API bool ToUpper(char8* const string);
+
+/**
+ * @brief Converts all uppercase characters in a string to lowercase.
+ * @param[in,out] string the string to be converted.
+ * @return true if everything went fine.
+ */
+DLL_API bool ToLower(char8* const string);
 
 /**
  * @brief Copies the source into the destination.

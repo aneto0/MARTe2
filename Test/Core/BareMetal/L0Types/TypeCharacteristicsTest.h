@@ -46,6 +46,24 @@ public:
     TypeCharacteristicsTest();
 
     /**
+     * @brief Test the function IsFloat with the type int8.
+     * @return True if IsSigned returns false.
+     */
+    bool TestIsFloatInt8();
+
+    /**
+     * @brief Test the function IsSigned with the type float32.
+     * @return True if IsSigned returns true.
+     */
+    bool TestIsFloatFloat32();
+
+    /**
+     * @brief Test the function IsSigned with the type float64.
+     * @return True if IsSigned returns true.
+     */
+    bool TestIsFloatFloat64();
+
+    /**
      * @brief Test the function IsSigned with the type int8.
      * @return True if IsSigned returns true.
      */
@@ -130,6 +148,47 @@ public:
     bool TestUsableBitSizeUInt32BZ2();
 
     /**
+     * @brief Test UsableBitSize using int8.
+     * @return True if UsableBitSize return 6.
+     */
+    bool TestUsableNegativeBitSizeInt8();
+
+    /**
+     * @brief Test UsableBitSize using an uint32.
+     * @return True if UsableBitSize returns 31.
+     */
+    bool TestUsableNegativeBitSizeInt32();
+
+    /**
+     * @brief Test UsableBitSize using an uint32.
+     * @return True if UsableBitSize returns 0.
+     */
+    bool TestUsableNegativeBitSizeUInt32();
+
+    /**
+     * @brief Test UsableBitSize using a float32.
+     * @return True if UsableBitSize returns FLT_MAX_EXP.
+     */
+    bool TestUsableNegativeBitSizeFloat32();
+
+    /**
+     * @brief Test SafeNumber2Number.
+     * @tparam inputType Type tested as input.
+     * @tparam outputType Type tested as output.
+     * @param[in] input is the input value.
+     * @param[in] expectedReturn is the expected return value from SafeNumber2Number.
+     * @param[in] expectedOutput is the expected output from SafeNumber2Number.
+     * @return True if SafeNumber2Number returns expectedReturn and output is expectedOutput.
+     */
+    template <typename inputType, typename outputType>
+    bool TestSafeNumber2Number(inputType input, bool expectedReturn, outputType expectedOutput){
+        outputType output;
+        retVal = (MARTe::SafeNumber2Number<inputType,outputType>(input, output) == expectedReturn);
+        retVal &= (output == expectedOutput);
+        return retVal;
+    }
+
+    /**
      * @brief Test SaturableInteger function using a value in the range type.
      * @return True if SaturableInteger the input value.
      */
@@ -162,6 +221,12 @@ public:
      * @return True if SaturableInteger returns -4 (the minimum possible value).
      */
     bool TestSaturableIntegerLessThan2();
+
+    /**
+     * @brief Test that Epsilon() returns the correct machine epsilon value.
+     */
+    bool TestEpsilon();
+    
 
 private:
 

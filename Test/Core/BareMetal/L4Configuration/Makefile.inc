@@ -33,12 +33,15 @@ OBJSX=	AnyObjectTest.x \
 	IntrospectionStructureTest.x \
 	JsonParserTest.x \
 	LexicalAnalyzerTest.x \
+	RuntimeEvaluatorTest.x \
+	RuntimeEvaluatorFunctionTest.x \
 	StandardParserTest.x \
 	TypeConversionTest.x \
 	TokenInfoTest.x \
 	TokenTest.x \
 	ValidateBasicTypeTest.x\
-	XMLParserTest.x
+	XMLParserTest.x\
+	MathExpressionParserTest.x
 					
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -184,6 +184,12 @@ public:
     bool Add(const void * const copyFrom);
 
     /**
+     * @brief Remove all elements. Does not shrink list or free memory
+     * @post GetSize() = 0
+     */
+    inline void Clean();
+
+    /**
      * @brief Inserts an element at a given position of the list
      * @param[in] position The index where the new element has to be added
      * @param[in] copyFrom The pointer to the memory address where the new element must be copied from
@@ -266,6 +272,12 @@ public:
      */
     void* GetAllocatedMemory();
 
+    /**
+     * @brief Retrieves the pointer to the allocated memory area.
+     * @return the pointer to the allocated memory area.
+     */
+    const void* GetAllocatedMemoryConst() const;
+
 private:
 
     /**
@@ -311,10 +323,14 @@ private:
      * during object's lifetime*/
 };
 
-}
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+void StaticListHolder::Clean(){
+    listSize_ = 0;
+}
+
+}
 
 #endif /* STATICLISTHOLDER_H_ */

@@ -30,12 +30,15 @@ OBJSX=  AnyObjectGTest.x \
 		IntrospectionStructureGTest.x \
 		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
+		RuntimeEvaluatorGTest.x \
+		RuntimeEvaluatorFunctionGTest.x \
 		StandardParserGTest.x \
 		TokenGTest.x \
 		TokenInfoGTest.x \
 		TypeConversionGTest.x\
 		ValidateBasicTypeGTest.x\
-		XMLParserGTest.x
+		XMLParserGTest.x\
+		MathExpressionParserGTest.x
 		 
 
 PACKAGE=GTest/BareMetal

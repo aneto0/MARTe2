@@ -2,7 +2,7 @@
  * @file Vector.h
  * @brief Header file for class Vector
  * @date 04/11/2015
- * @author Andre' Neto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -84,6 +84,16 @@ public:
            uint32 nOfElements);
 
     /**
+     * @brief Frees any existing memory and allocate enough to store nOfElements
+     * if nOfElements is zero, memory is freed and pointer set to NULL
+     * @param[in] nOfElements The number of elements of the vector
+     * @post
+     *    GetNumberOfElements() == nOfElements &&
+     *    GetDataPointer() == new allocated array
+     */
+    void SetSize(uint32 nOfElements);
+
+    /**
      * @brief Constructs a new matrix from a statically declared table [].
      * @tparam nOfElementsStatic Define nOfElementsStatic
      * @param[in] source The address of the statically declared table.
@@ -141,6 +151,12 @@ public:
                  T &result) const;
 
 private:
+    /**
+     * @brief Frees memory if necessary
+     * @post
+     *   GetDataPointer() == NULL
+     */
+    void FreeMemory();
 
     /**
      * The data pointer to the raw data.
@@ -188,6 +204,19 @@ Vector<T>::Vector(T *existingArray,
 }
 
 template<typename T>
+void Vector<T>::SetSize(uint32 nOfElements) {
+    FreeMemory();
+    if (nOfElements > 0){
+        dataPointer = new T[nOfElements];
+        canDestroy = true;
+    } else if (nOfElements == 0){
+        dataPointer = NULL_PTR(T*);
+        canDestroy = false;
+    }
+    numberOfElements = nOfElements;
+}
+
+template<typename T>
 template<uint32 nOfElementsStatic>
 Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
     dataPointer = reinterpret_cast<T *>(&source[0]);
@@ -197,9 +226,7 @@ Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
 
 template<typename T>
 Vector<T>::~Vector() {
-    if (canDestroy) {
-        delete[] reinterpret_cast<T*>(dataPointer);
-    }
+    FreeMemory();
 }
 
 template<typename T>
@@ -230,6 +257,16 @@ bool Vector<T>::Product(Vector<T> factor,
         }
     }
     return ret;
+}
+
+template<typename T>
+void Vector<T>::FreeMemory(){
+    if (canDestroy) {
+        delete[] reinterpret_cast<T*>(dataPointer);
+        dataPointer = NULL;
+        numberOfElements = 0;
+        canDestroy = false;
+    }
 }
 
 }

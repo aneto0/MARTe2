@@ -1,8 +1,8 @@
 /**
  * @file ErrorType.h
- * @brief Header file for class Errors
+ * @brief Header file for class ErrorType
  * @date 06/07/2015
- * @author Andre' Neto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -167,9 +167,27 @@ static const uint32 notCompletedBit(18u);
 static const uint32 NotCompletedBit(notCompletedBit);
 
 /**
+ * Bit to communicate that an operation yielded a result larger than possible / expected.
+ */
+static const uint32 overflowBit(19u);
+static const uint32 OverflowBit(overflowBit);
+
+/**
+ * Bit to communicate that an operation yielded a result smaller than possible / expected.
+ */
+static const uint32 underflowBit(20u);
+static const uint32 UnderflowBit(underflowBit);
+
+/**
+ * Bit for OutOfRange error.
+ */
+static const uint32 outOfRangeBit(21u);
+static const uint32 OutOfRangeBit(outOfRangeBit);
+
+/**
  * Last used Bit.
  */
-static const uint32 lastErrorBit(19u);
+static const uint32 lastErrorBit(22u);
 static const uint32 LastErrorBit(lastErrorBit);
 
 /**
@@ -281,6 +299,21 @@ GENERATE_ERROR_CONSTANTS(Completed)
  * ErrorManagement::NotCompleted.
  */
 GENERATE_ERROR_CONSTANTS(NotCompleted)
+
+/**
+ * ErrorManagement::Overflow.
+ */
+GENERATE_ERROR_CONSTANTS(Overflow)
+
+/**
+ * ErrorManagement::Underflow.
+ */
+GENERATE_ERROR_CONSTANTS(Underflow)
+
+/**
+ * ErrorManagement::OutOfRange.
+ */
+GENERATE_ERROR_CONSTANTS(OutOfRange)
 
 /**
  * @brief Provides an alternative to bool as return type from functions, allowing to add extra information.
@@ -463,9 +496,24 @@ public:
         GENERATE_ERROR_BITRANGE(completed)
 
         /**
-         * Operation completed.
+         * Operation not completed.
          */
         GENERATE_ERROR_BITRANGE(notCompleted)
+
+        /**
+         * Overflow.
+         */
+        GENERATE_ERROR_BITRANGE(overflow)
+
+        /**
+         * Underflow.
+         */
+        GENERATE_ERROR_BITRANGE(underflow)
+
+        /**
+         * OutOfRange.
+         */
+        GENERATE_ERROR_BITRANGE(outOfRange)
 
         /**
          * unmapped bits

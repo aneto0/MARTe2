@@ -2,7 +2,7 @@
  * @file FastMathGTest.cpp
  * @brief Source file for class FastMathGTest
  * @date 26/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,7 +24,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -273,3 +272,103 @@ TEST(BareMetal_L1Portability_FastMathGTest,TestSquareRootFloat64_4) {
     ASSERT_TRUE(test.TestSquareRootFloat64(4.0,2.0));
 }
 
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyUint8_4_5) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<uint8>(4,5,0,20));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyUint8_max) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<uint8>(255,255,254,1));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyUint16_4_5) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<uint16>(4,5,0,20));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyUint16_max) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<uint16>(65535,65535,65534,1));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyUint32_4_5) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<uint32>(4LU,5LU,0LU,20LU));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyUint32_max) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<uint32>(4294967295LU,4294967295LU,4294967294LU,1LU));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyUint64_4_5) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<uint64>(4LLU,5LLU,0LLU,20LLU));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyUint64_max) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<uint64>(18446744073709551615LLU,18446744073709551615LLU,18446744073709551614LLU,1LLU));
+}
+
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt8_4_5) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int8>(4,5,0,20));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt8_max) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int8>(127,127,63,1));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt16_4_5) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int16>(4,5,0,20));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt16_max) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int16>(32767,32767,16383,1));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt32_4_5) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int32>(4L,5L,0L,20L));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt32_max) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int32>(2147483647L,2147483647L,1073741823L,1L));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt64_4_5) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int64>(4LL,5LL,0LL,20LL));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt64_max) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int64>(9223372036854775807LL,9223372036854775807LL,4611686018427387903LL,1LL));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt8_Nmax) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int8>(-128,-128,64,0));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt16_Nmax) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int16>(-32768,-32768,16384,0));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt32_Nmax) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int32>(-2147483648L,-2147483648L,1073741824L,0L));
+}
+
+TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt64_Nmax) {
+    FastMathTest test;
+    ASSERT_TRUE(test.TestCompleteMultiply<int64>(-9223372036854775807LL,-9223372036854775807LL,4611686018427387903LL,1LL));
+}

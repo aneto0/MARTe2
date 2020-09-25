@@ -35,6 +35,7 @@ CircularStaticList.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
 ConfigurationDatabaseNode.cpp
+ConfigurationParserI.cpp
 ConsoleLogger.cpp
 CRC.h
 CString.h
@@ -120,6 +121,7 @@ Loader.cpp
 Logger.cpp
 LoggerConsumerI.cpp
 LoggerService.cpp
+MathExpressionParser.cpp
 Matrix.h
 Md5Encrypt.cpp
 MemoryArea.cpp
@@ -181,6 +183,9 @@ ReferenceContainerNode.cpp
 ReferenceT.h
 RegisteredMethodsMessageFilter.cpp
 ReplyMessageCatcherMessageFilter.cpp
+RuntimeEvaluator.cpp
+RuntimeEvaluatorFunction.cpp
+SafeMath.h
 SearchFilter.h
 SearchFilterT.h
 Select.cpp
@@ -201,6 +206,7 @@ StateMachine.cpp
 StateMachineEvent.cpp
 StaticList.h
 StaticListHolder.cpp
+StaticStack.h
 StreamI.h
 StreamMemoryReference.cpp
 StreamString.cpp
@@ -233,6 +239,7 @@ TypeConversion.cpp
 TypeDescriptor.cpp
 UDPLogger.cpp
 ValidateBasicType.cpp
+VariableInformation.h
 Vector.h
 XMLParser.cpp
 XMLPrinter.cpp
