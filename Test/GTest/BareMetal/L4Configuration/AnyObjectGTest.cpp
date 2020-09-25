@@ -581,6 +581,106 @@ TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Matrix_Float64) {
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::float64(7)));
 }
 
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_UInt8) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::uint8(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_Int8) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::int8(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_UInt16) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::uint16(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_Int16) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::int16(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_UInt32) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::uint32(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_Int32) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::int32(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_UInt64) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::uint64(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_Int64) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::int64(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_Float32) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::float32(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_Tensor_AnyType_Static_Float64) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_Tensor_AnyType_Static(MARTe::float64(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_UInt8) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::uint8(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_Int8) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::int8(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_UInt16) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::uint16(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_Int16) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::int16(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_UInt32) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::uint32(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_Int32) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::int32(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_UInt64) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::uint64(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_Int64) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::int64(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_Float32) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::float32(7)));
+}
+
+TEST(BareMetal_L4Configuration_AnyObjectGTest,TestGetType_Tensor_Float64) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestGetType_Tensor(MARTe::float64(7)));
+}
+
 TEST(BareMetal_L4Configuration_AnyObjectGTest,TestSerialise_StaticMatrixCharStar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticMatrixCharStar());

@@ -159,12 +159,6 @@ public:
     bool TestSerialise_Tensor_AnyType_Static(T value);
 
     /**
-     * @brief Tests the Serialise function with a statically defined array of T***
-     */
-    template<typename T>
-    bool TestSerialise_Tensor_Array_Static(T value);
-
-    /**
      * @brief Tests the GetType function with a tensor of type T
      */
     template<typename T>
@@ -373,73 +367,64 @@ bool AnyObjectTest::TestGetType_Matrix(T value) {
     return ok;
 }
 
-//template<typename T>
-//bool AnyObjectTest::TestSerialise_Tensor_AnyType_Static(T value) {
-    //MARTe::uint32 nOfRows = 2;
-    //MARTe::uint32 nOfColumns = 3;
-    //MARTe::uint32 nOfPages = 3;
-    //T arr[][3][2] = {
-                    //{ { 1, 2 },  {3, 4 }, {5,  6 } },
-                    //{ { 7, 8 },  {9, 10}, {11, 12} },
-                    //};
+template<typename T>
+bool AnyObjectTest::TestSerialise_Tensor_AnyType_Static(T value) {
+    MARTe::uint32 nOfRows = 3;
+    MARTe::uint32 nOfColumns = 2;
+    MARTe::uint32 nOfPages = 2;
+    T arr[][3][2] = {
+                    { { 1, 2 },  {3, 4 }, {5,  6 } },
+                    { { 7, 8 },  {9, 10}, {11, 12} },
+                    };
 
-    //MARTe::AnyObject anyObj;
-    //AnyType at(UnsignedInteger32Bit, 0u, intArrWrite);
-    //at.SetNumberOfDimensions(3u);
-    //at.SetNumberOfElements(0u, nOfRows);
-    //at.SetNumberOfElements(1u, nOfColumns);
-    //at.SetNumberOfElements(2u, nOfPages);
+    MARTe::AnyObject anyObj;
+    MARTe::TypeDescriptor type = MARTe::Type2TypeDescriptor<T>();
+    MARTe::AnyType at(type, 0u, arr);
+    at.SetNumberOfDimensions(3u);
+    at.SetNumberOfElements(0u, nOfRows);
+    at.SetNumberOfElements(1u, nOfColumns);
+    at.SetNumberOfElements(2u, nOfPages);
 
-    //bool ok = anyObj.Serialise(sourceMat);
-    //MARTe::uint32 i;
-    //MARTe::uint32 j;
-    //for (i = 0; i < nOfRows; i++) {
-        //T* beginMemory = reinterpret_cast<T*>(anyObj.GetType().GetDataPointer());
-        //MARTe::Vector<T> vec = MARTe::Vector<T>(&beginMemory[i * nOfColumns], nOfColumns);
-        //for (j = 0; j < nOfColumns; j++) {
-            //ok = (sourceMat[i][j] == vec[j]);
-        //}
-    //}
-    //return ok;
-//}
+    bool ok = anyObj.Serialise(at);
+    T* testTensor = reinterpret_cast<T*>(anyObj.GetType().GetDataPointer());
+    
+    MARTe::uint32 i;
+    MARTe::uint32 j;
+    MARTe::uint32 k;
+    for (k = 0; k < nOfPages; k++) {
+        for (i = 0; i < nOfRows; i++) {
+            for (j = 0; j < nOfColumns; j++) {
+                ok = (arr[k][i][j] == *( testTensor + (j + nOfColumns*(i + nOfRows*k)) ) );
+            }
+        }
+    }
+    return ok;
+}
 
-//template<typename T>
-//bool AnyObjectTest::TestSerialise_Tensor_Array_Static(T value) {
-    //MARTe::uint32 nOfRows = 2;
-    //MARTe::uint32 nOfColumns = 3;
-    //T arr[][3] = { { 1, 2, 3 }, { 6, 5, 4 } };
+template<typename T>
+bool AnyObjectTest::TestGetType_Tensor(T value) {
+    MARTe::uint32 nOfRows = 3;
+    MARTe::uint32 nOfColumns = 2;
+    MARTe::uint32 nOfPages = 2;
+    T arr[][3][2] = {
+                    { { 1, 2 },  {3, 4 }, {5,  6 } },
+                    { { 7, 8 },  {9, 10}, {11, 12} },
+                    };
 
-    //MARTe::AnyObject anyObj;
+    MARTe::AnyObject anyObj;
+    MARTe::TypeDescriptor type = MARTe::Type2TypeDescriptor<T>();
+    MARTe::AnyType at(type, 0u, arr);
+    at.SetNumberOfDimensions(3u);
+    at.SetNumberOfElements(0u, nOfRows);
+    at.SetNumberOfElements(1u, nOfColumns);
+    at.SetNumberOfElements(2u, nOfPages);
 
-    //bool ok = anyObj.Serialise(arr);
-    //MARTe::Matrix<T> testMat(static_cast<T **>(anyObj.GetType().GetDataPointer()), nOfRows, nOfColumns);
+    bool ok = anyObj.Serialise(at);
+    
+    ok = (anyObj.GetType().GetTypeDescriptor() == MARTe::Type2TypeDescriptor<T>());
 
-    //MARTe::uint32 i;
-    //MARTe::uint32 j;
-    //for (i = 0; i < nOfRows; i++) {
-        //T* beginMemory = reinterpret_cast<T*>(anyObj.GetType().GetDataPointer());
-        //MARTe::Vector<T> vec = MARTe::Vector<T>(&beginMemory[i * nOfColumns], nOfColumns);
-        //for (j = 0; j < nOfColumns; j++) {
-            //ok = (arr[i][j] == vec[j]);
-        //}
-    //}
-    //return ok;
-//}
-
-//template<typename T>
-//bool AnyObjectTest::TestGetType_Tensor(T value) {
-    //MARTe::uint32 nOfRows = 33;
-    //MARTe::uint32 nOfColumns = 2;
-    //MARTe::AnyObject anyObj;
-    //MARTe::Matrix<T> sourceMat(nOfRows, nOfColumns);
-
-    //bool ok = anyObj.Serialise(sourceMat);
-    //MARTe::Matrix<T> testMat(static_cast<T **>(anyObj.GetType().GetDataPointer()), nOfRows, nOfColumns);
-    //MARTe::AnyType testType(testMat);
-    //ok = (anyObj.GetType().GetTypeDescriptor() == testType.GetTypeDescriptor());
-
-    //return ok;
-//}
+    return ok;
+}
 
 #endif /* ANYOBJECTTEST_H_ */
 
