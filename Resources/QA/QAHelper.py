@@ -114,31 +114,33 @@ if __name__ == '__main__':
     reporter.SetHelper('General')
 
     if (len(args.dfile) != 0):
+        args.branch = ''
         changedFiles = [args.dfile]
         reporter.WriteInfo('The following files will be checked (set by user)')
         for f in changedFiles:
             reporter.WriteInfo(f)
     elif (args.allfiles):
+        args.branch = ''
         changedFiles = [f for f in glob.glob('{0}/**/*.h'.format(args.sourcedir), recursive=True)]
         reporter.WriteInfo('All project source files will be checked')
     elif (len(args.branch) > 0):
+        currentBranch = repo.active_branch.name
+        # Try to change branch to trap issues early on
+        if (not qautils.ChangeBranch(logger, repo, args.branch)):
+            logger.critical('Could not change to branch {0}'.format(args.branch))
+            exit(1)
+        if (not qautils.ChangeBranch(logger, repo, currentBranch)):
+            logger.critical('Could not change back to branch {0}'.format(currentBranch))
+            exit(1)
+
         changedFiles = qautils.GetChangedFiles(logger, repo, args.branch)
         reporter.WriteInfo('The following files were detected as changed between branches {0} and {1}'.format(repo.active_branch.name, args.branch))
         for f in changedFiles:
             reporter.WriteInfo(f)
     else:
-        logger.reporteritical('One of the following arguments (with the correct value) shall be set -af, -df, -b')
+        logger.critical('One of the following arguments (with the correct value) shall be set -af, -df, -b')
         exit(1)
 
-    if (len(args.branch) > 0):
-        currentBranch = repo.active_branch.name
-        # Try to change branch to trap issues early on
-        if (not qautils.ChangeBranch(logger, repo, args.branch)):
-            logger.reporteritical('Could not change to branch {0}'.format(args.branch))
-            exit(1)
-        if (not qautils.ChangeBranch(logger, repo, currentBranch)):
-            logger.reporteritical('Could not change back to branch {0}'.format(currentBranch))
-            exit(1)
 
     #Doxygen
     if (not args.excludedoxygen):
