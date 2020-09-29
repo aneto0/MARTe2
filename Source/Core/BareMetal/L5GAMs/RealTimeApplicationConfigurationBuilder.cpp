@@ -1439,11 +1439,17 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                             }
                             if (ret) {
                                 AnyType defVal = cdb.GetType("Default");
+                                uint32 defValDims = defVal.GetNumberOfDimensions();
                                 bool isString = (signalTypeDescriptor == Character8Bit);
-                                if (!isString) {
+                                if (isString) {
+                                    //Yet another exception for char8[]
+                                    if (numberOfElements > 1u) {
+                                        defValDims = 1u;
+                                    }
+                                }
+                                else {
                                     isString = (signalTypeDescriptor == CharString);
                                 }
-                                uint32 defValDims = defVal.GetNumberOfDimensions();
                                 ret = (defValDims <= 1u);
                                 uint8 usedDimensions = (numberOfDimensions > 0u) ? (1u) : (0u);
                                 if (ret) {

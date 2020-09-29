@@ -65,6 +65,11 @@ public:
     bool TestPrepareNextState_Default_Dimensions();
 
     /**
+     * @brief Tests the PrepareNextState method using signal char8[].
+     */
+    bool TestPrepareNextState_Default_Char8Arr();
+
+    /**
      * @brief Tests the PrepareNextStatemethod using signal Default values which have a dimension mismatch with respect to the signal dimension (number of rows).
      */
     bool TestPrepareNextState_Default_Dimensions_Mismatch_1();
