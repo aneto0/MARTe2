@@ -54,7 +54,11 @@ HttpChunkedStreamTest::~HttpChunkedStreamTest() {
 
 bool HttpChunkedStreamTest::TestConstructor() {
     HttpChunkedStream test;
-    return !test.IsChunkMode();
+    bool chunkModeCheck = !test.IsChunkMode();
+    bool readBufferSizeCheck = (test.GetReadBufferSize() == 0u);
+    bool writeBufferSizeCheck = (test.GetWriteBufferSize() == 4096u);
+
+    return chunkModeCheck && readBufferSizeCheck && writeBufferSizeCheck;
 }
 
 static void clientWriter(HttpChunkedStreamTest &tt) {
@@ -66,6 +70,7 @@ static void clientWriter(HttpChunkedStreamTest &tt) {
     HttpChunkedStream socket;
     socket.SetChunkMode(true);
 
+    //TODO Verify if this call is licit
     socket.SetBufferSize(8u, 8u);
 
     socket.SetSource(source);
