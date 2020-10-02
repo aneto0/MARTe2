@@ -29,10 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "ErrorManagement.h"
 #include "HttpChunkedStream.h"
 #include "StreamString.h"
-#include "ErrorManagement.h"
-#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
