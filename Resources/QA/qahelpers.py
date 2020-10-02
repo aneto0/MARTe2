@@ -115,8 +115,9 @@ class LintHelper(QAHelper):
         #Get all .cpp
         for f in cppFiles:
             self.logger.debug('Checking if file {0} is listed for linting'.format(f))
+            found = False
             if (f not in self.lintIgnoredFiles):
-                found = False
+                    
                 #Check if the file is one of the lint include files
                 for lintIncludeFileList in lintIncludeFilesList:
                     found = (f in lintIncludeFileList)

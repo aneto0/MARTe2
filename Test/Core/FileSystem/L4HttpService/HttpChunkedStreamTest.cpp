@@ -55,7 +55,7 @@ HttpChunkedStreamTest::~HttpChunkedStreamTest() {
 bool HttpChunkedStreamTest::TestConstructor() {
     HttpChunkedStream test;
     bool chunkModeCheck = !test.IsChunkMode();
-    bool readBufferSizeCheck = (test.GetReadBufferSize() == 0u);
+    bool readBufferSizeCheck = (test.GetReadBufferSize() == 32u);
     bool writeBufferSizeCheck = (test.GetWriteBufferSize() == 4096u);
 
     return chunkModeCheck && readBufferSizeCheck && writeBufferSizeCheck;

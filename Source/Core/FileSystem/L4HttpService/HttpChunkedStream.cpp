@@ -47,7 +47,7 @@ HttpChunkedStream::HttpChunkedStream() :
     chunkMode = false;
     calibReadParam = 0u;
     calibWriteParam = 0u;
-    SetBufferSize(0u, 4096u);
+    SetBufferSize(32u, 4096u);
 }
 
 HttpChunkedStream::~HttpChunkedStream() {
