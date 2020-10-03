@@ -256,7 +256,7 @@ class RedmineReporter(QAReporter):
         out += 'h1. Integration test review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
-        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, codeVersion, NEW_LINE)
+        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, self.codeVersion, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_REVIEW_STR, NA_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(NON_CONFORMITIES_STR, NA_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(COMMENTS_STR, NA_STR, NEW_LINE)
@@ -265,7 +265,7 @@ class RedmineReporter(QAReporter):
         out += 'h1. Acceptance test review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
-        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, codeVersion, NEW_LINE)
+        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, self.codeVersion, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_REVIEW_STR, NA_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(NON_CONFORMITIES_STR, NA_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(COMMENTS_STR, NA_STR, NEW_LINE)
@@ -405,7 +405,7 @@ class HTMLReporter(QAReporter):
         out += NEW_LINE
         out += '<tr><td id="tdh">Report date</td><td>{0}</td>'.format(dateStr)
         out += NEW_LINE
-        out += '<tr><td id="tdh">Software version</td><td>{0}</td></tr>'.format(codeVersion)
+        out += '<tr><td id="tdh">Software version</td><td>{0}</td></tr>'.format(self.codeVersion)
         out += NEW_LINE
         out += '<tr><td id="tdh">Current branch</td><td>{0}</td></tr>'.format(self.currentBranch)
         out += NEW_LINE
