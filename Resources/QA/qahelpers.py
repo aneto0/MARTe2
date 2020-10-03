@@ -127,7 +127,7 @@ class LintHelper(QAHelper):
                     self.logger.critical('File {0} is not being linted!'.format(f))
                     reporter.WriteError('File {0} is not being linted!'.format(f))
                     ok = False
-            if (ok):
+        if (ok):
             reporter.WriteOK('All files are being included for linting')
         else:
             reporter.WriteError('Not all files are being included for linting')
