@@ -144,6 +144,8 @@ class RedmineReporter(QAReporter):
         
         Args:
             args (dict): args['reviewauthor'] (str) the name of the person doing the review.
+                         args['outputfile'] (str) the name of the file to write.
+                         args['repo'] (git.Repo) the git repository.
         Returns:
             True if all the parameters are successfully loaded.
         """
@@ -273,6 +275,123 @@ class RedmineReporter(QAReporter):
         with open(self.outputFile, 'w') as f:
             f.write(out)
             self.logger.info('Wrote redmine output to {0}'.format(self.outputFile))
+
+class HTMLReporter(QAReporter):
+    """ QA reporter that outputs in HTML.
+    """
+
+    def Configure(self, args):
+        """ Configures the reporter instance.
+        
+        Args:
+            args (dict): args['reviewauthor'] (str) the name of the person doing the review.
+                         args['outputfile'] (str) the name of the file to write.
+                         args['repo'] (git.Repo) the git repository.
+        Returns:
+            True if all the parameters are successfully loaded.
+        """
+        self.reviewAuthor = args['reviewauthor']
+        self.outputFile = args['outputfile']
+        self.repo = args['repo']
+        return True
+
+    def WriteHelperOutput(self, helper):
+        OK_COLOR = 'green'
+        WARN_COLOR = 'yellow'
+        ERROR_COLOR = 'red'
+        NEW_LINE = '\n'
+        ret = '<h1>{0}</h1>'.format(helper)
+        ret += NEW_LINE
+        ret += '<table><th><td>Severity</td><td>Message</td></th>'
+        ret += NEW_LINE
+
+        errFound = False
+        for msg in self.msgs[helper][self.ERROR]:
+            msg = msg.rstrip()
+            errFound = True
+            ret += '<tr><td>ERROR</td><td>{0}</td></tr>'.format(msg)
+            ret += NEW_LINE
+        for msg in self.msgs[helper][self.WARNING]:
+            msg = msg.rstrip()
+            errFound = True
+            ret += '<tr><td>WARN</td><td>{0}</td></tr>'.format(msg)
+            ret += NEW_LINE
+
+        for msg in self.msgs[helper][self.OK]:
+            msg = msg.rstrip()
+            ret += '<tr><td>OK</td><td>{0}</td></tr>'.format(msg)
+            ret += NEW_LINE
+
+        ret += '</table>'
+
+        if (len(self.msgs[helper][self.INFO]) > 0):
+            ret += 'Information'
+            ret += NEW_LINE
+            ret += '<pre>'
+            ret += NEW_LINE
+            for msg in self.msgs[helper][self.INFO]:
+                msg = msg.rstrip()
+                ret += msg
+                ret += '\n'
+            ret += '</pre>'
+            ret += NEW_LINE
+
+        ret += NEW_LINE
+        if (not errFound):
+            ret += 'No errors found!'
+        ret += NEW_LINE
+
+        return ret
+
+    def Terminate(self):
+        NEW_LINE = '\n'
+
+        now = datetime.now()
+        dateStr = now.strftime("%d/%m/%Y")
+        codeVersion = self.repo.head.object.hexsha
+       
+        out = '<html>'
+        out += NEW_LINE
+        out += '<p>Report date: {0}</p>'.format(dateStr)
+        out += NEW_LINE
+        out += '<p>Software version: {0}</p>'.format(codeVersion)
+        out += NEW_LINE
+        out += '<p>Reviewer: {0}</p>'.format(self.reviewAuthor)
+        out += NEW_LINE
+
+        out += self.WriteHelperOutput('Headers')
+        out += self.WriteHelperOutput('Linter')
+        out += self.WriteHelperOutput('Doxygen')
+        out += self.WriteHelperOutput('Functional tests')
+        out += self.WriteHelperOutput('GTest')
+        out += self.WriteHelperOutput('Coverage')
+        out += '</html>'
+        out += NEW_LINE
+        self.logger.debug(out)
+        with open(self.outputFile, 'w') as f:
+            f.write(out)
+            self.logger.info('Wrote html output to {0}'.format(self.outputFile))
+
+class CompositeReporter(QAReporter):
+    """ QA reporter that calls Terminate on all the registered reporters.
+    """
+
+    def Configure(self, args):
+        """ Configures the reporter instance.
+        
+        Args:
+            args (dict): args['reporters'] ([QAReporter]) all the QA reporters to call.
+        Returns:
+            True if all the parameters are successfully loaded.
+        """
+        self.reporters = args['reporters']
+        return True
+
+    def Terminate(self):
+        for r in self.reporters:
+            r.msgs = self.msgs
+            r.Terminate()
+
 
 class CompositeReporter(QAReporter):
     """ QA reporter that calls Terminate on all the registered reporters.

@@ -42,6 +42,7 @@ from qahelpers import LintHelper
 import qautils
 from qareporters import CompositeReporter
 from qareporters import ConsoleReporter
+from qareporters import HTMLReporter
 from qareporters import RedmineReporter 
 
 # Create a custom logger
@@ -93,6 +94,7 @@ if __name__ == '__main__':
     parser.add_argument('-ef', '--excludefunctional', action='store_true', help='Disable functional tests checking' )
     parser.add_argument('-eg', '--excludegtest', action='store_true', help='Disable GTest checking' )
     parser.add_argument('-ro', '--redmineoutputfile', type=str, help='Redmine output file', default='/tmp/redmine.out.txt')
+    parser.add_argument('-ho', '--htmloutputfile', type=str, help='HTML output file', default='/tmp/qahelper.html')
     parser.add_argument('-fe', '--functionaltestexceptions', type=str, help='List of files that are not supposed to be tested', nargs='*', default='[]')
 
     args = parser.parse_args()
@@ -107,9 +109,11 @@ if __name__ == '__main__':
     conReporter = ConsoleReporter(logger)
     redReporter = RedmineReporter(logger)
     redReporter.Configure({'reviewauthor': args.reviewauthor, 'outputfile': args.redmineoutputfile, 'repo': repo})
+    htmlReporter = HTMLReporter(logger)
+    htmlReporter.Configure({'reviewauthor': args.reviewauthor, 'outputfile': args.htmloutputfile, 'repo': repo})
 
     reporter = CompositeReporter(logger)
-    reporter.Configure({'reporters': [conReporter, redReporter]})
+    reporter.Configure({'reporters': [conReporter, redReporter, htmlReporter]})
 
     reporter.SetHelper('General')
 
