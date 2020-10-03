@@ -209,6 +209,9 @@ class RedmineReporter(QAReporter):
         dateStr = now.strftime("%d/%m/%Y")
        
         out = 'DESCRIBE CHANGES {0}{1}'.format(TODO_STR, NEW_LINE)
+
+        out += self.WriteHelperOutput('General')
+
         out += 'h1. Requirements review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
@@ -330,18 +333,6 @@ class HTMLReporter(QAReporter):
 
         ret += '</table>'
 
-        if (len(self.msgs[helper][self.INFO]) > 0):
-            ret += 'Information'
-            ret += NEW_LINE
-            ret += '<pre>'
-            ret += NEW_LINE
-            for msg in self.msgs[helper][self.INFO]:
-                msg = msg.rstrip()
-                ret += msg
-                ret += '\n'
-            ret += '</pre>'
-            ret += NEW_LINE
-
         ret += NEW_LINE
         if (not errFound):
             ret += 'No errors found!'
@@ -385,8 +376,8 @@ class HTMLReporter(QAReporter):
              color: white;
            }
            #tdi {
-             background: $f0f0f0;
-             color: #ff9300;
+             background: #f0f0f0;
+             color: #3e3e3e;
            }
         '''
 
