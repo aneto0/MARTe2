@@ -302,9 +302,10 @@ class HTMLReporter(QAReporter):
         NEW_LINE = '\n'
         ret = '<h1>{0}</h1>'.format(helper)
         ret += NEW_LINE
-        ret += '<table><th><td>Severity</td><td>Message</td></th>'
+        ret += '<table>'
         ret += NEW_LINE
-
+        ret += '<tr><th>Severity</th><th>Message</th></tr>'
+        ret += NEW_LINE
         errFound = False
         for msg in self.msgs[helper][self.ERROR]:
             msg = msg.rstrip()
