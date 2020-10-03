@@ -104,13 +104,19 @@ if __name__ == '__main__':
     logger.setLevel(logCriticality)
     consoleHandler.setLevel(logCriticality)
 
+    if ((len(args.dfile)) != 0 or (args.allfiles)):
+        args.branch = ''
+
     repo = git.Repo(args.rootdir)
+    currentBranch = repo.active_branch.name
+    referenceBranch = args.branch
+    codeVersion = repo.head.object.hexsha
 
     conReporter = ConsoleReporter(logger)
     redReporter = RedmineReporter(logger)
-    redReporter.Configure({'reviewauthor': args.reviewauthor, 'outputfile': args.redmineoutputfile, 'repo': repo})
+    redReporter.Configure({'reviewauthor': args.reviewauthor, 'outputfile': args.redmineoutputfile, 'codeversion': codeVersion})
     htmlReporter = HTMLReporter(logger)
-    htmlReporter.Configure({'reviewauthor': args.reviewauthor, 'outputfile': args.htmloutputfile, 'repo': repo})
+    htmlReporter.Configure({'reviewauthor': args.reviewauthor, 'outputfile': args.htmloutputfile, 'currentbranch': currentBranch, 'referencebranch': referenceBranch, 'codeversion': codeVersion})
 
     reporter = CompositeReporter(logger)
     reporter.Configure({'reporters': [conReporter, redReporter, htmlReporter]})
@@ -118,17 +124,14 @@ if __name__ == '__main__':
     reporter.SetHelper('General')
 
     if (len(args.dfile) != 0):
-        args.branch = ''
         changedFiles = [args.dfile]
         reporter.WriteInfo('The following files will be checked (set by user)')
         for f in changedFiles:
             reporter.WriteInfo(f)
     elif (args.allfiles):
-        args.branch = ''
         changedFiles = [f for f in glob.glob('{0}/**/*.h'.format(args.sourcedir), recursive=True)]
         reporter.WriteInfo('All project source files will be checked')
     elif (len(args.branch) > 0):
-        currentBranch = repo.active_branch.name
         # Try to change branch to trap issues early on
         if (not qautils.ChangeBranch(logger, repo, args.branch)):
             logger.critical('Could not change to branch {0}'.format(args.branch))

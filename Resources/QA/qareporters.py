@@ -145,13 +145,13 @@ class RedmineReporter(QAReporter):
         Args:
             args (dict): args['reviewauthor'] (str) the name of the person doing the review.
                          args['outputfile'] (str) the name of the file to write.
-                         args['repo'] (git.Repo) the git repository.
+                         args['codeversion'] (str) the version of the code being reviewed.
         Returns:
             True if all the parameters are successfully loaded.
         """
         self.reviewAuthor = args['reviewauthor']
         self.outputFile = args['outputfile']
-        self.repo = args['repo']
+        self.codeVersion = args['codeversion']
         return True
 
     def WriteHelperOutput(self, helper):
@@ -225,11 +225,10 @@ class RedmineReporter(QAReporter):
         out += '{0}{1}{2}'.format(NON_CONFORMITIES_STR, TODO_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(COMMENTS_STR, TODO_STR, NEW_LINE)
 
-        codeVersion = self.repo.head.object.hexsha
         out += 'h1. Code and documentation review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
-        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, codeVersion, NEW_LINE)
+        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, self.codeVersion, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_REVIEW_STR, TODO_STR, NEW_LINE)
         out += '{0}{1}'.format(NON_CONFORMITIES_STR, NEW_LINE)
 
@@ -242,7 +241,7 @@ class RedmineReporter(QAReporter):
         out += 'h1. Unit test review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
-        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, codeVersion, NEW_LINE)
+        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, self.codeVersion, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_COVERAGE_TEST_STR, TODO_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_FUNCTIONAL_TEST_STR, TODO_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_REVIEW_STR, TODO_STR, NEW_LINE)
@@ -286,19 +285,21 @@ class HTMLReporter(QAReporter):
         Args:
             args (dict): args['reviewauthor'] (str) the name of the person doing the review.
                          args['outputfile'] (str) the name of the file to write.
-                         args['repo'] (git.Repo) the git repository.
+                         args['currentbranch'] (str) the name of the branch that was subject to the QA review.
+                         args['referencebranch'] (str) the reference branch that was used for the comparison.
+                         args['codeversion'] (str) the version of the code used in the current branch.
         Returns:
             True if all the parameters are successfully loaded.
         """
         self.reviewAuthor = args['reviewauthor']
         self.outputFile = args['outputfile']
-        self.repo = args['repo']
+        self.currentBranch = args['currentbranch']
+        self.referenceBranch = args['referencebranch']
+        self.codeVersion = args['codeversion']
         return True
 
     def WriteHelperOutput(self, helper):
-        OK_COLOR = 'green'
-        WARN_COLOR = 'yellow'
-        ERROR_COLOR = 'red'
+
         NEW_LINE = '\n'
         ret = '<h1>{0}</h1>'.format(helper)
         ret += NEW_LINE
@@ -310,18 +311,22 @@ class HTMLReporter(QAReporter):
         for msg in self.msgs[helper][self.ERROR]:
             msg = msg.rstrip()
             errFound = True
-            ret += '<tr><td>ERROR</td><td>{0}</td></tr>'.format(msg)
+            ret += '<tr><td id="tde">ERROR</td><td>{0}</td></tr>'.format(msg)
             ret += NEW_LINE
         for msg in self.msgs[helper][self.WARNING]:
             msg = msg.rstrip()
             errFound = True
-            ret += '<tr><td>WARN</td><td>{0}</td></tr>'.format(msg)
+            ret += '<tr><td id="tdw">WARN</td><td>{0}</td></tr>'.format(msg)
             ret += NEW_LINE
-
         for msg in self.msgs[helper][self.OK]:
             msg = msg.rstrip()
-            ret += '<tr><td>OK</td><td>{0}</td></tr>'.format(msg)
+            ret += '<tr><td id="tdo">OK</td><td>{0}</td></tr>'.format(msg)
             ret += NEW_LINE
+        for msg in self.msgs[helper][self.INFO]:
+            msg = msg.rstrip()
+            ret += '<tr><td id="tdi">INFO</td><td>{0}</td></tr>'.format(msg)
+            ret += NEW_LINE
+
 
         ret += '</table>'
 
@@ -349,23 +354,75 @@ class HTMLReporter(QAReporter):
 
         now = datetime.now()
         dateStr = now.strftime("%d/%m/%Y")
-        codeVersion = self.repo.head.object.hexsha
-       
+        CSS = '''
+           h1   {
+             color: #3e3e3e;
+             font-size: 24px;
+           }
+           table, th, td {
+             border: 1px solid gray;
+             border-collapse: collapse;
+           }
+           th, td {
+             padding: 5px;
+           }
+           th {
+             background: #f0f0f0;
+           }
+           #tdh {
+             background: #f0f0f0;
+           }
+           #tde {
+             background: red;
+             color: white;
+           }
+           #tdw {
+             background: #ff9300;
+             color: white;
+           }
+           #tdo {
+             background: green;
+             color: white;
+           }
+           #tdi {
+             background: $f0f0f0;
+             color: #ff9300;
+           }
+        '''
+
         out = '<html>'
         out += NEW_LINE
-        out += '<p>Report date: {0}</p>'.format(dateStr)
+        out += '<header>'
+        out += '<style>'
+        out += CSS
         out += NEW_LINE
-        out += '<p>Software version: {0}</p>'.format(codeVersion)
+        out += '</style>'
         out += NEW_LINE
-        out += '<p>Reviewer: {0}</p>'.format(self.reviewAuthor)
+        out += '</header>'
+        out += '<body>'
         out += NEW_LINE
+        out += '<table>'
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Report date</td><td>{0}</td>'.format(dateStr)
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Software version</td><td>{0}</td></tr>'.format(codeVersion)
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Current branch</td><td>{0}</td></tr>'.format(self.currentBranch)
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Reference branch</td><td>{0}</td></tr>'.format(self.referenceBranch)
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Reviewer</td><td>{0}</td></tr>'.format(self.reviewAuthor)
+        out += NEW_LINE
+        out += '</table>'
 
+        out += self.WriteHelperOutput('General')
         out += self.WriteHelperOutput('Headers')
         out += self.WriteHelperOutput('Linter')
         out += self.WriteHelperOutput('Doxygen')
         out += self.WriteHelperOutput('Functional tests')
         out += self.WriteHelperOutput('GTest')
         out += self.WriteHelperOutput('Coverage')
+        out += '</body>'
         out += '</html>'
         out += NEW_LINE
         self.logger.debug(out)
