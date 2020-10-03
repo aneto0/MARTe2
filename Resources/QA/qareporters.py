@@ -304,7 +304,9 @@ class HTMLReporter(QAReporter):
     def WriteHelperOutput(self, helper):
 
         NEW_LINE = '\n'
-        ret = '<h1>{0}</h1>'.format(helper)
+        ret = '<hr>'
+        ret += NEW_LINE
+        ret += '<h1>{0}</h1>'.format(helper)
         ret += NEW_LINE
         ret += '<table>'
         ret += NEW_LINE
@@ -335,7 +337,7 @@ class HTMLReporter(QAReporter):
 
         ret += NEW_LINE
         if (not errFound):
-            ret += 'No errors found!'
+            ret += '<h3 id="h3ok">No errors found!</h3>'
         ret += NEW_LINE
 
         return ret
@@ -379,6 +381,10 @@ class HTMLReporter(QAReporter):
              background: #f0f0f0;
              color: #3e3e3e;
            }
+           #h3ok {
+             color: green;
+           }
+
         '''
 
         out = '<html>'
