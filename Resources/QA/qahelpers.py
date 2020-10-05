@@ -407,6 +407,7 @@ class HeadersHelper(QAHelper):
         atDateOK = False
         atAuthorOK = False
         atCopyrightOK = False
+        includesOK = True
 
         filename = f.split('/')[-1]
         filenameSplit = filename.split('.')
@@ -416,6 +417,7 @@ class HeadersHelper(QAHelper):
             extension = filenameSplit[1].rsplit()[0]
         isHeaderFile = (extension == 'h')
         includes = []
+        endOfHeaderCommentReached = False
         with open(f) as lines:
             for line in lines:
                 line = line.rstrip()
@@ -430,21 +432,22 @@ class HeadersHelper(QAHelper):
                     if (not(atFileOK)):
                         self.logger.critical('@file incorrect format detected: {0}'.format(line))
                 elif ('* @brief ' in line):
-                    possibleBriefs = []
-                    expectedBrief = 'file for class {0}'.format(className)
-                    if (isHeaderFile):
-                        expectedBrief = 'Header ' + expectedBrief
-                        possibleBriefs.append(expectedBrief)
-                    else:
-                        possibleBriefs.append('Class ' + expectedBrief)
-                        possibleBriefs.append('Source ' + expectedBrief)
-                    for expectedBrief in possibleBriefs:
-                        self.logger.debug('Expected brief: {0}'.format(expectedBrief))
-                        atBriefOK = (expectedBrief in line)
-                        if (not(atBriefOK)):
-                            self.logger.debug('Unexpected brief found: {0}'.format(line))
+                    if (not endOfHeaderCommentReached):
+                        possibleBriefs = []
+                        expectedBrief = 'file for class {0}'.format(className)
+                        if (isHeaderFile):
+                            expectedBrief = 'Header ' + expectedBrief
+                            possibleBriefs.append(expectedBrief)
                         else:
-                            break
+                            possibleBriefs.append('Class ' + expectedBrief)
+                            possibleBriefs.append('Source ' + expectedBrief)
+                        for expectedBrief in possibleBriefs:
+                            self.logger.debug('Expected brief: {0}'.format(expectedBrief))
+                            atBriefOK = (expectedBrief in line)
+                            if (not(atBriefOK)):
+                                self.logger.debug('Unexpected brief found: {0}'.format(line))
+                            else:
+                                break
                 elif ('* @author ' in line):
                     author = line.split('@author ')[1]
                     #Remove accents
@@ -471,12 +474,15 @@ class HeadersHelper(QAHelper):
                         atDateOK = False
                 elif ('#include' in line):
                     includes.append(line)
-
-        includesSort = includes[:]
-        includesSort.sort()
-        includesOK = (includes == includesSort)
-        if (not includesOK):
-            self.logger.critical('Includes not sorted {0} != {1}'.format(includes, includesSort))
+                elif ('*/' in line):
+                    endOfHeaderCommentReached = True
+                    includesSort = includes[:]
+                    includesSort.sort()
+                    if (includesOK):
+                        includesOK = (includes == includesSort)
+                        if (not includesOK):
+                            self.logger.critical('Includes not sorted {0} != {1}'.format(includes, includesSort))
+            
         allOK = atFileOK and atBriefOK and atDateOK and atAuthorOK and atCopyrightOK and includesOK
         status = {'allok': allOK, '@file': atFileOK, '@brief': atBriefOK, '@date': atDateOK, '@author': atAuthorOK, '@copyright': atCopyrightOK, '#includes sorted': includesOK}
         return status
