@@ -159,32 +159,35 @@ class RedmineReporter(QAReporter):
         WARN_COLOR = 'yellow'
         ERROR_COLOR = 'red'
         ret = '\n*{0}*\n\n'.format(helper)
-        errFound = False
-        for msg in self.msgs[helper][self.ERROR]:
-            msg = msg.rstrip().replace('%', '%%')
-            errFound = True
-            ret += '%{{color:{0}}}ERR:% {1}\n'.format(ERROR_COLOR, msg)
-        for msg in self.msgs[helper][self.WARNING]:
-            msg = msg.rstrip().replace('%', '%%')
-            errFound = True
-            ret += '%{{color:{0}}}WARN:% {1}\n'.format(WARN_COLOR, msg)
+        if (helper in self.msgs):
+            errFound = False
+            for msg in self.msgs[helper][self.ERROR]:
+                msg = msg.rstrip().replace('%', '%%')
+                errFound = True
+                ret += '%{{color:{0}}}ERR:% {1}\n'.format(ERROR_COLOR, msg)
+            for msg in self.msgs[helper][self.WARNING]:
+                msg = msg.rstrip().replace('%', '%%')
+                errFound = True
+                ret += '%{{color:{0}}}WARN:% {1}\n'.format(WARN_COLOR, msg)
 
-        for msg in self.msgs[helper][self.OK]:
-            msg = msg.rstrip().replace('%', '%%')
-            ret += '%{{color:{0}}}OK:% {1}\n'.format(OK_COLOR, msg)
+            for msg in self.msgs[helper][self.OK]:
+                msg = msg.rstrip().replace('%', '%%')
+                ret += '%{{color:{0}}}OK:% {1}\n'.format(OK_COLOR, msg)
 
-        if (len(self.msgs[helper][self.INFO]) > 0):
-            ret += 'Information\n'
-            ret += '<pre>\n'
-            for msg in self.msgs[helper][self.INFO]:
-                msg = msg.rstrip()
-                ret += msg
-                ret += '\n'
-            ret += '</pre>\n'
+            if (len(self.msgs[helper][self.INFO]) > 0):
+                ret += 'Information\n'
+                ret += '<pre>\n'
+                for msg in self.msgs[helper][self.INFO]:
+                    msg = msg.rstrip()
+                    ret += msg
+                    ret += '\n'
+                ret += '</pre>\n'
 
 
-        if (not errFound):
-            ret += '%{{color:{0}}}OK:% no errors found.\n\n'.format(OK_COLOR)
+            if (not errFound):
+                ret += '%{{color:{0}}}OK:% no errors found.\n\n'.format(OK_COLOR)
+        else:
+            ret += '%{{color:{0}}}ERR:% helper did not run.\n\n'.format(ERROR_COLOR)
 
         return ret
 
@@ -237,6 +240,7 @@ class RedmineReporter(QAReporter):
 
         out += '%{{background:red}}Run flexelint and report% {0}{1}'.format(TODO_STR, NEW_LINE)
         out += self.WriteHelperOutput('Headers')
+        out += self.WriteHelperOutput('Lint includes')
         out += self.WriteHelperOutput('Linter')
         out += self.WriteHelperOutput('Doxygen')
 
@@ -302,43 +306,45 @@ class HTMLReporter(QAReporter):
         return True
 
     def WriteHelperOutput(self, helper):
-
         NEW_LINE = '\n'
         ret = '<hr>'
         ret += NEW_LINE
         ret += '<h1>{0}</h1>'.format(helper)
         ret += NEW_LINE
-        ret += '<table>'
-        ret += NEW_LINE
-        ret += '<tr><th>Severity</th><th>Message</th></tr>'
-        ret += NEW_LINE
-        errFound = False
-        for msg in self.msgs[helper][self.ERROR]:
-            msg = msg.rstrip()
-            errFound = True
-            ret += '<tr><td id="tde">ERROR</td><td>{0}</td></tr>'.format(msg)
+        if (helper in self.msgs):
+            ret += '<table>'
             ret += NEW_LINE
-        for msg in self.msgs[helper][self.WARNING]:
-            msg = msg.rstrip()
-            errFound = True
-            ret += '<tr><td id="tdw">WARN</td><td>{0}</td></tr>'.format(msg)
+            ret += '<tr><th>Severity</th><th>Message</th></tr>'
             ret += NEW_LINE
-        for msg in self.msgs[helper][self.OK]:
-            msg = msg.rstrip()
-            ret += '<tr><td id="tdo">OK</td><td>{0}</td></tr>'.format(msg)
-            ret += NEW_LINE
-        for msg in self.msgs[helper][self.INFO]:
-            msg = msg.rstrip()
-            ret += '<tr><td id="tdi">INFO</td><td>{0}</td></tr>'.format(msg)
-            ret += NEW_LINE
+            errFound = False
+            for msg in self.msgs[helper][self.ERROR]:
+                msg = msg.rstrip()
+                errFound = True
+                ret += '<tr><td id="tde">ERROR</td><td>{0}</td></tr>'.format(msg)
+                ret += NEW_LINE
+            for msg in self.msgs[helper][self.WARNING]:
+                msg = msg.rstrip()
+                errFound = True
+                ret += '<tr><td id="tdw">WARN</td><td>{0}</td></tr>'.format(msg)
+                ret += NEW_LINE
+            for msg in self.msgs[helper][self.OK]:
+                msg = msg.rstrip()
+                ret += '<tr><td id="tdo">OK</td><td>{0}</td></tr>'.format(msg)
+                ret += NEW_LINE
+            for msg in self.msgs[helper][self.INFO]:
+                msg = msg.rstrip()
+                ret += '<tr><td id="tdi">INFO</td><td>{0}</td></tr>'.format(msg)
+                ret += NEW_LINE
 
 
-        ret += '</table>'
+            ret += '</table>'
 
-        ret += NEW_LINE
-        if (not errFound):
-            ret += '<h3 id="h3ok">No errors found!</h3>'
-        ret += NEW_LINE
+            ret += NEW_LINE
+            if (not errFound):
+                ret += '<h3 id="h3ok">No errors found!</h3>'
+            ret += NEW_LINE
+        else:
+            ret += '<h3 id="h3nok">Helper did not run</h3>'
 
         return ret
 
@@ -384,7 +390,9 @@ class HTMLReporter(QAReporter):
            #h3ok {
              color: green;
            }
-
+           #h3nok {
+             color: red;
+           }
         '''
 
         out = '<html>'
@@ -414,6 +422,7 @@ class HTMLReporter(QAReporter):
 
         out += self.WriteHelperOutput('General')
         out += self.WriteHelperOutput('Headers')
+        out += self.WriteHelperOutput('Lint includes')
         out += self.WriteHelperOutput('Linter')
         out += self.WriteHelperOutput('Doxygen')
         out += self.WriteHelperOutput('Functional tests')

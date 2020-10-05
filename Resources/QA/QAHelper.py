@@ -38,7 +38,8 @@ from qahelpers import GTestHelper
 from qahelpers import HeadersHelper
 from qahelpers import FunctionalTestsHelper
 from qahelpers import CoverageHelper
-from qahelpers import LintHelper
+from qahelpers import LinterExecutorHelper
+from qahelpers import LintIncludeHelper
 import qautils
 from qareporters import CompositeReporter
 from qareporters import ConsoleReporter
@@ -73,6 +74,16 @@ if __name__ == '__main__':
     parser.add_argument('-af', '--allfiles', action='store_true', help='Validates all source files (mostly for debug)', default='')
     parser.add_argument('-if', '--lintincludes', type=str, help='Lint list of includes files to be linted', nargs='*', default=['MakeDefaults/Lint/marte_flint_files.lnt'])
     parser.add_argument('-ii', '--lintignore', type=str, help='Lint list of files to be ignored', nargs='*', default=['MARTeApp.cpp', 'Bootstrap.cpp'])
+    parser.add_argument('-xx', '--linterexec', type=str, help='Linter executable', default='/opt/FlexeLint/flint')
+    parser.add_argument('-xd', '--linterdir', type=str, help='Directory where to trigger the lint from', default='MARTe2-dev')
+    parser.add_argument('-xh', '--linterhostname', type=str, help='Linter hostname', default='flexelint.codac.local')
+    parser.add_argument('-xr', '--linterrsyncsource', type=str, help='Linter source directories to be rsynced', nargs='*', default=['.'])
+    parser.add_argument('-xt', '--linterrsynctarget', type=str, help='Linter target directories to be rsynced (should have the same size of linterrsyncsource)', nargs='*', default=['MARTe2-dev'])
+    parser.add_argument('-xe', '--linterrsyncexclude', type=str, help='Linter directories not to be rsynced', nargs='*', default=['Lib', 'Test', '.git', 'Build', 'cov'])
+    parser.add_argument('-xi', '--linterinclude', type=str, help='Linter include directories', nargs='*', default=['/opt/FlexeLint/supp/lnt', 'MakeDefaults/Lint'])
+    parser.add_argument('-xu', '--linterusername', type=str, help='Linter server username', default=os.environ.get('USER', None))
+    parser.add_argument('-xf', '--linterfilename', type=str, help='Linter input filename', default='marte_flint_eclipse.lnt')
+    parser.add_argument('-xg', '--lintergrep', type=str, help='Grep out these keywords', nargs='*', default=['lint-linux.h'])
     parser.add_argument('-lg', '--lcovexec', type=str, help='Lcov GTest executor location', default='Test/GTest/cov/MainGTest.ex')
     parser.add_argument('-lf', '--lcovfilter', type=str, help='Lcov GTest filters', nargs='*', default=['*'])
     parser.add_argument('-ld', '--lcovoutputdir', type=str, help='Where to write the lcov temporary output files', default='Build')
@@ -89,10 +100,12 @@ if __name__ == '__main__':
     parser.add_argument('-gt', '--gtesttarget', type=str, help='GTest target platform', default='x86-linux')
     parser.add_argument('-ed', '--excludedoxygen', action='store_true', help='Disable doxygen checking' )
     parser.add_argument('-el', '--excludelinterincludes', action='store_true', help='Disable linter include checking' )
+    parser.add_argument('-ex', '--excludelinterexec', action='store_true', help='Disable linter execution checking' )
     parser.add_argument('-ec', '--excludecoverage', action='store_true', help='Disable coverage checking' )
     parser.add_argument('-eh', '--excludeheaders', action='store_true', help='Disable headers checking' )
     parser.add_argument('-ef', '--excludefunctional', action='store_true', help='Disable functional tests checking' )
     parser.add_argument('-eg', '--excludegtest', action='store_true', help='Disable GTest checking' )
+    parser.add_argument('-er', '--excludereport', action='store_true', help='Disable reporting (mostly for debug)' )
     parser.add_argument('-ro', '--redmineoutputfile', type=str, help='Redmine output file', default='/tmp/redmine.out.txt')
     parser.add_argument('-ho', '--htmloutputfile', type=str, help='HTML output file', default='/tmp/qahelper.html')
     parser.add_argument('-fe', '--functionaltestexceptions', type=str, help='List of files that are not supposed to be tested', nargs='*', default='[]')
@@ -163,12 +176,19 @@ if __name__ == '__main__':
         hh.Configure({'authors': args.authors, 'files': changedFiles})
         hh.Run(reporter)
 
-    #Linter
+    #Linter includes
     if (not args.excludelinterincludes):
+        reporter.SetHelper('Lint includes')
+        li = LintIncludeHelper(logger)
+        li.Configure({'sourcedir': args.sourcedir, 'lintincludes': args.lintincludes, 'lintignore': args.lintignore})
+        li.Run(reporter)
+
+    #Linter executor
+    if (not args.excludelinterexec):
         reporter.SetHelper('Linter')
-        lh = LintHelper(logger)
-        lh.Configure({'sourcedir': args.sourcedir, 'lintincludes': args.lintincludes, 'lintignore': args.lintignore})
-        lh.Run(reporter)
+        lx = LinterExecutorHelper(logger)
+        lx.Configure({'linterexec': args.linterexec, 'linterhostname': args.linterhostname, 'linterdir': args.linterdir, 'linterrsyncsource': args.linterrsyncsource, 'linterrsynctarget': args.linterrsynctarget, 'linterrsyncexclude': args.linterrsyncexclude, 'linterinclude': args.linterinclude, 'linterusername': args.linterusername, 'linterfilename': args.linterfilename, 'lintergrep': args.lintergrep})
+        lx.Run(reporter)
 
     #Functional tests
     if (not args.excludefunctional):
@@ -194,5 +214,6 @@ if __name__ == '__main__':
             'gtestfilter': args.gtestfilter, 'gtestexecdisable': args.gtestexecdisable, 'gtesttarget': args.gtesttarget, 'compbranch': args.branch, 'repo': repo})
         gh.Run(reporter)
 
-    reporter.Terminate()
+    if (not args.excludereport):
+        reporter.Terminate()
 
