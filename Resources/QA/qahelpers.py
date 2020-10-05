@@ -222,7 +222,7 @@ class LinterExecutorHelper(QAHelper):
 
             outLines = process.stdout.readlines()
             errLines = process.stderr.readlines()
-            ignoreKeywords = ['FlexeLint for C/C++ (Unix) Vers. 9.00L, Copyright Gimpel Software 1985-2014', 'Warning 686: Option', '\'-elib(*)\' is suspicious', 'receiving a syntax error in a library file most likely means', 'something is wrong with your Lint configuration']  
+            ignoreKeywords = ['FlexeLint for C/C++ (Unix) Vers. 9.00L, Copyright Gimpel Software 1985-2014', 'Warning 686: Option', '\'-elib(*)\' is suspicious', 'causing meaningless output', 'something is wrong with your Lint configuration']  
 
             #errorKeywords = ['warning:', 'error:']
             for line in errLines:
