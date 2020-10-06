@@ -29,6 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "ErrorManagement.h"
 #include "HttpChunkedStream.h"
 #include "StreamString.h"
 /*---------------------------------------------------------------------------*/
@@ -47,6 +49,19 @@ HttpChunkedStream::HttpChunkedStream() :
     chunkMode = false;
     calibReadParam = 0u;
     calibWriteParam = 0u;
+
+    uint32 readBufferSize = 32u;
+    uint32 writeBufferSize = 4096u;
+
+    /*lint -e{1506} Buffer size needs to be set before any method is called */
+    bool ret = SetBufferSize(readBufferSize, writeBufferSize);
+    if(!ret) {
+        REPORT_ERROR_STATIC(
+            ErrorManagement::ParametersError,
+            "Failure setting buffer sizes, expected %u/%u - actual %u/%u (R/W)",
+	    readBufferSize, writeBufferSize,
+            GetReadBufferSize(), GetWriteBufferSize());
+    }
 }
 
 HttpChunkedStream::~HttpChunkedStream() {

@@ -144,12 +144,14 @@ class RedmineReporter(QAReporter):
         
         Args:
             args (dict): args['reviewauthor'] (str) the name of the person doing the review.
+                         args['outputfile'] (str) the name of the file to write.
+                         args['codeversion'] (str) the version of the code being reviewed.
         Returns:
             True if all the parameters are successfully loaded.
         """
         self.reviewAuthor = args['reviewauthor']
         self.outputFile = args['outputfile']
-        self.repo = args['repo']
+        self.codeVersion = args['codeversion']
         return True
 
     def WriteHelperOutput(self, helper):
@@ -157,32 +159,35 @@ class RedmineReporter(QAReporter):
         WARN_COLOR = 'yellow'
         ERROR_COLOR = 'red'
         ret = '\n*{0}*\n\n'.format(helper)
-        errFound = False
-        for msg in self.msgs[helper][self.ERROR]:
-            msg = msg.rstrip().replace('%', '%%')
-            errFound = True
-            ret += '%{{color:{0}}}ERR:% {1}\n'.format(ERROR_COLOR, msg)
-        for msg in self.msgs[helper][self.WARNING]:
-            msg = msg.rstrip().replace('%', '%%')
-            errFound = True
-            ret += '%{{color:{0}}}WARN:% {1}\n'.format(WARN_COLOR, msg)
+        if (helper in self.msgs):
+            errFound = False
+            for msg in self.msgs[helper][self.ERROR]:
+                msg = msg.rstrip().replace('%', '%%')
+                errFound = True
+                ret += '%{{color:{0}}}ERR:% {1}\n'.format(ERROR_COLOR, msg)
+            for msg in self.msgs[helper][self.WARNING]:
+                msg = msg.rstrip().replace('%', '%%')
+                errFound = True
+                ret += '%{{color:{0}}}WARN:% {1}\n'.format(WARN_COLOR, msg)
 
-        for msg in self.msgs[helper][self.OK]:
-            msg = msg.rstrip().replace('%', '%%')
-            ret += '%{{color:{0}}}OK:% {1}\n'.format(OK_COLOR, msg)
+            for msg in self.msgs[helper][self.OK]:
+                msg = msg.rstrip().replace('%', '%%')
+                ret += '%{{color:{0}}}OK:% {1}\n'.format(OK_COLOR, msg)
 
-        if (len(self.msgs[helper][self.INFO]) > 0):
-            ret += 'Information\n'
-            ret += '<pre>\n'
-            for msg in self.msgs[helper][self.INFO]:
-                msg = msg.rstrip()
-                ret += msg
-                ret += '\n'
-            ret += '</pre>\n'
+            if (len(self.msgs[helper][self.INFO]) > 0):
+                ret += 'Information\n'
+                ret += '<pre>\n'
+                for msg in self.msgs[helper][self.INFO]:
+                    msg = msg.rstrip()
+                    ret += msg
+                    ret += '\n'
+                ret += '</pre>\n'
 
 
-        if (not errFound):
-            ret += '%{{color:{0}}}OK:% no errors found.\n\n'.format(OK_COLOR)
+            if (not errFound):
+                ret += '%{{color:{0}}}OK:% no errors found.\n\n'.format(OK_COLOR)
+        else:
+            ret += '%{{color:{0}}}ERR:% helper did not run.\n\n'.format(ERROR_COLOR)
 
         return ret
 
@@ -207,6 +212,9 @@ class RedmineReporter(QAReporter):
         dateStr = now.strftime("%d/%m/%Y")
        
         out = 'DESCRIBE CHANGES {0}{1}'.format(TODO_STR, NEW_LINE)
+
+        out += self.WriteHelperOutput('General')
+
         out += 'h1. Requirements review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
@@ -223,16 +231,16 @@ class RedmineReporter(QAReporter):
         out += '{0}{1}{2}'.format(NON_CONFORMITIES_STR, TODO_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(COMMENTS_STR, TODO_STR, NEW_LINE)
 
-        codeVersion = self.repo.head.object.hexsha
         out += 'h1. Code and documentation review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
-        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, codeVersion, NEW_LINE)
+        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, self.codeVersion, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_REVIEW_STR, TODO_STR, NEW_LINE)
         out += '{0}{1}'.format(NON_CONFORMITIES_STR, NEW_LINE)
 
         out += '%{{background:red}}Run flexelint and report% {0}{1}'.format(TODO_STR, NEW_LINE)
         out += self.WriteHelperOutput('Headers')
+        out += self.WriteHelperOutput('Lint includes')
         out += self.WriteHelperOutput('Linter')
         out += self.WriteHelperOutput('Doxygen')
 
@@ -240,7 +248,7 @@ class RedmineReporter(QAReporter):
         out += 'h1. Unit test review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
-        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, codeVersion, NEW_LINE)
+        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, self.codeVersion, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_COVERAGE_TEST_STR, TODO_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_FUNCTIONAL_TEST_STR, TODO_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_REVIEW_STR, TODO_STR, NEW_LINE)
@@ -255,7 +263,7 @@ class RedmineReporter(QAReporter):
         out += 'h1. Integration test review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
-        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, codeVersion, NEW_LINE)
+        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, self.codeVersion, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_REVIEW_STR, NA_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(NON_CONFORMITIES_STR, NA_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(COMMENTS_STR, NA_STR, NEW_LINE)
@@ -264,7 +272,7 @@ class RedmineReporter(QAReporter):
         out += 'h1. Acceptance test review{0}'.format(NEW_LINE)
         out += '{0}{1}{2}'.format(DATE_OF_REVIEW_STR, dateStr, NEW_LINE)
         out += '{0}{1}{2}'.format(PERSON_REVIEW_STR, self.reviewAuthor, NEW_LINE)
-        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, codeVersion, NEW_LINE)
+        out += '{0}{1}{2}'.format(VERSION_OF_SRC_STR, self.codeVersion, NEW_LINE)
         out += '{0}{1}{2}'.format(RESULT_REVIEW_STR, NA_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(NON_CONFORMITIES_STR, NA_STR, NEW_LINE)
         out += '{0}{1}{2}'.format(COMMENTS_STR, NA_STR, NEW_LINE)
@@ -273,6 +281,181 @@ class RedmineReporter(QAReporter):
         with open(self.outputFile, 'w') as f:
             f.write(out)
             self.logger.info('Wrote redmine output to {0}'.format(self.outputFile))
+
+class HTMLReporter(QAReporter):
+    """ QA reporter that outputs in HTML.
+    """
+
+    def Configure(self, args):
+        """ Configures the reporter instance.
+        
+        Args:
+            args (dict): args['reviewauthor'] (str) the name of the person doing the review.
+                         args['outputfile'] (str) the name of the file to write.
+                         args['currentbranch'] (str) the name of the branch that was subject to the QA review.
+                         args['referencebranch'] (str) the reference branch that was used for the comparison.
+                         args['codeversion'] (str) the version of the code used in the current branch.
+        Returns:
+            True if all the parameters are successfully loaded.
+        """
+        self.reviewAuthor = args['reviewauthor']
+        self.outputFile = args['outputfile']
+        self.currentBranch = args['currentbranch']
+        self.referenceBranch = args['referencebranch']
+        self.codeVersion = args['codeversion']
+        return True
+
+    def WriteHelperOutput(self, helper):
+        NEW_LINE = '\n'
+        ret = '<hr>'
+        ret += NEW_LINE
+        ret += '<h1>{0}</h1>'.format(helper)
+        ret += NEW_LINE
+        if (helper in self.msgs):
+            ret += '<table>'
+            ret += NEW_LINE
+            ret += '<tr><th>Severity</th><th>Message</th></tr>'
+            ret += NEW_LINE
+            errFound = False
+            for msg in self.msgs[helper][self.ERROR]:
+                msg = msg.rstrip()
+                errFound = True
+                ret += '<tr><td id="tde">ERROR</td><td>{0}</td></tr>'.format(msg)
+                ret += NEW_LINE
+            for msg in self.msgs[helper][self.WARNING]:
+                msg = msg.rstrip()
+                errFound = True
+                ret += '<tr><td id="tdw">WARN</td><td>{0}</td></tr>'.format(msg)
+                ret += NEW_LINE
+            for msg in self.msgs[helper][self.OK]:
+                msg = msg.rstrip()
+                ret += '<tr><td id="tdo">OK</td><td>{0}</td></tr>'.format(msg)
+                ret += NEW_LINE
+            for msg in self.msgs[helper][self.INFO]:
+                msg = msg.rstrip()
+                ret += '<tr><td id="tdi">INFO</td><td>{0}</td></tr>'.format(msg)
+                ret += NEW_LINE
+
+
+            ret += '</table>'
+
+            ret += NEW_LINE
+            if (not errFound):
+                ret += '<h3 id="h3ok">No errors found!</h3>'
+            ret += NEW_LINE
+        else:
+            ret += '<h3 id="h3nok">Helper did not run</h3>'
+
+        return ret
+
+    def Terminate(self):
+        NEW_LINE = '\n'
+
+        now = datetime.now()
+        dateStr = now.strftime("%d/%m/%Y")
+        CSS = '''
+           h1   {
+             color: #3e3e3e;
+             font-size: 24px;
+           }
+           table, th, td {
+             border: 1px solid gray;
+             border-collapse: collapse;
+           }
+           th, td {
+             padding: 5px;
+           }
+           th {
+             background: #f0f0f0;
+           }
+           #tdh {
+             background: #f0f0f0;
+           }
+           #tde {
+             background: red;
+             color: white;
+           }
+           #tdw {
+             background: #ff9300;
+             color: white;
+           }
+           #tdo {
+             background: green;
+             color: white;
+           }
+           #tdi {
+             background: #f0f0f0;
+             color: #3e3e3e;
+           }
+           #h3ok {
+             color: green;
+           }
+           #h3nok {
+             color: red;
+           }
+        '''
+
+        out = '<html>'
+        out += NEW_LINE
+        out += '<header>'
+        out += '<style>'
+        out += CSS
+        out += NEW_LINE
+        out += '</style>'
+        out += NEW_LINE
+        out += '</header>'
+        out += '<body>'
+        out += NEW_LINE
+        out += '<table>'
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Report date</td><td>{0}</td>'.format(dateStr)
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Software version</td><td>{0}</td></tr>'.format(self.codeVersion)
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Current branch</td><td>{0}</td></tr>'.format(self.currentBranch)
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Reference branch</td><td>{0}</td></tr>'.format(self.referenceBranch)
+        out += NEW_LINE
+        out += '<tr><td id="tdh">Reviewer</td><td>{0}</td></tr>'.format(self.reviewAuthor)
+        out += NEW_LINE
+        out += '</table>'
+
+        out += self.WriteHelperOutput('General')
+        out += self.WriteHelperOutput('Headers')
+        out += self.WriteHelperOutput('Lint includes')
+        out += self.WriteHelperOutput('Linter')
+        out += self.WriteHelperOutput('Doxygen')
+        out += self.WriteHelperOutput('Functional tests')
+        out += self.WriteHelperOutput('GTest')
+        out += self.WriteHelperOutput('Coverage')
+        out += '</body>'
+        out += '</html>'
+        out += NEW_LINE
+        self.logger.debug(out)
+        with open(self.outputFile, 'w') as f:
+            f.write(out)
+            self.logger.info('Wrote html output to {0}'.format(self.outputFile))
+
+class CompositeReporter(QAReporter):
+    """ QA reporter that calls Terminate on all the registered reporters.
+    """
+
+    def Configure(self, args):
+        """ Configures the reporter instance.
+        
+        Args:
+            args (dict): args['reporters'] ([QAReporter]) all the QA reporters to call.
+        Returns:
+            True if all the parameters are successfully loaded.
+        """
+        self.reporters = args['reporters']
+        return True
+
+    def Terminate(self):
+        for r in self.reporters:
+            r.msgs = self.msgs
+            r.Terminate()
+
 
 class CompositeReporter(QAReporter):
     """ QA reporter that calls Terminate on all the registered reporters.

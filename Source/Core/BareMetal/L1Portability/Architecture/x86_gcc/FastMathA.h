@@ -44,12 +44,17 @@ namespace MARTe {
 
 namespace FastMath {
 
-
+#ifdef __SIZEOF_INT128__
 /** 128 Bit unsigned integer. */
 typedef unsigned __int128 uint128;
 
 /** 128 Bit signed integer. */
 typedef __int128 int128;
+
+#else
+typedef __int128_t int128;
+typedef __uint128_t uint128;
+#endif
 
 inline float Sin(const float angle) {
     volatile float output;

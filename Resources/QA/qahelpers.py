@@ -26,6 +26,7 @@ import datetime
 import glob
 import qautils
 import os
+import socket
 import unidecode
 
 ##
@@ -74,7 +75,7 @@ class QAHelper(object):
         #See qautils
         return qautils.ChangeBranch(self.logger, repo, targetBranch)
 
-class LintHelper(QAHelper):
+class LintIncludeHelper(QAHelper):
     """ Helper QA class that verifies if all the files are being included for linting.
     """
 
@@ -115,22 +116,152 @@ class LintHelper(QAHelper):
         #Get all .cpp
         for f in cppFiles:
             self.logger.debug('Checking if file {0} is listed for linting'.format(f))
+            found = False
             if (f not in self.lintIgnoredFiles):
-                found = False
+                    
                 #Check if the file is one of the lint include files
                 for lintIncludeFileList in lintIncludeFilesList:
                     found = (f in lintIncludeFileList)
                     if (found):
                         break
-            if (not found):
-                self.logger.critical('File {0} is not being linted!'.format(f))
-                reporter.WriteError('File {0} is not being linted!'.format(f))
-                ok = False
+                if (not found):
+                    self.logger.critical('File {0} is not being linted!'.format(f))
+                    reporter.WriteError('File {0} is not being linted!'.format(f))
+                    ok = False
         if (ok):
             reporter.WriteOK('All files are being included for linting')
         else:
             reporter.WriteError('Not all files are being included for linting')
         return ok
+
+class LinterExecutorHelper(QAHelper):
+    """ Helper QA class that triggers the remote execution of the linter (using rsync + ssh).
+    """
+
+    def Configure(self, args):
+        """ Configures the lint helper instance.
+        
+        Args:
+            args (dict): args['linterexec'] (str) the name of the Linter executable.
+                         args['linterhostname'] (str) the hostname of the computer where the linter is installed.
+                         args['linterdir'] (str) directory where to trigger the linter from.
+                         args['linterrsyncsource'] ([str]) list of source directories to be rsynced.
+                         args['linterrsynctarget'] ([str]) list of target directories to be rsynced.
+                         args['linterrsyncexclude'] ([str]) list of directories not to be rsynced.
+                         args['linterinclude'] ([str]) list of directories to be included in the lint call.
+                         args['linterusername'] (str) username to connect to the remote computer.
+                         args['linterfilename'] (str) linter input filename.
+                         args['lintergrep'] (str) negative grep to apply to output results.
+                         args['linteroutputfilename'] (str) linter output filename.
+        Returns:
+            True.
+        """
+        self.linterExec = args['linterexec']
+        self.linterHostname = args['linterhostname']
+        self.linterDir = args['linterdir']
+        self.linterRSyncSource = args['linterrsyncsource']
+        self.linterRSyncTarget = args['linterrsynctarget']
+        self.linterRSyncExclude = args['linterrsyncexclude']
+        self.linterInclude = args['linterinclude']
+        self.linterUsername = args['linterusername']
+        self.linterFilename = args['linterfilename']
+        self.linterGrep = args['lintergrep']
+        self.linterOutputFilename = args['linteroutputfilename']
+
+        return True
+
+    def Run(self, reporter):
+        """ RSyncs using ssh to the remote PC where the lint program is installed and calls the linter.
+        Args:
+            args (QAReporter): where to print the output results.
+        Returns:
+            True if there are no errors output by the linter. 
+        """
+        ok = True
+        #Try to connect to the remote host
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sock.connect((self.linterHostname, 22))
+        except Exception as e:
+            ok = False
+            self.logger.critical('Could not connect to: {0}. Reason: {1}'.format(self.linterHostname, e))
+            reporter.WriteError('Could not connect to: {0}. Linter was not executed'.format(self.linterHostname))
+        sock.close()
+
+
+        if (ok):
+            ok = len(self.linterRSyncSource) == len(self.linterRSyncTarget)
+            if (not ok):
+                self.logger.critical('linterrsyncsource and linterrsynctarget shall have the same size')
+
+        if (ok):
+            rsyncExcludes = ''
+            for e in self.linterRSyncExclude:
+                rsyncExcludes += ' --exclude \'{0}\''.format(e)
+            #RSync
+            for (s, t) in zip(self.linterRSyncSource, self.linterRSyncTarget):
+                if (s != '.'):
+                    if (not s.endswith('/')):
+                        s += '/'
+                while (t.endswith('/')):
+                    t = t[0:len(t)-1]
+                if (len(t) > 0):
+                    rsyncCommand = 'rsync -avz {0} --delete -e ssh {1} {2}@{3}:{4}'.format(rsyncExcludes, s, self.linterUsername, self.linterHostname, t)
+                    self.logger.debug('Calling rsync: {0}'.format(rsyncCommand))
+                    self.ExecShellCommand('{0}'.format(rsyncCommand))
+                else:
+                    self.logger.critical('Invalid target')
+        if (ok):
+            linterIncludes = ''
+            linterGreps = ''
+            for s in self.linterInclude:
+                linterIncludes += ' -i {0}'.format(s)
+            for s in self.linterGrep:
+                linterGreps += ' | grep -v {0}'.format(s)
+
+            lintCommand = 'ssh {0}@{1} "cd {2} && {3} {4} -v {5} {6}"'.format(self.linterUsername, self.linterHostname, self.linterDir, self.linterExec, linterIncludes, self.linterFilename, linterGreps)
+            self.logger.debug('Calling lint command: {0}'.format(lintCommand))
+            process = self.ExecShellCommand(lintCommand, False, False)
+
+            outLines = process.stdout.readlines()
+            errLines = process.stderr.readlines()
+            ignoreKeywords = ['FlexeLint for C/C++ (Unix) Vers. 9.00L, Copyright Gimpel Software 1985-2014', 'Warning 686: Option', '\'-elib(*)\' is suspicious', 'causing meaningless output', 'something is wrong with your Lint configuration', 'receiving a syntax error in a library file']  
+
+            outFile = None
+            if (len(self.linterOutputFilename) > 0):
+                outFile = open(self.linterOutputFilename, 'w')
+            #errorKeywords = ['warning:', 'error:']
+            for line in errLines:
+                if (outFile is not None):
+                    outFile.write(line)
+                ignore = False
+                for k in ignoreKeywords:
+                    if (not ignore):
+                        ignore = k in line 
+                if (not ignore):
+                    ok = False
+                    self.logger.debug(line)
+                    reporter.WriteError(line)
+
+            for line in outLines:
+                if (outFile is not None):
+                    outFile.write(line)
+                ignore = False
+                for k in ignoreKeywords:
+                    if (not ignore):
+                        ignore = k in line 
+                if (not ignore):
+                    ok = False
+                    self.logger.debug(line)
+                    reporter.WriteError(line)
+
+        if (outFile is not None):
+            outFile.close()
+        if (ok):
+            reporter.WriteOK('No linter errors found')
+        return ok
+
+
 
 class FunctionalTestsHelper(QAHelper):
     """ Helper QA class that verifies if all the public methods are being tested.
@@ -288,6 +419,7 @@ class HeadersHelper(QAHelper):
         atDateOK = False
         atAuthorOK = False
         atCopyrightOK = False
+        includesOK = True
 
         filename = f.split('/')[-1]
         filenameSplit = filename.split('.')
@@ -296,7 +428,8 @@ class HeadersHelper(QAHelper):
         if (len(filenameSplit) > 1):
             extension = filenameSplit[1].rsplit()[0]
         isHeaderFile = (extension == 'h')
-
+        includes = []
+        endOfHeaderCommentReached = False
         with open(f) as lines:
             for line in lines:
                 line = line.rstrip()
@@ -311,21 +444,22 @@ class HeadersHelper(QAHelper):
                     if (not(atFileOK)):
                         self.logger.critical('@file incorrect format detected: {0}'.format(line))
                 elif ('* @brief ' in line):
-                    possibleBriefs = []
-                    expectedBrief = 'file for class {0}'.format(className)
-                    if (isHeaderFile):
-                        expectedBrief = 'Header ' + expectedBrief
-                        possibleBriefs.append(expectedBrief)
-                    else:
-                        possibleBriefs.append('Class ' + expectedBrief)
-                        possibleBriefs.append('Source ' + expectedBrief)
-                    for expectedBrief in possibleBriefs:
-                        self.logger.debug('Expected brief: {0}'.format(expectedBrief))
-                        atBriefOK = (expectedBrief in line)
-                        if (not(atBriefOK)):
-                            self.logger.debug('Unexpected brief found: {0}'.format(line))
+                    if (not endOfHeaderCommentReached):
+                        possibleBriefs = []
+                        expectedBrief = 'file for class {0}'.format(className)
+                        if (isHeaderFile):
+                            expectedBrief = 'Header ' + expectedBrief
+                            possibleBriefs.append(expectedBrief)
                         else:
-                            break
+                            possibleBriefs.append('Class ' + expectedBrief)
+                            possibleBriefs.append('Source ' + expectedBrief)
+                        for expectedBrief in possibleBriefs:
+                            self.logger.debug('Expected brief: {0}'.format(expectedBrief))
+                            atBriefOK = (expectedBrief in line)
+                            if (not(atBriefOK)):
+                                self.logger.debug('Unexpected brief found: {0}'.format(line))
+                            else:
+                                break
                 elif ('* @author ' in line):
                     author = line.split('@author ')[1]
                     #Remove accents
@@ -350,11 +484,19 @@ class HeadersHelper(QAHelper):
                     except Exception as e:
                         self.logger.critical('Invalid date found: {0}'.format(e))
                         atDateOK = False
+                elif ('#include' in line):
+                    includes.append(line)
                 elif ('*/' in line):
-                    break
-
-        allOK = atFileOK and atBriefOK and atDateOK and atAuthorOK and atCopyrightOK
-        status = {'allok': allOK, '@file': atFileOK, '@brief': atBriefOK, '@date': atDateOK, '@author': atAuthorOK, '@copyright': atCopyrightOK}
+                    endOfHeaderCommentReached = True
+                    includesSort = includes[:]
+                    includesSort.sort()
+                    if (includesOK):
+                        includesOK = (includes == includesSort)
+                        if (not includesOK):
+                            self.logger.critical('Includes not sorted {0} != {1}'.format(includes, includesSort))
+            
+        allOK = atFileOK and atBriefOK and atDateOK and atAuthorOK and atCopyrightOK and includesOK
+        status = {'allok': allOK, '@file': atFileOK, '@brief': atBriefOK, '@date': atDateOK, '@author': atAuthorOK, '@copyright': atCopyrightOK, '#includes sorted': includesOK}
         return status
 
 

@@ -1574,6 +1574,104 @@ static const char8 * const config14 = ""
         "    }"
         "}";
 
+static const char8 * const config15 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = GAMDataSourceTestGAM1"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = char8"
+        "                   NumberOfElements = 16"
+        "                   NumberOfDimensions = 1"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMB = {"
+        "            Class = GAMDataSourceTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = char8"
+        "                   NumberOfElements = 16"
+        "                   NumberOfDimensions = 1"
+        "                   Default = \"Test\"" 
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMC = {"
+        "            Class = GAMDataSourceTestGAM1"
+        "            OutputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMD = {"
+        "            Class = GAMDataSourceTestGAM1"
+        "            InputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfElements = 10"
+        "                   NumberOfDimensions = 1"
+        "                   Default = {1 2 3 4 5 6 7 8 9 10}"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMD GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "        +State2 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMB GAMA GAMD GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "        +State3 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMD GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        TimingDataSource = Timings"
+        "        Class = GAMDataSourceTestScheduler1"
+        "    }"
+        "}";
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -1813,6 +1911,47 @@ bool GAMDataSourceTest::TestPrepareNextState_Default_Dimensions() {
 
     return ret;
 }
+
+bool GAMDataSourceTest::TestPrepareNextState_Default_Char8Arr() {
+    bool ret = InitialiseGAMDataSourceEnviroment(config15);
+    ReferenceT<GAMDataSource> gamDataSource;
+    if (ret) {
+        gamDataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB1");
+        ret = gamDataSource.IsValid();
+    }
+    char8 *signal0 = NULL_PTR(char8 *);
+
+    if (ret) {
+        ret = gamDataSource->GetSignalMemoryBuffer(0, 0, reinterpret_cast<void *&>(signal0));
+    }
+
+    const uint32 numberOfElements = 16u;
+    uint32 i;
+
+    if (ret) {
+        //Clean the memory
+        for (i = 0u; i < numberOfElements; i++) {
+            signal0[i] = 1;
+        }
+        ret = gamDataSource->PrepareNextState("State1", "State2");
+    }
+
+    //Signal was already being used keep the value
+    if (ret) {
+        ret = (signal0[0] == 'T');
+    }
+    if (ret) {
+        ret = (signal0[1] == 'e');
+    }
+    if (ret) {
+        ret = (signal0[2] == 's');
+    }
+    if (ret) {
+        ret = (signal0[3] == 't');
+    }
+    return ret;
+}
+
 
 bool GAMDataSourceTest::TestPrepareNextState_Default_Dimensions_Mismatch_1() {
     bool ret = InitialiseGAMDataSourceEnviroment(config4);

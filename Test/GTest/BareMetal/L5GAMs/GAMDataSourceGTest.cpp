@@ -60,6 +60,11 @@ TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_Default_Dimensions
     ASSERT_TRUE(test.TestPrepareNextState_Default_Dimensions());
 }
 
+TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_Default_Char8Arr) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_Default_Char8Arr());
+}
+
 TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_Default_Dimensions_Mismatch_1) {
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestPrepareNextState_Default_Dimensions_Mismatch_1());
