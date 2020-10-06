@@ -83,6 +83,7 @@ if __name__ == '__main__':
     parser.add_argument('-xi', '--linterinclude', type=str, help='Linter include directories', nargs='*', default=['/opt/FlexeLint/supp/lnt', 'MakeDefaults/Lint'])
     parser.add_argument('-xu', '--linterusername', type=str, help='Linter server username', default=os.environ.get('USER', None))
     parser.add_argument('-xf', '--linterfilename', type=str, help='Linter input filename', default='marte_flint_eclipse.lnt')
+    parser.add_argument('-xo', '--linteroutputfilename', type=str, help='Linter output filename', default='')
     parser.add_argument('-xg', '--lintergrep', type=str, help='Grep out these keywords', nargs='*', default=['lint-linux.h'])
     parser.add_argument('-lg', '--lcovexec', type=str, help='Lcov GTest executor location', default='Test/GTest/cov/MainGTest.ex')
     parser.add_argument('-lf', '--lcovfilter', type=str, help='Lcov GTest filters', nargs='*', default=['*'])
@@ -187,7 +188,7 @@ if __name__ == '__main__':
     if (not args.excludelinterexec):
         reporter.SetHelper('Linter')
         lx = LinterExecutorHelper(logger)
-        lx.Configure({'linterexec': args.linterexec, 'linterhostname': args.linterhostname, 'linterdir': args.linterdir, 'linterrsyncsource': args.linterrsyncsource, 'linterrsynctarget': args.linterrsynctarget, 'linterrsyncexclude': args.linterrsyncexclude, 'linterinclude': args.linterinclude, 'linterusername': args.linterusername, 'linterfilename': args.linterfilename, 'lintergrep': args.lintergrep})
+        lx.Configure({'linterexec': args.linterexec, 'linterhostname': args.linterhostname, 'linterdir': args.linterdir, 'linterrsyncsource': args.linterrsyncsource, 'linterrsynctarget': args.linterrsynctarget, 'linterrsyncexclude': args.linterrsyncexclude, 'linterinclude': args.linterinclude, 'linterusername': args.linterusername, 'linterfilename': args.linterfilename, 'lintergrep': args.lintergrep, 'linteroutputfilename': args.linteroutputfilename})
         lx.Run(reporter)
 
     #Functional tests

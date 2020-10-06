@@ -151,6 +151,8 @@ class LinterExecutorHelper(QAHelper):
                          args['linterinclude'] ([str]) list of directories to be included in the lint call.
                          args['linterusername'] (str) username to connect to the remote computer.
                          args['linterfilename'] (str) linter input filename.
+                         args['lintergrep'] (str) negative grep to apply to output results.
+                         args['linteroutputfilename'] (str) linter output filename.
         Returns:
             True.
         """
@@ -164,6 +166,7 @@ class LinterExecutorHelper(QAHelper):
         self.linterUsername = args['linterusername']
         self.linterFilename = args['linterfilename']
         self.linterGrep = args['lintergrep']
+        self.linterOutputFilename = args['linteroutputfilename']
 
         return True
 
@@ -222,10 +225,15 @@ class LinterExecutorHelper(QAHelper):
 
             outLines = process.stdout.readlines()
             errLines = process.stderr.readlines()
-            ignoreKeywords = ['FlexeLint for C/C++ (Unix) Vers. 9.00L, Copyright Gimpel Software 1985-2014', 'Warning 686: Option', '\'-elib(*)\' is suspicious', 'causing meaningless output', 'something is wrong with your Lint configuration']  
+            ignoreKeywords = ['FlexeLint for C/C++ (Unix) Vers. 9.00L, Copyright Gimpel Software 1985-2014', 'Warning 686: Option', '\'-elib(*)\' is suspicious', 'causing meaningless output', 'something is wrong with your Lint configuration', 'receiving a syntax error in a library file']  
 
+            outFile = None
+            if (len(self.linterOutputFilename) > 0):
+                outFile = open(self.linterOutputFilename, 'w')
             #errorKeywords = ['warning:', 'error:']
             for line in errLines:
+                if (outFile is not None):
+                    outFile.write(line)
                 ignore = False
                 for k in ignoreKeywords:
                     if (not ignore):
@@ -236,6 +244,8 @@ class LinterExecutorHelper(QAHelper):
                     reporter.WriteError(line)
 
             for line in outLines:
+                if (outFile is not None):
+                    outFile.write(line)
                 ignore = False
                 for k in ignoreKeywords:
                     if (not ignore):
@@ -245,6 +255,8 @@ class LinterExecutorHelper(QAHelper):
                     self.logger.debug(line)
                     reporter.WriteError(line)
 
+        if (outFile is not None):
+            outFile.close()
         if (ok):
             reporter.WriteOK('No linter errors found')
         return ok
