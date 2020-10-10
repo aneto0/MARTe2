@@ -556,6 +556,15 @@ public:
      */
     bool TestArraysOfStructures2();
 
+    /**
+     * @brief Tests that the application successfully handles a struct Default for arrays
+     */
+    bool TestStructureDefaultArrayMember();
+
+    /**
+     * @brief Tests that the application successfully handles a struct Default for char8 []
+     */
+    bool TestStructureDefaultArrayMemberString();
 };
 
 }

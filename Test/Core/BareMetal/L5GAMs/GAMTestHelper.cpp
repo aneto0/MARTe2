@@ -123,6 +123,13 @@ static const IntrospectionEntry* TestStructGEntries[] = { &TestStructG_g1_intros
 
 DECLARE_STRUCT_INTROSPECTION(TestStructG, TestStructGEntries);
 
+DECLARE_CLASS_MEMBER(TestStructH, str, char8, "[64]", "");
+
+static const IntrospectionEntry* TestStructHEntries[] = { &TestStructH_str_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructH, TestStructHEntries);
+
+
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////

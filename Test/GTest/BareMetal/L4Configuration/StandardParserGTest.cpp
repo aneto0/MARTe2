@@ -56,6 +56,11 @@ TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseScalar) {
     ASSERT_TRUE(parserTest.TestParseScalar());
 }
 
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseString) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestParseString());
+}
+
 TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseVector) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestParseVector());

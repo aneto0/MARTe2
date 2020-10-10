@@ -104,6 +104,37 @@ bool StandardParserTest::TestParseScalar() {
     return true;
 }
 
+bool StandardParserTest::TestParseString() {
+    ConfigurationDatabase database;
+    StreamString errors;
+    StreamString configString = "+Test={\n"
+            "Str1=\"TEST_STRING\"\n"
+            "Str2=\"TEST STRING\"\n"
+            "}";
+
+    configString.Seek(0);
+    StandardParser myParser(configString, database, &errors);
+    bool ok = myParser.Parse();
+    if (ok) {
+        ok = (database.MoveAbsolute("+Test"));
+    }
+    StreamString str1;
+    if (ok) {
+        ok = database.Read("Str1", str1);
+    }
+    if (ok) {
+        ok = (str1 == "TEST_STRING");
+    }
+    StreamString str2;
+    if (ok) {
+        ok = database.Read("Str2", str2);
+    }
+    if (ok) {
+        ok = (str2 == "TEST STRING");
+    }
+    return ok;
+}
+
 bool StandardParserTest::TestParseVector() {
     ConfigurationDatabase database;
     StreamString errors;

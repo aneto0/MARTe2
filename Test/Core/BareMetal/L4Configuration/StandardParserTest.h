@@ -90,6 +90,11 @@ public:
     bool TestParseScalar();
 
     /**
+     * @brief Tests the parsing of strings.
+     */
+    bool TestParseString();
+
+    /**
      * @brief Tests the parsing of vector variables.
      */
     bool TestParseVector();

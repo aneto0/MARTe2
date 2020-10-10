@@ -32370,4 +32370,228 @@ bool RealTimeApplicationConfigurationBuilderTest::TestArraysOfStructures2() {
     return ok;
 }
 
+bool RealTimeApplicationConfigurationBuilderTest::TestStructureDefaultArrayMember() {
+
+    const char8 * const config = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               ADCs = {"
+            "                   Signal3 = {"
+            "                       Alias = ADCs1234"
+            "                       DataSource = Drv1"
+            "                       Type = TestStructA"
+            "                       NumberOfElements = 2"
+            "                   }"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               Signal3 = {"
+            "                   Type = TestStructC"
+            "                   DataSource = Drv1"
+            "                   NumberofDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   Defaults = {"
+            "                       Signal3.c2 = {1 2 3}"
+            "                   }"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = Drv1"
+            "        +Drv1 = {"
+            "            Class = Driver1"
+            "            Signals = {"
+            "               ADCs1234 = { "
+            "                   Type = TestStructA"
+            "               }"
+            "               Signal3 = {"
+            "                   Type = TestStructC"
+            "               }"
+            "            }"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA }"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+    ConfigurationDatabase cdb;
+    StreamString configStream = config;
+    configStream.Seek(0);
+    StreamString err;
+    StandardParser parser(configStream, cdb, &err);
+    bool ok = parser.Parse();
+    if (!ok) {
+        printf("\n%s\n", err.Buffer());
+    }
+    if (ok) {
+        ObjectRegistryDatabase::Instance()->Purge();
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    if (ok) {
+        ReferenceT<RealTimeApplication> rtApp = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ok = rtApp->ConfigureApplication();
+    }
+    ReferenceT<GAM> gam;
+    if (ok) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ok = gam.IsValid();
+    }
+    uint32 idx = 0;
+    if (ok) {
+        ok = gam->GetSignalIndex(OutputSignals, idx, "Signal3.c2");
+    }
+    uint32 defValMem[3];
+    AnyType defVal(defValMem);
+    if (ok) {
+        ok = gam->GetSignalDefaultValue(OutputSignals, idx, defVal);
+    }
+    if (ok) {
+        ok = (defVal.GetNumberOfElements(0) == 3);
+    }
+    if (ok) {
+        ok = (defValMem[0] == 1);
+    }
+    if (ok) {
+        ok = (defValMem[1] == 2);
+    }
+    if (ok) {
+        ok = (defValMem[2] == 3);
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestStructureDefaultArrayMemberString() {
+
+    const char8 * const config = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               ADCs = {"
+            "                   Signal3 = {"
+            "                       Alias = ADCs1234"
+            "                       DataSource = Drv1"
+            "                       Type = TestStructA"
+            "                       NumberOfElements = 2"
+            "                   }"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               Signal3 = {"
+            "                   Type = TestStructH"
+            "                   DataSource = Drv1"
+            "                   NumberofDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   Defaults = {"
+            "                       Signal3.str = \"TEST STRING\""
+            "                   }"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = Drv1"
+            "        +Drv1 = {"
+            "            Class = Driver1"
+            "            Signals = {"
+            "               ADCs1234 = { "
+            "                   Type = TestStructA"
+            "               }"
+            "               Signal3 = {"
+            "                   Type = TestStructH"
+            "               }"
+            "            }"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA }"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+    ConfigurationDatabase cdb;
+    StreamString configStream = config;
+    configStream.Seek(0);
+    StreamString err;
+    StandardParser parser(configStream, cdb, &err);
+    bool ok = parser.Parse();
+    if (!ok) {
+        printf("\n%s\n", err.Buffer());
+    }
+    if (ok) {
+        ObjectRegistryDatabase::Instance()->Purge();
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    if (ok) {
+        ReferenceT<RealTimeApplication> rtApp = ObjectRegistryDatabase::Instance()->Find("Application1");
+        ok = rtApp->ConfigureApplication();
+    }
+    ReferenceT<GAM> gam;
+    if (ok) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ok = gam.IsValid();
+    }
+    uint32 idx = 0;
+    if (ok) {
+        ok = gam->GetSignalIndex(OutputSignals, idx, "Signal3.str");
+    }
+    char8 defValMem[64];
+    AnyType defVal(defValMem);
+    if (ok) {
+        ok = gam->GetSignalDefaultValue(OutputSignals, idx, defVal);
+    }
+    if (ok) {
+        ok = (defVal.GetNumberOfElements(0) == 64);
+    }
+    if (ok) {
+        ok = (StringHelper::Compare(&defValMem[0], "TEST STRING") == 0);
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
 }

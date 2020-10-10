@@ -625,3 +625,13 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestArraysOfS
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestArraysOfStructures2());
 }
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestStructureDefaultArrayMember) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestStructureDefaultArrayMember());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestStructureDefaultArrayMemberString) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestStructureDefaultArrayMemberString());
+}

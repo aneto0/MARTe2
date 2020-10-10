@@ -1056,6 +1056,19 @@ private:
      * of the MARTe environment
      */
     bool initialiseAfterInitialisation;
+
+    /**
+     * @brief Writes the default value to the target StructuredDataI (sdi)
+     * @param[out] sdi the StructuredDataI where to write the Default value
+     * @param[in] signalName the name of the signal containing the default value 
+     * @param[in] dataSourceName the name of the DataSource to which this signal is connected
+     * @param[in] signalTypeDescriptor the signal type
+     * @param[in] numberOfDimensions the signal number of dimensions
+     * @param[in] numberOfElements the signal number of elements
+     * @param[in] numberOfBytes the signal number of bytes
+     * @return true if the signal and its default value are compatible in terms of type and dimensions, and if the signal default value can be successfully written to the output StructuredDataI.
+     */
+    bool WriteDefault(StructuredDataI &sdi, const char8 * const signalName, const char8 * const dataSourceName, TypeDescriptor signalTypeDescriptor, uint32 numberOfDimensions, uint32 numberOfElements, uint32 signalNumberOfBytes);
 };
 
 }

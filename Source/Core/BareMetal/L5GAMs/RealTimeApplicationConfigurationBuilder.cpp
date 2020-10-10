@@ -1424,83 +1424,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                     }
 
                     if (ret) {
-                        StreamString defaultVal;
-                        if (dataSourcesDatabase.Read("Default", defaultVal)) {
-                            // check validity of the default value
-                            // parse the DefaultValue
-                            // check its compatibility with the type
-                            StreamString defValConfig = "Default=";
-                            defValConfig += defaultVal;
-                            ret = defValConfig.Seek(0LLU);
-                            ConfigurationDatabase cdb;
-                            StandardParser parser(defValConfig, cdb);
-                            if (ret) {
-                                ret = parser.Parse();
-                            }
-                            if (ret) {
-                                AnyType defVal = cdb.GetType("Default");
-                                uint32 defValDims = defVal.GetNumberOfDimensions();
-                                bool isString = (signalTypeDescriptor == Character8Bit);
-                                if (isString) {
-                                    //Yet another exception for char8[]
-                                    if (numberOfElements > 1u) {
-                                        defValDims = 1u;
-                                    }
-                                }
-                                else {
-                                    isString = (signalTypeDescriptor == CharString);
-                                }
-                                ret = (defValDims <= 1u);
-                                uint8 usedDimensions = (numberOfDimensions > 0u) ? (1u) : (0u);
-                                if (ret) {
-                                    uint32 elements0 = defVal.GetNumberOfElements(0u);
-                                    //Another exception for the char8[]
-                                    if (isString && (elements0 <= 1u)) {
-                                        StreamString ss = reinterpret_cast<const char8 *>(defVal.GetDataPointer());
-                                        ret = (ss.Size() <= numberOfElements);
-                                    }
-                                    else {
-                                        ret = (defValDims == usedDimensions);
-                                        if (ret) {
-                                            ret = (elements0 == numberOfElements);
-                                        }
-                                        else if (numberOfElements == 1u) {
-                                            //To avoid the problem of 0 dimensions with 1 element vs 1 dimension with 1 element
-                                            ret = (elements0 == 1u);
-                                        }
-                                        else {
-                                            //NOOP
-                                        }
-                                    }
-                                }
-                                else {
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Default value of signal %s in %s must be defined as a vector for multi-dimensional variables",
-                                                        signalName.Buffer(), dataSourceName.Buffer());
-                                }
-                                if (ret) {
-                                    void *ptr = HeapManager::Malloc(signalNumberOfBytes);
-                                    ret = (ptr != NULL_PTR(void *));
-                                    if (ret) {
-                                        AnyType at = AnyType(signalTypeDescriptor, 0u, ptr);
-                                        at.SetNumberOfDimensions(static_cast<uint8>(defValDims));
-                                        at.SetNumberOfElements(0u, numberOfElements);
-
-                                        ret = cdb.Read("Default", at);
-                                        if (ret) {
-                                            ret = dataSourcesDatabase.Delete("Default");
-                                        }
-                                        if (ret) {
-                                            // write the default value as a value and not a string anymore!
-                                            ret = dataSourcesDatabase.Write("Default", at);
-                                        }
-                                        (void) HeapManager::Free(reinterpret_cast<void*&>(ptr));
-                                    }
-                                }
-                                if (!ret) {
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported defined default value of signal %s in %s", signalName.Buffer(), dataSourceName.Buffer());
-                                }
-                            }
-                        }
+                        ret = WriteDefault(dataSourcesDatabase, signalName.Buffer(), dataSourceName.Buffer(), signalTypeDescriptor, numberOfDimensions, numberOfElements, signalNumberOfBytes);
                     }
                 }
                 s++;
@@ -3253,18 +3177,6 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                         ret = data.CreateAbsolute(signalNumberStr.Buffer());
                     }
                 }
-                // loop in the default values and add it to the signal if found
-                signalDatabaseBeforeMove = signalDatabase;
-                if (signalDatabase.MoveRelative("Defaults")) {
-                    StreamString defaultValue;
-                    if (signalDatabase.Read(fullSignalName.Buffer(), defaultValue)) {
-                        ret = data.Write("Default", defaultValue.Buffer());
-                    }
-                    if (ret) {
-                        //ret = signalDatabase.MoveToAncestor(1u);
-                        signalDatabase = signalDatabaseBeforeMove;
-                    }
-                }
                 uint32 byteSize = 0u;
                 if ((i + 1u) < numberOfMembers) {
                     if (intro != NULL_PTR(const Introspection *)) {
@@ -3281,6 +3193,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 if (ret) {
                     ret = data.Write("QualifiedName", fullSignalName.Buffer());
                 }
+                
                 if (StringHelper::Length(dataSourceName) > 0u) {
                     StreamString dataSourceNumber;
                     ret = dataSourcesIndexesCache.Read(dataSourceName, dataSourceNumber);
@@ -3294,11 +3207,13 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 if (ret) {
                     ret = data.Write("Type", entry.GetMemberTypeName());
                 }
+                uint32 numberOfDimensions = 0u;
                 if (ret) {
-                    ret = data.Write("NumberOfDimensions", entry.GetNumberOfDimensions());
+                    numberOfDimensions = entry.GetNumberOfDimensions();
+                    ret = data.Write("NumberOfDimensions", numberOfDimensions);
                 }
+                uint32 totalElements = 1u;
                 if (ret) {
-                    uint32 totalElements = 1u;
                     uint8 j;
                     for (j = 0u; j <= entry.GetNumberOfDimensions(); j++) {
                         totalElements *= entry.GetNumberOfElements(j);
@@ -3312,7 +3227,21 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 if (ret) {
                     ret = data.Write("MemberSize", byteSize);
                 }
-
+                if (ret) {
+                    signalDatabaseBeforeMove = signalDatabase;
+                    // loop in the default values and add it to the signal if found
+                    if (signalDatabase.MoveRelative("Defaults")) {
+                        AnyType defaultValueAnyType = signalDatabase.GetType(fullSignalName.Buffer());
+                        if (defaultValueAnyType .GetTypeDescriptor() != voidAnyType.GetTypeDescriptor()) {
+                            ret = data.Write("Default", defaultValueAnyType );
+                            REPORT_ERROR(ErrorManagement::Debug, "Writing Default value %! (from Defaults) for signal %s", defaultValueAnyType , fullSignalName.Buffer());
+                        }
+                    }
+                    if (ret) {
+                        //ret = signalDatabase.MoveToAncestor(1u);
+                        signalDatabase = signalDatabaseBeforeMove;
+                    }
+                }
                 ConfigurationDatabase dataBeforeMove = data;
                 if (ret) {
                     if (isFunctionDatabase) {
@@ -3649,6 +3578,103 @@ void RealTimeApplicationConfigurationBuilder::CleanCaches() {
     dataSourcesFunctionIndexesCache.Purge();
     functionsMemoryIndexesCache.Purge();
 }
+
+bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi, const char8 * const signalName, const char8 * const dataSourceName, TypeDescriptor signalTypeDescriptor, uint32 numberOfDimensions, uint32 numberOfElements, uint32 signalNumberOfBytes) {
+    bool ret = true;
+    StreamString defaultVal;
+    if (sdi.Read("Default", defaultVal)) {
+        //Check if is a string stored in the StructuredDataI
+        bool isString = (signalTypeDescriptor == Character8Bit);
+        if (!isString) {
+            isString = (signalTypeDescriptor == CharString);
+        }
+        //Given that the signal may be stored as a string in the cdb, it will have to be reparsed, otherwise
+        //array signals like {1, 2, 3, 4} will be interpreted as a string (instead of an array of uint32)
+        StreamString defValConfig = "Default=";
+        if (isString) {
+            //Force quotes around the string, otherwise we may get problems with spacs
+            defValConfig += "\"";
+        }
+        defValConfig += defaultVal;
+        if (isString) {
+            defValConfig += "\"";
+        }
+        ret = defValConfig.Seek(0LLU);
+        ConfigurationDatabase cdb;
+        StandardParser parser(defValConfig, cdb);
+        if (ret) {
+            ret = parser.Parse();
+        }
+
+        //Get the type as it was directly stored
+        AnyType defaultValueAnyType;
+        if (ret) {
+            defaultValueAnyType = cdb.GetType("Default");
+        }
+        uint32 defValDims = defaultValueAnyType .GetNumberOfDimensions();
+        if (isString) {
+            //Yet another exception for char8[]
+            if (numberOfElements > 1u) {
+                defValDims = 1u;
+            }
+        }
+
+        //Check if the dimensions between the signal declared dimensions and the default value are compatible (e.g. do not accept to store an array default value in a scalar type)
+        uint8 usedDimensions = (numberOfDimensions > 0u) ? (1u) : (0u);
+        if (ret) {
+            //Now check that the number of elements is compatible between the signal definitions and its default value
+            uint32 elements0 = defaultValueAnyType .GetNumberOfElements(0u);
+            //Another exception for the char8[]
+            if (isString && (elements0 <= 1u)) {
+                //Check that the string fits inside the char8[] size
+                StreamString ss = reinterpret_cast<const char8 *>(defaultValueAnyType .GetDataPointer());
+                ret = (ss.Size() <= numberOfElements);
+            }
+            else {
+                ret = (defValDims == usedDimensions);
+                if (ret) {
+                    ret = (elements0 == numberOfElements);
+                }
+                else if (numberOfElements == 1u) {
+                    //To avoid the problem of 0 dimensions with 1 element vs 1 dimension with 1 element
+                    ret = (elements0 == 1u);
+                }
+                else {
+                    //NOOP
+                }
+            }
+            if (!ret) {
+                const char8 * const typeNameStr = TypeDescriptor::GetTypeNameFromTypeDescriptor(signalTypeDescriptor);
+                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Default value of signal %s of type %s in %s must be defined as a vector for multi-dimensional variables", signalName, typeNameStr, dataSourceName);
+            }
+        }
+        //If everything is OK, construct a temporary AnyType with the correct characteristics and read the Default value to be stored in the target database (sdi)
+        if (ret) {
+            void *ptr = HeapManager::Malloc(signalNumberOfBytes);
+            ret = (ptr != NULL_PTR(void *));
+            if (ret) {
+                AnyType at = AnyType(signalTypeDescriptor, 0u, ptr);
+                at.SetNumberOfDimensions(static_cast<uint8>(defValDims));
+                at.SetNumberOfElements(0u, numberOfElements);
+
+                ret = cdb.Read("Default", at);
+                if (ret) {
+                    ret = sdi.Delete("Default");
+                }
+                if (ret) {
+                    // write the default value as a value and not a string anymore!
+                    ret = sdi.Write("Default", at);
+                }
+                (void) HeapManager::Free(reinterpret_cast<void*&>(ptr));
+            }
+        }
+        if (!ret) {
+            REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported defined default value of signal %s in %s", signalName, dataSourceName);
+        }
+    }
+    return ret;
+}
+
 /**Ignore doxygen false positive*/
 CLASS_REGISTER(RealTimeApplicationConfigurationBuilder, "1.0");
 
