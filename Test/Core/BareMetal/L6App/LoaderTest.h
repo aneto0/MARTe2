@@ -58,6 +58,11 @@ public:
     bool TestConfigure_CPUs();
 
     /**
+     * @brief Tests the Configure method with non default scheduler granularity
+     */
+    bool TestConfigure_SchedulerGranularity();
+
+    /**
      * @brief Tests the Configure method with the json parser.
      */
     bool TestConfigure_Json();

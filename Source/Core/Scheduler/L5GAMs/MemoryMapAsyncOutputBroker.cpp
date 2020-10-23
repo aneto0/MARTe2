@@ -167,6 +167,9 @@ bool MemoryMapAsyncOutputBroker::InitWithBufferParameters(const SignalDirection 
     }
     if (ok) {
         readSynchIdx = numberOfBuffers - 1u;
+        StreamString serviceName;
+        serviceName.Printf("%s:MemoryMapAsyncOutputBroker", dataSourceIn.GetName());
+        service.SetName(serviceName.Buffer());
         ok = (service.Start() == ErrorManagement::NoError);
     }
     return ok;

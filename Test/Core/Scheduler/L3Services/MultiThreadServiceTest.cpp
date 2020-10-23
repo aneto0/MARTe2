@@ -1130,6 +1130,31 @@ bool MultiThreadServiceTest::TestSetStackSizeThreadPool() {
     return ok;
 }
 
+bool MultiThreadServiceTest::TestSetThreadNameThreadPool() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService embeddedThread(binder);
+    uint32 nOfThreads = 5;
+    embeddedThread.SetNumberOfPoolThreads(nOfThreads);
+    embeddedThread.CreateThreads();
+    StreamString *threadNames = new StreamString[nOfThreads];
+    uint32 i;
+    for (i = 0; i < nOfThreads; i++) {
+        threadNames[i].Printf("TestSetCPUMaskThreadPool_%d", i);
+        embeddedThread.SetThreadNameThreadPool(threadNames[i].Buffer(), i);
+    }
+    bool ok = true;
+    for (i = 0; (i < nOfThreads) && (ok); i++) {
+        StreamString expectedName;
+        expectedName.Printf("TestSetCPUMaskThreadPool_%d", i);
+        ok = (expectedName == embeddedThread.GetThreadNameThreadPool(i));
+    }
+    delete [] threadNames;
+    return ok;
+}
+
+
 bool MultiThreadServiceTest::TestSetCPUMaskThreadPool() {
     using namespace MARTe;
     MultiThreadServiceTestCallbackClass callbackClass;
@@ -1162,6 +1187,10 @@ bool MultiThreadServiceTest::TestGetPriorityLevelThreadPool() {
 
 bool MultiThreadServiceTest::TestGetStackSizeThreadPool() {
     return TestSetStackSizeThreadPool();
+}
+
+bool MultiThreadServiceTest::TestGetThreadNameThreadPool() {
+    return TestSetThreadNameThreadPool();
 }
 
 bool MultiThreadServiceTest::TestGetCPUMaskThreadPool() {
@@ -1348,3 +1377,48 @@ bool MultiThreadServiceTest::TestSetStackSizeThreadPool_Start() {
     ok &= (service.GetStackSizeThreadPool(1) == THREADS_DEFAULT_STACKSIZE * 2);
     return ok;
 }
+
+bool MultiThreadServiceTest::TestSetThreadNameThreadPool_Start() {
+    using namespace MARTe;
+    MultiThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiThreadServiceTestCallbackClass> binder(callbackClass, &MultiThreadServiceTestCallbackClass::CallbackFunction);
+    MultiThreadService service(binder);
+    service.SetNumberOfPoolThreads(3);
+    service.CreateThreads();
+    bool ok = (service.GetStatus(0) == EmbeddedThreadI::OffState);
+    ok &= (service.GetStatus(1) == EmbeddedThreadI::OffState);
+    ok &= (service.GetStatus(2) == EmbeddedThreadI::OffState);
+
+    service.SetThreadNameThreadPool("A", 0);
+    service.SetThreadNameThreadPool("B", 1);
+    service.SetThreadNameThreadPool("C", 2);
+    ErrorManagement::ErrorType err = service.Start();
+    ok = (err == ErrorManagement::NoError);
+    uint32 maxCounter = 10;
+    while (((service.GetStatus(0) != EmbeddedThreadI::RunningState) || (service.GetStatus(1) != EmbeddedThreadI::RunningState)
+            || (service.GetStatus(2) != EmbeddedThreadI::RunningState)) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    ok &= (service.GetStatus(0) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStatus(1) == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStatus(2) == EmbeddedThreadI::RunningState);
+    StreamString threadName = service.GetThreadNameThreadPool(1);
+    ok &= (threadName == "B"); 
+    service.SetThreadNameThreadPool("ShouldNotWork", 1);
+    threadName = service.GetThreadNameThreadPool(1);
+    ok &= (threadName == "B"); 
+    service.Stop();
+    maxCounter = 10;
+    while (((service.GetStatus(0) != EmbeddedThreadI::OffState) || (service.GetStatus(1) != EmbeddedThreadI::OffState)
+            || (service.GetStatus(2) != EmbeddedThreadI::OffState)) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    service.CreateThreads();
+    service.SetThreadNameThreadPool("B", 1);
+    threadName = service.GetThreadNameThreadPool(1);
+    ok &= (threadName == "B"); 
+    return ok;
+}
+

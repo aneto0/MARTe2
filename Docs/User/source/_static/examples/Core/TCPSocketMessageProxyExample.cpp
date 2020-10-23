@@ -90,6 +90,7 @@ bool TCPSocketMessageProxyExample::Initialise(MARTe::StructuredDataI & data) {
         }
     }
     if (ok) {
+        tcpClientService.SetName(GetName());
         ok = (tcpClientService.Start() == ErrorManagement::NoError);
         if (!ok) {
             REPORT_ERROR(ErrorManagement::ParametersError, "Could not Start tcpClientService");

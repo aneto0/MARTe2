@@ -315,3 +315,18 @@ TEST(Scheduler_L3Services_MultiThreadServiceGTest, TestGetStackSizeThreadPool_Ou
     ASSERT_TRUE(target.TestGetStackSizeThreadPool_OutOfIndex());
 }
 
+TEST(Scheduler_L3Services_MultiThreadServiceGTest, TestGetThreadNameThreadPool) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetThreadNameThreadPool());
+}
+
+TEST(Scheduler_L3Services_MultiThreadServiceGTest, TestSetThreadNameThreadPool) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetThreadNameThreadPool());
+}
+
+TEST(Scheduler_L3Services_MultiThreadServiceGTest, TestSetThreadNameThreadPool_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetThreadNameThreadPool_Start());
+}
+

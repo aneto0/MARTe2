@@ -90,6 +90,16 @@ public:
     bool TestSemiBusy(float64 totalSleepSec,
                       float64 nonBusySleepSec);
 
+    /**
+     * @brief Tests the GetSchedulerGranularity function.
+     */
+    bool TestGetSchedulerGranularity();
+ 
+    /**
+     * @brief Tests the SetSchedulerGranularity function.
+     */
+    bool TestSetSchedulerGranularity();
+
 };
 
 /*---------------------------------------------------------------------------*/

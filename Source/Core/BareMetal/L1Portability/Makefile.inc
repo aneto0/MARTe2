@@ -39,6 +39,7 @@ OBJSX=  FastPollingEventSem.x \
 	Md5Encrypt.x\
 	MemoryOperationsHelper.x \
 	ProcessorType.x \
+	Sleep.x \
 	StaticListHolder.x \
 	StringHelper.x \
 	TypeDescriptor.x

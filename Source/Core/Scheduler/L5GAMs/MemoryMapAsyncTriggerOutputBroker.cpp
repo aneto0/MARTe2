@@ -250,6 +250,10 @@ bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDi
         else {
             readSynchIdx = (numberOfBuffers - preTriggerBuffers);
         }
+        StreamString serviceName;
+        serviceName.Printf("%s:MemoryMapAsyncOutputBroker", dataSourceIn.GetName());
+        service.SetName(serviceName.Buffer());
+
         ok = (service.Start() == ErrorManagement::NoError);
     }
     return ok;

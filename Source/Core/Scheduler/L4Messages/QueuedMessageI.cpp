@@ -62,13 +62,17 @@ QueuedMessageI::QueuedMessageI() :
 QueuedMessageI::~QueuedMessageI() {
 }
 
+
+void QueuedMessageI::SetQueueName(const char8 * const name) {
+    queueProcessingThread.SetName(name);
+}
+
 ErrorManagement::ErrorType QueuedMessageI::Start() {
     ErrorManagement::ErrorType err;
 
     err.fatalError = !queue.IsValid();
 
     if (err.ErrorsCleared()) {
-
         err = queueProcessingThread.Start();
 
     }

@@ -45,7 +45,7 @@ namespace MARTe {
 /**
  * The list of linux MARTe applications.
  */
-static const char8 * const arguments = "Arguments are -l LOADERCLASS -f FILENAME [-p xml|json|cdb] [-s FIRST_STATE | -m MSG_DESTINATION:MSG_FUNCTION] [-c DEFAULT_CPUS] [-t BUILD_TOKENS]";
+static const char8 * const arguments = "Arguments are -l LOADERCLASS -f FILENAME [-p xml|json|cdb] [-s FIRST_STATE | -m MSG_DESTINATION:MSG_FUNCTION] [-c DEFAULT_CPUS] [-t BUILD_TOKENS] [-g SCHEDULER_GRANULARITY_US]";
 
 }
 
@@ -121,6 +121,12 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         uint32 defaultCPUs = 0x1;
         (void) argsConfiguration.Read("-c", defaultCPUs);
         ret.parametersError = !loaderParameters.Write("DefaultCPUs", defaultCPUs);
+    }
+    if (ret) {
+        uint32 schedulerGranularity;
+        if(argsConfiguration.Read("-g", schedulerGranularity)) {
+            ret.parametersError = !loaderParameters.Write("SchedulerGranularity", schedulerGranularity);
+        }
     }
     if (ret) {
         StreamString parserType;

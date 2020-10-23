@@ -111,6 +111,7 @@ bool LoggerService::Initialise(StructuredDataI &data) {
         logger = Logger::Instance(numberOfLogPages);
         logThreadService.SetStackSize(stackSize);
         logThreadService.SetCPUMask(cpuMask);
+        logThreadService.SetName(GetName());
         ok = logThreadService.Start();
         if (!ok) {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not start the embedded thread.");

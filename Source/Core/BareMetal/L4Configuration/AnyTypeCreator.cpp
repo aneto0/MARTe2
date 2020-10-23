@@ -139,7 +139,8 @@ bool AnyTypeCreator::Add(const char8 * const type,
         }
 
         if(!ret){
-            REPORT_ERROR_STATIC(ErrorManagement::Warning, "ToType: Type not found; automatic cast to C-string");
+            //This could be a warning but the amount of noise is just to large today (no one is explicitly casting in the configuration files)
+            REPORT_ERROR_STATIC(ErrorManagement::Debug, "ToType: Type not found or not set (an explicit cast is likely to be missing); automatic cast to C-string");
             typeIndex = 0u;
         }
     }

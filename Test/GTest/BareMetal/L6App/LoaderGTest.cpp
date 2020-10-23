@@ -128,3 +128,8 @@ TEST(BareMetal_L6App_LoaderGTest,TestStop) {
     LoaderTest test;
     ASSERT_TRUE(test.TestStop());
 }
+
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_SchedulerGranularity) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_SchedulerGranularity());
+}

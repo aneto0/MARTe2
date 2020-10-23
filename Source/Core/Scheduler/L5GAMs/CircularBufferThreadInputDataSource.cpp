@@ -729,6 +729,7 @@ bool CircularBufferThreadInputDataSource::PrepareNextState(const char8 * const c
     }
 
     if (executor.GetStatus() == EmbeddedThreadI::OffState) {
+        executor.SetName(GetName());
         ret = executor.Start();
     }
     return ret;

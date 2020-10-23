@@ -32,6 +32,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "StringHelper.h"
 #include "Threads.h"
 #include "ThreadsDatabase.h"
 
@@ -171,7 +172,7 @@ void SetPriority(const ThreadIdentifier &threadId,
                 if (pthread_setschedparam(threadId, policy, &param) != 0) {
                     threadInfo->SetPriorityLevel(oldPriorityLevel);
                     threadInfo->SetPriorityClass(oldPriorityClass);
-                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_setschedparam()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "Failed to change the thread priority (likely due to insufficient permissions)");
                 }
             }
             else {
@@ -322,7 +323,23 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 }
             }
         }
-
+        if (ok) {
+            if (name != NULL_PTR(const char8 * const)) {
+                //pthread_setname_np name maximum size is 16, including the \0
+                const uint32 PTHREAD_NAME_MAX_SIZE = 16u;
+                char8 threadName[PTHREAD_NAME_MAX_SIZE];
+                //The StringHelper::CopyN will already copy the \0 if it is within the PTHREAD_NAME_MAX_SIZE (see man strncpy)
+                ok = StringHelper::CopyN(threadName, name, PTHREAD_NAME_MAX_SIZE);
+                if (ok) {
+                    //The last char must be \0. This is for the case where the name size >= 16
+                    threadName[PTHREAD_NAME_MAX_SIZE - 1u] = '\0';
+                    ok = (pthread_setname_np(threadId, threadName) == 0);
+                    if (!ok) {
+                        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_setname_np()");
+                    }
+                }
+            }
+        }
         if (ok) {
             ok = (pthread_detach(threadId) == 0);
             if (!ok) {

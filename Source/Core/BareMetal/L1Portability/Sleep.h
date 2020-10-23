@@ -87,6 +87,18 @@ public:
     static inline void SemiBusy(const float32 totalSleepSec,
             const float32 nonBusySleepSec);
 
+    /**
+     * @brief Gets the scheduler granularity (i.e. any requests to sleep no more than this value, will busy sleep).
+     * @return the scheduler granularity in micro-seconds.
+     */
+    static uint32 GetSchedulerGranularity();
+
+    /**
+     * @brief Sets the scheduler granularity (i.e. any requests to sleep no more than this value, will busy sleep).
+     * @param[in] granularity the scheduler granularity in micro-seconds.
+     */
+    static void SetSchedulerGranularity(const uint32 &granularity);
+
 private:
 
     /**
@@ -101,6 +113,11 @@ private:
      * @param[in] usecTime is the time to sleep in micro-seconds
      */
     static void OsUsleep(uint32 usecTime);
+
+    /**
+     * The scheduler granularity (i.e. any requests to sleep no more than this value, will busy sleep).
+     */
+    static uint32 schedulerGranularity;
 };
 
 /*---------------------------------------------------------------------------*/
@@ -111,11 +128,11 @@ void Sleep::NoMore(const float32 sec) {
 
     uint32 uSec = static_cast<uint32>((sec * 1e6) + 0.5);
 
-    uint32 toGrow = SCHED_GRANULARITY_US;
+    uint32 toGrow = schedulerGranularity;
     while (toGrow < uSec) {
-        toGrow += SCHED_GRANULARITY_US;
+        toGrow += schedulerGranularity;
     }
-    toGrow -= SCHED_GRANULARITY_US;
+    toGrow -= schedulerGranularity;
 
     MicroSeconds(uSec, toGrow);
 

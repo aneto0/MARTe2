@@ -97,6 +97,24 @@ bool LoaderTest::TestConfigure_CPUs() {
     return ok;
 }
 
+bool LoaderTest::TestConfigure_SchedulerGranularity() {
+    using namespace MARTe;
+    Loader l;
+    StreamString config = "+A={"
+            "   Class = ReferenceContainer"
+            "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    uint32 currentValue = Sleep::GetSchedulerGranularity();
+    uint32 schedulerGranularity = 123456;
+    params.Write("SchedulerGranularity", schedulerGranularity);
+    bool ok = l.Configure(params, config);
+    ok = (Sleep::GetSchedulerGranularity() == schedulerGranularity);
+    Sleep::SetSchedulerGranularity(currentValue);
+    return ok;
+}
+
+
 bool LoaderTest::TestConfigure_Json() {
     using namespace MARTe;
     Loader l;

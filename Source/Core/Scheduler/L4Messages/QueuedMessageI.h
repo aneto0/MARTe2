@@ -97,6 +97,13 @@ public:
      */
     virtual ErrorManagement::ErrorType RemoveMessageFilter(ReferenceT<MessageFilter> messageFilter);
 
+protected:
+    /**
+     * @brief Proxy method to update the name of the SingleThreadService.
+     * @param[in] name the name of the queue to set.
+     */
+    void SetQueueName(const char8 * const name);
+
 private:
 
     /**

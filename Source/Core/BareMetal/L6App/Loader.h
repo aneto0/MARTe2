@@ -65,6 +65,7 @@ public:
      * @brief Initialises the Loader with the parameters specified in \a data and with the \a configuration stream.
      * @param[in] data the loader parameters: \n
      * - DefaultCPUs (optional): sets the threads defaults CPUs (see ProcessorType::SetDefaultCPUs);\n
+     * - SchedulerGranularity (optional): sets the scheduler granularity in micro-seconds (i.e. any requests to sleep no more than this value, will busy sleep).
      * - Parser: the type of parser to be parse the \a configuration as one of:cdb, xml and json;\n
      * - MessageDestination (optional): the name of the Object that will receive the message when Start is called;\n
      * - MessageFunction (optional, but compulsory if MessageDestination is set): the name of the Function to be called in the MessageDestination.

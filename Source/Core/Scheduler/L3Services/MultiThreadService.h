@@ -201,6 +201,17 @@ public:
     uint32 GetStackSizeThreadPool(uint32 threadIdx);
 
     /**
+     * @brief Gets the thread name for the thread with index \a threadIdx.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   threadIdx < GetNumberOfPoolThreads()
+     * @return the thread name or NULL if the pre conditions are not met.
+     * @post
+     *   The returned pointer may be deleted at any time.
+     */
+    const char8 * const GetThreadNameThreadPool(uint32 threadIdx);
+
+    /**
      * @brief Gets the thread priority CPU mask for the thread with index \a threadIdx.
      * @param[in] threadIdx the index of the thread.
      * @pre
@@ -248,6 +259,17 @@ public:
      *   threadIdx < GetNumberOfPoolThreads()
      */
     void SetCPUMaskThreadPool(const ProcessorType& cpuMaskIn, uint32 threadIdx);
+
+    /**
+     * @brief Sets the thread name for the thread with index \a threadIdx.
+     * @param[in] threadName the thread name to set.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   GetStatus(threadIdx) == OffState
+     *   threadIdx < GetNumberOfPoolThreads()
+     */
+    void SetThreadNameThreadPool(const char8 * const threadName, uint32 threadIdx);
+
 
 protected:
     /**

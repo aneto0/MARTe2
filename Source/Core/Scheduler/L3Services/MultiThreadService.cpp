@@ -497,6 +497,18 @@ uint32 MultiThreadService::GetStackSizeThreadPool(const uint32 threadIdx) {
     return stackSizeAtIdx;
 }
 
+const char8 * const MultiThreadService::GetThreadNameThreadPool(const uint32 threadIdx) {
+    const char8 * threadName = NULL_PTR(const char8 * const);
+    if (threadIdx < threadPool.Size()) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            threadName = thread->GetName();
+        }
+    }
+    return threadName;
+}
+
+
 ProcessorType MultiThreadService::GetCPUMaskThreadPool(const uint32 threadIdx) {
     ProcessorType cpuMaskForIdx = UndefinedCPUs;
     if (threadIdx < threadPool.Size()) {
@@ -544,6 +556,19 @@ void MultiThreadService::SetStackSizeThreadPool(const uint32 stackSizeIn, const 
         REPORT_ERROR(ErrorManagement::ParametersError, "Stack size cannot be changed if the service is running");
     }
 }
+
+void MultiThreadService::SetThreadNameThreadPool(const char8 * const threadName, const uint32 threadIdx) {
+    if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            thread->SetName(threadName);
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Thread name cannot be changed if the service is running");
+    }
+}
+
 
 void MultiThreadService::SetCPUMaskThreadPool(const ProcessorType& cpuMaskIn, const uint32 threadIdx) {
     if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {

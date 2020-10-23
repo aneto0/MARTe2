@@ -75,3 +75,13 @@ TEST(BareMetal_L1Portability_SleepGTest,TestGetDateSeconds) {
     ASSERT_TRUE(sleepTest.TestGetDateSeconds());
 }
 
+TEST(BareMetal_L1Portability_SleepGTest,TestGetSchedulerGranularity) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestGetSchedulerGranularity());
+}
+
+TEST(BareMetal_L1Portability_SleepGTest,TestSetSchedulerGranularity) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestSetSchedulerGranularity());
+}
+

@@ -198,6 +198,7 @@ void GAMScheduler::CustomPrepareNextState() {
                     multiThreadService[nextBuffer]->SetPriorityClassThreadPool(Threads::RealTimePriorityClass, i);
                     multiThreadService[nextBuffer]->SetCPUMaskThreadPool(nextState->threads[i].cpu, i);
                     multiThreadService[nextBuffer]->SetStackSizeThreadPool(nextState->threads[i].stackSize, i);
+                    multiThreadService[nextBuffer]->SetThreadNameThreadPool(nextState->threads[i].name, i);
                 }
                 err = multiThreadService[nextBuffer]->Start();
             }

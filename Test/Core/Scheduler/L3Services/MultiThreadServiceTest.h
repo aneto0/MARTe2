@@ -263,6 +263,11 @@ public:
     bool TestSetStackSizeThreadPool();
 
     /**
+     * @brief Tests the SetThreadNameThreadPool method.
+     */
+    bool TestSetThreadNameThreadPool();
+
+    /**
      * @brief Tests the SetCPUMaskThreadPool method.
      */
     bool TestSetCPUMaskThreadPool();
@@ -281,6 +286,11 @@ public:
      * @brief Tests the GetStackSizeThreadPool method.
      */
     bool TestGetStackSizeThreadPool();
+
+    /**
+     * @brief Tests the GetThreadNameThreadPool method.
+     */
+    bool TestGetThreadNameThreadPool();
 
     /**
      * @brief Tests the GetCPUMaskThreadPool method.
@@ -326,6 +336,12 @@ public:
      * @brief Verifies that stack size is not changed after the service has started.
      */
     bool TestSetStackSizeThreadPool_Start();
+
+    /**
+     * @brief Verifies that the thread name is not changed after the service has started.
+     */
+    bool TestSetThreadNameThreadPool_Start();
+
 };
 
 /*---------------------------------------------------------------------------*/

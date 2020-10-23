@@ -119,3 +119,17 @@ bool SleepTest::TestSemiBusy(float64 totalSleepSec,
 
     return testResult;
 }
+
+bool SleepTest::TestSetSchedulerGranularity() {
+    uint32 currentValue = Sleep::GetSchedulerGranularity();
+    uint32 valueToSet = 123456;
+    Sleep::SetSchedulerGranularity(valueToSet);
+    bool ok = (valueToSet == Sleep::GetSchedulerGranularity());
+    Sleep::SetSchedulerGranularity(currentValue);
+    return ok;
+}
+
+bool SleepTest::TestGetSchedulerGranularity() {
+    return TestSetSchedulerGranularity();
+}
+

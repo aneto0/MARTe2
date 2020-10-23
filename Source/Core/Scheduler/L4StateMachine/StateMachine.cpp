@@ -157,6 +157,7 @@ bool StateMachine::Initialise(StructuredDataI &data) {
         }
     }
     if (err.ErrorsCleared()) {
+        QueuedMessageI::SetQueueName(GetName());
         err = Start();
     }
     if (err.ErrorsCleared()) {
