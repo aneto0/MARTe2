@@ -3579,7 +3579,7 @@ void RealTimeApplicationConfigurationBuilder::CleanCaches() {
     functionsMemoryIndexesCache.Purge();
 }
 
-bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi, const char8 * const signalName, const char8 * const dataSourceName, TypeDescriptor signalTypeDescriptor, uint32 numberOfDimensions, uint32 numberOfElements, uint32 signalNumberOfBytes) {
+bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi, const char8 * const signalName, const char8 * const dataSourceName, const TypeDescriptor &signalTypeDescriptor, const uint32 numberOfDimensions, const uint32 numberOfElements, const uint32 signalNumberOfBytes) const {
     bool ret = true;
     StreamString defaultVal;
     if (sdi.Read("Default", defaultVal)) {

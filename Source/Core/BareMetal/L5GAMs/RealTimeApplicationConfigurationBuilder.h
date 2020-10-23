@@ -1068,7 +1068,7 @@ private:
      * @param[in] numberOfBytes the signal number of bytes
      * @return true if the signal and its default value are compatible in terms of type and dimensions, and if the signal default value can be successfully written to the output StructuredDataI.
      */
-    bool WriteDefault(StructuredDataI &sdi, const char8 * const signalName, const char8 * const dataSourceName, TypeDescriptor signalTypeDescriptor, uint32 numberOfDimensions, uint32 numberOfElements, uint32 signalNumberOfBytes);
+    bool WriteDefault(StructuredDataI &sdi, const char8 * const signalName, const char8 * const dataSourceName, const TypeDescriptor &signalTypeDescriptor, uint32 numberOfDimensions, uint32 numberOfElements, uint32 signalNumberOfBytes) const;
 };
 
 }

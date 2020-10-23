@@ -329,11 +329,11 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 const uint32 PTHREAD_NAME_MAX_SIZE = 16u;
                 char8 threadName[PTHREAD_NAME_MAX_SIZE];
                 //The StringHelper::CopyN will already copy the \0 if it is within the PTHREAD_NAME_MAX_SIZE (see man strncpy)
-                ok = StringHelper::CopyN(threadName, name, PTHREAD_NAME_MAX_SIZE);
+                ok = StringHelper::CopyN(&threadName[0u], name, PTHREAD_NAME_MAX_SIZE);
                 if (ok) {
                     //The last char must be \0. This is for the case where the name size >= 16
                     threadName[PTHREAD_NAME_MAX_SIZE - 1u] = '\0';
-                    ok = (pthread_setname_np(threadId, threadName) == 0);
+                    ok = (pthread_setname_np(threadId, &threadName[0u]) == 0);
                     if (!ok) {
                         REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_setname_np()");
                     }

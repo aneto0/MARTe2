@@ -63,7 +63,7 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
     REPORT_ERROR_STATIC(ErrorManagement::Information, "DefaultCPUs set to %d", defaultCPUs);
     ProcessorType::SetDefaultCPUs(defaultCPUs);
 
-    uint32 schedulerGranularity = 0;
+    uint32 schedulerGranularity = 0u;
     if (data.Read("SchedulerGranularity", schedulerGranularity)) {
         Sleep::SetSchedulerGranularity(schedulerGranularity);
     }
