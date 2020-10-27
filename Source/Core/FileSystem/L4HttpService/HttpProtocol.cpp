@@ -60,6 +60,7 @@ HttpProtocol::HttpProtocol(DoubleBufferedStream &outputStreamIn) :
 
 HttpProtocol::~HttpProtocol() {
     outputStream = NULL_PTR(DoubleBufferedStream*);
+    Purge();
 }
 
 bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, TimeoutType msecTimeout, const uint32 bufferReadSize) {

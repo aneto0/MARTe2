@@ -60,36 +60,37 @@ ConfigurationDatabaseNode::~ConfigurationDatabaseNode() {
 }
 
 void ConfigurationDatabaseNode::Purge() {
-    if (Lock()) {
-        if (container != NULL_PTR(Reference *)) {
-            parent = Reference();
-            delete [] container;
-            container = NULL_PTR(Reference *);
-            containerSize = 0u;
-            maxSize = 0u;
-            binTree.Reset();
-        }
-    }
-    UnLock();
+    ReferenceContainer purgeList;
+    Purge(purgeList);
 }
 
 void ConfigurationDatabaseNode::Purge(ReferenceContainer &purgeList) {
-    if (Lock()) {
-        if (container != NULL_PTR(Reference *)) {
-            parent = Reference();
-            uint32 n;
-            bool ok = true;
-            for (n = 0u; (n<containerSize) && (ok); n++) {
-                ok = purgeList.Insert(container[n]);
-            }
-            delete [] container;
-            container = NULL_PTR(Reference *);
-            containerSize = 0u;
-            maxSize = 0u;
-            binTree.Reset();
+    bool ok = true;
+    uint32 purgeStart = purgeList.Size();
+    //Remove self recursions due to links to the ancestors
+    if (parent.IsValid()) {
+        ok = purgeList.Insert(parent);
+        parent = Reference();
+    }
+    if (container != NULL_PTR(Reference *)) {
+        for (uint32 n = 0u; (n<containerSize) && (ok); n++) {
+            ok = purgeList.Insert(container[n]);
+            container[n] = Reference();
+        }
+        delete [] container;
+        container = NULL_PTR(Reference *);
+        containerSize = 0u;
+        maxSize = 0u;
+        binTree.Reset();
+    }
+    //Also need to purge all the sub nodes
+    uint32 purgeEnd = purgeList.Size();
+    for (uint32 n = purgeStart; ((n<purgeEnd) && (ok)); n++) {
+        ReferenceT<ConfigurationDatabaseNode> node = purgeList.Get(n);
+        if (node.IsValid()) {
+            node->Purge(purgeList);
         }
     }
-    UnLock();
 }
 
 bool ConfigurationDatabaseNode::Insert(Reference ref) {
