@@ -64,5 +64,5 @@ LFLAGS = -Wl,--no-as-needed -fPIC
 CFLAGS = -fPIC -Wall -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable
 CPPFLAGS = $(CFLAGS) -frtti 
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
-LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl
+LIBRARIES =  -lm -lpthread -lrt -ldl
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
