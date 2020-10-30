@@ -392,12 +392,12 @@ bool AnyObject::Serialise(const AnyType &typeIn) {
             void *tmp = type.GetDataPointer();
             type = AnyType(static_cast<char8 *>(typeIn.GetDataPointer()));
             type.SetDataPointer(tmp);
-            type.SetStaticDeclared(typeIn.IsStaticDeclared());
             type.SetNumberOfDimensions(typeIn.GetNumberOfDimensions());
             type.SetNumberOfElements(0u, typeIn.GetNumberOfElements(0u));
             type.SetNumberOfElements(1u, typeIn.GetNumberOfElements(1u));
             type.SetNumberOfElements(2u, typeIn.GetNumberOfElements(2u));
         }
+        type.SetStaticDeclared(typeIn.IsStaticDeclared());
     }
 
     return ok;
