@@ -58,6 +58,7 @@ HttpProtocol::HttpProtocol(DoubleBufferedStream &outputStreamIn) :
     isChunked = false;
 }
 
+/*lint -e{1551} the HttpProtocol must be purged.*/
 HttpProtocol::~HttpProtocol() {
     outputStream = NULL_PTR(DoubleBufferedStream*);
     Purge();
