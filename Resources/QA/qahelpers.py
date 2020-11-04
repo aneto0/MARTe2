@@ -494,6 +494,8 @@ class HeadersHelper(QAHelper):
                         includesOK = (includes == includesSort)
                         if (not includesOK):
                             self.logger.critical('Includes not sorted {0} != {1}'.format(includes, includesSort))
+                    #Sort include by blocks /**/
+                    includes = []
             
         allOK = atFileOK and atBriefOK and atDateOK and atAuthorOK and atCopyrightOK and includesOK
         status = {'allok': allOK, '@file': atFileOK, '@brief': atBriefOK, '@date': atDateOK, '@author': atAuthorOK, '@copyright': atCopyrightOK, '#includes sorted': includesOK}
