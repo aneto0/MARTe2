@@ -45,7 +45,7 @@ namespace MARTe {
 /**
  * The list of linux MARTe applications.
  */
-static const char8 * const arguments = "Arguments are -l LOADERCLASS -f FILENAME [-p xml|json|cdb] [-s FIRST_STATE | -m MSG_DESTINATION:MSG_FUNCTION] [-c DEFAULT_CPUS] [-t BUILD_TOKENS] [-g SCHEDULER_GRANULARITY_US]";
+static const char8 * const arguments = "Arguments are -l LOADERCLASS -f FILENAME [-p xml|json|cdb] [-s FIRST_STATE | -m MSG_DESTINATION:MSG_FUNCTION] [-c DEFAULT_CPUS] [-t BUILD_TOKENS] [-g SCHEDULER_GRANULARITY_US] [-k STOP_MSG_DESTINATION:STOP_MSG_FUNCTION]";
 
 }
 
@@ -176,6 +176,27 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
             }
         }
     }
+    if (ret) {
+        StreamString messageArgs;
+        (void) argsConfiguration.Read("-k", messageArgs);
+        if (messageArgs.Size() > 0u) {
+            char8 term;
+            messageArgs.Seek(0LLU);
+            StreamString messageDestination;
+            StreamString messageFunction;
+            ret.parametersError = !messageArgs.GetToken(messageDestination, ":", term);
+            if (ret) {
+                ret.parametersError = !messageArgs.GetToken(messageFunction, ":", term);
+            }
+            if (ret) {
+                ret.parametersError = !loaderParameters.Write("StopMessageDestination", messageDestination.Buffer());
+            }
+            if (ret) {
+                ret.parametersError = !loaderParameters.Write("StopMessageFunction", messageFunction.Buffer());
+            }
+        }
+    }
+
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Loader parameters:\n%!", loaderParameters);
     }

@@ -49,9 +49,9 @@ bool BootstrapTest::TestConstructor() {
 
 bool BootstrapTest::TestReadParameters() {
     using namespace MARTe;
-    uint32 argc = 13;
+    uint32 argc = 15;
     const char8 *argv[] =
-            { "Test", "-l", "LOADERCLASS", "-f", "FILENAME", "-p", "xml", "-s", "FIRST_STATE", "-m", "MSG_DESTINATION:MSG_FUNCTION", "-c", "0xff" };
+            { "Test", "-l", "LOADERCLASS", "-f", "FILENAME", "-p", "xml", "-s", "FIRST_STATE", "-m", "MSG_DESTINATION:MSG_FUNCTION", "-c", "0xff", "-k", "STOP_MSG_DESTINATION:STOP_MSG_FUNCTION"};
     Bootstrap bp;
     ConfigurationDatabase loaderParameters;
     bp.ReadParameters(argc, const_cast<char8 **>(argv), loaderParameters);
@@ -94,6 +94,20 @@ bool BootstrapTest::TestReadParameters() {
     }
     if (ok) {
         ok = (param == "MSG_FUNCTION");
+        param = "";
+    }
+    if (ok) {
+        ok = loaderParameters.Read("StopMessageDestination", param);
+    }
+    if (ok) {
+        ok = (param == "STOP_MSG_DESTINATION");
+        param = "";
+    }
+    if (ok) {
+        ok = loaderParameters.Read("StopMessageFunction", param);
+    }
+    if (ok) {
+        ok = (param == "STOP_MSG_FUNCTION");
         param = "";
     }
     uint32 cpus = 0;

@@ -34,8 +34,9 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "Bootstrap.h"
-#include "File.h"
 #include "ConfigurationDatabase.h"
+#include "File.h"
+#include "MessageI.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -55,6 +56,11 @@ static bool keepRunning = true;
  * To be used when the application is to be killed.
  */
 static bool killApp = false;
+
+/**
+ * The message to be sent when the application is stopped.
+ */
+static ReferenceT<Message> stopMessage;
 /**
  * Callback function for the signal (see Run below).
  */
@@ -66,11 +72,15 @@ static void StopApp(int sig) {
     }else if (sig == SIGINT){
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Application recieved SIGINT.\n");
     }
-    //Second time this is called? Kill the application.
+
     if (!killApp) {
+        if (stopMessage.IsValid()) {
+            (void) MessageI::SendMessage(stopMessage);
+        }
         killApp = true;
     }
     else {
+        //Second time this is called? Kill the application.
         REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Application killed.");
         _exit(0);
     }
@@ -94,6 +104,30 @@ ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &lo
         }
         else {
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to open the input file %s", filename.Buffer());
+        }
+    }
+    if (ret) {
+        StreamString messageDestination;
+        StreamString messageFunction;
+        if (loaderParameters.Read("StopMessageDestination", messageDestination)) {
+            if (loaderParameters.Read("StopMessageFunction", messageFunction)) {
+                stopMessage = ReferenceT<Message>(new Message());
+                ConfigurationDatabase msgConfig;
+                ret.parametersError = !msgConfig.Write("Destination", messageDestination);
+                if (ret.ErrorsCleared()) {
+                    ret.initialisationError = !msgConfig.Write("Function", messageFunction);
+                }
+                if (ret.ErrorsCleared()) {
+                    ret.initialisationError = !stopMessage->Initialise(msgConfig);
+                }
+                if (ret.ErrorsCleared()) {
+                    REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to send message %s:%s upon application stop", messageDestination.Buffer(), messageFunction.Buffer());
+                }
+                else {
+                    REPORT_ERROR_STATIC(ErrorManagement::Warning, "Failed to load the stop message");
+                    stopMessage = ReferenceT<Message>();
+                }
+            }
         }
     }
     if (ret) {
