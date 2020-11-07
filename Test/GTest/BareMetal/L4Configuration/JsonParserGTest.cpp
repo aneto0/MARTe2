@@ -71,6 +71,17 @@ TEST(BareMetal_L4Configuration_JsonParserGTest,TestNestedBlocks) {
     JsonParserTest parserTest;
     ASSERT_TRUE(parserTest.TestNestedBlocks());
 }
+
+TEST(BareMetal_L4Configuration_JsonParserGTest,TestCanonical) {
+    JsonParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestCanonical());
+}
+
+TEST(BareMetal_L4Configuration_JsonParserGTest,TestCanonical_Error) {
+    JsonParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestCanonical_Error());
+}
+
 /*
 TEST(BareMetal_L4Configuration_JsonParserGTest,TestTypeCast_Scalar_int8) {
     JsonParserTest parserTest;

@@ -371,6 +371,65 @@ bool JsonParserTest::TestNestedBlocks() {
     return var == 5;
 }
 
+bool JsonParserTest::TestCanonical() {
+    ConfigurationDatabase database;
+    StreamString errors;
+    StreamString configString = "{\n+PID:{\n"
+            "Kp:100.5\n"
+            "Ki: 2\n"
+            "Kd : 5\n"
+            "}\n}";
+
+    configString.Seek(0);
+    JsonParser myParser(configString, database, &errors);
+    if (!myParser.Parse()) {
+        return false;
+    }
+
+    if (!database.MoveAbsolute("+PID")) {
+        return false;
+    }
+    float32 Kp = 0.0;
+    database.Read("Kp", Kp);
+
+    if (Kp != 100.5) {
+        return false;
+    }
+
+    uint8 Ki = 0;
+    database.Read("Ki", Ki);
+    if (Ki != 2) {
+        return false;
+    }
+
+    float32 Kd = 0.0;
+
+    database.Read("Kd", Kd);
+    if (Kd != 5.0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool JsonParserTest::TestCanonical_Error() {
+    ConfigurationDatabase database;
+    StreamString errors;
+    StreamString configString = "{\n+PID:{\n"
+            "Kp:100.5\n"
+            "Ki: 2\n"
+            "Kd : 5\n"
+            "}";
+
+    configString.Seek(0);
+    JsonParser myParser(configString, database, &errors);
+    if (myParser.Parse()) {
+        return false;
+    }
+    return true;
+}
+
+
 bool JsonParserTest::TestParseErrors(const char8 *configStringIn) {
 
     StreamString configString = configStringIn;

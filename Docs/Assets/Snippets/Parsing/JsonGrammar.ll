@@ -8,7 +8,7 @@ cdbFile:
 expressions:
         __GetNodeName  STRING   \: variables	                            __AddLeaf
         __CreateNode   STRING   \: block            	                    
-        
+        bblock
 
 variables:
 		scalar
@@ -26,6 +26,9 @@ matrix:
 
 block:
         \{ expressions { expressions } __BlockEnd \}
+
+bblock:
+        \{ expressions { expressions } \}
 
 token:
 	STRING

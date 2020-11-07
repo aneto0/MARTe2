@@ -80,6 +80,16 @@ public:
     bool TestNestedBlocks();
 
     /**
+     * @brief Tests a canonical json 
+     */
+    bool TestCanonical();
+
+    /**
+     * @brief Tests a malformed canonical json 
+     */
+    bool TestCanonical_Error();
+
+    /**
      * @brief Tests if the Parse function returns false in case of errors in the input stream.
      */
     bool TestParseErrors(const char8 *configStringIn);

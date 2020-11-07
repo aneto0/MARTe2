@@ -43,41 +43,56 @@
 
 namespace MARTe {
 
-static uint32 Production[] = { 0u
+static uint32 Production[] = {0
 
-, 3u, 9u, 10u, 22u, 3u, 10u, 11u, 18u, 6u, 11u, 23u, 1u, 2u, 12u, 24u, 5u, 11u, 25u, 1u, 2u, 16u, 2u, 12u, 13u, 2u, 12u, 14u, 2u, 12u, 15u, 3u, 13u, 26u, 17u, 5u, 14u, 3u, 13u, 19u, 4u, 5u, 15u, 3u, 14u,
-        20u, 4u, 5u, 16u, 5u, 11u, 21u, 6u, 2u, 17u, 1u, 2u, 17u, 7u, 3u, 18u, 11u, 18u, 1u, 18u, 3u, 19u, 13u, 19u, 2u, 19u, 27u, 3u, 20u, 14u, 20u, 2u, 20u, 28u, 3u, 21u, 11u, 21u, 2u, 21u, 29u, 0u };
+,3,9,10,24 ,3,10,11,19 ,6,11,25,1,2,12,26 ,5,11,27,1,2,16 
+,2,11,17 ,2,12,13 ,2,12,14 ,2,12,15 ,3,13,28,18 
+,5,14,3,13,20,4 ,5,15,3,14,21,4 ,5,16,5,11,22,6 
+,5,17,5,11,23,6 ,2,18,1 ,2,18,7 ,3,19,11,19 
+,1,19 ,3,20,13,20 ,2,20,29 ,3,21,14,21 ,2,21,30 
+,3,22,11,22 ,2,22,31 ,3,23,11,23 ,1,23 
+,0};
 
-static uint32 Production_row[] = { 0u
+static uint32 Production_row[] = {0
 
-, 1u, 5u, 9u, 16u, 22u, 25u, 28u, 31u, 35u, 41u, 47u, 53u, 56u, 59u, 63u, 65u, 69u, 72u, 76u, 79u, 83u, 0u};
+,1,5,9,16,22,25,28,31,34,38,44,50,56,62,65,68
+,72,74,78,81,85,88,92,95,99
+,0};
 
 static uint32 ParseArray[] = {
 
-0u, 0u, 5u, 16u, 23u, 8u, 17u, 12u, 5u, 16u, 14u, 8u, 1u, 13u, 18u, 19u, 20u, 15u, 2u, 22u, 9u, 21u, 10u, 11u, 0u, 0u, 0u, 0u };
+0,0,6,16,27,10,18,16,6,19,17,22,18,24,11,22,23,24,25
+,1,2,26,9,1,2,5,14,12,9,20,21,13,15,0,0
+};
 
-static uint32 Parse_row[] = { 0u
+static uint32 Parse_row[] = {0
 
-, 11u, 17u, 18u, 1u, 4u, 17u, 19u, 18u, 6u, 9u, 2u, 11u, 15u, 0u };
+,18,19,20,1,21,2,11,22,26,25,2,5,26,10,12
+,0};
 
 static uint32 Conflict[] = {
 
-0u, 0u, 6u, 24u, 7u, 3u, 0u, 3u, 6u, 4u, 0u, 3u };
+0,0,7,28,8,3,0,3,7,4,0,3
+};
 
-static uint32 Conflict_row[] = { 0u
-, 1u, 1u, 4u, 0u };
+static uint32 Conflict_row[] = {0
+
+,1,1,4
+,0};
+
+
 /*
  #define START_SYMBOL 9
  #define END_OF_SLK_INPUT_ 8
  #define START_STATE 0
- #define START_CONFLICT 22
- #define END_CONFLICT 25
- #define START_ACTION 22
- #define END_ACTION 30
+ #define START_CONFLICT 26
+ #define END_CONFLICT 29
+ #define START_ACTION 24
+ #define END_ACTION 32
  #define TOTAL_CONFLICTS 3
  */
 
-static const uint32 Constants[] = { 9u, 8u, 0u, 22u, 25u, 22u, 30u, 3u };
+static const uint32 Constants[] = { 9u, 8u, 0u, 26u, 29u, 24u, 32u, 3u };
 
 
 static const char8 * Terminal_name[] = { "0"
@@ -94,14 +109,15 @@ JsonParser::JsonParser(StreamI &stream,
                        BufferedStreamI * const err) :
         ConfigurationParserI(stream, databaseIn, err, JsonGrammar) {
     Action[0] = static_cast<void (JsonParser::*)(void)>(NULL);
-    Action[1] = &JsonParser::End;
-    Action[2] = &JsonParser::GetNodeName;
-    Action[3] = &JsonParser::AddLeaf;
-    Action[4] = &JsonParser::CreateNode;
-    Action[5] = &JsonParser::AddScalar;
-    Action[6] = &JsonParser::EndVector;
-    Action[7] = &JsonParser::EndMatrix;
-    Action[8] = &JsonParser::BlockEnd;
+    Action [ 1 ] = &JsonParser::End;
+    Action [ 2 ] = &JsonParser::GetNodeName;
+    Action [ 3 ] = &JsonParser::AddLeaf;
+    Action [ 4 ] = &JsonParser::CreateNode;
+    Action [ 5 ] = &JsonParser::AddScalar;
+    Action [ 6 ] = &JsonParser::EndVector;
+    Action [ 7 ] = &JsonParser::EndMatrix;
+    Action [ 8 ] = &JsonParser::BlockEnd;
+
 }
 
 JsonParser::~JsonParser() {
