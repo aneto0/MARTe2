@@ -59,7 +59,7 @@ def ChangeBranch(logger, repo, targetBranch):
         repo.git.pull()
     except Exception as e:
         ok = False
-        logger.critical('Failed checkout to branch {0} from branch {1}'.format(targetBranch, currentBranch))
+        logger.critical('Failed checkout to branch {0} from branch {1}. Error: {2}'.format(targetBranch, currentBranch, e))
 
     return ok
 
