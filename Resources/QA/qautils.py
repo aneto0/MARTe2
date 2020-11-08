@@ -56,6 +56,7 @@ def ChangeBranch(logger, repo, targetBranch):
     try:
         logger.debug('Checking out to branch {0} from branch {1}'.format(targetBranch, currentBranch))
         repo.git.checkout(targetBranch)
+        repo.git.pull()
     except Exception as e:
         ok = False
         logger.critical('Failed checkout to branch {0} from branch {1}'.format(targetBranch, currentBranch))
