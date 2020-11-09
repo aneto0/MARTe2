@@ -88,7 +88,7 @@ if __name__ == '__main__':
     parser.add_argument('-lg', '--lcovexec', type=str, help='Lcov GTest executor location', default='Test/GTest/cov/MainGTest.ex')
     parser.add_argument('-lf', '--lcovfilter', type=str, help='Lcov GTest filters', nargs='*', default=['*'])
     parser.add_argument('-ld', '--lcovoutputdir', type=str, help='Where to write the lcov temporary output files', default='Build')
-    parser.add_argument('-lp', '--lcovprefix', type=str, help='Lcov GTest build file prefix', default='MARTe2.coverage.info')
+    parser.add_argument('-lp', '--lcovprefix', type=str, help='Lcov GTest build file prefix', default='MARTe2-coverage.info')
     parser.add_argument('-le', '--lcovexecdisable', action='store_true', help='Disable the lcov program? Mostly used for debug')
     parser.add_argument('-la', '--lcovminlines', type=float, help='Minimum line coverage ([0, 1])', default=0.9)
     parser.add_argument('-lb', '--lcovminfun', type=float, help='Minimum function coverage ([0, 1])', default=0)
