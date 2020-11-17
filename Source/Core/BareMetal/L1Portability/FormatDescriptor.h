@@ -405,6 +405,7 @@ static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, fa
 /*---------------------------------------------------------------------------*/
 
 FormatDescriptor::FormatDescriptor() {
+    format_as_uint32 = 0u;
     desiredAction = PrintAnything;
     size = 0u;
     precision = defaultPrecision;
@@ -438,6 +439,7 @@ FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
                                    const bool isBinaryPadded,
                                    const bool isFullNotation) {
 
+    format_as_uint32 = 0u;
     desiredAction = desiredActionToSet;
     size = sizeToSet;
     precision = precisionToSet;
