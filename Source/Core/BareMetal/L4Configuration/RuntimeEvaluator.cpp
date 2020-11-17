@@ -896,7 +896,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile()
                             typeList += '|';
                         }
                         TypeDescriptor td;
-                        ret.unsupportedFeature = !typeStack.Peek(typeIndex,td);
+                        if(!typeStack.Peek(typeIndex,td)) {
+                            REPORT_ERROR_STATIC(ErrorManagement::Debug, "Peek() failed");
+                        }
                         typeList += TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
                     }
                     typeList += ']';

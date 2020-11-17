@@ -18,7 +18,7 @@ New parsers
 SLK Parser
 ----------
 
-The MARTe parsers are developed using the `slk tool <http://www.slkpg2.com/download.html>`_. In order to add a new language the steps described below must be followed.
+The MARTe parsers are developed using the `slk tool <http://www.slkpg.org/download.html>`_. In order to add a new language the steps described below must be followed.
 
 Lexical Analyzer
 ----------------

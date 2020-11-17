@@ -43,6 +43,7 @@
 
 namespace MARTe {
 
+/*lint -e{9117} data generated from slk*/
 static uint32 Production[] = {0
 
 ,3,9,10,24 ,3,10,11,19 ,6,11,25,1,2,12,26 ,5,11,27,1,2,16 
@@ -53,28 +54,33 @@ static uint32 Production[] = {0
 ,3,22,11,22 ,2,22,31 ,3,23,11,23 ,1,23 
 ,0};
 
+/*lint -e{9117} data generated from slk*/
 static uint32 Production_row[] = {0
 
 ,1,5,9,16,22,25,28,31,34,38,44,50,56,62,65,68
 ,72,74,78,81,85,88,92,95,99
 ,0};
 
+/*lint -e{9117} data generated from slk*/
 static uint32 ParseArray[] = {
 
 0,0,6,16,27,10,18,16,6,19,17,22,18,24,11,22,23,24,25
 ,1,2,26,9,1,2,5,14,12,9,20,21,13,15,0,0
 };
 
+/*lint -e{9117} data generated from slk*/
 static uint32 Parse_row[] = {0
 
 ,18,19,20,1,21,2,11,22,26,25,2,5,26,10,12
 ,0};
 
+/*lint -e{9117} data generated from slk*/
 static uint32 Conflict[] = {
 
 0,0,7,28,8,3,0,3,7,4,0,3
 };
 
+/*lint -e{9117} data generated from slk*/
 static uint32 Conflict_row[] = {0
 
 ,1,1,4
