@@ -421,6 +421,35 @@ REGISTER_OPERATOR(DIV, / ,Division)
 /*********************************************************************************************************
  *********************************************************************************************************
  *
+ *                      Unary math operators
+ *
+ *********************************************************************************************************
+ **********************************************************************************************************/
+
+#define COMMA ,
+#define REGISTER_UNARY_OPERATOR(name,oper,fname, typeIn, typeOut)                                          \
+        template <typename T1, typename T2> void function ## fname ## typeIn ## ication (RuntimeEvaluator &context){ \
+            T1 x1;                                                                  \
+            T2 x2;                                                                  \
+            context.Pop(x1);                                                        \
+            x2 = oper static_cast<T2>(x1);                                          \
+            context.Push(x2);                                                       \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1u,1u,function ## fname ## typeIn ## ication <typeIn COMMA typeOut>,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())  \
+
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, float64, float64)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, float32, float32)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, int8,    int8)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, int16,   int16)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, int32,   int32)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, int64,   int64)
+
+#undef COMMA
+
+
+/*********************************************************************************************************
+ *********************************************************************************************************
+ *
  *                      Type converting Integer math operators
  *
  *********************************************************************************************************
