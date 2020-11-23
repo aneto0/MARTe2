@@ -211,7 +211,7 @@ const char8* MathExpressionParser::OperatorFormatting(char8* const operatorIn) c
         ret = "DIV";
     }
     else if (StringHelper::Compare(operatorIn, "!") == 0) {
-        ret = "FACT";
+        ret = "NOT";
     }
     else {
         bool ok = StringHelper::ToUpper(operatorIn);
