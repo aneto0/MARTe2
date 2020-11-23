@@ -428,11 +428,17 @@ REGISTER_OPERATOR(DIV, / ,Division)
 
 #define COMMA ,
 #define REGISTER_UNARY_OPERATOR(name,oper,fname, typeIn, typeOut)                                          \
-        template <typename T1, typename T2> void function ## fname ## typeIn ## ication (RuntimeEvaluator &context){ \
-            T1 x1;                                                                  \
-            T2 x2;                                                                  \
-            context.Pop(x1);                                                        \
-            x2 = oper static_cast<T2>(x1);                                          \
+        template <typename T1, typename Tout> void function ## fname ## typeIn ## ication (RuntimeEvaluator &context){ \
+            Tout x1;                                                                \
+            Tout x2;                                                                \
+            T1 z1;                                                                  \
+            context.Pop(z1);                                                        \
+            bool sat = SafeNumber2Number(z1, x1);                                   \
+            if (sat) {                                                              \
+                x2 = oper x1;                                    \
+            } else {                                                                \
+                context.runtimeError.overflow = true;                               \
+            }                                                                       \
             context.Push(x2);                                                       \
         }                                                                           \
         REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1u,1u,function ## fname ## typeIn ## ication <typeIn COMMA typeOut>,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())  \
@@ -446,6 +452,7 @@ REGISTER_UNARY_OPERATOR(NEG, -, Negative, int64,   int64)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint8,   int16)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint16,  int32)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint32,  int64)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint64,  int64)
 
 #undef COMMA
 
