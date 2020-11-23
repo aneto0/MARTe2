@@ -443,6 +443,9 @@ REGISTER_UNARY_OPERATOR(NEG, -, Negative, int8,    int8)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, int16,   int16)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, int32,   int32)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, int64,   int64)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint8,   int16)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint16,  int32)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint32,  int64)
 
 #undef COMMA
 
