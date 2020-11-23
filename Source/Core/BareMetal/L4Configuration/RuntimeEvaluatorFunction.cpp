@@ -435,9 +435,9 @@ REGISTER_OPERATOR(DIV, / ,Division)
             context.Pop(z1);                                                        \
             bool sat = SafeNumber2Number(z1, x1);                                   \
             if (sat) {                                                              \
-                x2 = oper x1;                                    \
+                x2 = oper x1;                                                       \
             } else {                                                                \
-                context.runtimeError.overflow = true;                               \
+                context.runtimeError.underflow = true;                              \
             }                                                                       \
             context.Push(x2);                                                       \
         }                                                                           \
