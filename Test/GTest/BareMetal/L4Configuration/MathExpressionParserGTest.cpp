@@ -145,6 +145,30 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Logic_2)
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Logic_3)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = !1;";
+    const char8* expectedOutput = "CONST float64 1\n"
+                                  "NOT\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Logic_4)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = !A;";
+    const char8* expectedOutput = "READ A\n"
+                                  "NOT\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Comparison_1)
 {
     MathExpressionParserTest parserTest;
@@ -560,7 +584,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
                                   "READ X\n"
                                   "READ Y\n"
                                   "SUB\n"
-                                  "FACT\n"
+                                  "NOT\n"
                                   "MUL\n"
                                   "ADD\n"
                                   "READ X\n"
@@ -647,7 +671,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Multiple
                                   "READ X\n"
                                   "READ Y\n"
                                   "SUB\n"
-                                  "FACT\n"
+                                  "NOT\n"
                                   "MUL\n"
                                   "ADD\n"
                                   "READ X\n"
