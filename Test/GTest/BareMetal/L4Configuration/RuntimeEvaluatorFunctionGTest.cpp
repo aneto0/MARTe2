@@ -1366,6 +1366,42 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestXorExecution) {
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNotFunctionTypes) {
+    RuntimeEvaluatorFunctionTest test;
+
+    test.AddExpectedFunction1In1Out("uint8", "uint8");
+
+    ASSERT_TRUE(test.TestFunctionTypes("NOT", 1, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNotExecution) {
+    RuntimeEvaluatorFunctionTest test;
+
+    StreamString rpnCode=
+            "READ IN1\n"
+            "NOT\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit, UnsignedInteger8Bit));
+
+    uint8 inputFalse[] = {0};
+
+    test.SetInputs(context, inputFalse);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
+
+    uint8 inputTrue[] = {1};
+
+    test.SetInputs(context, inputTrue);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
+
+    uint8 inputGreaterThanOne[] = {2};
+
+    test.SetInputs(context, inputGreaterThanOne);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                  ADD                                      */
 /*---------------------------------------------------------------------------*/
