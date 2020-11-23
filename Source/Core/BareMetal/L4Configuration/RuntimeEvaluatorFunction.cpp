@@ -383,7 +383,7 @@ REGISTER_LOGICAL_OPERATOR(XOR, !=, xor)
             bool x1;                                                                \
             bool ret;                                                               \
             context.Pop(x1);                                                        \
-            x1 != false ? x1 = true : x1 = false;                                   \
+            (x1 != false) ? (x1 = true) : (x1 = false);                                   \
             ret = oper x1;                                                          \
             context.Push(ret);                                                      \
         }                                                                           \
@@ -427,6 +427,7 @@ REGISTER_OPERATOR(DIV, / ,Division)
  **********************************************************************************************************/
 
 #define COMMA ,
+
 #define REGISTER_UNARY_OPERATOR(name,oper,fname, typeIn, typeOut)                                          \
         template <typename T1, typename Tout> void function ## fname ## typeIn ## ication (RuntimeEvaluator &context){ \
             Tout x1;                                                                \
@@ -453,8 +454,6 @@ REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint8,   int16)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint16,  int32)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint32,  int64)
 REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint64,  int64)
-
-#undef COMMA
 
 
 /*********************************************************************************************************
