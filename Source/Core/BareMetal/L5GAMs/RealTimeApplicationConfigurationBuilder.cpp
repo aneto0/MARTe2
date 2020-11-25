@@ -52,6 +52,9 @@ RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder
     initialiseAfterInitialisation = true;
 }
 
+RealTimeApplicationConfigurationBuilder::~RealTimeApplicationConfigurationBuilder() {
+}
+
 RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(RealTimeApplication & realTimeApplicationIn, const char8 * const defaultDataSourceNameIn) : Object() {
     defaultDataSourceName = defaultDataSourceNameIn;
     realTimeApplication = &realTimeApplicationIn;
@@ -84,7 +87,6 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureAfterInitialisation() {
     if (!ret) {
         REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to InitialiseSignalsDatabase");
     }
-
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to FlattenSignalsDatabases");
         ret = FlattenSignalsDatabases();
@@ -120,6 +122,7 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureAfterInitialisation() {
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyConsumersAndProducers");
         }
     }
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to CleanCaches");
     CleanCaches();
     return ret;
 }
@@ -166,6 +169,7 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureBeforeInitialisation() {
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyConsumersAndProducers");
         }
     }
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to CleanCaches");
     CleanCaches();
     return ret;
 
@@ -435,11 +439,9 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
 // FlattenSignalsDatabases
 ////////////////////////////////
 ////////////////////////////////
-
 //-Flats all the signals as long their type are declared
 bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabases() {
     bool ret = functionsDatabase.MoveAbsolute("Functions");
-
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Flattening functions input signals");
         ret = FlattenSignalsDatabase(functionsDatabase, InputSignals);
@@ -515,10 +517,10 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabase(Configurati
 
     uint32 signalNumber;
     bool ret = true;
-//A signal container can be either a GAM or a DataSource
+    //A signal container can be either a GAM or a DataSource
     uint32 numberOfSignalContainers = signalDatabase.GetNumberOfChildren();
     uint32 i;
-//For each signal container...
+    //For each signal container...
     ConfigurationDatabase originalSignalDatabase = signalDatabase;
     for (i = 0u; (i < numberOfSignalContainers) && (ret); i++) {
         signalDatabase = originalSignalDatabase;
@@ -602,7 +604,9 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabase(Configurati
             }
             if (ret) {
                 //Copy into the signalDatabase the found elements.
+                REPORT_ERROR(ErrorManagement::Debug, "Updating the signal database");
                 ret = signalLocalDatabase.Copy(signalDatabase);
+                REPORT_ERROR(ErrorManagement::Debug, "The signal database has now %d signals", signalDatabase.GetNumberOfChildren());
             }
         }
     }
@@ -812,7 +816,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                             }
 
                             if (ret) {
-                                REPORT_ERROR_STATIC(ErrorManagement::Debug, "Calling SignalIntrospectionToStructuredData for %s", fsignalName.Buffer());
+                                REPORT_ERROR_STATIC(ErrorManagement::Debug, "Calling SignalIntrospectionToStructuredData for %s [%s]", fsignalName.Buffer(), signalType.Buffer());
                                 ret = SignalIntrospectionToStructuredData(signalDatabase, signalType.Buffer(), fsignalName.Buffer(), fAlias.Buffer(), dataSourceName.Buffer(), syncSignalName.Buffer(),
                                                                           triggerSignalName.Buffer(), fullType.Buffer(), ranges, samples, frequency, trigger, resolvedSignal, signalNumber, syncSet,
                                                                           triggerSet, isFunctionsDatabase);
@@ -837,7 +841,6 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                     ret = signalDatabase.Delete("Type");
                 }
             }
-
         }
         //BasicType. Write all the known signal properties
         // do this also if the type is undefined
@@ -902,6 +905,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                 // read the qualified name just for error reporting
                 ret = functionsDatabase.Read("QualifiedName", functionName);
             }
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "Resolving for function %s [idx: %d]", functionName.Buffer(), i);
             StreamString functionId;
             if (ret) {
                 functionId = functionsDatabase.GetName();
@@ -933,7 +937,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                     ConfigurationDatabase functionsDatabaseBeforeSignalMove = functionsDatabase;
                     for (uint32 s = 0u; (s < numberOfSignals) && (ret); s++) {
                         functionsDatabase = functionsDatabaseBeforeSignalMove;
-                        //functionsDatabase.SetCurrentNode(signalsContainer->Get(s));
                         ret = functionsDatabase.MoveToChild(s);
 
                         StreamString signalId;
@@ -1281,6 +1284,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
             if (ret) {
                 ret = dataSourcesDatabase.MoveRelative("Signals");
             }
+            REPORT_ERROR(ErrorManagement::Information, "Verifying signals for %s", dataSourceName.Buffer());
             uint32 numberOfSignals = 0u;
             if (ret) {
                 numberOfSignals = dataSourcesDatabase.GetNumberOfChildren();
@@ -1468,6 +1472,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
             for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
                 ReferenceT<RealTimeState> state = statesFound.Get(i);
                 const char8 * stateName = state->GetName();
+                REPORT_ERROR(ErrorManagement::Information, "Resolving state %s", stateName);
                 //Look for a ReferenceContainer named Threads
                 uint32 j;
                 bool found = false;
@@ -1477,6 +1482,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                     threadContainer = state->Get(j);
                     if (threadContainer.IsValid()) {
                         found = (StringHelper::Compare("Threads", threadContainer->GetName()) == 0);
+                        REPORT_ERROR(ErrorManagement::Information, "Resolving thread container %s", threadContainer->GetName());
                     }
                 }
                 ret = found;
@@ -1492,6 +1498,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                             StreamString threadFullName = stateName;
                             threadFullName += ".";
                             threadFullName += threadName;
+                            REPORT_ERROR(ErrorManagement::Information, "Resolving thread %s", threadFullName.Buffer());
 
                             ret = AddThreadCycleTime(threadFullName.Buffer());
                             ReferenceContainer gams;
@@ -1523,6 +1530,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                                         ret = qualifiedName.Printf("%s", name.Buffer());
                                     }
                                 }
+                                REPORT_ERROR(ErrorManagement::Information, "Resolving %s", qualifiedName.Buffer());
                                 StreamString functionNumber;
                                 //Look for the FunctionNumber which has this qualified name
                                 ret = FindFunctionNumber(qualifiedName, functionNumber);
@@ -2075,6 +2083,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
         if (ret) {
             ret = dataSourcesDatabase.MoveRelative("Signals");
         }
+        REPORT_ERROR(ErrorManagement::Information, "Verifying consumers and producers for %s", dataSourceName.Buffer());
         if (ret) {
             uint32 numberOfSignals = dataSourcesDatabase.GetNumberOfChildren();
             ConfigurationDatabase dataSourcesDatabaseBeforeSignalMove = dataSourcesDatabase;
@@ -3119,6 +3128,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 if (nOfZ == 0u) {
                     nOfZ = 1u;
                 }
+
                 /*lint -e{850} nr, nc and nz are not modified by the Print*/
                 for (nr = 0u; (nr < nOfRows) && (ret); nr++) {
                     for (nc = 0u; (nc < nOfCols) && (ret); nc++) {
@@ -3238,7 +3248,6 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                         }
                     }
                     if (ret) {
-                        //ret = signalDatabase.MoveToAncestor(1u);
                         signalDatabase = signalDatabaseBeforeMove;
                     }
                 }
@@ -3572,11 +3581,17 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureThreads() const {
 }
 
 void RealTimeApplicationConfigurationBuilder::CleanCaches() {
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging dataSourcesIndexesCache. Number of children:%d", dataSourcesSignalIndexCache.GetNumberOfChildren());
     dataSourcesIndexesCache.Purge();
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging functionsIndexesCache. Number of children:%d", functionsIndexesCache.GetNumberOfChildren());
     functionsIndexesCache.Purge();
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging dataSourcesSignalIndexCache. Number of children:%d", dataSourcesSignalIndexCache.GetNumberOfChildren());
     dataSourcesSignalIndexCache.Purge();
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging dataSourcesFunctionIndexesCache. Number of children:%d", dataSourcesFunctionIndexesCache.GetNumberOfChildren());
     dataSourcesFunctionIndexesCache.Purge();
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging functionsMemoryIndexesCache. Number of children:%d", functionsMemoryIndexesCache.GetNumberOfChildren());
     functionsMemoryIndexesCache.Purge();
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purged functionsMemoryIndexesCache. Number of children:%d", functionsMemoryIndexesCache.GetNumberOfChildren());
 }
 
 bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi, const char8 * const signalName, const char8 * const dataSourceName, const TypeDescriptor &signalTypeDescriptor, const uint32 numberOfDimensions, const uint32 numberOfElements, const uint32 signalNumberOfBytes) const {
