@@ -719,6 +719,11 @@ private:
     /**
      * Allows to speed-up access to the databases
      */
+    ConfigurationDatabase cachedIntrospections;
+
+    /**
+     * Allows to speed-up access to the databases
+     */
     ConfigurationDatabase cachedDatabase;
 
     /**
@@ -913,6 +918,27 @@ private:
                                 StreamString &otherFullType,
                                 StreamString &signalName,
                                 StreamString &dataSourceSignalName) const;
+
+    /**
+     * @brief Store in a ConfigurationDatabase (cachedIntrospections) the structured information (name, type, ...) of all the signals.
+     * registered in the ClassRegistryDatabase. This information is then use to optimise the SignalIntrospectionToStructuredData
+     */
+    bool CacheAllSignalsIntrospections();
+
+    /**
+     * @brief Called by the CacheAllSignalsIntrospections for every type that is registered in the ClassRegistryDatabase.
+     * @details This is a recursive method.
+     * @param[in] typeName the type to register (it must be registered in the ClassRegistryDatabase)
+     * @param[in] signalName the parent structure member name (including path to the root)
+     * @param[in] fullTypeName the parent structure type name (including path to the root)
+     * @param[out] data see SignalIntrospectionToStructuredData
+     * @param[in] signalNumber incremented for each signal that is written to \a data
+     * @return true if all the signal properties are written into \a data.
+     */
+    bool CacheSignalIntrospections(const char8 * const typeName, const char8 * const signalName,
+                                   const char8 * const fullTypeName,
+                                   ConfigurationDatabase & data,
+                                   uint32 &signalNumber);
 
     /**
      * @brief Expands a structure into a flat database where each member of the structure is stored as an entry with a name in
