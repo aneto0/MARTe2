@@ -56,6 +56,7 @@ MemoryMapAsyncOutputBroker::MemoryMapAsyncOutputBroker() :
     fastSem.Create();
     posted = false;
     destroying = false;
+    ignoreBufferOverrun = false;
 }
 
 /*lint -e{1551} the destructor must guarantee that the SingleThreadService is stopped and that buffer memory is freed.*/
