@@ -422,8 +422,10 @@ bool RealTimeApplication::AddBrokersToFunctions() {
             if (ret) {
 
                 ret = dataSource->AddBrokers(InputSignals);
+                REPORT_ERROR(ErrorManagement::Information, "Getting input brokers for %s", dataSource->GetName());
                 if (ret) {
                     ret = dataSource->AddBrokers(OutputSignals);
+                    REPORT_ERROR(ErrorManagement::Information, "Getting output brokers for %s", dataSource->GetName());
                 }
 
             }
