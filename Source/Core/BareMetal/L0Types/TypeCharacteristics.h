@@ -220,6 +220,9 @@ inline bool SafeNumber2Number(inputType src,outputType &dest){
     if (ret) {
         dest = static_cast<outputType>(src);
     }
+    else {
+        dest = static_cast<outputType>(0u);
+    }
 
     return ret;
 }
