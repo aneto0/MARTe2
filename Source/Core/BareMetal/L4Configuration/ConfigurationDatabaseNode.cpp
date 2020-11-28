@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "ConfigurationDatabaseNode.h"
 #include "StreamString.h"
 
@@ -43,7 +44,7 @@ namespace MARTe {
 
 ConfigurationDatabaseNode::ConfigurationDatabaseNode() :
         Object() {
-    granularity = 16u;
+    granularity = 2u;
     containerSize = 0u;
     maxSize = 0u;
     container = NULL_PTR(Reference *);
@@ -52,45 +53,27 @@ ConfigurationDatabaseNode::ConfigurationDatabaseNode() :
 
 /*lint -e{1551} by design memory if freed in the destructor.*/
 ConfigurationDatabaseNode::~ConfigurationDatabaseNode() {
-    binTree.Reset();
-    if (container != NULL_PTR(Reference *)) {
-        parent = Reference();
-        delete [] container;
-    }
+    Purge();
 }
 
 void ConfigurationDatabaseNode::Purge() {
-    ReferenceContainer purgeList;
-    Purge(purgeList);
-}
-
-void ConfigurationDatabaseNode::Purge(ReferenceContainer &purgeList) {
     bool ok = true;
-    uint32 purgeStart = purgeList.Size();
     //Remove self recursions due to links to the ancestors
-    if (parent.IsValid()) {
-        ok = purgeList.Insert(parent);
-        parent = Reference();
-    }
+    parent = Reference();
+
     if (container != NULL_PTR(Reference *)) {
         for (uint32 n = 0u; (n<containerSize) && (ok); n++) {
-            ok = purgeList.Insert(container[n]);
-            container[n] = Reference();
+            ReferenceT<ConfigurationDatabaseNode> rc = container[n];
+            if (rc.IsValid()) {
+                rc->Purge();
+            }
         }
         delete [] container;
         container = NULL_PTR(Reference *);
-        containerSize = 0u;
-        maxSize = 0u;
-        binTree.Reset();
     }
-    //Also need to purge all the sub nodes
-    uint32 purgeEnd = purgeList.Size();
-    for (uint32 n = purgeStart; ((n<purgeEnd) && (ok)); n++) {
-        ReferenceT<ConfigurationDatabaseNode> node = purgeList.Get(n);
-        if (node.IsValid()) {
-            node->Purge(purgeList);
-        }
-    }
+    containerSize = 0u;
+    maxSize = 0u;
+    binTree.Reset();
 }
 
 bool ConfigurationDatabaseNode::Insert(Reference ref) {
@@ -98,11 +81,11 @@ bool ConfigurationDatabaseNode::Insert(Reference ref) {
     if (ok) {
         uint32 index = containerSize;
         if (index >= maxSize) {
-            if (containerSize < granularity) {
-                maxSize++;
+            if (maxSize == 0u) {
+                maxSize = 1u;
             }
             else {
-                maxSize += granularity;
+                maxSize *= granularity;
             }
             Reference *oldContainer = container;
             container = new Reference[maxSize];
@@ -110,6 +93,7 @@ bool ConfigurationDatabaseNode::Insert(Reference ref) {
             //oldContainer == NULL => containerSize == 0
             for (n=0u; n<containerSize; n++) {
                 container[n] = oldContainer[n];
+                oldContainer[n] = Reference();
             }
             if (oldContainer != NULL_PTR(Reference *)) {
                 delete [] oldContainer;
@@ -177,17 +161,11 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
                     }
                     else {
                         ret = container[index];
-                        UnLock();
                     }
                 }
-                else {
-                    UnLock();
-                }
-            }
-            else {
-                UnLock();
             }
         }
+        UnLock();
     }
 
     return ret;
@@ -224,12 +202,10 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
         }
         if (ok) {
             containerSize--;
-            if (containerSize < granularity) {
-                maxSize--;
-            }
-            else {
-                if ((containerSize % granularity) == 0u) {
-                    maxSize -= granularity;
+            if (containerSize < (maxSize / granularity)) {
+                maxSize /= granularity;
+                if (maxSize < containerSize) {
+                    maxSize = containerSize;
                 }
             }
             if (containerSize > 0u) {
@@ -251,6 +227,7 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
             else {
                 delete [] container;
                 container = NULL_PTR(Reference *);
+                maxSize = 0u;
             }
         }
         //Need to remap...
@@ -261,6 +238,14 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
                 /*lint -e{613} containerSize > 0 => container != NULL*/
                 Reference eRef = container[i];
                 ok = (binTree.Insert(eRef->GetName(), static_cast<uint32>(i)) != 0xFFFFFFFFu);
+            }
+        }
+        if (ok) {
+            //Break the reference to the parent
+            ReferenceT<ConfigurationDatabaseNode> refCdbn = ref;
+            if (refCdbn.IsValid()) {
+                refCdbn->SetParent(Reference());
+                refCdbn->Purge();
             }
         }
     }
