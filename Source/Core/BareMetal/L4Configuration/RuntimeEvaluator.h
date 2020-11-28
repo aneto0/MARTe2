@@ -819,6 +819,9 @@ void RuntimeEvaluator::Pop(T &value){
         stackPtr -= ByteSizeToDataMemorySize(sizeof(T));
         value = *((T *)stackPtr);
     }
+    else {
+        value = static_cast<T>(0u);
+    }
 }
 
 template<typename T>
@@ -829,12 +832,15 @@ void RuntimeEvaluator::Peek(T &value){
         DataMemoryElement *p =  stackPtr- ByteSizeToDataMemorySize(sizeof(T));
         value = *((T *)p);
     }
+    else {
+        value = static_cast<T>(0u);
+    }
 }
 
 
 template<typename T>
 void RuntimeEvaluator::Push(T &value){
-    if (stackPtr ){
+    if (stackPtr){
         *((T *)stackPtr) = value;
         // adds granularity-1 so that also 1 byte uses 1 slot
         stackPtr += ByteSizeToDataMemorySize(sizeof(T));
