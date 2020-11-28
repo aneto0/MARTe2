@@ -276,7 +276,7 @@ bool RuntimeEvaluatorTest::TestConstructor() {
     //Check that stackPtr is null
     uint32 value = 5;
     context.Peek(value);
-    ok &= (value == 5);
+    ok &= (value == 0);
 
     return ok;
 }

@@ -64,16 +64,9 @@ ConfigurationDatabaseNode    ();
     virtual ~ConfigurationDatabaseNode();
 
     /**
-     * @brief Purges the internal containers.
-     * @see ReferenceContainer::Purge
+     * @brief Purges the internal containers and breaks the link to the parent ConfigurationDatabaseNode.
      */
     void Purge();
-
-    /**
-     * @brief Purges the internal containers.
-     * @see ReferenceContainer::Purge
-     */
-    void Purge(ReferenceContainer &purgeList);
 
     /**
      * @brief Inserts a reference to this node.
@@ -147,7 +140,7 @@ private:
     Reference *container;
 
     /**
-     * Number of elements to add to the array when it gets out of space.
+     * Number of elements to grow the array when it gets out of space.
      */
     uint32 granularity;
 
