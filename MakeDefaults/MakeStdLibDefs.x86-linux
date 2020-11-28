@@ -58,10 +58,11 @@ CCOMPILER = gcc
 MAKE = make
 
 DEBUG = -g -ggdb
-OPTIM = 
+MARTE_OPTIM ?= -O2
+OPTIM = $(MARTE_OPTIM)
 INCLUDE =
-LFLAGS = -Wl,--no-as-needed -fPIC
-CFLAGS = -fPIC -Wall -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable
+LFLAGS = -Wl,--no-as-needed -fPIC 
+CFLAGS = -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable 
 CPPFLAGS = $(CFLAGS) -frtti 
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lpthread -lrt -ldl
