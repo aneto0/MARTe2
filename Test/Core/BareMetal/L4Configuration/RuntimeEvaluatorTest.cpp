@@ -1096,14 +1096,14 @@ bool RuntimeEvaluatorTest::RecordMatchesExpectedFunction(RuntimeEvaluatorFunctio
 }
 
 void MockRead(RuntimeEvaluator &context) {
-    float32 variableHolder;
+    float32 variableHolder = 0.F;
     context.Push(variableHolder);
     context.Push(variableHolder);
     context.Push(variableHolder);
 }
 
 void MockWrite(RuntimeEvaluator &context) {
-    float32 variableHolder;
+    float32 variableHolder = 0.F;
     context.Pop(variableHolder);
     context.Pop(variableHolder);
     context.Pop(variableHolder);

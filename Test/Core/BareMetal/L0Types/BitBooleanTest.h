@@ -117,7 +117,11 @@ bool BitBooleanTest<T>::TestBoolCast() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    BitBoolean<T, zero> myZeroShiftedBool;
+    union {
+        BitBoolean<T, zero> myZeroShiftedBool;
+        uint32 initValue;
+    };
+    initValue = 0u;
     myZeroShiftedBool = true;
     if (!myZeroShiftedBool) {
         return false;
@@ -128,9 +132,12 @@ bool BitBooleanTest<T>::TestBoolCast() {
     if (myZeroShiftedBool) {
         return false;
     }
-
-    BitBoolean<T, half> myHalfShiftedBool;
-
+    
+    union {
+        BitBoolean<T, half> myHalfShiftedBool;
+        uint32 initValue2;
+    };
+    initValue2 = 0u;
     myHalfShiftedBool = true;
     if (!myHalfShiftedBool) {
         return false;
@@ -142,7 +149,11 @@ bool BitBooleanTest<T>::TestBoolCast() {
         return false;
     }
 
-    BitBoolean<T, max> myMaxShiftedBool;
+    union {
+        BitBoolean<T, max> myMaxShiftedBool;
+        uint32 initValue3;
+    };
+    initValue3 = 0u;
 
     myMaxShiftedBool = true;
     if (!myMaxShiftedBool) {
@@ -169,7 +180,11 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    BitBoolean<T, zero> myZeroShiftedBool;
+    union {
+        BitBoolean<T, zero> myZeroShiftedBool;
+        uint32 initValue1;
+    };
+    initValue1 = 0u;
     myZeroShiftedBool = true;
 
     AnyType atTest = myZeroShiftedBool;
@@ -188,7 +203,11 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
         return false;
     }
 
-    BitBoolean<T, half> myHalfShiftedBool;
+    union {
+        BitBoolean<T, half> myHalfShiftedBool;
+        uint32 initValue2;
+    };
+    initValue2 = 0u;
 
     myHalfShiftedBool = true;
     atTest = myHalfShiftedBool;
@@ -206,7 +225,11 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
         return false;
     }
 
-    BitBoolean<T, max> myMaxShiftedBool;
+    union {
+        BitBoolean<T, max> myMaxShiftedBool;
+        uint32 initValue3;
+    };
+    initValue3 = 0u;
 
     myMaxShiftedBool = true;
     atTest = myMaxShiftedBool;
@@ -234,18 +257,31 @@ bool BitBooleanTest<T>::TestNumberOfBits() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    BitBoolean<T, zero> myZeroShiftedBool;
+    union {
+        BitBoolean<T, zero> myZeroShiftedBool;
+        uint32 initValue1;
+    };
+    initValue1 = 0u;
 
     if (myZeroShiftedBool.NumberOfBits() != 1) {
         return false;
     }
 
-    BitBoolean<T, half> myHalfShiftedBool;
+    union {
+        BitBoolean<T, half> myHalfShiftedBool;
+        uint32 initValue2;
+    };
+    initValue2 = 0u;
 
     if (myHalfShiftedBool.NumberOfBits() != 1) {
         return false;
     }
-    BitBoolean<T, max> myMaxShiftedBool;
+
+    union {
+        BitBoolean<T, max> myMaxShiftedBool;
+        uint32 initValue3;
+    };
+    initValue3 = 0u;
 
     if (myMaxShiftedBool.NumberOfBits() != 1) {
         return false;
@@ -261,18 +297,31 @@ bool BitBooleanTest<T>::TestBitOffset() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    BitBoolean<T, zero> myZeroShiftedBool;
+    union {
+        BitBoolean<T, zero> myZeroShiftedBool;
+        uint32 initValue1;
+    };
+    initValue1 = 0u;
 
     if (myZeroShiftedBool.BitOffset() != zero) {
         return false;
     }
 
-    BitBoolean<T, half> myHalfShiftedBool;
+    union {
+        BitBoolean<T, half> myHalfShiftedBool;
+        uint32 initValue2;
+    };
+    initValue2 = 0u;
 
     if (myHalfShiftedBool.BitOffset() != half) {
         return false;
     }
-    BitBoolean<T, max> myMaxShiftedBool;
+    
+    union {
+        BitBoolean<T, max> myMaxShiftedBool;
+        uint32 initValue3;
+    };
+    initValue3 = 0u;
 
     if (myMaxShiftedBool.BitOffset() != max) {
         return false;

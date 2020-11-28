@@ -537,8 +537,8 @@ bool MemoryMapBrokerTest::TestInit_Input() {
         ret = broker->Execute();
     }
     uint32 signalIdx;
-    char8 *dataSourcePtr;
-    char8 *gamPtr;
+    char8 *dataSourcePtr = NULL_PTR(char8 *);
+    char8 *gamPtr = NULL_PTR(char8 *);
     uint32 copySize = 0;
     uint32 s;
     uint32 n;
@@ -599,8 +599,8 @@ bool MemoryMapBrokerTest::TestInit_Input_Ranges() {
         ret = broker->Execute();
     }
     uint32 signalIdx;
-    char8 *dataSourcePtr;
-    char8 *gamPtr;
+    char8 *dataSourcePtr = NULL_PTR(char8 *);
+    char8 *gamPtr = NULL_PTR(char8 *);
     //Signal4A
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal4A");
@@ -676,8 +676,8 @@ bool MemoryMapBrokerTest::TestInit_Input_Samples() {
         ret = broker->Execute();
     }
     uint32 signalIdx;
-    char8 *dataSourcePtr;
-    char8 *gamPtr;
+    char8 *dataSourcePtr = NULL_PTR(char8 *);
+    char8 *gamPtr = NULL_PTR(char8 *);
     uint32 copySize = 0;
     uint32 s;
     uint32 n;
@@ -742,8 +742,8 @@ bool MemoryMapBrokerTest::TestInit_Output() {
     if (ret) {
         ret = dataSource->GetSignalIndex(signalIdx, "Signal1A");
     }
-    char8 *dataSourcePtr;
-    char8 *gamPtr;
+    char8 *dataSourcePtr = NULL;
+    char8 *gamPtr = NULL;
     if (ret) {
         ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0, reinterpret_cast<void *&>(dataSourcePtr));
     }
@@ -798,8 +798,8 @@ bool MemoryMapBrokerTest::TestInit_Output_Ranges() {
         ret = broker->Execute();
     }
     uint32 signalIdx;
-    char8 *dataSourcePtr;
-    char8 *gamPtr;
+    char8 *dataSourcePtr = NULL_PTR(char8 *);
+    char8 *gamPtr = NULL_PTR(char8 *);
     uint32 n = 0;
     uint32 copySize = broker->GetCopyByteSize(n);
     uint32 s;
@@ -879,8 +879,8 @@ bool MemoryMapBrokerTest::TestInit_Output_Samples() {
         ret = broker->Execute();
     }
     uint32 signalIdx;
-    char8 *dataSourcePtr;
-    char8 *gamPtr;
+    char8 *dataSourcePtr = NULL_PTR(char8 *);
+    char8 *gamPtr = NULL_PTR(char8 *);
     uint32 n = 0;
     uint32 copySize = broker->GetCopyByteSize(n);
     uint32 s;

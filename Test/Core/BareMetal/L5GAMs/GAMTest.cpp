@@ -1004,7 +1004,8 @@ bool GAMTest::TestAddSignals() {
         value = "";
     }
     if (ret) {
-        test.Purge();
+        test.MoveToRoot();
+        test.Delete("Signals");
     }
     if (ret) {
         gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMD");

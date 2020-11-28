@@ -532,7 +532,7 @@ bool MemoryMapInputBrokerTest::TestExecute() {
         ret = broker->Execute();
     }
     //Verify if the GAM has the expected pattern
-    char8 *gamPtr;
+    char8 *gamPtr = NULL_PTR(char8 *);
     if (ret) {
         gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(1));
     }
@@ -579,7 +579,7 @@ bool MemoryMapInputBrokerTest::TestExecute_Ranges() {
         ret = broker->Execute();
     }
     //Verify if the GAM has the expected pattern
-    char8 *gamPtr;
+    char8 *gamPtr = NULL_PTR(char8 *);
     if (ret) {
         gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(0));
     }
@@ -637,7 +637,7 @@ bool MemoryMapInputBrokerTest::TestExecute_Samples() {
         ret = broker->Execute();
     }
     uint32 s;
-    char8 *gamPtr;
+    char8 *gamPtr = NULL_PTR(char8 *);
     //Skip the signal that belongs to the other DataSource...
     if (ret) {
         gamPtr = reinterpret_cast<char8 *>(gamA->GetInputSignalMemory(3));
@@ -684,7 +684,7 @@ bool MemoryMapInputBrokerTest::TestExecute_MultiStateBuffer() {
         ret = broker->Execute();
     }
     uint32 s;
-    uint8 *gamPtr;
+    uint8 *gamPtr = NULL_PTR(uint8 *);
     //Skip the signal that belongs to the other DataSource...
     if (ret) {
         gamPtr = reinterpret_cast<uint8 *>(gamA->GetInputSignalMemory(3));

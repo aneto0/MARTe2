@@ -75,9 +75,9 @@ bool DirectoryScannerTest::TestDirectorySize() {
 
     StringHelper::Copy(path2, path);
     StringHelper::Copy(path3, path);
-    StringHelper::Concatenate(path2, &DIRECTORY_SEPARATOR);
+    StringHelper::ConcatenateN(path2, &DIRECTORY_SEPARATOR, 1);
     StringHelper::Concatenate(path2, "TestDirectorySize.txt");
-    StringHelper::Concatenate(path3, &DIRECTORY_SEPARATOR);
+    StringHelper::ConcatenateN(path3, &DIRECTORY_SEPARATOR, 1);
     StringHelper::Concatenate(path3, "TestDirectorySize_Inside");
     Directory dir3(path3);
     dir3.Create(false);
@@ -111,13 +111,13 @@ bool DirectoryScannerTest::TestScan(const char8 * pathin,
     StringHelper::Copy(path3, path);
     StringHelper::Copy(pathDot, path);
     StringHelper::Copy(pathDoubleDot, path);
-    StringHelper::Concatenate(pathDot, &DIRECTORY_SEPARATOR);
-    StringHelper::Concatenate(pathDoubleDot, &DIRECTORY_SEPARATOR);
+    StringHelper::ConcatenateN(pathDot, &DIRECTORY_SEPARATOR, 1);
+    StringHelper::ConcatenateN(pathDoubleDot, &DIRECTORY_SEPARATOR, 1);
     StringHelper::Concatenate(pathDot, ".");
     StringHelper::Concatenate(pathDoubleDot, "..");
-    StringHelper::Concatenate(path2, &DIRECTORY_SEPARATOR);
+    StringHelper::ConcatenateN(path2, &DIRECTORY_SEPARATOR, 1);
     StringHelper::Concatenate(path2, "TestScan");
-    StringHelper::Concatenate(path3, &DIRECTORY_SEPARATOR);
+    StringHelper::ConcatenateN(path3, &DIRECTORY_SEPARATOR, 1);
     StringHelper::Concatenate(path3, "TestScan.txt");
 
     Directory dir(path);
@@ -165,7 +165,7 @@ bool DirectoryScannerTest::TestScan_NoExist(const char8 * pathin,
     char8 compare[128];
     DirectoryCreateN(path, pathin);
     StringHelper::Copy(compare, path);
-    StringHelper::Concatenate(compare, &DIRECTORY_SEPARATOR);
+    StringHelper::ConcatenateN(compare, &DIRECTORY_SEPARATOR, 1);
     Directory directory(path);
     DirectoryScanner dir;
     bool ok = dir.Scan(path, fileMask);
@@ -180,7 +180,7 @@ bool DirectoryScannerTest::TestScan_NULL(const char8 * pathin,
                                          const char8 *fileMask) {
     DirectoryScanner dir;
     bool ok = dir.Scan(pathin, fileMask);
-    ok &= (StringHelper::Compare(dir.BasePath(), &DIRECTORY_SEPARATOR) == 0);
+    ok &= (StringHelper::CompareN(dir.BasePath(), &DIRECTORY_SEPARATOR, 1) == 0);
     return ok;
 }
 
@@ -319,7 +319,7 @@ bool DirectoryScannerTest::TestBasePath(const char8 * pathin) {
     dir.Create(false);
     DirectoryScanner directoryScann;
     directoryScann.Scan(path);
-    StringHelper::Concatenate(path, &DIRECTORY_SEPARATOR);
+    StringHelper::ConcatenateN(path, &DIRECTORY_SEPARATOR, 1);
     bool ok = (StringHelper::Compare(directoryScann.BasePath(), path) == 0);
     ok &= dir.Delete();
     return ok;
@@ -359,6 +359,6 @@ void DirectoryScannerTest::DirectoryCreateN(char8 *destination,
                                             const char8 *path) {
     destination[0] = '\0';
     StringHelper::Concatenate(destination, BASE_PATH);
-    StringHelper::Concatenate(destination, &DIRECTORY_SEPARATOR);
+    StringHelper::ConcatenateN(destination, &DIRECTORY_SEPARATOR, 1);
     StringHelper::Concatenate(destination, path);
 }

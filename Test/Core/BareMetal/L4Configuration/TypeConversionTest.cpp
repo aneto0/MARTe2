@@ -467,8 +467,8 @@ bool TypeConversionTest::TestObjectToObject_NoCompatibility() {
     }
     testSource.member4_from[0][0] = (char8*)"4";
     testSource.member4_from[0][1] = (char8*)"5";
-    testSource.member4_from[0][2] = (char8*)"6";
-    testSource.member4_from[0][3] = (char8*)"7";
+    testSource.member4_from[1][0] = (char8*)"6";
+    testSource.member4_from[1][0] = (char8*)"7";
 
     uint32 member5=5;
     testSource.member5_from.nestedMember1_from = &member5;

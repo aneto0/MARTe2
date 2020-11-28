@@ -174,7 +174,7 @@ const char8 *DataSourceITestHelper::GetBrokerName(StructuredDataI &data, const S
     bool syncOrTrigger = false;
     data.Read("Frequency", freq);
     syncOrTrigger = (freq > 0);
-    const char8 * brokerName;
+    const char8 * brokerName = "";
 
     if (direction == InputSignals) {
         if (syncOrTrigger) {

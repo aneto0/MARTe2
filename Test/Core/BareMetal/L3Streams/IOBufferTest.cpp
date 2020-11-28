@@ -875,7 +875,7 @@ bool IOBufferTest::TestGetC_Heap() {
     const uint32 size = 32;
     ioBuffer.SetBufferHeapMemory(size, 0);
 
-    char8 ret;
+    char8 ret  = '\0';
     if (ioBuffer.GetC(ret)) {
         return false;
     }
@@ -904,7 +904,7 @@ bool IOBufferTest::TestGetC_MemoryReference() {
 
     ioBuffer.SetBufferReferencedMemory(bufferIn, size, 0);
 
-    char8 ret;
+    char8 ret = '\0';
     if (ioBuffer.GetC(ret)) {
         return false;
     }
@@ -933,7 +933,7 @@ bool IOBufferTest::TestGetC_MemoryReferenceRO() {
 
     ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, 0);
 
-    char8 ret;
+    char8 ret = '\0';
     if (ioBuffer.GetC(ret)) {
         return false;
     }

@@ -147,7 +147,11 @@ bool BitRangeTest<T>::TestBasicTypeCastMinorSize(T2 input) {
     // the size of the bit range
     const uint8 minorSize = (inputSize < max) ? (inputSize - 1) : (half - 1);
 
-    BitRange<T, minorSize, half> myBitRange;
+    union {
+        BitRange<T, minorSize, half> myBitRange;
+        T initBitRange;
+    };
+    initBitRange = 0;
 
     bool isInputSigned = TypeCharacteristics<T2>::IsSigned();
 
@@ -211,7 +215,11 @@ bool BitRangeTest<T>::TestBasicTypeCastMajorSize(T2 input) {
     const uint8 half = max / 2 - 2;
     const uint8 majorSize = (inputSize + 1);
 
-    BitRange<T, majorSize, half> myBitRange;
+    union {
+        BitRange<T, majorSize, half> myBitRange;
+        T initBitRange;
+    };
+    initBitRange = 0;
 
     bool isInputSigned = TypeCharacteristics<T2>::IsSigned();
     T2 maxValue = 0;
@@ -271,7 +279,11 @@ bool BitRangeTest<T>::TestAnyTypeCast() {
 
     const uint8 size = 8;
 
-    BitRange<T, size, half> myBitRange;
+    union {
+        BitRange<T, size, half> myBitRange;
+        T initBitRange;
+    };
+    initBitRange = 0;
     myBitRange = 0;
 
     AnyType atTest = myBitRange;
