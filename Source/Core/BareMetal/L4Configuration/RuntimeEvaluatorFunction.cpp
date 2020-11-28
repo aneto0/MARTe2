@@ -463,6 +463,7 @@ template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluat
         x2 = static_cast<Tout>(z2);
         x3 = static_cast<Tout>(x2 / x1);
     } else {
+        x3 = static_cast<Tout>(0u);
         context.runtimeError.overflow = true;
     }
     context.Push(x3);
@@ -529,6 +530,7 @@ template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvalua
     if ((z1 != static_cast<T1>(0)) && sat1 && sat2) {
         x3 = static_cast<Tout>(x2 / x1);
     } else {
+        x3 = static_cast<Tout>(0u);
         context.runtimeError.overflow = true;
     }
     context.Push(x3);
@@ -548,6 +550,7 @@ template <typename T1,typename T2,typename Tout> void SSAddition_3T(RuntimeEvalu
         if (sat1 && sat2) {
             context.runtimeError = SafeMath::Addition(x2,x1,x3);
         } else {
+            x3 = static_cast<Tout>(0u);
             context.runtimeError.overflow = true;
         }
         context.Push(x3);
@@ -568,6 +571,7 @@ template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEv
         if (sat1 && sat2) {
             context.runtimeError = SafeMath::Subtraction(x2,x1,x3);
         } else {
+            x3 = static_cast<Tout>(0u);
             context.runtimeError.overflow = true;
         }
         context.Push(x3);
@@ -588,6 +592,7 @@ template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(Runtim
         if (sat1 && sat2) {
             context.runtimeError = SafeMath::Multiplication(x2,x1,x3);
         } else {
+            x3 = static_cast<Tout>(0u);
             context.runtimeError.overflow = true;
         }
         context.Push(x3);
