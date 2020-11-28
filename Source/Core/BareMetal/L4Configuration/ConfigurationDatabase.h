@@ -205,7 +205,7 @@ ConfigurationDatabase    ();
      * @brief Gets a reference to the current node as a ReferenceContainer.
      * @return a reference to the current node as a ReferenceContainer.
      */
-    Reference GetCurrentNode() const;
+    //Reference GetCurrentNode() const;
 
     /**
      * @brief Sets the current node as the root node.

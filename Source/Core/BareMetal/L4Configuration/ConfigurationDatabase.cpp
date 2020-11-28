@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
+#include "AdvancedErrorManagement.h"
 #include "AnyObject.h"
 #include "ErrorType.h"
 #include "ConfigurationDatabase.h"
@@ -56,6 +57,8 @@ ConfigurationDatabase::ConfigurationDatabase() :
 }
 
 ConfigurationDatabase::~ConfigurationDatabase() {
+    currentNode = Reference();
+    Purge();
 }
 
 ConfigurationDatabase::ConfigurationDatabase(const ConfigurationDatabase &toCopy) :
@@ -67,6 +70,8 @@ ConfigurationDatabase::ConfigurationDatabase(const ConfigurationDatabase &toCopy
 
 ConfigurationDatabase &ConfigurationDatabase::operator =(const ConfigurationDatabase &toCopy) {
     if (this != &toCopy) {
+        currentNode = Reference();
+        Purge();
         mux = toCopy.mux;
         rootNode = toCopy.rootNode;
         currentNode = toCopy.currentNode;
@@ -75,8 +80,11 @@ ConfigurationDatabase &ConfigurationDatabase::operator =(const ConfigurationData
 }
 
 void ConfigurationDatabase::Purge() {
-    currentNode = rootNode;
-    rootNode->Purge();
+    //If the only references pointing at the rootNode are itself and eventually all its child nodes then it can be purged
+    //Note that for every direct child of the rootNode a link to it (the parent) is created
+    if((rootNode.NumberOfReferences() - 1u) == rootNode->Size()) {
+        rootNode->Purge();
+    }
 }
 
 bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value) {
@@ -368,21 +376,16 @@ void ConfigurationDatabase::Unlock() {
     mux.FastUnLock();
 }
 
-Reference ConfigurationDatabase::GetCurrentNode() const {
+/*Reference ConfigurationDatabase::GetCurrentNode() const {
     return currentNode;
-}
+}*/
 
 void ConfigurationDatabase::SetCurrentNodeAsRootNode() {
     rootNode = currentNode;
 }
 
 void ConfigurationDatabase::Purge(ReferenceContainer &purgeList) {
-    if (currentNode.IsValid()) {
-        currentNode->Purge(purgeList);
-    }
-    if (rootNode.IsValid()) {
-        rootNode->Purge(purgeList);
-    }
+    Purge();
 }
 
 CLASS_REGISTER(ConfigurationDatabase, "1.0")
