@@ -65,7 +65,7 @@ bool ConfigurationDatabaseNodeTest::TestPurge_ReferenceContainer() {
     bool ok = cdbn.Insert(ref);
     ok &= (cdbn.Size() == 1u);
     ReferenceContainer rc;
-    cdbn.Purge(rc);
+    cdbn.Purge();
     ok &= (cdbn.Size() == 0u);
     return ok;
 }
