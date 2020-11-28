@@ -75,7 +75,7 @@ bool LoadableLibrary::Open(char8 const * const dllName) {
         uint32 errLen = (StringHelper::Length(err1) + StringHelper::Length(err2) + 1u);
         char8 err[errLen];
         (void) StringHelper::Concatenate(err1, err2, &err[0]);
-        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, &err[0]);
+        REPORT_ERROR_STATIC_0(ErrorManagement::Warning, &err[0]);
         ret = false;
     }
     SetModule(m);
