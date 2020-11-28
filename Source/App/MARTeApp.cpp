@@ -124,8 +124,27 @@ int main(int argc, char **argv) {
     if (ret) {
         ret = loaderRef->Stop();
     }
-    MARTe::ObjectRegistryDatabase::Instance()->Purge();
 
+    loaderRef = Reference();
+    MARTe::ObjectRegistryDatabase::Instance()->Purge();
+    loaderParameters.Purge();
+    ClassRegistryDatabase *crd = ClassRegistryDatabase::Instance();
+    uint32 numberOfItems = crd->GetSize();
+    uint32 i;
+    //List all the classes and the related number of instances that are still alive
+    for (i=0u; i<numberOfItems; i++) {
+        const ClassRegistryItem *cri = crd->Peek(i);
+        if (cri != NULL_PTR(const ClassRegistryItem *)) {
+            const ClassProperties *cp = cri->GetClassProperties();
+            if (cp != NULL_PTR(const ClassProperties *)) {
+                ErrorManagement::ErrorType err = ErrorManagement::Information;
+                if (cri->GetNumberOfInstances() != 0u) {
+                    err = ErrorManagement::Warning;
+                }
+                REPORT_ERROR_STATIC(err, "[%s] - instances: %d", cp->GetName(), cri->GetNumberOfInstances());
+            }
+        }
+    }
     return 0;
 }
 
