@@ -28,6 +28,7 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -45,99 +46,58 @@ namespace MARTe {
 namespace Atomic {
 
 inline void Increment(volatile int32 *p) {
-    asm volatile(
-            "lock incl (%0)\n"
-            : : "r" (p)
-    );
+    __atomic_add_fetch(p, 1, __ATOMIC_SEQ_CST);
 }
 
 inline void Increment(volatile int16 *p) {
-    asm volatile(
-            "lock incw (%0)\n"
-            : : "r" (p)
-    );
+    __atomic_add_fetch(p, 1, __ATOMIC_SEQ_CST);
 }
 
 inline void Increment(volatile int8 *p) {
-    asm volatile(
-            "lock incb (%0)\n"
-            : : "r" (p)
-    );
+    __atomic_add_fetch(p, 1, __ATOMIC_SEQ_CST);
 }
 
 inline void Decrement(volatile int32 *p) {
-    asm volatile(
-            "lock decl (%0)\n"
-            : : "r" (p)
-    );
+    __atomic_sub_fetch(p, 1, __ATOMIC_SEQ_CST);
 }
 
 inline void Decrement(volatile int16 *p) {
-    asm volatile(
-            "lock decw (%0)\n"
-            : : "r" (p)
-    );
+    __atomic_sub_fetch(p, 1, __ATOMIC_SEQ_CST);
 }
 
 inline void Decrement(volatile int8 *p) {
-    asm volatile(
-            "lock decb (%0)\n"
-            : : "r" (p)
-    );
+    __atomic_sub_fetch(p, 1, __ATOMIC_SEQ_CST);
 }
 
 inline int32 Exchange(volatile int32 *p,
                       int32 v) {
-    asm volatile(
-            "lock xchg (%1), %0"
-            :"=r" (v) : "r" (p), "0" (v)
-    );
-    return v;
+    int32 ret;
+    __atomic_exchange(p, &v, &ret, __ATOMIC_SEQ_CST);
+    return ret;
 }
 
 inline bool TestAndSet(volatile int32 *p) {
-    register int32 out = 1;
-    asm volatile (
-            "lock xchg (%2),%1"
-            : "=r" (out) : "0" (out), "r" (p)
-    );
-    return (out == 0);
+    /*
+     * @retval 1 if the flag was already true - lock not taken
+     * @retval 0 if the flag was false and is now set to true - lock taken
+     */
+    return (__atomic_test_and_set(p, __ATOMIC_SEQ_CST) == 0u);
 }
 
 inline bool TestAndSet(volatile int16 *p) {
-    register int16 out = 1;
-    asm volatile (
-            "lock xchgw (%2),%1"
-            : "=r" (out) : "0" (out), "r" (p)
-    );
-    return (out == 0);
+    return (__atomic_test_and_set(p, __ATOMIC_SEQ_CST) == 0u);
 }
 
 inline bool TestAndSet(volatile int8 *p) {
-    register int8 out = 1;
-    asm volatile (
-            "lock xchgb (%2),%1"
-            : "=q" (out) : "0" (out), "q" (p)
-    );
-    return (out == 0);
+    return (__atomic_test_and_set(p, __ATOMIC_SEQ_CST) == 0u);
 }
 
-inline void Add(volatile int32 *p,
-                int32 value) {
-    asm volatile (
-            "lock addl %1, (%0)"
-            : /* output */
-            :"r" (p), "ir" (value) /* input */
-    );
+inline void Add(volatile int32 *p, int32 value) {
+    __atomic_add_fetch(p, value, __ATOMIC_SEQ_CST);
 }
 
-inline void Sub(volatile int32 *p,
-                int32 value) {
-    asm volatile (
-            "lock subl %1, (%0)"
-            : /* output */
-            :"r" (p), "ir" (value) /* input */
-    );
+inline void Sub(volatile int32 *p, int32 value) {
+    __atomic_sub_fetch(p, value, __ATOMIC_SEQ_CST);
 }
 
 }
