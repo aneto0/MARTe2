@@ -90,7 +90,7 @@ ConfigurationDatabase    ();
     /**
      * @brief Removes all the elements from the database.
      */
-    void Purge();
+    void Purge() const;
 
     /**
      * @see StructuredDataI::Read
@@ -211,12 +211,6 @@ ConfigurationDatabase    ();
      * @brief Sets the current node as the root node.
      */
     void SetCurrentNodeAsRootNode();
-
-
-    /**
-     * @see ReferenceContainer::Purge()
-     */
-    virtual void Purge(ReferenceContainer &purgeList);
 
 private:
 

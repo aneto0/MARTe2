@@ -27,6 +27,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include <string.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -102,7 +103,14 @@ inline uint32 Model() {
 
 inline const char8 *VendorId() {
     uint32 eax = 0;
-    CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
+    uint32 ebx = 0;
+    uint32 ecx = 0;
+    uint32 edx = 0;
+
+    CPUID(0, eax, ebx, ecx, edx);
+    memcpy(&processorVendorId[0], &ebx, 4u);
+    memcpy(&processorVendorId[8], &ecx, 4u);
+    memcpy(&processorVendorId[4], &edx, 4u);
     processorVendorId[12] = 0;
     return &(processorVendorId[0]);
 }

@@ -56,6 +56,7 @@ ConfigurationDatabase::ConfigurationDatabase() :
     currentNode = rootNode;
 }
 
+/*lint -e{1551} by design memory if freed in the destructor.*/
 ConfigurationDatabase::~ConfigurationDatabase() {
     currentNode = Reference();
     Purge();
@@ -79,7 +80,7 @@ ConfigurationDatabase &ConfigurationDatabase::operator =(const ConfigurationData
     return *this;
 }
 
-void ConfigurationDatabase::Purge() {
+void ConfigurationDatabase::Purge() const {
     //If the only references pointing at the rootNode are itself and eventually all its child nodes then it can be purged
     //Note that for every direct child of the rootNode a link to it (the parent) is created
     if((rootNode.NumberOfReferences() - 1u) == rootNode->Size()) {
@@ -382,10 +383,6 @@ void ConfigurationDatabase::Unlock() {
 
 void ConfigurationDatabase::SetCurrentNodeAsRootNode() {
     rootNode = currentNode;
-}
-
-void ConfigurationDatabase::Purge(ReferenceContainer &purgeList) {
-    Purge();
 }
 
 CLASS_REGISTER(ConfigurationDatabase, "1.0")

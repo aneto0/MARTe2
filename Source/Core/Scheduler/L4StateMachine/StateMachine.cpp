@@ -78,7 +78,6 @@ void StateMachine::Purge(ReferenceContainer &purgeList) {
         ReferenceT<ReferenceContainer> state = Get(i);
         if (state.IsValid()) {
             uint32 j;
-            bool found = false;
             for (j = 0u; (j < state->Size()) && (ok); j++) {
                 ReferenceT<StateMachineEvent> event = state->Get(j);
                 if (event.IsValid()) {

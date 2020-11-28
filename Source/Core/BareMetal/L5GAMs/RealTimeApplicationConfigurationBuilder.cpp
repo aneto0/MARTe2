@@ -3318,7 +3318,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
             for (nn=0u; (nn<signalDatabase.GetNumberOfChildren()) && (!patchAlias); nn++) {
                 memberAliasKey = signalDatabase.GetChildName(nn);
                 //Check if the declared member alias is part of the full signal name. If so patch
-                patchAlias = (fullSignalName.Locate(memberAliasKey.Buffer()) == 0U);
+                patchAlias = (fullSignalName.Locate(memberAliasKey.Buffer()) == 0);
             }
         }
         if (patchAlias) {
@@ -3378,13 +3378,12 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         else {
             typeNameStr = fullTypeName;
             StreamString subType;
-            char8 terminator;
             bool tokenize = true;
             (void) cachedFullType.Seek(0LLU);
             while (cachedFullType.GetToken(subType, ".", terminator)) {
                 //Only add to the type name the unmatched part of the cached full signal type (e.g. A.B is inside Node.Node.A.B.C.D)
                 if (tokenize) {
-                    tokenize = (StringHelper::SearchString(fullTypeName, subType.Buffer()));
+                    tokenize = (StringHelper::SearchString(fullTypeName, subType.Buffer()) != NULL_PTR(char8 *));
                 }
                 if (!tokenize) {
                     typeNameStr += ".";

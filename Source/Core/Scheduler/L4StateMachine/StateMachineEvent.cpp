@@ -47,6 +47,7 @@ StateMachineEvent::StateMachineEvent() :
     timeout = TTInfiniteWait;
 }
 
+/*lint -e{1551} references are destroyed by design in the destructor*/
 StateMachineEvent::~StateMachineEvent() {
     stateMachineIn = Reference();
 }

@@ -94,7 +94,7 @@ EventSem::EventSem() {
 
 EventSem::EventSem(EventSem &source) {
     handle = source.GetProperties();
-    if (mux.FastLock()) {
+    if (mux.FastLock() == ErrorManagement::NoError) {
         //Capture the case that it got the handle reference while the source semaphore
         //was already being destructed...
         if (handle == static_cast<EventSemProperties *>(NULL)) {
@@ -110,7 +110,7 @@ EventSem::EventSem(EventSem &source) {
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 EventSem::~EventSem() {
     if (handle != static_cast<EventSemProperties *>(NULL)) {
-        if (mux.FastLock()) {
+        if (mux.FastLock() == ErrorManagement::NoError) {
             if (handle->references == 1u) {
                 if (!handle->closed) {
                     /*lint -e{534} possible closure failure is not handled in the destructor.*/
@@ -133,7 +133,7 @@ EventSem::~EventSem() {
  * reference to handle*/
 bool EventSem::Create() {
     bool ok = false;
-    if (mux.FastLock()) {
+    if (mux.FastLock() == ErrorManagement::NoError) {
         handle->closed = false;
         handle->stop = true;
         ok = (pthread_mutexattr_init(&handle->mutexAttributes) == 0);

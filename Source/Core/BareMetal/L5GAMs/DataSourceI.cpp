@@ -826,8 +826,8 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
 }
 
 void DataSourceI::Purge(ReferenceContainer &purgeList){
-    signalsDatabaseNode.Purge(purgeList);
-    functionsDatabaseNode.Purge(purgeList);
+    signalsDatabaseNode.Purge();
+    functionsDatabaseNode.Purge();
     ReferenceContainer::Purge(purgeList);
 }
 

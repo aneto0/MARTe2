@@ -546,8 +546,8 @@ void RealTimeApplication::Purge(ReferenceContainer &purgeList) {
         dataSourceContainer.RemoveReference();
     }
     statefulsInData.Purge(purgeList);
-    functionsDatabase.Purge(purgeList);
-    dataSourcesDatabase.Purge(purgeList);
+    functionsDatabase.Purge();
+    dataSourcesDatabase.Purge();
     ReferenceContainer::Purge(purgeList);
 }
 

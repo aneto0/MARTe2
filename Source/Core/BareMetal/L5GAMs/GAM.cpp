@@ -259,10 +259,10 @@ bool GAM::SetContext(ConstReference context) {
 void GAM::Purge(ReferenceContainer &purgeList) {
     inputBrokers.Purge(purgeList);
     outputBrokers.Purge(purgeList);
-    inputSignalsDatabaseNode.Purge(purgeList);
-    outputSignalsDatabaseNode.Purge(purgeList);
-    signalsDatabase.Purge(purgeList);
-    configuredDatabase.Purge(purgeList);
+    inputSignalsDatabaseNode.Purge();
+    outputSignalsDatabaseNode.Purge();
+    signalsDatabase.Purge();
+    configuredDatabase.Purge();
     ReferenceContainer::Purge(purgeList);
 }
 
