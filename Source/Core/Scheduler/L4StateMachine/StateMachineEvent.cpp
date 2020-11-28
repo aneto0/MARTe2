@@ -48,7 +48,7 @@ StateMachineEvent::StateMachineEvent() :
 }
 
 StateMachineEvent::~StateMachineEvent() {
-
+    stateMachineIn = Reference();
 }
 
 TimeoutType StateMachineEvent::GetTransitionTimeout() const {

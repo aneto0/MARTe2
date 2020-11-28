@@ -63,9 +63,9 @@ void StateMachine::Purge(ReferenceContainer &purgeList) {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not Stop the StateMachine.");
         }
     }
+    bool ok = true;
     if (currentState.IsValid()) {
         uint32 j;
-        bool ok = true;
         for (j = 0u; (j < currentState->Size()) && (ok); j++) {
             ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
             if (currentStateEventJ.IsValid()) {
@@ -73,6 +73,21 @@ void StateMachine::Purge(ReferenceContainer &purgeList) {
             }
         }
     }
+    uint32 i;
+    for (i = 0u; (i < Size()) && (ok); i++) {
+        ReferenceT<ReferenceContainer> state = Get(i);
+        if (state.IsValid()) {
+            uint32 j;
+            bool found = false;
+            for (j = 0u; (j < state->Size()) && (ok); j++) {
+                ReferenceT<StateMachineEvent> event = state->Get(j);
+                if (event.IsValid()) {
+                    event->SetStateMachine(Reference());
+                }
+            }
+        }
+    }
+    PurgeFilters();
     ReferenceContainer::Purge(purgeList);
 }
 

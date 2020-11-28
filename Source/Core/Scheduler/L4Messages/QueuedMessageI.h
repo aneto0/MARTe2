@@ -104,6 +104,11 @@ protected:
      */
     void SetQueueName(const char8 * const name);
 
+    /**
+     * @brief Purge all the installed filters.
+     */
+    void PurgeFilters();
+
 private:
 
     /**

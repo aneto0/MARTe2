@@ -135,6 +135,10 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(ExecutionInfo &info) 
 
 }
 
+void QueuedMessageI::PurgeFilters() {
+    (void) queuedMessageFilters.Purge();
+}
+
 ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, const int32 position) {
     ErrorManagement::ErrorType err;
     err.parametersError = !messageFilter.IsValid();
