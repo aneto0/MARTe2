@@ -66,11 +66,6 @@ struct EventSemProperties {
     uint32 references;
 
     /**
-     * To protect the reference handling
-     */
-    int32 referencesMux;
-
-    /**
      * Implementation of the barrier in Linux. When true the EventSem will stop.
      */
     bool stop;
@@ -93,70 +88,72 @@ EventSem::EventSem() {
     handle = new EventSemProperties();
     handle->closed = true;
     handle->references = 1u;
-    handle->referencesMux = 0;
     handle->stop = true;
+    mux.Create();
 }
 
 EventSem::EventSem(EventSem &source) {
     handle = source.GetProperties();
-    while (!Atomic::TestAndSet(&handle->referencesMux)) {
+    if (mux.FastLock()) {
+        //Capture the case that it got the handle reference while the source semaphore
+        //was already being destructed...
+        if (handle == static_cast<EventSemProperties *>(NULL)) {
+            EventSem();
+        }
+        else {
+            handle->references++;
+        }
     }
-    //Capture the case that it got the handle reference while the source semaphore
-    //was already being destructed...
-    if (handle == static_cast<EventSemProperties *>(NULL)) {
-        EventSem();
-    }
-    else {
-        handle->references++;
-        handle->referencesMux = 0;
-    }
+    mux.FastUnLock();
 }
 
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 EventSem::~EventSem() {
     if (handle != static_cast<EventSemProperties *>(NULL)) {
-        while (!Atomic::TestAndSet(&handle->referencesMux)) {
-        }
-        if (handle->references == 1u) {
-            if (!handle->closed) {
-                /*lint -e{534} possible closure failure is not handled in the destructor.*/
-                Close();
+        if (mux.FastLock()) {
+            if (handle->references == 1u) {
+                if (!handle->closed) {
+                    /*lint -e{534} possible closure failure is not handled in the destructor.*/
+                    Close();
+                }
+                handle->references--;
+                /*lint -esym(1579, MARTe::EventSem::handle) the variable is correctly freed here when this is the last reference alive.*/
+                delete handle;
+                handle = static_cast<EventSemProperties *>(NULL);
             }
-            /*lint -esym(1579, MARTe::EventSem::handle) the variable is correctly freed here when this is the last reference alive.*/
-            delete handle;
-            handle = static_cast<EventSemProperties *>(NULL);
+            else {
+                handle->references--;
+            }
         }
-        else {
-            handle->references--;
-            handle->referencesMux = 0;
-        }
+        mux.FastUnLock();
     }
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to handle*/
 bool EventSem::Create() {
-    while (!Atomic::TestAndSet(&handle->referencesMux)) {
-    }
-    handle->closed = false;
-    handle->stop = true;
-    bool ok = (pthread_mutexattr_init(&handle->mutexAttributes) == 0);
-    if (ok) {
-        ok = (pthread_mutex_init(&handle->mutexHandle, &handle->mutexAttributes) == 0);
+    bool ok = false;
+    if (mux.FastLock()) {
+        handle->closed = false;
+        handle->stop = true;
+        ok = (pthread_mutexattr_init(&handle->mutexAttributes) == 0);
         if (ok) {
-            ok = (pthread_cond_init(&handle->eventVariable, static_cast<const pthread_condattr_t *>(NULL)) == 0);
-            if (!ok) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_cond_init()");
+            ok = (pthread_mutex_init(&handle->mutexHandle, &handle->mutexAttributes) == 0);
+            if (ok) {
+                ok = (pthread_cond_init(&handle->eventVariable, static_cast<const pthread_condattr_t *>(NULL)) == 0);
+                if (!ok) {
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_cond_init()");
+                }
+            }
+            else {
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_mutex_init()");
             }
         }
         else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_mutex_init()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_mutexattr_init()");
         }
     }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_mutexattr_init()");
-    }
-    handle->referencesMux = 0;
+    mux.FastUnLock();
     return ok;
 }
 

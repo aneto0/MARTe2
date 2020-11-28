@@ -32,10 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorType.h"
-#include "TimeoutType.h"
-#include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
+#include "ErrorType.h"
+#include "FastPollingMutexSem.h"
+#include "GeneralDefinitions.h"
+#include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -157,6 +158,11 @@ private:
      * Operating system specific properties to be used by the operating system specific implementation
      */
     EventSemHandle handle;
+
+    /**
+     * Global semaphore to protect access to the handle
+     */
+    FastPollingMutexSem mux;
 };
 
 }
