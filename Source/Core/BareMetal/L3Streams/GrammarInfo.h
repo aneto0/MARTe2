@@ -158,8 +158,8 @@ static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", "", '<', 
  * @warning Keywords with more than 2 characters are not supported
  */
 static const GrammarInfo MathGrammar = { "\n\r\t ", "//", "/*", "*/",                                // sep
-	                                     "|| && ^ < > <= >= == !=",                              // keywords
-	                                     '+', '-', '*', '/', '=', '(', ')', '(', ')', ')', ",;\0" }; // term
+                                         "|| && ^ < > <= >= == !=",                                // keywords
+                                         '+', '-', '*', '/', '=', '(', ')', '(', ')', '!', ",;\0" }; // term
 
 }
 

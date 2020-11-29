@@ -346,7 +346,10 @@ class RuntimeEvaluatorFunction;
  * | `DIV`            | Division between top two elements of the stack                         |
  * | `SIN`            | Sine operation on the top of the stack                                 |
  * | `COS`            | Cosine operation on the top of the stack                               |
- * | `POW`            | Power operation between top two elements of the stack                  |
+ * | `TAN`            | Tangent operation on the top of the stack                              |
+ * | `EXP`            | Returns `e` to the power of the argument                               |
+ * | `LOG`            | Log operation on the top of the stack                                  |
+ * | `LOG10`          | Log10 operation on the top of the stack                                |
  * 
  * @note Comparison of floating-point types may often be implementation-dependent.
  *       The `EQ` and `NEQ` operators use the SafeMath::IsEqual()

@@ -285,7 +285,7 @@ bool MathExpressionParserTest::TestGetStackMachineExpression() {
                               "READ X\n"
                               "READ Y\n"
                               "SUB\n"
-                              "FACT\n"
+                              "NOT\n"
                               "MUL\n"
                               "ADD\n"
                               "READ X\n"
@@ -320,7 +320,7 @@ bool MathExpressionParserTest::TestOperatorFormatting() {
     
     bool ok = true;
     StreamString  operatorIn[14u] = {"&&", "||", "^", "==", "!=", ">", "<", ">=", "<=", "+", "-", "*", "/", "!"};
-    StreamString operatorOut[14u] = {"AND", "OR", "XOR", "EQ", "NEQ", "GT", "LT", "GTE", "LTE", "ADD", "SUB", "MUL", "DIV", "FACT"};
+    StreamString operatorOut[14u] = {"AND", "OR", "XOR", "EQ", "NEQ", "GT", "LT", "GTE", "LTE", "ADD", "SUB", "MUL", "DIV", "NOT"};
     
     for (uint32 idx = 0u; idx < 14u; idx++) {
         ok &= helperParser.OperatorFormattingHelperTest(operatorIn[idx].BufferReference(), operatorOut[idx].Buffer());

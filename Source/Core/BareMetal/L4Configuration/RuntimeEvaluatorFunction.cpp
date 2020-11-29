@@ -370,8 +370,26 @@ REGISTER_LOGICAL_OPERATOR(AND, &&, And)
 REGISTER_LOGICAL_OPERATOR(OR,  ||, Or )
 REGISTER_LOGICAL_OPERATOR(XOR, !=, xor)
 
+/*********************************************************************************************************
+ *********************************************************************************************************
+ *
+ *                      Unary logical operators
+ *
+ *********************************************************************************************************
+ **********************************************************************************************************/
 
+#define REGISTER_UNARY_LOGICAL_OPERATOR(name,oper,fname)                            \
+        void function ## fname ## ication (RuntimeEvaluator &context){              \
+            bool x1;                                                                \
+            bool ret;                                                               \
+            context.Pop(x1);                                                        \
+            (x1 != false) ? (x1 = true) : (x1 = false);                                   \
+            ret = oper x1;                                                          \
+            context.Push(ret);                                                      \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,boolean,1u,1u,function ## fname ## ication,UnsignedInteger8Bit,UnsignedInteger8Bit)
 
+REGISTER_UNARY_LOGICAL_OPERATOR(NOT, !, Not)
 
 
 /*********************************************************************************************************
@@ -399,6 +417,44 @@ REGISTER_OPERATOR(ADD, + ,Addition)
 REGISTER_OPERATOR(SUB, - ,Subtract)
 REGISTER_OPERATOR(MUL, * ,Multipl)
 REGISTER_OPERATOR(DIV, / ,Division)
+
+/*********************************************************************************************************
+ *********************************************************************************************************
+ *
+ *                      Unary math operators
+ *
+ *********************************************************************************************************
+ **********************************************************************************************************/
+
+#define COMMA ,
+
+#define REGISTER_UNARY_OPERATOR(name,oper,fname, typeIn, typeOut)                                          \
+        template <typename T1, typename Tout> void function ## fname ## typeIn ## ication (RuntimeEvaluator &context){ \
+            Tout x1;                                                                \
+            Tout x2;                                                                \
+            T1 z1;                                                                  \
+            context.Pop(z1);                                                        \
+            bool sat = SafeNumber2Number(z1, x1);                                   \
+            if (sat) {                                                              \
+                x2 = oper x1;                                                       \
+            } else {                                                                \
+                context.runtimeError.underflow = true;                              \
+            }                                                                       \
+            context.Push(x2);                                                       \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1u,1u,function ## fname ## typeIn ## ication <typeIn COMMA typeOut>,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())  \
+
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, float64, float64)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, float32, float32)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, int8,    int8)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, int16,   int16)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, int32,   int32)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, int64,   int64)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint8,   int16)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint16,  int32)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint32,  int64)
+REGISTER_UNARY_OPERATOR(NEG, -, Negative, uint64,  int64)
+
 
 /*********************************************************************************************************
  *********************************************************************************************************
