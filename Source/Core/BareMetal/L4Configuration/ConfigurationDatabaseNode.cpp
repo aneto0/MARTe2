@@ -51,6 +51,7 @@ ConfigurationDatabaseNode::ConfigurationDatabaseNode() :
     muxTimeout = TTInfiniteWait;
 }
 
+/*lint -e{1579} .Justification: The destructor calls an external function. */
 /*lint -e{1551} by design memory if freed in the destructor.*/
 ConfigurationDatabaseNode::~ConfigurationDatabaseNode() {
     Purge();

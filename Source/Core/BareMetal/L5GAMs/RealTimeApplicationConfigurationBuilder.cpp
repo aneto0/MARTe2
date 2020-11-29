@@ -891,6 +891,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
     if (ret) {
         ret = dataSourcesDatabase.MoveAbsolute("Data");
     }
+    /*lint -e{850} i is not modified by the REPORT_ERROR*/
     if (ret) {
         //Go to each function
         uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
@@ -3199,15 +3200,16 @@ bool RealTimeApplicationConfigurationBuilder::CacheAllSignalsIntrospections() {
         for (uint32 n=0u; (n<nItems) && (ret); n++) {
             const ClassRegistryItem *item = crd->Peek(n);
             if (item != NULL_PTR(const ClassRegistryItem *)) {
-                 const Introspection *intro = item->GetIntrospection();
-                 if (intro != NULL_PTR(const Introspection *)) {
-                     StreamString typeName = item->GetClassProperties()->GetName();
-                     uint32 signalNumber = 0u;
-                     ret = cachedIntrospections.CreateAbsolute(typeName.Buffer());
-                     if (ret) {
-                         REPORT_ERROR(ErrorManagement::Information, "Caching signal type [%s]", typeName.Buffer());
-                         ret = CacheSignalIntrospections(typeName.Buffer(), "", typeName.Buffer(), cachedIntrospections, signalNumber);
-                     }
+                const Introspection *intro = item->GetIntrospection();
+                if (intro != NULL_PTR(const Introspection *)) {
+                    StreamString typeName = item->GetClassProperties()->GetName();
+                    uint32 signalNumber = 0u;
+                    ret = cachedIntrospections.CreateAbsolute(typeName.Buffer());
+                    /*lint -e{864} typeName is not modified by the REPORT_ERROR*/
+                    if (ret) {
+                        REPORT_ERROR(ErrorManagement::Information, "Caching signal type [%s]", typeName.Buffer());
+                        ret = CacheSignalIntrospections(typeName.Buffer(), "", typeName.Buffer(), cachedIntrospections, signalNumber);
+                    }
                 }
             }
         }

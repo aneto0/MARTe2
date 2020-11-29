@@ -34,8 +34,6 @@
 #include "AnyObject.h"
 #include "ErrorType.h"
 #include "ConfigurationDatabase.h"
-#include "ReferenceContainerFilterObjectName.h"
-#include "ReferenceContainerFilterReferences.h"
 #include "StreamString.h"
 #include "TypeConversion.h"
 /*---------------------------------------------------------------------------*/

@@ -136,7 +136,7 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(ExecutionInfo &info) 
 }
 
 void QueuedMessageI::PurgeFilters() {
-    (void) queuedMessageFilters.Purge();
+    queuedMessageFilters.Purge();
 }
 
 ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, const int32 position) {
