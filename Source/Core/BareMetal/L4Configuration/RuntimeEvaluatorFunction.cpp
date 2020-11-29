@@ -438,6 +438,7 @@ REGISTER_OPERATOR(DIV, / ,Division)
             if (sat) {                                                              \
                 x2 = oper x1;                                                       \
             } else {                                                                \
+                x2 = static_cast<Tout>(0u);                                         \
                 context.runtimeError.underflow = true;                              \
             }                                                                       \
             context.Push(x2);                                                       \
