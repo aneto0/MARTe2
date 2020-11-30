@@ -73,10 +73,8 @@ IntrospectionStructure::IntrospectionStructure() :
 
 /*lint -e{1551} should not throw exception as the memory is checked. By the design memory if freed in the destructor.*/
 IntrospectionStructure::~IntrospectionStructure() {
-    struct A1 {
-
-    };
-    if (entries != NULL_PTR(IntrospectionEntry **)) {
+    //The entries cannot be destroyed, as otherwise the IntrospectionEntry** would be removed for the database
+    /*if (entries != NULL_PTR(IntrospectionEntry **)) {
         uint32 n;
         for (n = 0u; n < (numberOfMembers + 1u); n++) {
             delete entries[n];
@@ -92,7 +90,7 @@ IntrospectionStructure::~IntrospectionStructure() {
     }
     if (introMembers != NULL_PTR(Introspection *)) {
         delete[] introMembers;
-    }
+    }*/
 }
 
 bool IntrospectionStructure::Initialise(StructuredDataI &data) {
