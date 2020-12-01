@@ -24,6 +24,10 @@
 #ifndef COMPILERTYPESA_H_
 #define COMPILERTYPESA_H_
 
+#define GCC_VERSION (__GNUC__ * 10000 \
+                     + __GNUC_MINOR__ * 100 \
+                     + __GNUC_PATCHLEVEL__)
+
 namespace MARTe {
 
 /** 64 Bit unsigned integer. */

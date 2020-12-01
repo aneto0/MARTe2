@@ -45,7 +45,7 @@ namespace MARTe{
 namespace HighResolutionTimer {
 
 inline uint32 Counter32() {
-    volatile uint64 perf;
+    volatile uint64 perf = 0LLU;
     uint32 *pperf = (uint32 *) &perf;
     asm(
             "\n"
@@ -57,7 +57,7 @@ inline uint32 Counter32() {
 }
 
 inline uint64 Counter() {
-    volatile uint64 perf;
+    volatile uint64 perf = 0LLU;
     uint32 *pperf = (uint32 *) &perf;
     asm volatile(
             "\n"

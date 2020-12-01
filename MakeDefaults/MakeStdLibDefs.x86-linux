@@ -62,7 +62,8 @@ MARTE_OPTIM ?= -O2
 OPTIM = $(MARTE_OPTIM)
 INCLUDE =
 LFLAGS = -Wl,--no-as-needed -fPIC 
-CFLAGS = -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable 
+#-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
+CFLAGS = -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable -fno-strict-aliasing
 CPPFLAGS = $(CFLAGS) -frtti 
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lpthread -lrt -ldl

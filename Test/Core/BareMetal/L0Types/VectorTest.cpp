@@ -184,7 +184,7 @@ bool VectorTest::TestProduct() {
     Vector<int32> vector1(factor1);
     Vector<int32> vector2(factor2);
 
-    int32 result;
+    int32 result = 0;
 
     vector1.Product(vector2, result);
     return result == 11;
