@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     float64 sunMass   = 1.988e+30;
     float64 earthMass = 5.972e+24;
     float64 moonMass  = 7.346e+22;
-    RuntimeEvaluator* evaluator;
+    RuntimeEvaluator *evaluator = NULL_PTR(RuntimeEvaluator *);
 
     expression = "F = G*((m1*m2)/pow(d, 2));";
     

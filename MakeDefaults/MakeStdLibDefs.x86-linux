@@ -58,8 +58,8 @@ CCOMPILER = gcc
 MAKE = make
 
 DEBUG = -g -ggdb
-MARTE_OPTIM ?= -O2
-OPTIM = $(MARTE_OPTIM)
+MARTe2_OPTIM ?= -O2
+OPTIM = $(MARTe2_OPTIM)
 INCLUDE =
 LFLAGS = -Wl,--no-as-needed -fPIC 
 #-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
