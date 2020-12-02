@@ -71,6 +71,7 @@ IntrospectionStructure::IntrospectionStructure() :
     memberInfo = NULL_PTR(MemberInfo **);
 }
 
+/*lint -e{1540} The entries cannot be destroyed, as otherwise the IntrospectionEntry** would be removed for the database*/
 /*lint -e{1551} should not throw exception as the memory is checked. By the design memory if freed in the destructor.*/
 IntrospectionStructure::~IntrospectionStructure() {
     //The entries cannot be destroyed, as otherwise the IntrospectionEntry** would be removed for the database
