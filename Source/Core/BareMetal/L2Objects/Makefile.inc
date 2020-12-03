@@ -27,25 +27,26 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  AnyType.x \
-                ClassMethodCaller.x\
-                ClassMethodInterfaceMapper.x\
+		ClassMethodCaller.x\
+		ClassMethodInterfaceMapper.x\
 		ClassProperties.x \
 		ClassRegistryDatabase.x \
 		ClassRegistryItem.x \
-		Introspection.x\
-		IntrospectionEntry.x \
+		Introspection.x2\
+		IntrospectionEntry.x2 \
 		Object.x \
 		ObjectRegistryDatabase.x \
 		Reference.x \
-		ReferenceContainer.x \
-		ReferenceContainerNode.x \
+		ReferenceContainer.x2 \
+		ReferenceContainerNode.x2 \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
 		ReferenceContainerFilterObjectName.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I../L1Portability -I../L0Types
+INCLUDES+=-I../L0Types
+INCLUDES+=-I../L1Portability
 
 all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L2ObjectsB$(LIBEXT) \

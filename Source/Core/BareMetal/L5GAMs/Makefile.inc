@@ -62,6 +62,8 @@ INCLUDES += -I../L3Streams
 INCLUDES += -I../L4Configuration
 INCLUDES += -I../L4Messages
 
+OPTIM = -O2
+
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L5GAMsB$(LIBEXT) \
 	        $(BUILD_DIR)/L5GAMsB.def

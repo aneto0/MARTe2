@@ -35,7 +35,22 @@ createLibrary :
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
-#	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+#	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+
+$(BUILD_DIR)/%.o1 : %.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c -O1 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o1
+#	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+
+$(BUILD_DIR)/%.o2 : %.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c -O2 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o2
+#	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+
+$(BUILD_DIR)/%.o3 : %.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c -O3 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o3
+#	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o : %.c
 	mkdir -p $(BUILD_DIR)

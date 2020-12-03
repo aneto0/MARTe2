@@ -25,8 +25,8 @@
 #############################################################
 
 OBJSX=	BufferedStreamI.x \
-                Base64Encoder.x\
-                BufferedStreamIOBuffer.x \
+		Base64Encoder.x\
+		BufferedStreamIOBuffer.x \
 		CharBuffer.x \
 		DoubleBufferedStream.x \
 		IOBuffer.x \
@@ -56,6 +56,8 @@ INCLUDES += -I.
 INCLUDES += -I../L0Types
 INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
+
+OPTIM = -O2
 
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L3StreamsB$(LIBEXT) \
