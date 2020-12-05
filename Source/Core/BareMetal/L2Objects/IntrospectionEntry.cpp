@@ -82,23 +82,21 @@ IntrospectionEntry::IntrospectionEntry(const char8 * const memberNameIn,
     if (modifiers != NULL) {
         uint32 i = 0u;
         uint8 nDim = 0u;
+        uint32 lastDim = 0u;
         while ((modifiers[i] != '\0') && (nDim < 3u)) {
             if (modifiers[i] == '[') {
-                for (uint32 k = 0u; k < nDim; k++) {
-                    uint32 prev = ((nDim - k) - 1u);
-                    dimensionSize[nDim - k] = dimensionSize[prev];
-                }
-                dimensionSize[0] = 0u;
+                lastDim = 0u;
                 i++;
                 while ((modifiers[i] != ']') && (modifiers[i] != '\0')) {
-                    dimensionSize[0] *= 10u;
+                    lastDim *= 10u;
                     int32 zero = static_cast<int32>('0');
                     int32 digit = (static_cast<int32>(modifiers[i]) - zero);
                     if ((digit >= 0) && ((digit <= 9))) {
-                        dimensionSize[0] += static_cast<uint32>(digit);
+                        lastDim += static_cast<uint32>(digit);
                     }
                     i++;
                 }
+                dimensionSize[nDim] = lastDim; 
                 nDim++;
             }
             i++;
