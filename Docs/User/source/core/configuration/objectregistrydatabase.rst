@@ -225,7 +225,7 @@ Similar to the example below but the structures are registered using the configu
    :language: c++   
    :caption: Reading registered structures (ConfigurationExample7)
    :linenos:  
-   :emphasize-lines: 190-203,206-212
+   :emphasize-lines: 202-215,218-225
    
 Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.
 

@@ -53,13 +53,13 @@ namespace MARTe2Tutorial {
 /**
  * Configuration structures
  */
-struct GainFromIntroStructure {
+struct __attribute__((__packed__)) GainFromIntroStructure {
     MARTe::float32 gain1;
     MARTe::float32 gain2;
     MARTe::float32 gain3[6];
 };
-struct GainsFromIntroStructure {
-    struct GainFromIntroStructure lowGains;
+struct __attribute__((__packed__)) GainsFromIntroStructure {
+    struct GainFromIntroStructure lowGains[2];
     struct GainFromIntroStructure highGains;
 };
 
@@ -87,10 +87,15 @@ ControllerEx1    () {
     /**
      * Read all the properties from the Gains struct (names must match the ones of the struct!
      * Gains1 = {
-     *     lowGain = {
+     *     lowGain[0] = {
      *         Gain1 = -1.0
      *         Gain2 = -3.0
      *         Gain3 = {-9.0, -8.0, -7.0, -6.0, -5.0, -4.0}
+     *     }
+     *     lowGain[1] = {
+     *         Gain1 = -2.0
+     *         Gain2 = -6.0
+     *         Gain3 = {-18.0, -16.0, -14.0, -12.0, -10.0, -8.0}
      *     }
      *     High = {
      *         Gain1 = 7.0
@@ -144,12 +149,16 @@ ControllerEx1    () {
         }
 
         if (ok) {
-            REPORT_ERROR(ErrorManagement::Information, "Gains 1 low gains");
-            PrintGains(&gains1.lowGains);
+            REPORT_ERROR(ErrorManagement::Information, "Gains 1 low[0] gains");
+            PrintGains(&gains1.lowGains[0]);
+            REPORT_ERROR(ErrorManagement::Information, "Gains 1 low[1] gains");
+            PrintGains(&gains1.lowGains[1]);
             REPORT_ERROR(ErrorManagement::Information, "Gains 1 high gains");
             PrintGains(&gains1.highGains);
-            REPORT_ERROR(ErrorManagement::Information, "Gains 2 low gains");
-            PrintGains(&gains2.lowGains);
+            REPORT_ERROR(ErrorManagement::Information, "Gains 2 low[0] gains");
+            PrintGains(&gains2.lowGains[0]);
+            REPORT_ERROR(ErrorManagement::Information, "Gains 2 low[1] gains");
+            PrintGains(&gains2.lowGains[1]);
             REPORT_ERROR(ErrorManagement::Information, "Gains 2 high gains");
             PrintGains(&gains2.highGains);
         }
@@ -160,9 +169,12 @@ ControllerEx1    () {
 private:
     void PrintGains(GainFromIntroStructure *gainToPrint) {
         using namespace MARTe;
-        REPORT_ERROR(ErrorManagement::Information, "Gain1 %f", gainToPrint->gain1);
-        REPORT_ERROR(ErrorManagement::Information, "Gain2 %f", gainToPrint->gain2);
-        REPORT_ERROR(ErrorManagement::Information, "Gain3 %f", gainToPrint->gain3);
+        float32 gain1 = gainToPrint->gain1;
+        float32 gain2 = gainToPrint->gain2;
+        float32 gain3[6] = {gainToPrint->gain3[0], gainToPrint->gain3[1], gainToPrint->gain3[2], gainToPrint->gain3[3], gainToPrint->gain3[4], gainToPrint->gain3[5]};
+        REPORT_ERROR(ErrorManagement::Information, "Gain1 %f", gain1);
+        REPORT_ERROR(ErrorManagement::Information, "Gain2 %f", gain2);
+        REPORT_ERROR(ErrorManagement::Information, "Gain3 %f", gain3);
     }
 
     /**
@@ -206,6 +218,7 @@ int main(int argc, char **argv) {
             "        Class = IntrospectionStructure\n"
             "        lowGains = {\n"
             "            Type = GainFromIntroStructure\n"
+            "            NumberOfElements = {2}\n"
             "        }\n"
             "        highGains = {\n"
             "            Type = GainFromIntroStructure\n"
@@ -215,10 +228,15 @@ int main(int argc, char **argv) {
             "+ControllerInstance1 = {\n"
             "    Class = ControllerEx1\n"
             "    Gains1 = {\n"
-            "        lowGains = {\n"
+            "        lowGains[0] = {\n"
             "            Gain1 = -1.0\n"
             "            Gain2 = -3.0\n"
             "            Gain3 = {-9.0, -8.0, -7.0, -6.0, -5.0, -4.0}\n"
+            "        }\n"
+            "        lowGains[1] = {\n"
+            "            Gain1 = -2.0\n"
+            "            Gain2 = -6.0\n"
+            "            Gain3 = {-18.0, -16.0, -14.0, -12.0, -10.0, -8.0}\n"
             "        }\n"
             "        highGains = {\n"
             "            Gain1 = 7.0\n"
@@ -227,10 +245,15 @@ int main(int argc, char **argv) {
             "        }\n"
             "    }\n"
             "    Gains2 = {\n"
-            "        lowGains = {\n"
+            "        lowGains[0] = {\n"
             "            Gain1 = -1.0\n"
             "            Gain2 = -3.0\n"
             "            Gain3 = {-9.1, -8.1, -7.1, -6.1, -5.1, -4.1}\n"
+            "        }\n"
+            "        lowGains[1] = {\n"
+            "            Gain1 = -2.0\n"
+            "            Gain2 = -6.0\n"
+            "            Gain3 = {-18.2, -16.2, -14.2, -12.2, -10.2, -8.2}\n"
             "        }\n"
             "        highGains = {\n"
             "            Gain1 = 7.0\n"
@@ -275,10 +298,10 @@ int main(int argc, char **argv) {
     if (ok) {
         ConfigurationDatabase cdb;
         GainsFromIntroStructure gainsExample;
-        gainsExample.lowGains.gain1 = 1;
-        gainsExample.lowGains.gain2 = 2;
-        gainsExample.lowGains.gain3[0] = -1;
-        gainsExample.lowGains.gain3[5] = 1;
+        gainsExample.lowGains[0].gain1 = 1;
+        gainsExample.lowGains[0].gain2 = 2;
+        gainsExample.lowGains[1].gain3[0] = -1;
+        gainsExample.lowGains[1].gain3[5] = 1;
         gainsExample.highGains.gain1 = -1;
         gainsExample.highGains.gain2 = -2;
         gainsExample.highGains.gain3[0] = 1;

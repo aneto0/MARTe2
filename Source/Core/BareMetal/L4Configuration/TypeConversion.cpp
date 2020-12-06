@@ -484,6 +484,46 @@ static bool ObjectToObject(const AnyType &destination, const AnyType &source) {
 }
 
 /**
+ * @Recursive support function for the StructuredDataToObject for the serialisation of arrays of structures
+ * @param[in] destinationMemberIntrospection IntrospectionEntry of the member representing the structure.
+ * @param[in] memberName the name of the member to which the format [][][] will be appended
+ * @param[in] sourcePointer StructuredDataI from where the array of structure is read from
+ * @param[in] source the original AnyType for the TypeConvert
+ * @param[in] newDestinationDescriptor the structure TypeDescriptor
+ * @param[in] destinationMemberDataPointer  the pointer to the source of the array of structures i.e. address of [0]...[0] 
+ * @param[in] dim the number of dimensions
+ * @param[out] offset the current offset with respect to the destinationMemberDataPointer
+ * @param[in] memberSize the size of the structure
+ * @return true if the conversion succeeds, false otherwise.
+ */
+static bool RecurseStructureToObject(IntrospectionEntry &destinationMemberIntrospection, const char8 * const memberName, StructuredDataI * const sourcePointer, const AnyType &source, TypeDescriptor &newDestinationDescriptor, char8 * const destinationMemberDataPointer, const uint32 dim, const uint32 nOfDimensions, uint32 &offset, const uint32 memberSize) {
+    uint32 nOfElements = destinationMemberIntrospection.GetNumberOfElements(dim);
+    bool ret = (sourcePointer != NULL_PTR(StructuredDataI *));
+    /*lint -e{850} n is not modified by the Printf*/
+    for (uint32 n=0u; (n<nOfElements) && (ret); n++) {
+        StreamString fullMemberNameIdx = memberName;
+        (void)fullMemberNameIdx.Printf("[%d]", n);
+        if (dim == (nOfDimensions - 1u)) {
+            ret = sourcePointer->MoveRelative(fullMemberNameIdx.Buffer());
+            if (ret) {
+                uint32 ptrOffset = (offset * memberSize);
+                void *fullSourceMemberDataPointer = &destinationMemberDataPointer[ptrOffset];
+                offset++;
+                AnyType newDestination(newDestinationDescriptor, 0u, fullSourceMemberDataPointer);
+                ret = TypeConvert(newDestination, source);
+                if (!sourcePointer->MoveToAncestor(1u)) {
+                    ret = false;
+                }
+            }
+        }
+        else {
+            ret = RecurseStructureToObject(destinationMemberIntrospection, fullMemberNameIdx.Buffer(), sourcePointer, source, newDestinationDescriptor, destinationMemberDataPointer, dim + 1u, nOfDimensions, offset, memberSize);
+        }
+    }
+    return ret;
+}
+
+/**
  * @brief Performs the conversion from a StructuredDataI to a compatible object.
  * @details If the structure represented by the StructuredDataI node is introspectable its members
  * will be searched by name, otherwise they will be considered as they are sorted inside the node.
@@ -508,7 +548,7 @@ static bool StructuredDataToObject(const AnyType &destination, const AnyType &so
     }
     else {
         // Assume that Class is the first field
-        beginIndex++;
+        beginIndex = 1u;
         sourceItem = ClassRegistryDatabase::Instance()->Find(sourceStructName.Buffer());
         isSourceIntrospection = (sourceItem != NULL);
     }
@@ -517,87 +557,104 @@ static bool StructuredDataToObject(const AnyType &destination, const AnyType &so
     if (destinationItem != NULL) {
         const Introspection *sourceIntrospection = NULL_PTR(const Introspection *);
         if (isSourceIntrospection) {
-            sourceIntrospection = sourceItem->GetIntrospection();
+            if (sourceItem != NULL) {
+                sourceIntrospection = sourceItem->GetIntrospection();
+            }
             isSourceIntrospection = (sourceIntrospection != NULL);
         }
         const Introspection *destinationIntrospection = destinationItem->GetIntrospection();
         if (destinationIntrospection != NULL) {
-            uint32 numberOfFields = sourcePointer->GetNumberOfChildren();
-
             if (isSourceIntrospection) {
                 // if there is the introspection get the number of members
-                numberOfFields = sourceIntrospection->GetNumberOfMembers();
                 beginIndex = 0u;
             }
-            uint32 numberOfMembers = (numberOfFields - beginIndex);
-            if (numberOfMembers == destinationIntrospection->GetNumberOfMembers()) {
+            uint32 numberOfMembers = destinationIntrospection->GetNumberOfMembers();
+            uint32 cdbIdx = 0u;
+            //No longer checked since with structured arrays, the number of elements in the CDB != number of elements in the struct (as the struct as the array represented in a compact format)
+            //if (numberOfMembers == destinationIntrospection->GetNumberOfMembers()) {
+            ret = true;
+            for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                IntrospectionEntry destinationMemberIntrospection = (*destinationIntrospection)[i];
 
-                ret = true;
-                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
-                    IntrospectionEntry destinationMemberIntrospection = (*destinationIntrospection)[i];
+                TypeDescriptor destinationMemberDescriptor = destinationMemberIntrospection.GetMemberTypeDescriptor();
 
-                    TypeDescriptor destinationMemberDescriptor = destinationMemberIntrospection.GetMemberTypeDescriptor();
+                TypeDescriptor newDestinationDescriptor = destinationMemberDescriptor;
+                // destination is a pointer!
+                if (destinationMemberIntrospection.GetMemberPointerLevel() > 0u) {
+                    newDestinationDescriptor = TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*)) * 8u);
+                }
 
-                    TypeDescriptor newDestinationDescriptor = destinationMemberDescriptor;
-                    // destination is a pointer!
-                    if (destinationMemberIntrospection.GetMemberPointerLevel() > 0u) {
-                        newDestinationDescriptor = TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*)) * 8u);
+                char8* destinationMemberDataPointer = &(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
+                AnyType newDestination(newDestinationDescriptor, 0u, destinationMemberDataPointer);
+
+                // special case char* string because is a pointer
+                if (newDestinationDescriptor == CharString) {
+                    if (destinationMemberIntrospection.GetNumberOfDimensions() == 0u) {
+                        newDestination = AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
                     }
+                }
 
-                    char8* destinationMemberDataPointer = &(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
-                    AnyType newDestination(newDestinationDescriptor, 0u, destinationMemberDataPointer);
+                for (uint32 j = 0u; j < 3u; j++) {
+                    newDestination.SetNumberOfElements(j, destinationMemberIntrospection.GetNumberOfElements(j));
+                }
+                newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
 
-                    // special case char* string because is a pointer
-                    if (newDestinationDescriptor == CharString) {
-                        if (destinationMemberIntrospection.GetNumberOfDimensions() == 0u) {
-                            newDestination = AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
+                AnyType newSource;
+                const char8* childName = NULL_PTR(const char8*);
+                // get the member AnyType from the database if the member is a basic type!
+                if (isSourceIntrospection) {
+                    // if the introspection for the source class exists find the member name
+                    /*lint -e{613} isSourceIntrospection => sourceIntrospection != NULL*/
+                    IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
+                    childName = sourceMemberIntrospection.GetMemberName();
+                    newSource = sourcePointer->GetType(childName);
+                }
+                else {
+                    childName = sourcePointer->GetChildName(cdbIdx + beginIndex);
+                    newSource = sourcePointer->GetType(childName);
+                }
+
+                if (newSource.GetDataPointer() == NULL) {
+                    // could be a structured node!
+                    uint32 nOfDimensions = destinationMemberIntrospection.GetNumberOfDimensions();
+                    if (nOfDimensions == 1u) {
+                        if (destinationMemberIntrospection.GetNumberOfElements(0u) == 1u) {
+                            nOfDimensions = 0u;
                         }
                     }
-
-                    for (uint32 j = 0u; j < 3u; j++) {
-                        newDestination.SetNumberOfElements(j, destinationMemberIntrospection.GetNumberOfElements(j));
-                    }
-                    newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
-
-                    AnyType newSource;
-                    const char8* childName = NULL_PTR(const char8*);
-                    // get the member AnyType from the database if the member is a basic type!
-                    if (isSourceIntrospection) {
-                        // if the introspection for the source class exists find the member name
-                        IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
-                        childName = sourceMemberIntrospection.GetMemberName();
-                        newSource = sourcePointer->GetType(childName);
+                    if (nOfDimensions > 0u) {
+                        uint32 offset = 0u;
+                        ret = RecurseStructureToObject(destinationMemberIntrospection, destinationMemberIntrospection.GetMemberName(), sourcePointer, source, newDestinationDescriptor, destinationMemberDataPointer, 0u, nOfDimensions, offset, destinationMemberIntrospection.GetMemberSize());
+                        cdbIdx += offset;
                     }
                     else {
-                        childName = sourcePointer->GetChildName(i + beginIndex);
-                        newSource = sourcePointer->GetType(childName);
-                    }
-
-                    if (newSource.GetDataPointer() == NULL) {
-                        // could be a structured node!
+                        cdbIdx++;
                         ret = sourcePointer->MoveRelative(childName);
-                        if (ret) {
-                            // call the conversion recursively !
-                            ret = TypeConvert(newDestination, source);
-                            if (!sourcePointer->MoveToAncestor(1u)) {
-                                ret = false;
-                            }
-                        }
-                    }
-                    // could be a leaf!
-                    else {
                         // call the conversion recursively !
-                        ret = TypeConvert(newDestination, newSource);
                         if (ret) {
-                            // validate the output
-                            ret = ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                            ret = TypeConvert(newDestination, source);
+                        }
+                        if (!sourcePointer->MoveToAncestor(1u)) {
+                            ret = false;
                         }
                     }
                 }
+                // could be a leaf!
+                else {
+                    cdbIdx++;
+                    // call the conversion recursively !
+                    ret = TypeConvert(newDestination, newSource);
+                    if (ret) {
+                        // validate the output
+                        ret = ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                    }
+                }
             }
+            //No longer verified as it would invalidate the way arrays of structures are represented
+            /*}
             else {
                 REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StructuredDataToObject: The classes do not have the same number of members");
-            }
+            }*/
         }
         else {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StructuredDataToObject: Introspection not found for the specified classes");
@@ -609,6 +666,47 @@ static bool StructuredDataToObject(const AnyType &destination, const AnyType &so
 
     return ret;
 }
+
+/**
+ * @Recursive support function for the ObjectToStructuredData for the serialisation of arrays of structures
+ * @param[in] sourceMemberIntrospection IntrospectionEntry of the member representing the structure.
+ * @param[in] memberName the name of the member to which the format [][][] will be appended
+ * @param[in] destinationPointer StructuredDataI to serialise the array of structure
+ * @param[in] destination the original AnyType for the TypeConvert
+ * @param[in] newSourceDescriptor the structure TypeDescriptor
+ * @param[in] sourceMemberDataPointer the pointer to the source of the array of structures i.e. address of [0]...[0] 
+ * @param[in] dim the number of dimensions
+ * @param[out] offset the current offset with respect to the sourceMemberDataPointer
+ * @param[in] memberSize the size of the structure
+ * @return true if the conversion succeeds, false otherwise.
+ */
+static bool RecurseStructureToStructuredData(IntrospectionEntry &sourceMemberIntrospection, const char8 * const memberName, StructuredDataI * const destinationPointer, const AnyType &destination, TypeDescriptor &newSourceDescriptor, char8 * const sourceMemberDataPointer, const uint32 dim, const uint32 nOfDimensions, uint32 &offset, const uint32 memberSize) {
+    uint32 nOfElements = sourceMemberIntrospection.GetNumberOfElements(dim);
+    bool ret = (destinationPointer != NULL_PTR(StructuredDataI *));
+    /*lint -e{850} n is not modified by the Printf*/
+    for (uint32 n=0u; (n<nOfElements) && (ret); n++) {
+        StreamString fullMemberNameIdx = memberName;
+        (void)fullMemberNameIdx.Printf("[%d]", n);
+        if (dim == (nOfDimensions - 1u)) {
+            ret = destinationPointer->CreateRelative(fullMemberNameIdx.Buffer());
+            if (ret) {
+                uint32 ptrOffset = (offset * memberSize);
+                void *fullSourceMemberDataPointer = &sourceMemberDataPointer[ptrOffset];
+                offset++;
+                AnyType newSource(newSourceDescriptor, 0u, fullSourceMemberDataPointer);
+                ret = TypeConvert(destination, newSource);
+                if (!destinationPointer->MoveToAncestor(1u)) {
+                    ret = false;
+                }
+            }
+        }
+        else {
+            ret = RecurseStructureToStructuredData(sourceMemberIntrospection, fullMemberNameIdx.Buffer(), destinationPointer, destination, newSourceDescriptor, sourceMemberDataPointer, dim + 1u, nOfDimensions, offset, memberSize);
+        }
+    }
+    return ret;
+}
+
 
 /**
  * @Performs the conversion from an object to a StructuredDataI node.
@@ -658,12 +756,24 @@ static bool ObjectToStructuredData(const AnyType &destination, const AnyType &so
 
                     bool isNewSourceStructured = newSourceDescriptor.isStructuredData;
                     if (isNewSourceStructured) {
-                        // structured data again! Create a node and go recursively
-                        ret = destinationPointer->CreateRelative(sourceMemberIntrospection.GetMemberName());
-                        if (ret) {
-                            ret = TypeConvert(destination, newSource);
-                            if (!destinationPointer->MoveToAncestor(1u)) {
-                                ret = false;
+                        uint32 nOfDimensions = sourceMemberIntrospection.GetNumberOfDimensions();
+                        if (nOfDimensions == 1u) {
+                            if (sourceMemberIntrospection.GetNumberOfElements(0u) == 1u) {
+                                nOfDimensions = 0u;
+                            }
+                        }
+                        if (nOfDimensions > 0u) {
+                            uint32 offset = 0u;
+                            ret = RecurseStructureToStructuredData(sourceMemberIntrospection, sourceMemberIntrospection.GetMemberName(), destinationPointer, destination, newSourceDescriptor, sourceMemberDataPointer, 0u, nOfDimensions, offset, sourceMemberIntrospection.GetMemberSize());
+                        }
+                        else {
+                            // structured data again! Create a node and go recursively
+                            ret = destinationPointer->CreateRelative(sourceMemberIntrospection.GetMemberName());
+                            if (ret) {
+                                ret = TypeConvert(destination, newSource);
+                                if (!destinationPointer->MoveToAncestor(1u)) {
+                                    ret = false;
+                                }
                             }
                         }
                     }

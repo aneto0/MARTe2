@@ -315,6 +315,11 @@ public:
     bool TestStructuredDataToObject_SourceIntrospection();
 
     /**
+     * @brief Tests the read of a structured object from a ConfigurationDatabase with arrays of structures.
+     */
+    bool TestStructuredDataToObject_SourceIntrospectionArray();
+
+    /**
      * @brief Tests the read of a structured object from a ConfigurationDatabase.
      */
     bool TestStructuredDataToObject_NoSourceIntrospection();
@@ -333,6 +338,11 @@ public:
      * @brief Tests the write of a structured object on a ConfigurationDatabase.
      */
     bool TestObjectToStructuredData();
+
+    /**
+     * @brief Tests the write of a structured object with arrays of structures on a ConfigurationDatabase.
+     */
+    bool TestObjectArrayToStructuredData();
 
     /**
      * @brief Tests the if the functions clones the source ConfigurationDatabase into the destination ConfigurationDatabase.

@@ -29,10 +29,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "TypeConversionTest.h"
-#include "Object.h"
 #include "ConfigurationDatabase.h"
 #include "IntrospectionTestHelper.h"
+#include "Object.h"
+#include "ObjectRegistryDatabase.h"
+#include "StandardParser.h"
+#include "TypeConversionTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -558,6 +560,145 @@ bool TypeConversionTest::TestStructuredDataToObject_SourceIntrospection() {
     return StringHelper::Compare(testDestination.member5_to.nestedMember2_to , "12345")==0;
 }
 
+bool TypeConversionTest::TestStructuredDataToObject_SourceIntrospectionArray() {
+    const char8 * const config = ""
+            "+Types = {"
+            "  Class = ReferenceContainer"
+            "  +TypeConversionTestEx0 = {"
+            "     Class = IntrospectionStructure"
+            "     Field1 = {"
+            "       Type = char8"
+            "       NumberOfElements = {64}"
+            "     }"
+            "  }"
+            "  +TypeConversionTestEx1 = {"
+            "     Class = IntrospectionStructure"
+            "     Field1 = {"
+            "       Type = uint32"
+            "       NumberOfElements = {1}"
+            "     }"
+            "     Field2 = {"
+            "       Type = TypeConversionTestEx0"
+            "       NumberOfElements = {2,3}"
+            "     }"
+            "   }"
+            "   +TypeConversionTestEx2 = {"
+            "     Class = IntrospectionStructure"
+            "     Field1A = {"
+            "       Type = TypeConversionTestEx1"
+            "       NumberOfElements = {3, 1, 2}"
+            "     }"
+            "     Field2A = {"
+            "       Type = float32"
+            "       NumberOfElements = 3"
+            "     }"
+            "     Field3A = {"
+            "       Type = float64"
+            "       NumberOfElements = 1"
+            "     }"
+            "     Field4A = {"
+            "       Type = uint8"
+            "       NumberOfElements = 1"
+            "     }"
+            "     Field5A = {"
+            "       Type = uint16"
+            "       NumberOfElements = 1"
+            "     }"
+            "   }"
+            "}";
+
+    struct __attribute__((__packed__)) TypeConversionTestEx0 {
+        char8 field1[64];
+    };
+    struct __attribute__((__packed__)) TypeConversionTestEx1 {
+        uint32 field1;
+        TypeConversionTestEx0 field2[2][3];
+    };
+    struct __attribute__((__packed__)) TypeConversionTestEx2 {
+        TypeConversionTestEx1 field1A[3][1][2];
+        float32 field2A[3];
+        float64 field3A;
+        uint8 field4A;
+        uint16 field5A;
+    };
+    ConfigurationDatabase cdb;
+    StreamString configStr = config;
+    configStr.Seek(0);
+    StandardParser parser(configStr, cdb);
+    bool ok = parser.Parse();
+
+    if (ok) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ConfigurationDatabase source;
+    for (uint32 i=0; i<3; i++) {
+        for (uint32 j=0; j<1; j++) {
+            for (uint32 k=0; k<2; k++) {
+                StreamString field1Name;
+                field1Name.Printf("Field1A[%d][%d][%d]", i, j, k);
+                source.CreateAbsolute(field1Name.Buffer());
+                source.Write("Field1", (i + 1) * 10 + j + k);
+                for (uint32 a=0; a<2; a++) {
+                    for (uint32 b=0; b<3; b++) {
+                        StreamString field2CharName;
+                        field2CharName.Printf("Field2[%d][%d]", a, b);
+                        source.CreateRelative(field2CharName.Buffer());
+                        StreamString value;
+                        uint32 valInt = a*10+b;
+                        value.Printf("AAA%dBBB", valInt);
+                        source.Write("Field1", value.Buffer());
+                        source.MoveToAncestor(1u);
+                    }
+                }
+            }
+        }
+    }
+    source.MoveToRoot();
+    float32 farr[3];
+    farr[0] = -5;
+    farr[1] = -3;
+    farr[2] = -7;
+    source.Write("Field2A", farr);
+    source.Write("Field3A", 103);
+    source.Write("Field4A", 104);
+    source.Write("Field5A", 105);
+    /*StreamString temp;
+    temp.Printf("%!", source);
+    printf("%s\n\n", temp.Buffer());*/
+    
+    TypeConversionTestEx2 destStruct;
+    TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TypeConversionTestEx2")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType destination(destinationDes, 0u, &destStruct);
+    source.MoveToRoot();
+
+    ok = TypeConvert(destination, source);
+    for (uint32 i=0; i<3; i++) {
+        for (uint32 j=0; j<1; j++) {
+            for (uint32 k=0; k<2; k++) {
+                ok &= destStruct.field1A[i][j][k].field1 == ((i + 1) * 10 + j + k);
+                for (uint32 a=0; a<2; a++) {
+                    for (uint32 b=0; b<3; b++) {
+                        StreamString stored = destStruct.field1A[i][j][k].field2[a][b].field1;
+                        StreamString value;
+                        uint32 valInt = a*10+b;
+                        value.Printf("AAA%dBBB", valInt);
+                        ok &= (stored == value);
+                    }
+                }
+            }
+        }
+    }
+    if (ok) {
+        ok = destStruct.field2A[0] == -5;
+        ok = destStruct.field2A[1] == -3;
+        ok = destStruct.field2A[2] == -7;
+    }
+    return ok;
+}
+
+
 bool TypeConversionTest::TestStructuredDataToObject_NoSourceIntrospection() {
 
     TestIntrospectionObjectFrom testSource;
@@ -786,6 +927,157 @@ bool TypeConversionTest::TestObjectToStructuredData() {
     }
     return StringHelper::Compare(destMember6, "12345")==0;
 }
+
+bool TypeConversionTest::TestObjectArrayToStructuredData() {
+    const char8 * const config = ""
+            "+Types = {"
+            "  Class = ReferenceContainer"
+            "  +TypeConversionTestEx0 = {"
+            "     Class = IntrospectionStructure"
+            "     Field1 = {"
+            "       Type = char8"
+            "       NumberOfElements = {64}"
+            "     }"
+            "  }"
+            "  +TypeConversionTestEx1 = {"
+            "     Class = IntrospectionStructure"
+            "     Field1 = {"
+            "       Type = uint32"
+            "       NumberOfElements = {1}"
+            "     }"
+            "     Field2 = {"
+            "       Type = TypeConversionTestEx0"
+            "       NumberOfElements = {2,3}"
+            "     }"
+            "   }"
+            "   +TypeConversionTestEx2 = {"
+            "     Class = IntrospectionStructure"
+            "     Field1A = {"
+            "       Type = TypeConversionTestEx1"
+            "       NumberOfElements = {3, 1, 2}"
+            "     }"
+            "     Field2A = {"
+            "       Type = float32"
+            "       NumberOfElements = 3"
+            "     }"
+            "     Field3A = {"
+            "       Type = float64"
+            "       NumberOfElements = 1"
+            "     }"
+            "     Field4A = {"
+            "       Type = uint8"
+            "       NumberOfElements = 1"
+            "     }"
+            "     Field5A = {"
+            "       Type = uint16"
+            "       NumberOfElements = 1"
+            "     }"
+            "   }"
+            "}";
+
+    struct __attribute__((__packed__)) TypeConversionTestEx0 {
+        char8 field1[64];
+    };
+    struct __attribute__((__packed__)) TypeConversionTestEx1 {
+        uint32 field1;
+        TypeConversionTestEx0 field2[2][3];
+    };
+    struct __attribute__((__packed__)) TypeConversionTestEx2 {
+        TypeConversionTestEx1 field1A[3][1][2];
+        float32 field2A[3];
+        float64 field3A;
+        uint8 field4A;
+        uint16 field5A;
+    };
+    ConfigurationDatabase cdb;
+    StreamString configStr = config;
+    configStr.Seek(0);
+    StandardParser parser(configStr, cdb);
+    bool ok = parser.Parse();
+
+    if (ok) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+
+    TypeConversionTestEx2 sourceStruct;
+    TypeDescriptor sourceDes(false, ClassRegistryDatabase::Instance()->Find("TypeConversionTestEx2")->GetClassProperties()->GetUniqueIdentifier());
+    AnyType source(sourceDes, 0u, &sourceStruct);
+
+    for (uint32 i=0; i<3; i++) {
+        for (uint32 j=0; j<1; j++) {
+            for (uint32 k=0; k<2; k++) {
+                ok &= sourceStruct.field1A[i][j][k].field1 = ((i + 1) * 10 + j + k);
+                for (uint32 a=0; a<2; a++) {
+                    for (uint32 b=0; b<3; b++) {
+                        StreamString value;
+                        uint32 valInt = a*10+b;
+                        value.Printf("AAA%dBBB", valInt);
+                        StringHelper::Copy(sourceStruct.field1A[i][j][k].field2[a][b].field1, value.Buffer());
+                    }
+                }
+            }
+        }
+    }
+    sourceStruct.field2A[0] = -5;
+    sourceStruct.field2A[1] = -3;
+    sourceStruct.field2A[2] = -7;
+    sourceStruct.field3A = 103;
+    sourceStruct.field4A = 104;
+    sourceStruct.field5A = 105;
+
+    ConfigurationDatabase destination;
+    ok = TypeConvert(destination, source);
+
+    for (uint32 i=0; i<3; i++) {
+        for (uint32 j=0; j<1; j++) {
+            for (uint32 k=0; k<2; k++) {
+                StreamString field1Name;
+                field1Name.Printf("Field1A[%d][%d][%d]", i, j, k);
+                ok &= destination.MoveAbsolute(field1Name.Buffer());
+                uint32 field1Value = 0;
+                ok &= destination.Read("Field1", field1Value);
+                ok &= (field1Value == ((i + 1) * 10 + j + k));
+                for (uint32 a=0; a<2; a++) {
+                    for (uint32 b=0; b<3; b++) {
+                        StreamString field2CharName;
+                        field2CharName.Printf("Field2[%d][%d]", a, b);
+                        destination.MoveRelative(field2CharName.Buffer());
+                        StreamString valueExp;
+                        uint32 valInt = a*10+b;
+                        valueExp.Printf("AAA%dBBB", valInt);
+                        StreamString value;
+                        destination.Read("Field1", value);
+                        ok &= (value == valueExp);
+                        destination.MoveToAncestor(1u);
+                    }
+                }
+            }
+        }
+    }
+    destination.MoveToRoot();
+    float32 farr[3];
+    float64 val64 = 0;
+    uint8 val8 = 0;
+    uint16 val16 = 0;
+    ok &= destination.Read("Field2A", farr);
+    ok &= destination.Read("Field3A", val64);
+    ok &= destination.Read("Field4A", val8);
+    ok &= destination.Read("Field5A", val16);
+    /*StreamString temp;
+    destination.MoveToRoot();
+    temp.Printf("%!", destination);
+    printf("%s\n\n", temp.Buffer());*/
+    ok &= (farr[0] == -5);
+    ok &= (farr[1] == -3);
+    ok &= (farr[2] == -7);
+    ok &= (val64 == 103);
+    ok &= (val8 == 104);
+    ok &= (val16 == 105);
+    return ok;
+}
+
 
 bool TypeConversionTest::TestStructuredDataToStructuredData() {
 
