@@ -626,6 +626,9 @@ static bool StructuredDataToObject(const AnyType &destination, const AnyType &so
                         uint32 offset = 0u;
                         ret = RecurseStructureToObject(destinationMemberIntrospection, destinationMemberIntrospection.GetMemberName(), sourcePointer, source, newDestinationDescriptor, destinationMemberDataPointer, 0u, nOfDimensions, offset, destinationMemberIntrospection.GetMemberSize());
                         cdbIdx += offset;
+                        if (!ret) {
+                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "RecurseStructureToObject failed for member %s", destinationMemberIntrospection.GetMemberName());
+                        }
                     }
                     else {
                         cdbIdx++;
@@ -633,7 +636,11 @@ static bool StructuredDataToObject(const AnyType &destination, const AnyType &so
                         // call the conversion recursively !
                         if (ret) {
                             ret = TypeConvert(newDestination, source);
+                            if (!ret) {
+                                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "TypeConvert failed for member %s", destinationMemberIntrospection.GetMemberName());
+                            }
                         }
+
                         if (!sourcePointer->MoveToAncestor(1u)) {
                             ret = false;
                         }
@@ -647,6 +654,12 @@ static bool StructuredDataToObject(const AnyType &destination, const AnyType &so
                     if (ret) {
                         // validate the output
                         ret = ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                        if (!ret) {
+                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ValidateBasicType failed for member %s", destinationMemberIntrospection.GetMemberName());
+                        }
+                    }
+                    else {
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "TypeConvert (leaf) failed for member %s", destinationMemberIntrospection.GetMemberName());
                     }
                 }
             }
@@ -1308,6 +1321,9 @@ bool TypeConvert(const AnyType &destination, const AnyType &source) {
             }
         }
         ok = (destinationNumberOfDimensions == sourceNumberOfDimensions);
+        if (!ok) {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Dimension mismatch. Destination: %d Source %d", destinationNumberOfDimensions, sourceNumberOfDimensions);
+        }
         //The number of elements in all dimensions must be the same
         //Again, give the char8 strings a special treatment
         if (destinationIsCArray) {
