@@ -380,10 +380,9 @@ REGISTER_LOGICAL_OPERATOR(XOR, !=, xor)
 
 #define REGISTER_UNARY_LOGICAL_OPERATOR(name,oper,fname)                            \
         void function ## fname ## ication (RuntimeEvaluator &context){              \
-            bool x1;                                                                \
-            bool ret;                                                               \
+            uint8 x1;                                                               \
+            uint8 ret;                                                              \
             context.Pop(x1);                                                        \
-            (x1 != false) ? (x1 = true) : (x1 = false);                                   \
             ret = oper x1;                                                          \
             context.Push(ret);                                                      \
         }                                                                           \
