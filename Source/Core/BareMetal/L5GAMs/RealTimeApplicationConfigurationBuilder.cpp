@@ -3135,13 +3135,11 @@ bool RealTimeApplicationConfigurationBuilder::CacheSignalIntrospections(const ch
                 }
             }
             else {
+                //Got to the final BasicType. Add a node with the signal number as the name...
+                StreamString signalNumberStr;
+                ret = signalNumberStr.Printf("%d", signalNumber);
                 if (ret) {
-                    //Got to the final BasicType. Add a node with the signal number as the name...
-                    StreamString signalNumberStr;
-                    ret = signalNumberStr.Printf("%d", signalNumber);
-                    if (ret) {
-                        ret = data.CreateRelative(signalNumberStr.Buffer());
-                    }
+                    ret = data.CreateRelative(signalNumberStr.Buffer());
                 }
                 uint32 byteSize = 0u;
                 if ((i + 1u) < numberOfMembers) {
@@ -3338,9 +3336,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 bool patch = false;
                 //Reset the type so that is can be matched against the correct aliased signal
                 typeNameStr = "";
-                if (ret) {
-                    ret = memberAlias.Seek(0LLU);
-                }
+                ret = memberAlias.Seek(0LLU);
                 //If the alias is a path (e.g. A=B.C), add the keyword Node so that it can be later matched
                 while (memberAlias.SkipTokens(1u, ".")) {
                     if (typeNameStr.Size() > 0LLU) {
@@ -3385,7 +3381,30 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
             while (cachedFullType.GetToken(subType, ".", terminator)) {
                 //Only add to the type name the unmatched part of the cached full signal type (e.g. A.B is inside Node.Node.A.B.C.D)
                 if (tokenize) {
-                    tokenize = (StringHelper::SearchString(fullTypeName, subType.Buffer()) != NULL_PTR(char8 *));
+                    //Make sure that there is a complete match of the subtype, e.g. looking for BB inside A.CBB.D.BB should not held a match in CBB!
+                    //First case subType equals the type, i.e. BB = BB
+                    tokenize = (subType == cachedFullType);
+                    if (!tokenize) {
+                        //Second case the type starts with the subType BB.A.BC
+                        StreamString subTypeDot = subType;
+                        subTypeDot += ".";
+                        uint32 len = static_cast<uint32>(subTypeDot.Size());
+                        tokenize = (StringHelper::CompareN(cachedFullType.Buffer(), subTypeDot.Buffer(), len) == 0);
+                    }
+                    if (!tokenize) {
+                        //Third case the type contains the subType A.BB.C.BC or ends with the subType A.C.BB
+                        StreamString subTypeDot = ".";
+                        subTypeDot += subType;
+                        const char8 *foundStr = (StringHelper::SearchString(fullTypeName, subType.Buffer()));
+                        tokenize = (foundStr != NULL_PTR(char8 *));
+                        if (tokenize) {
+                            //Check if ends with . or \0
+                            tokenize = (foundStr[subTypeDot.Size()] == '\0');
+                            if (!tokenize) {
+                                tokenize = (foundStr[subTypeDot.Size()] == '.');
+                            }
+                        }
+                    }
                 }
                 if (!tokenize) {
                     typeNameStr += ".";

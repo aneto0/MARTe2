@@ -1321,9 +1321,10 @@ bool TypeConvert(const AnyType &destination, const AnyType &source) {
             }
         }
         ok = (destinationNumberOfDimensions == sourceNumberOfDimensions);
-        if (!ok) {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Dimension mismatch. Destination: %d Source %d", destinationNumberOfDimensions, sourceNumberOfDimensions);
-        }
+        /*if (!ok) {
+            //Beware that by enabling this, there will be a lot of noise driven by attempts of reading arrays (e.g. if (!data.Read("MyArray", myarray")) {...
+            REPORT_ERROR_STATIC(ErrorManagement::Debug, "Dimension mismatch. Destination: %d Source %d", destinationNumberOfDimensions, sourceNumberOfDimensions);
+        }*/
         //The number of elements in all dimensions must be the same
         //Again, give the char8 strings a special treatment
         if (destinationIsCArray) {
