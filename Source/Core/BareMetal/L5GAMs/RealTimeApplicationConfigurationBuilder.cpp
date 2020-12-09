@@ -3395,7 +3395,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                         //Third case the type contains the subType A.BB.C.BC or ends with the subType A.C.BB
                         StreamString subTypeDot = ".";
                         subTypeDot += subType;
-                        const char8 *foundStr = (StringHelper::SearchString(fullTypeName, subType.Buffer()));
+                        const char8 *foundStr = (StringHelper::SearchString(fullTypeName, subTypeDot.Buffer()));
                         tokenize = (foundStr != NULL_PTR(char8 *));
                         if (tokenize) {
                             //Check if ends with . or \0
