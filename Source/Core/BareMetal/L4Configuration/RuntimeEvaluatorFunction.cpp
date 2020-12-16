@@ -378,6 +378,8 @@ REGISTER_LOGICAL_OPERATOR(XOR, !=, xor)
  *********************************************************************************************************
  **********************************************************************************************************/
 
+/*lint -emacro( {909}, REGISTER_UNARY_LOGICAL_OPERATOR ) uint8 conversion to bool.*/
+/*lint -emacro( {9133}, REGISTER_UNARY_LOGICAL_OPERATOR ) uint8 converting to bool.*/
 #define REGISTER_UNARY_LOGICAL_OPERATOR(name,oper,fname)                            \
         void function ## fname ## ication (RuntimeEvaluator &context){              \
             uint8 x1;                                                               \
