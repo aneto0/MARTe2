@@ -31,5 +31,6 @@ A quick way of finding where you can help is by visiting the `core <https://vcis
    :caption: Contents:
 
    qa/qa
+   qa/qahelper
    development/environment
    
