@@ -3387,8 +3387,8 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                     nOfTypeTokensToSkip--;
                 }
                 (void) cachedFullType.Seek(0LLU);
-                for (uint32 m=0; m<nOfTypeTokensToSkip; m++) {
-                    cachedFullType.GetToken(tokenT, ".", terminator);
+                for (uint32 m=0u; m<nOfTypeTokensToSkip; m++) {
+                    (void) cachedFullType.GetToken(tokenT, ".", terminator);
                     tokenT = "";
                 }
                 //Reoconstruct the signal type
