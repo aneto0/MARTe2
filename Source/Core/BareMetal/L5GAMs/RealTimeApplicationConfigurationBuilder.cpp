@@ -3346,30 +3346,58 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 }
                 token = "";
                 StreamString tokenA;
-                //Get the full signal type and use only the unmatched part. E.g. If the full signal type was StructA.StructB.StructC.int32 and this signal has type StructB, 
-                //then the subtype would be StructC.int32. The same logic applies to the qualified name.
-                while (cachedFullType.GetToken(token, ".", terminator)) {
-                    (void) (cachedQualifiedName.GetToken(tokenA, ".", terminator));
-                    if (token == typeName) {
-                        //Found the subtype. Only the next token should be considered before starting to reconstruct the alias name/type. Skip one token.
-                        token = "";
-                        patch = cachedFullType.GetToken(token, ".", terminator);
-                        tokenA = "";
-                        (void) (cachedQualifiedName.GetToken(tokenA, ".", terminator));
+                //Get the full signal name and use only the unmatched part w.r.t. to the MemberAlias. E.g. If the full signal name was ADCs.ADC1.Signal3.c1.b1
+                //and the name of the to be aliased (i.e. the memberAliasKey) was ADCs.ADC1.Signal3.c1, then the unmatched part would be b1.
+                //As a consequence, the string b1 will have to be appended to the MemberAlias, so that if we had MemberAlias = ADC_Channel1, the alias name would be ADC_Channel1.b1,
+                //since ADC_Channel1 must also be a struct (with a member b1). The same logic applies to the type below
+                //1. Find out what part of the memberAliasKey does not match the fullSignalName
+                (void) fullSignalName.Seek(0LLU);
+                (void) memberAliasKey.Seek(0LLU);
+                uint32 nOfTypeTokensToKeep = 0u;
+                while (fullSignalName.GetToken(token, ".", terminator)) {
+                    (void) (memberAliasKey.GetToken(tokenA, ".", terminator));
+                    if (!patch) {
+                        patch = (token != tokenA);
                     }
                     if (patch) {
-                        //Reconstruct the type and the alias with the unmatched part
-                        if (typeNameStr.Size() > 0u) {
-                            typeNameStr += ".";
-                        }
-                        typeNameStr += token.Buffer();
-                        if (tokenA.Size() > 0U) {
+                        nOfTypeTokensToKeep++;
+                        if (token.Size() > 0U) {
                             fullAliasName += ".";
-                            fullAliasName += tokenA.Buffer();
+                            fullAliasName += token.Buffer();
                         }
                     }
                     token = "";
                     tokenA = "";
+                }
+                //Reconstruct the missing signal type by checking how many unmatched nodes were detected before. In the example above there was only one unmatched node named b1
+                uint32 fullTypeNOfTokens = 0u;
+                StreamString tokenT;
+                (void) cachedFullType.Seek(0LLU);
+                //Compute how many tokens are in the full type
+                while (cachedFullType.GetToken(tokenT, ".", terminator)) {
+                    fullTypeNOfTokens++;
+                    tokenT = "";
+                }
+                //Only keep the unmatched last N tokens
+                uint32 nOfTypeTokensToSkip = 0u;
+                if (fullTypeNOfTokens > nOfTypeTokensToKeep) {
+                    nOfTypeTokensToSkip = (fullTypeNOfTokens - nOfTypeTokensToKeep);
+                }
+                if (nOfTypeTokensToSkip > 0u) {
+                    nOfTypeTokensToSkip--;
+                }
+                (void) cachedFullType.Seek(0LLU);
+                for (uint32 m=0; m<nOfTypeTokensToSkip; m++) {
+                    cachedFullType.GetToken(tokenT, ".", terminator);
+                    tokenT = "";
+                }
+                //Reoconstruct the signal type
+                while (cachedFullType.GetToken(tokenT, ".", terminator)) {
+                    if (typeNameStr.Size() > 0u) {
+                        typeNameStr += ".";
+                    }
+                    typeNameStr += tokenT.Buffer();
+                    tokenT = "";
                 }
             }
         }
