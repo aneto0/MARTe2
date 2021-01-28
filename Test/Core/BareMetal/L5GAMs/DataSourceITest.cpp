@@ -2342,3 +2342,14 @@ bool DataSourceITest::TestGetOutputBrokers() {
     }
     return ret;
 }
+
+bool DataSourceITest::TestSynchronise() {
+    DataSourceITestHelper test;
+    return !test.Synchronise();
+}
+
+bool DataSourceITest::TestBrokerCopyTerminated() {
+    DataSourceITestHelper test;
+    return test.BrokerCopyTerminated();
+}
+

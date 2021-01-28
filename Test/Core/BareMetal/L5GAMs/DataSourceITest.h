@@ -277,6 +277,17 @@ public:
      * @brief Tests the TestGetOutputBrokers() method.
      */
     bool TestGetOutputBrokers();
+
+    /**
+     * @brief Tests the Synchronise() method.
+     */
+    bool TestSynchronise();
+
+    /**
+     * @brief Tests the BrokerCopyTerminated() method.
+     */
+    bool TestBrokerCopyTerminated();
+
 };
 
 /*---------------------------------------------------------------------------*/
