@@ -179,9 +179,6 @@ bool MutexSem::Close() {
     bool ok = true;
     if (!handle->closed) {
         handle->closed = true;
-        /*lint -e{534} the UnLock is allowed to fail (and it will if the semaphore was never used).
-         *The semaphore has to be closed whatever the result.*/
-        UnLock();
         ok = (pthread_mutexattr_destroy(&handle->mutexAttributes) == 0);
         if (ok) {
             ok = (pthread_mutex_destroy(&handle->mutexHandle) == 0);
