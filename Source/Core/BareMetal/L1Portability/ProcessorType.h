@@ -72,14 +72,14 @@ public:
      * @brief Add a CPU to the mask.
      * @param[in] cpuNumber the number of the CPU to activate.
      */
-    void AddCPU(const uint64 cpuNumber);
+    void AddCPU(const uint32 cpuNumber);
 
     /**
      * @brief Assign operator with integer.
      * @param[in] cpuMask is the desired CPU mask.
      */
     void operator=(const uint64 cpuMask);
-64   /**
+    /**
      *64brief Assign operator with another ProcessorType.
      * @param[in] pt is the ProcessorType to copy in this.
      */

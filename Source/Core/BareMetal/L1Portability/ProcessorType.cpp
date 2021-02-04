@@ -62,7 +62,9 @@ void ProcessorType::SetMask(const uint64 mask) {
     processorMask = mask;
 }
 
-void ProcessorType::AddCPU(const uint64 cpuNumber) {
+void ProcessorType::AddCPU(const uint32 cpuNumber) {
+    // NOTE no test to ensure that cpuNumber is smaller than the maximum size
+    // of the bitmask.
     uint64 cpuMask = 1u;
     cpuMask = cpuMask << (cpuNumber - 1u);
     processorMask |= cpuMask;
