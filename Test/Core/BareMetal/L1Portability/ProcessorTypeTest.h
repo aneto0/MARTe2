@@ -104,7 +104,7 @@ public:
      * @param[in] mask is the desired cpu mask.
      * @return true if the mask is assigned correctly.
      */
-    bool TestSetMask(uint32 mask);
+    bool TestSetMask(uint64 mask);
 
     /**
      * @brief Tests the ProcessorType::AddCPU function.

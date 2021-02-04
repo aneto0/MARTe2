@@ -2,7 +2,7 @@
  * @file ProcessorTypeTest.cpp
  * @brief Source file for class ProcessorTypeTest
  * @date 25/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -116,7 +116,7 @@ bool ProcessorTypeTest::TestSetGetDefaultCPUs() {
     ProcessorType ptTest(ptSecond);
 
     ptTest.SetDefaultCPUs(0xAA);
-    uint32 test = ptTest.GetDefaultCPUs();
+    uint64 test = ptTest.GetDefaultCPUs();
 
     if (test != 0xAA){
         ptTest.SetDefaultCPUs(0u);
@@ -131,7 +131,6 @@ bool ProcessorTypeTest::TestDefaultConstructor() {
     ProcessorType ptDefault;             // Std contructor
     return (ptDefault.GetProcessorMask() == 0xFE);
 }
-
 bool ProcessorTypeTest::TestConstructorFromMask() {
     ProcessorType ptFromMask(0xFC);      // Mask constructor
 
@@ -146,7 +145,7 @@ bool ProcessorTypeTest::TestConstructorFromProcessorType() {
 
 }
 
-bool ProcessorTypeTest::TestSetMask(uint32 mask) {
+bool ProcessorTypeTest::TestSetMask(uint64 mask) {
     ProcessorType test;
     test.SetMask(mask);
     return ((test.GetProcessorMask() == mask));
@@ -158,7 +157,7 @@ bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
     test.SetMask(0);
     test.AddCPU(cpuNumber1);
 
-    uint32 save = 1 << (cpuNumber1 - 1);
+    uint64 save = 1 << (cpuNumber1 - 1);
     if (test.GetProcessorMask() != save) {
         return false;
     }
@@ -169,9 +168,9 @@ bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
         return false;
     }
 
-    //the maximum supported is 32 cpu.
+    //the maximum supported is 65 cpu.
     //if there is an overload it considers the rest.
-    uint32 out = 33;
+    uint32 out = 65;
     test.AddCPU(out);
 
     save |= 0x1;
@@ -179,7 +178,7 @@ bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
         return false;
     }
 
-    //0 is the same of 32.
+    //0 is the same of 65.
     test.AddCPU(0);
 
     save |= 0x80000000;
