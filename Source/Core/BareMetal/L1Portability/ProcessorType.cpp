@@ -36,17 +36,17 @@
 namespace MARTe{
 
 #if ProcessorTypeDefaultCPUs
-uint64 ProcessorType::defaultCPUs = ProcessorTypeDefaultCPUs;
+BitSet ProcessorType::defaultCPUs = ProcessorTypeDefaultCPUs;
 #else
-uint64 ProcessorType::defaultCPUs = 0;
+BitSet ProcessorType::defaultCPUs = 0u;
 #endif
 
 
-uint64 ProcessorType::GetDefaultCPUs() {
+BitSet ProcessorType::GetDefaultCPUs() {
     return ProcessorType::defaultCPUs;
 }
 
-void ProcessorType::SetDefaultCPUs(const uint64 &mask) {
+void ProcessorType::SetDefaultCPUs(const BitSet &mask) {
     ProcessorType::defaultCPUs = mask;
 }
 
@@ -58,19 +58,17 @@ void ProcessorType::SetDefaultCPUs(const uint64 &mask) {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void ProcessorType::SetMask(const uint64 mask) {
+void ProcessorType::SetMask(const BitSet mask) {
     processorMask = mask;
 }
 
 void ProcessorType::AddCPU(const uint32 cpuNumber) {
     // NOTE no test to ensure that cpuNumber is smaller than the maximum size
     // of the bitmask.
-    uint64 cpuMask = 1u;
-    cpuMask = cpuMask << (cpuNumber - 1u);
-    processorMask |= cpuMask;
+    processorMask.Set(cpuNumber - 1u, 1);
 }
 
-void ProcessorType::operator=(const uint64 cpuMask) {
+void ProcessorType::operator=(const BitSet cpuMask) {
     processorMask = cpuMask;
 }
 
@@ -81,7 +79,7 @@ ProcessorType& ProcessorType::operator=(const ProcessorType &pt) {
     return *this;
 }
 
-void ProcessorType::operator|=(const uint64 cpuMask) {
+void ProcessorType::operator|=(const BitSet cpuMask) {
     processorMask |= cpuMask;
 }
 
@@ -93,7 +91,7 @@ bool ProcessorType::operator==(const ProcessorType &pt) const {
     return processorMask == pt.processorMask;
 }
 
-bool ProcessorType::operator==(const uint64 mask) const {
+bool ProcessorType::operator==(const BitSet mask) const {
     return processorMask == mask;
 }
 
@@ -101,7 +99,7 @@ bool ProcessorType::operator!=(const ProcessorType &pt) const {
     return processorMask != pt.processorMask;
 }
 
-bool ProcessorType::operator!=(const uint64 mask) const {
+bool ProcessorType::operator!=(const BitSet mask) const {
     return processorMask != mask;
 }
 
@@ -109,7 +107,7 @@ uint32 ProcessorType::GetProcessorMask() const {
     return processorMask;
 }
 
-ProcessorType::ProcessorType(const uint64 cpuMask) {
+ProcessorType::ProcessorType(const BitSet cpuMask) {
     processorMask = cpuMask;
 }
 

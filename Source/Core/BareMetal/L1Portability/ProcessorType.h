@@ -32,6 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
+#include "BitSet.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -54,7 +56,7 @@ public:
      * @details The default is to run the tasks all CPUs but the first.
      * @param[in] cpuMask the CPU mask.
      */
-    ProcessorType(const uint64 cpuMask = 0xFEu);
+    ProcessorType(const BitSet cpuMask = 0xFEu);
 
     /**
      * @brief Constructor from another ProcessorType object
@@ -66,7 +68,7 @@ public:
      * @brief Set the processor mask.
      * @param[in] mask the CPU mask.
      */
-    void SetMask(const uint64 mask);
+    void SetMask(const BitSet mask);
 
     /**
      * @brief Add a CPU to the mask.
@@ -78,7 +80,7 @@ public:
      * @brief Assign operator with integer.
      * @param[in] cpuMask is the desired CPU mask.
      */
-    void operator=(const uint64 cpuMask);
+    void operator=(const BitSet cpuMask);
     /**
      *64brief Assign operator with another ProcessorType.
      * @param[in] pt is the ProcessorType to copy in this.
@@ -89,7 +91,7 @@ public:
      * @brief or operator with integer.
      * @param[in] cpuMask is the CPU mask which will be in or with this.
      */
-    void operator|=(const uint64 cpuMask);
+    void operator|=(const BitSet cpuMask);
 
     /**
      * @brief or operator with another ProcessorType object.
@@ -110,7 +112,7 @@ public:
      * @param[in] mask is the mask which will be compared with this CPU mask.
      * @return true if the masks are equal.
      */
-    bool operator==(const uint64 mask) const;
+    bool operator==(const BitSet mask) const;
 
     /**
      * @brief Compares this object with another ProcessorType.
@@ -125,7 +127,7 @@ public:
      * @param[in] mask is the mask which will be compared with this CPU mask.
      * @return true if the masks are different.
      */
-    bool operator!=(const uint64 mask) const;
+    bool operator!=(const BitSet mask) const;
 
     /**
      * @brief Returns the currently set CPU mask.
@@ -144,18 +146,18 @@ public:
      * @brief Sets the default CPU mask.
      * @param[in] mask defines the default CPU.
      */
-    static void SetDefaultCPUs(const uint64 &mask);
+    static void SetDefaultCPUs(const BitSet &mask);
 
 private:
     /**
      * The processor mask
      */
-    uint64 processorMask;
+    BitSet processorMask;
 
     /**
      * The default CPU mask. Initialised to zero.
      */
-    static uint64 defaultCPUs;
+    static BitSet defaultCPUs;
 };
 
 /**
