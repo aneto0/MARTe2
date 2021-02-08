@@ -115,17 +115,66 @@ public:
      * @return initialized BitSet.
      */
     BitSet & operator=(const uint32& other);
+
+    /**
+     * @brief assing BitSet operator from uint64.
+     * @param[in] other uint64 value to be copied.
+     * @return initialized BitSet.
+     */
     BitSet & operator=(const uint64& other);
 
+
+    /**
+     * @brief uint32 cast operator for back compatibility.
+     * @return uint32 truncated value.
+     */
     operator uint32() const;
+
+    /**
+     * @brief uint64 cast operator for back comaptibilty.
+     * @return uint64 truncated value.
+     */
     operator uint64() const;
 
+    /**
+     * @brief bitwise `and` operator.
+     * @param[in] rhm right operand.
+     * @return result of the bitwise `and` operator.
+     */
     BitSet operator&(const BitSet& rhm);
+
+    /**
+     * @brief bitwise `or` operator.
+     * @param[in] rhm right operand.
+     * @return result of the bitwise `or` operator.
+     */
     BitSet operator|(const BitSet& rhm);
+
+    /**
+     * @brief bitwise `xor` operator.
+     * @param[in] rhm right operand.
+     * @return result of the bitwise `xor` operator.
+     */
     BitSet operator^(const BitSet& rhm);
+
+    /**
+     * @brief bitwise `not` operator.
+     * @return inverse bitset.
+     */
     BitSet operator~();
 
+    /**
+     * @brief left bit shift operator.
+     * @param[in] rhf number of bits to be shifted.
+     * @return left shifted bitset.
+     */
     BitSet operator<<(const int& rhf);
+    
+    /**
+     * @brief right bit shift operator.
+     * @param[in] rhf number of bits to be shifted.
+     * @return right shifted bitset. 
+     */
     BitSet operator>>(const int& rhm);
 
     bool operator==(const BitSet& rhm) const;
