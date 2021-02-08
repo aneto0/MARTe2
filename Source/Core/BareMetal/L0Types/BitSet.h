@@ -48,20 +48,72 @@ namespace MARTe {
  */
 class BitSet {
 public:
+    
+    /**
+     * @brief empty constructor.
+     * @details initialize with a single uint32 0 value.
+     */  
     BitSet();
-    BitSet(uint32);
-    BitSet(uint64);
-    BitSet(const BitSet &other);
-    BitSet(uint32* bytes, uint32 size);
+    
+    /**
+     * @brief uint32 constructor.
+     * @details copy the uint32 value to the bitset.
+     * @param[in] value uint32 value to copy.
+     */ 
+    BitSet(uint32 value);
 
+    /**
+     * @brief uint64 constructor
+     * @details copy the uint64 value as a pair of uint32 in the bitset.
+     * @param[in] value uint64 value to copy.
+     */
+    BitSet(uint64 value);
+
+    /**
+     * @brief clone constructor.
+     * @param[in] other bitset to be cloned.
+     */
+    BitSet(const BitSet &other);
+
+    /**
+     * @brief simple distructor.
+     * @details free the memory used to store the bitset.
+     */
     ~BitSet();
 
+    /**
+     * @brief Get the number of uint32 values used.
+     * @return Number of elements used to store the bitset.
+     */  
     uint32 GetByteSize();
 
+    /**
+     * @brief Get the status of a single bit.
+     * @param[in] index bit position.
+     * @return value of the bit, if not defined 0.
+     */ 
     bool Bit(uint32 index);
+
+    /**
+     * @brief Set a single bit.
+     * @param[in] index bit position.
+     * @param[in] value bit value.
+     */
     void Set(uint32 index, bool value);
     
+    
+    /**
+     * @brief assign BitSet operator.
+     * @param[in] other value to be copied.
+     * @return initialized BitSet with same value than the original.
+     */
     BitSet & operator=(const BitSet& other);
+
+    /**
+     * @brief assign BitSet operator from uint32.
+     * @param[in] other uint32 value to be copied.
+     * @return initialized BitSet.
+     */
     BitSet & operator=(const uint32& other);
     BitSet & operator=(const uint64& other);
 
@@ -86,7 +138,15 @@ public:
     BitSet & operator|=(const BitSet& rhm);
     BitSet & operator&=(const BitSet& rhm);
     BitSet & operator^=(const BitSet& rhm);
+
 private:
+    /**
+     * @brief array constructor
+     * @details copy an array of uint32 bytes to the bitset.
+     * @param[in] bytes array to be copied.
+     * @param[in] size number of elements in the array.
+     */
+    BitSet(uint32* bytes, uint32 size);
     uint32 bytesSize;
     uint32 * bytes;
 
