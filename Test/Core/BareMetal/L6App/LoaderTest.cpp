@@ -78,7 +78,7 @@ bool LoaderTest::TestConfigure() {
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     bool ok = l.Configure(params, config);
-    ok = (ProcessorType::GetDefaultCPUs() == 0x1);
+    ok = (ProcessorType::GetDefaultCPUs() == 0x1u);
     return ok;
 }
 
@@ -90,7 +90,7 @@ bool LoaderTest::TestConfigure_CPUs() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    uint32 defaultCPUs = 0xf;
+    uint32 defaultCPUs = 0xfu;
     params.Write("DefaultCPUs", defaultCPUs);
     bool ok = l.Configure(params, config);
     ok = (ProcessorType::GetDefaultCPUs() == defaultCPUs);
