@@ -27,6 +27,7 @@
 OBJSX=  BasicTypeTest.x \
 		BitBooleanTest.x\
 		BitRangeTest.x \
+        BitSetTest.x \
 		CRCTest.x \
 		DjbHashFunctionTest.x\
 		DoubleIntegerTest.x \
