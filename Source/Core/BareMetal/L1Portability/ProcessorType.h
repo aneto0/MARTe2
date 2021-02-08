@@ -86,6 +86,12 @@ public:
      * @param[in] pt is the ProcessorType to copy in this.
      */
     ProcessorType& operator=(const ProcessorType &pt);
+    /**
+     * @brief Assign operator with integer.
+     * @param[in] cpuMask is the desired CPU mask.
+     * @deprecated this method should be avoided and instead using bitset type.
+     */
+    void operator=(const uint32 cpuMask);
 
     /**
      * @brief or operator with integer.
@@ -134,13 +140,13 @@ public:
 
      * @return the CPU mask as an uint64.
      */
-    uint64 GetProcessorMask() const;
+    BitSet GetProcessorMask() const;
 
     /**
      * @brief Rerurns the default CPU mask.
      * @return the default CPU mask.
      */
-    static uint64 GetDefaultCPUs();
+    static BitSet GetDefaultCPUs();
 
     /**
      * @brief Sets the default CPU mask.
