@@ -79,11 +79,12 @@ ProcessorType& ProcessorType::operator=(const ProcessorType &pt) {
     return *this;
 }
 
-void ProcessorType::operator=(const uint32 cpuMask) {
-    processorMask = cpuMask;
+ProcessorType& ProcessorType::operator=(const uint32 &cpuMask) {
+    this->processorMask = BitSet(cpuMask);
+    return *this;
 }
 
-void ProcessorType::operator|=(const BitSet cpuMask) {
+void ProcessorType::operator|=(const BitSet &cpuMask) {
     processorMask |= cpuMask;
 }
 
@@ -95,7 +96,7 @@ bool ProcessorType::operator==(const ProcessorType &pt) const {
     return processorMask == pt.processorMask;
 }
 
-bool ProcessorType::operator==(const BitSet mask) const {
+bool ProcessorType::operator==(const BitSet &mask) const {
     return processorMask == mask;
 }
 
@@ -103,7 +104,7 @@ bool ProcessorType::operator!=(const ProcessorType &pt) const {
     return processorMask != pt.processorMask;
 }
 
-bool ProcessorType::operator!=(const BitSet mask) const {
+bool ProcessorType::operator!=(const BitSet &mask) const {
     return processorMask != mask;
 }
 
@@ -117,6 +118,10 @@ ProcessorType::ProcessorType(const BitSet cpuMask) {
 
 ProcessorType::ProcessorType(const ProcessorType &pt) {
     processorMask = pt.processorMask;
+}
+
+ProcessorType::ProcessorType(const uint32 &cpuMask){
+    processorMask = cpuMask;
 }
 
 }
