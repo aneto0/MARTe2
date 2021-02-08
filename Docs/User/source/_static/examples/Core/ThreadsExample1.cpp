@@ -72,7 +72,7 @@ static void IncrementDecrementFunction(const void * const params) {
 int main(int argc, char *argv[]) {
     using namespace MARTe;
     SetErrorProcessFunction(&ErrorProcessExampleFunction);
-    ProcessorType::SetDefaultCPUs(0x1);
+    ProcessorType::SetDefaultCPUs(0x1u);
 
     int32 numberOfThreads = 10;
     int32 i = 0;
