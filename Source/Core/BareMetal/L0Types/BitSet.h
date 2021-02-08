@@ -26,12 +26,15 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "CompilerTypes.h"
-#include "TypeCharacteristics.h"
+
+#include <cstdlib>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+#include "CompilerTypes.h"
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -73,10 +76,8 @@ public:
     BitSet operator<<(const int& rhf);
     BitSet operator>>(const int& rhm);
 
-    bool operator==(const BitSet& rhm);
-    bool operator==(const uint32& rhm);
-    bool operator!=(const BitSet& rhm);
-    bool operator!=(const uint32& rhm);
+    bool operator==(const BitSet& rhm) const;
+    bool operator!=(const BitSet& rhm) const;
 
     BitSet & operator|=(const BitSet& rhm);
     BitSet & operator&=(const BitSet& rhm);
@@ -280,7 +281,7 @@ BitSet BitSet::operator>>(const int& rhb) {
 }
 
 
-bool BitSet::operator==(const BitSet& rhm){
+bool BitSet::operator==(const BitSet& rhm) const{
     uint32 common = this->bytesSize < rhm.bytesSize ? this->bytesSize : rhm.bytesSize;
     uint32 max_length = this->bytesSize > rhm.bytesSize ? this->bytesSize : rhm.bytesSize;
 
@@ -299,22 +300,11 @@ bool BitSet::operator==(const BitSet& rhm){
     return true;
 }
 
-bool BitSet::operator==(const uint32& rhm){
-    if (this->bytesSize == 0 && rhm != 0) return false;
-    if (this->bytes[0] != rhm) return false;
-    for (uint32 i = 1; i < this->bytesSize; i++) {
-        if (this->bytes[i] != 0) return false;
-    }
-    return true;
-}
 
-bool BitSet::operator!=(const BitSet& rhm){
+bool BitSet::operator!=(const BitSet& rhm) const{
     return !(*this == rhm);
 }
 
-bool BitSet::operator!=(const uint32& rhm){
-    return !(*this == rhm);
-}
 
 BitSet & BitSet::operator|=(const BitSet& rhm){
     uint32 msize = this->bytesSize < rhm.bytesSize ? this->bytesSize : rhm.bytesSize;
