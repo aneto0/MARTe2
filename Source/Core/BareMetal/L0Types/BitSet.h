@@ -177,15 +177,69 @@ public:
      */
     BitSet operator>>(const int& rhm);
 
+
+    /**
+     * @brief equality operator between two BitSets.
+     * @param[in] rhm right operand.
+     * @return true if the two bitsets are equivalents else false.
+     */
     bool operator==(const BitSet& rhm) const;
+
+    /**
+     * @brief equality operator between a BitSet and an uint32.
+     * @param[in] rhm right operand.
+     * @return true if the two values are equivalents else false.
+     */
     bool operator==(const uint32& rhm) const;
+
+    /**
+     * @brief equality operator between a BitSet and an uint64.
+     * @param[in] rhm right operand.
+     * @return true if the two values are equivalents else false.
+     */
     bool operator==(const uint64& rhm) const;
+
+    /**
+     * @brief disequality operator between two BitSets.
+     * @param[in] rhm right operand.
+     * @return false if the two bitsets are equivalents else true.
+     */
     bool operator!=(const BitSet& rhm) const;
+
+    /**
+     * @brief disequality operator between a BitSet and an uint32.
+     * @param[in] rhm right operand.
+     * @return false if the two values are equivalents else true.
+     */
     bool operator!=(const uint32& rhm) const;
+
+    /**
+     * @brief disequality operator between a BitSet and an uint64.
+     * @param[in] rhm right operand.
+     * @return false if the two values are equivalents else true.
+     */
     bool operator!=(const uint64& rhm) const;
 
+
+    /**
+     * @brief bitwise `or` assign operator.
+     * @param[in] rhm right operands.
+     * @return BitSet with updated value resulting from the bitwise `or` operator.
+     */
     BitSet & operator|=(const BitSet& rhm);
+    
+    /**
+     * @brief bitwise `and` assign operator.
+     * @param[in] rhm right operands.
+     * @return BitSet with updated value resulting from the bitwise `and` operator.
+     */
     BitSet & operator&=(const BitSet& rhm);
+    
+    /**
+     * @brief bitwise `xor` assign operator.
+     * @param[in] rhm right operands.
+     * @return BitSet with updated value resulting from the bitwise `xor` operator.
+     */
     BitSet & operator^=(const BitSet& rhm);
 
 private:
@@ -196,7 +250,15 @@ private:
      * @param[in] size number of elements in the array.
      */
     BitSet(uint32* bytes, uint32 size);
+    
+    /**
+     * @brief size of the uint32 array used to store the bitset.
+     */ 
     uint32 bytesSize;
+
+    /**
+     * @brief array of uint32 used to store the bitset.
+     */
     uint32 * bytes;
 
 };
