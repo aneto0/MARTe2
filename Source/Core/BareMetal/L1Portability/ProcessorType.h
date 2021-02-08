@@ -107,6 +107,12 @@ public:
      * @param[in] cpuMask is the CPU mask which will be in or with this.
      */
     void operator|=(const BitSet &cpuMask);
+    
+    /**
+     * @brief or operator with integer.
+     * @param[in] cpuMask is the CPU mask which will be in or with this.
+     */
+    void operator|=(const uint32 &cpuMask);
 
     /**
      * @brief or operator with another ProcessorType object.
@@ -129,6 +135,12 @@ public:
      */
     bool operator==(const BitSet &mask) const;
 
+    /**
+     * @brief Compares this CPU mask with an input mask.
+     * @param[in] mask is the mask which will be compared with this CPU mask.
+     * @return true if the masks are equal.
+     */
+    bool operator==(const uint32 &mask) const;
 
     /**
      * @brief Compares this object with another ProcessorType.
@@ -145,6 +157,13 @@ public:
      */
     bool operator!=(const BitSet &mask) const;
 
+    /**
+     * @brief Compares this CPU mask with an input mask.
+     * @param[in] mask is the mask which will be compared with this CPU mask.
+     * @return true if the masks are different.
+     */
+    bool operator!=(const uint32 &mask) const;
+    
     /**
      * @brief Returns the currently set CPU mask.
 

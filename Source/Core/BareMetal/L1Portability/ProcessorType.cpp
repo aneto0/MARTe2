@@ -88,6 +88,10 @@ void ProcessorType::operator|=(const BitSet &cpuMask) {
     processorMask |= cpuMask;
 }
 
+void ProcessorType::operator|=(const uint32 &cpuMask) {
+    processorMask |= cpuMask;
+}
+
 void ProcessorType::operator|=(const ProcessorType &pt) {
     processorMask |= pt.processorMask;
 }
@@ -100,11 +104,19 @@ bool ProcessorType::operator==(const BitSet &mask) const {
     return processorMask == mask;
 }
 
+bool ProcessorType::operator==(const uint32 &mask) const {
+    return processorMask == mask;
+}
+
 bool ProcessorType::operator!=(const ProcessorType &pt) const {
     return processorMask != pt.processorMask;
 }
 
 bool ProcessorType::operator!=(const BitSet &mask) const {
+    return processorMask != mask;
+}
+
+bool ProcessorType::operator!=(const uint32 &mask) const {
     return processorMask != mask;
 }
 
