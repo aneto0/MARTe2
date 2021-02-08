@@ -78,8 +78,10 @@ public:
 
     bool operator==(const BitSet& rhm) const;
     bool operator==(const uint32& rhm) const;
+    bool operator==(const uint64& rhm) const;
     bool operator!=(const BitSet& rhm) const;
     bool operator!=(const uint32& rhm) const;
+    bool operator!=(const uint64& rhm) const;
 
     BitSet & operator|=(const BitSet& rhm);
     BitSet & operator&=(const BitSet& rhm);
