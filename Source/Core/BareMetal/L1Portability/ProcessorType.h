@@ -65,6 +65,15 @@ public:
     ProcessorType(const ProcessorType &pt);
 
     /**
+     * @brief Constructor from integer.
+     *
+     * @details The default is to run the tasks all CPUs but the first.
+     * @param[in] cpuMask the CPU mask.
+     * @deprecated 
+     */
+    ProcessorType(const uint32 &cpuMask);
+
+    /**
      * @brief Set the processor mask.
      * @param[in] mask the CPU mask.
      */
@@ -91,13 +100,13 @@ public:
      * @param[in] cpuMask is the desired CPU mask.
      * @deprecated this method should be avoided and instead using bitset type.
      */
-    void operator=(const uint32 cpuMask);
+    ProcessorType& operator=(const uint32 &cpuMask);
 
     /**
      * @brief or operator with integer.
      * @param[in] cpuMask is the CPU mask which will be in or with this.
      */
-    void operator|=(const BitSet cpuMask);
+    void operator|=(const BitSet &cpuMask);
 
     /**
      * @brief or operator with another ProcessorType object.
@@ -118,7 +127,8 @@ public:
      * @param[in] mask is the mask which will be compared with this CPU mask.
      * @return true if the masks are equal.
      */
-    bool operator==(const BitSet mask) const;
+    bool operator==(const BitSet &mask) const;
+
 
     /**
      * @brief Compares this object with another ProcessorType.
@@ -133,7 +143,7 @@ public:
      * @param[in] mask is the mask which will be compared with this CPU mask.
      * @return true if the masks are different.
      */
-    bool operator!=(const BitSet mask) const;
+    bool operator!=(const BitSet &mask) const;
 
     /**
      * @brief Returns the currently set CPU mask.
