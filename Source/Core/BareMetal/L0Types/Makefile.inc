@@ -26,7 +26,8 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  HashFunction.x\
+OBJSX=  BitSet.x\
+        HashFunction.x\
         DjbHashFunction.x\
         Fnv1aHashFunction.x\
         LinkedListable.x \
