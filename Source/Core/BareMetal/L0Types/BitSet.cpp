@@ -171,7 +171,7 @@ BitSet BitSet::operator^(const BitSet& rhm){
 BitSet BitSet::operator~(){
     uint32 bytes[bytesSize];
     for (uint32 i = 0; i < bytesSize; i++) {
-        bytes[i] = ~bytes[i];
+        bytes[i] = ~this->bytes[i];
     }
     return BitSet(bytes, bytesSize);
 }
