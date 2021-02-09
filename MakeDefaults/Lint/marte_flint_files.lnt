@@ -14,6 +14,7 @@ BasicUDPSocket.cpp
 BinaryTree.h
 BitBoolean.h
 BitRange.h
+BitSet.cpp
 BitSetToInteger.h
 BrokerI.cpp
 BufferedStreamGenerator.h
