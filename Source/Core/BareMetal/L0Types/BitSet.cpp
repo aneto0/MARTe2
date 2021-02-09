@@ -26,16 +26,16 @@ BitSet::BitSet(uint64 value) {
 BitSet::BitSet(const BitSet &other) {
     bytes = new uint32[other.bytesSize];
     bytesSize = other.bytesSize;
-    for (uint32 i = 0; i < other.bytesSize; i++) {
+    for (uint32 i = 0; i < bytesSize; i++) {
         bytes[i] = other.bytes[i];
     }
 }
 
 BitSet::BitSet(uint32 *bytes, uint32 size){
     bytesSize = size;
-    bytes = new uint32[size];
+    this->bytes = new uint32[size];
     for (uint32 i = 0; i < size; i++) {
-        bytes[i] = bytes[i];
+        this->bytes[i] = bytes[i];
     }
 }
 
