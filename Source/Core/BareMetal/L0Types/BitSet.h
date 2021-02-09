@@ -254,7 +254,7 @@ private:
      * @brief change bytes array size.
      * @param[in] size new size.
      */
-    void resize(uint32 size);
+    void resize(const uint32 size);
 
     /**
      * @brief size of the uint32 array used to store the bitset.
