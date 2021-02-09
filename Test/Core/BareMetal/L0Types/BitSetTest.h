@@ -47,6 +47,66 @@ class BitSetTest {
 
 public:
 
+/**
+ * @brief Test the constructors.
+ */
+bool TestConstructors();
+
+/**
+ * @brief Test the Set and Bit methods.
+ */
+bool TestSetBitMethods();
+
+/**
+ * @brief Thest the `int` cast operators.
+ */
+bool TestIntCastOperator();
+
+/**
+ * @brief Test the assing `=` operators.
+ */
+bool TestAssingOperator();
+
+/**
+ * @brief Test the bitwise `or` operators.
+ */
+bool TestOrOperator();
+
+/**
+ * @brief Test the bitwise `and` operators.
+ */
+bool TestAndOperator();
+
+/**
+ * @brief Test the bitwise `xor` operators.
+ */
+bool TestXorOperator();
+
+/**
+ * @brief Test the bitwise `not` operators.
+ */
+bool TestNotOperator();
+
+/**
+ * @brief Test boolean equality operators.
+ */
+bool TestEquality();
+
+/**
+ * @brief Test boolean disequality operators.
+ */
+bool TestDisequality();
+
+/**
+ * @brief Test left shift operator.
+ */
+bool TestLeftShift();
+
+/**
+ * @brief Test right shift operator.
+ */
+bool TestRightShift();
+
 };
 
 /*---------------------------------------------------------------------------*/
