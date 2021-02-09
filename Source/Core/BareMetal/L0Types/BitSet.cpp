@@ -136,55 +136,55 @@ BitSet longer(BitSet a, BitSet b){
 BitSet BitSet::operator&(const BitSet& rhm){
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize);// ? bytesSize : rhm.bytesSize;
-    uint32 bytes[size];
+    uint32 new_bytes[size];
     for (uint32 i = 0u; i < msize; i++) {
-        bytes[i] = this->bytes[i] & rhm.bytes[i];
+        new_bytes[i] = bytes[i] & rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
-        bytes[i] = 0u;
+        new_bytes[i] = 0u;
     }
 
-    return BitSet(bytes, size);
+    return BitSet(new_bytes, size);
 }
 
 BitSet BitSet::operator|(const BitSet& rhm){
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
-    uint32 bytes[size];
+    uint32 new_bytes[size];
     for (uint32 i = 0u; i < msize; i++) {
-        bytes[i] = this->bytes[i] | rhm.bytes[i];
+        new_bytes[i] = bytes[i] | rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
-        bytes[i] = longer(*this, rhm).bytes[i];
+        new_bytes[i] = longer(*this, rhm).bytes[i];
     }
-    return BitSet(bytes, size);
+    return BitSet(new_bytes, size);
 }
     
 BitSet BitSet::operator^(const BitSet& rhm){
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
-    uint32 bytes[size];
+    uint32 new_bytes[size];
     for (uint32 i = 0u; i < msize; i++) {
-        bytes[i] = this->bytes[i] ^ rhm.bytes[i];
+        new_bytes[i] = bytes[i] ^ rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
-        bytes[i] = longer(*this, rhm).bytes[i];
+        new_bytes[i] = longer(*this, rhm).bytes[i];
     }
-    return BitSet(bytes, size);
+    return BitSet(new_bytes, size);
 }
 
 BitSet BitSet::operator~(){
-    uint32 bytes[bytesSize];
+    uint32 new_bytes[bytesSize];
     for (uint32 i = 0u; i < bytesSize; i++) {
-        bytes[i] = ~this->bytes[i];
+        new_bytes[i] = ~bytes[i];
     }
-    return BitSet(bytes, bytesSize);
+    return BitSet(new_bytes, bytesSize);
 }
 
 BitSet BitSet::operator<<(const uint32& rhb){
     uint32 new_size = bytesSize + rhb / 32u;
-    uint32 bytes[new_size];
-    BitSet bs(bytes, new_size);
+    uint32 new_bytes[new_size];
+    BitSet bs(new_bytes, new_size);
     for (uint32 i = 0u; i < 32u * bytesSize; i++) {
         bs.Set(i+rhb, Bit(i));
     }
@@ -192,8 +192,8 @@ BitSet BitSet::operator<<(const uint32& rhb){
 }
 
 BitSet BitSet::operator>>(const uint32& rhb) {
-    uint32 bytes[bytesSize];
-    BitSet bs(bytes, bytesSize);
+    uint32 new_bytes[bytesSize];
+    BitSet bs(new_bytes, bytesSize);
     for (uint32 i = rhb; i < 32u * bytesSize; i++) {
         bs.Set(i-rhb, Bit(i));
     }
@@ -263,30 +263,30 @@ bool BitSet::operator!=(const uint64& rhm) const{
 BitSet & BitSet::operator|=(const BitSet& rhm){
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 * bytes = new uint32[size];
+    uint32 * new_bytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
-        bytes[i] = this->bytes[i] | rhm.bytes[i];
+        new_bytes[i] = bytes[i] | rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
-        bytes[i] = longer(*this, rhm).bytes[i];
+        new_bytes[i] = longer(*this, rhm).bytes[i];
     }
-    delete[] this->bytes;
-    this->bytes = bytes;
+    delete[] bytes;
+    bytes = new_bytes;
     bytesSize = size;
     return *this;
 }
 BitSet & BitSet::operator&=(const BitSet& rhm){
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 *bytes = new uint32[size];
+    uint32 *new_bytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
-        bytes[i] = this->bytes[i] & rhm.bytes[i];
+        new_bytes[i] = bytes[i] & rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
-        bytes[i] = 0u;
+        new_bytes[i] = 0u;
     }
-    delete[] this->bytes;
-    this->bytes = bytes;
+    delete[] bytes;
+    bytes = new_bytes;
     bytesSize = size;
     return *this;
 }
@@ -294,15 +294,15 @@ BitSet & BitSet::operator&=(const BitSet& rhm){
 BitSet & BitSet::operator^=(const BitSet& rhm) {
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 *bytes = new uint32[size];
+    uint32 *new_bytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
-        bytes[i] = this->bytes[i] ^ rhm.bytes[i];
+        new_bytes[i] = bytes[i] ^ rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
-        bytes[i] = longer(*this, rhm).bytes[i];
+        new_bytes[i] = longer(*this, rhm).bytes[i];
     }
-    delete[] this->bytes;
-    this->bytes = bytes;
+    delete[] bytes;
+    bytes = new_bytes;
     bytesSize = size;
     return *this;
 }
