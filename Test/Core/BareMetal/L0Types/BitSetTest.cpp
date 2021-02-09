@@ -30,12 +30,16 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BitSetTest.h"
-#include <cstdlib>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-#define LOG_ERROR(X) printf("  [BitSetTest] ERROR: %s\n", #X)
+#if LOCAL_TEST
+#include <cstdlib>
+#define LOG_ERROR(X) printf("[BitSetTest] ERROR: %s\n", #X)
 #define ASSERT(X) if (!(X)) { LOG_ERROR(X); return false;}
+#else
+#define ASSERT(X) if (!(X)) return false;
+#endif
 
 using namespace MARTe;
 
@@ -187,21 +191,68 @@ bool BitSetTest::TestNotOperator(){
     ASSERT(bs_b.GetByteSize() == 1);
     ASSERT(bs_b != bs_a);
     ASSERT(check(bs_b, (uint32)0xFFFFFFFA));
+
+    bs_a.Set(32, true);
+    ASSERT(check(bs_a, (uint64)0x100000005));
+    bs_b = ~bs_a;
+    ASSERT(bs_b.GetByteSize() == 2);
+    ASSERT(check(bs_b, (uint64)0xFFFFFFFEFFFFFFFA));
     return true;
 }
 
 bool BitSetTest::TestEquality(){
+    BitSet bs_a(0b101u);
+    ASSERT(bs_a == 0b101u);
+
+    BitSet bs_b(0b101u);
+    ASSERT(bs_a == bs_b);
+
+    bs_b.Set(32, 1);
+    bs_b.Set(32, 0);
+    ASSERT(bs_b.GetByteSize() == 2);
+    ASSERT(bs_a == bs_b);
+    
+    ASSERT(bs_a == (uint64)5);
     return true;
 }
 
 bool BitSetTest::TestDisequality(){
+    BitSet bs_a(0b101u);
+    ASSERT(bs_a != 0b111u);
+
+    BitSet bs_b(0b111u);
+    ASSERT(bs_a != bs_b);
+
+    bs_b.Set(1, 0);
+    bs_b.Set(32, 1);
+    ASSERT(bs_b.GetByteSize() == 2);
+    ASSERT(bs_a != bs_b);
+    
+    ASSERT(bs_a != (uint64)7);
     return true;
 }
 
 bool BitSetTest::TestLeftShift(){
+    BitSet bs(0b1u);
+    ASSERT(bs == 0b1u);
+    ASSERT(bs.GetByteSize() == 1);
+    bs = bs << 1;
+    ASSERT(bs.GetByteSize() == 2);
+    ASSERT(bs == 0b10u);
+    BitSet bs_b(0b10u);
+    ASSERT(bs == bs_b);
     return true;
 }
 
 bool BitSetTest::TestRightShift(){
+    BitSet bs;
+    bs.Set(1, 1);
+    ASSERT(bs == 2u);
+    bs.Set(0, 1);
+    ASSERT(bs == 3u);
+    bs = bs >> 1;
+    ASSERT(bs.Bit(0) && !bs.Bit(1) && !bs.Bit(2));
+    bs = bs << 1;
+    ASSERT(!bs.Bit(0) && bs.Bit(1) && !bs.Bit(2));
     return true;
 }
