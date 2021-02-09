@@ -46,6 +46,20 @@ BitSet::~BitSet(){
     delete[] bytes;
 }
 
+void BitSet::resize(const uint32 size) {
+    uint32 * new_bytes = new uint32[size];
+    uint32 common_size = MIN(size, bytesSize);
+    for (uint32 i = 0u; i < common_size; i++) {
+        new_bytes[i] = bytes[i];
+    }
+    for (uint32 i = common_size; i < size; i++) {
+        new_bytes[i] = 0u;
+    }
+    delete[] bytes;
+    bytes = new_bytes;
+    bytesSize = size;
+}
+
 uint32 BitSet::GetByteSize() {
     return bytesSize;
 }
@@ -214,16 +228,20 @@ bool BitSet::operator==(const BitSet& rhm) const{
 }
 
 bool BitSet::operator==(const uint32& rhm) const {
+    bool result = true;
     if (bytesSize == 0u) {
-        return rhm == 0u;
-    }
-    if (bytes[0] != rhm) return false;
-    for (uint32 i = 1u; i < bytesSize; i++) {
-        if (bytes[i] != 0u) {
-            return false;
+        result = rhm == 0u;
+    } else if (bytes[0] != rhm) {
+        result = false;
+    } else {
+        for (uint32 i = 1u; i < bytesSize; i++) {
+            if (bytes[i] != 0u) {
+                result = false;
+                break;
+            }
         }
     }
-    return true;
+    return result;
 }
 
 bool BitSet::operator==(const uint64& rhm) const {
@@ -298,20 +316,6 @@ BitSet & BitSet::operator^=(const BitSet& rhm) {
     bytes = new_bytes;
     bytesSize = size;
     return *this;
-}
-
-void BitSet::resize(uint32 size) {
-    uint32 * new_bytes = new uint32[size];
-    uint32 common_size = MIN(size, bytesSize);
-    for (uint32 i = 0u; i < common_size; i++) {
-        new_bytes[i] = bytes[i];
-    }
-    for (uint32 i = common_size; i < size; i++) {
-        new_bytes[i] = 0u;
-    }
-    delete[] bytes;
-    bytes = new_bytes;
-    bytesSize = size;
 }
 
 }
