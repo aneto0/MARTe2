@@ -249,6 +249,7 @@ private:
      * @param[in] bytes array to be copied.
      * @param[in] size number of elements in the array.
      */
+    /*lint -e1704 */
     BitSet(uint32* bytes, uint32 size);
     
     /**
