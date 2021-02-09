@@ -27,8 +27,6 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <cstdlib>
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -251,7 +249,13 @@ private:
      */
     /*lint -e1704 */
     BitSet(uint32* bytes, uint32 size);
-    
+
+    /**
+     * @brief change bytes array size.
+     * @param[in] size new size.
+     */
+    void resize(uint32 size);
+
     /**
      * @brief size of the uint32 array used to store the bitset.
      */ 
