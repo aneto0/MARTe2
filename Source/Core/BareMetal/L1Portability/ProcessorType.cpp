@@ -65,7 +65,7 @@ void ProcessorType::SetMask(const BitSet mask) {
 void ProcessorType::AddCPU(const uint32 cpuNumber) {
     // NOTE no test to ensure that cpuNumber is smaller than the maximum size
     // of the bitmask.
-    processorMask.Set(cpuNumber - 1u, 1);
+    processorMask.Set(cpuNumber - 1u, true);
 }
 
 void ProcessorType::operator=(const BitSet cpuMask) {
