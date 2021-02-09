@@ -236,7 +236,7 @@ bool BitSetTest::TestLeftShift(){
     BitSet bs(0b1u);
     ASSERT(bs == 0b1u);
     ASSERT(bs.GetByteSize() == 1);
-    bs = bs << 1;
+    bs = bs << 1u;
     ASSERT(bs.GetByteSize() == 2);
     ASSERT(bs == 0b10u);
     BitSet bs_b(0b10u);
@@ -250,9 +250,9 @@ bool BitSetTest::TestRightShift(){
     ASSERT(bs == 2u);
     bs.Set(0, 1);
     ASSERT(bs == 3u);
-    bs = bs >> 1;
+    bs = bs >> 1u;
     ASSERT(bs.Bit(0) && !bs.Bit(1) && !bs.Bit(2));
-    bs = bs << 1;
+    bs = bs << 1u;
     ASSERT(!bs.Bit(0) && bs.Bit(1) && !bs.Bit(2));
     return true;
 }
