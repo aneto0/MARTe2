@@ -69,7 +69,7 @@ bool BitSet::Bit(uint32 index) {
     if (byte_index < bytesSize) {
         uint32 local_index = index - (32u * byte_index);
         uint32 byte =  bytes[byte_index];
-        return byte & ((uint32) 1 << local_index);
+        return byte & (1u << local_index);
     }
     return false;
 }
@@ -81,9 +81,9 @@ void BitSet::Set(uint32 index, bool value) {
     }
     uint32 local_index = index - (32u * byte_index);
     if (value) {
-        bytes[byte_index] |= 1u << local_index;
+        if (byte_index < bytesSize) bytes[byte_index] |= 1u << local_index;
     } else {
-        bytes[byte_index] &= ~ ((uint32)1 << local_index);
+        if (byte_index < bytesSize) bytes[byte_index] &= ~ (1u << local_index);
     }
 }
 
@@ -252,7 +252,7 @@ bool BitSet::operator==(const uint64& rhm) const {
     if (bytes[0] != (rhm & 0xffffffffu)) return false;
     if (bytes[1] != rhm >> 32) return false;
     for (uint32 i = 2u; i < bytesSize; i++) {
-        if (bytes[i] != 0u) {
+        if (i < bytesSize && bytes[i] != 0u) {
             return false;
         }
     }
