@@ -302,10 +302,11 @@ BitSet & BitSet::operator^=(const BitSet& rhm) {
 
 void BitSet::resize(uint32 size) {
     uint32 * new_bytes = new uint32[size];
-    for (uint32 i = 0u; i < MIN(size, bytesSize); i++) {
+    uint32 common_size = MIN(size, bytesSize);
+    for (uint32 i = 0u; i < common_size; i++) {
         new_bytes[i] = bytes[i];
     }
-    for (uint32 i = bytesSize; i < size; i++) {
+    for (uint32 i = common_size; i < size; i++) {
         new_bytes[i] = 0u;
     }
     delete[] bytes;
