@@ -8,25 +8,25 @@ namespace MARTe{
 
 BitSet::BitSet() {
     bytesSize = 1u;
-    bytes = new uint32[1u];
+    bytes = (uint32*)malloc(sizeof(uint32));
     bytes[0u] = 0u;
 }
 
 BitSet::BitSet(uint32 value){
     bytesSize = 1u;
-    bytes = new uint32[1u];
+    bytes = (uint32*)malloc(sizeof(uint32));
     bytes[0u] = value;
 }
 
 BitSet::BitSet(uint64 value) {
     bytesSize = 2u;
-    bytes = new uint32[2u];
+    bytes = (uint32*)malloc(sizeof(uint32) * 2u);
     bytes[0u] = value;
     bytes[1u] = value >> 32u;
 }
 
 BitSet::BitSet(const BitSet &other) {
-    bytes = new uint32[other.bytesSize];
+    bytes = (uint32*)malloc(sizeof(uint32) * other.bytesSize);
     bytesSize = other.bytesSize;
     for (uint32 i = 0u; i < bytesSize; i++) {
         bytes[i] = other.bytes[i];
@@ -35,7 +35,7 @@ BitSet::BitSet(const BitSet &other) {
 
 BitSet::BitSet(uint32 *bytes, uint32 size){
     bytesSize = size;
-    this->bytes = new uint32[size];
+    this->bytes = (uint32*)malloc(sizeof(uint32) * size);
     for (uint32 i = 0u; i < size; i++) {
         this->bytes[i] = bytes[i];
     }
@@ -43,7 +43,7 @@ BitSet::BitSet(uint32 *bytes, uint32 size){
 
 
 BitSet::~BitSet(){
-    delete[] bytes;
+    free(bytes);
 }
 
 uint32 BitSet::GetByteSize() {
@@ -81,9 +81,9 @@ void BitSet::Set(uint32 index, bool value) {
 }
 
 BitSet& BitSet::operator=(const BitSet& other) {
-    if (bytes != NULL) delete[] bytes;
+    if (bytes != NULL) free(bytes);
     bytesSize = other.bytesSize;
-    bytes = new uint32[other.bytesSize];
+    bytes = (uint32*)malloc(sizeof(uint32)*other.bytesSize);
     
     for (uint32 i = 0u; i < other.bytesSize; i++) {
         bytes[i] = other.bytes[i];
@@ -92,17 +92,17 @@ BitSet& BitSet::operator=(const BitSet& other) {
 }
 
 BitSet& BitSet::operator=(const uint32& other) {
-    if (bytes != NULL) delete[] bytes;
+    if (bytes != NULL) free(bytes);
     bytesSize = 1u;
-    bytes = new uint32[1u];
+    bytes = (uint32*)malloc(sizeof(uint32));
     bytes[0] = other;
     return *this;
 }
 
 BitSet& BitSet::operator=(const uint64& other) {
-    if (bytes != NULL) delete[] bytes;
+    if (bytes != NULL) free(bytes);
     bytesSize = 2u;
-    bytes = new uint32[2u];
+    bytes = (uint32*)malloc(sizeof(uint32) * 2u);
     bytes[0] = other;
     bytes[1] = other >> 32u;
     return *this;
@@ -261,47 +261,50 @@ bool BitSet::operator!=(const uint64& rhm) const{
 }
 
 BitSet & BitSet::operator|=(const BitSet& rhm){
+    if (this->bytes == NULL) throw "BitSet not initialized";
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 * new_bytes = new uint32[size];
+    uint32 * new_bytes = (uint32*)malloc(sizeof(uint32) * size);
     for (uint32 i = 0u; i < msize; i++) {
         new_bytes[i] = bytes[i] | rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
         new_bytes[i] = longer(*this, rhm).bytes[i];
     }
-    delete[] bytes;
+    free(bytes);
     bytes = new_bytes;
     bytesSize = size;
     return *this;
 }
 BitSet & BitSet::operator&=(const BitSet& rhm){
+    if (this->bytes == NULL) throw "BitSet not initialized";
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 *new_bytes = new uint32[size];
+    uint32 *new_bytes = (uint32*)malloc(sizeof(uint32) * size);
     for (uint32 i = 0u; i < msize; i++) {
         new_bytes[i] = bytes[i] & rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
         new_bytes[i] = 0u;
     }
-    delete[] bytes;
+    free(bytes);
     bytes = new_bytes;
     bytesSize = size;
     return *this;
 }
 
 BitSet & BitSet::operator^=(const BitSet& rhm) {
+    if (this->bytes == NULL) throw "BitSet not initialized";
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 *new_bytes = new uint32[size];
+    uint32 *new_bytes = (uint32*)malloc(sizeof(uint32) * size);
     for (uint32 i = 0u; i < msize; i++) {
         new_bytes[i] = bytes[i] ^ rhm.bytes[i];
     }      
     for (uint32 i = msize; i < size; i++) {
         new_bytes[i] = longer(*this, rhm).bytes[i];
     }
-    delete[] bytes;
+    free(bytes);
     bytes = new_bytes;
     bytesSize = size;
     return *this;
