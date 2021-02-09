@@ -1,6 +1,8 @@
 
 #include "BitSet.h"
 
+#define MAX(a, b) (a > b) ? a : b
+#define MIN(a, b) (a < b) ? a : b
 
 namespace MARTe{
 
@@ -132,8 +134,8 @@ BitSet longer(BitSet a, BitSet b){
 }
 
 BitSet BitSet::operator&(const BitSet& rhm){
-    uint32 msize = bytesSize < rhm.bytesSize ? bytesSize : rhm.bytesSize;
-    uint32 size = bytesSize > rhm.bytesSize ? bytesSize : rhm.bytesSize;
+    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = MAX(bytesSize, rhm.bytesSize);// ? bytesSize : rhm.bytesSize;
     uint32 bytes[size];
     for (uint32 i = 0u; i < msize; i++) {
         bytes[i] = this->bytes[i] & rhm.bytes[i];
@@ -146,8 +148,8 @@ BitSet BitSet::operator&(const BitSet& rhm){
 }
 
 BitSet BitSet::operator|(const BitSet& rhm){
-    uint32 msize = bytesSize < rhm.bytesSize ? bytesSize : rhm.bytesSize;
-    uint32 size = bytesSize > rhm.bytesSize ? bytesSize : rhm.bytesSize;
+    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
     uint32 bytes[size];
     for (uint32 i = 0u; i < msize; i++) {
         bytes[i] = this->bytes[i] | rhm.bytes[i];
@@ -159,8 +161,8 @@ BitSet BitSet::operator|(const BitSet& rhm){
 }
     
 BitSet BitSet::operator^(const BitSet& rhm){
-    uint32 msize = bytesSize < rhm.bytesSize ? bytesSize : rhm.bytesSize;
-    uint32 size = bytesSize > rhm.bytesSize ? bytesSize : rhm.bytesSize;
+    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
     uint32 bytes[size];
     for (uint32 i = 0u; i < msize; i++) {
         bytes[i] = this->bytes[i] ^ rhm.bytes[i];
@@ -200,8 +202,8 @@ BitSet BitSet::operator>>(const uint32& rhb) {
 
 
 bool BitSet::operator==(const BitSet& rhm) const{
-    uint32 common = bytesSize < rhm.bytesSize ? bytesSize : rhm.bytesSize;
-    uint32 max_length = bytesSize > rhm.bytesSize ? bytesSize : rhm.bytesSize;
+    uint32 common = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 max_length = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
 
     for (uint32 i = 0u; i < common; i++){
         if (rhm.bytes[i] != bytes[i]){
@@ -259,8 +261,8 @@ bool BitSet::operator!=(const uint64& rhm) const{
 }
 
 BitSet & BitSet::operator|=(const BitSet& rhm){
-    uint32 msize = bytesSize < rhm.bytesSize ? bytesSize : rhm.bytesSize;
-    uint32 size = bytesSize > rhm.bytesSize ? bytesSize : rhm.bytesSize;
+    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 * bytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         bytes[i] = this->bytes[i] | rhm.bytes[i];
@@ -274,8 +276,8 @@ BitSet & BitSet::operator|=(const BitSet& rhm){
     return *this;
 }
 BitSet & BitSet::operator&=(const BitSet& rhm){
-    uint32 msize = bytesSize < rhm.bytesSize ? bytesSize : rhm.bytesSize;
-    uint32 size = bytesSize > rhm.bytesSize ? bytesSize : rhm.bytesSize;
+    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 *bytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         bytes[i] = this->bytes[i] & rhm.bytes[i];
@@ -290,8 +292,8 @@ BitSet & BitSet::operator&=(const BitSet& rhm){
 }
 
 BitSet & BitSet::operator^=(const BitSet& rhm) {
-    uint32 msize = bytesSize < rhm.bytesSize ? bytesSize : rhm.bytesSize;
-    uint32 size = bytesSize > rhm.bytesSize ? bytesSize : rhm.bytesSize;
+    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 *bytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         bytes[i] = this->bytes[i] ^ rhm.bytes[i];
