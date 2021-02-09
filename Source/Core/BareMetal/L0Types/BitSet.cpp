@@ -5,22 +5,22 @@
 namespace MARTe{
 
 BitSet::BitSet() {
-    bytesSize = 1;
-    bytes = new uint32[1];
-    bytes[0] = 0;
+    bytesSize = 1u;
+    bytes = new uint32[1u];
+    bytes[0u] = 0u;
 }
 
 BitSet::BitSet(uint32 value){
-    bytesSize = 1;
-    bytes = new uint32[1];
-    bytes[0] = value;
+    bytesSize = 1u;
+    bytes = new uint32[1u];
+    bytes[0u] = value;
 }
 
 BitSet::BitSet(uint64 value) {
-    bytesSize = 2;
-    bytes = new uint32[2];
-    bytes[0] = value;
-    bytes[1] = value >> 32;
+    bytesSize = 2u;
+    bytes = new uint32[2u];
+    bytes[0u] = value;
+    bytes[1u] = value >> 32u;
 }
 
 BitSet::BitSet(const BitSet &other) {
@@ -49,9 +49,9 @@ uint32 BitSet::GetByteSize() {
 }
 
 bool BitSet::Bit(uint32 index) {
-    uint32 byte_index = index / 32;
+    uint32 byte_index = index / 32u;
     if (byte_index < bytesSize) {
-        uint32 local_index = index - (32 * byte_index);
+        uint32 local_index = index - (32u * byte_index);
         uint32 byte =  bytes[byte_index];
         return byte & ((uint32) 1 << local_index);
     }
@@ -59,7 +59,7 @@ bool BitSet::Bit(uint32 index) {
 }
 
 void BitSet::Set(uint32 index, bool value) {
-    uint32 byte_index = index / 32;
+    uint32 byte_index = index / 32u;
     if (byte_index >= bytesSize) {
         bytes = (uint32*)realloc(bytes, sizeof(uint32) * (byte_index + 1));
         if (bytes == NULL) {   
@@ -68,9 +68,9 @@ void BitSet::Set(uint32 index, bool value) {
         for (uint32 i = bytesSize; i <= byte_index; i++) {
             bytes[i] = 0u;
         }
-        bytesSize = byte_index + 1;
+        bytesSize = byte_index + 1u;
     }
-    uint32 local_index = index - (32 * byte_index);
+    uint32 local_index = index - (32u * byte_index);
     if (value) {
         bytes[byte_index] |= 1u << local_index;
     } else {
@@ -92,7 +92,7 @@ BitSet& BitSet::operator=(const BitSet& other) {
 BitSet& BitSet::operator=(const uint32& other) {
     if (bytes != NULL) delete[] bytes;
     bytesSize = 1u;
-    bytes = new uint32[1];
+    bytes = new uint32[1u];
     bytes[0] = other;
     return *this;
 }
@@ -100,26 +100,26 @@ BitSet& BitSet::operator=(const uint32& other) {
 BitSet& BitSet::operator=(const uint64& other) {
     if (bytes != NULL) delete[] bytes;
     bytesSize = 2u;
-    bytes = new uint32[2];
+    bytes = new uint32[2u];
     bytes[0] = other;
-    bytes[1] = other >> 32;
+    bytes[1] = other >> 32u;
     return *this;
 }
 
 BitSet::operator uint32() const{
     if (bytesSize) {
-        return bytes[0];
+        return bytes[0u];
     }
-    return 0;
+    return 0u;
 }
 
 BitSet::operator uint64() const{
     uint64 v = 0u;
     if (bytesSize){
-        v = bytes[0];
+        v = bytes[0u];
     }
     if (bytesSize == 2u) {
-        v += ((uint64)bytes[1]) << 32;
+        v += ((uint64)bytes[1u]) << 32u;
     }
     return v;
 }
@@ -180,10 +180,10 @@ BitSet BitSet::operator~(){
 }
 
 BitSet BitSet::operator<<(const int& rhb){
-    uint32 new_size = bytesSize + rhb/ 32;
+    uint32 new_size = bytesSize + rhb / 32u;
     uint32 bytes[new_size];
     BitSet bs(bytes, new_size);
-    for (uint32 i = 0u; i < 32 * bytesSize; i++) {
+    for (uint32 i = 0u; i < 32u * bytesSize; i++) {
         bs.Set(i+rhb, Bit(i));
     }
     return bs;
@@ -192,7 +192,7 @@ BitSet BitSet::operator<<(const int& rhb){
 BitSet BitSet::operator>>(const int& rhb) {
     uint32 bytes[bytesSize];
     BitSet bs(bytes, bytesSize);
-    for (uint32 i = rhb; i < 32 * bytesSize; i++) {
+    for (uint32 i = rhb; i < 32u * bytesSize; i++) {
         bs.Set(i-rhb, Bit(i));
     }
     return bs;
