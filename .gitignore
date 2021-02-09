@@ -17,3 +17,5 @@ dependsRaw.*
 *.a
 GTestDirectoryTest/*
 __pycache__
+
+.vscode
