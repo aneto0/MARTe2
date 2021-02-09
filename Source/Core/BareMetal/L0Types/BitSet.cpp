@@ -63,14 +63,7 @@ bool BitSet::Bit(uint32 index) {
 void BitSet::Set(uint32 index, bool value) {
     uint32 byte_index = index / 32u;
     if (byte_index >= bytesSize) {
-        bytes = (uint32*)realloc(bytes, sizeof(uint32) * (byte_index + 1));
-        if (bytes == NULL) {   
-            throw "bytes array is null";
-        }
-        for (uint32 i = bytesSize; i <= byte_index; i++) {
-            bytes[i] = 0u;
-        }
-        bytesSize = byte_index + 1u;
+        resize(byte_index + 1u);
     }
     uint32 local_index = index - (32u * byte_index);
     if (value) {
@@ -305,6 +298,19 @@ BitSet & BitSet::operator^=(const BitSet& rhm) {
     bytes = new_bytes;
     bytesSize = size;
     return *this;
+}
+
+void BitSet::resize(uint32 size) {
+    uint32 * new_bytes = new uint32[size];
+    for (uint32 i = 0u; i < MIN(size, bytesSize); i++) {
+        new_bytes[i] = bytes[i];
+    }
+    for (uint32 i = bytesSize; i < size; i++) {
+        new_bytes[i] = 0u;
+    }
+    delete[] bytes;
+    bytes = new_bytes;
+    bytesSize = size;
 }
 
 }
