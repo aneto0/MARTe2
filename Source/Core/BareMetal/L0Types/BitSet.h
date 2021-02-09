@@ -168,14 +168,14 @@ public:
      * @param[in] rhf number of bits to be shifted.
      * @return left shifted bitset.
      */
-    BitSet operator<<(const int& rhf);
+    BitSet operator<<(const uint32& rhf);
     
     /**
      * @brief right bit shift operator.
      * @param[in] rhf number of bits to be shifted.
      * @return right shifted bitset. 
      */
-    BitSet operator>>(const int& rhm);
+    BitSet operator>>(const uint32& rhm);
 
 
     /**

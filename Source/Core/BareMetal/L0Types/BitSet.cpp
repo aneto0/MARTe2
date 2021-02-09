@@ -179,7 +179,7 @@ BitSet BitSet::operator~(){
     return BitSet(bytes, bytesSize);
 }
 
-BitSet BitSet::operator<<(const int& rhb){
+BitSet BitSet::operator<<(const uint32& rhb){
     uint32 new_size = bytesSize + rhb / 32u;
     uint32 bytes[new_size];
     BitSet bs(bytes, new_size);
@@ -189,7 +189,7 @@ BitSet BitSet::operator<<(const int& rhb){
     return bs;
 }
 
-BitSet BitSet::operator>>(const int& rhb) {
+BitSet BitSet::operator>>(const uint32& rhb) {
     uint32 bytes[bytesSize];
     BitSet bs(bytes, bytesSize);
     for (uint32 i = rhb; i < 32u * bytesSize; i++) {
