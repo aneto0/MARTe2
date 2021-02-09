@@ -62,6 +62,9 @@ void BitSet::Set(uint32 index, bool value) {
     uint32 byte_index = index / 32;
     if (byte_index >= bytesSize) {
         bytes = (uint32*)realloc(bytes, sizeof(uint32) * (byte_index + 1));
+        if (bytes == NULL) {   
+            throw "bytes array is null";
+        }
         for (uint32 i = bytesSize; i <= byte_index; i++) {
             bytes[i] = 0;
         }
