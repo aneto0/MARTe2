@@ -88,12 +88,14 @@ void BitSet::Set(const uint32 index, const bool value) {
 }
 
 BitSet& BitSet::operator=(const BitSet& other) {
-    if (bytes != NULL) delete[] bytes;
-    bytesSize = other.bytesSize;
-    bytes = new uint32[other.bytesSize];
-    
-    for (uint32 i = 0u; i < other.bytesSize; i++) {
-        bytes[i] = other.bytes[i];
+    if (&other != this) {
+        if (bytes != NULL) delete[] bytes;
+        bytesSize = other.bytesSize;
+        bytes = new uint32[other.bytesSize];
+        
+        for (uint32 i = 0u; i < other.bytesSize; i++) {
+            bytes[i] = other.bytes[i];
+        }
     }
     return *this;
 }
