@@ -215,7 +215,8 @@ BitSet BitSet::operator<<(const uint32& rhb) const{
     for (uint32 i = 0u; i < new_size; i++){
         new_bytes[i] = 0u;
     }
-    for (uint32 i = 0u; i < 32u * bytesSize; i++) {
+    uint32 bitsize = 32u * bytesSize;
+    for (uint32 i = 0u; i < bitsize; i++) {
         if (Bit(i)) {
             uint32 byte_ind = (i+rhb) / 32;
             uint32 bit_ind = (i+rhb) - (byte_ind * 32);
@@ -231,10 +232,11 @@ BitSet BitSet::operator<<(const uint32& rhb) const{
 /*lint -e771 new_bytes is correctly initialized*/
 BitSet BitSet::operator>>(const uint32& rhb) const{
     uint32 new_bytes[bytesSize];
+    uint32 bitsize = 32u * bytesSize;
     for (uint32 i = 0u; i < bytesSize; i++){
         new_bytes[i] = 0u;
     }
-    for (uint32 i = rhb; i < 32u * bytesSize; i++) {
+    for (uint32 i = rhb; i < bitsize; i++) {
         if (Bit(i)) {
             uint32 byte_ind = (i-rhb) / 32;
             uint32 bit_ind = (i-rhb) - (byte_ind * 32);
@@ -288,9 +290,9 @@ bool BitSet::operator==(const uint64& rhm) const {
     bool result = true;
     if (bytesSize == 0u) {
         result = rhm == 0u;
-    } else if ((bytesSize == 1u && (rhm >> 32) != 0u) || \
+    } else if (((bytesSize == 1u) && ((rhm >> 32) != 0u)) || \
                 (bytes[0] != (rhm & 0xffffffffu)) || \
-                (bytes[1] != rhm >> 32u)) {
+                (bytes[1] != (rhm >> 32u))) {
         result = false;
     } else {
         for (uint32 i = 2u; i < bytesSize; i++) {
