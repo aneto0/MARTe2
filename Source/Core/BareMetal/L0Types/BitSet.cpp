@@ -14,13 +14,13 @@ BitSet::BitSet() {
     bytes[0u] = 0u;
 }
 
-BitSet::BitSet(uint32 value){
+BitSet::BitSet(const uint32 value){
     bytesSize = 1u;
     bytes = new uint32[1u];
     bytes[0u] = value;
 }
 
-BitSet::BitSet(uint64 value) {
+BitSet::BitSet(const uint64 value) {
     bytesSize = 2u;
     bytes = new uint32[2u];
     bytes[0u] = static_cast<uint32>(value);
@@ -158,7 +158,7 @@ BitSet longer(BitSet a, BitSet b){
     return result;
 }
 
-/*lint -e772 new_bytes correctly initialized*/
+/*lint -e772 -e9135 new_bytes correctly initialized and it is not an unary operator!*/
 BitSet BitSet::operator&(const BitSet& rhm) const{
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize);// ? bytesSize : rhm.bytesSize;
