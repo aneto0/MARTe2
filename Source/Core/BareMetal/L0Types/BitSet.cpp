@@ -207,7 +207,9 @@ BitSet BitSet::operator~() const{
     for (uint32 i = 0u; i < bytesSize; i++) {
         new_bytes[i] = ~bytes[i];
     }
-    return BitSet(new_bytes, bytesSize);
+    BitSet res(new_bytes, bytesSize);
+    delete[] new_bytes;
+    return res;
 }
 
 /*lint -e771 new_bytes is correctly initialized*/
@@ -228,6 +230,7 @@ BitSet BitSet::operator<<(const uint32& rhm) const{
         }
     }
     BitSet bs(new_bytes, new_size);
+    delete[] new_bytes;
     return bs;
 }
 
@@ -248,6 +251,7 @@ BitSet BitSet::operator>>(const uint32& rhm) const{
         }
     }
     BitSet bs(new_bytes, bytesSize);
+    delete[] new_bytes;
     return bs;
 }
 
