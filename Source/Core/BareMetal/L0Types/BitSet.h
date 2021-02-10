@@ -139,41 +139,41 @@ public:
      * @param[in] rhm right operand.
      * @return result of the bitwise `and` operator.
      */
-    BitSet operator&(const BitSet& rhm);
+    BitSet operator&(const BitSet& rhm) const;
 
     /**
      * @brief bitwise `or` operator.
      * @param[in] rhm right operand.
      * @return result of the bitwise `or` operator.
      */
-    BitSet operator|(const BitSet& rhm);
+    BitSet operator|(const BitSet& rhm) const;
 
     /**
      * @brief bitwise `xor` operator.
      * @param[in] rhm right operand.
      * @return result of the bitwise `xor` operator.
      */
-    BitSet operator^(const BitSet& rhm);
+    BitSet operator^(const BitSet& rhm) const;
 
     /**
      * @brief bitwise `not` operator.
      * @return inverse bitset.
      */
-    BitSet operator~();
+    BitSet operator~() const;
 
     /**
      * @brief left bit shift operator.
      * @param[in] rhf number of bits to be shifted.
      * @return left shifted bitset.
      */
-    BitSet operator<<(const uint32& rhf);
+    BitSet operator<<(const uint32& rhf) const;
     
     /**
      * @brief right bit shift operator.
      * @param[in] rhf number of bits to be shifted.
      * @return right shifted bitset. 
      */
-    BitSet operator>>(const uint32& rhm);
+    BitSet operator>>(const uint32& rhm) const;
 
 
     /**

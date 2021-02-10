@@ -142,7 +142,7 @@ BitSet longer(BitSet a, BitSet b){
     return b;
 }
 
-BitSet BitSet::operator&(const BitSet& rhm){
+BitSet BitSet::operator&(const BitSet& rhm) const{
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize);// ? bytesSize : rhm.bytesSize;
     uint32 new_bytes[size];
@@ -156,7 +156,7 @@ BitSet BitSet::operator&(const BitSet& rhm){
     return BitSet(new_bytes, size);
 }
 
-BitSet BitSet::operator|(const BitSet& rhm){
+BitSet BitSet::operator|(const BitSet& rhm) const{
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
     uint32 new_bytes[size];
@@ -169,7 +169,7 @@ BitSet BitSet::operator|(const BitSet& rhm){
     return BitSet(new_bytes, size);
 }
     
-BitSet BitSet::operator^(const BitSet& rhm){
+BitSet BitSet::operator^(const BitSet& rhm) const{
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
     uint32 new_bytes[size];
@@ -182,7 +182,7 @@ BitSet BitSet::operator^(const BitSet& rhm){
     return BitSet(new_bytes, size);
 }
 
-BitSet BitSet::operator~(){
+BitSet BitSet::operator~() const{
     uint32 new_bytes[bytesSize];
     for (uint32 i = 0u; i < bytesSize; i++) {
         new_bytes[i] = ~bytes[i];
@@ -190,7 +190,7 @@ BitSet BitSet::operator~(){
     return BitSet(new_bytes, bytesSize);
 }
 
-BitSet BitSet::operator<<(const uint32& rhb){
+BitSet BitSet::operator<<(const uint32& rhb) const{
     uint32 new_size = bytesSize + (rhb / 32u) + 1;
     uint32 new_bytes[new_size];
     for (uint32 i = 0u; i < new_size; i++){
@@ -207,7 +207,7 @@ BitSet BitSet::operator<<(const uint32& rhb){
     return bs;
 }
 
-BitSet BitSet::operator>>(const uint32& rhb) {
+BitSet BitSet::operator>>(const uint32& rhb) const{
     uint32 new_bytes[bytesSize];
     for (uint32 i = 0u; i < bytesSize; i++){
         new_bytes[i] = 0u;
