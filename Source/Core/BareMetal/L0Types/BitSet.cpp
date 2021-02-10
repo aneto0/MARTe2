@@ -149,11 +149,11 @@ BitSet::operator uint64() const{
 }
 
 BitSet longer(BitSet a, BitSet b){
+    BitSet result = b;
     if (a.GetByteSize() > b.GetByteSize()) {
-        return a;
-    } else {
-        return b;
+        result = a;
     }
+    return result;
 }
 
 /*lint -e772 new_bytes correctly initialized*/
