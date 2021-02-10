@@ -143,6 +143,7 @@ BitSet longer(BitSet a, BitSet b){
     return b;
 }
 
+/*lint -e772 new_bytes correctly initialized*/
 BitSet BitSet::operator&(const BitSet& rhm) const{
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize);// ? bytesSize : rhm.bytesSize;
@@ -157,6 +158,7 @@ BitSet BitSet::operator&(const BitSet& rhm) const{
     return BitSet(new_bytes, size);
 }
 
+/*lint -e772 new_bytes correctly initialized*/
 BitSet BitSet::operator|(const BitSet& rhm) const{
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
@@ -170,6 +172,7 @@ BitSet BitSet::operator|(const BitSet& rhm) const{
     return BitSet(new_bytes, size);
 }
     
+/*lint -e772 new_bytes correctly initialized*/
 BitSet BitSet::operator^(const BitSet& rhm) const{
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
@@ -183,6 +186,7 @@ BitSet BitSet::operator^(const BitSet& rhm) const{
     return BitSet(new_bytes, size);
 }
 
+/*lint -e772 new_bytes correctly initialized*/
 BitSet BitSet::operator~() const{
     uint32 new_bytes[bytesSize];
     for (uint32 i = 0u; i < bytesSize; i++) {
