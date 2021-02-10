@@ -260,7 +260,7 @@ bool BitSet::operator==(const BitSet& rhm) const{
             result = false;
         }
     }
-    if (result && common < max_length) {
+    if (result && (common < max_length)) {
         for (uint32 i = common; i < max_length; i++){
             if (longer(*this, rhm).bytes[i] != 0){
                 result = false;
