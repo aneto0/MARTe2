@@ -95,7 +95,9 @@ void BitSet::Set(const uint32 index, const bool value) {
 
 BitSet& BitSet::operator=(const BitSet& other) {
     if (&other != this) {
-        if (bytes != NULL) delete[] bytes;
+        if (bytes != NULL) {
+            delete[] bytes;
+        }
         bytesSize = other.bytesSize;
         bytes = new uint32[other.bytesSize];
         
