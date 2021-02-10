@@ -21,8 +21,8 @@ BitSet::BitSet(uint32 value){
 BitSet::BitSet(uint64 value) {
     bytesSize = 2u;
     bytes = new uint32[2u];
-    bytes[0u] = value;
-    bytes[1u] = value >> 32u;
+    bytes[0u] = static_cast<uint32>(value);
+    bytes[1u] = static_cast<uint32>(value >> 32u);
 }
 
 BitSet::BitSet(const BitSet &other) {
