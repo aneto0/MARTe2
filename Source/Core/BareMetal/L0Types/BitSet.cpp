@@ -3,6 +3,7 @@
 
 #define MAX(a, b) ((a > b) ? a : b)
 #define MIN(a, b) ((a < b) ? a : b)
+#define ONE (static_cast<uint32>(1u))
 
 namespace MARTe{
 
@@ -70,7 +71,7 @@ bool BitSet::Bit(const uint32 index) const{
     if (byte_index < bytesSize) {
         uint32 local_index = index - (32u * byte_index);
         uint32 byte =  bytes[byte_index];
-        result = (byte & (1u << local_index)) != 0u;
+        result = (byte & (ONE << local_index)) != 0u;
     }
     return result;
 }
@@ -81,7 +82,7 @@ void BitSet::Set(const uint32 index, const bool value) {
         resize(byte_index + 1u);
     }
     uint32 local_index = index - (32u * byte_index);
-    uint32 bitmask = 1u << local_index;
+    uint32 bitmask = ONE << local_index;
     if (value) {
         if (byte_index < bytesSize) {
             bytes[byte_index] |= bitmask;
@@ -221,7 +222,7 @@ BitSet BitSet::operator<<(const uint32& rhb) const{
             uint32 byte_ind = (i+rhb) / 32;
             uint32 bit_ind = (i+rhb) - (byte_ind * 32);
             if (byte_ind < new_size) {
-                new_bytes[byte_ind] |= 1u << bit_ind;
+                new_bytes[byte_ind] |= ONE << bit_ind;
             }
         }
     }
@@ -241,7 +242,7 @@ BitSet BitSet::operator>>(const uint32& rhb) const{
             uint32 byte_ind = (i-rhb) / 32;
             uint32 bit_ind = (i-rhb) - (byte_ind * 32);
             if (byte_ind < bytesSize) {
-                new_bytes[byte_ind] |= 1u << bit_ind;
+                new_bytes[byte_ind] |= ONE << bit_ind;
             }
         }
     }
