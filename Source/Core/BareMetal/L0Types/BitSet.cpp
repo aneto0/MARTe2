@@ -251,20 +251,20 @@ BitSet BitSet::operator>>(const uint32& rhb) const{
 bool BitSet::operator==(const BitSet& rhm) const{
     uint32 common = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 max_length = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-
+    bool result = true;
     for (uint32 i = 0u; i < common; i++){
         if (rhm.bytes[i] != bytes[i]){
-            return false;
+            result = false;
         }
     }
-    if (common < max_length) {
+    if (result && common < max_length) {
         for (uint32 i = common; i < max_length; i++){
             if (longer(*this, rhm).bytes[i] != 0){
-                return false;
+                result = false;
             }
         }
     }
-    return true;
+    return result;
 }
 
 bool BitSet::operator==(const uint32& rhm) const {
