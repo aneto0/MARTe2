@@ -131,7 +131,7 @@ BitSet::operator uint64() const{
         v = bytes[0u];
     }
     if (bytesSize == 2u) {
-        v += ((uint64)bytes[1u]) << 32u;
+        v += static_cast<uint64>(bytes[1u]) << 32u;
     }
     return v;
 }
