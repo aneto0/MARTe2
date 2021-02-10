@@ -1,10 +1,61 @@
 
+/**
+ * @file BitSet.cpp
+ * @brief Source file for class BitSet
+ * @date 04/02/2021
+ * @author Martino Ferrari
+ *
+ * @copyright Copyright 2021 ITER.
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class BitSet (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+
 #include "BitSet.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
 #define MAX(a, b) ((a > b) ? a : b)
 #define MIN(a, b) ((a < b) ? a : b)
 #define ONE (static_cast<uint32>(1u))
 #define ZERO (static_cast<uint32>(0u))
+
+
+MARTe::BitSet longer(const MARTe::BitSet a, const MARTe::BitSet b) {
+    MARTe::BitSet result = a;
+    if (b.GetByteSize() > a.GetByteSize()) {
+        result = b;
+    }
+    return result;
+}
+
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+
 
 namespace MARTe{
 
@@ -22,7 +73,7 @@ BitSet::BitSet(const uint32 value){
 
 BitSet::BitSet(const uint64 value) {
     bytesSize = 2u;
-    bytes = new uint32[2u];
+    bytes = new uint32[bytesSize];
     bytes[0u] = static_cast<uint32>(value);
     bytes[1u] = static_cast<uint32>(value >> 32u);
 }
@@ -115,7 +166,7 @@ BitSet& BitSet::operator=(const uint32& other) {
         delete[] bytes;
     }
     bytesSize = 1u;
-    bytes = new uint32[1u];
+    bytes = new uint32[bytesSize];
     bytes[0] = other;
     return *this;
 }
@@ -125,7 +176,7 @@ BitSet& BitSet::operator=(const uint64& other) {
         delete[] bytes;
     }
     bytesSize = 2u;
-    bytes = new uint32[2u];
+    bytes = new uint32[bytesSize];
     bytes[0] = static_cast<uint32>(other);
     bytes[1] = static_cast<uint32>(other >> 32u);
     return *this;
@@ -150,13 +201,6 @@ BitSet::operator uint64() const{
     return v;
 }
 
-BitSet longer(BitSet a, BitSet b){
-    BitSet result = b;
-    if (a.GetByteSize() > b.GetByteSize()) {
-        result = a;
-    }
-    return result;
-}
 
 /*lint -e772 -e9135 new_bytes correctly initialized and it is not an unary operator!*/
 BitSet BitSet::operator&(const BitSet& rhm) const{
