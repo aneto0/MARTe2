@@ -33,13 +33,13 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-#if LOCAL_TEST
+//#if LOCAL_TEST
 #include <cstdlib>
-#define LOG_ERROR(X) printf("[BitSetTest] ERROR: %s\n", #X)
+#define LOG_ERROR(X) printf("[%s:%d] ERROR: %s\n", __FILE__, __LINE__, #X)
 #define ASSERT(X) if (!(X)) { LOG_ERROR(X); return false;}
-#else
-#define ASSERT(X) if (!(X)) return false;
-#endif
+//#else
+//#define ASSERT(X) if (!(X)) return false;
+//#endif
 
 using namespace MARTe;
 
