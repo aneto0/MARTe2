@@ -42,8 +42,10 @@
 #define ZERO (static_cast<uint32>(0u))
 
 
-MARTe::BitSet longer(const MARTe::BitSet a, const MARTe::BitSet b) {
-    MARTe::BitSet result = a;
+namespace MARTe{
+
+static BitSet longer(const BitSet a, const BitSet b) {
+    BitSet result = a;
     if (b.GetByteSize() > a.GetByteSize()) {
         result = b;
     }
@@ -57,7 +59,6 @@ MARTe::BitSet longer(const MARTe::BitSet a, const MARTe::BitSet b) {
 
 
 
-namespace MARTe{
 
 BitSet::BitSet() {
     bytesSize = 1u;
