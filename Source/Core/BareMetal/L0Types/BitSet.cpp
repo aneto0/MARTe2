@@ -66,12 +66,13 @@ uint32 BitSet::GetByteSize() const{
 
 bool BitSet::Bit(const uint32 index) const{
     uint32 byte_index = index / 32u;
+    bool result = false;
     if (byte_index < bytesSize) {
         uint32 local_index = index - (32u * byte_index);
         uint32 byte =  bytes[byte_index];
-        return byte & (1u << local_index);
+        result = (byte & (1u << local_index)) != 0u;
     }
-    return false;
+    return result;
 }
 
 void BitSet::Set(const uint32 index, const bool value) {
