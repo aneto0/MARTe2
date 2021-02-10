@@ -248,7 +248,7 @@ private:
      * @param[in] size number of elements in the array.
      */
     /*lint -e1704 */
-    BitSet(uint32* bytes, uint32 size);
+    BitSet(uint32* mbytes, uint32 size);
 
     /**
      * @brief change bytes array size.

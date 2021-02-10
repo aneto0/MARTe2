@@ -33,11 +33,11 @@ BitSet::BitSet(const BitSet &other) {
     }
 }
 
-BitSet::BitSet(uint32 *bytes, uint32 size){
+BitSet::BitSet(uint32 *mbytes, uint32 size){
     bytesSize = size;
-    this->bytes = new uint32[size];
+    bytes = new uint32[size];
     for (uint32 i = 0u; i < size; i++) {
-        this->bytes[i] = bytes[i];
+        bytes[i] = mbytes[i];
     }
 }
 
