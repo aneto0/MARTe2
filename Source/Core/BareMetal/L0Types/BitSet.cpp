@@ -128,10 +128,11 @@ BitSet& BitSet::operator=(const uint64& other) {
 }
 
 BitSet::operator uint32() const{
+    uint32 value = 0u;
     if (bytesSize) {
-        return bytes[0u];
+        value = bytes[0u];
     }
-    return 0u;
+    return value;
 }
 
 BitSet::operator uint64() const{
@@ -148,8 +149,9 @@ BitSet::operator uint64() const{
 BitSet longer(BitSet a, BitSet b){
     if (a.GetByteSize() > b.GetByteSize()) {
         return a;
+    } else {
+        return b;
     }
-    return b;
 }
 
 /*lint -e772 new_bytes correctly initialized*/
