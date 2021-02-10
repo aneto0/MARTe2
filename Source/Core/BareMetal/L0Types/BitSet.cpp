@@ -4,6 +4,7 @@
 #define MAX(a, b) ((a > b) ? a : b)
 #define MIN(a, b) ((a < b) ? a : b)
 #define ONE (static_cast<uint32>(1u))
+#define ZERO (static_cast<uint32>(0u))
 
 namespace MARTe{
 
@@ -132,7 +133,7 @@ BitSet& BitSet::operator=(const uint64& other) {
 
 BitSet::operator uint32() const{
     uint32 value = 0u;
-    if (bytesSize > 0) {
+    if (bytesSize > 0u) {
         value = bytes[0u];
     }
     return value;
@@ -140,7 +141,7 @@ BitSet::operator uint32() const{
 
 BitSet::operator uint64() const{
     uint64 v = 0u;
-    if (bytesSize > 0){
+    if (bytesSize > 0u){
         v = bytes[0u];
     }
     if (bytesSize == 2u) {
@@ -211,7 +212,7 @@ BitSet BitSet::operator~() const{
 
 /*lint -e771 new_bytes is correctly initialized*/
 BitSet BitSet::operator<<(const uint32& rhb) const{
-    uint32 new_size = bytesSize + (rhb / 32u) + 1;
+    uint32 new_size = bytesSize + (rhb / 32u) + 1u;
     uint32 new_bytes[new_size];
     for (uint32 i = 0u; i < new_size; i++){
         new_bytes[i] = 0u;
@@ -219,8 +220,8 @@ BitSet BitSet::operator<<(const uint32& rhb) const{
     uint32 bitsize = 32u * bytesSize;
     for (uint32 i = 0u; i < bitsize; i++) {
         if (Bit(i)) {
-            uint32 byte_ind = (i+rhb) / 32;
-            uint32 bit_ind = (i+rhb) - (byte_ind * 32);
+            uint32 byte_ind = (i+rhb) / 32u;
+            uint32 bit_ind = (i+rhb) - (byte_ind * 32u);
             if (byte_ind < new_size) {
                 new_bytes[byte_ind] |= ONE << bit_ind;
             }
@@ -239,8 +240,8 @@ BitSet BitSet::operator>>(const uint32& rhb) const{
     }
     for (uint32 i = rhb; i < bitsize; i++) {
         if (Bit(i)) {
-            uint32 byte_ind = (i-rhb) / 32;
-            uint32 bit_ind = (i-rhb) - (byte_ind * 32);
+            uint32 byte_ind = (i-rhb) / 32u;
+            uint32 bit_ind = (i-rhb) - (byte_ind * 32u);
             if (byte_ind < bytesSize) {
                 new_bytes[byte_ind] |= ONE << bit_ind;
             }
@@ -262,7 +263,7 @@ bool BitSet::operator==(const BitSet& rhm) const{
     }
     if (result && (common < max_length)) {
         for (uint32 i = common; i < max_length; i++){
-            if (longer(*this, rhm).bytes[i] != 0){
+            if (longer(*this, rhm).bytes[i] != 0u){
                 result = false;
             }
         }
