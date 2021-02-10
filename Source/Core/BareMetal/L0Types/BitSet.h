@@ -83,14 +83,14 @@ public:
      * @brief Get the number of uint32 values used.
      * @return Number of elements used to store the bitset.
      */  
-    uint32 GetByteSize();
+    uint32 GetByteSize() const;
 
     /**
      * @brief Get the status of a single bit.
      * @param[in] index bit position.
      * @return value of the bit, if not defined 0.
      */ 
-    bool Bit(const uint32 index);
+    bool Bit(const uint32 index) const;
 
     /**
      * @brief Set a single bit.

@@ -60,11 +60,11 @@ void BitSet::resize(const uint32 size) {
     bytesSize = size;
 }
 
-uint32 BitSet::GetByteSize() {
+uint32 BitSet::GetByteSize() const{
     return bytesSize;
 }
 
-bool BitSet::Bit(const uint32 index) {
+bool BitSet::Bit(const uint32 index) const{
     uint32 byte_index = index / 32u;
     if (byte_index < bytesSize) {
         uint32 local_index = index - (32u * byte_index);
@@ -270,7 +270,7 @@ bool BitSet::operator==(const uint64& rhm) const {
         result = false;
     } else {
         for (uint32 i = 2u; i < bytesSize; i++) {
-            if (i < bytesSize) result = result && (bytes[i] != 0u);
+            result = result && (bytes[i] != 0u);
         }
     }
     return result;
