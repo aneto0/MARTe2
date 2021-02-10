@@ -189,21 +189,35 @@ BitSet BitSet::operator~(){
 }
 
 BitSet BitSet::operator<<(const uint32& rhb){
-    uint32 new_size = bytesSize + rhb / 32u;
+    uint32 new_size = bytesSize + (rhb / 32u) + 1;
     uint32 new_bytes[new_size];
-    BitSet bs(new_bytes, new_size);
-    for (uint32 i = 0u; i < 32u * bytesSize; i++) {
-        bs.Set(i+rhb, Bit(i));
+    for (uint32 i = 0u; i < new_size; i++){
+        new_bytes[i] = 0u;
     }
+    for (uint32 i = 0u; i < 32u * bytesSize; i++) {
+        if (Bit(i)) {
+            uint32 byte_ind = (i+rhb) / 32;
+            uint32 bit_ind = (i+rhb) - (byte_ind * 32);
+            if (byte_ind < new_size) new_bytes[byte_ind] |= 1u << bit_ind;
+        }
+    }
+    BitSet bs(new_bytes, new_size);
     return bs;
 }
 
 BitSet BitSet::operator>>(const uint32& rhb) {
     uint32 new_bytes[bytesSize];
-    BitSet bs(new_bytes, bytesSize);
-    for (uint32 i = rhb; i < 32u * bytesSize; i++) {
-        bs.Set(i-rhb, Bit(i));
+    for (uint32 i = 0u; i < bytesSize; i++){
+        new_bytes[i] = 0u;
     }
+    for (uint32 i = rhb; i < 32u * bytesSize; i++) {
+        if (Bit(i)) {
+            uint32 byte_ind = (i-rhb) / 32;
+            uint32 bit_ind = (i-rhb) - (byte_ind * 32);
+            if (byte_ind < bytesSize) new_bytes[byte_ind] |= 1u << bit_ind;
+        }
+    }
+    BitSet bs(new_bytes, bytesSize);
     return bs;
 }
 
