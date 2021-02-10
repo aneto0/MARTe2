@@ -81,10 +81,11 @@ void BitSet::Set(const uint32 index, const bool value) {
         resize(byte_index + 1u);
     }
     uint32 local_index = index - (32u * byte_index);
+    uint32 bitmask = 1u << local_index;
     if (value) {
-        if (byte_index < bytesSize) bytes[byte_index] |= 1u << local_index;
+        if (byte_index < bytesSize) bytes[byte_index] |= bitmask;
     } else {
-        if (byte_index < bytesSize) bytes[byte_index] &= ~ (1u << local_index);
+        if (byte_index < bytesSize) bytes[byte_index] &= ~bitmask;
     }
 }
 
