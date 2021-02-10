@@ -83,9 +83,13 @@ void BitSet::Set(const uint32 index, const bool value) {
     uint32 local_index = index - (32u * byte_index);
     uint32 bitmask = 1u << local_index;
     if (value) {
-        if (byte_index < bytesSize) bytes[byte_index] |= bitmask;
+        if (byte_index < bytesSize) {
+            bytes[byte_index] |= bitmask;
+        }
     } else {
-        if (byte_index < bytesSize) bytes[byte_index] &= ~bitmask;
+        if (byte_index < bytesSize) {
+            bytes[byte_index] &= ~bitmask;
+        }
     }
 }
 
@@ -103,7 +107,9 @@ BitSet& BitSet::operator=(const BitSet& other) {
 }
 
 BitSet& BitSet::operator=(const uint32& other) {
-    if (bytes != NULL) delete[] bytes;
+    if (bytes != NULL) {
+        delete[] bytes;
+    }
     bytesSize = 1u;
     bytes = new uint32[1u];
     bytes[0] = other;
@@ -111,7 +117,9 @@ BitSet& BitSet::operator=(const uint32& other) {
 }
 
 BitSet& BitSet::operator=(const uint64& other) {
-    if (bytes != NULL) delete[] bytes;
+    if (bytes != NULL) {
+        delete[] bytes;
+    }
     bytesSize = 2u;
     bytes = new uint32[2u];
     bytes[0] = static_cast<uint32>(other);
@@ -207,7 +215,9 @@ BitSet BitSet::operator<<(const uint32& rhb) const{
         if (Bit(i)) {
             uint32 byte_ind = (i+rhb) / 32;
             uint32 bit_ind = (i+rhb) - (byte_ind * 32);
-            if (byte_ind < new_size) new_bytes[byte_ind] |= 1u << bit_ind;
+            if (byte_ind < new_size) {
+                new_bytes[byte_ind] |= 1u << bit_ind;
+            }
         }
     }
     BitSet bs(new_bytes, new_size);
@@ -224,7 +234,9 @@ BitSet BitSet::operator>>(const uint32& rhb) const{
         if (Bit(i)) {
             uint32 byte_ind = (i-rhb) / 32;
             uint32 bit_ind = (i-rhb) - (byte_ind * 32);
-            if (byte_ind < bytesSize) new_bytes[byte_ind] |= 1u << bit_ind;
+            if (byte_ind < bytesSize) {
+                new_bytes[byte_ind] |= 1u << bit_ind;
+            }
         }
     }
     BitSet bs(new_bytes, bytesSize);
