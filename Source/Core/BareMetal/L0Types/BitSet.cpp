@@ -170,7 +170,9 @@ BitSet BitSet::operator&(const BitSet& rhm) const{
         new_bytes[i] = 0u;
     }
 
-    return BitSet(new_bytes, size);
+    BitSet res(new_bytes, size);
+    delete[] new_bytes;
+    return res;
 }
 
 /*lint -e772 new_bytes correctly initialized*/
@@ -184,7 +186,9 @@ BitSet BitSet::operator|(const BitSet& rhm) const{
     for (uint32 i = msize; i < size; i++) {
         new_bytes[i] = longer(*this, rhm).bytes[i];
     }
-    return BitSet(new_bytes, size);
+    BitSet res(new_bytes, size);
+    delete[] new_bytes;
+    return res;
 }
     
 /*lint -e772 new_bytes correctly initialized*/
@@ -198,7 +202,9 @@ BitSet BitSet::operator^(const BitSet& rhm) const{
     for (uint32 i = msize; i < size; i++) {
         new_bytes[i] = longer(*this, rhm).bytes[i];
     }
-    return BitSet(new_bytes, size);
+    BitSet res(new_bytes, size);
+    delete[] new_bytes;
+    return res;
 }
 
 /*lint -e772 new_bytes correctly initialized*/
