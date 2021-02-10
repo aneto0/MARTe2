@@ -261,18 +261,19 @@ bool BitSet::operator==(const uint32& rhm) const {
 }
 
 bool BitSet::operator==(const uint64& rhm) const {
+    bool result = true;
     if (bytesSize == 0u) {
-        return rhm == 0u;
-    }
-    if (bytesSize == 1u && (rhm >> 32) != 0u) return false;
-    if (bytes[0] != (rhm & 0xffffffffu)) return false;
-    if (bytes[1] != rhm >> 32) return false;
-    for (uint32 i = 2u; i < bytesSize; i++) {
-        if (i < bytesSize && bytes[i] != 0u) {
-            return false;
+        result = rhm == 0u;
+    } else if ((bytesSize == 1u && (rhm >> 32) != 0u) || \
+                (bytes[0] != (rhm & 0xffffffffu)) || \
+                (bytes[1] != rhm >> 32u)) {
+        result = false;
+    } else {
+        for (uint32 i = 2u; i < bytesSize; i++) {
+            if (i < bytesSize) result = result && (bytes[i] != 0u);
         }
     }
-    return true;
+    return result;
 }
 
 bool BitSet::operator!=(const BitSet& rhm) const{
