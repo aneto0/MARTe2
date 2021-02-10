@@ -33,7 +33,7 @@ BitSet::BitSet(const BitSet &other) {
     }
 }
 
-BitSet::BitSet(uint32 *mbytes, uint32 size){
+BitSet::BitSet(const uint32 *mbytes, const uint32 size){
     bytesSize = size;
     bytes = new uint32[size];
     for (uint32 i = 0u; i < size; i++) {
@@ -64,7 +64,7 @@ uint32 BitSet::GetByteSize() {
     return bytesSize;
 }
 
-bool BitSet::Bit(uint32 index) {
+bool BitSet::Bit(const uint32 index) {
     uint32 byte_index = index / 32u;
     if (byte_index < bytesSize) {
         uint32 local_index = index - (32u * byte_index);
@@ -74,7 +74,7 @@ bool BitSet::Bit(uint32 index) {
     return false;
 }
 
-void BitSet::Set(uint32 index, bool value) {
+void BitSet::Set(const uint32 index, const bool value) {
     uint32 byte_index = index / 32u;
     if (byte_index >= bytesSize) {
         resize(byte_index + 1u);

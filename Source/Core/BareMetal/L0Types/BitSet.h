@@ -58,14 +58,14 @@ public:
      * @details copy the uint32 value to the bitset.
      * @param[in] value uint32 value to copy.
      */ 
-    BitSet(uint32 value);
+    BitSet(const uint32 value);
 
     /**
      * @brief uint64 constructor
      * @details copy the uint64 value as a pair of uint32 in the bitset.
      * @param[in] value uint64 value to copy.
      */
-    BitSet(uint64 value);
+    BitSet(const uint64 value);
 
     /**
      * @brief clone constructor.
@@ -90,14 +90,14 @@ public:
      * @param[in] index bit position.
      * @return value of the bit, if not defined 0.
      */ 
-    bool Bit(uint32 index);
+    bool Bit(const uint32 index);
 
     /**
      * @brief Set a single bit.
      * @param[in] index bit position.
      * @param[in] value bit value.
      */
-    void Set(uint32 index, bool value);
+    void Set(const uint32 index, bool value);
     
     
     /**
@@ -248,7 +248,7 @@ private:
      * @param[in] size number of elements in the array.
      */
     /*lint -e1704 */
-    BitSet(uint32* mbytes, uint32 size);
+    BitSet(const uint32* mbytes, const uint32 size);
 
     /**
      * @brief change bytes array size.
