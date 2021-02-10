@@ -113,8 +113,8 @@ BitSet& BitSet::operator=(const uint64& other) {
     if (bytes != NULL) delete[] bytes;
     bytesSize = 2u;
     bytes = new uint32[2u];
-    bytes[0] = other;
-    bytes[1] = other >> 32u;
+    bytes[0] = static_cast<uint32>(other);
+    bytes[1] = static_cast<uint32>(other >> 32u);
     return *this;
 }
 
