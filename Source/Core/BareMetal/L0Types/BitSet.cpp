@@ -131,7 +131,7 @@ BitSet& BitSet::operator=(const uint64& other) {
 
 BitSet::operator uint32() const{
     uint32 value = 0u;
-    if (bytesSize) {
+    if (bytesSize > 0) {
         value = bytes[0u];
     }
     return value;
@@ -139,7 +139,7 @@ BitSet::operator uint32() const{
 
 BitSet::operator uint64() const{
     uint64 v = 0u;
-    if (bytesSize){
+    if (bytesSize > 0){
         v = bytes[0u];
     }
     if (bytesSize == 2u) {
