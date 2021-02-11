@@ -1,4 +1,3 @@
-
 /**
  * @file BitSetTest.cpp
  * @brief Source file for class BitSetTest
@@ -55,7 +54,7 @@ bool check(BitSet bitset, uint32 value) {
 bool check(BitSet bitset, uint64 value) {
     ASSERT(bitset.GetByteSize() == 2);
     for (uint32 i = 0; i < 64; i++) {
-        bool ref = value & ((uint64)1u << i);
+        bool ref = value & ((uint64) 1u << i);
         ASSERT(bitset.Bit(i) == ref);
     }
     return true;
@@ -64,14 +63,14 @@ bool check(BitSet bitset, uint64 value) {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool BitSetTest::TestConstructors(){
+bool BitSetTest::TestConstructors() {
     BitSet bitset_a; // default constructor
-    ASSERT(check(bitset_a , 0u));
-    
-    BitSet bitset_b(0b11011u); // uint32 constructor
-    ASSERT(check(bitset_b, 27u)); 
+    ASSERT(check(bitset_a, 0u));
 
-    uint64 value = (uint64)1u << 32; // 0x100000000
+    BitSet bitset_b(0b11011u); // uint32 constructor
+    ASSERT(check(bitset_b, 27u));
+
+    uint64 value = (uint64) 1u << 32; // 0x100000000
     BitSet bitset_c(value); // uint64 constructor
     ASSERT(check(bitset_c, value));
 
@@ -83,7 +82,7 @@ bool BitSetTest::TestConstructors(){
 bool BitSetTest::TestSetBitMethods() {
     BitSet bs(0b111u); // initialize
     ASSERT(check(bs, 7u));
-    
+
     bs.Set(0, 0); // Set a bit to 0;
     ASSERT(check(bs, 6u));
 
@@ -116,23 +115,23 @@ bool BitSetTest::TestAssingOperator() {
     ASSERT(check(bs_b, 11u));
     bs = bs_b; // Assign bitset
     ASSERT(check(bs, 11u));
-    return true;   
+    return true;
 }
 
-bool BitSetTest::TestIntCastOperator(){
+bool BitSetTest::TestIntCastOperator() {
     BitSet bs(10u);
     ASSERT(check(bs, 0xAu));
     uint32 val32 = bs;
     ASSERT(val32 == 0xAu);
 
     bs.Set(32, 1);
-    ASSERT(check(bs, (uint64)0x10000000A));
+    ASSERT(check(bs, (uint64 )0x10000000A));
     uint64 val64 = bs;
-    ASSERT(val64 == (uint64)0x10000000A); 
+    ASSERT(val64 == (uint64 )0x10000000A);
     return true;
 }
 
-bool  BitSetTest::TestOrOperator(){
+bool BitSetTest::TestOrOperator() {
     BitSet bs_a(0b101u);
     ASSERT(check(bs_a, 5u));
     BitSet bs_b(0b010u);
@@ -140,10 +139,10 @@ bool  BitSetTest::TestOrOperator(){
     BitSet bs_c = bs_a | bs_b; // bitset | bitset
     ASSERT(check(bs_c, 7u));
 
-    bs_b = (uint64)0x100000002;
+    bs_b = (uint64) 0x100000002;
     bs_c = bs_a | bs_b;
     ASSERT(bs_c.GetByteSize() == 2);
-    ASSERT(check(bs_c, (uint64)0x100000007)); 
+    ASSERT(check(bs_c, (uint64 )0x100000007));
 
     bs_a |= BitSet(0b1000u); // |= bitset
     ASSERT(check(bs_a, 13u));
@@ -159,8 +158,8 @@ bool BitSetTest::TestAndOperator() {
     BitSet bs_c = bs_a & bs_b; // bitset & bitset
     ASSERT(check(bs_c, 0u));
 
-    bs_b = (uint64)0x100000002;
-    ASSERT(check(bs_a & bs_b, (uint64)0)); 
+    bs_b = (uint64) 0x100000002;
+    ASSERT(check(bs_a & bs_b, (uint64 )0));
 
     bs_a &= BitSet(0b100u); // &= bitset
     ASSERT(check(bs_a, 4u));
@@ -168,7 +167,7 @@ bool BitSetTest::TestAndOperator() {
     return true;
 }
 
-bool BitSetTest::TestXorOperator(){
+bool BitSetTest::TestXorOperator() {
     BitSet bs_a(0b101u);
     ASSERT(check(bs_a, 5u));
     BitSet bs_b(0b011u);
@@ -176,31 +175,31 @@ bool BitSetTest::TestXorOperator(){
     BitSet bs_c = bs_a ^ bs_b; // bitset ^ bitset
     ASSERT(check(bs_c, 6u));
 
-    bs_b = (uint64)0x100000002;
-    ASSERT(check(bs_a ^ bs_b, (uint64)0x100000006)); 
+    bs_b = (uint64) 0x100000002;
+    ASSERT(check(bs_a ^ bs_b, (uint64 )0x100000006));
 
     bs_a ^= BitSet(0b100u); // ^= bitset
     ASSERT(check(bs_a, 1u));
     return true;
 }
 
-bool BitSetTest::TestNotOperator(){
+bool BitSetTest::TestNotOperator() {
     BitSet bs_a(0b101u);
     ASSERT(check(bs_a, 5u));
     BitSet bs_b = ~bs_a;
     ASSERT(bs_b.GetByteSize() == 1);
     ASSERT(bs_b != bs_a);
-    ASSERT(check(bs_b, (uint32)0xFFFFFFFA));
+    ASSERT(check(bs_b, (uint32 )0xFFFFFFFA));
 
     bs_a.Set(32, true);
-    ASSERT(check(bs_a, (uint64)0x100000005));
+    ASSERT(check(bs_a, (uint64 )0x100000005));
     bs_b = ~bs_a;
     ASSERT(bs_b.GetByteSize() == 2);
-    ASSERT(check(bs_b, (uint64)0xFFFFFFFEFFFFFFFA));
+    ASSERT(check(bs_b, (uint64 )0xFFFFFFFEFFFFFFFA));
     return true;
 }
 
-bool BitSetTest::TestEquality(){
+bool BitSetTest::TestEquality() {
     BitSet bs_a(0b101u);
     ASSERT(bs_a == 0b101u);
 
@@ -211,12 +210,12 @@ bool BitSetTest::TestEquality(){
     bs_b.Set(32, 0);
     ASSERT(bs_b.GetByteSize() == 2);
     ASSERT(bs_a == bs_b);
-    
-    ASSERT(bs_a == (uint64)5);
+
+    ASSERT(bs_a == (uint64 )5);
     return true;
 }
 
-bool BitSetTest::TestDisequality(){
+bool BitSetTest::TestDisequality() {
     BitSet bs_a(0b101u);
     ASSERT(bs_a != 0b111u);
 
@@ -227,12 +226,12 @@ bool BitSetTest::TestDisequality(){
     bs_b.Set(32, 1);
     ASSERT(bs_b.GetByteSize() == 2);
     ASSERT(bs_a != bs_b);
-    
-    ASSERT(bs_a != (uint64)7);
+
+    ASSERT(bs_a != (uint64 )7);
     return true;
 }
 
-bool BitSetTest::TestLeftShift(){
+bool BitSetTest::TestLeftShift() {
     BitSet bs(0b1u);
     ASSERT(bs == 0b1u);
     ASSERT(bs.GetByteSize() == 1);
@@ -244,7 +243,7 @@ bool BitSetTest::TestLeftShift(){
     return true;
 }
 
-bool BitSetTest::TestRightShift(){
+bool BitSetTest::TestRightShift() {
     BitSet bs;
     bs.Set(1, 1);
     ASSERT(bs == 2u);

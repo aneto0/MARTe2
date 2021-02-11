@@ -72,7 +72,7 @@ bool ThreadsInformationQuery::ExportData(StructuredDataI & data) {
             if (ok) {
                 ProcessorType cpuMask = Threads::GetCPUs(tinfo);
                 // TODO implement a correct setter and getter for cpu mask instead of using uint32 
-                ok = data.Write("Affinity", (uint32)cpuMask.GetProcessorMask());
+                ok = data.Write("Affinity", static_cast<uint32>(cpuMask.GetProcessorMask()));
             }
             if (ok) {
                 Threads::PriorityClassType pclass = Threads::GetPriorityClass(tinfo);

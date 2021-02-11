@@ -1,4 +1,3 @@
-
 /**
  * @file BitSetGTest.cpp
  * @brief Source file for class BitSetGTest
@@ -43,46 +42,46 @@
 /*---------------------------------------------------------------------------*/
 
 TEST(BareMetal_L0Types_BitSetGTest,TestConstructors) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestConstructors());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestConstructors());
 }
 
 TEST(BareMetal_L0Types_BitSetGTest,TestSetBitMethods) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestSetBitMethods());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestSetBitMethods());
 }
 
 TEST(BareMetal_L0Types_BitSetGTest,TestAssignOperator) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestAssingOperator());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestAssingOperator());
 }
 
 TEST(BareMetal_L0Types_BitSetGTest,TestIntCastOperator) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestIntCastOperator());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestIntCastOperator());
 }
 
 TEST(BareMetal_L0Types_BitSetGTest,TestOrOperator) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestOrOperator());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestOrOperator());
 }
 
 TEST(BareMetal_L0Types_BitSetGTest,TestAndOperator) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestAndOperator());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestAndOperator());
 }
 
 TEST(BareMetal_L0Types_BitSetGTest,TestNotOperator) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestNotOperator());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestNotOperator());
 }
 
 TEST(BareMetal_L0Types_BitSetGTest,TestLeftShiftOperator) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestLeftShift());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestLeftShift());
 }
 
 TEST(BareMetal_L0Types_BitSetGTest,TestRightShiftOperator) {
-     BitSetTest myBasicTypeTest;
-     ASSERT_TRUE(myBasicTypeTest.TestRightShift());
+    BitSetTest myBasicTypeTest;
+    ASSERT_TRUE(myBasicTypeTest.TestRightShift());
 }

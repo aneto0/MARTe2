@@ -46,18 +46,18 @@ namespace MARTe {
  */
 class BitSet {
 public:
-    
+
     /**
      * @brief empty constructor.
      * @details initialize with a single uint32 0 value.
-     */  
+     */
     BitSet();
-    
+
     /**
      * @brief uint32 constructor.
      * @details copy the uint32 value to the bitset.
      * @param[in] value uint32 value to copy.
-     */ 
+     */
     BitSet(const uint32 value);
 
     /**
@@ -82,14 +82,14 @@ public:
     /**
      * @brief Get the number of uint32 values used.
      * @return Number of elements used to store the bitset.
-     */  
+     */
     uint32 GetByteSize() const;
 
     /**
      * @brief Get the status of a single bit.
      * @param[in] index bit position.
      * @return value of the bit, if not defined 0.
-     */ 
+     */
     bool Bit(const uint32 index) const;
 
     /**
@@ -98,8 +98,7 @@ public:
      * @param[in] value bit value.
      */
     void Set(const uint32 index, bool value);
-    
-    
+
     /**
      * @brief assign BitSet operator.
      * @param[in] other value to be copied.
@@ -120,7 +119,6 @@ public:
      * @return initialized BitSet.
      */
     BitSet & operator=(const uint64& other);
-
 
     /**
      * @brief uint32 cast operator for back compatibility.
@@ -167,14 +165,13 @@ public:
      * @return left shifted bitset.
      */
     BitSet operator<<(const uint32& rhm) const;
-    
+
     /**
      * @brief right bit shift operator.
      * @param[in] rhm number of bits to be shifted.
      * @return right shifted bitset. 
      */
     BitSet operator>>(const uint32& rhm) const;
-
 
     /**
      * @brief equality operator between two BitSets.
@@ -218,21 +215,20 @@ public:
      */
     bool operator!=(const uint64& rhm) const;
 
-
     /**
      * @brief bitwise `or` assign operator.
      * @param[in] rhm right operands.
      * @return BitSet with updated value resulting from the bitwise `or` operator.
      */
     BitSet & operator|=(const BitSet& rhm);
-    
+
     /**
      * @brief bitwise `and` assign operator.
      * @param[in] rhm right operands.
      * @return BitSet with updated value resulting from the bitwise `and` operator.
      */
     BitSet & operator&=(const BitSet& rhm);
-    
+
     /**
      * @brief bitwise `xor` assign operator.
      * @param[in] rhm right operands.
@@ -258,7 +254,7 @@ private:
 
     /**
      * @brief size of the uint32 array used to store the bitset.
-     */ 
+     */
     uint32 bytesSize;
 
     /**
@@ -266,12 +262,12 @@ private:
      */
     uint32 * bytes;
 
+    /*lint -e{1739} the operators are member functions*/
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Methods Implementation                             */
 /*---------------------------------------------------------------------------*/
-
 
 }
 #endif // L0TYPESDEV_BITSET_H_
