@@ -177,7 +177,7 @@ bool BitSetTest::TestXorOperator(){
     ASSERT(check(bs_c, 6u));
 
     bs_b = (uint64)0x100000002;
-    ASSERT(check(bs_a ^ bs_b, (uint64)0x100000006)); 
+    ASSERT(check(bs_a ^ bs_b, (uint64)0x100000007)); 
 
     bs_a ^= BitSet(0b100u); // ^= bitset
     ASSERT(check(bs_a, 1u));
