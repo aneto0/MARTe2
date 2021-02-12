@@ -72,6 +72,11 @@ TEST(BareMetal_L0Types_BitSetGTest,TestAndOperator) {
      ASSERT_TRUE(myBasicTypeTest.TestAndOperator());
 }
 
+TEST(BareMetal_L0Types_BitSetGTest,TestXorOperator) {
+     BitSetTest myBasicTypeTest;
+     ASSERT_TRUE(myBasicTypeTest.TestXorOperator());
+}
+
 TEST(BareMetal_L0Types_BitSetGTest,TestNotOperator) {
      BitSetTest myBasicTypeTest;
      ASSERT_TRUE(myBasicTypeTest.TestNotOperator());
