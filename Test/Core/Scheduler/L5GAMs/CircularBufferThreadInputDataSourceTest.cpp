@@ -1721,6 +1721,156 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_False_Si
     return ret;
 }
 
+bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_PacketMemberSizes_HeaderSize() {
+
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = CircularBufferThreadInputDataSourceTestGAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 10"
+            "                   Frequency = 0"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 10"
+            "                   Ranges = {{0,0}, {2,2}}"
+            "                   Samples = 5"
+            "               }"
+            "               Signal3 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 12"
+            "               }"
+            "               InternalTimeStamp = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint64"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "               }"
+            "               ErrorCheck = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = CircularBufferThreadInputDataSourceTestDS"
+            "            NumberOfBuffers = 100"
+            "            CpuMask = 1"
+            "            ReceiverThreadPriority = 31"
+            "            Signals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   PacketMemberSizes = {1, 1}"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 10"
+            "                   PacketMemberSizes = {4, 4}"
+            "                   HeaderSize = 8"
+            "               }"
+            "            }"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+
+    ReferenceT<CircularBufferThreadInputDataSourceTestDS> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->GetIsRefreshed() != NULL);
+    }
+    if (ret) {
+        ret = (dataSource->GetLastReadBuffer() != NULL);
+    }
+    if (ret) {
+        ret = (dataSource->NBrokerOpPerSignal() != NULL);
+    }
+    if (ret) {
+        ret = (dataSource->GetNumberOfChannels() == 3);
+    }
+
+    uint32 numberOfSignals = 0u;
+    if (ret) {
+        numberOfSignals = dataSource->GetNumberOfSignals();
+    }
+    if (ret) {
+        //4 because 40-8=32/(4+4)=4
+        uint32 testInputSamples[] = { 2, 4, 1, 1, 1 };
+        uint32 *inputSamples = dataSource->GetNumberOfInterleavedSamples();
+        for (uint32 i = 0u; (i < numberOfSignals) && (ret); i++) {
+            ret = (inputSamples[i] == testInputSamples[i]);
+        }
+    }
+    if (ret) {
+        uint32 testInputByteSize[] = { 2, 8, 4, 24, 12 };
+        uint32 *inputByteSize = dataSource->GetInterleavedSignalByteSize();
+        for (uint32 i = 0u; (i < numberOfSignals) && (ret); i++) {
+            ret = (testInputByteSize[i] == inputByteSize[i]);
+        }
+    }
+    if (ret) {
+        uint32 testNInputChunks[] = { 2, 2, 0, 0, 0 };
+        uint32 *nInputChunks = dataSource->GetNumberOfInterleavedSignalMembers();
+        for (uint32 i = 0u; (i < numberOfSignals) && (ret); i++) {
+            ret = (testNInputChunks[i] == nInputChunks[i]);
+        }
+    }
+    if (ret) {
+
+        uint32 testPacketInputChunkSize[] = { 1, 1, 4, 4 };
+        uint32 *packetInputChunkSize = dataSource->GetPacketMemberByteSize();
+        for (uint32 i = 0u; (i < 4) && (ret); i++) {
+            ret = (testPacketInputChunkSize[i] == packetInputChunkSize[i]);
+        }
+    }
+    dataSource->Stop();
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ret;
+}
+
 bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_False_WrittenSignal() {
 
     static const char8 * const config1 = ""
@@ -2573,7 +2723,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_Both() {
                         ret = (mem[15 + i] == 2);
                     }
                     else {
-                        ret = (mem[15 + i] == 1);
+                        ret = (mem[15 + i] == 1);    // TODO - Check what changed...
+                        // ret = (mem[15 + i] == 3);    // TODO - This works.
                     }
                 }
                 else if (n > 2) {

@@ -139,7 +139,8 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
     bool ret = MemoryDataSourceI::Initialise(data);
     if (ret) {
         // Read cpu mask
-        uint32 cpuMask = 0u;
+        // uint64 cpuMask = 0u;
+        uint32 cpuMask = 0u;  // TODO - TO CHECK
         if (!data.Read("CpuMask", cpuMask)) {
             cpuMask = 0xFFFFu;
             REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "CpuMask was not specified. Using default: %d", cpuMask);
@@ -354,7 +355,7 @@ bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI 
                 if (ret) {
                     if (signalName == "ErrorCheck") {
                         errorCheckSignalIndex = i;
-//check the type of the time stamp signal
+                        //check the type of the time stamp signal
                         TypeDescriptor td = GetSignalType(errorCheckSignalIndex);
                         ret = (td == UnsignedInteger32Bit);
                         if (!ret) {
@@ -475,7 +476,7 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
     //Look for all the "PacketMemberSizes". Each signal is potentially a packet
     for (uint32 i = 0u; (i < numberOfSignals) && (ret); i++) {
         numberOfInterleavedSignalMembers[i] = 0u;
-        headerSize[i] = 0u;
+        headerSize[i] = 0u;  // TODO - TO CHECK
 
         StreamString signalName;
         ret = GetSignalName(i, signalName);
