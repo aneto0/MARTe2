@@ -1,8 +1,9 @@
 /**
  * @file CircularBufferThreadInputDataSourceTest.h
  * @brief Header file for class CircularBufferThreadInputDataSourceTest
- * @date 26/04/2018
+ * @date 12/02/2021
  * @author Giuseppe Ferro
+ * @author Pedro Lourenco
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,7 +16,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class CircularBufferThreadInputDataSourceTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -32,10 +33,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "CircularBufferThreadInputDataSource.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 using namespace MARTe;
 
 class CircularBufferThreadInputDataSourceTest {
@@ -115,11 +116,6 @@ public:
      * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase with SignalDefinitionInterleaved with different number of samples
      */
     bool TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples();
-
-    /**
-     * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase with SignalDefinitionInterleaved and HeaderSize
-     */
-    bool TestSetConfiguredDatabase_PacketMemberSizes_HeaderSize();
 
     /**
      * @brief Tests that CircularBufferThreadInputDataSource::SetConfiguredDatabase returns
@@ -261,4 +257,3 @@ public:
 /*---------------------------------------------------------------------------*/
 
 #endif /* CIRCULARBUFFERTHREADINPUTDATASOURCETEST_H_ */
-
