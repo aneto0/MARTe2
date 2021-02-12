@@ -213,6 +213,11 @@ bool BitSetTest::TestEquality(){
     ASSERT(bs_a == bs_b);
     
     ASSERT(bs_a == (uint64)5);
+
+    bs_b.Set(32, 1);
+    ASSERT(!(bs_a == bs_b));
+    ASSERT(!(bs_a == (uint32)6));
+    ASSERT(!(bs_b == 5u));
     return true;
 }
 
