@@ -172,7 +172,7 @@ bool BitSetTest::TestXorOperator(){
     BitSet bs_a(0b101u);
     ASSERT(check(bs_a, 5u));
     BitSet bs_b(0b011u);
-    ASSERT(check(bs_b, 2u));
+    ASSERT(check(bs_b, 3u));
     BitSet bs_c = bs_a ^ bs_b; // bitset ^ bitset
     ASSERT(check(bs_c, 6u));
 
