@@ -8,10 +8,16 @@ make -f Makefile.cov
 #Run baseline coverage
 lcov --capture --initial --directory . --no-external --output-file $OUTPUT_DIR/MARTe2.coverage.info.initial
 
-#Execute the tests
-Test/GTest/cov/MainGTest.ex --gtest_filter=BareMetal*
-Test/GTest/cov/MainGTest.ex --gtest_filter=FileSystem*
-Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*
+if [ $# -gt 0 ]; then
+    for filter in "$@"; do 
+        Test/GTest/cov/MainGTest.ex --gtest_filter=$filter
+    done
+else
+    #Execute the tests
+    Test/GTest/cov/MainGTest.ex --gtest_filter=BareMetal*
+    Test/GTest/cov/MainGTest.ex --gtest_filter=FileSystem*
+    Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*
+fi
 
 #Create test coverage data file
 lcov --capture --directory . --no-external --output-file $OUTPUT_DIR/MARTe2.coverage.info.tests
