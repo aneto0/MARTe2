@@ -58,6 +58,9 @@ bool ProcessorTypeTest::TestAssignmentOperator() {
     ptTest = ptFirst;
     result &= (ptTest.GetProcessorMask() == ptFirst.GetProcessorMask());
 
+    ptTest = BitSet(0b101u);
+    result &= (ptTest.GetProcessorMask() == 0b101u);
+    result &= (ptTest.GetProcessorMask() == BitSet(0b101u));
     return result;
 }
 
@@ -81,6 +84,10 @@ bool ProcessorTypeTest::TestOROperator() {
     ptTest |= 0x02u;
     result &= (ptTest == 0x03u);
 
+    ptTest = 0b101u;
+    ptTest |= BitSet(0b10u);
+    result &= (ptTest == 0b111u);
+
     return result;
 
 }
@@ -95,6 +102,9 @@ bool ProcessorTypeTest::TestEqualityOperator() {
     ptTest = 0xFDu;
     result &= (ptTest == ptSecond);
 
+    BitSet bs(0xFDu);
+    result &= (ptTest == bs);
+
     return result;
 
 }
@@ -107,6 +117,9 @@ bool ProcessorTypeTest::TestInequalityOperator() {
     result &= (ptTest != 0xFDu);
 
     result &= (ptTest != ptSecond);
+
+    BitSet bs(0xFDu);
+    result &= (ptTest != bs);
 
     return result;
 
