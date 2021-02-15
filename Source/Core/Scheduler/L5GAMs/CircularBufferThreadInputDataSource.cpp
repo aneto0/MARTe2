@@ -139,8 +139,8 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
     bool ret = MemoryDataSourceI::Initialise(data);
     if (ret) {
         // Read cpu mask
-        // uint64 cpuMask = 0u;
-        uint32 cpuMask = 0u;  // TODO - TO CHECK
+        uint64 cpuMask = 0u;
+        // uint32 cpuMask = 0u;  // TODO - TO CHECK
         if (!data.Read("CpuMask", cpuMask)) {
             cpuMask = 0xFFFFu;
             REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "CpuMask was not specified. Using default: %d", cpuMask);
@@ -629,6 +629,8 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
                                 ret = GetSignalByteSize(signalIdx, headerSize[0]);
                             }
                         }
+                    }
+                    if (ret) {
                         ret = (nOfSamples == nOfSamplesRead);
                         if (!ret) {
                             REPORT_ERROR(ErrorManagement::InitialisationError,
