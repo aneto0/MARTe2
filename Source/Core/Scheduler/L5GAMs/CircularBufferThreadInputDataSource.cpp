@@ -140,7 +140,6 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
     if (ret) {
         // Read cpu mask
         uint64 cpuMask = 0u;
-        // uint32 cpuMask = 0u;  // TODO - TO CHECK
         if (!data.Read("CpuMask", cpuMask)) {
             cpuMask = 0xFFFFu;
             REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "CpuMask was not specified. Using default: %d", cpuMask);
@@ -476,7 +475,7 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
     //Look for all the "PacketMemberSizes". Each signal is potentially a packet
     for (uint32 i = 0u; (i < numberOfSignals) && (ret); i++) {
         numberOfInterleavedSignalMembers[i] = 0u;
-        headerSize[i] = 0u;  // TODO - TO CHECK
+        headerSize[i] = 0u;
 
         StreamString signalName;
         ret = GetSignalName(i, signalName);
@@ -818,10 +817,8 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
                         uint32 index = (currentBuffer[errorCheckSignalIndex] * (numberOfChannels));
                         errorMemIndex = (signalOffsets[errorCheckSignalIndex] + ((index + cnt) * static_cast<uint32> (sizeof(uint32))));
                         void *errorPtr = &memory[errorMemIndex];
-
-                        uint32 *errorP = reinterpret_cast<uint32*> (errorPtr);
                         //if timeout give it a chance
-                        *errorP |= 1u;
+                        *reinterpret_cast<uint32*>(errorPtr) |= 1u;
                     }
                     //copy the timestamp of the previous buffer
                     if (timeStampSignalIndex != 0xFFFFFFFFu) {
@@ -838,7 +835,6 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
                         *reinterpret_cast<uint64*> (timePtr2) = *reinterpret_cast<uint64*> (timePtr1);
                     }
                 }
-
                 //refresh in any case... otherwise it will block the sync
                 {
                     //the DriverRead returns the size read
@@ -867,7 +863,6 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
                         currentBuffer[i] = 0u;
                     }
                 }
-
                 cnt++;
             }
         }
@@ -911,6 +906,7 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
     else {
 
     }
+
     return err;
 }
 

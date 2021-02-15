@@ -223,18 +223,6 @@ public:
      */
     virtual bool TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples);
 
-private:
-
-    /**
-     * @brief Helper function to create the interleaved accelerators
-     */
-    bool GenererateInterleavedAccelerators();
-
-    /**
-     * @brief Helper function to create the interleaved accelerators for the signalDefinitionInterleaved case
-     */
-    bool GenererateInterleavedAcceleratorsSignalDefinitionInterleaved();
-
 protected:
 
     /**
@@ -347,14 +335,26 @@ protected:
     bool getFirst;
 
     /**
-     * TODO - WAS MISSING.
+     * If not zero, stops the operations in Synchronise().
      */
     volatile int32 stop;
     
     /**
-     * TODO - WAS MISSING.
+     * The time to sleep in seconds.
      */
     float32 sleepTime;
+
+private:
+
+    /**
+     * @brief Helper function to create the interleaved accelerators
+     */
+    bool GenererateInterleavedAccelerators();
+
+    /**
+     * @brief Helper function to create the interleaved accelerators for the signalDefinitionInterleaved case
+     */
+    bool GenererateInterleavedAcceleratorsSignalDefinitionInterleaved();
 
 };
 

@@ -2715,19 +2715,27 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_Both() {
         if (ret) {
             uint32 nSamples = 10;
             for (uint32 i = 0u; (i < nSamples) && (ret); i++) {
+                //The offset of 15 in 'mem[15 + i]' gets the ErrorCheck signals.
                 if (n < 2) {
+                    //See CircularBufferThreadInputDataSource.h.
+                    //2u = 2'b00 = {Write overlap==false, DriverRead(*)==true].
                     ret = (mem[15 + i] == 0);
                 }
                 else if (n == 2) {
                     if (i % 2 == 0) {
+                        //See CircularBufferThreadInputDataSource.h.
+                        //2u = 2'b10 = {Write overlap==true, DriverRead(*)==true]
                         ret = (mem[15 + i] == 2);
                     }
                     else {
-                        ret = (mem[15 + i] == 1);    // TODO - Check what changed...
-                        // ret = (mem[15 + i] == 3);    // TODO - This works.
+                        //See CircularBufferThreadInputDataSource.h.
+                        //3u = 2'b11 = {Write overlap==true, DriverRead(*)==false]
+                        ret = (mem[15 + i] == 3);
                     }
                 }
                 else if (n > 2) {
+                    //See CircularBufferThreadInputDataSource.h.
+                    //2u = 2'b10 = {Write overlap==true, DriverRead(*)==true]
                     ret = (mem[15 + i] == 2);
                 }
             }
