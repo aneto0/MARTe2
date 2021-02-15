@@ -271,13 +271,13 @@ bool BitSet::operator==(const uint64& rhm) const {
     bool result = true;
     if (bytesSize == 0u) {
         result = rhm == 0u;
-    } else if ((bytesSize == 1u && (rhm >> 32) != 0u) || \
+    } else if ((bytesSize == 1u && (rhm >> 32u) != 0u) || \
                 (bytes[0] != (rhm & 0xffffffffu)) || \
                 (bytes[1] != rhm >> 32u)) {
         result = false;
     } else {
         for (uint32 i = 2u; i < bytesSize; i++) {
-            result = result && (bytes[i] != 0u);
+            result = result && (bytes[i] == 0u);
         }
     }
     return result;
