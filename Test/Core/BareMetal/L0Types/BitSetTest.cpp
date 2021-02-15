@@ -33,8 +33,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-#if LOCAL_TEST
-#include <cstdlib>
+#if ENVIRONMENT==Linux && ARCHITECTURE==x86_gcc
+#include <cstdio>
 #define LOG_ERROR(X) printf("[%s:%d] ERROR: %s\n", __FILE__, __LINE__, #X)
 #define ASSERT(X) if (!(X)) { LOG_ERROR(X); return false;}
 #else
@@ -211,13 +211,25 @@ bool BitSetTest::TestEquality(){
     bs_b.Set(32, 0);
     ASSERT(bs_b.GetByteSize() == 2);
     ASSERT(bs_a == bs_b);
-    
-    ASSERT(bs_a == (uint64)5);
-
     bs_b.Set(32, 1);
     ASSERT(!(bs_a == bs_b));
-    ASSERT(!(bs_a == (uint32)6));
-    ASSERT(!(bs_b == 5u));
+    uint32 v32 = 6u;
+    ASSERT(!(bs_a == v32));
+    uint64 v64 = 6u;
+    ASSERT(!(bs_a == v64));
+    v32 = 5u;
+    v64 = 5u;
+    ASSERT(!(bs_b == v32));
+    ASSERT(!(bs_b == v64));
+    
+    // Check longer bitmasks.
+    v64 = bs_b;
+    ASSERT(bs_b == v64);
+    bs_b.Set(64, 1);
+    bs_b.Set(64, 0);
+    ASSERT(bs_b == v64);
+    bs_b.Set(64, 1);
+    ASSERT(!(bs_b == v64));
     return true;
 }
 
