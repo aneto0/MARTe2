@@ -38,7 +38,13 @@ def ExecShellCommand(logger, command, logOutput = True, logErrors = True):
     logger.info('Calling command {0}'.format(command))
     if not isinstance(command, list):
         command = [command]
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
+    process = subprocess.Popen(command, 
+                               stdout=subprocess.PIPE, 
+                               stderr=subprocess.PIPE, 
+                               universal_newlines=True, 
+                               shell=True, 
+                               encoding='utf8', 
+                               errors='ignore')
     if (logOutput):
         for outLine in iter(process.stdout.readline, ''):
             logger.debug(outLine)
