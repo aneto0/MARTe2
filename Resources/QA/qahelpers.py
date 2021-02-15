@@ -682,7 +682,7 @@ class CoverageHelper(QAHelper):
         if (len(lcovLines) == 0):
             ok = False
             self.logger.critical('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
-            report.WriteError('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
+            reporter.WriteError('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
         else:
             covResultsCurrentBranch = self.ParseLCovFile(lcovLines)
             self.logger.debug(covResultsCurrentBranch)
@@ -711,7 +711,7 @@ class CoverageHelper(QAHelper):
             lcovLines = self.GetLCovOutput()
             if (len(lcovLines) == 0):
                 self.logger.critical('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
-                report.WriteError('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
+                reporter.WriteError('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
             else:
                 covResultsReferenceBranch = self.ParseLCovFile(lcovLines)
                 self.logger.debug(covResultsReferenceBranch)
