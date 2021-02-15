@@ -9,7 +9,8 @@ make -f Makefile.cov
 lcov --capture --initial --directory . --no-external --output-file $OUTPUT_DIR/MARTe2.coverage.info.initial
 
 if [ $# -gt 0 ]; then
-    for filter in "$@"; do 
+    for filter in $@; do
+        echo "Testing: $filter"
         Test/GTest/cov/MainGTest.ex --gtest_filter=$filter
     done
 else
