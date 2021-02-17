@@ -342,7 +342,7 @@ bool BitSet::operator==(const uint64& rhm) const {
     else {
         for (uint32 i = 2u; i < bytesSize; i++) {
             /*lint -e{661} the size of bytes is always guaranteed to be < bytesSize*/
-            result = result && (bytes[i] != 0u);
+            result = result && (bytes[i] == 0u);
         }
     }
     return result;
