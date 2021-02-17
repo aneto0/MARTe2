@@ -1,6 +1,9 @@
 #!/bin/bash
 OUTPUT_DIR=Build
 
+#Clear previous results
+rm $OUTPUT_DIR/MARTe2.coverage.*
+
 #Build with coverage enabled
 make -f Makefile.cov clean
 make -f Makefile.cov
@@ -28,7 +31,8 @@ lcov --add-tracefile $OUTPUT_DIR/MARTe2.coverage.info.initial --add-tracefile $O
 
 #Remove false positives
 lcov --remove $OUTPUT_DIR/MARTe2.coverage.info.1 "/Test*" --output-file $OUTPUT_DIR/MARTe2.coverage.info.2
-lcov --remove $OUTPUT_DIR/MARTe2.coverage.info.2 "*gtest*" --output-file $OUTPUT_DIR/MARTe2.coverage.info
+lcov --remove $OUTPUT_DIR/MARTe2.coverage.info.2 "*_Gen.cpp" --output-file $OUTPUT_DIR/MARTe2.coverage.info.3
+lcov --remove $OUTPUT_DIR/MARTe2.coverage.info.3 "*gtest*" --output-file $OUTPUT_DIR/MARTe2.coverage.info
 
 #Generate the html
 genhtml $OUTPUT_DIR/MARTe2.coverage.info --output-directory $OUTPUT_DIR/cov_html
