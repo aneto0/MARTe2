@@ -107,7 +107,7 @@ private:
      * The mask covering with ones the specified bit range.
      */
     /*lint -e{845} The right argument to operator >> / << is certain to be 0. Justification: it depends by the template instance. */
-    static const baseType mask = static_cast<baseType>(((~static_cast<uint64>(0u)) >> (baseTypeBitSize - numberOfBits)) << bitOffset);
+    static const baseType mask = static_cast<baseType>(static_cast<uint64>(static_cast<baseType>(~static_cast<baseType>(0u)) >> (baseTypeBitSize - numberOfBits)) << bitOffset);
 
     /**
      * The mask covering with ones the space out of the bit range.
