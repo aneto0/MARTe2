@@ -88,6 +88,16 @@ public:
 
 CLASS_REGISTER(TestIOBufferNotIntrospectable, "1.0")
 
+
+char8 * new_str(const char string[]) {
+    uint32 length = sizeof(&string) / sizeof(char);
+    char8 * str = new char8[length];
+    for (uint32 i = 0; i < length; i++){
+        str[i] = static_cast<char8>(string[i]);
+    } 
+    return str;
+}
+
 //static ClassProperties TestIOBufferNotIntrospectable_prop("TestIOBufferNotIntrospectable", "TestIOBufferNotIntrospectable", "1.0");
 //static ClassRegistryItem TestIOBufferNotIntrospectable_item(TestIOBufferNotIntrospectable_prop, (ObjectBuildFn*) NULL);
 
@@ -1691,7 +1701,18 @@ bool IOBufferTest::TestPrintTooMuchDimensions() {
 }
 
 bool IOBufferTest::TestPrintFormattedIntrospection() {
-    TestIOBufferIntrospectionStructure myStruct;
+    TestIOBufferIntrospectionStructure myStruct; 
+    myStruct.member2 = new float32(0);
+    for (uint32 i = 0; i < 32; i++) {
+        myStruct.member3[i] = static_cast<float32>(i);
+    }
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
+            myStruct.member4[i][j] = new char8('0');
+        }
+    }
+    myStruct.member5.nestedMember1 = 0;
+    myStruct.member5.nestedMember2 = new_str("hello world");
     TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
     AnyType at(myType, 0, (void*) &myStruct);
     IOBuffer ioBuffer;
