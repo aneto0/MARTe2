@@ -1,4 +1,3 @@
-
 /**
  * @file BitSetGTest.cpp
  * @brief Source file for class BitSetGTest
