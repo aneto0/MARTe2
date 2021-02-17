@@ -113,5 +113,11 @@ namespace MARTe {
 
 }
 
-#endif /* COMPILERTYPES */
+/*lint -save -e9026, function-like macro defined to simplify code calls*/
+#define MAX(a, b) ((a > b) ? a : b)
+#define MIN(a, b) ((a < b) ? a : b)
+/*lint -restore */
+#define ONE (static_cast<uint32>(1u))
+#define ZERO (static_cast<uint32>(0u))
 
+#endif /* COMPILERTYPES */
