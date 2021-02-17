@@ -36,7 +36,7 @@
 
 namespace MARTe {
 
-static BitSet longer(const BitSet a, const BitSet b) {
+static BitSet Longer(const BitSet a, const BitSet b) {
     BitSet result = a;
     if (b.GetByteSize() > a.GetByteSize()) {
         result = b;
@@ -216,7 +216,7 @@ BitSet BitSet::operator|(const BitSet& rhm) const {
         newBytes[i] = bytes[i] | rhm.bytes[i];
     }
     for (uint32 i = msize; i < size; i++) {
-        newBytes[i] = longer(*this, rhm).bytes[i];
+        newBytes[i] = Longer(*this, rhm).bytes[i];
     }
     BitSet res(newBytes, size);
     delete[] newBytes;
@@ -232,7 +232,7 @@ BitSet BitSet::operator^(const BitSet& rhm) const {
         newBytes[i] = bytes[i] ^ rhm.bytes[i];
     }
     for (uint32 i = msize; i < size; i++) {
-        newBytes[i] = longer(*this, rhm).bytes[i];
+        newBytes[i] = Longer(*this, rhm).bytes[i];
     }
     BitSet res(newBytes, size);
     delete[] newBytes;
@@ -295,16 +295,16 @@ BitSet BitSet::operator>>(const uint32& rhm) const {
 
 bool BitSet::operator==(const BitSet& rhm) const {
     uint32 common = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 max_length = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 maxLength = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     bool result = true;
     for (uint32 i = 0u; i < common; i++) {
         if (rhm.bytes[i] != bytes[i]) {
             result = false;
         }
     }
-    if (result && (common < max_length)) {
-        for (uint32 i = common; i < max_length; i++) {
-            if (longer(*this, rhm).bytes[i] != 0u) {
+    if (result && (common < maxLength)) {
+        for (uint32 i = common; i < maxLength; i++) {
+            if (Longer(*this, rhm).bytes[i] != 0u) {
                 result = false;
             }
         }
@@ -368,7 +368,7 @@ BitSet & BitSet::operator|=(const BitSet& rhm) {
         newBytes[i] = bytes[i] | rhm.bytes[i];
     }
     for (uint32 i = msize; i < size; i++) {
-        newBytes[i] = longer(*this, rhm).bytes[i];
+        newBytes[i] = Longer(*this, rhm).bytes[i];
     }
     delete[] bytes;
     bytes = newBytes;
@@ -399,7 +399,7 @@ BitSet & BitSet::operator^=(const BitSet& rhm) {
         newBytes[i] = bytes[i] ^ rhm.bytes[i];
     }
     for (uint32 i = msize; i < size; i++) {
-        newBytes[i] = longer(*this, rhm).bytes[i];
+        newBytes[i] = Longer(*this, rhm).bytes[i];
     }
     delete[] bytes;
     bytes = newBytes;
