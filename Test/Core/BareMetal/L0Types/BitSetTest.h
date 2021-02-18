@@ -52,6 +52,11 @@ public:
     bool TestConstructors();
 
     /**
+     * @brief Test ByteSize.
+     */
+    bool TestGetByteSize();
+    
+    /**
      * @brief Test the Set and Bit methods.
      */
     bool TestSetBitMethods();

@@ -79,6 +79,19 @@ bool BitSetTest::TestConstructors() {
     return true;
 }
 
+bool BitSetTest::TestGetByteSize() {
+    BitSet bitset;
+    ASSERT(bitset.GetByteSize() == 1u);
+    BitSet bitsetU32(1u);
+    ASSERT(bitsetU32.GetByteSize() == 1u);
+    BitSet bitsetU64(static_cast<uint64>(1u));
+    ASSERT(bitsetU64.GetByteSize() == 2u);
+    bitset.Set(32, 1);
+    ASSERT(bitset.GetByteSize() == 2u);
+    bitset.Set(64, 1);
+    ASSERT(bitset.GetByteSize() == 3u);
+}
+
 bool BitSetTest::TestSetBitMethods() {
     BitSet bs(0b111u); // initialize
     ASSERT(Check(bs, 7u));
