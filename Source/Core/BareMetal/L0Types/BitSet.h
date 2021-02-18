@@ -243,7 +243,7 @@ private:
      * @param[in] bytes array to be copied.
      * @param[in] size number of elements in the array.
      */
-    /*lint -e1704 */
+    /*lint -e{1704} the private constructor is used in the assign operator */
     BitSet(const uint32 mbytes[], const uint32 size);
 
     /**

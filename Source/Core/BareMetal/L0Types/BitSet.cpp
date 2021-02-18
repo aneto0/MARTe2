@@ -190,7 +190,7 @@ BitSet::operator uint64() const {
     return v;
 }
 
-/*lint -e772 -e9135 newBytes correctly initialized and it is not an unary operator!*/
+/*lint -e{772} -e{9135} newBytes correctly initialized and it is not an unary operator!*/
 BitSet BitSet::operator&(const BitSet& rhm) const {
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
@@ -207,7 +207,7 @@ BitSet BitSet::operator&(const BitSet& rhm) const {
     return res;
 }
 
-/*lint -e772 newBytes correctly initialized*/
+/*lint -e{772} newBytes correctly initialized*/
 BitSet BitSet::operator|(const BitSet& rhm) const {
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
@@ -223,7 +223,7 @@ BitSet BitSet::operator|(const BitSet& rhm) const {
     return res;
 }
 
-/*lint -e772 newBytes correctly initialized*/
+/*lint -e{772} newBytes correctly initialized*/
 BitSet BitSet::operator^(const BitSet& rhm) const {
     uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
@@ -239,7 +239,7 @@ BitSet BitSet::operator^(const BitSet& rhm) const {
     return res;
 }
 
-/*lint -e772 newBytes correctly initialized*/
+/*lint -e{772} newBytes correctly initialized*/
 BitSet BitSet::operator~() const {
     uint32 * newBytes = new uint32[bytesSize];
     for (uint32 i = 0u; i < bytesSize; i++) {
@@ -250,7 +250,7 @@ BitSet BitSet::operator~() const {
     return res;
 }
 
-/*lint -e771 newBytes is correctly initialized*/
+/*lint -e{771} newBytes is correctly initialized*/
 BitSet BitSet::operator<<(const uint32& rhm) const {
     uint32 newSize = bytesSize + (rhm / 32u) + 1u;
     uint32 * newBytes = new uint32[newSize];
@@ -272,7 +272,7 @@ BitSet BitSet::operator<<(const uint32& rhm) const {
     return bs;
 }
 
-/*lint -e771 newBytes is correctly initialized*/
+/*lint -e{771} newBytes is correctly initialized*/
 BitSet BitSet::operator>>(const uint32& rhm) const {
     uint32 * newBytes = new uint32[bytesSize];
     uint32 bitsize = 32u * bytesSize;
