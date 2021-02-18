@@ -5,7 +5,7 @@ OUTPUT_DIR=Build
 set -e
 
 #Clear previous results
-rm $OUTPUT_DIR/MARTe2.coverage.*
+rm -f $OUTPUT_DIR/MARTe2.coverage.*
 
 #Build with coverage enabled
 make -f Makefile.cov clean
