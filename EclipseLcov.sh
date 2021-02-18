@@ -1,9 +1,6 @@
 #!/bin/bash
 OUTPUT_DIR=Build
 
-# Exit if any of the command fail
-set -e
-
 #Clear previous results
 rm -f $OUTPUT_DIR/MARTe2.coverage.*
 
