@@ -268,3 +268,14 @@ TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetOutputBrokers) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetOutputBrokers());
 }
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestSynchronise) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestSynchronise());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestBrokerCopyTerminated) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestBrokerCopyTerminated());
+}
+

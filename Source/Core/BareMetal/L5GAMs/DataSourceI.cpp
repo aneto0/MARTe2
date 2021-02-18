@@ -645,6 +645,10 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
     return ret;
 }
 
+bool DataSourceI::BrokerCopyTerminated() {
+    return true;
+}
+
 bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
                                                      const char8* const functionName,
                                                      void * const gamMemPtr) {

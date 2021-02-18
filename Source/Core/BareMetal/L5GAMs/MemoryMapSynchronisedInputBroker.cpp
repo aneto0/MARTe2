@@ -57,6 +57,9 @@ bool MemoryMapSynchronisedInputBroker::Execute() {
     if (ret) {
         ret = MemoryMapInputBroker::Execute();
     }
+    if (ret) {
+        ret = dataSource->BrokerCopyTerminated();
+    }
     return ret;
 }
 
