@@ -90,6 +90,8 @@ bool BitSetTest::TestGetByteSize() {
     ASSERT(bitset.GetByteSize() == 2u);
     bitset.Set(64, 1);
     ASSERT(bitset.GetByteSize() == 3u);
+
+    return true;
 }
 
 bool BitSetTest::TestSetBitMethods() {
