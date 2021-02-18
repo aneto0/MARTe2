@@ -48,7 +48,12 @@ TEST(TESTSET_NAME,TestConstructors) {
      ASSERT_TRUE(myBasicTypeTest.TestConstructors());
 }
 
-TEST(TESTSET_NAME,tTestSetBitMethods) {
+TEST(TESTSET_NAME, TestGetByteSize) {
+     BitSetTest myBasicTypeTest;
+     ASSERT_TRUE(myBasicTypeTest.TestGetByteSize());
+}
+
+TEST(TESTSET_NAME,TestSetBitMethods) {
      BitSetTest myBasicTypeTest;
      ASSERT_TRUE(myBasicTypeTest.TestSetBitMethods());
 }
