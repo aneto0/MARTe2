@@ -80,6 +80,7 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder, const uin
     priorityLevel = 0u;
     cpuMask = UndefinedCPUs;
     stackSize = THREADS_DEFAULT_STACKSIZE;
+    mux.Create();
 }
 
 
@@ -92,7 +93,10 @@ EmbeddedThreadI::Commands EmbeddedThreadI::GetCommands() const {
 }
 
 void EmbeddedThreadI::SetCommands(const Commands commandsIn) {
-    commands = commandsIn;
+    if (mux.FastLock()) {
+        commands = commandsIn;
+    }
+    mux.FastUnLock();
 }
 
 ThreadIdentifier EmbeddedThreadI::GetThreadId() const {

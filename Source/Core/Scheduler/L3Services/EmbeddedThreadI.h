@@ -34,6 +34,7 @@
 
 #include "EmbeddedServiceMethodBinderI.h"
 #include "EmbeddedServiceMethodBinderT.h"
+#include "FastPollingMutexSem.h"
 #include "Object.h"
 #include "Threads.h"
 
@@ -107,7 +108,6 @@ public:
          * Stop called twice - performing async killing
          */
         KillCommand
-
     };
 
     /**
@@ -311,6 +311,11 @@ protected:
      * The thread unique number (in the context of a pool)
      */
     uint16 threadNumber;
+
+    /**
+     * Mutex semaphore to avoid racing condition between the start of thread and its premature stopping.
+     */
+    FastPollingMutexSem mux; 
 
 private:
 
