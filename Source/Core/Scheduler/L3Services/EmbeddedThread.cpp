@@ -53,7 +53,7 @@ EmbeddedThread::~EmbeddedThread() {
 }
 
 void EmbeddedThread::ThreadLoop() {
-    if (mux.FastLock()) {
+    if (mux.FastLock() == ErrorManagement::NoError) {
         //Needed to avoid that the command is reset to KeepRunningCommand after a StopCommand was set (see EmbeddedThreadI::Stop) (i.e. a racing condition)
         bool setKeepRunning = (GetCommands() == EmbeddedThreadI::StartCommand);
         mux.FastUnLock();

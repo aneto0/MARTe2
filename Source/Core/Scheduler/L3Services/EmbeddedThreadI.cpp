@@ -93,7 +93,7 @@ EmbeddedThreadI::Commands EmbeddedThreadI::GetCommands() const {
 }
 
 void EmbeddedThreadI::SetCommands(const Commands commandsIn) {
-    if (mux.FastLock()) {
+    if (mux.FastLock() == ErrorManagement::NoError) {
         commands = commandsIn;
     }
     mux.FastUnLock();
