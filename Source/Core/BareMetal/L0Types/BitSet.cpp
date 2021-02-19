@@ -89,7 +89,7 @@ BitSet::~BitSet() {
 
 void BitSet::resize(const uint32 size) {
     uint32 * newBytes = new uint32[size];
-    uint32 commonSize = MIN(size, bytesSize);
+    uint32 commonSize = TypeCharacteristics<uint32>::Min(size, bytesSize);
     for (uint32 i = 0u; i < commonSize; i++) {
         newBytes[i] = bytes[i];
     }
@@ -111,7 +111,7 @@ bool BitSet::Bit(const uint32 index) const {
     if (byteIndex < bytesSize) {
         uint32 localIndex = index - (32u * byteIndex);
         uint32 byte = bytes[byteIndex];
-        result = (byte & (ONE << localIndex)) != 0u;
+        result = (byte & (TypeCharacteristics<uint32>::One() << localIndex)) != 0u;
     }
     return result;
 }
@@ -122,7 +122,7 @@ void BitSet::Set(const uint32 index, const bool value) {
         resize(byteIndex + 1u);
     }
     uint32 localIndex = index - (32u * byteIndex);
-    uint32 bitmask = ONE << localIndex;
+    uint32 bitmask = TypeCharacteristics<uint32>::One() << localIndex;
     if (value) {
         if (byteIndex < bytesSize) {
             bytes[byteIndex] |= bitmask;
@@ -192,8 +192,8 @@ BitSet::operator uint64() const {
 
 /*lint -e{772} -e{9135} newBytes correctly initialized and it is not an unary operator!*/
 BitSet BitSet::operator&(const BitSet& rhm) const {
-    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 msize = TypeCharacteristics<uint32>::Min(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = TypeCharacteristics<uint32>::Max(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 * newBytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         newBytes[i] = bytes[i] & rhm.bytes[i];
@@ -209,8 +209,8 @@ BitSet BitSet::operator&(const BitSet& rhm) const {
 
 /*lint -e{772} newBytes correctly initialized*/
 BitSet BitSet::operator|(const BitSet& rhm) const {
-    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
+    uint32 msize = TypeCharacteristics<uint32>::Min(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = TypeCharacteristics<uint32>::Max(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
     uint32 * newBytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         newBytes[i] = bytes[i] | rhm.bytes[i];
@@ -225,8 +225,8 @@ BitSet BitSet::operator|(const BitSet& rhm) const {
 
 /*lint -e{772} newBytes correctly initialized*/
 BitSet BitSet::operator^(const BitSet& rhm) const {
-    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 size = MAX(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
+    uint32 msize = TypeCharacteristics<uint32>::Min(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = TypeCharacteristics<uint32>::Max(bytesSize, rhm.bytesSize); // bytesSize : rhm.bytesSize;
     uint32 * newBytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         newBytes[i] = bytes[i] ^ rhm.bytes[i];
@@ -263,7 +263,7 @@ BitSet BitSet::operator<<(const uint32& rhm) const {
             uint32 byteIndex = (i + rhm) / 32u;
             uint32 bitIndex = (i + rhm) - (byteIndex * 32u);
             if (byteIndex < newSize) {
-                newBytes[byteIndex] |= ONE << bitIndex;
+                newBytes[byteIndex] |= TypeCharacteristics<uint32>::One() << bitIndex;
             }
         }
     }
@@ -284,7 +284,7 @@ BitSet BitSet::operator>>(const uint32& rhm) const {
             uint32 byteIndex = (i - rhm) / 32u;
             uint32 bitIndex = (i - rhm) - (byteIndex * 32u);
             if (byteIndex < bytesSize) {
-                newBytes[byteIndex] |= ONE << bitIndex;
+                newBytes[byteIndex] |= TypeCharacteristics<uint32>::One() << bitIndex;
             }
         }
     }
@@ -294,8 +294,8 @@ BitSet BitSet::operator>>(const uint32& rhm) const {
 }
 
 bool BitSet::operator==(const BitSet& rhm) const {
-    uint32 common = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 maxLength = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 common = TypeCharacteristics<uint32>::Min(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 maxLength = TypeCharacteristics<uint32>::Max(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     bool result = true;
     for (uint32 i = 0u; i < common; i++) {
         if (rhm.bytes[i] != bytes[i]) {
@@ -361,8 +361,8 @@ bool BitSet::operator!=(const uint64& rhm) const {
 }
 
 BitSet & BitSet::operator|=(const BitSet& rhm) {
-    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 msize = TypeCharacteristics<uint32>::Min(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = TypeCharacteristics<uint32>::Max(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 * newBytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         newBytes[i] = bytes[i] | rhm.bytes[i];
@@ -376,8 +376,8 @@ BitSet & BitSet::operator|=(const BitSet& rhm) {
     return *this;
 }
 BitSet & BitSet::operator&=(const BitSet& rhm) {
-    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 msize = TypeCharacteristics<uint32>::Min(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = TypeCharacteristics<uint32>::Max(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 *newBytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         newBytes[i] = bytes[i] & rhm.bytes[i];
@@ -392,8 +392,8 @@ BitSet & BitSet::operator&=(const BitSet& rhm) {
 }
 
 BitSet & BitSet::operator^=(const BitSet& rhm) {
-    uint32 msize = MIN(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
-    uint32 size = MAX(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 msize = TypeCharacteristics<uint32>::Min(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
+    uint32 size = TypeCharacteristics<uint32>::Max(bytesSize, rhm.bytesSize); // ? bytesSize : rhm.bytesSize;
     uint32 *newBytes = new uint32[size];
     for (uint32 i = 0u; i < msize; i++) {
         newBytes[i] = bytes[i] ^ rhm.bytes[i];

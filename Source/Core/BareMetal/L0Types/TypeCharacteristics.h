@@ -57,6 +57,37 @@ template<typename T>
 class  TypeCharacteristics {
 
 public:
+
+/**
+ *  @brief Returns the highest value between two variables.
+ *  @param[in] a first value to be compared.
+ *  @param[in] b second value to be compared.
+ *  @return max(a,b)
+ */
+static inline T Max(T a, T b) {
+    T ret = ((a > b) ? a : b);
+    return ret;
+}
+
+/**
+ *  @brief Returns the lowest value between two variables.
+ *  @param[in] a first value to be compared.
+ *  @param[in] b second value to be compared.
+ *  @return min(a,b)
+ */
+static inline T Min(T a, T b) {
+    T ret = ((a < b) ? a : b);
+    return ret;
+}
+
+/**
+ *  @brief Helper function to define 1.
+ *  @return 1.
+ */
+static inline T One() {
+    return static_cast<T>(1u);
+}
+
 /**
  *  @brief Returns true if type T is a float, false otherwise.
  *  @return true if type T is a float, false otherwise.
@@ -194,8 +225,8 @@ inline const double TypeCharacteristics<double>::MinValue(){
  * @brief converts any number to any other number saturating the conversion
  * @tparam inputType Any number for which TypeCharacteristics is implemented
  * @tparam outputType Any number for which TypeCharacteristics is implemented
- * @param src is the number to copy
- * @param dest is the number to be copied to
+ * @param[in] src is the number to copy
+ * @param[out] dest is the number to be copied to
  * @pre (inputType != FractionalInteger) && (outputType != FractionalInteger)
  * @return false if saturation was necessary
  */
