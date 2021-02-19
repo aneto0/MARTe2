@@ -53,12 +53,12 @@ bool MemoryMapSynchronisedInputBroker::Execute() {
     bool ret = true;
     if (dataSource != NULL_PTR(DataSourceI *)) {
         ret = dataSource->Synchronise();
-    }
-    if (ret) {
-        ret = MemoryMapInputBroker::Execute();
-    }
-    if (ret) {
-        ret = dataSource->BrokerCopyTerminated();
+        if (ret) {
+            ret = MemoryMapInputBroker::Execute();
+        }
+        if (ret) {
+            ret = dataSource->BrokerCopyTerminated();
+        }
     }
     return ret;
 }
