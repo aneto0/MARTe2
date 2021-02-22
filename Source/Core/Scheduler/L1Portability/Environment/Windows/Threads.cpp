@@ -286,7 +286,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             runOnCPUs = ProcessorType::GetDefaultCPUs();
         }
         else {
-            runOnCPUs = 0xff;
+            runOnCPUs = ProcessorType(0xf);
         }
     }
 
