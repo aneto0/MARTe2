@@ -189,7 +189,7 @@ private:
     /**
      * The thread CPUs mask.
      */
-    uint32 cpuMask;
+    ProcessorType cpuMask;
 
     /**
      * The thread stack size.
