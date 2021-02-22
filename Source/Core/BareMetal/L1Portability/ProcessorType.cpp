@@ -72,11 +72,11 @@ bool ProcessorType::CPUEnabled(const uint32 cpuNumber) {
     return processorMask.Bit(cpuNumber -1u);
 }
 
-uint32 ProcessorType::GetCPUsNumber() {
+const uint32 ProcessorType::GetCPUsNumber() {
     return processorMask.GetByteSize() * 32u;
 }    
 
-uint32 ProcessorType::GetLegacyUint32Mask() {
+const uint32 ProcessorType::GetLegacyUint32Mask() {
     return static_cast<uint32>(processorMask);
 }
 

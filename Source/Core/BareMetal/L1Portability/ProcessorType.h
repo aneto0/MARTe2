@@ -96,7 +96,7 @@ public:
      * @brief Get the total maximum number of CPUs available in this configuration (the size of the BitSet)/
      * @return the number of bits of the current bitmask.
      */
-    uint32 GetCPUsNumber();
+    const uint32 GetCPUsNumber();
 
 
     /**
@@ -104,7 +104,7 @@ public:
      * @return the CPUMask BitSet as a trunkated `uint32`
      * @deprecated
      */
-    uint32 GetLegacyUint32Mask();
+    const uint32 GetLegacyUint32Mask();
 
     /**
      * @brief Assign operator with integer.
