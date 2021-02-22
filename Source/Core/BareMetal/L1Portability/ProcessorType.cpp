@@ -68,15 +68,15 @@ void ProcessorType::AddCPU(const uint32 cpuNumber) {
     processorMask.Set(cpuNumber - 1u, true);
 }
 
-const bool ProcessorType::CPUEnabled(const uint32 cpuNumber) {
+const bool ProcessorType::CPUEnabled(const uint32 cpuNumber) const {
     return processorMask.Bit(cpuNumber -1u);
 }
 
-const uint32 ProcessorType::GetCPUsNumber() {
+const uint32 ProcessorType::GetCPUsNumber() const {
     return processorMask.GetByteSize() * 32u;
 }    
 
-const uint32 ProcessorType::GetLegacyUint32Mask() {
+const uint32 ProcessorType::GetLegacyUint32Mask() const {
     return static_cast<uint32>(processorMask);
 }
 

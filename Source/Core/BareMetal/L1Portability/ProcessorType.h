@@ -90,13 +90,13 @@ public:
      * @param[in] cpuNumber the number of the CPU to check.
      * @return the status of the selected CPU.
      */
-    const bool CPUEnabled(const uint32 cpuNumber);
+    const bool CPUEnabled(const uint32 cpuNumber) const;
 
     /**
      * @brief Get the total maximum number of CPUs available in this configuration (the size of the BitSet)/
      * @return the number of bits of the current bitmask.
      */
-    const uint32 GetCPUsNumber();
+    const uint32 GetCPUsNumber() const;
 
 
     /**
@@ -104,7 +104,7 @@ public:
      * @return the CPUMask BitSet as a trunkated `uint32`
      * @deprecated
      */
-    const uint32 GetLegacyUint32Mask();
+    const uint32 GetLegacyUint32Mask() const;
 
     /**
      * @brief Assign operator with integer.
