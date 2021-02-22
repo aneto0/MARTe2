@@ -90,7 +90,7 @@ public:
      * @param[in] cpuNumber the number of the CPU to check.
      * @return the status of the selected CPU.
      */
-    bool CPUEnabled(const uint32 cpuNumber);
+    const bool CPUEnabled(const uint32 cpuNumber);
 
     /**
      * @brief Get the total maximum number of CPUs available in this configuration (the size of the BitSet)/

@@ -68,7 +68,7 @@ void ProcessorType::AddCPU(const uint32 cpuNumber) {
     processorMask.Set(cpuNumber - 1u, true);
 }
 
-bool ProcessorType::CPUEnabled(const uint32 cpuNumber) {
+const bool ProcessorType::CPUEnabled(const uint32 cpuNumber) {
     return processorMask.Bit(cpuNumber -1u);
 }
 
