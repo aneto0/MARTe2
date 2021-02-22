@@ -170,7 +170,7 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
 
                                 states[i].threads[j].numberOfExecutables = numberOfExecutables;
                                 states[i].threads[j].name = threadElement->GetName();
-                                states[i].threads[j].cpu = threadElement->GetCPU().GetProcessorMask();
+                                states[i].threads[j].cpu = threadElement->GetCPU();
                                 states[i].threads[j].stackSize = threadElement->GetStackSize();
                             }
                             uint32 c = 0u;

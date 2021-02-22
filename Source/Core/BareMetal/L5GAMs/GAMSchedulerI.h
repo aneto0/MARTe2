@@ -38,6 +38,7 @@
 #include "ReferenceT.h"
 #include "StatefulI.h"
 #include "TimingDataSource.h"
+#include "ProcessorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -67,7 +68,7 @@ struct ScheduledThread {
     /**
      * The cpus where is possible to run the thread
      */
-    uint32 cpu;
+    ProcessorType cpu;
 
     /**
      * The thread stack size
