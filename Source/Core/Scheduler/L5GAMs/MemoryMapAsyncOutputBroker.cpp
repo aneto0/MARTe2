@@ -45,7 +45,7 @@ MemoryMapAsyncOutputBroker::MemoryMapAsyncOutputBroker() :
     numberOfBuffers = 0u;
     writeIdx = 0u;
     readSynchIdx = 0u;
-    cpuMask = 0xffu;
+    cpuMask = ProcessorType(0xffu); // WARNING USING UINT32 TO INITIALIZE `ProcessorType`
     stackSize = THREADS_DATABASE_GRANULARITY;
     if (!sem.Create()) {
         REPORT_ERROR(ErrorManagement::FatalError, "Could not Create the EventSem.");

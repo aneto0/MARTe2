@@ -49,7 +49,7 @@ MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
     writeIdx = 0u;
     readSynchIdx = 0u;
     preTriggerBuffers = 0u;
-    cpuMask = 0xffu;
+    cpuMask = ProcessorType(0xffu); // WARNING USING `uint32` TO INIT A `ProcessorType`
     postTriggerBuffersCounter = 0u;
     postTriggerBuffers = 0u;
     numberOfPreBuffersWritten = 0;
