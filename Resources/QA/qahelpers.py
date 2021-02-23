@@ -890,7 +890,7 @@ class GTestHelper(QAHelper):
                 ret['disabled'] = int(testSuitesNode.attrib['disabled'])
                 ret['errors'] = int(testSuitesNode.attrib['errors'])
                 self.logger.debug(ret)
-                ret['failedtests'] = [test.get('name') for test in xmlRoot.xpath('*/testcase[failure]')]
+                ret['failedTests'] = [test.get('name') for test in xmlRoot.xpath('*/testcase[failure]')]
             else:
                 self.logger.critical("Could not find the xml tree for {0}".format(f))
 
@@ -905,6 +905,31 @@ class GTestHelper(QAHelper):
 
     def ReportErrors(self, output, qualifier, currentTotalTests, currentTotalErrors, referenceTotalErrors):
         output('Number of errors {0}. Number of tests: {1}. Current branch: {2}. Reference branch: {3}'.format(qualifier, currentTotalTests, currentTotalErrors, referenceTotalErrors))
+
+    def ReportFailedTests(self, reporter, currentFailedTests, referenceFailedTests):
+        common = []
+        onlyCurrent = []
+        onlyReference = []
+        for test in currentFailedTests:
+            if test in referenceFailedTests:
+                common.append(test)
+            else:
+                onlyCurrent.append(test)
+        for test in referenceFailedTests:
+            if test not in common:
+                onlyReference.append(test)
+        if len(common):
+            reporter.SetHelper('Common Failed Tests')
+            for test in common: 
+                reporter.WriteError(test)
+        if len(onlyReference):
+            reporter.SetHelper('Reference Branch Failed Tests')
+            for test in onlyReference:
+                reporter.WriteError(test)
+        if len(onlyCurrent):
+            reporter.SetHelper('Current Branch Failed Tests')
+            for test in onlyCurrent:
+                reporter.WriteError(test)
 
     def Run(self, reporter):
         """ Checks that all the test pass.
@@ -984,6 +1009,9 @@ class GTestHelper(QAHelper):
                 else:
                     self.ReportErrors(reporter.WriteOK, 'is zero', currentTotalTests, currentTotalErrors, referenceTotalErrors)
 
+
+            if referenceTotalErrors or currentTotalErrors:
+                self.ReportFailedTests(reporter, currentFailedTests, referenceFailedTests)
 
             self.gtestOutputFilePrefix = originalPrexif
         else:
