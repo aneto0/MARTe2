@@ -890,6 +890,7 @@ class GTestHelper(QAHelper):
                 ret['disabled'] = int(testSuitesNode.attrib['disabled'])
                 ret['errors'] = int(testSuitesNode.attrib['errors'])
                 self.logger.debug(ret)
+                ret['failedtests'] = [test.get('name') for test in xmlRoot.xpath('*/testcase[failure]')]
             else:
                 self.logger.critical("Could not find the xml tree for {0}".format(f))
 
@@ -922,7 +923,7 @@ class GTestHelper(QAHelper):
 
         currentTotalTests = 0
         currentTotalErrors = 0
-        
+        currentFailedTests = []
 
         for idx, fil in enumerate(self.gtestFilters):
             gtestOutputFile = '{0}/{1}_{2}.xml'.format(self.gtestOutputDir, self.gtestOutputFilePrefix, idx)
@@ -934,6 +935,7 @@ class GTestHelper(QAHelper):
             else:
                 currentTotalTests += gtestOutput['tests']
                 currentTotalErrors += gtestOutput['failures']
+                currentFailedTests += gtestOutput['failedTests']
 
         if (relativeComparison):
             originalPrexif = self.gtestOutputFilePrefix
@@ -948,6 +950,7 @@ class GTestHelper(QAHelper):
            
             referenceTotalTests = 0
             referenceTotalErrors = 0
+            referenceFailedTests = []
             for idx, fil in enumerate(self.gtestFilters):
                 gtestOutputFile = '{0}/{1}_{2}.xml'.format(self.gtestOutputDir, self.gtestOutputFilePrefix, idx)
                 gtestOutput = self.ParseGTestOutputFile(gtestOutputFile)
@@ -958,6 +961,7 @@ class GTestHelper(QAHelper):
                 else:
                     referenceTotalTests += gtestOutput['tests']
                     referenceTotalErrors += gtestOutput['failures']
+                    referenceFailedTests += gtestOutput['failedTests']
 
             if (currentTotalTests == referenceTotalTests):
                 self.ReportTestQuantity(reporter.WriteOK, 'unchanged', currentTotalTests, referenceTotalTests)
