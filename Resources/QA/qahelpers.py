@@ -889,8 +889,8 @@ class GTestHelper(QAHelper):
                 ret['failures'] = int(testSuitesNode.attrib['failures'])
                 ret['disabled'] = int(testSuitesNode.attrib['disabled'])
                 ret['errors'] = int(testSuitesNode.attrib['errors'])
-                self.logger.debug(ret)
                 ret['failedTests'] = [test.get('name') for test in xmlRoot.xpath('*/testcase[failure]')]
+                self.logger.debug(ret)
             else:
                 self.logger.critical("Could not find the xml tree for {0}".format(f))
 
