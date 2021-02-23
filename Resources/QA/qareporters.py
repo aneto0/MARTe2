@@ -408,15 +408,15 @@ class HTMLReporter(QAReporter):
         out += NEW_LINE
         out += '<table>'
         out += NEW_LINE
-        out += '<tr><td id="tdh">Report date</td><td>{0}</td>'.format(dateStr)
+        out += f'<tr><td id="tdh">Report date</td><td>{dateStr}</td>'
         out += NEW_LINE
-        out += '<tr><td id="tdh">Software version</td><td>{0}</td></tr>'.format(self.codeVersion)
+        out += f'<tr><td id="tdh">Software version</td><td>{self.codeVersion}</td></tr>'
         out += NEW_LINE
-        out += '<tr><td id="tdh">Current branch</td><td>{0}</td></tr>'.format(self.currentBranch)
+        out += f'<tr><td id="tdh">Current branch</td><td>{self.currentBranch}</td></tr>'
         out += NEW_LINE
-        out += '<tr><td id="tdh">Reference branch</td><td>{0}</td></tr>'.format(self.referenceBranch)
+        out += f'<tr><td id="tdh">Reference branch</td><td>{self.referenceBranch}</td></tr>'
         out += NEW_LINE
-        out += '<tr><td id="tdh">Reviewer</td><td>{0}</td></tr>'.format(self.reviewAuthor)
+        out += f'<tr><td id="tdh">Reviewer</td><td>{self.reviewAuthor}</td></tr>'
         out += NEW_LINE
         out += '</table>'
 
