@@ -186,7 +186,7 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
     if (ret) {
         // TODO using better way to read/write BitSet
         uint32 cpuConfig = 0u;
-        if (!data.Read("CPUs", &cpuConfig)) {
+        if (!data.Read("CPUs", cpuConfig)) {
             REPORT_ERROR(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName());
         }
         if (!data.Read("StackSize", stackSize)) {
