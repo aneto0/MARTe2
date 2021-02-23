@@ -745,12 +745,11 @@ bool RealTimeThreadTest::TestGetCPU() {
 
     RealTimeThread thread;
     bool ok = (thread.GetCPU() == ProcessorType::GetDefaultCPUs());
-
     if (ok) {
         ok = thread.Initialise(tcdb);
     }
     if (ok) {
-        ok = (thread.GetCPU() == 0xfeff);
+        ok = (thread.GetCPU() == 0xfeffu);
     }
 
     return ok;
