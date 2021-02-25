@@ -348,6 +348,23 @@ class HTMLReporter(QAReporter):
 
         return ret
 
+    def WriteListFailedTestCategory(self, category, msgType='ERROR', cssClass='tde'):
+        ret = ''
+        if category in self.msgs:
+            ret += f'<h2>{category}</h2>\n'
+            ret += '<tr><th>Severity</th><th>Message</th></tr>\n'
+            for msg in self.msgs[category][self.ERROR]:
+                ret += f'<tr><td id="{cssClass}">{msgType}</td><td>{msg}</td></tr>\n'
+            ret += '</table>\n'
+        return ret
+
+    def WriteListFailedTest(self):
+        NEW_LINE = '\n'
+        ret += self.WriteListFailedTestCategory('Common Failed Tests', 'WARNING', 'tdw')
+        ret += self.WriteListFailedTestCategory('Reference Branch Failed Tests', 'SOLVED', 'tdo')
+        ret += self.WriteListFailedTestCategory('Current Branch Failed Tests', 'ERROR', 'tde')
+        return ret
+        
     def Terminate(self):
         NEW_LINE = '\n'
 
@@ -427,6 +444,7 @@ class HTMLReporter(QAReporter):
         out += self.WriteHelperOutput('Doxygen')
         out += self.WriteHelperOutput('Functional tests')
         out += self.WriteHelperOutput('GTest')
+        out += self.WriteListFailedTest()
         out += self.WriteHelperOutput('Coverage')
         out += '</body>'
         out += '</html>'
