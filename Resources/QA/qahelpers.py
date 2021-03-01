@@ -919,15 +919,15 @@ class GTestHelper(QAHelper):
             if test not in common:
                 onlyReference.append(test)
         if len(common):
-            reporter.SetHelper('Common Failed Tests')
+            reporter.SetHelper('Unsolved Failing Tests')
             for test in common: 
                 reporter.WriteError(test)
         if len(onlyReference):
-            reporter.SetHelper('Reference Branch Failed Tests')
+            reporter.SetHelper('Solved Failing Tests')
             for test in onlyReference:
                 reporter.WriteError(test)
         if len(onlyCurrent):
-            reporter.SetHelper('Current Branch Failed Tests')
+            reporter.SetHelper('New Failing Tests')
             for test in onlyCurrent:
                 reporter.WriteError(test)
 

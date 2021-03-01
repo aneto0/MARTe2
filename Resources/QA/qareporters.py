@@ -360,9 +360,9 @@ class HTMLReporter(QAReporter):
 
     def WriteListFailedTest(self):
         NEW_LINE = '\n'
-        ret = self.WriteListFailedTestCategory('Common Failed Tests', 'WARNING', 'tdw')
-        ret += self.WriteListFailedTestCategory('Reference Branch Failed Tests', 'SOLVED', 'tdo')
-        ret += self.WriteListFailedTestCategory('Current Branch Failed Tests', 'ERROR', 'tde')
+        ret = self.WriteListFailedTestCategory('Unsolved Failing Tests', 'WARNING', 'tdw')
+        ret += self.WriteListFailedTestCategory('New Failing Tests', 'ERROR', 'tde')
+        ret += self.WriteListFailedTestCategory('Solved Failing Tests', 'SOLVED', 'tdo')
         return ret
         
     def Terminate(self):
