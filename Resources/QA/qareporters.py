@@ -154,7 +154,7 @@ class RedmineReporter(QAReporter):
         self.codeVersion = args['codeversion']
         return True
 
-    def WriteHelperOutput(self, helper):
+    def WriteHelperOutput(self, helper, ignoreNotRun=False):
         OK_COLOR = 'green'
         WARN_COLOR = 'yellow'
         ERROR_COLOR = 'red'
@@ -186,7 +186,7 @@ class RedmineReporter(QAReporter):
 
             if (not errFound):
                 ret += '%{{color:{0}}}OK:% no errors found.\n\n'.format(OK_COLOR)
-        else:
+        elif(not ignoreNotRun):
             ret += '%{{color:{0}}}ERR:% helper did not run.\n\n'.format(ERROR_COLOR)
 
         return ret
@@ -257,9 +257,9 @@ class RedmineReporter(QAReporter):
 
         out += self.WriteHelperOutput('Functional tests')
         out += self.WriteHelperOutput('GTest')
-        out += self.WriteHelperOutput('Unsolved Failing Tests')
-        out += self.WriteHelperOutput('New Failing Tests')
-        out += self.WriteHelperOutput('Solved Failing Tests')
+        out += self.WriteHelperOutput('Unsolved Failing Tests', True)
+        out += self.WriteHelperOutput('New Failing Tests', True)
+        out += self.WriteHelperOutput('Solved Failing Tests', True)
         out += self.WriteHelperOutput('Coverage')
 
         out += NEW_LINE
@@ -354,6 +354,7 @@ class HTMLReporter(QAReporter):
     def WriteListFailedTestCategory(self, category, msgType='ERROR', cssClass='tde'):
         ret = ''
         if category in self.msgs:
+            ret += '<table>\n'
             ret += f'<h2>{category}</h2>\n'
             ret += '<tr><th>Severity</th><th>Message</th></tr>\n'
             for msg in self.msgs[category][self.ERROR]:
