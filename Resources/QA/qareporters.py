@@ -257,6 +257,9 @@ class RedmineReporter(QAReporter):
 
         out += self.WriteHelperOutput('Functional tests')
         out += self.WriteHelperOutput('GTest')
+        out += self.WriteHelperOutput('Unsolved Failing Tests')
+        out += self.WriteHelperOutput('New Failing Tests')
+        out += self.WriteHelperOutput('Solved Failing Tests')
         out += self.WriteHelperOutput('Coverage')
 
         out += NEW_LINE
