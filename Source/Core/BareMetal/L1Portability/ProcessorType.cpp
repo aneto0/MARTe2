@@ -84,6 +84,10 @@ void ProcessorType::operator=(const BitSet cpuMask) {
     processorMask = cpuMask;
 }
 
+void ProcessorType::operator=(const uint32 cpuMask) {
+    processorMask = cpuMask;
+}
+
 ProcessorType& ProcessorType::operator=(const ProcessorType &pt) {
     if (this != &pt) {
         processorMask = pt.processorMask;

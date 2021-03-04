@@ -110,13 +110,19 @@ public:
      * @brief Assign operator with integer.
      * @param[in] cpuMask is the desired CPU mask.
      */
-    
     void operator=(const BitSet cpuMask);
+
+    /**
+     * @brief Assign operator with uint32.
+     * @param[in] cpuMask is the desired CPU mask.
+     * @deprecated
+     */
+    void operator=(const uint32 cpuMask);
+
     /**
      *64brief Assign operator with another ProcessorType.
      * @param[in] pt is the ProcessorType to copy in this.
      */
-    
     ProcessorType& operator=(const ProcessorType &pt);
     
     /**
