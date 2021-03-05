@@ -110,6 +110,10 @@ public:
      */
     bool TestSetIgnoreBufferOverrun();
 
+    /**
+     * @brief Tests the TestSetIgnoreBufferOverrun method.
+     */
+    bool TestFlush();
 };
 
 /*---------------------------------------------------------------------------*/

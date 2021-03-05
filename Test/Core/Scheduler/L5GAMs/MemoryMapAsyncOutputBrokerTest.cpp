@@ -223,7 +223,7 @@ MemoryMapAsyncOutputBrokerDataSourceTestHelper    () {
             const MARTe::char8* const functionName,
             void * const gamMemPtr) {
         using namespace MARTe;
-        ReferenceT<MARTe::MemoryMapAsyncOutputBroker> broker = ReferenceT<MARTe::MemoryMapAsyncOutputBroker>("MemoryMapAsyncOutputBroker");
+        broker = ReferenceT<MARTe::MemoryMapAsyncOutputBroker>("MemoryMapAsyncOutputBroker");
         bool ret = broker.IsValid();
         if (ret) {
             ret = broker->InitWithBufferParameters(OutputSignals, *this, functionName, gamMemPtr, numberOfBuffers, cpuMask, stackSize);
@@ -253,6 +253,10 @@ MemoryMapAsyncOutputBrokerDataSourceTestHelper    () {
         return memoryOK;
     }
 
+    bool Flush() {
+        return broker->Flush();
+    }
+
     MARTe::uint32 numberOfBuffers;
     MARTe::uint32 *offsets;
     MARTe::uint32 cpuMask;
@@ -261,6 +265,7 @@ MemoryMapAsyncOutputBrokerDataSourceTestHelper    () {
     MARTe::uint32 numberOfExecutes;
     MARTe::uint32 totalNumberOfSignalElements;
     MARTe::uint32 counter;
+    MARTe::ReferenceT<MARTe::MemoryMapAsyncOutputBroker> broker;
     bool memoryOK;
     void *signalMemory;
 };
@@ -434,6 +439,9 @@ static bool TestExecute_Buffers(const MARTe::char8 * const config, MARTe::uint32
     }
     if (ok) {
         ok = dataSource->memoryOK;
+    }
+    if (ok) {
+        ok = dataSource->Flush();
     }
 
     godb->Purge();

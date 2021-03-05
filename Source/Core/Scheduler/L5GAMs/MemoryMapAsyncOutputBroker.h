@@ -149,6 +149,10 @@ MemoryMapAsyncOutputBroker    ();
      */
     bool IsIgnoringBufferOverrun() const;
 
+    /**
+     * @brief Flush all the data left in the shared buffer between the threads.
+     * @return true if the data is properly flushed.
+     */
     bool Flush();
 
 private:

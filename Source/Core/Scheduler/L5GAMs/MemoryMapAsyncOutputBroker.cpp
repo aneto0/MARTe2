@@ -236,7 +236,7 @@ bool MemoryMapAsyncOutputBroker::Flush() {
     }
     fastSem.FastUnLock();
     while(!flushed) {
-        Sleep::MSec(0.1F);
+        Sleep::Sec(0.1F);
     }
     return ret;
 }
