@@ -55,6 +55,7 @@ MemoryMapAsyncOutputBroker::MemoryMapAsyncOutputBroker() :
     }
     fastSem.Create();
     posted = false;
+    flushed = true;
     destroying = false;
     ignoreBufferOverrun = false;
 }
@@ -226,6 +227,20 @@ bool MemoryMapAsyncOutputBroker::Execute() {
     return ret;
 }
 
+bool MemoryMapAsyncOutputBroker::Flush() {
+    bool ret = (fastSem.FastLock() == ErrorManagement::NoError);
+    if (ret) {
+        flushed = false;
+        ret = sem.Post();
+        posted = true;
+    }
+    fastSem.FastUnLock();
+    while(!flushed) {
+        Sleep::MSec(0.1F);
+    }
+    return ret;
+}
+
 /*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
 ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(ExecutionInfo & info) {
     ErrorManagement::ErrorType err;
@@ -272,6 +287,7 @@ ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(ExecutionInfo 
         }
 
         if (ret) {
+            flushed = true;
             //Wait for new data to be available from the real-time thread.
             if (!destroying) {
                 err = sem.Wait(TTInfiniteWait);

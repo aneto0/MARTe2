@@ -149,6 +149,7 @@ MemoryMapAsyncOutputBroker    ();
      */
     bool IsIgnoringBufferOverrun() const;
 
+    bool Flush();
 
 private:
 
@@ -229,6 +230,11 @@ private:
      * If true buffer overruns will be ignored.
      */
     bool ignoreBufferOverrun;
+
+    /**
+     * True if flushed was called.
+     */
+    bool flushed;
 };
 }
 
