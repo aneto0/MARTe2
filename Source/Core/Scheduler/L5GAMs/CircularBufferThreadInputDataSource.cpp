@@ -170,8 +170,7 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
             sleepTime = 0.F;
         }
         receiverThreadPriority %= 32u;
-        executor.SetCPUMask(static_cast<uint32>(cpuMask));  //Older Version is uint32
-        // executor.SetCPUMask(cpuMask); //New version is uint64
+        executor.SetCPUMask(static_cast<uint32>(cpuMask));
         executor.SetStackSize(receiverThreadStackSize);
         executor.SetPriorityClass(Threads::RealTimePriorityClass);
         executor.SetPriorityLevel(receiverThreadPriority);
