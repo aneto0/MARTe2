@@ -2476,6 +2476,10 @@ bool CircularBufferThreadInputDataSourceTest::TestGetInputOffset() {
 
 }
 
+bool CircularBufferThreadInputDataSourceTest::PrepareInputOffsets() {
+    return TestGetInputOffset();
+}
+
 bool CircularBufferThreadInputDataSourceTest::TestGetOutputOffset() {
 
     CircularBufferThreadInputDataSourceTestDS dataSource;

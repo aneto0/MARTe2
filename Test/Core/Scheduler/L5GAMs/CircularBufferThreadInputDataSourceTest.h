@@ -202,6 +202,12 @@ public:
     bool TestGetInputOffset();
 
     /**
+     * @brief Tests the CircularBufferThreadInputDataSource::PrepareInputOffsets
+     * method.
+     */
+    bool PrepareInputOffsets();
+
+    /**
      * @brief Tests the CircularBufferThreadInputDataSource::GetOutputOffset
      * method.
      */

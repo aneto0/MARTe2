@@ -176,6 +176,11 @@ TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestGetInputOffse
     ASSERT_TRUE(test.TestGetInputOffset());
 }
 
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,PrepareInputOffsets) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.PrepareInputOffsets());
+}
+
 TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestGetOutputOffset) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestGetOutputOffset());

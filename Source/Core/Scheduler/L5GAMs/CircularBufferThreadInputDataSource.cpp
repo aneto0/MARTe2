@@ -201,7 +201,7 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
 /*lint -e{613} null pointer checked before.*/
 void CircularBufferThreadInputDataSource::PrepareInputOffsets() {
 
-    REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::PrepareInputOffsets");
+    // REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::PrepareInputOffsets");
 
     for (uint32 i = 0u; i < numberOfSignals; i++) {
         if (i != syncSignal) {
@@ -319,7 +319,7 @@ const char8 *CircularBufferThreadInputDataSource::GetBrokerName(StructuredDataI 
 bool CircularBufferThreadInputDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers,
                                                            const char8* const functionName,
                                                            void * const gamMemPtr) {
-    REPORT_ERROR(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::GetOutputBrokers returning false (no OutputBrokers).");
+    // REPORT_ERROR(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::GetOutputBrokers returning false (no OutputBrokers).");
     return false;
 }
 
@@ -750,7 +750,7 @@ bool CircularBufferThreadInputDataSource::GetInputOffset(const uint32 signalIdx,
                                                          const uint32 numberOfSamples,
                                                          uint32 &offset) {
 
-    REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::GetInputOffset");
+    // REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::GetInputOffset");
 
     offset = ((lastReadBuffer[signalIdx] - numberOfSamples) + 1u);
     if (offset >= numberOfBuffers) {
@@ -765,7 +765,7 @@ bool CircularBufferThreadInputDataSource::GetInputOffset(const uint32 signalIdx,
 bool CircularBufferThreadInputDataSource::GetOutputOffset(const uint32 signalIdx,
                                                           const uint32 numberOfSamples,
                                                           uint32 &offset) {
-    REPORT_ERROR(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::GetOutputBrokers returning false (no OutputOffset).");
+    // REPORT_ERROR(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::GetOutputBrokers returning false (no OutputOffset).");
     return false;
 }
 
