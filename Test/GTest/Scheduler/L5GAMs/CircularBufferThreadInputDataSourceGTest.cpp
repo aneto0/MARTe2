@@ -1,8 +1,9 @@
 /**
  * @file CircularBufferThreadInputDataSourceGTest.cpp
- * @brief Source file for class CircularBufferThreadInputDataSourceGTest
- * @date 27/04/2018
+ * @brief Source file for class CircularBufferThreadInputDataSourceGTest.
+ * @date 12/02/2021
  * @author Giuseppe Ferro
+ * @author Pedro Lourenco
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,28 +16,24 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
- * the class CircularBufferThreadInputDataSourceGTest (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * the class CircularBufferThreadInputDataSourceGTest (public, protected, and
+ * private). Be aware that some methods, such as those inline could be defined
+ * on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
+#include "gtest/gtest.h"
 #include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "gtest/gtest.h"
 #include "CircularBufferThreadInputDataSourceTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -69,6 +66,11 @@ TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_St
     ASSERT_TRUE(test.TestInitialise_StackSize());
 }
 
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_SleepTime) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestInitialise_SleepTime());
+}
+
 TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_SignalDefinitionInterleaved) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestInitialise_SignalDefinitionInterleaved());
@@ -87,6 +89,11 @@ TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSynchronise_F
 TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSynchronise_GetLatest) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSynchronise_GetLatest());
+}
+
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSynchronise_SleepTime) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSynchronise_SleepTime());
 }
 
 TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestGetBrokerName) {
@@ -132,6 +139,21 @@ TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfigured
 TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples());
+}
+
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_SignalDefinitionInterleaved_HeaderSize) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_SignalDefinitionInterleaved_HeaderSize());
+}
+
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_PacketMemberSizes_RecallAllocation) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_PacketMemberSizes_RecallAllocation());
+}
+
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_SignalDefinitionInterleaved_RecallAllocation) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_SignalDefinitionInterleaved_RecallAllocation());
 }
 
 TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_InvalidPacketMemberSize) {
@@ -233,6 +255,3 @@ TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestTerminateInpu
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestTerminateInputCopy());
 }
-
-
-

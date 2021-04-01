@@ -1,8 +1,9 @@
 /**
  * @file CircularBufferThreadInputDataSource.h
- * @brief Header file for class CircularBufferThreadInputDataSource
- * @date 13/04/2018
+ * @brief Header file for class CircularBufferThreadInputDataSource.
+ * @date 12/02/2021
  * @author Giuseppe Ferro
+ * @author Pedro Lourenco
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,10 +16,11 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
- * @details This header file contains the declaration of the class CircularBufferThreadInputDataSource
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ *
+ * @details This header file contains the declaration of the class
+ * CircularBufferThreadInputDataSource with all of its public, protected and
+ * private members. It may also include definitions for inline methods which
+ * need to be visible to the compiler.
  */
 
 #ifndef CIRCULARBUFFERTHREADINPUTDATASOURCE_H_
@@ -35,10 +37,10 @@
 #include "FastPollingMutexSem.h"
 #include "MemoryDataSourceI.h"
 #include "SingleThreadService.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
 /**
@@ -57,8 +59,7 @@ namespace MARTe {
  *
  * This data source also allows to specify signals as being "interleaved". In order to achieve this, each signal must declared a field named PacketMemberSizes which describes its structure.
  * As an example PacketMemberSizes={4,2,2,8} would mean that the signal (whose NumberOfElements shall be 16 for an uint8 type) is composed of an uint32, followed by 2 uint16 and finally followed by an uint64.
- * Furthermore, for each signal, a number of header bytes can skipped from the source signal when interleaving (this is specified with the parameter HeaderBytes).
- * A series of protected accelerators (see numberOfInterleavedSamples, numberOfInterleavedSignalMembers and memberByteSize) allow specialised classes to use this information, together with the number of samples, to go from an interleaved memory representation to a non-interleaved representation (where each signal contains N consecutive samples of its type).
+  * A series of protected accelerators (see numberOfInterleavedSamples, numberOfInterleavedSignalMembers and memberByteSize) allow specialised classes to use this information, together with the number of samples, to go from an interleaved memory representation to a non-interleaved representation (where each signal contains N consecutive samples of its type).
  *
  * If the parameter SignalDefinitionInterleaved is = 1, it is assumed that the defined signals form part of a packet that is interleaved (and replicated for N samples).
  * Again, the protected accelerators (see numberOfInterleavedSamples, numberOfInterleavedSignalMembers and memberByteSize) allow specialised classes to use this information.
@@ -72,6 +73,9 @@ namespace MARTe {
  *     *CpuMask = 0x1 (the cpus where the internal thread is allowed to run: default is 0xFFFF)
  *     *ReceiverThreadPriority = 0-31 (the priority of the internal thread, default is 31)
  *     *ReceiverThreadStackSize = 0-31 (the stack size of the internal thread, default is THREADS_DEFAULT_STACKSIZE)
+ *     *SleepTime = 0 (the sleep time in mutex in seconds, default is 0.F)
+ *     *SignalDefinitionInterleaved = 0/1 (if 0, default, it is assumed that the signal is not defined as interleaved)
+ *     *sleepInMutexSec = 1e-6F (the sleep time in mutex in seconds, default is 1e-6F)
  *     *GetFirst = 0/1 (if 0, default, do not wait for the first valid buffer to arrive)
  *     Signals = {
  *         *InternalTimeStamp = {
@@ -224,6 +228,7 @@ public:
     virtual bool TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples);
 
 protected:
+
     /**
      * The last buffer written by the internal thread
      */
@@ -329,10 +334,22 @@ protected:
     bool signalDefinitionInterleaved;
 
     /**
-     * If true 
+     * If true get wait for the  first valid buffer to arrive.
      */
     bool getFirst;
+
+    /**
+     * If not zero, stops the operations in Synchronise().
+     */
+    volatile int32 stop;
+    
+    /**
+     * The time to sleep in seconds.
+     */
+    float32 sleepTime;
+
 private:
+
     /**
      * @brief Helper function to create the interleaved accelerators
      */
@@ -342,7 +359,9 @@ private:
      * @brief Helper function to create the interleaved accelerators for the signalDefinitionInterleaved case
      */
     bool GenererateInterleavedAcceleratorsSignalDefinitionInterleaved();
+
 };
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -350,4 +369,3 @@ private:
 /*---------------------------------------------------------------------------*/
 
 #endif /* CIRCULARBUFFERTHREADINPUTDATASOURCE_H_ */
-
