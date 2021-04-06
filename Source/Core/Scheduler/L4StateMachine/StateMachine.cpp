@@ -63,9 +63,9 @@ void StateMachine::Purge(ReferenceContainer &purgeList) {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not Stop the StateMachine.");
         }
     }
-    bool ok = true;
     if (currentState.IsValid()) {
         uint32 j;
+        bool ok = true;
         for (j = 0u; (j < currentState->Size()) && (ok); j++) {
             ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
             if (currentStateEventJ.IsValid()) {
@@ -73,20 +73,6 @@ void StateMachine::Purge(ReferenceContainer &purgeList) {
             }
         }
     }
-    uint32 i;
-    for (i = 0u; (i < Size()) && (ok); i++) {
-        ReferenceT<ReferenceContainer> state = Get(i);
-        if (state.IsValid()) {
-            uint32 j;
-            for (j = 0u; (j < state->Size()) && (ok); j++) {
-                ReferenceT<StateMachineEvent> event = state->Get(j);
-                if (event.IsValid()) {
-                    event->SetStateMachine(Reference());
-                }
-            }
-        }
-    }
-    PurgeFilters();
     ReferenceContainer::Purge(purgeList);
 }
 
@@ -101,7 +87,6 @@ bool StateMachine::ExportData(StructuredDataI & data) {
     }
     return ok;
 }
-
 
 bool StateMachine::Initialise(StructuredDataI &data) {
     ErrorManagement::ErrorType err;
@@ -127,7 +112,7 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                         if (!ok) {
                             err.parametersError = true;
                             REPORT_ERROR(ErrorManagement::ParametersError, "In event (%s) the next state (%s) does not exist", event->GetName(),
-                                                    nextStateStr.GetList());
+                                         nextStateStr.GetList());
                         }
                         //Check if the NextStateError exists
                         if (ok) {
@@ -136,8 +121,8 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                             ok = nextStateError.IsValid();
                             if (!ok) {
                                 err.parametersError = true;
-                                REPORT_ERROR(ErrorManagement::ParametersError, "In event (%s) the next state error (%s) does not exist",
-                                                        event->GetName(), nextStateErrorStr.GetList());
+                                REPORT_ERROR(ErrorManagement::ParametersError, "In event (%s) the next state error (%s) does not exist", event->GetName(),
+                                             nextStateErrorStr.GetList());
                             }
                         }
                     }
@@ -171,7 +156,6 @@ bool StateMachine::Initialise(StructuredDataI &data) {
         }
     }
     if (err.ErrorsCleared()) {
-        QueuedMessageI::SetQueueName(GetName());
         err = Start();
     }
     if (err.ErrorsCleared()) {
@@ -210,11 +194,9 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
             bool ok = true;
             for (j = 0u; (j < currentState->Size()) && (ok); j++) {
                 ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
-                if (currentStateEventJ != event) {
-                    if (currentStateEventJ.IsValid()) {
-                        err = RemoveMessageFilter(currentStateEventJ);
-                        ok = err.ErrorsCleared();
-                    }
+                if (currentStateEventJ.IsValid()) {
+                    err = RemoveMessageFilter(currentStateEventJ);
+                    ok = err.ErrorsCleared();
                 }
             }
         }
@@ -235,8 +217,7 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
         }
     }
     else {
-        REPORT_ERROR(err, "In state (%s) could not send all the event messages. Moving to error state (%s)", currentState->GetName(),
-                                nextStateError.Buffer());
+        REPORT_ERROR(err, "In state (%s) could not send all the event messages. Moving to error state (%s)", currentState->GetName(), nextStateError.Buffer());
         if (nextStateError.Size() > 0u) {
             currentState = Find(nextStateError.Buffer());
             err.fatalError = !currentState.IsValid();
