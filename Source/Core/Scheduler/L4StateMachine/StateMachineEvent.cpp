@@ -43,12 +43,13 @@ namespace MARTe {
 
 StateMachineEvent::StateMachineEvent() :
         ReferenceContainer(),
-        MessageFilter(true) {
+        MessageFilter(false) {
     timeout = TTInfiniteWait;
 }
 
+/*lint -e{1551} references are destroyed by design in the destructor*/
 StateMachineEvent::~StateMachineEvent() {
-
+    stateMachineIn = Reference();
 }
 
 TimeoutType StateMachineEvent::GetTransitionTimeout() const {
