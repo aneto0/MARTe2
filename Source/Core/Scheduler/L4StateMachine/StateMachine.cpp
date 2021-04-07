@@ -210,8 +210,8 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
             bool ok = true;
             for (j = 0u; (j < currentState->Size()) && (ok); j++) {
                 ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
-                if (currentStateEventJ != event) {
-                    if (currentStateEventJ.IsValid()) {
+                if (currentStateEventJ.IsValid()) {
+                    if (currentStateEventJ != event) {
                         err = RemoveMessageFilter(currentStateEventJ);
                         ok = err.ErrorsCleared();
                     }
