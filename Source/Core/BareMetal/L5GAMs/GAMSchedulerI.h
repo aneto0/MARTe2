@@ -209,6 +209,16 @@ protected:
      * The real-time application linked to this scheduler
      */
     Reference realTimeApp;
+
+    /**
+    * @brief Pointer to the memory area where a numeric identifier for the current state is stored 
+    */
+    uint32 *currentStateIdentifier;
+
+    /**
+    * @brief Numeric identifier for the next state
+    */
+    uint32 nextCurrentStateIdentifier;
 private:
 
     /**
