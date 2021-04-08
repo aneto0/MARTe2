@@ -717,6 +717,11 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
                         }
                     }
                     if (ret) {
+                        StreamString brokerName = functionName;
+                        brokerName += ".InputBroker.";
+                        brokerName += suggestedBrokerNameIn.Buffer();
+                        broker->SetName(brokerName.Buffer());
+
                         ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
                         if (ret) {
                             //Insert at the beginning the sync/trigger broker
@@ -808,6 +813,11 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
                         }
                     }
                     if (ret) {
+                        StreamString brokerName = functionName;
+                        brokerName += ".OutputBroker.";
+                        brokerName += suggestedBrokerNameIn.Buffer();
+                        broker->SetName(brokerName.Buffer());
+
                         ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
                         if (ret) {
                             //Insert at the end the sync/trigger broker
