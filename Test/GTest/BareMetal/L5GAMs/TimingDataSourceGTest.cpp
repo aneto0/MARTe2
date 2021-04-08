@@ -54,3 +54,8 @@ TEST(BareMetal_L5GAMs_TimingDataSourceGTest,TestSetConfiguredDatabase_False_Prod
     TimingDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_Producers());
 }
+
+TEST(BareMetal_L5GAMs_TimingDataSourceGTest,TestCurrentStateValue) {
+    TimingDataSourceTest test;
+    ASSERT_TRUE(test.TestCurrentStateValue());
+}
