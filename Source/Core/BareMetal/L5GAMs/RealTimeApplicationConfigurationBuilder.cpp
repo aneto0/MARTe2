@@ -2280,6 +2280,25 @@ bool RealTimeApplicationConfigurationBuilder::AddTimingSignals() {
                 }
             }
         }
+        //Adding of the CurrentStateSignal
+        if (ret) {
+            StreamString currentStateIdx;
+            uint32 currentStateNextIndex = dataSourcesDatabase.GetNumberOfChildren();
+            ret = currentStateIdx.Printf("%d", currentStateNextIndex);
+            ConfigurationDatabase dataSourcesDatabaseBeforeCreate;
+
+            if(ret) {
+                dataSourcesDatabaseBeforeCreate = dataSourcesDatabase;
+                ret = dataSourcesDatabase.CreateRelative(currentStateIdx.Buffer());
+            }
+            if (ret) {
+                ret = WriteTimeSignalInfo("CurrentState");
+            }
+            if(ret){
+                dataSourcesDatabase = dataSourcesDatabaseBeforeCreate;
+            }
+        }
+
         if (ret) {
             ret = dataSourcesDatabase.MoveToAncestor(1u);
         }

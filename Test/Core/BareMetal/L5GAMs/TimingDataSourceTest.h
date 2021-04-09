@@ -59,6 +59,11 @@ public:
      */
     bool TestSetConfiguredDatabase_False_Producers();
 
+    /**
+    * @brief Tests the CurrentState ancillary signal generation and value change across states
+    */
+    bool TestCurrentStateValue();
+
 };
 
 /*---------------------------------------------------------------------------*/

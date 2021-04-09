@@ -28,8 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "ConfigurationDatabase.h"
 #include "TimingDataSourceTest.h"
+#include "GAM.h"
 #include "GAMSchedulerI.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
@@ -104,6 +106,10 @@ TimingDataSourceTestGAM1    ();
     virtual bool Setup();
 
     virtual bool Execute();
+
+    void *GetInputSignalsMemory();
+
+    void *GetOutputSignalsMemory();
 };
 
 TimingDataSourceTestGAM1::TimingDataSourceTestGAM1() :
@@ -118,6 +124,15 @@ bool TimingDataSourceTestGAM1::Setup() {
 bool TimingDataSourceTestGAM1::Execute() {
     return true;
 }
+
+void* TimingDataSourceTestGAM1::GetInputSignalsMemory() {
+    return GAM::GetInputSignalsMemory();
+}
+
+void* TimingDataSourceTestGAM1::GetOutputSignalsMemory() {
+    return GAM::GetOutputSignalsMemory();
+}
+
 CLASS_REGISTER(TimingDataSourceTestGAM1, "1.0")
 
 static const char8 * const config1 = ""
@@ -329,6 +344,65 @@ static const char8 * const config2 = ""
         "    }"
         "}";
 
+static const char8 * const configTestCurrentStateSignal = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = TimingDataSourceTestGAM1"
+        "            InputSignals = {"
+        "                CurrentState = {"
+        "                   DataSource = Timings"
+        "                   Type = uint32"
+        "                }"
+        "            }"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMA}"
+        "                }"
+        "            }"
+        "        }"
+        "        +State2 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMA}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        TimingDataSource = Timings"
+        "        Class = GAMScheduler"
+        "    }"
+        "}";
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -350,6 +424,125 @@ bool TimingDataSourceTest::TestSetConfiguredDatabase() {
         ret = timingDataSource.IsValid();
     }
     return ret;
+}
+
+bool TimingDataSourceTest::TestCurrentStateValue() {
+    ConfigurationDatabase cdb;
+    StreamString configStream = configTestCurrentStateSignal;
+    configStream.Seek(0);
+    StandardParser parser(configStream, cdb);
+
+    bool ok = parser.Parse();
+
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+
+    if (ok) {
+        god->Purge();
+        ok = god->Initialise(cdb);
+    }
+
+    ReferenceT<RealTimeApplication> application;
+    ReferenceT<TimingDataSourceTestGAM1> gama;
+
+    if (ok) {
+        application = god->Find("Application1");
+        ok = application.IsValid();
+    }
+
+    if (ok) {
+        gama = application->Find("Functions.GAMA");
+        ok = gama.IsValid();
+    }
+    
+    if (!ok) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Cannot find GAMA");
+    }
+
+    if (ok) {
+        ok = application->ConfigureApplication();
+    }
+
+    uint32* currentStateValue = (uint32*)gama->GetInputSignalsMemory();
+
+    if(currentStateValue == NULL_PTR(uint32*)) {
+        ok = false;
+    }
+
+    //Round 1 - Going to State1 and ensuring we have the index to 0
+    if (ok) {
+        ok = application->PrepareNextState("State1");
+    }
+
+    if (ok) {
+        ok = application->StartNextStateExecution();
+    }
+
+    Sleep::MSec(10);
+        
+    if (ok) {
+        ok = application->StopCurrentStateExecution();
+    }
+
+    if (!ok) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Null pointer for the currentStateValue");
+    }
+
+    if (ok) {
+        ok = (*currentStateValue == 0u);
+    }
+
+    if (!ok) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "[A] Current state value should be 0 instead of %d", *currentStateValue);
+    }
+
+    //Round 2 - Going to State2 and ensuring we have the index to 1
+    if (ok) {
+        ok = application->PrepareNextState("State2");
+    }
+
+    if (ok) {
+        ok = application->StartNextStateExecution();
+    }
+
+    Sleep::MSec(10);
+        
+    if (ok) {
+        ok = application->StopCurrentStateExecution();
+    }
+
+    if (ok) {
+        ok = (*currentStateValue == 1u);
+    }
+
+    if (!ok) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "[B] Current state value should be 1 instead of %d", *currentStateValue);
+    }
+
+    //Round 3 - Going to back again to State1 and ensuring we have the index to 0
+    if (ok) {
+        ok = application->PrepareNextState("State1");
+    }
+
+    if (ok) {
+        ok = application->StartNextStateExecution();
+    }
+
+    Sleep::MSec(10);
+        
+    if (ok) {
+        ok = application->StopCurrentStateExecution();
+    }
+
+    if (ok) {
+        ok = (*currentStateValue == 0u);
+    }
+
+    if (!ok) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "[C] Current state value should be 0 instead of %d", *currentStateValue);
+    }
+
+    god->Purge();
+    return ok;
 }
 
 bool TimingDataSourceTest::TestSetConfiguredDatabase_False_Producers() {
