@@ -29,6 +29,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX = CircularBufferThreadInputDataSource.x \
 	GAMScheduler.x \
+	FastScheduler.x \
 	MemoryMapAsyncOutputBroker.x \
 	MemoryMapAsyncTriggerOutputBroker.x 
 

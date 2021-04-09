@@ -219,7 +219,7 @@ protected:
     * @brief Numeric identifier for the next state
     */
     uint32 nextCurrentStateIdentifier;
-private:
+protected:
 
     /**
      * Double buffer accelerator to the threads to be executed for the current
@@ -247,6 +247,7 @@ private:
      */
     uint32 numberOfStates;
 
+private:
     /**
      * @brief Helper function to add the input brokers of the \a gam to the table of states to be executed.
      * @param[in] gamFullName the GAM fully qualified name.

@@ -28,7 +28,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=Environment/$(ENVIRONMENT).x
 
-OBJSX =
+OBJSX=CountingSem.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

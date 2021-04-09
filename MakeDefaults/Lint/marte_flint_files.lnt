@@ -38,6 +38,7 @@ ConfigurationDatabase.cpp
 ConfigurationDatabaseNode.cpp
 ConfigurationParserI.cpp
 ConsoleLogger.cpp
+CountingSem.cpp
 CRC.h
 CString.h
 DataSourceI.cpp
@@ -64,6 +65,7 @@ FastMath.h
 FastPollingEventSem.cpp
 FastPollingMutexSem.cpp
 FastResourceContainer.cpp
+FastScheduler.cpp
 FlagsType.h
 Fnv1aHashFunction.cpp
 FloatToInteger.cpp
