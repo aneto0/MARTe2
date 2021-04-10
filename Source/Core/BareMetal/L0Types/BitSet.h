@@ -54,6 +54,15 @@ public:
     BitSet();
 
     /**
+     * @brief array constructor
+     * @details copy an array of 32-bit words to the bitset.
+     * @param[in] array to be copied.
+     * @param[in] size number of 32-bit elements in the array.
+     */
+    BitSet(const uint32 marray[], const uint32 size);
+
+
+    /**
      * @brief uint32 constructor.
      * @details copy the uint32 value to the bitset.
      * @param[in] value uint32 value to copy.
@@ -83,7 +92,7 @@ public:
      * @brief Get the number of uint32 values used.
      * @return Number of elements used to store the bitset.
      */
-    uint32 GetByteSize() const;
+    uint32 GetNumberOfElements() const;
 
     /**
      * @brief Get the status of a single bit.
@@ -131,6 +140,7 @@ public:
      * @return uint64 truncated value.
      */
     operator uint64() const;
+
 
     /**
      * @brief bitwise `and` operator.
@@ -236,31 +246,28 @@ public:
      */
     BitSet & operator^=(const BitSet& rhm);
 
-private:
     /**
-     * @brief array constructor
-     * @details copy an array of uint32 bytes to the bitset.
-     * @param[in] bytes array to be copied.
-     * @param[in] size number of elements in the array.
+     * @brief change array size.
+     * @param[in] size new size (number of 32-bit elements).
      */
-    /*lint -e{1704} the private constructor is used in the assign operator */
-    BitSet(const uint32 mbytes[], const uint32 size);
+    void Resize(const uint32 size);
 
     /**
-     * @brief change bytes array size.
-     * @param[in] size new size.
+     * @brief Access to the internal array.
      */
-    void resize(const uint32 size);
+    uint32 *GetArray() const;
+private:
+
 
     /**
      * @brief size of the uint32 array used to store the bitset.
      */
-    uint32 bytesSize;
+    uint32 nElements;
 
     /**
      * @brief array of uint32 used to store the bitset.
      */
-    uint32 * bytes;
+    uint32 * array;
 
     /*lint -e{1739} the operators are member functions*/
 };

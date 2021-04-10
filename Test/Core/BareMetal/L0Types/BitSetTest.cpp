@@ -43,7 +43,7 @@
 using namespace MARTe;
 
 bool Check(BitSet bitset, uint32 value) {
-    ASSERT(bitset.GetByteSize() == 1);
+    ASSERT(bitset.GetNumberOfElements() == 1);
     for (uint32 i = 0; i < 32; i++) {
         bool ref = value & (1u << i);
         ASSERT(bitset.Bit(i) == ref);
@@ -52,7 +52,7 @@ bool Check(BitSet bitset, uint32 value) {
 }
 
 bool Check(BitSet bitset, uint64 value) {
-    ASSERT(bitset.GetByteSize() == 2);
+    ASSERT(bitset.GetNumberOfElements() == 2);
     for (uint32 i = 0; i < 64; i++) {
         bool ref = value & ((uint64) 1u << i);
         ASSERT(bitset.Bit(i) == ref);
@@ -79,17 +79,17 @@ bool BitSetTest::TestConstructors() {
     return true;
 }
 
-bool BitSetTest::TestGetByteSize() {
+bool BitSetTest::TestGetNumberOfElements() {
     BitSet bitset;
-    ASSERT(bitset.GetByteSize() == 1u);
+    ASSERT(bitset.GetNumberOfElements() == 1u);
     BitSet bitsetU32(1u);
-    ASSERT(bitsetU32.GetByteSize() == 1u);
+    ASSERT(bitsetU32.GetNumberOfElements() == 1u);
     BitSet bitsetU64(static_cast<uint64>(1u));
-    ASSERT(bitsetU64.GetByteSize() == 2u);
+    ASSERT(bitsetU64.GetNumberOfElements() == 2u);
     bitset.Set(32, 1);
-    ASSERT(bitset.GetByteSize() == 2u);
+    ASSERT(bitset.GetNumberOfElements() == 2u);
     bitset.Set(64, 1);
-    ASSERT(bitset.GetByteSize() == 3u);
+    ASSERT(bitset.GetNumberOfElements() == 3u);
 
     return true;
 }
@@ -104,14 +104,14 @@ bool BitSetTest::TestSetBitMethods() {
     bs.Set(5, 1); // set a bit to 1;
     ASSERT(Check(bs, 38u));
 
-    ASSERT(bs.GetByteSize() == 1);
+    ASSERT(bs.GetNumberOfElements() == 1);
     bs.Set(32, 1); // it should increase the size of the array.
-    ASSERT(bs.GetByteSize() == 2);
+    ASSERT(bs.GetNumberOfElements() == 2);
     uint64 ref = 0x100000026;
     ASSERT(Check(bs, ref));
 
     bs.Set(32, 0); // it should maintain the same size.
-    ASSERT(bs.GetByteSize() == 2);
+    ASSERT(bs.GetNumberOfElements() == 2);
     ref = 0x26;
     ASSERT(Check(bs, ref));
 
@@ -156,7 +156,7 @@ bool BitSetTest::TestOrOperator() {
 
     bsB = (uint64) 0x100000002;
     bsC = bsA | bsB;
-    ASSERT(bsC.GetByteSize() == 2);
+    ASSERT(bsC.GetNumberOfElements() == 2);
     ASSERT(Check(bsC, (uint64 )0x100000007));
 
     bsA |= BitSet(0b1000u); // |= bitset
@@ -202,14 +202,14 @@ bool BitSetTest::TestNotOperator() {
     BitSet bsA(0b101u);
     ASSERT(Check(bsA, 5u));
     BitSet bsB = ~bsA;
-    ASSERT(bsB.GetByteSize() == 1);
+    ASSERT(bsB.GetNumberOfElements() == 1);
     ASSERT(bsB != bsA);
     ASSERT(Check(bsB, (uint32 )0xFFFFFFFA));
 
     bsA.Set(32, true);
     ASSERT(Check(bsA, (uint64 )0x100000005));
     bsB = ~bsA;
-    ASSERT(bsB.GetByteSize() == 2);
+    ASSERT(bsB.GetNumberOfElements() == 2);
     ASSERT(Check(bsB, (uint64 )0xFFFFFFFEFFFFFFFA));
     return true;
 }
@@ -223,7 +223,7 @@ bool BitSetTest::TestEquality() {
 
     bsB.Set(32, 1);
     bsB.Set(32, 0);
-    ASSERT(bsB.GetByteSize() == 2);
+    ASSERT(bsB.GetNumberOfElements() == 2);
     ASSERT(bsA == bsB);
     bsB.Set(32, 1);
     ASSERT(!(bsA == bsB));
@@ -257,7 +257,7 @@ bool BitSetTest::TestDisequality() {
 
     bsB.Set(1, 0);
     bsB.Set(32, 1);
-    ASSERT(bsB.GetByteSize() == 2);
+    ASSERT(bsB.GetNumberOfElements() == 2);
     ASSERT(bsA != bsB);
 
     ASSERT(bsA != (uint64 )7);
@@ -267,9 +267,9 @@ bool BitSetTest::TestDisequality() {
 bool BitSetTest::TestLeftShift() {
     BitSet bs(0b1u);
     ASSERT(bs == 0b1u);
-    ASSERT(bs.GetByteSize() == 1);
+    ASSERT(bs.GetNumberOfElements() == 1);
     bs = bs << 1u;
-    ASSERT(bs.GetByteSize() == 2);
+    ASSERT(bs.GetNumberOfElements() == 2);
     ASSERT(bs == 0b10u);
     BitSet bsB(0b10u);
     ASSERT(bs == bsB);

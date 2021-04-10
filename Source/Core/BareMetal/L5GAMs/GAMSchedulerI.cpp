@@ -58,7 +58,8 @@ GAMSchedulerI::GAMSchedulerI() :
     scheduledStates[0] = NULL_PTR(ScheduledState *);
     scheduledStates[1] = NULL_PTR(ScheduledState *);
     numberOfStates = 0u;
-
+    currentState = NULL_PTR(uint32 *);
+    nextCurrentState = 0u;
 }
 
 GAMSchedulerI::~GAMSchedulerI() {
@@ -206,6 +207,15 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
                                 ret = timingDataSource->GetSignalIndex(signalIdx, threadFullName.Buffer());
                                 if (ret) {
                                     ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(states[i].threads[j].cycleTime));
+                                }
+                            }
+
+                            //Get the current state id
+                            if (ret) {
+                                uint32 signalIdx;
+                                ret = timingDataSource->GetSignalIndex(signalIdx, "CurrentState");
+                                if (ret) {
+                                    ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(currentState));
                                 }
                             }
                         }
@@ -365,13 +375,14 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
     }
 
     bool found = false;
-
+    nextCurrentState = numberOfStates;
     for (uint32 i = 0u; (i < numberOfStates) && (ret) && (!found); i++) {
         //lint -e{613} states != NULL checked before entering here.
         found = (StringHelper::Compare(nextStateName, states[i].name) == 0);
         if (found) {
             //lint -e{613} states != NULL checked before entering here.
             scheduledStates[nextBuffer] = &states[i];
+            nextCurrentState = i;
         }
     }
     if (ret) {

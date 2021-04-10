@@ -73,7 +73,7 @@ const bool ProcessorType::CPUEnabled(const uint32 cpuNumber) const {
 }
 
 const uint32 ProcessorType::GetCPUsNumber() const {
-    return processorMask.GetByteSize() * 32u;
+    return processorMask.GetNumberOfElements() * 32u;
 }    
 
 const uint32 ProcessorType::GetLegacyUint32Mask() const {
@@ -118,5 +118,10 @@ ProcessorType::ProcessorType(const ProcessorType &pt) {
 ProcessorType::ProcessorType(const uint32 &cpuMask){
     processorMask = cpuMask;
 }
+
+BitSet ProcessorType::GetProcessorMask() const{
+    return processorMask;
+}
+
 
 }

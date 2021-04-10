@@ -148,6 +148,12 @@ public:
     bool operator!=(const ProcessorType &pt) const;
 
     /**
+     * @brief Returns the currently set CPU mask.
+     * @return the CPU mask as a BitSize.
+     */
+    BitSet GetProcessorMask() const;
+
+    /**
      * @brief Rerurns the default CPU mask.
      * @return the default CPU mask.
      */

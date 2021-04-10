@@ -54,7 +54,7 @@ public:
     /**
      * @brief Test ByteSize.
      */
-    bool TestGetByteSize();
+    bool TestGetNumberOfElements();
     
     /**
      * @brief Test the Set and Bit methods.
