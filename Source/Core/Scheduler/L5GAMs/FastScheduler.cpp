@@ -172,7 +172,6 @@ ErrorManagement::ErrorType FastScheduler::StartNextStateExecution() {
     }
     if (err.ErrorsCleared()) {
         if (!initialised) {
-
             err = multiThreadService->Start();
             if (!err.ErrorsCleared()) {
                 REPORT_ERROR(ErrorManagement::FatalError, "Failed to Start() MultiThreadService.");
@@ -378,12 +377,12 @@ void FastScheduler::CustomPrepareNextState() {
             ScheduledState *nextState = GetSchedulableStates()[nextBuffer];
             uint32 numberOfThreads = nextState->numberOfThreads;
             for (uint32 i = 0u; i < numberOfThreads; i++) {
-                rtThreadInfo[nextBuffer][cpuThreadMap[nextCurrentState][i]].executables = nextState->threads[i].executables;
-                rtThreadInfo[nextBuffer][cpuThreadMap[nextCurrentState][i]].numberOfExecutables = nextState->threads[i].numberOfExecutables;
-                rtThreadInfo[nextBuffer][cpuThreadMap[nextCurrentState][i]].cycleTime = nextState->threads[i].cycleTime;
-                rtThreadInfo[nextBuffer][cpuThreadMap[nextCurrentState][i]].lastCycleTimeStamp = 0u;
-                REPORT_ERROR(ErrorManagement::FatalError, "Configuring rtThreadInfo[%d][%d]=%!", nextBuffer, cpuThreadMap[nextCurrentState][i],
-                        rtThreadInfo[nextBuffer][cpuThreadMap[nextCurrentState][i]].numberOfExecutables);
+                rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].executables = nextState->threads[i].executables;
+                rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].numberOfExecutables = nextState->threads[i].numberOfExecutables;
+                rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].cycleTime = nextState->threads[i].cycleTime;
+                rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].lastCycleTimeStamp = 0u;
+                REPORT_ERROR(ErrorManagement::FatalError, "Configuring rtThreadInfo[%d][%d]=%!", nextBuffer, cpuThreadMap[nextStateIdentifier][i],
+                             rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].numberOfExecutables);
             }
         }
     }

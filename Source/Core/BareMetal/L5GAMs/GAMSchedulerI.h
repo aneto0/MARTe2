@@ -211,6 +211,17 @@ protected:
     Reference realTimeApp;
 
     /**
+    * @brief Pointer to the memory area where a numeric identifier for the current state is stored 
+    */
+    uint32 *currentStateIdentifier;
+
+    /**
+    * @brief Numeric identifier for the next state
+    */
+    uint32 nextStateIdentifier;
+
+
+    /**
      * Double buffer accelerator to the threads to be executed for the current
      * and next state.
      */
@@ -235,16 +246,6 @@ protected:
      * Number of possible application states.
      */
     uint32 numberOfStates;
-
-    /**
-     * The current state
-     */
-    uint32 *currentState;
-
-    /**
-     * The next state
-     */
-    uint32 nextCurrentState;
 
     /**
      * @brief Helper function to add the input brokers of the \a gam to the table of states to be executed.

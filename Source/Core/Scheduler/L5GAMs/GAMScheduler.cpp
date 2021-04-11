@@ -134,6 +134,7 @@ ErrorManagement::ErrorType GAMScheduler::StartNextStateExecution() {
             uint32 newBuffer = realTimeApplicationT->GetIndex();
             ScheduledState *newState = GetSchedulableStates()[newBuffer];
             if (newState != NULL_PTR(ScheduledState *)) {
+                *currentStateIdentifier = nextStateIdentifier;
                 if (!eventSem.Post()) {
                     REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
                 }
