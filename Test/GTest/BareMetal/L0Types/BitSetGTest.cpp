@@ -107,3 +107,8 @@ TEST(TESTSET_NAME, TestDisequalityOperator) {
      BitSetTest myBasicTypeTest;
      ASSERT_TRUE(myBasicTypeTest.TestDisequality());
 }
+
+TEST(TESTSET_NAME, TestGetArray) {
+     BitSetTest myBasicTypeTest;
+     ASSERT_TRUE(myBasicTypeTest.TestGetArray());
+}

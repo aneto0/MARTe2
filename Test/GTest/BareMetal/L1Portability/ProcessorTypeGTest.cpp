@@ -92,3 +92,8 @@ TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestAddCPU) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestAddCPU(3,9));
 }
+
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestGetProcessorMask) {
+    ProcessorTypeTest processorTypeTest;
+    ASSERT_TRUE(processorTypeTest.TestGetProcessorMask());
+}

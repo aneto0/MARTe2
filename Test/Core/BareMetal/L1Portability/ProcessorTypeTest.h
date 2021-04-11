@@ -115,6 +115,11 @@ public:
     bool TestAddCPU(uint32 cpuNumber1,
                     uint32 cpuNumber2);
 
+    /**
+     * @brief Tests the ProcessorType::GetProcessorMask function
+     */
+    bool TestGetProcessorMask();
+
 private:
 
     /**

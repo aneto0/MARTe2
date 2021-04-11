@@ -26,6 +26,7 @@
 
 
 OBJSX=	CircularBufferThreadInputDataSourceTest.x \
+    FastSchedulerTest.x \
     GAMSchedulerTest.x \
     MemoryMapAsyncOutputBrokerTest.x \
     MemoryMapAsyncTriggerOutputBrokerTest.x

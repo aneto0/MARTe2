@@ -76,6 +76,15 @@ bool BitSetTest::TestConstructors() {
 
     BitSet bitsetD(bitsetB); // copy constructor
     ASSERT(Check(bitsetD, 27u));
+
+    uint32 array[]={1u, 2u, 3u, 4u}; //generic constructor
+    BitSet bitset(array, 4u);
+    uint32 *retArray=bitset.GetArray();
+    ASSERT(Check(retArray[0], array[0]));
+    ASSERT(Check(retArray[1], array[1]));
+    ASSERT(Check(retArray[2], array[2]));
+    ASSERT(Check(retArray[3], array[3]));
+
     return true;
 }
 
@@ -288,3 +297,17 @@ bool BitSetTest::TestRightShift() {
     ASSERT(!bs.Bit(0) && bs.Bit(1) && !bs.Bit(2));
     return true;
 }
+
+bool BitSetTest::TestGetArray(){
+
+    uint32 array[]={1u, 2u, 3u, 4u}; //generic constructor
+    BitSet bitset(array, 4u);
+    uint32 *retArray=bitset.GetArray();
+    ASSERT(Check(retArray[0], array[0]));
+    ASSERT(Check(retArray[1], array[1]));
+    ASSERT(Check(retArray[2], array[2]));
+    ASSERT(Check(retArray[3], array[3]));
+    return true;
+}
+
+

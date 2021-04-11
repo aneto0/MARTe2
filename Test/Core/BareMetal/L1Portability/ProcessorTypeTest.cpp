@@ -31,6 +31,7 @@
 
 #include "ProcessorTypeTest.h"
 #include "GeneralDefinitions.h"
+#include "BitSet.h"
 #include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
@@ -132,7 +133,7 @@ bool ProcessorTypeTest::TestSetGetDefaultCPUs() {
     ptTest.SetDefaultCPUs(0xAAu);
     ProcessorType test = ptTest.GetDefaultCPUs();
 
-    if (test != ProcessorType(0xAAu)){
+    if (test != ProcessorType(0xAAu)) {
         ptTest.SetDefaultCPUs(0u);
         return false;
     }
@@ -182,5 +183,12 @@ bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
         return false;
     }
 
-     return true;
+    return true;
 }
+
+bool ProcessorTypeTest::TestGetProcessorMask() {
+    ProcessorType ptTest = ProcessorType(0xFDu);
+    BitSet mask = ptTest.GetProcessorMask();
+    return (uint32)mask==0xFDu;
+}
+

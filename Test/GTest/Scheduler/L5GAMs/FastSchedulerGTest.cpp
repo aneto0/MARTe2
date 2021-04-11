@@ -1,8 +1,8 @@
 /**
- * @file GAMSchedulerGTest.cpp
- * @brief Source file for class GAMSchedulerGTest
- * @date 09/ago/2016
- * @author Giuseppe Ferrò
+ * @file FastSchedulerGTest.cpp
+ * @brief Source file for class FastSchedulerGTest
+ * @date Apr 11, 2021 TODO Verify the value and format of the date
+ * @author ferrog TODO Verify the name and format of the author
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,22 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMSchedulerGTest (public, protected, and private). Be aware that some 
+ * the class FastSchedulerGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
 #include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "gtest/gtest.h"
-#include "GAMSchedulerTest.h"
+#include "FastSchedulerTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,57 +38,57 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestConstructor) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestConstructor) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestStartNextStateExecution) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestStartNextStateExecution) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestStartNextStateExecution());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestStartNextStateExecution_False_PrepareNextState) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestStartNextStateExecution_False_PrepareNextState) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestStartNextStateExecution_False_PrepareNextState());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestStopCurrentStateExecution) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestStopCurrentStateExecution) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestStopCurrentStateExecution());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestIntegrated) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestIntegrated) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestIntegrated());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestIntegrated_TriggerErrorMessage) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestIntegrated_TriggerErrorMessage) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestIntegrated_TriggerErrorMessage());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestPurge) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestPurge) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestPurge());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestInitialise) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestInitialise) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestInitialise_ErrorMessage) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestInitialise_ErrorMessage) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise_ErrorMessage());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestInitialise_False_InvalidMessage) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestInitialise_False_InvalidMessage) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise_False_InvalidMessage());
 }
 
-TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestInitialise_False_MoreThanOneErrorMessage) {
-    GAMSchedulerTest test;
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestInitialise_False_MoreThanOneErrorMessage) {
+    FastSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise_False_MoreThanOneErrorMessage());
 }

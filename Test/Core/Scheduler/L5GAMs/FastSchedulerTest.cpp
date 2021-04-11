@@ -1,8 +1,8 @@
 /**
- * @file GAMSchedulerTest.cpp
- * @brief Source file for class GAMSchedulerTest
- * @date 09/08/2016
- * @author Giuseppe Ferro
+ * @file FastSchedulerTest.cpp
+ * @brief Source file for class FastSchedulerTest
+ * @date Apr 11, 2021 TODO Verify the value and format of the date
+ * @author ferrog TODO Verify the name and format of the author
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,9 +17,11 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GAMSchedulerTest (public, protected, and private). Be aware that some 
+ * the class FastSchedulerTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -29,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GAMSchedulerTest.h"
+#include "FastSchedulerTest.h"
 #include "GAMTestHelper.h"
 #include "MessageI.h"
 #include "ObjectRegistryDatabase.h"
@@ -43,15 +45,15 @@
 /**
  * @brief GAM which returns false on Execute
  */
-class GAMSchedulerTestGAMFalse: public GAM {
+class FastSchedulerTestGAMFalse: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    GAMSchedulerTestGAMFalse() {
+    FastSchedulerTestGAMFalse() {
 
     }
 
-    virtual ~GAMSchedulerTestGAMFalse() {
+    virtual ~FastSchedulerTestGAMFalse() {
 
     }
 
@@ -68,7 +70,7 @@ public:
     }
 
 };
-CLASS_REGISTER(GAMSchedulerTestGAMFalse, "1.0")
+CLASS_REGISTER(FastSchedulerTestGAMFalse, "1.0")
 
 static StreamString configFull = ""
         "+StateMachine = {"
@@ -422,7 +424,7 @@ static StreamString configFull = ""
         "        }"
         "    }"
         "    +Scheduler = {"
-        "        Class = GAMScheduler"
+        "        Class = FastScheduler"
         "        TimingDataSource = Timings"
         "    }"
         "}"
@@ -577,7 +579,7 @@ static StreamString configFullError = ""
         "    +Functions = {"
         "        Class = ReferenceContainer"
         "        +GAMError = {"
-        "            Class = GAMSchedulerTestGAMFalse"
+        "            Class = FastSchedulerTestGAMFalse"
         "            InputSignals = {"
         "                SignalIn1 = {"
         "                    DataSource = DDB1"
@@ -817,7 +819,7 @@ static StreamString configFullError = ""
         "        }"
         "    }"
         "    +Scheduler = {"
-        "        Class = GAMScheduler"
+        "        Class = FastScheduler"
         "        TimingDataSource = Timings"
         "        +Error = {"
         "            Class = Message"
@@ -1086,7 +1088,7 @@ static StreamString configSimple = ""
         "        }"
         "    }"
         "    +Scheduler = {"
-        "        Class = GAMScheduler"
+        "        Class = FastScheduler"
         "        TimingDataSource = Timings"
         "    }"
         "}";
@@ -1145,7 +1147,7 @@ static StreamString configSimpleOneMessage = ""
         "        }"
         "    }"
         "    +Scheduler = {"
-        "        Class = GAMScheduler"
+        "        Class = FastScheduler"
         "        TimingDataSource = Timings"
         "        +Error = {"
         "            Class = Message"
@@ -1209,7 +1211,7 @@ static StreamString configSimpleTwoMessages = ""
         "        }"
         "    }"
         "    +Scheduler = {"
-        "        Class = GAMScheduler"
+        "        Class = FastScheduler"
         "        TimingDataSource = Timings"
         "        +Error = {"
         "            Class = Message"
@@ -1224,7 +1226,7 @@ static StreamString configSimpleTwoMessages = ""
         "    }"
         "}";
 
-static StreamString configSimpleInvalidMessage = ""
+StreamString configSimpleInvalidMessage = ""
         "$Fibonacci = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
@@ -1278,7 +1280,7 @@ static StreamString configSimpleInvalidMessage = ""
         "        }"
         "    }"
         "    +Scheduler = {"
-        "        Class = GAMScheduler"
+        "        Class = FastScheduler"
         "        TimingDataSource = Timings"
         "        +Error = {"
         "            Class = ReferenceContainer"
@@ -1290,15 +1292,15 @@ static StreamString configSimpleInvalidMessage = ""
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMSchedulerTest::GAMSchedulerTest() {
+FastSchedulerTest::FastSchedulerTest() {
 
 }
 
-GAMSchedulerTest::~GAMSchedulerTest() {
+FastSchedulerTest::~FastSchedulerTest() {
     ObjectRegistryDatabase::Instance()->Purge();
 }
 
-bool GAMSchedulerTest::Init(StreamString &config) {
+bool FastSchedulerTest::Init(StreamString &config) {
     config.Seek(0u);
     ConfigurationDatabase cdb;
     StandardParser parser(config, cdb);
@@ -1313,40 +1315,33 @@ bool GAMSchedulerTest::Init(StreamString &config) {
     return true;
 }
 
-bool GAMSchedulerTest::TestConstructor() {
-    GAMScheduler test;
+bool FastSchedulerTest::TestConstructor() {
+    FastScheduler test;
     return true;
 }
 
-bool GAMSchedulerTest::TestInitialise() {
+bool FastSchedulerTest::TestInitialise() {
     ConfigurationDatabase config;
     config.Write("TimingDataSource", "Timings");
-    GAMScheduler scheduler;
+    FastScheduler scheduler;
     bool ok = scheduler.Initialise(config);
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool GAMSchedulerTest::TestInitialise_ErrorMessage() {
-    bool ok = Init(configSimpleOneMessage);
-    ObjectRegistryDatabase::Instance()->Purge();
 
     return ok;
 }
 
-bool GAMSchedulerTest::TestInitialise_False_MoreThanOneErrorMessage() {
-    bool ok = !Init(configSimpleTwoMessages);
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
+bool FastSchedulerTest::TestInitialise_ErrorMessage() {
+    return Init(configSimpleOneMessage);
 }
 
-bool GAMSchedulerTest::TestInitialise_False_InvalidMessage() {
-    bool ok = !Init(configSimpleInvalidMessage);
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
+bool FastSchedulerTest::TestInitialise_False_MoreThanOneErrorMessage() {
+    return !Init(configSimpleTwoMessages);
 }
 
-bool GAMSchedulerTest::TestIntegrated() {
+bool FastSchedulerTest::TestInitialise_False_InvalidMessage() {
+    return !Init(configSimpleInvalidMessage);
+}
+
+bool FastSchedulerTest::TestIntegrated() {
     bool ok = Init(configFull);
     ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
     if (ok) {
@@ -1444,10 +1439,7 @@ bool GAMSchedulerTest::TestIntegrated() {
         return false;
     }
     ok &= (MessageI::SendMessage(messageStop, NULL) == ErrorManagement::NoError);
-
-    while (Threads::NumberOfThreads() > 1) {
-        Sleep::Sec(0.1);
-    }
+    Sleep::Sec(1.);
     ObjectRegistryDatabase::Instance()->Purge();
     while (Threads::NumberOfThreads() > 0) {
         Sleep::Sec(0.1);
@@ -1456,7 +1448,7 @@ bool GAMSchedulerTest::TestIntegrated() {
     return ok;
 }
 
-bool GAMSchedulerTest::TestIntegrated_TriggerErrorMessage() {
+bool FastSchedulerTest::TestIntegrated_TriggerErrorMessage() {
     bool ok = Init(configFullError);
     ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
     if (ok) {
@@ -1496,9 +1488,7 @@ bool GAMSchedulerTest::TestIntegrated_TriggerErrorMessage() {
         }
     }
     //Wait for the StateMachine to be the only thread alive.
-    while (Threads::NumberOfThreads() > 1) {
-        Sleep::Sec(0.1);
-    }
+    Sleep::Sec(1.);
     ObjectRegistryDatabase::Instance()->Purge();
     while (Threads::NumberOfThreads() > 0) {
         Sleep::Sec(0.1);
@@ -1507,7 +1497,7 @@ bool GAMSchedulerTest::TestIntegrated_TriggerErrorMessage() {
     return ok;
 }
 
-bool GAMSchedulerTest::TestPurge() {
+bool FastSchedulerTest::TestPurge() {
     bool ok = Init(configFull);
     ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
     if (ok) {
@@ -1596,7 +1586,7 @@ static void PrepareNext(RealTimeApplication &app) {
     done = 1;
 }
 
-bool GAMSchedulerTest::TestStartNextStateExecution() {
+bool FastSchedulerTest::TestStartNextStateExecution() {
     if (!Init(configSimple)) {
         return false;
     }
@@ -1611,7 +1601,7 @@ bool GAMSchedulerTest::TestStartNextStateExecution() {
         return false;
     }
 
-    ReferenceT<GAMScheduler> sched = app->Find("Scheduler");
+    ReferenceT<FastScheduler> sched = app->Find("Scheduler");
 
     ErrorManagement::ErrorType err = app->StartNextStateExecution();
     if (err.ErrorsCleared()) {
@@ -1625,16 +1615,41 @@ bool GAMSchedulerTest::TestStartNextStateExecution() {
         err = app->StartNextStateExecution();
         Sleep::Sec(1.0);
 
-        app->StopCurrentStateExecution();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
-        Sleep::MSec(10);
+        if (err.ErrorsCleared()) {
+            ReferenceT<GAM1> gam = app->Find("Functions.GAMA");
+            uint32 tic = (gam->numberOfExecutions);
+
+            Sleep::MSec(500);
+            uint32 toc = gam->numberOfExecutions;
+            err = (toc == tic);
+            if (err.ErrorsCleared()) {
+                app->StopCurrentStateExecution();
+                Sleep::MSec(200);
+
+                tic = (gam->numberOfExecutions);
+
+                Sleep::MSec(500);
+                toc = gam->numberOfExecutions;
+                err = (toc != tic);
+                if (!err.ErrorsCleared()) {
+                    printf("failed 2 %d %d\n", tic, toc);
+                }
+            }
+            else {
+                printf("failed 1 %d %d\n", tic, toc);
+            }
+
+        }
+        ObjectRegistryDatabase::Instance()->Purge();
+
+        while (Threads::NumberOfThreads() > 0) {
+            Sleep::MSec(10);
+        }
     }
     return err.ErrorsCleared();
 }
 
-bool GAMSchedulerTest::TestStartNextStateExecution_False_PrepareNextState() {
+bool FastSchedulerTest::TestStartNextStateExecution_False_PrepareNextState() {
     if (!Init(configSimple)) {
         return false;
     }
@@ -1644,14 +1659,14 @@ bool GAMSchedulerTest::TestStartNextStateExecution_False_PrepareNextState() {
         return false;
     }
 
-    ReferenceT<GAMScheduler> sched = app->Find("Scheduler");
+    ReferenceT<FastScheduler> sched = app->Find("Scheduler");
 
     ErrorManagement::ErrorType err = app->StartNextStateExecution();
-    ObjectRegistryDatabase::Instance()->Purge();
 
     return !err.ErrorsCleared();
 }
 
-bool GAMSchedulerTest::TestStopCurrentStateExecution() {
+bool FastSchedulerTest::TestStopCurrentStateExecution() {
     return TestStartNextStateExecution();
 }
+

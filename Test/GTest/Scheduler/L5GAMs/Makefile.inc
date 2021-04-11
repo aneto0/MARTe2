@@ -26,6 +26,7 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  CircularBufferThreadInputDataSourceGTest.x \
+    FastSchedulerGTest.x \
     GAMSchedulerGTest.x \
     MemoryMapAsyncOutputBrokerGTest.x\
     MemoryMapAsyncTriggerOutputBrokerGTest.x

@@ -209,15 +209,6 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
                                     ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(states[i].threads[j].cycleTime));
                                 }
                             }
-
-                            //Get the current state id
-                            if (ret) {
-                                uint32 signalIdx;
-                                ret = timingDataSource->GetSignalIndex(signalIdx, "CurrentState");
-                                if (ret) {
-                                    ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(currentState));
-                                }
-                            }
                         }
                     }
                 }

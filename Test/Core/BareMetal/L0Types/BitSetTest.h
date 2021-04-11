@@ -111,6 +111,11 @@ public:
      */
     bool TestRightShift();
 
+    /**
+     * @brief Test GetArray method.
+     */
+    bool TestGetArray();
+
 };
 
 /*---------------------------------------------------------------------------*/

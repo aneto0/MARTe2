@@ -166,8 +166,13 @@ ErrorManagement::ErrorType FastScheduler::StartNextStateExecution() {
 
     ErrorManagement::ErrorType err;
     err = !realTimeApplicationT.IsValid();
+
+    if (err.ErrorsCleared()) {
+        err = (multiThreadService == NULL);
+    }
     if (err.ErrorsCleared()) {
         if (!initialised) {
+
             err = multiThreadService->Start();
             if (!err.ErrorsCleared()) {
                 REPORT_ERROR(ErrorManagement::FatalError, "Failed to Start() MultiThreadService.");
