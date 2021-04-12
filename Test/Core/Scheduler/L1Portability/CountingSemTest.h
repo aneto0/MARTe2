@@ -88,30 +88,6 @@ public:
      */
     bool TestWaitForAll(uint32 numberOfActors,TimeoutType timeout);
 
-    /**
-     * @brief Tests the CountingSem::Wait function.
-     * @details This functions waits on an event semaphore. A thread is spawned and should
-     * post this semaphore.
-     * @return true if the function waits until it is posted and if CountingSem::Wait returns true.
-     */
-    bool TestWait();
-
-    /**
-     * @brief Tests the CountingSem::ResetWait function.
-     * @details Same strategy as TestWait but using the ResetWait function.
-     * @return true if the function waits until it is posted and if CountingSem::WaitReset returns true.
-     */
-    bool TestResetWait();
-
-    /**
-     * @brief Tests the CountingSem::Reset function.
-     * @details Same strategy as TestPost but now focusing on the return value of the Reset function.
-     * The first post should return true, the second should return false because the handle is still signaled.
-     * After the reset the post should have success again.
-     * @return true if the semaphore can be successfully posted after being reset, false otherwise.
-     */
-    bool TestReset();
-
     bool TestForceReset();
 
     bool TestForcePass();

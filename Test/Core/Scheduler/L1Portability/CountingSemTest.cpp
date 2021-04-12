@@ -78,10 +78,82 @@ bool CountingSemTest::TestCreate(uint32 numberOfActors) {
     return test;
 }
 
-bool CountingSemTest::TestWaitForAll(uint32 numberOfActors, TimeoutType timeoutTime) {
-  return true;
+struct ThreadData {
+  CountingSem *semaphore;
+  MutexSem    *mutex;
+  TimeoutType timeoutTime;
+  uint32      sharedData;
+};
+
+void MultiThreadedTestWaitCallback(ThreadData & payload) {
+    //Wait before proceeding...
+    payload.semaphore->WaitForAll(payload.timeoutTime);
+    payload.mutex->Lock();
+    payload.sharedData ++;
+    payload.mutex->UnLock();
+    Threads::EndThread();
 }
 
+bool CountingSemTest::TestWaitForAll(uint32 numberOfActors, TimeoutType timeoutTime) {
+
+  if (numberOfActors == 0) return true; // Nothing todo in this case...
+  
+  // Initialize thread payload
+  ThreadData payload = {
+    new CountingSem(), 
+    new MutexSem(), // mutex to protect access to sharedData sharedVariable
+    timeoutTime, // max wait time..
+    0xABCD // shared data
+  };
+  uint32 i = 0; // counter variable
+
+  bool test = payload.semaphore->Create(numberOfActors); // initialize semaphore
+  test &= payload.mutex->Create(); // Initialize mutex
+  if (test) { 
+    // prepare first N-1 treads
+    for (i = 0; i < numberOfActors - 1; i++) {
+      Threads::BeginThread((ThreadFunctionType) MultiThreadedTestWaitCallback, &payload);
+      Sleep::MSec(50); // ensure that threads are waiting...
+      if (payload.sharedData != 0xABCD) { // if value changed something has gone wrong...
+        return false;
+      }
+    }
+  } else {
+    return false;
+  }
+  // reinitialize data to 0
+  payload.sharedData = 0;
+  i++;
+  // initialize last thread
+  Threads::BeginThread((ThreadFunctionType) MultiThreadedTestWaitCallback, &payload);
+  // after the synchronization the data should be equal to the num of threads.
+  while (payload.sharedData != numberOfActors) { 
+    Sleep::MSec(25);   
+    i --;
+    if (i <= 0) { 
+      // if after N waiting period the value is not yet at the expected value 
+      // something has gone wrong
+      test = false;
+    }
+  }
+  
+  Sleep::MSec(100);
+  //Check if all the threads have terminated
+  for (i = 0; i < Threads::NumberOfThreads(); i++) {
+    ThreadIdentifier tid = Threads::FindByIndex(i);
+    if (Threads::IsAlive(tid)) {
+      Threads::Kill(tid);
+    }
+  }
+
+  // clean status
+  payload.semaphore->Close();
+  payload.mutex->Close();
+  test &= payload.semaphore->IsClosed();
+  delete payload.mutex;
+  delete payload.semaphore;
+  return test;
+}
 
 
 bool CountingSemTest::TestReset() {
