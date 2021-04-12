@@ -122,7 +122,7 @@ public:
      * @brief Callback function for the MultiThreadService.
      * @details Loops on all the real-time threads and executes its ExecutableI
      * @param[in] information (see EmbeddedThread)
-     * @return ErrorManagement::NoError iff every ExecutableI did not return any error.
+     * @return ErrorManagement::NoError if every ExecutableI did not return any error.
      */
     ErrorManagement::ErrorType Execute(ExecutionInfo &information);
 

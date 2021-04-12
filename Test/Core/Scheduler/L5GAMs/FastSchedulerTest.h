@@ -1,8 +1,8 @@
 /**
  * @file FastSchedulerTest.h
  * @brief Header file for class FastSchedulerTest
- * @date Apr 11, 2021 TODO Verify the value and format of the date
- * @author ferrog TODO Verify the name and format of the author
+ * @date 11/042021
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -38,11 +38,20 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the FastScheduler functions
+ */
 class FastSchedulerTest {
-//TODO Add the macro DLL_API to the class declaration (i.e. class DLL_API FastSchedulerTest)
 public:
+
+    /**
+     * @brief Constructor
+     */
     FastSchedulerTest();
 
+    /**
+     * @brief Destructor
+     */
     virtual ~FastSchedulerTest();
 
     /**
@@ -99,6 +108,16 @@ public:
      * @brief Tests GAMScheduler integrated with the StateMachine
      */
     bool TestIntegrated_TriggerErrorMessage();
+
+    /**
+     * @brief Tests GAMScheduler integrated with NoWait = 0
+     */
+    bool TestIntegrated_WaitForAll();
+
+    /**
+     * @brief Tests GAMScheduler integrated with NoWait = 1
+     */
+    bool TestIntegrated_NoWait();
 
     /**
      * @brief Tests that the purge kills all threads

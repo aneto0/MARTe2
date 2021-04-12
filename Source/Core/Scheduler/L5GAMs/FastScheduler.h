@@ -1,7 +1,7 @@
 /**
  * @file FastScheduler.h
  * @brief Header file for class FastScheduler
- * @date May 21, 2020
+ * @date 21/05/2020
  * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -48,7 +48,8 @@ namespace MARTe {
  * @details The syntax in the configuration stream has to be:
  *
  * +Scheduler = {\n
- *    Class = Scheduler_name
+ *    Class = FastScheduler
+ *    NoWait = 0 //Wait for all the cycles to terminate before executing the executables of the next cycle. Default is 0
  *     ...\n
  *    TimingDataSource = "Name of the TimingDataSource"
  *    +ErrorMessage = { //Optional. Fired every time there is an execution error. Name is only an example.
@@ -56,6 +57,29 @@ namespace MARTe {
  *        ...
  *    }
  * }\n
+ *
+ * @details This scheduler executes from the beginning a number of threads and keeps them executing across the state transitions.
+ * The number of spawned threads depends on the cpus defined. It is the summatory over the number of cpus of [max(Ti)] where max(Ti)
+ * is the maxumum number of RTTs on the cpu i over the states
+ * To give an example, let´s assume the following scenario:
+ *   -State1
+ *     -RTT1, cpu=1
+ *     -RTT2, cpu=1
+ *     -RTT3, cpu=2
+ *   -State2
+ *     -RTT1, cpu=3
+ *     -RTT2, cpu=1
+ *     -RTT3, cpu=2
+ *     -RTT4, cpu=2
+ *
+ * Then the the scheduler will execute 5 threads:
+ *   - T1 executing RTT1 in state1 and RTT2 in state2 (cpu 1)
+ *   - T2 executing RTT2 in state1 and idle in state2 (cpu 1)
+ *   - T3 executing RTT3 in state1 and RTT3 in state2 (cpu 2)
+ *   - T4 idle in state1 and executing RTT4 in state2 (cpu 2)
+ *   - T5 idle in state1 and executing RTT1 in state3 (cpu 3)
+ *
+ * The mapping between Tx and RTTy is computed in the configuration stage.
  */
 class FastScheduler: public GAMSchedulerI {
 
@@ -75,19 +99,26 @@ public:
     /**
      * @brief Verifies if there is an ErrorMessage defined.
      * @param[in] data the StructuredDataI with the TimingDataSource name and with an optional ErrorMessage defined.
+     * @details User can configure the parameter:
+     *   NoWait = 0|1
+     * If 0, after a StartNextStateExecution call, the scheduler waits for all the RTTs (Real Time Threads) of the previous state to terminate
+     * before executing the executables of the next state. If 1, the RTT of the next state are executed immediately after the termination
+     * of the last RTT execution from the previous state. Since every RTT has a different synchronisation point, this might lead to the
+     * execution of RTTs of next and previous state at the same time.
+     *
      * @return At most one message shall be defined and this will be considered as the ErrorMessage.
-     * @see GAMSchedulerI::Initialise.
+     * @see FastSchedulerI::Initialise.
      */
     virtual bool Initialise(StructuredDataI & data);
 
     /**
-     * @see GAMSchedulerI::ConfigureScheduler
+     * @see FastSchedulerI::ConfigureScheduler
      */
     virtual bool ConfigureScheduler(Reference realTimeAppIn);
 
     /**
-     * @brief Starts the multi-thread execution for the current state.
-     * @return ErrorManagement::NoError if the next state was configured (see PrepareNextState) and the MultiThreadService could be successfully started.
+     * @brief Starts the RTTs of the current state.
+     * @return ErrorManagement::NoError if the next state was configured (see PrepareNextState)
      * @pre
      *   PrepareNextState()
      */
@@ -95,7 +126,9 @@ public:
 
     /**
      * @brief Stops the execution application
-     * @return ErrorManagement::NoError if the current state was configured (see PrepareNextState) and the MultiThreadService could be successfully stopped.
+     * @details This function is not really necessary if one wants to ensure fast transition from the current state to the next.
+     * Call this only in case of need to stop the execution of the RTTs.
+     * @return ErrorManagement::NoError
      * @pre
      *   PrepareNextState()
      */
@@ -105,7 +138,7 @@ public:
      * @brief Callback function for the MultiThreadService.
      * @details Loops on all the real-time threads and executes its ExecutableI
      * @param[in] information (see EmbeddedThread)
-     * @return ErrorManagement::NoError iff every ExecutableI did not return any error.
+     * @return ErrorManagement::NoError if every ExecutableI did not return any error.
      */
     ErrorManagement::ErrorType Execute(ExecutionInfo &information);
 

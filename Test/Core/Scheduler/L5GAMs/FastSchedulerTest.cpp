@@ -1,8 +1,8 @@
 /**
  * @file FastSchedulerTest.cpp
  * @brief Source file for class FastSchedulerTest
- * @date Apr 11, 2021 TODO Verify the value and format of the date
- * @author ferrog TODO Verify the name and format of the author
+ * @date 11/04/2021
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -38,6 +38,7 @@
 #include "RealTimeApplication.h"
 #include "StateMachine.h"
 #include "Threads.h"
+#include "MemoryDataSourceI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -71,6 +72,130 @@ public:
 
 };
 CLASS_REGISTER(FastSchedulerTestGAMFalse, "1.0")
+
+
+class FastSchedulerTestGAM: public GAM {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    FastSchedulerTestGAM() {
+
+    }
+
+    virtual ~FastSchedulerTestGAM() {
+
+    }
+
+    virtual bool Setup() {
+        return true;
+    }
+
+    virtual bool Execute() {
+        return true;
+    }
+
+    uint8 *GetInputMem() {
+        return (uint8*)GetInputSignalsMemory();
+    }
+
+    uint8 *GetOutputMem() {
+        return (uint8*)GetOutputSignalsMemory();
+    }
+};
+CLASS_REGISTER(FastSchedulerTestGAM, "1.0")
+
+
+class FastSchedulerTestDSTest: public MemoryDataSourceI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    FastSchedulerTestDSTest();
+
+    virtual ~FastSchedulerTestDSTest();
+
+    virtual const char8 *GetBrokerName(StructuredDataI &data,
+                                       const SignalDirection direction);
+
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
+
+    virtual bool Synchronise();
+
+    virtual EventSem *GetSem();
+
+    uint8 stop;
+private:
+    EventSem eventSem;
+
+};
+
+FastSchedulerTestDSTest::FastSchedulerTestDSTest() {
+    eventSem.Create();
+    stop = 0;
+}
+
+FastSchedulerTestDSTest::~FastSchedulerTestDSTest() {
+    eventSem.Close();
+}
+
+const char8 *FastSchedulerTestDSTest::GetBrokerName(StructuredDataI &data,
+                                                    const SignalDirection direction) {
+    const char8 *brokerName = NULL_PTR(const char8 *);
+    if (direction == InputSignals) {
+        float32 frequency = 0.F;
+        uint32 trigger = 0u;
+        if (!data.Read("Frequency", frequency)) {
+            frequency = -1.F;
+        }
+        if (!data.Read("Trigger", trigger)) {
+            trigger = 0u;
+        }
+        if ((frequency >= 0.F) || (trigger > 0u)) {
+            brokerName = "MemoryMapSynchronisedInputBroker";
+        }
+        else {
+            brokerName = "MemoryMapInputBroker";
+        }
+    }
+    else {
+        float32 frequency = 0.F;
+        uint32 trigger = 0u;
+        if (!data.Read("Frequency", frequency)) {
+            frequency = -1.F;
+        }
+        if (!data.Read("Trigger", trigger)) {
+            trigger = 0u;
+        }
+        if ((frequency >= 0.F) || (trigger > 0u)) {
+            brokerName = "MemoryMapSynchronisedOutputBroker";
+        }
+        else {
+            brokerName = "MemoryMapOutputBroker";
+        }
+    }
+    return brokerName;
+}
+
+bool FastSchedulerTestDSTest::PrepareNextState(const char8 * const currentStateName,
+                                               const char8 * const nextStateName) {
+    return true;
+}
+
+bool FastSchedulerTestDSTest::Synchronise() {
+    if (!stop) {
+        printf("before ResWait %s\n", GetName());
+        eventSem.ResetWait(0xFFFFFFFF);
+        printf("after ResWait %s\n", GetName());
+        (*(uint32*) memory)++;
+    }
+    return true;
+}
+
+EventSem *FastSchedulerTestDSTest::GetSem() {
+    return &eventSem;
+}
+
+CLASS_REGISTER(FastSchedulerTestDSTest, "1.0")
 
 static StreamString configFull = ""
         "+StateMachine = {"
@@ -1631,12 +1756,6 @@ bool FastSchedulerTest::TestStartNextStateExecution() {
                 Sleep::MSec(500);
                 toc = gam->numberOfExecutions;
                 err = (toc != tic);
-                if (!err.ErrorsCleared()) {
-                    printf("failed 2 %d %d\n", tic, toc);
-                }
-            }
-            else {
-                printf("failed 1 %d %d\n", tic, toc);
             }
 
         }
@@ -1662,11 +1781,493 @@ bool FastSchedulerTest::TestStartNextStateExecution_False_PrepareNextState() {
     ReferenceT<FastScheduler> sched = app->Find("Scheduler");
 
     ErrorManagement::ErrorType err = app->StartNextStateExecution();
+    app->StopCurrentStateExecution();
+    ObjectRegistryDatabase::Instance()->Purge();
 
+    while (Threads::NumberOfThreads() > 0) {
+        Sleep::MSec(10);
+    }
     return !err.ErrorsCleared();
 }
 
 bool FastSchedulerTest::TestStopCurrentStateExecution() {
     return TestStartNextStateExecution();
+}
+
+bool FastSchedulerTest::TestIntegrated_WaitForAll() {
+
+    static StreamString configTestIntegrated_WaitForAll = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = FastSchedulerTestGAM"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = TestDS1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Trigger = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Trigger = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = FastSchedulerTestGAM"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = TestDS2"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Trigger = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Trigger = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +TestDS1 = {"
+            "            Class = FastSchedulerTestDSTest"
+            "        }"
+            "        +TestDS2= {"
+            "            Class = FastSchedulerTestDSTest"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "                +Thread2 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = FastScheduler"
+            "        TimingDataSource = Timings"
+            "        NoWait = 0"
+            "    }"
+            "}";
+
+    if (!Init(configTestIntegrated_WaitForAll)) {
+        return false;
+    }
+
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (!app->ConfigureApplication()) {
+        return false;
+    }
+
+    // the start execution is inside the prepare next state
+    if (!app->PrepareNextState("State1")) {
+        return false;
+    }
+
+    ReferenceT<FastScheduler> sched = app->Find("Scheduler");
+    ReferenceT<FastSchedulerTestDSTest> testDS1 = app->Find("Data.TestDS1");
+    ReferenceT<FastSchedulerTestDSTest> testDS2 = app->Find("Data.TestDS2");
+    ReferenceT<FastSchedulerTestGAM> testgama = app->Find("Functions.GAMA");
+    ReferenceT<FastSchedulerTestGAM> testgamb = app->Find("Functions.GAMB");
+
+    if (!sched.IsValid() || !testDS1.IsValid() || !testDS2.IsValid() || !testgama.IsValid() || !testgamb.IsValid()) {
+        return false;
+    }
+
+    EventSem *sem1 = testDS1->GetSem();
+    EventSem *sem2 = testDS2->GetSem();
+    ErrorManagement::ErrorType err = app->StartNextStateExecution();
+
+    bool ret = true;
+    if (err.ErrorsCleared()) {
+        uint32 *mem1 = (uint32 *) testgama->GetInputMem();
+        uint32 *mem2 = (uint32 *) testgamb->GetInputMem();
+
+        printf("mem1=%d, mem2=%d\n", *mem1, *mem2);
+        if ((*mem1 != 0u) || (*mem2 != 0u)) {
+            return false;
+        }
+        //be sure threads are waiting
+        Sleep::MSec(1000u);
+
+        sem1->Post();
+        sem2->Post();
+
+        uint32 cnt = 0u;
+        while (((*mem1 != 1u) || (*mem2 != 1u)) && (cnt < 3u)) {
+            Sleep::MSec(500u);
+            cnt++;
+        }
+        printf("mem1=%d, mem2=%d\n", *mem1, *mem2);
+        if ((*mem1 != 1u) || (*mem2 != 1u)) {
+            ret = false;
+        }
+        if (ret) {
+            //give the time to wait again
+            Sleep::MSec(1000u);
+
+            //never do stop-start, always prepare-stop-start,
+            app->PrepareNextState("State1");
+            app->StopCurrentStateExecution();
+            app->StartNextStateExecution();
+
+            //this works from the prev cycle
+            sem1->Post();
+            cnt = 0u;
+            while (((*mem1 != 2u) || (*mem2 != 1u)) && (cnt < 3u)) {
+                Sleep::MSec(500u);
+                cnt++;
+            }
+            printf("mem1=%d, mem2=%d\n", *mem1, *mem2);
+            if ((*mem1 != 2u) || (*mem2 != 1u)) {
+                ret = false;
+            }
+
+            if (ret) {
+                //this is not working because blocked by the other
+                sem1->Post();
+
+                Sleep::MSec(1000);
+                printf("mem1=%d, mem2=%d\n", *mem1, *mem2);
+                if ((*mem1 != 2u) || (*mem2 != 1u)) {
+                    ret = false;
+                }
+            }
+
+            if (ret) {
+                sem2->Post();
+                Sleep::MSec(200u);
+
+                //needed because of the ResetWait
+                sem1->Post();
+
+                cnt = 0u;
+                while (((*mem1 != 3u) || (*mem2 != 2u)) && (cnt < 3u)) {
+                    Sleep::MSec(500u);
+                    cnt++;
+                }
+                printf("mem1=%d, mem2=%d\n", *mem1, *mem2);
+                if ((*mem1 != 3u) || (*mem2 != 2u)) {
+                    ret = false;
+                }
+            }
+        }
+
+    }
+    testDS1->stop = 1;
+    testDS2->stop = 1;
+    sem1->Post();
+    sem2->Post();
+
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    while (Threads::NumberOfThreads() > 0) {
+        Sleep::MSec(10);
+    }
+
+    return ret;
+}
+
+bool FastSchedulerTest::TestIntegrated_NoWait() {
+
+    static StreamString configTestIntegrated_NoWait = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = FastSchedulerTestGAM"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = TestDS1"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Trigger = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Trigger = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = FastSchedulerTestGAM"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = TestDS2"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Trigger = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Trigger = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "        +GAMC = {"
+            "            Class = FastSchedulerTestGAM"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = TestDS2"
+            "                    Type = uint32"
+            "                    Alias = add1"
+            "                    Trigger = 1"
+            "                }"
+            "                SignalIn2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Alias = add2"
+            "                    Trigger = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +TestDS1 = {"
+            "            Class = FastSchedulerTestDSTest"
+            "        }"
+            "        +TestDS2= {"
+            "            Class = FastSchedulerTestDSTest"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    CPUs = 0x1"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "                +Thread2 = {"
+            "                    CPUs = 0x1"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMB}"
+            "                }"
+            "            }"
+            "        }"
+            "        +State2 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    CPUs = 0x1"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "                +Thread2 = {"
+            "                    CPUs = 0x2"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMC}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = FastScheduler"
+            "        TimingDataSource = Timings"
+            "        NoWait = 1"
+            "    }"
+            "}";
+
+    if (!Init(configTestIntegrated_NoWait)) {
+        return false;
+    }
+
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (!app->ConfigureApplication()) {
+        return false;
+    }
+
+    // the start execution is inside the prepare next state
+    if (!app->PrepareNextState("State1")) {
+        return false;
+    }
+
+    ReferenceT<FastScheduler> sched = app->Find("Scheduler");
+    ReferenceT<FastSchedulerTestDSTest> testDS1 = app->Find("Data.TestDS1");
+    ReferenceT<FastSchedulerTestDSTest> testDS2 = app->Find("Data.TestDS2");
+    ReferenceT<FastSchedulerTestGAM> testgama = app->Find("Functions.GAMA");
+    ReferenceT<FastSchedulerTestGAM> testgamb = app->Find("Functions.GAMB");
+    ReferenceT<FastSchedulerTestGAM> testgamc = app->Find("Functions.GAMC");
+
+    if (!sched.IsValid() || !testDS1.IsValid() || !testDS2.IsValid() || !testgama.IsValid() || !testgamb.IsValid()) {
+        return false;
+    }
+
+    EventSem *sem1 = testDS1->GetSem();
+    EventSem *sem2 = testDS2->GetSem();
+    ErrorManagement::ErrorType err = app->StartNextStateExecution();
+
+    bool ret = true;
+    if (err.ErrorsCleared()) {
+        uint32 *mem1 = (uint32 *) testgama->GetInputMem();
+        uint32 *mem2 = (uint32 *) testgamb->GetInputMem();
+        uint32 *mem3 = (uint32 *) testgamc->GetInputMem();
+
+        printf("mem1=%d, mem2=%d\n", *mem1, *mem2);
+        if ((*mem1 != 0u) || (*mem2 != 0u)) {
+            return false;
+        }
+        //be sure threads are waiting
+        Sleep::MSec(1000u);
+
+        sem1->Post();
+        sem2->Post();
+
+        uint32 cnt = 0u;
+        while (((*mem1 != 1u) || (*mem2 != 1u)) && (cnt < 3u)) {
+            Sleep::MSec(500u);
+            cnt++;
+        }
+        printf("mem1=%d, mem2=%d\n", *mem1, *mem2);
+        if ((*mem1 != 1u) || (*mem2 != 1u)) {
+            ret = false;
+        }
+        if (ret) {
+            //give the time to wait again
+            Sleep::MSec(1000u);
+
+            //never do stop-start, always prepare-stop-start,
+            app->PrepareNextState("State2");
+            app->StopCurrentStateExecution();
+            app->StartNextStateExecution();
+
+            //this works from the prev cycle
+            sem1->Post();
+            //this is going to copy to GAMB still
+            sem2->Post();
+
+            cnt = 0u;
+            while (((*mem1 != 2u) || (*mem3 != 0u)) && (cnt < 3u)) {
+                Sleep::MSec(500u);
+                cnt++;
+            }
+            printf("mem1=%d, mem2=%d\n", *mem1, *mem3);
+            if ((*mem1 != 2u) || (*mem3 != 0u)) {
+                ret = false;
+            }
+
+            if (ret) {
+                sem1->Post();
+
+                cnt = 0u;
+                while (((*mem1 != 3u) || (*mem3 != 0u)) && (cnt < 3u)) {
+                    Sleep::MSec(500u);
+                    cnt++;
+                }
+                printf("mem1=%d, mem2=%d\n", *mem1, *mem3);
+                if ((*mem1 != 3u) || (*mem3 != 0u)) {
+                    ret = false;
+                }
+            }
+
+            if (ret) {
+
+                sem2->Post();
+                //needed because of the ResetWait
+                sem1->Post();
+
+                cnt = 0u;
+                while (((*mem1 != 4u) || (*mem3 != 3u)) && (cnt < 3u)) {
+                    Sleep::MSec(500u);
+                    cnt++;
+                }
+                printf("mem1=%d, mem2=%d\n", *mem1, *mem3);
+                if ((*mem1 != 4u) || (*mem3 != 3u)) {
+                    ret = false;
+                }
+            }
+        }
+
+    }
+    testDS1->stop = 1;
+    testDS2->stop = 1;
+    sem1->Post();
+    sem2->Post();
+
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    while (Threads::NumberOfThreads() > 0) {
+        Sleep::MSec(10);
+    }
+
+    return ret;
 }
 
