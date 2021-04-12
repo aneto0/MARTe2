@@ -19,3 +19,4 @@ GTestDirectoryTest/*
 __pycache__
 
 .vscode
+.clang
