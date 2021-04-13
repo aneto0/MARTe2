@@ -87,7 +87,7 @@ TEST(Scheduler_L1Portability_CountingSemGTest,TestForcePass) {
 
 TEST(Scheduler_L1Portability_CountingSemGTest,TestForceReset) {
     CountingSemTest semTest;
-    ASSERT_TRUE(semTest.TestForcePass(10, 1000));
+    ASSERT_TRUE(semTest.TestForceReset(10, 1000));
 }
 /*
 TEST(Scheduler_L1Portability_EventSemGTest,TestWaitTimeoutNoTimeout) {
