@@ -179,6 +179,15 @@ bool GAM1::Setup() {
     return true;
 }
 
+
+uint8 *GAM1::GetInputMem() {
+    return (uint8*)GetInputSignalsMemory();
+}
+
+uint8 *GAM1::GetOutputMem() {
+    return (uint8*)GetOutputSignalsMemory();
+}
+
 CLASS_REGISTER(GAM1, "1.0");
 
 ///////////////////////////////////////////

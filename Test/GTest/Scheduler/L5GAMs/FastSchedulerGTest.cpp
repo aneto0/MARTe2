@@ -92,3 +92,15 @@ TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestInitialise_False_MoreThanOneErrorMe
     FastSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise_False_MoreThanOneErrorMessage());
 }
+
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestIntegrated_WaitForAll) {
+    FastSchedulerTest test;
+    ASSERT_TRUE(test.TestIntegrated_WaitForAll());
+}
+
+TEST(Scheduler_L5GAMs_FastSchedulerGTest,TestIntegrated_NoWait) {
+    FastSchedulerTest test;
+    ASSERT_TRUE(test.TestIntegrated_NoWait());
+}
+
+

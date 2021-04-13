@@ -206,6 +206,10 @@ GAM1    ();
 
     bool PrepareNextState(const char8 * currentStateName, const char8 * nextStateName);
 
+    uint8 *GetInputMem();
+
+    uint8 *GetOutputMem();
+
     uint32 numberOfExecutions;
     uint32 context;
 

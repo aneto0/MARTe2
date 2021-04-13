@@ -1,8 +1,8 @@
 /**
  * @file FastScheduler.cpp
  * @brief Source file for class FastScheduler
- * @date May 21, 2020
- * @author Giuseppe
+ * @date 21/05/2020
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -56,10 +56,10 @@ FastScheduler::FastScheduler() :
     rtThreadInfo[0] = NULL_PTR(RTThreadParam *);
     rtThreadInfo[1] = NULL_PTR(RTThreadParam *);
     if (!eventSem.Create()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed Create(*) of the event semaphore");
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Create(*) of the event semaphore");
     }
     if (!unusedThreadsSem.Create()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed Create(*) of the event semaphore");
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Create(*) of the event semaphore");
     }
     maxNThreads = 0u;
     superFast = 0u;
@@ -69,19 +69,19 @@ FastScheduler::FastScheduler() :
  * the memory addresses are checked before being used.*/
 FastScheduler::~FastScheduler() {
     if (!eventSem.Post()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
     }
-    if (!countingSem.EventSem::Post()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+    if (!countingSem.ForcePass()) {
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
     }
     if (!unusedThreadsSem.Post()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
     }
     if (multiThreadService != NULL) {
         ErrorManagement::ErrorType err;
         err = multiThreadService->Stop();
         if (!err.ErrorsCleared()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Could not StopCurrentStateExecution multiThreadService[1]");
+            //REPORT_ERROR(ErrorManagement::FatalError, "Could not StopCurrentStateExecution multiThreadService[1]");
         }
         delete multiThreadService;
     }
@@ -112,7 +112,7 @@ FastScheduler::~FastScheduler() {
 bool FastScheduler::Initialise(StructuredDataI & data) {
     bool ret = GAMSchedulerI::Initialise(data);
     if (ret) {
-        if (!data.Read("SuperFast", superFast)) {
+        if (!data.Read("NoWait", superFast)) {
             superFast = 0u;
         }
 
@@ -122,11 +122,11 @@ bool FastScheduler::Initialise(StructuredDataI & data) {
                 errorMessage = Get(0u);
                 ret = errorMessage.IsValid();
                 if (!ret) {
-                    REPORT_ERROR(ErrorManagement::ParametersError, "The ErrorMessage is not valid");
+                    //REPORT_ERROR(ErrorManagement::ParametersError, "The ErrorMessage is not valid");
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::ParametersError, "Only one ErrorMessage shall be defined");
+                //REPORT_ERROR(ErrorManagement::ParametersError, "Only one ErrorMessage shall be defined");
             }
         }
     }
@@ -147,16 +147,19 @@ bool FastScheduler::ConfigureScheduler(Reference realTimeAppIn) {
 void FastScheduler::Purge(ReferenceContainer &purgeList) {
     //Post the semaphore to make sure that no Threads are awaiting to start!
     if (!eventSem.Post()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
     }
     if (!unusedThreadsSem.Post()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+    }
+    if (!countingSem.ForcePass()) {
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
     }
     if (multiThreadService != NULL) {
         ErrorManagement::ErrorType err;
         err = multiThreadService->Stop();
         if (!err.ErrorsCleared()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Could not StopCurrentStateExecution multiThreadService[1]");
+            //REPORT_ERROR(ErrorManagement::FatalError, "Could not StopCurrentStateExecution multiThreadService[1]");
         }
     }
     ReferenceContainer::Purge(purgeList);
@@ -174,28 +177,24 @@ ErrorManagement::ErrorType FastScheduler::StartNextStateExecution() {
         if (!initialised) {
             err = multiThreadService->Start();
             if (!err.ErrorsCleared()) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed to Start() MultiThreadService.");
+                //REPORT_ERROR(ErrorManagement::FatalError, "Failed to Start() MultiThreadService.");
             }
             initialised = true;
         }
-        REPORT_ERROR(ErrorManagement::FatalError, "START");
         //stop all and release the useless ones
-        if (superFast <= 1u) {
+        if (superFast == 0u) {
             if (!countingSem.Reset()) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed Reset(*) of the event semaphore");
+                //REPORT_ERROR(ErrorManagement::FatalError, "Failed Reset(*) of the event semaphore");
             }
         }
 
         if (!unusedThreadsSem.Post()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+            //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
         }
-        if (superFast > 1u) {
-            unusedThreadsSem.Reset();
-        }
+        unusedThreadsSem.Reset();
         if (!eventSem.Post()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+            //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
         }
-        REPORT_ERROR(ErrorManagement::FatalError, "STARTED");
 
     }
     return err;
@@ -204,17 +203,14 @@ ErrorManagement::ErrorType FastScheduler::StartNextStateExecution() {
 ErrorManagement::ErrorType FastScheduler::StopCurrentStateExecution() {
     ErrorManagement::ErrorType err(realTimeApplicationT.IsValid());
 
-    if (superFast == 0u) {
-        if (!eventSem.Reset()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed Reset(*) of the event semaphore");
-        }
+    if (!eventSem.Reset()) {
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed Reset(*) of the event semaphore");
     }
 
     return err;
 }
 
 void FastScheduler::ComputeMaxNThreads() {
-
 
     for (uint32 i = 0u; i < numberOfStates; i++) {
         uint32 nThreads = states[i].numberOfThreads;
@@ -255,7 +251,9 @@ void FastScheduler::ComputeMaxNThreads() {
     }
 }
 
-void FastScheduler::CreateThreadMap(uint64 cpu, uint32 state, uint32 thread){
+void FastScheduler::CreateThreadMap(uint64 cpu,
+                                    uint32 state,
+                                    uint32 thread) {
     bool found = false;
     uint64 firstInvalid = ALL_CPUS;
 
@@ -292,7 +290,6 @@ void FastScheduler::CreateThreadMap(uint64 cpu, uint32 state, uint32 thread){
     }
 }
 
-
 ErrorManagement::ErrorType FastScheduler::SetupThreadMap() {
     ErrorManagement::ErrorType err;
     ComputeMaxNThreads();
@@ -302,13 +299,7 @@ ErrorManagement::ErrorType FastScheduler::SetupThreadMap() {
     multiThreadService->SetNumberOfPoolThreads(maxNThreads);
     err = multiThreadService->CreateThreads();
     if (err.ErrorsCleared()) {
-        if (rtThreadInfo[0] != NULL) {
-            delete rtThreadInfo[0];
-        }
         rtThreadInfo[0] = new RTThreadParam[maxNThreads];
-        if (rtThreadInfo[1] != NULL) {
-            delete rtThreadInfo[1];
-        }
         rtThreadInfo[1] = new RTThreadParam[maxNThreads];
 
         //set all as invalid
@@ -341,11 +332,11 @@ ErrorManagement::ErrorType FastScheduler::SetupThreadMap() {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed Create(*) of the event semaphore");
+            //REPORT_ERROR(ErrorManagement::FatalError, "Failed Create(*) of the event semaphore");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed to CreateThreads().");
+        //REPORT_ERROR(ErrorManagement::FatalError, "Failed to CreateThreads().");
     }
     return err;
 }
@@ -382,7 +373,7 @@ void FastScheduler::CustomPrepareNextState() {
                 rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].cycleTime = nextState->threads[i].cycleTime;
                 rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].lastCycleTimeStamp = 0u;
                 REPORT_ERROR(ErrorManagement::FatalError, "Configuring rtThreadInfo[%d][%d]=%!", nextBuffer, cpuThreadMap[nextStateIdentifier][i],
-                             rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].numberOfExecutables);
+                        rtThreadInfo[nextBuffer][cpuThreadMap[nextStateIdentifier][i]].numberOfExecutables);
             }
         }
     }
@@ -397,13 +388,10 @@ ErrorManagement::ErrorType FastScheduler::Execute(ExecutionInfo & information) {
     else if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
         //everything ok at the post
         uint32 threadNumber = information.GetThreadNumber();
+        //normal wait for an explicit post
+        (void) eventSem.Wait(TTInfiniteWait);
         if (superFast == 0u) {
-            //normal wait for an explicit post
-            (void) eventSem.Wait(TTInfiniteWait);
-        }
-        if (superFast <= 1u) {
             (void) countingSem.WaitForAll(TTInfiniteWait);
-            unusedThreadsSem.Reset();
         }
 
         uint32 idx = (uint32) realTimeApplicationT->GetIndex();
@@ -429,9 +417,7 @@ ErrorManagement::ErrorType FastScheduler::Execute(ExecutionInfo & information) {
                     absTime = static_cast<uint32>(ticksToTime); //us
                 }
                 uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
-                if (!MemoryOperationsHelper::Copy(rtThreadInfo[idx][threadNumber].cycleTime, &absTime, sizeToCopy)) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Could not copy cycle time information.");
-                }
+                (void)MemoryOperationsHelper::Copy(rtThreadInfo[idx][threadNumber].cycleTime, &absTime, sizeToCopy);
                 rtThreadInfo[idx][threadNumber].lastCycleTimeStamp = HighResolutionTimer::Counter();
             }
             else {
@@ -439,7 +425,7 @@ ErrorManagement::ErrorType FastScheduler::Execute(ExecutionInfo & information) {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "RTThreadParam is NULL.");
+            //REPORT_ERROR(ErrorManagement::FatalError, "RTThreadParam is NULL.");
         }
     }
     else {
