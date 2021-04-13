@@ -82,13 +82,16 @@ ErrorManagement::ErrorType CountingSem::WaitForAll(const TimeoutType &timeout) {
 }
 
 bool CountingSem::Reset() {
-    if (sem.FastLock()) {
+      bool result = false;
+      if (sem.FastLock()) {
+  
         if (counter >= numberOfActors) {
             counter = 0;
+            result = EventSem::Reset();
         }
         sem.FastUnLock();
     }
-    return EventSem::Reset();
+    return result;
 }
 
 
