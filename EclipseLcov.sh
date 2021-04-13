@@ -5,7 +5,7 @@ OUTPUT_DIR=Build
 rm -f $OUTPUT_DIR/MARTe2.coverage.*
 
 #Build with coverage enabled
-#make -f Makefile.cov clean
+make -f Makefile.cov clean
 make -f Makefile.cov
 
 #Run baseline coverage
@@ -40,4 +40,4 @@ genhtml $OUTPUT_DIR/MARTe2.coverage.info --output-directory $OUTPUT_DIR/cov_html
 #Generate the text output
 lcov -l $OUTPUT_DIR/MARTe2.coverage.info > $OUTPUT_DIR/MARTe2.coverage.out
 
-#make -f Makefile.cov clean_gen
+make -f Makefile.cov clean_gen
