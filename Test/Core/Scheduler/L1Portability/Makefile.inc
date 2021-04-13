@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=  EventSemTest.x \
+OBJSX=  CountingSemTest.x \
+    EventSemTest.x \
 		MutexSemTest.x \
 		ProcessorTest.x \
 		ThreadsTest.x

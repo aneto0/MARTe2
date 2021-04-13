@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  EventSemGTest.x\
+OBJSX=  CountingSemGTest.x\
+		EventSemGTest.x\
 		MutexSemGTest.x\
 		ProcessorGTest.x\
 		ThreadsGTest.x
