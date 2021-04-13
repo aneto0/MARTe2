@@ -45,8 +45,6 @@ using namespace MARTe;
  */
 class CountingSemTest {
 public:
-    int32       sharedVariable1;
-    CountingSem countingSem;
     /**
      * @brief Constructor.
      * @details Creates the semaphore handle.
@@ -81,56 +79,33 @@ public:
 
     /**
      * @brief Tests the CountingSem::WaitForAll function.
-     * @details Checks that the wait function fails gracefully after the timeout expire.
+     * @details Checks that the wait function post gracefully after that all the actors check in.
      * @param[in] numberOfActors is the number of actors to synchronize.
      * @param[in] timeout is the desired timeout.
-     * @return true if the wait function correctly expires with the timeout and signals the correct error.
+     * @return true if the wait function correctly expires after all actors checkd in.
      */
-    bool TestWaitForAll(uint32 numberOfActors,TimeoutType timeout);
+    bool TestWaitForAll(uint32 numberOfActors, TimeoutType timeout);
 
-    bool TestForceReset();
+    /**
+     * @brief Tests the CountingSem::ForceReset function.
+     * @details Checks that the force reset function works properly.
+     * @param[in] numberOfActors is the number of actors to synchronize.
+     * @param[in] timeout is the desired timeout.
+     * @return true if the reset works properly.
+     */
+    bool TestForcePass(uint32 numberOfActors, TimeoutType timeout);
 
-    bool TestForcePass();
+    /**
+     * @brief Tests the CountingSem::ForceReset function.
+     * @details Checks that the force reset function works properly.
+     * @param[in] numberOfActors is the number of actors to synchronize.
+     * @param[in] timeout is the desired timeout.
+     * @return true if the reset works properly.
+     */
+    bool TestForceReset(uint32 numberOfActors, TimeoutType timeout);
 
 private:
-    /**
-     * Shared variable that will be incremented by each thread
-     */
-    uint32 sharedVariable;
-
-    /**
-     * timeout for the tests with timeout
-     */
-    TimeoutType timeout;
-
-    /**
-     * @brief Implements the test logic.
-     * @details The value of the sharedVariable is initialised to 0xABCD\n
-     * The CountingSem is reset and all the threads are created.\n
-     * The threads will then wait on the event semaphore being allowed to proceed.\n
-     * The Test function waits for some time before posting the semaphore. If the semaphore
-     * is functioning as expected, the value of the sharedVariable should still be 0xABCD
-     * before posting.
-     *
-     * The value of the sharedVariable is then set to zero and the semaphore is posted.\n
-     * It is then expected that the sharedVariable is individually incremented by each thread.
-     *
-     * @param[in] nOfThreads the number of threads for the test
-     * @return true if the final value of sharedVariable is equal to nOfThreads
-     */
-    bool MultiThreadedTestWait(uint32 nOfThreads);
-
-    /**
-     * @brief Helper callback function that is used by the thread spawned by the MultiThreadedTestWait.
-     * @param[in] eventSemTest the class instance under test
-     */
-    friend void MultiThreadedTestWaitCallback(CountingSemTest &eventSemTest);
-    /**
-     * @brief Helper callback to post the CountingSem so that the Wait and Reset functions can be tested
-     * @param[in] eventSemTest the class instance under test
-     */
-    friend void PosterThreadCallback(CountingSemTest &eventSemTest);
-
+    // NO PRIVATE MEMBERS
 };
 
 /*---------------------------------------------------------------------------*/

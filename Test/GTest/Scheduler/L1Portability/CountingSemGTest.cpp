@@ -55,21 +55,39 @@ TEST(Scheduler_L1Portability_CountingSemGTest,TestCreate) {
     ASSERT_TRUE(semTest.TestCreate(10));
 }
 
-TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll) {
+TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll10) {
     CountingSemTest semTest;
     ASSERT_TRUE(semTest.TestWaitForAll(10, 1000));
 }
 
-
-
-TEST(Scheduler_L1Portability_CountingSemGTest,TestForceReset) {
+TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll100) {
     CountingSemTest semTest;
-    ASSERT_TRUE(semTest.TestForceReset());
+    ASSERT_TRUE(semTest.TestWaitForAll(100, 10000));
+}
+
+TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll1000) {
+    CountingSemTest semTest;
+    ASSERT_TRUE(semTest.TestWaitForAll(1000, 100000));
+}
+
+TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll_ShortWait) {
+    CountingSemTest semTest;
+    ASSERT_TRUE(semTest.TestWaitForAll(5, 100));
+}
+
+TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll_FailShortWait) {
+    CountingSemTest semTest;
+    ASSERT_FALSE(semTest.TestWaitForAll(15, 100));
 }
 
 TEST(Scheduler_L1Portability_CountingSemGTest,TestForcePass) {
     CountingSemTest semTest;
-    ASSERT_TRUE(semTest.TestForcePass());
+    ASSERT_TRUE(semTest.TestForcePass(10, 100000));
+}
+
+TEST(Scheduler_L1Portability_CountingSemGTest,TestForceReset) {
+    CountingSemTest semTest;
+    ASSERT_TRUE(semTest.TestForcePass(10, 1000));
 }
 /*
 TEST(Scheduler_L1Portability_EventSemGTest,TestWaitTimeoutNoTimeout) {
