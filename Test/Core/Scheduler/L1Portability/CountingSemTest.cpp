@@ -74,10 +74,10 @@ bool CountingSemTest::TestCreate(uint32 numberOfActors) {
 }
 
 struct ThreadData {
-  CountingSem *semaphore;
-  MutexSem    *mutex;
-  TimeoutType timeoutTime;
-  uint32      sharedData;
+    CountingSem *semaphore;
+    MutexSem    *mutex;
+    TimeoutType timeoutTime;
+    uint32      sharedData;
 };
 
 void TestWaitForAllCallback(ThreadData & payload) {
@@ -89,193 +89,193 @@ void TestWaitForAllCallback(ThreadData & payload) {
     Threads::EndThread();
 }
 
-void killThreads() {
-  Sleep::MSec(100);
-  //Check if all the threads have terminated
-  for (uint32 i = 0; i < Threads::NumberOfThreads(); i++) {
-    ThreadIdentifier tid = Threads::FindByIndex(i);
-    if (Threads::IsAlive(tid)) {
-      Threads::Kill(tid);
+static void KillThreads() {
+    Sleep::MSec(100);
+    //Check if all the threads have terminated
+    for (uint32 i = 0; i < Threads::NumberOfThreads(); i++) {
+        ThreadIdentifier tid = Threads::FindByIndex(i);
+        if (Threads::IsAlive(tid)) {
+            Threads::Kill(tid);
+        }
     }
-  }
 }
 
 bool CountingSemTest::TestWaitForAll(uint32 numberOfActors, TimeoutType timeoutTime) {
 
-  if (numberOfActors == 0) return true; // Nothing todo in this case...
-  
-  // Initialize thread payload
-  ThreadData payload = {
-    new CountingSem(), 
-    new MutexSem(), // mutex to protect access to sharedData sharedVariable
-    timeoutTime, // max wait time..
-    0xABCD // shared data
-  };
-  uint32 i = 0; // counter variable
+    if (numberOfActors == 0) return true; // Nothing todo in this case...
 
-  bool test = payload.semaphore->Create(numberOfActors); // initialize semaphore
-  test &= payload.mutex->Create(); // Initialize mutex
-  if (test) { 
-    // prepare first N-1 treads
-    for (i = 0; i < numberOfActors - 1; i++) {
-      Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
-      Sleep::MSec(10); // ensure that threads are waiting...
-      if (payload.sharedData != 0xABCD) { // if value changed something has gone wrong... 
-        killThreads();
-        
-        payload.semaphore->Close();
-        payload.mutex->Close();
+    // Initialize thread payload
+    ThreadData payload = {
+        new CountingSem(), 
+        new MutexSem(), // mutex to protect access to sharedData sharedVariable
+        timeoutTime, // max wait time..
+        0xABCD // shared data
+    };
+    uint32 i = 0; // counter variable
+
+    bool test = payload.semaphore->Create(numberOfActors); // initialize semaphore
+    test &= payload.mutex->Create(); // Initialize mutex
+    if (test) { 
+        // prepare first N-1 treads
+        for (i = 0; i < numberOfActors - 1; i++) {
+            Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
+            Sleep::MSec(10); // ensure that threads are waiting...
+            if (payload.sharedData != 0xABCD) { // if value changed something has gone wrong... 
+                KillThreads();
+
+                payload.semaphore->Close();
+                payload.mutex->Close();
+                delete payload.mutex;
+                delete payload.semaphore;
+                return false;
+            }
+        }
+    } else {
         delete payload.mutex;
         delete payload.semaphore;
         return false;
-      }
     }
-  } else {
+    // reinitialize data to 0
+    payload.sharedData = 0;
+    i++;
+    // initialize last thread
+    Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
+    test &= !payload.semaphore->Reset();
+    Sleep::MSec(100);
+    test &= payload.semaphore->Reset();
+    // after the synchronization the data should be equal to the num of threads.
+    while (payload.sharedData != numberOfActors) { 
+        Sleep::MSec(25);   
+        i --;
+        if (i <= 0) { 
+            // if after N waiting period the value is not yet at the expected value 
+            // something has gone wrong
+            test = false;
+        }
+    }
+
+    KillThreads();
+    // clean status
+    payload.semaphore->Close();
+    payload.mutex->Close();
+    test &= payload.semaphore->IsClosed();
     delete payload.mutex;
     delete payload.semaphore;
-    return false;
-  }
-  // reinitialize data to 0
-  payload.sharedData = 0;
-  i++;
-  // initialize last thread
-  Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
-  test &= !payload.semaphore->Reset();
-  Sleep::MSec(100);
-  test &= payload.semaphore->Reset();
-  // after the synchronization the data should be equal to the num of threads.
-  while (payload.sharedData != numberOfActors) { 
-    Sleep::MSec(25);   
-    i --;
-    if (i <= 0) { 
-      // if after N waiting period the value is not yet at the expected value 
-      // something has gone wrong
-      test = false;
-    }
-  }
-   
-  killThreads();
-  // clean status
-  payload.semaphore->Close();
-  payload.mutex->Close();
-  test &= payload.semaphore->IsClosed();
-  delete payload.mutex;
-  delete payload.semaphore;
-  return test;
+    return test;
 }
 
 
 bool CountingSemTest::TestForcePass(uint32 numberOfActors, TimeoutType timeout) {
    
-  if (numberOfActors == 0) return true; // Nothing todo in this case...
-  
-  // Initialize thread payload
-  ThreadData payload = {
-    new CountingSem(), 
-    new MutexSem(), // mutex to protect access to sharedData sharedVariable
-    timeout, // max wait time..
-    0xABCD // shared data
-  };
-  uint32 i = 0; // counter variable
+    if (numberOfActors == 0) return true; // Nothing todo in this case...
 
-  // The number of actors setted in the semaphore is bigger then the real number
-  bool test = payload.semaphore->Create(numberOfActors + 1); // initialize semaphore
-  test &= payload.mutex->Create(); // Initialize mutex
-  if (test) { 
-    // prepare first N-1 treads
-    for (i = 0; i < numberOfActors; i++) {
-      Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
-      Sleep::MSec(10); // ensure that threads are waiting...
-      if (payload.sharedData != 0xABCD) { // if value changed something has gone wrong... 
-        killThreads();
-        
-        payload.semaphore->Close();
-        payload.mutex->Close();
+    // Initialize thread payload
+    ThreadData payload = {
+        new CountingSem(), 
+        new MutexSem(), // mutex to protect access to sharedData sharedVariable
+        timeout, // max wait time..
+        0xABCD // shared data
+    };
+    uint32 i = 0; // counter variable
+
+    // The number of actors setted in the semaphore is bigger then the real number
+    bool test = payload.semaphore->Create(numberOfActors + 1); // initialize semaphore
+    test &= payload.mutex->Create(); // Initialize mutex
+    if (test) { 
+        // prepare first N-1 treads
+        for (i = 0; i < numberOfActors; i++) {
+            Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
+            Sleep::MSec(10); // ensure that threads are waiting...
+            if (payload.sharedData != 0xABCD) { // if value changed something has gone wrong... 
+                KillThreads();
+
+                payload.semaphore->Close();
+                payload.mutex->Close();
+                delete payload.mutex;
+                delete payload.semaphore;
+                return false;
+            }
+        }
+    } else {
         delete payload.mutex;
         delete payload.semaphore;
         return false;
-      }
     }
-  } else {
+
+    payload.sharedData = 0;
+    test &= payload.semaphore->ForcePass();
+    Sleep::MSec(500);
+    test &= payload.sharedData == numberOfActors; 
+    KillThreads();
+    // clean status
+    payload.semaphore->Close();
+    payload.mutex->Close();
+    test &= payload.semaphore->IsClosed();
     delete payload.mutex;
     delete payload.semaphore;
-    return false;
-  }
-  
-  payload.sharedData = 0;
-  test &= payload.semaphore->ForcePass();
-  Sleep::MSec(500);
-  test &= payload.sharedData == numberOfActors; 
-  killThreads();
-  // clean status
-  payload.semaphore->Close();
-  payload.mutex->Close();
-  test &= payload.semaphore->IsClosed();
-  delete payload.mutex;
-  delete payload.semaphore;
-  return test;
+    return test;
 }
 
 
 
 bool CountingSemTest::TestForceReset(uint32 numberOfActors, TimeoutType timeoutTime) {
 
-  if (numberOfActors == 0) return true; // Nothing todo in this case...
-  
-  // Initialize thread payload
-  ThreadData payload = {
-    new CountingSem(), 
-    new MutexSem(), // mutex to protect access to sharedData sharedVariable
-    timeoutTime, // max wait time..
-    0xABCD // shared data
-  };
-  uint32 i = 0; // counter variable
+    if (numberOfActors == 0) return true; // Nothing todo in this case...
 
-  bool test = payload.semaphore->Create(numberOfActors); // initialize semaphore
-  test &= payload.mutex->Create(); // Initialize mutex
-  if (test) { 
-    // prepare first N-1 treads
-    for (i = 0; i < numberOfActors - 1; i++) {
-      Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
-      Sleep::MSec(10); // ensure that threads are waiting...
-      if (payload.sharedData != 0xABCD) { // if value changed something has gone wrong... 
-        killThreads();
-        
-        payload.semaphore->Close();
-        payload.mutex->Close();
+    // Initialize thread payload
+    ThreadData payload = {
+        new CountingSem(), 
+        new MutexSem(), // mutex to protect access to sharedData sharedVariable
+        timeoutTime, // max wait time..
+        0xABCD // shared data
+    };
+    uint32 i = 0; // counter variable
+
+    bool test = payload.semaphore->Create(numberOfActors); // initialize semaphore
+    test &= payload.mutex->Create(); // Initialize mutex
+    if (test) { 
+        // prepare first N-1 treads
+        for (i = 0; i < numberOfActors - 1; i++) {
+            Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
+            Sleep::MSec(10); // ensure that threads are waiting...
+            if (payload.sharedData != 0xABCD) { // if value changed something has gone wrong... 
+                KillThreads();
+
+                payload.semaphore->Close();
+                payload.mutex->Close();
+                delete payload.mutex;
+                delete payload.semaphore;
+                return false;
+            }
+        }
+    } else {
         delete payload.mutex;
         delete payload.semaphore;
         return false;
-      }
     }
-  } else {
+    // reinitialize data to 0
+    payload.sharedData = 0;
+    i = 100;
+    // initialize last thread
+    Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
+    test &= payload.semaphore->ForceReset();
+    // after the synchronization the data should be equal to the num of threads.
+    while (payload.sharedData != numberOfActors) { 
+        Sleep::MSec(25);   
+        i --;
+        if (i <= 0) { 
+            // if after N waiting period the value is not yet at the expected value 
+            // something has gone wrong
+            test = false;
+        }
+    }
+
+    KillThreads();
+    // clean status
+    payload.semaphore->Close();
+    payload.mutex->Close();
+    test &= payload.semaphore->IsClosed();
     delete payload.mutex;
     delete payload.semaphore;
-    return false;
-  }
-  // reinitialize data to 0
-  payload.sharedData = 0;
-  i++;
-  // initialize last thread
-  Threads::BeginThread((ThreadFunctionType) TestWaitForAllCallback, &payload);
-  test &= payload.semaphore->ForceReset();
-  // after the synchronization the data should be equal to the num of threads.
-  while (payload.sharedData != numberOfActors) { 
-    Sleep::MSec(25);   
-    i --;
-    if (i <= 0) { 
-      // if after N waiting period the value is not yet at the expected value 
-      // something has gone wrong
-      test = false;
-    }
-  }
-   
-  killThreads();
-  // clean status
-  payload.semaphore->Close();
-  payload.mutex->Close();
-  test &= payload.semaphore->IsClosed();
-  delete payload.mutex;
-  delete payload.semaphore;
-  return test;
+    return test;
 }
