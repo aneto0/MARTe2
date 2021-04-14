@@ -29,15 +29,14 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ConfigurationDatabase.h"
+#include "GAMSchedulerI.h"
 #include "GAMTestHelper.h"
 #include "Introspection.h"
 #include "IntrospectionT.h"
-#include "ConfigurationDatabase.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
-#include "GAMSchedulerI.h"
 #include "Sleep.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

@@ -31,9 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "CountingSem.h"
-#include "GAMSchedulerI.h"
 #include "GAMScheduler.h"
+#include "GAMSchedulerI.h"
 #include "Message.h"
 #include "MultiThreadService.h"
 #include "RealTimeApplication.h"

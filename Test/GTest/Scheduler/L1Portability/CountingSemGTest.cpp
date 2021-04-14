@@ -1,8 +1,8 @@
 /**
- * @file MemoryGTest.cpp
- * @brief Source file for class MemoryGTest
+ * @file CountingSemGTest.cpp
+ * @brief Source file for class CountingSemGTest
  * @date 29/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryGTest (public, protected, and private). Be aware that some
+ * the class CountingSemGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

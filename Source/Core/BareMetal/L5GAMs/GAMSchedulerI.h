@@ -34,11 +34,11 @@
 
 #include "ExecutableI.h"
 #include "GAM.h"
+#include "ProcessorType.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"
 #include "TimingDataSource.h"
-#include "ProcessorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

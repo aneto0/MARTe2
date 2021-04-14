@@ -31,12 +31,10 @@
 
 #include "CountingSemTest.h"
 #include "ErrorType.h"
-#include "Threads.h"
-#include "Sleep.h"
 #include "HighResolutionTimer.h"
 #include "MutexSem.h"
-
-
+#include "Sleep.h"
+#include "Threads.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

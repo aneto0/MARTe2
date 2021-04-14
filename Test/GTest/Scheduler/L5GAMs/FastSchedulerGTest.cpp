@@ -1,8 +1,8 @@
 /**
  * @file FastSchedulerGTest.cpp
  * @brief Source file for class FastSchedulerGTest
- * @date Apr 11, 2021 TODO Verify the value and format of the date
- * @author ferrog TODO Verify the name and format of the author
+ * @date 11/04/2021
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

@@ -29,11 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ProcessorTypeTest.h"
-#include "GeneralDefinitions.h"
 #include "BitSet.h"
-#include "stdio.h"
-
+#include "GeneralDefinitions.h"
+#include "ProcessorTypeTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

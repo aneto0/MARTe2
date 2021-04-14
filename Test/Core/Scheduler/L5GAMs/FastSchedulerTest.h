@@ -1,7 +1,7 @@
 /**
  * @file FastSchedulerTest.h
  * @brief Header file for class FastSchedulerTest
- * @date 11/042021
+ * @date 11/04/2021
  * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

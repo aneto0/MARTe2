@@ -33,12 +33,12 @@
 
 #include "FastSchedulerTest.h"
 #include "GAMTestHelper.h"
+#include "MemoryDataSourceI.h"
 #include "MessageI.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
 #include "StateMachine.h"
 #include "Threads.h"
-#include "MemoryDataSourceI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

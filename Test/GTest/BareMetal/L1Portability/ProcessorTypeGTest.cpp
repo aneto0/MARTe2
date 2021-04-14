@@ -1,8 +1,8 @@
 /**
  * @file ProcessorTypeGTest.cpp
  * @brief Source file for class ProcessorTypeGTest
- * @date 25/giu/2015
- * @author Giuseppe Ferr�
+ * @date 25/06/2015
+ * @author Giuseppe Ferr0
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
