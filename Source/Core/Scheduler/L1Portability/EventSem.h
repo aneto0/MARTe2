@@ -47,7 +47,7 @@ namespace MARTe {
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
-struct EventSemProperties;
+//struct EventSemProperties;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -77,6 +77,7 @@ public:
      * (i.e. that share the same handle) with the source semaphore.
      * @param[in] source the semaphore providing the access to the low-level semaphore.
      */
+    /*lint -e{1724} source cannot be made a const reference*/
     EventSem(EventSem &source);
 
     /**
@@ -122,7 +123,7 @@ public:
      * @return true if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
-    bool Reset();
+    virtual bool Reset();
 
     /**
      * @brief Posts the semaphore (lowers the barrier).

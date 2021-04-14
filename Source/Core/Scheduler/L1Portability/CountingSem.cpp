@@ -1,8 +1,9 @@
 /**
  * @file CountingSem.cpp
  * @brief Source file for class CountingSem
- * @date May 23, 2020
+ * @date 23/05/2020
  * @author Giuseppe Ferro
+ * @author Martino Ferrari
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,19 +41,15 @@
 
 namespace MARTe {
 
-CountingSem::CountingSem() {
-    // Auto-generated constructor stub for CountingSem
-    // TODO Verify if manual additions are needed
+CountingSem::CountingSem() : EventSem() {
     numberOfActors = 0u;
-    counter = 0;
+    counter = 0u;
 }
 
 CountingSem::~CountingSem() {
-    // Auto-generated destructor stub for CountingSem
-    // TODO Verify if manual additions are needed
 }
 
-bool CountingSem::Create(uint32 numberOfActorsIn) {
+bool CountingSem::Create(const uint32 numberOfActorsIn) {
     bool ret = EventSem::Create();
     if (ret) {
         numberOfActors = numberOfActorsIn;
@@ -63,7 +60,7 @@ bool CountingSem::Create(uint32 numberOfActorsIn) {
 ErrorManagement::ErrorType CountingSem::WaitForAll(const TimeoutType &timeout) {
     ErrorManagement::ErrorType err;
     bool condition = false;
-    if (sem.FastLock()) {
+    if (sem.FastLock() == ErrorManagement::NoError) {
         counter++;
         condition = (counter == numberOfActors);
         if (counter > numberOfActors) {
@@ -82,11 +79,10 @@ ErrorManagement::ErrorType CountingSem::WaitForAll(const TimeoutType &timeout) {
 }
 
 bool CountingSem::Reset() {
-      bool result = false;
-      if (sem.FastLock()) {
-  
+    bool result = false;
+    if (sem.FastLock() == ErrorManagement::NoError) {
         if (counter >= numberOfActors) {
-            counter = 0;
+            counter = 0u;
             result = EventSem::Reset();
         }
         sem.FastUnLock();
@@ -96,15 +92,15 @@ bool CountingSem::Reset() {
 
 
 bool CountingSem::ForceReset() {
-    if (sem.FastLock()) {
-        counter = 0;
+    if (sem.FastLock() == ErrorManagement::NoError) {
+        counter = 0u;
         sem.FastUnLock();
     }
     return EventSem::Reset();
 }
 
 bool CountingSem::ForcePass(){
-    if (sem.FastLock()) {
+    if (sem.FastLock() == ErrorManagement::NoError) {
         counter = numberOfActors;
         sem.FastUnLock();
     }

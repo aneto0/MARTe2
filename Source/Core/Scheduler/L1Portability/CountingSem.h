@@ -1,8 +1,9 @@
 /**
  * @file CountingSem.h
  * @brief Header file for class CountingSem
- * @date May 23, 2020
- * @author Giuseppe
+ * @date 23/05/2020
+ * @author Giuseppe Ferro
+ * @author Martino Ferrari
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -63,6 +64,7 @@ public:
      * @brief Create the semaphore and set the number of actors to wait.
      * @return true if the operating system call returns without errors.  
      */
+    /*lint -e{1511} allow to use the same function name as the parent class*/
     bool Create(uint32 numberOfActorsIn);
 
     /**
@@ -85,7 +87,7 @@ public:
      * @return true if the operating system call returns without errors.
      * @pre the semaphore was successfully created.
      */
-    bool Reset();
+    virtual bool Reset();
     
     /**
      * @brief Force the reset of the semaphore even if the condition on the 
