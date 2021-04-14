@@ -62,6 +62,7 @@ GAMSchedulerI::GAMSchedulerI() :
     nextStateIdentifier = 0u;
 }
 
+/*lint -e{1740} currentStateIdentifier is a pointer to a memory block allocated elsewhere*/
 GAMSchedulerI::~GAMSchedulerI() {
     if (states != NULL) {
         if (numberOfStates > 0u) {

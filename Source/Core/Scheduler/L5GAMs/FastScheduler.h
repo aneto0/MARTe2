@@ -60,7 +60,7 @@ namespace MARTe {
  *
  * @details This scheduler executes from the beginning a number of threads and keeps them executing across the state transitions.
  * The number of spawned threads depends on the cpus defined. It is the summatory over the number of cpus of [max(Ti)] where max(Ti)
- * is the maxumum number of RTTs on the cpu i over the states
+ * is the maximum number of RTTs on the cpu i over the states
  * To give an example, let´s assume the following scenario:
  *   -State1
  *     -RTT1, cpu=1
@@ -223,7 +223,7 @@ protected:
     /**
      * cpu thread map
      */
-    uint64 **cpuThreadMap;
+    uint32 **cpuThreadMap;
 
     /**
      * number of executable threads

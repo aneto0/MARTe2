@@ -255,7 +255,7 @@ public:
     /**
      * @brief Access to the internal array.
      */
-    uint32 *GetArray() const;
+    uint32 *GetArray();
 private:
 
 

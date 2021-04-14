@@ -407,7 +407,7 @@ BitSet & BitSet::operator^=(const BitSet& rhm) {
     return *this;
 }
 
-uint32 *BitSet::GetArray() const{
+uint32 *BitSet::GetArray() {
     return array;
 }
 

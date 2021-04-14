@@ -50,8 +50,8 @@ FastScheduler::FastScheduler() :
         GAMSchedulerI(),
         binder(*this, &FastScheduler::Execute) {
     initialised = false;
-    cpuMap = NULL;
-    cpuThreadMap = NULL;
+    cpuMap = NULL_PTR(uint64 **);
+    cpuThreadMap = NULL_PTR(uint32 **);
     multiThreadService = NULL_PTR(MultiThreadService *);
     rtThreadInfo[0] = NULL_PTR(RTThreadParam *);
     rtThreadInfo[1] = NULL_PTR(RTThreadParam *);
@@ -77,7 +77,7 @@ FastScheduler::~FastScheduler() {
     if (!unusedThreadsSem.Post()) {
         //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
     }
-    if (multiThreadService != NULL) {
+    if (multiThreadService != NULL_PTR(MultiThreadService *)) {
         ErrorManagement::ErrorType err;
         err = multiThreadService->Stop();
         if (!err.ErrorsCleared()) {
@@ -175,6 +175,7 @@ ErrorManagement::ErrorType FastScheduler::StartNextStateExecution() {
     }
     if (err.ErrorsCleared()) {
         if (!initialised) {
+            /*lint -e{613} multiThreadService cannot be NULL as otherwise err != ErrorsCleared*/
             err = multiThreadService->Start();
             if (!err.ErrorsCleared()) {
                 //REPORT_ERROR(ErrorManagement::FatalError, "Failed to Start() MultiThreadService.");
@@ -191,7 +192,7 @@ ErrorManagement::ErrorType FastScheduler::StartNextStateExecution() {
         if (!unusedThreadsSem.Post()) {
             //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
         }
-        unusedThreadsSem.Reset();
+        (void) unusedThreadsSem.Reset();
         if (!eventSem.Post()) {
             //REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
         }
@@ -219,7 +220,7 @@ void FastScheduler::ComputeMaxNThreads() {
             //different from the previous
             bool found = false;
             //loop on the previous states and previous states to find the same cpu
-            for (uint32 h = 0; (h <= i) && (!found); h++) {
+            for (uint32 h = 0u; (h <= i) && (!found); h++) {
                 uint32 nOtherThreads = states[h].numberOfThreads;
                 if (h == i) {
                     nOtherThreads = j;
@@ -235,7 +236,7 @@ void FastScheduler::ComputeMaxNThreads() {
                 //different from all the others
                 for (uint32 h = i; h < numberOfStates; h++) {
                     uint32 nEqualCpus = 0u;
-                    for (uint32 k = 0; k < states[h].numberOfThreads; k++) {
+                    for (uint32 k = 0u; k < states[h].numberOfThreads; k++) {
                         uint64 otherCpu = static_cast<uint64>(states[h].threads[k].cpu.GetProcessorMask());
                         if (otherCpu == cpu) {
                             nEqualCpus++;
@@ -251,11 +252,14 @@ void FastScheduler::ComputeMaxNThreads() {
     }
 }
 
-void FastScheduler::CreateThreadMap(uint64 cpu,
-                                    uint32 state,
-                                    uint32 thread) {
+/*lint -e{613} the caller of CreateThreadMap guarantees that the cpuMap memory is allocated*/
+/*lint -e{850} variables are not modified by the REPORT_ERROR*/
+void FastScheduler::CreateThreadMap(const uint64 cpu,
+                                    const uint32 state,
+                                    const uint32 thread) {
     bool found = false;
-    uint64 firstInvalid = ALL_CPUS;
+    uint32 UNDEFINED_THREAD_ID = 0xFFFFFFFFu;
+    uint32 firstInvalid = UNDEFINED_THREAD_ID;
 
     //match the cpu with the threads on the same line
     for (uint32 h = 0u; (h < maxNThreads) && (!found); h++) {
@@ -273,15 +277,14 @@ void FastScheduler::CreateThreadMap(uint64 cpu,
                 allInvalids = (cpuMap[k][h] == ALL_CPUS);
             }
             if (allInvalids || (state == 0u)) {
-                if (firstInvalid == ALL_CPUS) {
+                if (firstInvalid == UNDEFINED_THREAD_ID) {
                     firstInvalid = h;
                 }
             }
         }
     }
     if (!found) {
-
-        multiThreadService->SetCPUMaskThreadPool(cpu, firstInvalid);
+        multiThreadService->SetCPUMaskThreadPool(BitSet(cpu), firstInvalid);
         multiThreadService->SetPriorityClassThreadPool(Threads::RealTimePriorityClass, firstInvalid);
 
         cpuMap[state][firstInvalid] = cpu;
@@ -316,7 +319,7 @@ ErrorManagement::ErrorType FastScheduler::SetupThreadMap() {
             //if a cpu is not used in that state it will be invalid
             for (uint32 i = 0u; i < numberOfStates; i++) {
                 uint32 nThreads = states[i].numberOfThreads;
-                cpuThreadMap[i] = new uint64[nThreads];
+                cpuThreadMap[i] = new uint32[nThreads];
                 for (uint32 j = 0u; j < nThreads; j++) {
 
                     uint64 cpu = static_cast<uint64>(states[i].threads[j].cpu.GetProcessorMask());
@@ -325,42 +328,38 @@ ErrorManagement::ErrorType FastScheduler::SetupThreadMap() {
             }
 
             //set all as invalid
+            /*lint -e{850} variables are not modified by the REPORT_ERROR*/
             for (uint32 i = 0u; i < numberOfStates; i++) {
                 for (uint32 j = 0u; j < maxNThreads; j++) {
                     REPORT_ERROR(ErrorManagement::Information, "cpuMap[%d][%d]=%!", i, j, cpuMap[i][j]);
                 }
             }
         }
-        else {
-            //REPORT_ERROR(ErrorManagement::FatalError, "Failed Create(*) of the event semaphore");
-        }
-    }
-    else {
-        //REPORT_ERROR(ErrorManagement::FatalError, "Failed to CreateThreads().");
     }
     return err;
 }
 
+/*lint -e{613} rtThreadInfo != NULL is guaranteed by the caller, i.e. the function will not be reached*/
 void FastScheduler::CustomPrepareNextState() {
     ErrorManagement::ErrorType err;
 
     err = !realTimeApplicationT.IsValid();
     if (err.ErrorsCleared()) {
-        uint8 nextBuffer = realTimeApplicationT->GetIndex();
+        uint8 nextBuffer = static_cast<uint8>(realTimeApplicationT->GetIndex());
         nextBuffer++;
         nextBuffer &= 0x1u;
 
         if (!initialised) {
             cpuMap = new uint64*[numberOfStates];
-            cpuThreadMap = new uint64*[numberOfStates];
+            cpuThreadMap = new uint32*[numberOfStates];
             err = SetupThreadMap();
         }
         if (err.ErrorsCleared()) {
             //reset
             for (uint32 j = 0u; j < maxNThreads; j++) {
-                rtThreadInfo[nextBuffer][j].executables = NULL;
+                rtThreadInfo[nextBuffer][j].executables = NULL_PTR(ExecutableI **);
                 rtThreadInfo[nextBuffer][j].numberOfExecutables = 0u;
-                rtThreadInfo[nextBuffer][j].cycleTime = 0u;
+                rtThreadInfo[nextBuffer][j].cycleTime = NULL_PTR(uint32 *);
                 rtThreadInfo[nextBuffer][j].lastCycleTimeStamp = 0u;
             }
 
@@ -394,7 +393,7 @@ ErrorManagement::ErrorType FastScheduler::Execute(ExecutionInfo & information) {
             (void) countingSem.WaitForAll(TTInfiniteWait);
         }
 
-        uint32 idx = (uint32) realTimeApplicationT->GetIndex();
+        uint32 idx = static_cast<uint32>(realTimeApplicationT->GetIndex());
 
         if (rtThreadInfo[idx] != NULL_PTR(RTThreadParam *)) {
             if (rtThreadInfo[idx][threadNumber].numberOfExecutables > 0u) {
