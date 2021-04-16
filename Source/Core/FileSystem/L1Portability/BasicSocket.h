@@ -34,7 +34,7 @@
 #include "InternetHost.h"
 #include "StreamI.h"
 #include "HandleI.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,SocketCore.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

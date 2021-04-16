@@ -38,7 +38,7 @@
 #include "SortFilter.h"
 #include "BasicFile.h"
 #include "stdio.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,DirectoryCore.h)
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

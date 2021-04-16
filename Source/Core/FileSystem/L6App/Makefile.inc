@@ -24,13 +24,18 @@
 
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-SPB=Environment/$(ENVIRONMENT).x
+#Allow portable compilation of the core (i.e. with the Architecture and Environment defined elsewhere w.r.t. to the core)
+MARTe2_PORTABLE_SPB_DIR=.
+ifdef MARTe2_PORTABLE_ENV_DIR
+MARTe2_PORTABLE_SPB_DIR=$(MARTe2_PORTABLE_ENV_DIR)/FileSystem/L6App
+endif
+SPB=$(MARTe2_PORTABLE_SPB_DIR)/Environment/$(ENVIRONMENT).x
 
 OBJSX=
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../BareMetal/L0Types
 INCLUDES+=-I../../BareMetal/L1Portability
@@ -52,4 +57,4 @@ all: $(OBJS) $(SUBPROJ)   \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

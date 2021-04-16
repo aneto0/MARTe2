@@ -28,9 +28,9 @@ SPB = L1Portability.x L3Streams.x L4HttpService.x L4LoggerService.x L6App.x
 
 PACKAGE=GTest
 ROOT_DIR=../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC = $(BUILD_DIR)/L1Portability/L1PortabilityFGTest$(LIBEXT)
 LIBRARIES_STATIC += $(BUILD_DIR)/L3Streams/L3StreamsFGTest$(LIBEXT)
@@ -42,4 +42,4 @@ all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/MARTeFGTest$(LIBEXT) 
 	echo  $(OBJS)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

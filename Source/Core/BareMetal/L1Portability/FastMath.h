@@ -35,7 +35,7 @@
 
 #include "ErrorManagement.h"
 #include "CompilerTypes.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
+#include INCLUDE_FILE_ARCHITECTURE(BareMetal,L1Portability,ARCHITECTURE,FastMathA.h)
 
 
 /*---------------------------------------------------------------------------*/

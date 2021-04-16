@@ -38,21 +38,45 @@
 #define QUOTE_1(x) #x
 /*lint -restore */
 
+#ifndef MARTe2_PORTABLE_ENV_DIR
+#define MARTe2_PORTABLE_ENV_PARENT_DIR .
+#else
+#define MARTe2_PORTABLE_ENV_PARENT_DIR MARTe2_PORTABLE_ENV_DIR
+#endif
+
+#ifndef MARTe2_PORTABLE_ARCH_DIR
+#define MARTe2_PORTABLE_ARCH_PARENT_DIR .
+#else
+#define MARTe2_PORTABLE_ARCH_PARENT_DIR MARTe2_PORTABLE_ARCH_DIR
+#endif
+
+
 /**
  * @brief Builds an include filename based on actual architecture.
  */
+/*p=parent, a=architecture, f=file, t=tier, l=level*/
 /*lint -save -e9026 -estring(1960, *16-0-6*) , function-like macro defined, unparenthesized macro parameter*/
-#define INCLUDE_FILE_ARCHITECTURE(x,y) QUOTE(Architecture/x/y)
+#ifndef MARTe2_PORTABLE_ARCH_DIR
+#define INCLUDE_FILE_ARCHITECTURE_(t,l,p,a,f) QUOTE(Architecture/a/f)
+#else
+#define INCLUDE_FILE_ARCHITECTURE_(t,l,p,a,f) QUOTE(p/t/l/Architecture/a/f)
+#endif
+#define INCLUDE_FILE_ARCHITECTURE(t,l,a,f) INCLUDE_FILE_ARCHITECTURE_(t,l,MARTe2_PORTABLE_ARCH_PARENT_DIR,a,f)
 /*lint -restore */
 
 /**
  * @brief Builds an include filename based on actual environment.
  */
+/*p=parent, e=environment, f=file, t=tier, l=level*/
 /*lint -save -e9026 -estring(1960, *16-0-6*) , function-like macro defined, unparenthesized macro parameter*/
-#define INCLUDE_FILE_ENVIRONMENT(x,y) QUOTE(Environment/x/y)
+#ifndef MARTe2_PORTABLE_ENV_DIR
+#define INCLUDE_FILE_ENVIRONMENT_(t,l,p,e,f) QUOTE(Environment/e/f)
+#else
+#define INCLUDE_FILE_ENVIRONMENT_(t,l,p,e,f) QUOTE(p/t/l/Environment/e/f)
+#endif
+#define INCLUDE_FILE_ENVIRONMENT(t,l,e,f) INCLUDE_FILE_ENVIRONMENT_(t,l,MARTe2_PORTABLE_ENV_PARENT_DIR,e,f)
 /*lint -restore */
-
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,CompilerTypes.h)
+#include INCLUDE_FILE_ARCHITECTURE(BareMetal,L0Types,ARCHITECTURE,CompilerTypes.h)
 
 /**
  * @brief Casts a 0 value to the target pointer type.

@@ -23,7 +23,7 @@
 #############################################################
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  CircularBufferThreadInputDataSourceGTest.x \
     FastSchedulerGTest.x \
@@ -31,7 +31,7 @@ OBJSX=  CircularBufferThreadInputDataSourceGTest.x \
     MemoryMapAsyncOutputBrokerGTest.x\
     MemoryMapAsyncTriggerOutputBrokerGTest.x
 		 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
@@ -62,5 +62,5 @@ all: $(OBJS)    \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

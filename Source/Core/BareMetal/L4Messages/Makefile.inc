@@ -28,8 +28,8 @@ OBJSX=	MessageI.x Message.x MessageFilter.x MessageFilterPool.x ObjectRegistryDa
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
 INCLUDES += -I../L0Types
@@ -44,5 +44,5 @@ all: $(OBJS)    \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

@@ -31,14 +31,14 @@ BUILD_DIR?=.
 #Location of the MakeDefaults directory.
 #Note that the MARTe2_DIR environment variable
 #must have been exported before
-MAKEDEFAULTDIR=$(MARTe2_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(MARTe2_DIR)/MakeDefaults
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 CFLAGS += -DENABLE_WEB_BROWSING
 
 all: $(OBJS) 
 	echo  $(OBJS)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

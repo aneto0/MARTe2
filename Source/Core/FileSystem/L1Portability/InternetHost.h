@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "StreamString.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetHostCore.h)
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,InternetHostCore.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

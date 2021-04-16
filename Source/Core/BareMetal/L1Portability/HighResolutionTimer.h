@@ -35,8 +35,8 @@
 //#include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
 #include "TimeStamp.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,HighResolutionTimer.h)
+#include INCLUDE_FILE_ARCHITECTURE(BareMetal,L1Portability,ARCHITECTURE,HighResolutionTimerA.h)
+#include INCLUDE_FILE_ENVIRONMENT(BareMetal,L1Portability,ENVIRONMENT,HighResolutionTimer.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */

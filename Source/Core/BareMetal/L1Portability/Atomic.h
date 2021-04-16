@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,AtomicA.h)
+#include INCLUDE_FILE_ARCHITECTURE(BareMetal,L1Portability,ARCHITECTURE,AtomicA.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                              */

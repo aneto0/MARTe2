@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetServiceCore.h)
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,InternetServiceCore.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

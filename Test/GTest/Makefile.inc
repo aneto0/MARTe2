@@ -27,9 +27,9 @@ SPB = BareMetal.x Scheduler.x FileSystem.x
 
 PACKAGE=
 ROOT_DIR=../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES += -I$(ROOT_DIR)/Lib/gtest-1.7.0/include
 
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
@@ -48,5 +48,5 @@ all: $(OBJS) $(SUBPROJ)   \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

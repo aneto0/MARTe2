@@ -26,16 +26,17 @@
 OBJSX=
 SPB=
 SPBC=Source/Core.x Source/App.x
+
 SPBT=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x Docs/User/source/_static/examples/Core.x
 SUBPROJCORE = $(SPBC:%.x=%.spb)
 SUBPROJTEST = $(SPBT:%.x=%.spb)
 SUBPROJCOREC = $(SPBC:%.x=%.spc)
 SUBPROJTESTC = $(SPBT:%.x=%.spc)
 
-MAKEDEFAULTDIR=MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
 
 ROOT_DIR=.
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS) gtest core test
 	echo  $(OBJS)
@@ -51,5 +52,5 @@ test: $(SUBPROJTEST)
 
 clean: $(SUBPROJCOREC) $(SUBPROJTESTC)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

@@ -27,10 +27,10 @@ OBJSX=
 SPB    = L1Portability.x L3Services.x L4LoggerService.x L4Messages.x L4StateMachine.x L5GAMs.x
 
 PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=../../../MakeDefaults
 
 ROOT_DIR=../../..
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityS$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L3Services/L3ServicesS$(LIBEXT)
@@ -47,4 +47,4 @@ all: $(OBJS) $(SUBPROJ) \
 
 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

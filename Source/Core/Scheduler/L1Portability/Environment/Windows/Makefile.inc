@@ -26,7 +26,7 @@
 
 PACKAGE=Core/Scheduler/L1Portability
 ROOT_DIR=../../../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  EventSem.x \
 		MutexSem.x \
@@ -35,7 +35,7 @@ OBJSX=  EventSem.x \
 		Threads.x \
 		ThreadsDatabase_Gen.x
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
 INCLUDES+=-I../../../../BareMetal/L0Types/
@@ -49,5 +49,5 @@ all: $(OBJS)    $(CPPS) \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

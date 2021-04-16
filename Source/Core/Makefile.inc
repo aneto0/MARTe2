@@ -26,10 +26,10 @@
 OBJSX=
 SPB    = BareMetal.x Scheduler.x FileSystem.x
 PACKAGE=
-MAKEDEFAULTDIR=../../MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=../../MakeDefaults
 
 ROOT_DIR=../..
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -IBareMetal/L0Types
 INCLUDES += -IBareMetal/L1Portability
@@ -55,4 +55,4 @@ all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTe2$(DLLEXT)
 	echo  $(OBJS)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

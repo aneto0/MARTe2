@@ -24,9 +24,14 @@
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-SPB=Environment/$(ENVIRONMENT).x
+#Allow portable compilation of the core (i.e. with the Architecture and Environment defined elsewhere w.r.t. to the core)
+MARTe2_PORTABLE_SPB_DIR=.
+ifdef MARTe2_PORTABLE_ENV_DIR
+MARTe2_PORTABLE_SPB_DIR=$(MARTe2_PORTABLE_ENV_DIR)/BareMetal/L1Portability
+endif
+SPB=$(MARTe2_PORTABLE_SPB_DIR)/Environment/$(ENVIRONMENT).x
 
 OBJSX=  FastPollingEventSem.x \
 	FastPollingMutexSem.x \
@@ -44,11 +49,13 @@ OBJSX=  FastPollingEventSem.x \
 	StringHelper.x \
 	TypeDescriptor.x
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I.
 INCLUDES+=-I../L0Types
 
+CFLAGS+=-DMARTe2_TIER=$(MARTe2_TIER) -DMARTe2_LEVEL=$(MARTe2_LEVEL)
+CPPFLAGS+=-DMARTe2_TIER=$(MARTe2_TIER) -DMARTe2_LEVEL=$(MARTe2_LEVEL)
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ)   \
@@ -59,4 +66,4 @@ all: $(OBJS) $(SUBPROJ)   \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

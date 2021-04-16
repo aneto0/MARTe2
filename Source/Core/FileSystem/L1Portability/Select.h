@@ -36,7 +36,7 @@
 #include "TimeoutType.h"
 #include "HandleI.h"
 
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT, SelectProperties.h)
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,SelectProperties.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

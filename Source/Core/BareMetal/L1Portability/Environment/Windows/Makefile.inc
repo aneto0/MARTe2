@@ -26,7 +26,7 @@
 
 PACKAGE=Core/BareMetal/L1Portability
 ROOT_DIR=../../../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicConsole.x \
 		ErrorManagement_Gen.x \
@@ -40,7 +40,7 @@ OBJSX=  BasicConsole.x \
 		StringHelper_CLIB_Gen.x \
 		TimeStamp.x        
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
 INCLUDES+=-I../../../L0Types
@@ -52,5 +52,5 @@ all: $(OBJS)  $(CPPS)  \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

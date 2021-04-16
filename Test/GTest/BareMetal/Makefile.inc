@@ -28,9 +28,9 @@ SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L4H
 
 PACKAGE=GTest
 ROOT_DIR=../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 
 LIBRARIES_STATIC=$(BUILD_DIR)/L0Types/L0TypesBGTest$(LIBEXT)
@@ -48,6 +48,6 @@ all: $(OBJS)  $(SUBPROJ)  \
         $(BUILD_DIR)/MARTeBGTest$(LIBEXT) 
 	echo  $(OBJS)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 
 

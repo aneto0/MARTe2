@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
+#include INCLUDE_FILE_ARCHITECTURE(Scheduler,L1Portability,ARCHITECTURE,ProcessorA.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */

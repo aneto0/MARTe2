@@ -37,7 +37,7 @@
 #include "MemoryOperationsHelper.h"
 #include "StringHelper.h"
 #include "TimeStamp.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,DirectoryCore.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

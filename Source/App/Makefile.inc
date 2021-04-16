@@ -26,10 +26,10 @@
 OBJSX=
 SPB    =
 PACKAGE=
-MAKEDEFAULTDIR=../../MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=../../MakeDefaults
 
 ROOT_DIR=../..
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../Core/BareMetal/L0Types
 INCLUDES += -I../Core/BareMetal/L1Portability
@@ -55,4 +55,4 @@ all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeApp$(EXEEXT)
 	echo  $(OBJS)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

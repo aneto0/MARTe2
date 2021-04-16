@@ -38,7 +38,7 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,GeneralDefinitions.h)
+#include INCLUDE_FILE_ENVIRONMENT(BareMetal,L1Portability,ENVIRONMENT,GeneralDefinitions.h)
 
 namespace MARTe {
 

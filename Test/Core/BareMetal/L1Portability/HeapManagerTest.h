@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AuxHeap.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,StandardHeap.h)
+#include INCLUDE_FILE_ENVIRONMENT(BareMetal,L1Portability,ENVIRONMENT,StandardHeap.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
