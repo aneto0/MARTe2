@@ -179,6 +179,11 @@ MemoryMapAsyncTriggerOutputBroker    ();
      */
     bool FlushAllTriggers();
 
+    /**
+     * @brief Breaks the link with the owner DataSource (set with InitWithBufferParameters)
+     */
+    void UnlinkDataSource();
+
 private:
 
     /**

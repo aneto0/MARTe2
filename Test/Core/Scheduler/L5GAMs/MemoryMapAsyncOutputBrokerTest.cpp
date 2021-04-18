@@ -257,6 +257,13 @@ MemoryMapAsyncOutputBrokerDataSourceTestHelper    () {
         return broker->Flush();
     }
 
+    virtual void Purge(ReferenceContainer &purgeList) {
+        if (broker.IsValid()) {
+            broker->UnlinkDataSource();
+        }
+        DataSourceI::Purge(purgeList);
+    }
+
     MARTe::uint32 numberOfBuffers;
     MARTe::uint32 *offsets;
     MARTe::uint32 cpuMask;

@@ -171,6 +171,13 @@ public:
         }
     }
 
+    virtual void Purge(ReferenceContainer &purgeList) {
+        if (broker != NULL) {
+            broker->UnlinkDataSource();
+        }
+        DataSourceI::Purge(purgeList);
+    }
+
     virtual bool Initialise(MARTe::StructuredDataI & data) {
         using namespace MARTe;
         DataSourceI::Initialise(data);

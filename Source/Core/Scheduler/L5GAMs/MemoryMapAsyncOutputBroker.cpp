@@ -62,26 +62,7 @@ MemoryMapAsyncOutputBroker::MemoryMapAsyncOutputBroker() :
 
 /*lint -e{1551} the destructor must guarantee that the SingleThreadService is stopped and that buffer memory is freed.*/
 MemoryMapAsyncOutputBroker::~MemoryMapAsyncOutputBroker() {
-    if (!sem.IsClosed()) {
-        if (fastSem.FastLock() == ErrorManagement::NoError) {
-            destroying = true;
-            fastSem.FastUnLock();
-            if (!sem.Post()) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Could not Post the EventSem.");
-            }
-            posted = true;
-        }
-        if (!sem.Close()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Could not Close the EventSem.");
-        }
-    }
-    service.SetTimeout(1000);
-    if (service.Stop() != ErrorManagement::NoError) {
-        REPORT_ERROR(ErrorManagement::Warning, "Going to kill the EmbbeddedService");
-        if (service.Stop() != ErrorManagement::NoError) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the EmbeddedService");
-        }
-    }
+    UnlinkDataSource();
     if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *)) {
         uint32 i;
         for (i = 0u; i < numberOfBuffers; i++) {
@@ -96,6 +77,32 @@ MemoryMapAsyncOutputBroker::~MemoryMapAsyncOutputBroker() {
         delete[] bufferMemoryMap;
         bufferMemoryMap = NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *);
     }
+}
+
+void MemoryMapAsyncOutputBroker::UnlinkDataSource() {
+    if (!sem.IsClosed()) {
+        if (fastSem.FastLock() == ErrorManagement::NoError) {
+            destroying = true;
+            fastSem.FastUnLock();
+            if (!sem.Post()) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Could not Post the EventSem.");
+            }
+            posted = true;
+        }
+        if (!sem.Close()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not Close the EventSem.");
+        }
+    }
+    if (service.GetStatus() != EmbeddedThreadI::OffState) {
+        service.SetTimeout(1000);
+        if (service.Stop() != ErrorManagement::NoError) {
+            REPORT_ERROR(ErrorManagement::Warning, "Going to kill the EmbbeddedService");
+            if (service.Stop() != ErrorManagement::NoError) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the EmbeddedService");
+            }
+        }
+    }
+    dataSourceRef = Reference();
 }
 
 /*lint -e{715} This function is implemented just to avoid using this Broker as MemoryMapBroker.*/

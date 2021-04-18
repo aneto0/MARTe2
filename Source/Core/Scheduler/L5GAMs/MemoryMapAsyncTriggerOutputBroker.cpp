@@ -70,6 +70,24 @@ MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
 
 /*lint -e{1551} the destructor must guarantee that the SingleThreadService is stopped and that buffer memory is freed.*/
 MemoryMapAsyncTriggerOutputBroker::~MemoryMapAsyncTriggerOutputBroker() {
+    UnlinkDataSource();
+    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*)) {
+        uint32 i;
+        for (i = 0u; i < numberOfBuffers; i++) {
+            uint32 c;
+            for (c = 0u; c < numberOfCopies; c++) {
+                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(bufferMemoryMap[i].mem[c]);
+            }
+            delete[] bufferMemoryMap[i].mem;
+            bufferMemoryMap[i].mem = NULL_PTR(void**);
+        }
+
+        delete[] bufferMemoryMap;
+        bufferMemoryMap = NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*);
+    }
+}
+
+void MemoryMapAsyncTriggerOutputBroker::UnlinkDataSource() {
     if (!sem.IsClosed()) {
         if (fastSem.FastLock() == ErrorManagement::NoError) {
             destroying = true;
@@ -90,20 +108,8 @@ MemoryMapAsyncTriggerOutputBroker::~MemoryMapAsyncTriggerOutputBroker() {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the EmbeddedService");
         }
     }
-    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*)) {
-        uint32 i;
-        for (i = 0u; i < numberOfBuffers; i++) {
-            uint32 c;
-            for (c = 0u; c < numberOfCopies; c++) {
-                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(bufferMemoryMap[i].mem[c]);
-            }
-            delete[] bufferMemoryMap[i].mem;
-            bufferMemoryMap[i].mem = NULL_PTR(void**);
-        }
 
-        delete[] bufferMemoryMap;
-        bufferMemoryMap = NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*);
-    }
+    dataSourceRef = Reference();
 }
 
 /*lint -e{715} This function is implemented just to avoid using this Broker as MemoryMapBroker.*/
