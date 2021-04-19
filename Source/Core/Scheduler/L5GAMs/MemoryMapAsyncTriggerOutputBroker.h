@@ -73,6 +73,8 @@ struct MemoryMapAsyncTriggerOutputBrokerBufferEntry {
  * type uint8. All the signals shall have one and only one sample. The DataSourceI shall return GetNumberOfMemoryBuffers() == 1.
  *
  * Only one GAM is allowed to interact with this MemoryMapAsyncTriggerOutputBroker (an IOGAM can be used to collate all the signals).
+ * 
+ * The DataSource shall call the UnlinkDataSource in the DataSourceI::Purge.
  */
 class MemoryMapAsyncTriggerOutputBroker: public MemoryMapBroker {
 public:

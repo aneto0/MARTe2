@@ -438,44 +438,46 @@ bool MemoryMapAsyncTriggerOutputBroker::FlushAllTriggers() {
     uint32 i = 0u;
     uint32 idx = writeIdx;
     bool ret = true;
-    bool waitForBufferLoop = bufferLoopExecuting;
-    //Wait for the BufferLoop to end.
-    while ((waitForBufferLoop) && (ret)) {
-        ret = (fastSem.FastLock() == ErrorManagement::NoError);
-        waitForBufferLoop = bufferLoopExecuting;
-        fastSem.FastUnLock();
-        Sleep::Sec(1e-3F);
-    }
-    if (ret) {
-        ret = (fastSem.FastLock() == ErrorManagement::NoError);
-    }
+    if (service.GetStatus() != EmbeddedThreadI::OffState) {
+        bool waitForBufferLoop = bufferLoopExecuting;
+        //Wait for the BufferLoop to end.
+        while ((waitForBufferLoop) && (ret)) {
+            ret = (fastSem.FastLock() == ErrorManagement::NoError);
+            waitForBufferLoop = bufferLoopExecuting;
+            fastSem.FastUnLock();
+            Sleep::Sec(1e-3F);
+        }
+        if (ret) {
+            ret = (fastSem.FastLock() == ErrorManagement::NoError);
+        }
 
-    while ((i < numberOfBuffers) && (ret)) {
-        if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*)) {
-            if (bufferMemoryMap[idx].triggered) {
-                uint32 c;
-                for (c = 0u; (c < numberOfCopies) && (ret); c++) {
-                    //Copy from the buffer to the DataSource memory
-                    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
-                        ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, bufferMemoryMap[idx].mem[c], copyTable[c].copySize);
+        while ((i < numberOfBuffers) && (ret)) {
+            if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*)) {
+                if (bufferMemoryMap[idx].triggered) {
+                    uint32 c;
+                    for (c = 0u; (c < numberOfCopies) && (ret); c++) {
+                        //Copy from the buffer to the DataSource memory
+                        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
+                            ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, bufferMemoryMap[idx].mem[c], copyTable[c].copySize);
+                        }
                     }
-                }
-                if (ret) {
-                    if (dataSourceRef.IsValid()) {
-                        //Make sure that the dataSourceRef consumes this data.
-                        ret = dataSourceRef->Synchronise();
+                    if (ret) {
+                        if (dataSourceRef.IsValid()) {
+                            //Make sure that the dataSourceRef consumes this data.
+                            ret = dataSourceRef->Synchronise();
+                        }
                     }
+                    bufferMemoryMap[idx].triggered = false;
                 }
-                bufferMemoryMap[idx].triggered = false;
             }
+            idx++;
+            if (idx == numberOfBuffers) {
+                idx = 0u;
+            }
+            i++;
         }
-        idx++;
-        if (idx == numberOfBuffers) {
-            idx = 0u;
-        }
-        i++;
+        fastSem.FastUnLock();
     }
-    fastSem.FastUnLock();
     return ret;
 }
 

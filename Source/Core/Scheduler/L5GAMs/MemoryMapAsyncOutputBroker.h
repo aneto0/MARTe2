@@ -65,6 +65,8 @@ struct MemoryMapAsyncOutputBrokerBufferEntry {
  * in the context of a different thread (SingleThreadService).
  *
  * Only one GAM is allowed to interact with this MemoryMapAsyncOutputBroker (an IOGAM can be used to collate all the signals).
+ *
+ * The DataSource shall call the UnlinkDataSource in the DataSourceI::Purge.
  */
 class MemoryMapAsyncOutputBroker: public MemoryMapBroker {
 public:

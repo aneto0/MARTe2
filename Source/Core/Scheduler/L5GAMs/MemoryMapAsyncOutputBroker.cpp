@@ -235,15 +235,18 @@ bool MemoryMapAsyncOutputBroker::Execute() {
 }
 
 bool MemoryMapAsyncOutputBroker::Flush() {
-    bool ret = (fastSem.FastLock() == ErrorManagement::NoError);
-    if (ret) {
-        flushed = false;
-        ret = sem.Post();
-        posted = true;
-    }
-    fastSem.FastUnLock();
-    while(!flushed) {
-        Sleep::Sec(0.1F);
+    bool ret = true;
+    if (service.GetStatus() != EmbeddedThreadI::OffState) {
+        ret = (fastSem.FastLock() == ErrorManagement::NoError);
+        if (ret) {
+            flushed = false;
+            ret = sem.Post();
+            posted = true;
+        }
+        fastSem.FastUnLock();
+        while(!flushed) {
+            Sleep::Sec(0.1F);
+        }
     }
     return ret;
 }
