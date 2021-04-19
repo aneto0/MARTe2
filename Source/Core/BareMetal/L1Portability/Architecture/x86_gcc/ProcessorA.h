@@ -2,7 +2,8 @@
  * @file ProcessorA.h
  * @brief Header file for module ProcessorA
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
+ * @author Luca Boncagni
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -67,12 +68,17 @@ static inline void CPUID(uint32 info,
                          uint32 &ebx,
                          uint32 &ecx,
                          uint32 &edx) {
+#if defined( i386 ) && defined ( PIC )
+    /* in case of PIC under 32-bit EBX cannot be clobbered */
+    __asm__ volatile ("movl %ebx, %%edi \n\t cpuid \n\t xchgl %ebx, %%edi" : "=D" (ebx), "+a" (eax), "+c" (ecx), "=d" (edx));
+#else
     __asm__(
             "cpuid;" /* assembly code */
             :"=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx) /* outputs */
             :"a" (info) /* input: info into eax */
             /* clobbers: none */
     );
+#endif
 }
 
 inline uint32 Family() {
