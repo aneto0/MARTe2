@@ -73,7 +73,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
         FILE *f = fopen("/proc/cpuinfo", "r");
         size_t size = LINUX_CPUINFO_BUFFER_SIZE;
         if (f != NULL) {
-            size = fread(&buffer[0], size, static_cast<size_t>(1u), f);
+            size = fread(&buffer[0], static_cast<size_t>(1u), size, f);
             fclose(f);
         }
         else {

@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "HighResolutionTimerTest.h"
 #include "HighResolutionTimer.h"
 #include "Sleep.h"
@@ -139,6 +140,7 @@ bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
 bool HighResolutionTimerTest::TestPeriodFrequency() {
     int64 HRTfrequency = HighResolutionTimer::Frequency();
     float64 HRTperiod = HighResolutionTimer::Period();
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "HighResolutionTimer Frequency: %d Period: %e", HRTfrequency, HRTperiod);
     float64 relativePeriod = 1.0 / HRTfrequency;
     int64 relativeFrequency = (int64) (1.0 / HRTperiod);
     return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
