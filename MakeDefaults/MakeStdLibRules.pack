@@ -1,0 +1,55 @@
+#############################################################
+#
+# Copyright 2011 EFDA | European Fusion Development Agreement
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+
+precondition:
+	@if [ -e Build/x86-linux/App/MARTeApp.ex ]; then make -f Makefile.x86-linux clean; fi
+	@if [ -e Test/GTest/cov/MainGTest.ex ]; then make -f Makefile.cov clean; fi
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+
+
+$(BUILD_DIR)/SOURCES/$(PACK_NAME)-$(RPM_VERSION).tar.gz: $(OBJS) precondition
+	mkdir -p $(PACK_NAME)-$(RPM_VERSION)
+	cp -rfa $(OBJS) $(PACK_NAME)-$(RPM_VERSION)
+	tar -cvzf $@ $(PACK_NAME)-$(RPM_VERSION)
+	rm -rf $(PACK_NAME)-$(RPM_VERSION)
+	
+
+$(BUILD_DIR)/$(RPMS)/$(PACK_NAME)-$(RPM_VERSION).rpm : $(BUILD_DIR)/SOURCES/$(PACK_NAME)-$(RPM_VERSION).tar.gz
+	cp -rfa $(ROOT_DIR)/Resources/RPM/${SPEC_FILE} $(BUILD_DIR)/SPECS/$(SPEC_FILE)
+	sed -i 's/DEF_NAME/$(PACK_NAME)/g' $(BUILD_DIR)/SPECS/$(SPEC_FILE)
+	sed -i 's/DEF_VERSION/$(RPM_VERSION)/g' $(BUILD_DIR)/SPECS/$(SPEC_FILE)
+	rpmbuild --define "_topdir $(PWD)/$(BUILD_DIR)" $(RPM_FLAGS) $(BUILD_DIR)/SPECS/$(SPEC_FILE)
+
+%.spb : 
+	$(MAKE) -C $* -f Makefile.$(TARGET) 
+
+%.spc : 
+	$(MAKE) -C $* -f Makefile.$(TARGET) clean
+
+
+clean:  $(SUBPROJC)
+	@rm -rf $(BUILD_DIR)/*
+
