@@ -34,7 +34,9 @@ mkdir -p %{buildroot}/usr/lib
 cp -a Build/x86-linux/Core/MARTe2.so %{buildroot}/usr/lib/
 cp -a Build/x86-linux/Core/libMARTe2.so %{buildroot}/usr/lib/
 mkdir -p %{buildroot}/opt/marte2/include
-find Source -iname "*.h" | xargs -If cp --parent f %{buildroot}/opt/marte2/include
+cd Source
+find . -iname "*.h" | xargs -If cp --parent f %{buildroot}/opt/marte2/include
+cd ..
 
 %files
 /usr/bin/MARTeApp.ex
