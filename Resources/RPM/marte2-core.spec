@@ -1,6 +1,6 @@
 Name: 		DEF_NAME
 Version:    DEF_VERSION
-Release:    1%{?dist}
+Release:    %{?rpm_release:%{rpm_release}}%{!?rpm_release:1}
 Summary:	MARTe2 RPM package
 Source0:	DEF_NAME-DEF_VERSION.tar.gz
 License:	FIXME

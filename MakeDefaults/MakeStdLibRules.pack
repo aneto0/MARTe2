@@ -30,18 +30,18 @@ precondition:
 	mkdir -p $(BUILD_DIR)/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 
 
-$(BUILD_DIR)/SOURCES/$(PACK_NAME)-$(RPM_VERSION).tar.gz: $(OBJS) precondition
-	mkdir -p $(PACK_NAME)-$(RPM_VERSION)
-	cp -rfa $(OBJS) $(PACK_NAME)-$(RPM_VERSION)
-	tar -cvzf $@ $(PACK_NAME)-$(RPM_VERSION)
-	rm -rf $(PACK_NAME)-$(RPM_VERSION)
+$(BUILD_DIR)/SOURCES/$(RPM_NAME)-$(RPM_VERSION).tar.gz: $(OBJS) precondition
+	mkdir -p $(RPM_NAME)-$(RPM_VERSION)
+	cp -rfa $(OBJS) $(RPM_NAME)-$(RPM_VERSION)
+	tar -cvzf $@ $(RPM_NAME)-$(RPM_VERSION)
+	rm -rf $(RPM_NAME)-$(RPM_VERSION)
 	
 
-$(BUILD_DIR)/$(RPMS)/$(PACK_NAME)-$(RPM_VERSION).rpm : $(BUILD_DIR)/SOURCES/$(PACK_NAME)-$(RPM_VERSION).tar.gz
+$(BUILD_DIR)/$(RPMS)/$(RPM_NAME)-$(RPM_VERSION).rpm : $(BUILD_DIR)/SOURCES/$(RPM_NAME)-$(RPM_VERSION).tar.gz
 	cp -rfa $(ROOT_DIR)/Resources/RPM/${SPEC_FILE} $(BUILD_DIR)/SPECS/$(SPEC_FILE)
-	sed -i 's/DEF_NAME/$(PACK_NAME)/g' $(BUILD_DIR)/SPECS/$(SPEC_FILE)
+	sed -i 's/DEF_NAME/$(RPM_NAME)/g' $(BUILD_DIR)/SPECS/$(SPEC_FILE)
 	sed -i 's/DEF_VERSION/$(RPM_VERSION)/g' $(BUILD_DIR)/SPECS/$(SPEC_FILE)
-	rpmbuild --define "_topdir $(PWD)/$(BUILD_DIR)" $(RPM_FLAGS) $(BUILD_DIR)/SPECS/$(SPEC_FILE)
+	rpmbuild --define "_topdir $(PWD)/$(BUILD_DIR)" --define "rpm_release $(RPM_RELEASE)" $(RPM_FLAGS) $(BUILD_DIR)/SPECS/$(SPEC_FILE)
 
 %.spb : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) 

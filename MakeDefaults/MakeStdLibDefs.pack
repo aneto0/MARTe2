@@ -36,4 +36,5 @@ RPM_FLAGS = -v -ba
 SPEC_FILE = marte2-core.spec
 
 RPM_VERSION = 1.0
-PACK_NAME = marte2-core
+RPM_RELEASE = 0
+RPM_NAME = marte2-core
