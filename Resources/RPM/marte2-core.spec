@@ -1,8 +1,10 @@
-Name: 		DEF_NAME
-Version:    DEF_VERSION
+Name: 		%{rpm_name}
+Version:    %{rpm_version}
 Release:    %{?rpm_release:%{rpm_release}}%{!?rpm_release:1}
+Requires:   %{rpm_requires}
+BuildRequires:   %{rpm_build_requires}
 Summary:	MARTe2 RPM package
-Source0:	DEF_NAME-DEF_VERSION.tar.gz
+Source0:	%{rpm_name}-%{rpm_version}.tar.gz
 License:	FIXME
 
 BuildArch:    x86_64
@@ -18,33 +20,35 @@ Summary:	MARTe2 RPM devel package
 %description -n %subpackage devel
 MARTe2 RPM package - devel
 
+
 %prep
 %setup -q
 
 %build
-export ONLY_MARTE_CORE=1
-make -f Makefile.x86-linux
-unset ONLY_MARTE_CORE
+unset MARTe2_DIR
+make -f Makefile.x86-linux %{rpm_build_options}
 
 %install
-## Probably would be better to install in /opt/marte2 and organise the rest through links
-mkdir -p %{buildroot}/usr/bin
-install -m 0755 Build/x86-linux/App/MARTeApp.ex %{buildroot}/usr/bin/
-mkdir -p %{buildroot}/usr/lib
-cp -a Build/x86-linux/Core/MARTe2.so %{buildroot}/usr/lib/
-cp -a Build/x86-linux/Core/libMARTe2.so %{buildroot}/usr/lib/
-mkdir -p %{buildroot}/opt/marte2/include
-cd Source
-find . -iname "*.h" | xargs -If cp --parent f %{buildroot}/opt/marte2/include
-cd ..
+mkdir -p %{buildroot}/%{rpm_inst_dir}/bin
+find . -iname "*.ex" | xargs -Ifanculo install -m 0755 fanculo %{buildroot}/%{rpm_inst_dir}/bin
+mkdir -p %{buildroot}/%{rpm_inst_dir}/lib
+find . -iname "*.so" | xargs -Ifanculo cp fanculo %{buildroot}/%{rpm_inst_dir}/lib
+mkdir -p %{buildroot}/%{rpm_inst_dir}/include
+find . -iname "*.h" | xargs -Ifanculo cp --parents fanculo %{buildroot}/%{rpm_inst_dir}/include
+mkdir -p %{buildroot}/%{rpm_sys_conf_dir}/ld.so.conf.d
+echo /%{rpm_inst_dir}/lib > %{buildroot}/%{rpm_sys_conf_dir}/ld.so.conf.d/%{rpm_name}-%{rpm_version}.conf
+mkdir -p %{buildroot}/%{rpm_sys_conf_dir}/env.d
+echo export MARTe2_DIR=/%{rpm_inst_dir}/ > %{buildroot}/%{rpm_sys_conf_dir}/env.d/%{rpm_name}-%{rpm_version}.conf
 
 %files
-/usr/bin/MARTeApp.ex
-/usr/lib/MARTe2.so
-/usr/lib/libMARTe2.so
+/%{rpm_sys_conf_dir}/ld.so.conf.d/%{rpm_name}-%{rpm_version}.conf
+/%{rpm_sys_conf_dir}/env.d/%{rpm_name}-%{rpm_version}.conf
+/%{rpm_inst_dir}/bin
+/%{rpm_inst_dir}/lib
+/%{rpm_inst_dir}/lib
 
 %files -n %subpackage devel
-/opt/marte2/include
+/%{rpm_inst_dir}/include
 
 %changelog
 

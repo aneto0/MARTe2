@@ -35,6 +35,11 @@ SUBPROJC = $(SPB:%.x=%.spc)
 RPM_FLAGS = -v -ba
 SPEC_FILE = marte2-core.spec
 
-RPM_VERSION = 1.0
-RPM_RELEASE = 0
-RPM_NAME = marte2-core
+RPM_NAME ?= marte2-$(lastword $(subst /,\ ,$(CURDIR)))
+RPM_VERSION ?= 1.0
+RPM_RELEASE ?= 0
+RPM_INST_DIR ?= opt/codac/marte2-$(lastword $(subst /,\ ,$(CURDIR)))
+RPM_SYS_CONF_DIR ?= etc/opt/codac
+RPM_REQUIRES ?= gcc
+RPM_BUILD_REQUIRES ?= gcc
+BUILD_OPT ?= all

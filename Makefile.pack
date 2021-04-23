@@ -26,15 +26,16 @@
 
 TARGET=pack
 
-OBJSX= Source.x MakeDefaults.x Test.x Lib.x Docs.x Makefile.x86-linux.x Makefile.inc.x
+OBJSX= Source.x Lib.x MakeDefaults.x Makefile.x86-linux.x Makefile.inc.x Test.x Docs.x
 
 MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
 
 ROOT_DIR=.
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(BUILD_DIR)/$(RPMS)/$(PACK_NAME)-$(RPM_VERSION).rpm  
-	echo  $(OBJS)
+# Optionally do [make -f Makefile.pack BUILD_OPT=...] to build with that target 
 
+all: $(OBJS) $(BUILD_DIR)/RPMS/$(RPM_NAME)-$(BUILD_OPT)-$(RPM_VERSION).rpm  
+	echo  $(OBJS)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
