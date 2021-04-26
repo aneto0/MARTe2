@@ -43,16 +43,20 @@ GCDAEXT=.gcda
 GCOVEXT=.gcov
 DEFEXT=.def
 
-OBJS0= $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
-OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o1) 
-OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o2) 
-OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o3) 
-OBJS= $(OBJS3)
+#Objects with different optim levels
+OBJS0=$(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+OBJS1=$(OBJS0:%.x1=$(BUILD_DIR)/%.o1) 
+OBJS2=$(OBJS1:%.x2=$(BUILD_DIR)/%.o2) 
+OBJS3=$(OBJS2:%.x3=$(BUILD_DIR)/%.o3) 
+OBJS=$(OBJS3)
 
-SUBPROJ = $(SPB:%.x=%.spb)
-SUBPROJC = $(SPB:%.x=%.spc)
-SUBPROJ2 = $(SPB2:%.x=%.spb)
-SUBPROJC += $(SPB2:%.x=%.spc)
+#Subprojects
+SUBPROJ=$(SPB:%.x=%.spb)
+#Testing subprojects
+SUBPROJT=$(SPBT:%.x=%.spb)
+#Cleaning of the subprojects
+SUBPROJC=$(SPB:%.x=%.spc)
+SUBPROJTC=$(SPBT:%.x=%.spc)
 
 COMPILER = g++
 CCOMPILER = gcc
@@ -68,3 +72,4 @@ CPPFLAGS = $(CFLAGS) -frtti
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lpthread -lrt -ldl
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
+

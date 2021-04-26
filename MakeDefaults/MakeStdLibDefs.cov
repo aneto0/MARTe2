@@ -43,13 +43,14 @@ OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o)
 OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o) 
 OBJS= $(OBJS3)
 
-
 SUBPROJ = $(SPB:%.x=%.spb)
 SUBPROJC = $(SPB:%.x=%.spc)
 SUBPROJCG = $(SPB:%.x=%.spcg)
 SUBPROJ2 = $(SPB2:%.x=%.spb)
 SUBPROJC += $(SPB2:%.x=%.spc)
 SUBPROJCG += $(SPB2:%.x=%.spcg)
+SUBPROJT = $(SPBT:%.x=%.spb)
+SUBPROJTC = $(SPBT:%.x=%.spc)
 
 COMPILER = g++
 CCOMPILER = gcc
