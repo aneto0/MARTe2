@@ -1,6 +1,6 @@
 Name: 		%{rpm_id}
 Version:    %{rpm_version}
-Release:    %{?rpm_release:%{rpm_release}}%{!?rpm_release:1}
+Release:    %{?rpm_release:%{rpm_release}}%{!?rpm_release:1}%{dist}
 Summary:	%{rpm_name} package
 Source0:	%{rpm_id}-%{rpm_version}.tar.gz
 License:	%{rpm_license}
