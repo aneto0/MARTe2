@@ -54,13 +54,15 @@ M2_RPM_BUILD_OPTIONS?=all
 #Allow to compile a subset of the project folders by setting e.g. SBPM and SPBMT
 M2_RPM_BUILD_EXTRA_ARGS?='IGNORE=1'
 #RPM release number
-M2_RPM_RELEASE?=0
+M2_RPM_RELEASE?=
 #Avoid e.g. that marte2-core and marte2-core-test coexist
 M2_RPM_CONFLICTS?=
 #Run user specific script in spec file after %install
 M2_RPM_PROJECT_INSTALL?=
 #Run user specific script in spec file after %post
 M2_RPM_PROJECT_POST?=
+#Custom distribution tag (e.g. ccs6.2)
+M2_RPM_CUSTOM_DIST?=
 
 M2_RPM_DEFINES=--define "rpm_id $(M2_RPM_ID)"
 M2_RPM_DEFINES+=--define "rpm_src_dir $(M2_RPM_SRC_DIR)"
@@ -78,5 +80,6 @@ M2_RPM_DEFINES+=--define "rpm_release $(M2_RPM_RELEASE)"
 M2_RPM_DEFINES+=--define "rpm_conflicts $(M2_RPM_CONFLICTS)"
 M2_RPM_DEFINES+=--define "rpm_project_install $(M2_RPM_PROJECT_INSTALL)"
 M2_RPM_DEFINES+=--define "rpm_project_post $(M2_RPM_PROJECT_POST)"
+M2_RPM_DEFINES+=--define "rpm_custom_dist $(M2_RPM_CUSTOM_DIST)"
 M2_RPM_DEFINES+=--define "_topdir $(PWD)/$(BUILD_DIR)"
 
