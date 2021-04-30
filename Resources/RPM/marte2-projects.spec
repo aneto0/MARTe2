@@ -45,6 +45,8 @@ find %{_builddir} -iname "*.a" | xargs -I found_file cp found_file %{buildroot}%
 find %{_builddir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}%{rpm_top_dir}/%{rpm_id}/lib/
 #Try to copy the resources folder (if it exists)
 test -e ./Resources && cp -R ./Resources %{buildroot}%{rpm_top_dir}/%{rpm_id}/
+test -e ./Configurations && cp -R ./Configurations %{buildroot}%{rpm_top_dir}/%{rpm_id}/
+test -e ./Startup && cp -R ./Startup %{buildroot}%{rpm_top_dir}/%{rpm_id}/
 #Copy all .h files to an include folder
 mkdir -p %{buildroot}%{rpm_top_dir}/%{rpm_id}/include
 cd %{rpm_src_dir}
@@ -69,7 +71,9 @@ cp %{buildroot}/etc/profile.d/%{rpm_id}.sh %{buildroot}/etc/profile.d/%{rpm_id}.
 /etc/profile.d/%{rpm_id}.csh
 %{rpm_top_dir}/%{rpm_id}/bin
 %{rpm_top_dir}/%{rpm_id}/lib
-%{rpm_top_dir}/%{rpm_id}/Resources
+%ghost %config(missingok) %{rpm_top_dir}/%{rpm_id}/Resources
+%ghost %config(missingok) %{rpm_top_dir}/%{rpm_id}/Configurations
+%ghost %config(missingok) %{rpm_top_dir}/%{rpm_id}/Startup
 
 %files -n %{rpm_id}-devel
 %{rpm_top_dir}/%{rpm_id}/Source
