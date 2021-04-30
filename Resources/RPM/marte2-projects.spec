@@ -10,6 +10,9 @@ AutoReq:      no
 
 Requires:   %{rpm_requires}
 
+# Turn off the brp-python-bytecompile automagic otherwise it will clash with QA helper python scripts!
+%define _python_bytecompile_errors_terminate_build 0
+
 BuildRequires:   %{rpm_build_requires}
 
 #If rpm_conflicts not defined force its value to be zero so that the if is not evaluated
@@ -41,7 +44,7 @@ mkdir -p %{buildroot}%{rpm_top_dir}/%{rpm_id}/lib
 find %{_builddir} -iname "*.a" | xargs -I found_file cp found_file %{buildroot}%{rpm_top_dir}/%{rpm_id}/lib/
 find %{_builddir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}%{rpm_top_dir}/%{rpm_id}/lib/
 #Try to copy the resources folder (if it exists)
-test -e {%_builddir}/Resources | cp -R {%_builddir}/Resources %{buildroot}%{rpm_top_dir}/%{rpm_id}/
+test -e ./Resources | cp -R ./Resources %{buildroot}%{rpm_top_dir}/%{rpm_id}/
 #Copy all .h files to an include folder
 mkdir -p %{buildroot}%{rpm_top_dir}/%{rpm_id}/include
 cd %{rpm_src_dir}
