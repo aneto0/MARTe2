@@ -44,7 +44,7 @@ mkdir -p %{buildroot}%{rpm_top_dir}/%{rpm_id}/lib
 find %{_builddir} -iname "*.a" | xargs -I found_file cp found_file %{buildroot}%{rpm_top_dir}/%{rpm_id}/lib/
 find %{_builddir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}%{rpm_top_dir}/%{rpm_id}/lib/
 #Try to copy the resources folder (if it exists)
-test -e ./Resources | cp -R ./Resources %{buildroot}%{rpm_top_dir}/%{rpm_id}/
+test -e ./Resources && cp -R ./Resources %{buildroot}%{rpm_top_dir}/%{rpm_id}/
 #Copy all .h files to an include folder
 mkdir -p %{buildroot}%{rpm_top_dir}/%{rpm_id}/include
 cd %{rpm_src_dir}
