@@ -40,12 +40,15 @@ M2_RPM_CONFLICTS?=$(M2_RPM_ID_TEST)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
+#Core version with no tests
 all: $(OBJS) $(BUILD_DIR)/$(M2_RPM_ID)-$(M2_RPM_VERSION).rpm  
 	echo  $(OBJS)
 
+#Include test artifacts
 test: 
 	make -f Makefile.$(TARGET) M2_RPM_ID=$(M2_RPM_ID_TEST) FOLDERSX='$(FOLDERSX) Test.x Lib.x' M2_RPM_BUILD_OPTIONS=all M2_RPM_CONFLICTS=$(M2_RPM_ID)
 
+#Yum distribution file
 dist:
 	make -f Makefile.$(TARGET) M2_RPM_ID=marte2-release FOLDERSX='Resources.x' M2_RPM_SPEC_FILE=marte2-repo.spec
 
