@@ -50,7 +50,7 @@ gtest:
 test: $(SUBPROJTEST)
 	echo  $(SUBPROJTEST)
 
-clean: $(SUBPROJCOREC) $(SUBPROJTESTC)
+clean:: $(SUBPROJCOREC) $(SUBPROJTESTC)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 
