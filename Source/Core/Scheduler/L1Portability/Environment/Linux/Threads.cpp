@@ -50,7 +50,7 @@ namespace Threads {
  * When the callback finishes its execution this function removes the thread from the database.
  * @param[in,out] threadInfo the thread information structure.
  */
-static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
+static void* SystemThreadFunction(ThreadInformation *const threadInfo) {
 
     if (threadInfo != NULL) {
 
@@ -67,9 +67,9 @@ static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
                     //CStaticAssertErrorCondition(ErrorManagement::FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
                 }
             }
+            delete threadInfo;
             ThreadsDatabase::UnLock();
         }
-        delete threadInfo;
     }
     return static_cast<void *>(NULL);
 }
@@ -81,9 +81,9 @@ static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
  * @param[in] threadName is the desired name of the thread.
  * @return the ThreadInformation structure.
  */
-static ThreadInformation * threadInitialisationInterfaceConstructor(const ThreadFunctionType userThreadFunction,
-                                                                    const void * const userData,
-                                                                    const char8 * const threadName) {
+static ThreadInformation* threadInitialisationInterfaceConstructor(const ThreadFunctionType userThreadFunction,
+                                                                   const void *const userData,
+                                                                   const char8 *const threadName) {
 
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
@@ -134,29 +134,28 @@ void SetPriority(const ThreadIdentifier &threadId,
     bool ok = ThreadsDatabase::Lock();
     if (ok) {
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-        ThreadsDatabase::UnLock();
-        if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
+        if (threadInfo != static_cast<ThreadInformation*>(NULL)) {
             uint8 prioLevel = priorityLevel;
             if (prioLevel > 15u) {
                 prioLevel = 15u;
             }
-            uint8 oldPriorityLevel = GetPriorityLevel(threadId);
-            Threads::PriorityClassType oldPriorityClass = GetPriorityClass(threadId);
+            uint8 oldPriorityLevel = threadInfo->GetPriorityLevel();
+            Threads::PriorityClassType oldPriorityClass = threadInfo->GetPriorityClass();
             threadInfo->SetPriorityLevel(prioLevel);
             threadInfo->SetPriorityClass(priorityClass);
 
             uint32 priorityClassNumber = 0u;
             switch (priorityClass) {
-            case UnknownPriorityClass:
+                case UnknownPriorityClass:
                 priorityClassNumber = 0u;
                 break;
-            case IdlePriorityClass:
+                case IdlePriorityClass:
                 priorityClassNumber = 1u;
                 break;
-            case NormalPriorityClass:
+                case NormalPriorityClass:
                 priorityClassNumber = 2u;
                 break;
-            case RealTimePriorityClass:
+                case RealTimePriorityClass:
                 priorityClassNumber = 3u;
                 break;
             }
@@ -180,9 +179,7 @@ void SetPriority(const ThreadIdentifier &threadId,
             }
         }
     }
-    else {
-        ThreadsDatabase::UnLock();
-    }
+    ThreadsDatabase::UnLock();
 }
 
 uint8 GetPriorityLevel(const ThreadIdentifier &threadId) {
@@ -223,6 +220,12 @@ bool IsAlive(const ThreadIdentifier &threadId) {
     if (ok) {
         ok = (ThreadsDatabase::GetThreadInformation(threadId) != NULL);
         ThreadsDatabase::UnLock();
+        if(ok) {
+            ok=(threadId!=InvalidThreadIdentifier);
+            if (!ok) {
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Invalid Thread Id");
+            }
+        }
         if (ok) {
             alive = (pthread_kill(threadId, 0) == 0);
         }
@@ -251,7 +254,12 @@ bool Kill(const ThreadIdentifier &threadId) {
             }
         }
         ThreadsDatabase::UnLock();
-
+        if (ok) {
+            ok = (threadId != InvalidThreadIdentifier);
+            if (!ok) {
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Invalid Thread Id");
+            }
+        }
         if (ok) {
             ok = (pthread_cancel(threadId) == 0);
             if (!ok) {
@@ -259,7 +267,7 @@ bool Kill(const ThreadIdentifier &threadId) {
             }
         }
         if (ok) {
-            ok = (pthread_join(threadId, static_cast<void **>(NULL)) != 0);
+            ok = (pthread_join(threadId, static_cast<void**>(NULL)) != 0);
             if (!ok) {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_join()");
             }
@@ -271,9 +279,9 @@ bool Kill(const ThreadIdentifier &threadId) {
 
 /*lint -e{715} the exceptionHandlerBehaviour implementation has not been agreed yet.*/
 ThreadIdentifier BeginThread(const ThreadFunctionType function,
-                             const void * const parameters,
+                             const void *const parameters,
                              const uint32 &stacksize,
-                             const char8 * const name,
+                             const char8 *const name,
                              const uint32 exceptionHandlerBehaviour,
                              ProcessorType runOnCPUs) {
 
@@ -288,7 +296,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
     }
 
     ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
-    if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
+    if (threadInfo != static_cast<ThreadInformation*>(NULL)) {
         //CStaticAssertErrorCondition(InitialisationError,"Threads::ThreadsBeginThread (%s) threadInitialisationInterfaceConstructor returns NULL", name);
         pthread_attr_t stackSizeAttribute;
         bool ok = (pthread_attr_init(&stackSizeAttribute) == 0);
@@ -311,15 +319,10 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             }
 
             if (ok) {
-                ok = ThreadsDatabase::Lock();
-                if (ok) {
-                    threadInfo->SetThreadIdentifier(threadId);
-                    ok = ThreadsDatabase::NewEntry(threadInfo);
-                    ThreadsDatabase::UnLock();
-                }
+                threadInfo->SetThreadIdentifier(threadId);
                 if(ok) {
                     threadInfo->SetPriorityLevel(0u);
-                    SetPriority(threadId, Threads::NormalPriorityClass, 0u);
+                    threadInfo->SetPriorityClass(Threads::NormalPriorityClass);
                 }
             }
         }
@@ -357,15 +360,27 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 }
             }
             ok = (pthread_setaffinity_np(threadId, sizeof(processorCpuSet), &processorCpuSet) == 0);
-
-            if (ok) {
-                ok = threadInfo->ThreadPost();
-            }
-            else {
+            if(!ok) {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_setaffinity_np()");
             }
         }
-        if (!ok) {
+        if (ok) {
+            ok = ThreadsDatabase::Lock();
+            if (ok) {
+                threadInfo->SetThreadIdentifier(threadId);
+                ok = ThreadsDatabase::NewEntry(threadInfo);
+            }
+            ThreadsDatabase::UnLock();
+            SetPriority(threadId, Threads::NormalPriorityClass, 0u);
+        }
+        if (ok) {
+            ok = ThreadsDatabase::Lock();
+            if (ok) {
+                ok = threadInfo->ThreadPost();
+            }
+            ThreadsDatabase::UnLock();
+        }
+        if(!ok) {
             threadId = InvalidThreadIdentifier;
             delete threadInfo;
         }
@@ -377,19 +392,16 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
 void EndThread() {
 }
 
-const char8 *Name(const ThreadIdentifier &threadId) {
-    const char8 *name = static_cast<const char8 *>(NULL);
+const char8* Name(const ThreadIdentifier &threadId) {
+    const char8 *name = static_cast<const char8*>(NULL);
     bool ok = ThreadsDatabase::Lock();
     if (ok) {
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-        ThreadsDatabase::UnLock();
         if (threadInfo != NULL) {
             name = threadInfo->ThreadName();
         }
     }
-    else {
-        ThreadsDatabase::UnLock();
-    }
+    ThreadsDatabase::UnLock();
     return name;
 }
 
@@ -398,21 +410,45 @@ ThreadIdentifier FindByIndex(const uint32 &n) {
 }
 
 uint32 NumberOfThreads() {
-    return ThreadsDatabase::NumberOfThreads();
+    bool ok = ThreadsDatabase::Lock();
+    uint32 ret = 0u;
+    if (ok) {
+        ret = ThreadsDatabase::NumberOfThreads();
+    }
+    ThreadsDatabase::UnLock();
+    return ret;
 }
 
 bool GetThreadInfoCopy(ThreadInformation &copy,
                        const uint32 &n) {
-    return ThreadsDatabase::GetInfoIndex(copy, n);
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ok = ThreadsDatabase::GetInfoIndex(copy, n);
+    }
+    ThreadsDatabase::UnLock();
+    return ok;
+
 }
 
 bool GetThreadInfoCopy(ThreadInformation &copy,
                        const ThreadIdentifier &threadId) {
-    return ThreadsDatabase::GetInfo(copy, threadId);
+
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ok = ThreadsDatabase::GetInfo(copy, threadId);
+    }
+    ThreadsDatabase::UnLock();
+    return ok;
 }
 
-ThreadIdentifier FindByName(const char8 * const name) {
-    return ThreadsDatabase::Find(name);
+ThreadIdentifier FindByName(const char8 *const name) {
+    ThreadIdentifier ret = InvalidThreadIdentifier;
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ret = ThreadsDatabase::Find(name);
+    }
+    ThreadsDatabase::UnLock();
+    return ret;
 }
 
 }
