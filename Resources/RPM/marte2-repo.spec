@@ -24,5 +24,6 @@ cp Resources/RPM/RPM-GPG-KEY-MARTe2 %{buildroot}/etc/pki/rpm-gpg/
 /etc/pki/rpm-gpg/RPM-GPG-KEY-MARTe2
 
 %post
+#Forced to do sed because $releasever is RHEL dependent
+sed -i "s/{rpm_releasever}/$RELEASEVER/g" /etc/yum.repos.d/marte2-ccs.repo
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-MARTe2
-

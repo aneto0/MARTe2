@@ -65,6 +65,8 @@ M2_RPM_PROJECT_POST?=
 M2_RPM_CUSTOM_DIST?=
 #Other project specific folders (e.g. Resources, Startup, Configurations, ...). This is a space separated string with NO quotes (i.e. the spaces have to be properly escaped). For example M2_RPM_OTHER_FOLDERS=Startup\ Configurations
 M2_RPM_OTHER_FOLDERS?=
+#Release version
+M2_RPM_RELEASEVER?=$(shell cat /etc/redhat-release | tr -dc '0-9' | awk '{print substr($0,0,1)}')
 
 M2_RPM_DEFINES=--define "rpm_id $(M2_RPM_ID)"
 M2_RPM_DEFINES+=--define "rpm_src_dir $(M2_RPM_SRC_DIR)"
@@ -84,5 +86,6 @@ M2_RPM_DEFINES+=--define "rpm_project_install $(M2_RPM_PROJECT_INSTALL)"
 M2_RPM_DEFINES+=--define "rpm_project_post $(M2_RPM_PROJECT_POST)"
 M2_RPM_DEFINES+=--define "rpm_custom_dist $(M2_RPM_CUSTOM_DIST)"
 M2_RPM_DEFINES+=--define "rpm_other_folders $(M2_RPM_OTHER_FOLDERS)"
+M2_RPM_DEFINES+=--define "rpm_releasever $(M2_RPM_RELEASEVER)"
 M2_RPM_DEFINES+=--define "_topdir $(PWD)/$(BUILD_DIR)"
 
