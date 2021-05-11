@@ -34,7 +34,7 @@ MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
 M2_RPM_NAME?=MARTe2
 M2_RPM_ID?=marte2-core
 M2_RPM_ID_TEST?=$(M2_RPM_ID)-test
-M2_RPM_ID_RELEASE?=$(M2_RPM_ID)-release
+M2_RPM_ID_RELEASE?=marte2-release
 M2_RPM_BUILD_OPTIONS=core
 #Do not allow installing both marte2-core and marte2-core-test in the same target
 M2_RPM_CONFLICTS?=$(M2_RPM_ID_TEST)
