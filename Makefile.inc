@@ -46,7 +46,9 @@ core: $(SUBPROJMAIN)
 	echo  $(SUBPROJMAIN)
 
 gtest:
+ifeq ($(TARGET), x86-linux)
 	make -C Lib/gtest-1.7.0 -f Makefile.$(TARGET)
+endif
 
 test: $(SUBPROJMAINTEST)
 	echo  $(SUBPROJMAINTEST)
