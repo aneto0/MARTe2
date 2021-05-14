@@ -108,7 +108,7 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 %.spcg : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean_gen
 
-clean:  $(SUBPROJC)
+clean::  $(SUBPROJC)
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)
