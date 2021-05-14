@@ -1,0 +1,7 @@
+[MARTe2-core]
+name=MARTe2-core
+baseurl=http://vcis.f4e.europa.eu/dist/marte2/elRELEASEVER/$basearch
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-MARTe2
+metadata_expire=300

@@ -84,15 +84,22 @@ $(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
 	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	rm -f createLibrary
 
+#If the file does not exist and we are in a clean context, do not create it!
 depends.$(TARGET): dependsRaw.$(TARGET) 
+ifneq ($(MAKECMDGOALS),clean)
 	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > Create$(TARGET)Depends.sed
 	sed -f Create$(TARGET)Depends.sed dependsRaw.$(TARGET) >depends.$(TARGET)
 	rm -f Create$(TARGET)Depends.sed 
+endif
 
+#If the file does not exist and we are in a clean context, do not create it (a touch is still needed it to implement the include)!
 dependsRaw.$(TARGET): 
+ifneq ($(MAKECMDGOALS),clean)
 	$(COMPILER) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.$(TARGET)
-	@mkdir -p temp
 	@mkdir -p $(BUILD_DIR)
+else
+	touch $@
+endif
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
 	$(COMPILER) $(LFLAGS) -shared  $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
@@ -106,7 +113,12 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 %.spc : 
 	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) clean
 
+<<<<<<< MakeDefaults/MakeStdLibRules.x86-linux
+.PHONY: clean
+clean:  $(SUBPROJC) $(SUBPROJTC)
+=======
 clean::  $(SUBPROJC)
+>>>>>>> MakeDefaults/MakeStdLibRules.x86-linux
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)

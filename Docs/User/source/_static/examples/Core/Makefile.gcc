@@ -26,5 +26,5 @@
 
 include Makefile.inc
 
-LIBRARIES += -L$(MARTe2_DIR)/Build/$(TARGET)/Core -lMARTe2
+LIBRARIES += -L$(ROOT_DIR)/Build/$(TARGET)/Core -lMARTe2
 

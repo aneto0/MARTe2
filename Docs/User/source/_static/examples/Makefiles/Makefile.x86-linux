@@ -30,4 +30,4 @@ export TARGET=x86-linux
 include Makefile.inc
 
 #Must link with the MARTe2 library
-LIBRARIES   += -L$(MARTe2_DIR)/Build/$(TARGET)/Core -lMARTe2
+LIBRARIES   += -L$(ROOT_DIR)/Build/$(TARGET)/Core -lMARTe2
