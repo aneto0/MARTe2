@@ -174,6 +174,7 @@ ErrorManagement::ErrorType FastScheduler::StartNextStateExecution() {
         err = (multiThreadService == NULL);
     }
     if (err.ErrorsCleared()) {
+        *currentStateIdentifier=nextStateIdentifier;
         if (!initialised) {
             /*lint -e{613} multiThreadService cannot be NULL as otherwise err != ErrorsCleared*/
             err = multiThreadService->Start();
