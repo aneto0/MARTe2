@@ -85,6 +85,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ReferencesExample4$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
+        $(BUILD_DIR)/ReferencesExample7$(EXEEXT) \
         $(BUILD_DIR)/RuntimeEvaluatorExample1$(EXEEXT) \
         $(BUILD_DIR)/SingleThreadServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/StateMachineExample1$(EXEEXT) \
