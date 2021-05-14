@@ -113,12 +113,7 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 %.spc : 
 	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) clean
 
-<<<<<<< MakeDefaults/MakeStdLibRules.x86-linux
-.PHONY: clean
-clean:  $(SUBPROJC) $(SUBPROJTC)
-=======
-clean::  $(SUBPROJC)
->>>>>>> MakeDefaults/MakeStdLibRules.x86-linux
+clean::  $(SUBPROJC) $(SUBPROJTC)
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)
