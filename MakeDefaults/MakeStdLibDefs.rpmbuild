@@ -33,8 +33,8 @@ M2_RPM_FLAGS=-v -ba
 M2_RPM_SPEC_FILE_PATH?=$(ROOT_DIR)/Resources/RPM/
 M2_RPM_SPEC_FILE?=marte2-projects.spec
 
-#If not set try to get the project version from a git tag (in the format vx.y, i.e. assuming it starts with v)
-M2_RPM_VERSION?=$(shell git tag | sort -V | tail -1 | cut -c2-)
+#Should be set by the source Makefile
+M2_RPM_VERSION?=0.0
 M2_RPM_SRC_DIR?=Source
 M2_RPM_LICENSE?=EUPL
 #The name of the project (e.g. MARTe2 or MARTe2_Components). Note that a variable name $(M2_RPM_NAME)_DIR will be created based on this name.

@@ -75,13 +75,13 @@ find %{rpm_src_dir} -iname "*.h" | xargs -I found_file cp --parent found_file %{
 #List all the files to be added to the file-list section
 current_path=`pwd`
 cd %{buildroot}
-find . -type f -printf "\"/%%P\"\n" | grep -v Source | grep -v Include > $current_path/file-lists
+find . -type f -printf "\"/%%P\"\n" | grep -v %{rpm_src_dir} | grep -v Include > $current_path/file-lists
 cd -
 
 %files -f file-lists
 
 %files -n %{rpm_id}-devel
-%{rpm_top_dir}/%{rpm_id}/Source
+%{rpm_top_dir}/%{rpm_id}/%{rpm_src_dir}
 %{rpm_top_dir}/%{rpm_id}/Include
 
 %changelog
