@@ -108,7 +108,21 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 %.spcg : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean_gen
 
-clean::  $(SUBPROJC)
+#When changing branches, if a subfolder no longer exists it also must be deleted.
+#This nuke cannot be the general clean rule because we don't want to delete all the built artefacts
+#when working at the subdirectory level
+clean_wipe_old:
+	@$(shell find . -wholename "*/cov/*$(OBJEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(DLLEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(EXEEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(LIBEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(GAMEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(DRVEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(ASMEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(GCNOEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(GCDAEXT)" | xargs rm -f)
+
+clean::  $(SUBPROJC) 
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)

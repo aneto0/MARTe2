@@ -113,7 +113,22 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 %.spc : 
 	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) clean
 
-clean::  $(SUBPROJC) $(SUBPROJTC)
+#When changing branches, if a subfolder no longer exists it also must be deleted.
+#This nuke cannot be the general clean rule because we don't want to delete all the built artefacts
+#when working at the subdirectory level
+clean_wipe_old:
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DLLEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(EXEEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(LIBEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(GAMEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DRVEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(ASMEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(GCNOEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(GCDAEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DEFEXT)" | xargs rm -f)
+
+clean::  $(SUBPROJC) $(SUBPROJTC) 
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)
