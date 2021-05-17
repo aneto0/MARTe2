@@ -59,15 +59,16 @@ public:
      * @brief Tests the constructor passing a double pointer which represents a matrix on heap.
      */
     template<typename T>
-    bool TestConstructorByPointerHeap(T** matrix,
+    bool TestConstructorByPointerHeap(T **matrix,
                                       uint32 nRows,
                                       uint32 nCols);
 
     /**
      * @brief Tests the constructor passing a pointer to a static memory.
      */
-    template<typename T>
-    bool TestConstructorByPointerStatic(T* matrix,
+    template<typename T,typename T2>
+    bool TestConstructorByPointerStatic(T2 matrix,
+                                        Matrix<T> matrix2,
                                         uint32 nRows,
                                         uint32 nCols);
 
@@ -209,7 +210,7 @@ public:
 /*---------------------------------------------------------------------------*/
 
 template<typename T>
-bool MatrixTest::TestConstructorByPointerHeap(T** matrix,
+bool MatrixTest::TestConstructorByPointerHeap(T **matrix,
                                               uint32 nRows,
                                               uint32 nCols) {
 
@@ -227,22 +228,23 @@ bool MatrixTest::TestConstructorByPointerHeap(T** matrix,
 
 }
 
-template<typename T>
-bool MatrixTest::TestConstructorByPointerStatic(T* matrix,
+template<typename T, typename T2>
+bool MatrixTest::TestConstructorByPointerStatic(T2 matrix,
+                                                Matrix<T> matrix2,
                                                 uint32 nRows,
                                                 uint32 nCols) {
 
-    Matrix<T> myMatrix(matrix, nRows, nCols);
+    //Matrix<T> myMatrix(matrix, nRows, nCols);
 
     for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
-            if (myMatrix[i][j] != matrix[i * nCols + j]) {
+            if (matrix2[i][j] != matrix[i][j]) {
                 return false;
             }
         }
     }
 
-    return myMatrix.IsStaticDeclared();
+    return matrix2.IsStaticDeclared();
 
 }
 

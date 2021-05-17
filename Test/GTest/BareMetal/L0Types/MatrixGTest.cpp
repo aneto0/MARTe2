@@ -273,8 +273,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int8) {
             matrix[i][j] = (i - j);
         }
     }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<int8> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt8) {
@@ -289,8 +289,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt8) {
             matrix[i][j] = (i + j);
         }
     }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<uint8> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int16) {
@@ -305,8 +305,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int16) {
             matrix[i][j] = (i - j);
         }
     }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<int16> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt16) {
@@ -321,8 +321,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt16) {
             matrix[i][j] = (i + j);
         }
     }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<uint16> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int32) {
@@ -337,7 +337,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int32) {
             matrix[i][j] = (i - j);
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<int32> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt32) {
@@ -351,7 +352,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt32) {
             matrix[i][j] = (i + j);
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<uint32> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int64) {
@@ -365,7 +367,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int64) {
             matrix[i][j] = (i - j);
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<int64> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt64) {
@@ -379,7 +382,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt64) {
             matrix[i][j] = (i + j);
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<uint64> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Float32) {
@@ -393,7 +397,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Float32) {
             matrix[i][j] = (i + j) + 0.956 * i - 1.112 * j;
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<float32> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Float64) {
@@ -407,8 +412,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Float64) {
             matrix[i][j] = (i + j) + 0.956 * i - 1.112 * j;
         }
     }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    Matrix<float64> matrix2(&matrix[0][0], nRows, nCols);
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix,matrix2, nRows, nCols));
 }
 
 TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_Int8) {

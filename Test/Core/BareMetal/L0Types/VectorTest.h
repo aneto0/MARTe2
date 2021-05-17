@@ -66,7 +66,7 @@ public:
      * @brief Tests the constructor passing a pointer to an heap array.
      */
     template<typename T>
-    bool TestConstructorByPointerHeap(T* array,
+    bool TestConstructorByPointerHeap(T *array,
                                       uint32 nElements);
 
     /**
@@ -103,7 +103,37 @@ public:
     /**
      * @brief Tests if SetSize function allocates a new dataPointer and changes the number of elements.
      */
-    bool TestSetSize(Vector<int32> &vector1, uint32 newSize);
+    bool TestSetSize(Vector<int32> &vector1,
+                     uint32 newSize);
+
+    template<class T>
+    bool TestCopyConstructor();
+
+    template<class T>
+    bool TestCopyAssignment();
+
+    template<class T>
+    bool TestVectorPassedToAFunction();
+
+    template<class T>
+    bool TestVectorReturnedFromAFunction();
+
+private:
+    /**
+     * @brief compare a vector with the expected value
+     * @return true if the values of the vector are as expected.
+     */
+    template<typename T>
+    bool AuxiliaryFunctionIn(Vector<T> vec);
+
+    /**
+     * @brief Return an initialised vector.
+     * @brief Creates a vector, initialised its value with a sequential number based on its index, and then return the vector.
+     * @return return a vector statically initialised.
+     */
+    template<typename T>
+    Vector<T> AuxiliaryFunctionOut(uint32 nOfElements);
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -113,7 +143,7 @@ public:
 template<typename T, uint32 nElements>
 bool VectorTest::TestConstructorByPointerStatic(T (&array)[nElements]) {
 
-    T* pointer = array;
+    T *pointer = array;
     Vector<T> myVector(pointer, nElements);
 
     for (uint32 i = 0; i < nElements; i++) {
@@ -126,7 +156,7 @@ bool VectorTest::TestConstructorByPointerStatic(T (&array)[nElements]) {
 }
 
 template<typename T>
-bool VectorTest::TestConstructorByPointerHeap(T* array,
+bool VectorTest::TestConstructorByPointerHeap(T *array,
                                               uint32 nElements) {
 
     Vector<T> myVector(array, nElements);
@@ -154,6 +184,86 @@ bool VectorTest::TestConstructorByTable(T (&array)[nElements]) {
     return true;
 
 }
+
+template<class T>
+bool VectorTest::TestCopyConstructor() {
+    uint32 nOfElements = 10u;
+    Vector<T> originalVector(nOfElements);
+    for (uint32 i = 0u; i < nOfElements; i++) {
+        originalVector[i] = i;
+    }
+    Vector<T> copiedVector(originalVector);
+    bool ret = copiedVector.GetDataPointer() != originalVector.GetDataPointer();
+    if (ret) {
+        ret = copiedVector.GetNumberOfElements() == originalVector.GetNumberOfElements();
+    }
+    for (uint32 i = 0u; (i < nOfElements) && ret; i++) {
+        ret = copiedVector[i] == i;
+    }
+    return ret;
+}
+
+template<class T>
+bool VectorTest::TestCopyAssignment() {
+    uint32 nOfElements = 10u;
+    Vector<T> originalVector(nOfElements);
+    for (uint32 i = 0u; i < nOfElements; i++) {
+        originalVector[i] = i;
+    }
+    Vector<T> copiedVector(3);
+    copiedVector = originalVector;
+    bool ret = copiedVector.GetDataPointer() != originalVector.GetDataPointer();
+    if (ret) {
+        ret = copiedVector.GetNumberOfElements() == originalVector.GetNumberOfElements();
+    }
+    for (uint32 i = 0u; (i < nOfElements) && ret; i++) {
+        ret = copiedVector[i] == i;
+    }
+    return ret;
+}
+
+template<class T>
+bool VectorTest::TestVectorPassedToAFunction() {
+    uint32 nOfElements = 10u;
+    Vector<T> originalVector(nOfElements);
+    for (uint32 i = 0u; i < nOfElements; i++) {
+        originalVector[i] = i;
+    }
+    return AuxiliaryFunctionIn(originalVector);
+}
+
+template<class T>
+bool VectorTest::TestVectorReturnedFromAFunction() {
+    uint32 nOfElements = 10u;
+    Vector<T> vec(3);
+    vec = AuxiliaryFunctionOut<T>(nOfElements);
+    bool ret = true;
+    for (uint32 i = 0u; i < nOfElements; i++) {
+        ret = vec[i] == i;
+    }
+    return ret;
+}
+
+template<typename T>
+bool VectorTest::AuxiliaryFunctionIn(Vector<T> vec) {
+    bool ret = true;
+    for (uint32 i = 0u; (i < vec.GetNumberOfElements()) && ret; i++) {
+        ret = vec[i] == i;
+    }
+    return ret;
+}
+
+
+template<typename T>
+Vector<T> VectorTest::AuxiliaryFunctionOut(uint32 nOfElements) {
+    Vector<T> vec(nOfElements);
+    for (uint32 i = 0u; (i < vec.GetNumberOfElements()); i++) {
+        vec[i] = i;
+    }
+    return vec;
+}
+
+
 
 #endif /* VECTORTEST_H_ */
 

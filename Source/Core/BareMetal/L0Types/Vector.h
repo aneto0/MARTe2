@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManager.h"
+#include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -59,6 +60,18 @@ public:
      *    IsStaticDeclared()
      */
     Vector();
+
+    /**
+     * @brief Copy constructor
+     * @details Creates a copy of that. The copy mechanism depends on that.canDestroy, as follow:
+     * <ul>
+     * <li>If that.canDestroy = true, the copied vector allocates its own memory, copy the values from that and sets this.canDestroy = true</li>
+     * <li>if that.canDestroy = false, this.canDestroy = false and this.GetDataPointer() = that.GetDataPointer()</li>
+     * </ul>
+     * @param[in] that is the object to copy
+     * @return the copied Vector
+     */
+    Vector(const Vector<T> &that);
 
     /**
      * @brief Constructs a new vector with a given size
@@ -117,13 +130,27 @@ public:
      * @param[in] idx The index of the element to retrieve.
      * @return the element at position \a idx.
      */
-    T &operator [](uint32 idx);
+    T& operator [](uint32 idx);
+
+    /**
+     * @brief Makes a copy of the Vector
+     * @details Creates a copy of the Vector that. First, it frees the current vector memory(if needed) and then copies the vector based on that.canDestroy:
+     * <ul>
+     * <li>If that.canDestroy = true, the copied vector allocates its own memory, copy the values from that and sets this.canDestroy = true</li>
+     * <li>if that.canDestroy = false, this.canDestroy = false and this.GetDataPointer() = that.GetDataPointer()</li>
+     * </ul>
+     * @param[in] that is the Vector to copy
+     * @return the copied Vector
+     *
+     * @warning if the vector to copy from has a NULL pointer or numberOfElements = 0, the old information of the destination vector is destroyed (if it was internally allocated) but the dataPointer is not initialised.
+     */
+    Vector<T>& operator =(const Vector<T> &that);
 
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
-    inline void * GetDataPointer() const;
+    inline void* GetDataPointer() const;
 
     /**
      * @brief Checks if GetDataPointer() is pointing at a statically allocated array memory block [].
@@ -184,8 +211,28 @@ namespace MARTe {
 template<typename T>
 Vector<T>::Vector() {
     numberOfElements = 0u;
-    dataPointer = NULL_PTR(T *);
+    dataPointer = NULL_PTR(T*);
     canDestroy = false;
+}
+
+template<typename T>
+Vector<T>::Vector(const Vector<T> &that) {
+    this->numberOfElements = that.GetNumberOfElements();
+    if ((numberOfElements > 0u) && (that.GetDataPointer() != NULL_PTR(void*))) {
+        if (that.canDestroy) {
+            this->dataPointer = new T[that.numberOfElements];
+            this->canDestroy = true;
+            T *arrayD = reinterpret_cast<T*>(this->GetDataPointer());
+            T *arrayO = reinterpret_cast<T*>(that.GetDataPointer());
+            for (uint32 i = 0u; i < this->numberOfElements; i++) {
+                arrayD[i] = arrayO[i];
+            }
+        }
+        else {
+            this->canDestroy = false;
+            this->dataPointer = that.GetDataPointer();
+        }
+    }
 }
 
 template<typename T>
@@ -206,10 +253,11 @@ Vector<T>::Vector(T *existingArray,
 template<typename T>
 void Vector<T>::SetSize(uint32 nOfElements) {
     FreeMemory();
-    if (nOfElements > 0){
+    if (nOfElements > 0) {
         dataPointer = new T[nOfElements];
         canDestroy = true;
-    } else if (nOfElements == 0){
+    }
+    else if (nOfElements == 0) {
         dataPointer = NULL_PTR(T*);
         canDestroy = false;
     }
@@ -219,7 +267,7 @@ void Vector<T>::SetSize(uint32 nOfElements) {
 template<typename T>
 template<uint32 nOfElementsStatic>
 Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
-    dataPointer = reinterpret_cast<T *>(&source[0]);
+    dataPointer = reinterpret_cast<T*>(&source[0]);
     numberOfElements = nOfElementsStatic;
     canDestroy = false;
 }
@@ -230,9 +278,31 @@ Vector<T>::~Vector() {
 }
 
 template<typename T>
-T &Vector<T>::operator [](uint32 idx) {
-    T* array = reinterpret_cast<T*>(dataPointer);
+T& Vector<T>::operator [](uint32 idx) {
+    T *array = reinterpret_cast<T*>(dataPointer);
     return array[idx];
+}
+
+template<typename T>
+Vector<T>& Vector<T>::operator =(const Vector<T> &that) {
+    this->FreeMemory();
+    this->numberOfElements = that.GetNumberOfElements();
+    if ((numberOfElements > 0u) && (that.GetDataPointer() != NULL_PTR(void*))) {
+        if (that.canDestroy) {
+            this->dataPointer = new T[that.numberOfElements];
+            this->canDestroy = true;
+            T *arrayD = reinterpret_cast<T*>(this->GetDataPointer());
+            T *arrayO = reinterpret_cast<T*>(that.GetDataPointer());
+            for (uint32 i = 0u; i < this->numberOfElements; i++) {
+                arrayD[i] = arrayO[i];
+            }
+        }
+        else {
+            this->canDestroy = false;
+            this->dataPointer = that.GetDataPointer();
+        }
+    }
+    return *this;
 }
 
 template<typename T>
@@ -251,7 +321,7 @@ bool Vector<T>::Product(Vector<T> factor,
     bool ret = (factor.numberOfElements == numberOfElements);
     if (ret) {
         result = static_cast<T>(0);
-        T* array = reinterpret_cast<T*>(dataPointer);
+        T *array = reinterpret_cast<T*>(dataPointer);
         for (uint32 i = 0u; i < numberOfElements; i++) {
             result += array[i] * factor[i];
         }
@@ -260,7 +330,7 @@ bool Vector<T>::Product(Vector<T> factor,
 }
 
 template<typename T>
-void Vector<T>::FreeMemory(){
+void Vector<T>::FreeMemory() {
     if (canDestroy) {
         delete[] reinterpret_cast<T*>(dataPointer);
         dataPointer = NULL;
