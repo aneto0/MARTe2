@@ -815,31 +815,6 @@ bool ConfigurationDatabaseTest::TestCopyOperatorEqualBug() {
     ok &= cdb2.Read("Node1", node1Val);
     ok &= (node1Val == 2);
     ok &= cdb.MoveAbsolute("B.C.D");
-    /*cdb2 = cdb;
-    ok &= cdb.CreateAbsolute("B.C.D");
-    ok &= (cdb.GetNumberOfChildren() == 0);
-    ok &= cdb.MoveToRoot();
-    ok &= (cdb.GetNumberOfChildren() == 2);
-
-    ok &= cdb2.MoveAbsolute("B.C.D");
-    ok &= cdb2.MoveToRoot();*/
-    /*ConfigurationDatabase cdb3;
-    cdb3 = cdb2;
-    ok &= cdb3.MoveAbsolute("B.C.D");
-    ok &= cdb2.MoveAbsolute("B.C.D");
-    ok &= cdb.MoveAbsolute("B.C.D");
-    uint32 node1Val = 0u;
-    ok &= cdb.MoveToRoot();
-    ok &= cdb2.MoveToRoot();
-    ok &= cdb3.MoveToRoot();
-    ok &= cdb.Read("Node1", node1Val);
-    ok &= (node1Val == 1);
-    node1Val = 0u;
-    ok &= cdb2.Read("Node1", node1Val);
-    ok &= (node1Val == 1);
-    node1Val = 0u;
-    ok &= cdb3.Read("Node1", node1Val);
-    ok &= (node1Val == 1);*/
 
     return ok;
 }

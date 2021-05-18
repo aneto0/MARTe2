@@ -81,7 +81,12 @@ ConfigurationDatabase &ConfigurationDatabase::operator =(const ConfigurationData
 void ConfigurationDatabase::Purge() const {
     //If the only references pointing at the rootNode are itself and eventually all its child nodes then it can be purged
     //Note that for every direct child of the rootNode a link to it (the parent) is created
-    if((rootNode.NumberOfReferences() - 1u) == rootNode->Size()) {
+    uint32 numberOfReferences = (rootNode.NumberOfReferences() - 1u);
+    if (rootNode == currentNode) {
+        //currentNode is pointing at rootNode
+        numberOfReferences--;
+    }
+    if(numberOfReferences == rootNode->GetNumberOfNodes()) {
         rootNode->Purge();
     }
 }
