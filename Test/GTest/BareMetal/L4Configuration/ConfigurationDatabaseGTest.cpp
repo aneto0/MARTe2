@@ -367,3 +367,14 @@ TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestSetCurrentNodeAsRo
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestSetCurrentNodeAsRootNode());
 }
+
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestPurge) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestPurge());
+}
+
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCopyOperatorEqualBug) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestCopyOperatorEqualBug());
+}
+

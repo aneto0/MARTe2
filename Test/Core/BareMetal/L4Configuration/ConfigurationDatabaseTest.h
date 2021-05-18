@@ -237,6 +237,16 @@ public:
      * @brief Tests the SetCurrentNodeAsRootNode method
      */
     bool TestSetCurrentNodeAsRootNode();
+
+    /**
+     * @brief Tests the Purge method
+     */
+    bool TestPurge();
+
+    /**
+     * @brief Tests the copy equal operator forcing a condition that led to a bug in release 1.4.0
+     */
+    bool TestCopyOperatorEqualBug();
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
