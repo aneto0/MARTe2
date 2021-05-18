@@ -802,7 +802,10 @@ bool ConfigurationDatabaseTest::TestPurge() {
 bool ConfigurationDatabaseTest::TestCopyOperatorEqualBug() {
     ConfigurationDatabase cdb;
     bool ok = cdb.Write("Node1", 2);
+    ok &= cdb.Write("Node2", 3);
     ok &= cdb.CreateAbsolute("B.C.D");
+    ok &= (cdb.GetNumberOfChildren() == 0);
+    ok &= (cdb.MoveToRoot());
     ok &= (cdb.GetNumberOfChildren() == 2);
     ConfigurationDatabase cdb2;
     cdb2 = cdb;
@@ -810,7 +813,7 @@ bool ConfigurationDatabaseTest::TestCopyOperatorEqualBug() {
     cdb2 = cdb;
     uint32 node1Val = 0u;
     ok &= cdb2.Read("Node1", node1Val);
-    ok &= (node1Val == 1);
+    ok &= (node1Val == 2);
     ok &= cdb.MoveAbsolute("B.C.D");
     /*cdb2 = cdb;
     ok &= cdb.CreateAbsolute("B.C.D");
