@@ -806,7 +806,7 @@ bool ConfigurationDatabaseTest::TestCopyOperatorEqualBug() {
     ok &= cdb.CreateAbsolute("B.C.D");
     ok &= (cdb.GetNumberOfChildren() == 0);
     ok &= (cdb.MoveToRoot());
-    ok &= (cdb.GetNumberOfChildren() == 2);
+    ok &= (cdb.GetNumberOfChildren() == 3);
     ConfigurationDatabase cdb2;
     cdb2 = cdb;
     //This second copy was incorrectly forcing a Purge. Let's make sure this is no longer the case
