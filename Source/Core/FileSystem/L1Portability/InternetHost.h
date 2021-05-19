@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,InternetHostCore.h)
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,InternetMulticastCore.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -141,6 +142,10 @@ namespace MARTe {
          */
         bool SetLocalAddress();
 
+        void SetMulticastGroup(const char8 * const addr);
+
+        StreamString GetMulticastGroup();
+
         /**
          * @brief Returns access to the low-level handle.
          * @return a pointer to the handle of this structure containing
@@ -149,11 +154,15 @@ namespace MARTe {
          */
         InternetHostCore *GetInternetHost();
 
+        InternetMulticastCore *GetInternetMulticastHost();
+
         /**
          * @brief Gets the size in bytes of the handle.
          * @return the size of InternetHostCore handle.
          */
         uint32 Size() const;
+
+        uint32 MulticastSize() const;
 
     private:
 
@@ -161,6 +170,11 @@ namespace MARTe {
          * The InternetHost handle.
          */
         InternetHostCore address;
+
+        /**
+         * The InternetMulticastCore handle.
+         */
+        InternetMulticastCore mreq;
 
     };
 

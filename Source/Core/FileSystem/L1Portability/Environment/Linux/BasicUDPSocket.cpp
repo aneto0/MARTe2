@@ -57,7 +57,7 @@ BasicUDPSocket::~BasicUDPSocket() {
 
 }
 
-bool BasicUDPSocket::Peek(char8* const output,
+bool BasicUDPSocket::Peek(char8 *const output,
                           uint32 &size) {
 
     int32 ret = -1;
@@ -83,7 +83,7 @@ bool BasicUDPSocket::Peek(char8* const output,
 
 }
 
-bool BasicUDPSocket::Read(char8* const output,
+bool BasicUDPSocket::Read(char8 *const output,
                           uint32 &size) {
 
     int32 ret = -1;
@@ -108,7 +108,7 @@ bool BasicUDPSocket::Read(char8* const output,
     return (ret > 0);
 }
 
-bool BasicUDPSocket::Write(const char8* const input,
+bool BasicUDPSocket::Write(const char8 *const input,
                            uint32 &size) {
 
     int32 ret = -1;
@@ -154,7 +154,19 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     return (errorCode >= 0);
 }
 
-bool BasicUDPSocket::Connect(const char8 * const address,
+bool BasicUDPSocket::Join(const char8 *const group) {
+    uint32 opt = 1u;
+    /* Allow multiple sockets to use the same addr and port number */
+    bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&opt), sizeof(opt)) >= 0u;
+    if (ok) {
+        InternetHost host;
+        host.SetMulticastGroup(group);
+        ok = setsockopt(connectionSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP,reinterpret_cast<char*>(host.GetInternetMulticastHost()), host.MulticastSize()) >= 0;
+    }
+    return ok;
+}
+
+bool BasicUDPSocket::Connect(const char8 *const address,
                              const uint16 port) {
 
     bool ret = IsValid();
@@ -186,8 +198,8 @@ bool BasicUDPSocket::CanSeek() const {
     return false;
 }
 
-bool BasicUDPSocket::Read(char8 * const output,
-                          uint32 & size,
+bool BasicUDPSocket::Read(char8 *const output,
+                          uint32 &size,
                           const TimeoutType &timeout) {
     uint32 sizeToRead = size;
     size = 0u;
@@ -199,8 +211,7 @@ bool BasicUDPSocket::Read(char8 * const output,
             timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
             /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal,
-                                   static_cast<socklen_t>(sizeof(timeoutVal)));
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the read timeout");
@@ -228,8 +239,8 @@ bool BasicUDPSocket::Read(char8 * const output,
     return (size > 0u);
 }
 
-bool BasicUDPSocket::Write(const char8 * const input,
-                           uint32 & size,
+bool BasicUDPSocket::Write(const char8 *const input,
+                           uint32 &size,
                            const TimeoutType &timeout) {
     uint32 sizeToWrite = size;
     size = 0u;
@@ -241,8 +252,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
             timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal,
-                                   static_cast<socklen_t>(sizeof(timeoutVal)));
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the write timeout");

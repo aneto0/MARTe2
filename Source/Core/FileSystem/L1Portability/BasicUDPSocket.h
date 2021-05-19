@@ -103,6 +103,8 @@ public:
      */
     bool Listen(const uint16 port);
 
+    bool Join(const char8 * const group);
+
     /**
      * @brief Sets the writing destination address.
      * @param[in] address the destination IP address.
