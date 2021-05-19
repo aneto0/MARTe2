@@ -124,7 +124,7 @@ bool MatrixTest::TestMatrixOperator_Heap() {
     const uint32 nRows = 32;
     const uint32 nCols = 32;
 
-    int32 ** matrix = new int32*[nRows];
+    int32 **matrix = new int32*[nRows];
 
     for (uint32 i = 0; i < nRows; i++) {
         matrix[i] = new int32[nCols];
@@ -139,9 +139,9 @@ bool MatrixTest::TestMatrixOperator_Heap() {
     Matrix<int32> myMatrix(matrix, nRows, nCols);
 
     bool ret = true;
-    for (uint32 i = 0; i < nRows; i++) {
+    for (uint32 i = 0; (i < nRows) && ret; i++) {
         Vector<int32> row = myMatrix[i];
-        for (uint32 j = 0; j < nCols; j++) {
+        for (uint32 j = 0; (j < nCols) && ret; j++) {
             if (row[j] != matrix[i][j]) {
                 ret = false;
             }
@@ -154,6 +154,47 @@ bool MatrixTest::TestMatrixOperator_Heap() {
 
     delete[] matrix;
 
+    return ret;
+}
+
+bool MatrixTest::TestMatrixOperator_HeapDisc() {
+    const uint32 nRows = 3;
+    const uint32 nCols = 3;
+
+    int32 **matrix = new int32*[nRows];
+    int32 **auxP1 = new int32*[nRows];
+    for (uint32 i = 0; i < nRows; i++) {
+        auxP1[i] = new int32[nCols];
+        MemoryOperationsHelper::Set(reinterpret_cast<void*>(auxP1[i]), 0, sizeof(int32) * nCols);
+        matrix[i] = new int32[nCols];
+    }
+
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            matrix[i][j] = i + j;
+        }
+    }
+
+    Matrix<int32> myMatrix(matrix, nRows, nCols);
+
+    bool ret = true;
+    for (uint32 i = 0; (i < nRows) && ret; i++) {
+        Vector<int32> row = myMatrix[i];
+        for (uint32 j = 0; (j < nCols) && ret; j++) {
+            if (row[j] != static_cast<int32>(i+j)) {
+                ret = false;
+            }
+        }
+    }
+
+    for (uint32 i = 0; i < nRows; i++) {
+        delete[] matrix[i];
+        delete[] auxP1[i];
+        auxP1[i] = NULL;
+    }
+
+    delete[] matrix;
+    delete[] auxP1;
     return ret;
 }
 
@@ -172,7 +213,7 @@ bool MatrixTest::TestMatrixFunctionCallOperator_Static() {
 
         for (uint32 i = 0; i < nRow; i++) {
             for (uint32 j = 0; j < nCols; j++) {
-                if (myMatrix(i,j) != matrix[i][j]) {
+                if (myMatrix(i, j) != matrix[i][j]) {
                     return false;
                 }
             }
@@ -186,13 +227,13 @@ bool MatrixTest::TestMatrixFunctionCallOperator_Static() {
 
         for (uint32 i = 0; i < nRow; i++) {
             for (uint32 j = 0; j < nCols; j++) {
-                myMatrix(i,j) = i + j;
+                myMatrix(i, j) = i + j;
             }
         }
 
         for (uint32 i = 0; i < nRow; i++) {
             for (uint32 j = 0; j < nCols; j++) {
-                if (myMatrix(i,j) != matrix[i][j]) {
+                if (myMatrix(i, j) != matrix[i][j]) {
                     return false;
                 }
             }
@@ -209,7 +250,7 @@ bool MatrixTest::TestMatrixFunctionCallOperator_Heap() {
 
     Matrix<int32> myMatrix(nRows, nCols);
 
-    int32 ** matrix = new int32*[nRows];
+    int32 **matrix = new int32*[nRows];
 
     for (uint32 i = 0; i < nRows; i++) {
         matrix[i] = new int32[nCols];
@@ -217,14 +258,14 @@ bool MatrixTest::TestMatrixFunctionCallOperator_Heap() {
 
     for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
-            myMatrix(i,j) = i + j;
+            myMatrix(i, j) = i + j;
             matrix[i][j] = i + j;
         }
     }
 
     for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
-            if (myMatrix(i,j) != matrix[i][j]) {
+            if (myMatrix(i, j) != matrix[i][j]) {
                 ret = false;
             }
         }
@@ -328,7 +369,7 @@ bool MatrixTest::TestProduct() {
 bool MatrixTest::TestSum() {
 
     int32 matrix1[3][3] = { { 1, 2, -3 }, { -4, 5, 6 }, { 7, 8, 9 } };
-    int32 matrix2[3][3] = { { 1, 2, 1 }, { -4, 1, 5 }, {1, 7, 8 } };
+    int32 matrix2[3][3] = { { 1, 2, 1 }, { -4, 1, 5 }, { 1, 7, 8 } };
 
     int32 matrix3[3][3];
 
@@ -340,7 +381,7 @@ bool MatrixTest::TestSum() {
         return false;
     }
 
-    int32 testResult[3][3] = { { 2, 4, -2}, { -8, 6, 11}, {8, 15, 17}};
+    int32 testResult[3][3] = { { 2, 4, -2 }, { -8, 6, 11 }, { 8, 15, 17 } };
 
     for (int32 i = 0; i < 3; i++) {
         for (int32 j = 0; j < 3; j++) {
@@ -359,7 +400,7 @@ bool MatrixTest::TestSum() {
 bool MatrixTest::TestCopy() {
 
     int32 matrix1[3][3] = { { 1, 2, -3 }, { -4, 5, 6 }, { 7, 8, 9 } };
-    int32 matrix2[3][3] = { { 1, 2, 1 }, { -4, 1, 5 }, {1, 7, 8 } };
+    int32 matrix2[3][3] = { { 1, 2, 1 }, { -4, 1, 5 }, { 1, 7, 8 } };
 
     Matrix<int32> addend1(matrix1);
     Matrix<int32> addend2(matrix2);
@@ -625,7 +666,7 @@ bool MatrixTest::TestProduct_Heap() {
 bool MatrixTest::TestSum_Heap() {
 
     int32 matrix1[3][3] = { { 1, 2, -3 }, { -4, 5, 6 }, { 7, 8, 9 } };
-    int32 matrix2[3][3] = { { 1, 2, 1 }, { -4, 1, 5 }, {1, 7, 8 } };
+    int32 matrix2[3][3] = { { 1, 2, 1 }, { -4, 1, 5 }, { 1, 7, 8 } };
 
     int32 matrix3[3][3];
 
@@ -649,7 +690,7 @@ bool MatrixTest::TestSum_Heap() {
     if (!addend1.Sum(addend2, result)) {
         return false;
     }
-    int32 testResult[3][3] = { { 2, 4, -2}, { -8, 6, 11}, {8, 15, 17}};
+    int32 testResult[3][3] = { { 2, 4, -2 }, { -8, 6, 11 }, { 8, 15, 17 } };
     for (int32 i = 0; i < 3; i++) {
         for (int32 j = 0; j < 3; j++) {
             if (result[i][j] != testResult[i][j]) {
@@ -667,7 +708,7 @@ bool MatrixTest::TestSum_Heap() {
 bool MatrixTest::TestCopy_Heap() {
 
     int32 matrix1[3][3] = { { 1, 2, -3 }, { -4, 5, 6 }, { 7, 8, 9 } };
-    int32 matrix2[3][3] = { { 1, 2, 1 }, { -4, 1, 5 }, {1, 7, 8 } };
+    int32 matrix2[3][3] = { { 1, 2, 1 }, { -4, 1, 5 }, { 1, 7, 8 } };
 
     Matrix<int32> addend1(3, 3);
 

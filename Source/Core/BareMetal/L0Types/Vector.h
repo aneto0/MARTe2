@@ -69,7 +69,6 @@ public:
      * <li>if that.canDestroy = false, this.canDestroy = false and this.GetDataPointer() = that.GetDataPointer()</li>
      * </ul>
      * @param[in] that is the object to copy
-     * @return the copied Vector
      */
     Vector(const Vector<T> &that);
 
