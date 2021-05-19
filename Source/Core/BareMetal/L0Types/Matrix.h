@@ -479,7 +479,9 @@ Matrix<T>::Matrix(const Matrix<T> &that) {
 
 template<typename T>
 Matrix<T>::~Matrix() {
+    //lint -e{1551} Function may throw exception '...' in destructor. Justification FreeMemory cannot throw an exception
     FreeMemory();
+    //lint -e{1579} Pointer member 'MARTe::Matrix<float>::dataPointer' (line 332) might have been freed by a separate function. Justification. FreeMemory frees memory if was internally allocated
 }
 
 template<typename T>
@@ -516,9 +518,10 @@ template<typename T>
 Matrix<T>& Matrix<T>::operator =(const Matrix<T> &that) {
     if (this != &that) {
         this->FreeMemory();
-        if (that.dataPointer != NULL_PTR(void*) && (that.numberOfColumns > 0u) && (that.numberOfRows > 0u)) {
+        if ((that.dataPointer != NULL_PTR(void*)) && (that.numberOfColumns > 0u) && (that.numberOfRows > 0u)) {
             this->numberOfColumns = that.numberOfColumns;
             this->numberOfRows = that.numberOfRows;
+            //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Cast from pointer to pointer needed.
             if (that.IsStaticDeclared()) {
                 T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
                 T **rows = new T*[this->numberOfRows];
@@ -528,7 +531,8 @@ Matrix<T>& Matrix<T>::operator =(const Matrix<T> &that) {
                     //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
                     rows[i] = new T[this->numberOfColumns];
                     for (uint32 c = 0u; c < this->numberOfColumns; c++) {
-                        rows[i][c] = auxPointer[i * numberOfColumns + c];
+                        uint32 auxIdx = (i * numberOfColumns) + c;
+                        rows[i][c] = auxPointer[auxIdx];
                     }
                 }
             }
