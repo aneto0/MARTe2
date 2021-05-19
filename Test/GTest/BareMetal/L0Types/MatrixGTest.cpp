@@ -1488,3 +1488,15 @@ TEST(BareMetal_L0Types_MatrixGTest,TestInverse_float64_Heap) {
     ASSERT_TRUE(matrixTest.TestInverse_float64_Heap());
 }
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorNULLPointer) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorNULLPointer());
+}
+
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentNULLPointer) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentNULLPointer());
+}
+
+

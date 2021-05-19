@@ -152,7 +152,7 @@ public:
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
-    inline  T* GetDataPointer() const;
+    inline T* GetDataPointer() const;
 
     /**
      * @brief Checks if GetDataPointer() is pointing at a statically allocated array memory block [].
@@ -237,6 +237,11 @@ Vector<T>::Vector(const Vector<T> &that) {
             this->dataPointer = that.GetDataPointer();
         }
     }
+    else {
+        this->dataPointer = NULL_PTR(T*);
+        this->canDestroy = false;
+        this->numberOfElements = 0u;
+    }
 }
 
 template<typename T>
@@ -247,7 +252,7 @@ Vector<T>::Vector(uint32 nOfElements) {
 }
 //lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
 template<typename T>
-Vector<T>::Vector(T * const existingArray,
+Vector<T>::Vector(T *const existingArray,
                   const uint32 nOfElements) {
     dataPointer = existingArray;
     numberOfElements = nOfElements;
@@ -311,12 +316,17 @@ Vector<T>& Vector<T>::operator =(const Vector<T> &that) {
                 this->dataPointer = that.GetDataPointer();
             }
         }
+        else {
+            this->dataPointer = NULL_PTR(T*);
+            this->canDestroy = false;
+            this->numberOfElements = 0u;
+        }
     }
     return *this;
 }
 
 template<typename T>
-inline T* Vector<T>::GetDataPointer() const{
+inline T* Vector<T>::GetDataPointer() const {
     return dataPointer;
     //lint -e{1763} Member function 'MARTe::Vector<float>::GetDataPointer(void) const' marked as const indirectly modifies class [MISRA C++ Rule 9-3-1]. Justification: It is allowed to change the class via its pointer.
 }
@@ -344,7 +354,7 @@ template<typename T>
 void Vector<T>::FreeMemory() {
     if (canDestroy) {
         delete[] dataPointer;
-        dataPointer = NULL_PTR(T *);
+        dataPointer = NULL_PTR(T*);
         numberOfElements = 0u;
         canDestroy = false;
     }

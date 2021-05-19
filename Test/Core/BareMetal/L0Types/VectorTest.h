@@ -106,17 +106,38 @@ public:
     bool TestSetSize(Vector<int32> &vector1,
                      uint32 newSize);
 
+    /**
+     * @brief Tests copy constructor for all basic types.
+     */
     template<class T>
     bool TestCopyConstructor();
 
+    /**
+     * @brief Tests copy assignment for all basic types.
+     */
     template<class T>
     bool TestCopyAssignment();
 
+    /**
+     * @brief Tests copy constructor passing a vector to a functions.
+     */
     template<class T>
     bool TestVectorPassedToAFunction();
 
+    /**
+     * @brief Tests copy assignment passing returning a vector from a function.
+     */
     template<class T>
     bool TestVectorReturnedFromAFunction();
+
+    /**
+     * Test copy constructor using a vector with the pointer not initialised
+     */
+    bool TestCopyConstructorNULLPointer();
+    /**
+     * Test copy assignment using a vector with the pointer not initialised.
+     */
+    bool TestCopyAssignmentNULLPointer();
 
 private:
     /**
@@ -253,7 +274,6 @@ bool VectorTest::AuxiliaryFunctionIn(Vector<T> vec) {
     return ret;
 }
 
-
 template<typename T>
 Vector<T> VectorTest::AuxiliaryFunctionOut(uint32 nOfElements) {
     Vector<T> vec(nOfElements);
@@ -262,8 +282,6 @@ Vector<T> VectorTest::AuxiliaryFunctionOut(uint32 nOfElements) {
     }
     return vec;
 }
-
-
 
 #endif /* VECTORTEST_H_ */
 

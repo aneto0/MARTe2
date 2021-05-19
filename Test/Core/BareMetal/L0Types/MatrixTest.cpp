@@ -181,7 +181,7 @@ bool MatrixTest::TestMatrixOperator_HeapDisc() {
     for (uint32 i = 0; (i < nRows) && ret; i++) {
         Vector<int32> row = myMatrix[i];
         for (uint32 j = 0; (j < nCols) && ret; j++) {
-            if (row[j] != static_cast<int32>(i+j)) {
+            if (row[j] != static_cast<int32>(i + j)) {
                 ret = false;
             }
         }
@@ -899,5 +899,39 @@ bool MatrixTest::TestInverse_float64_Heap() {
         }
     }
     return true;
+}
+
+bool MatrixTest::TestCopyConstructorNULLPointer() {
+    Matrix<int32> originalMatrix;
+    Matrix<int32> copiedMatrix(originalMatrix);
+    bool ret = copiedMatrix.GetDataPointer() == NULL_PTR(void*);
+    if (ret) {
+        ret = copiedMatrix.GetNumberOfColumns() == 0u;
+    }
+    if (ret) {
+        ret = copiedMatrix.GetNumberOfRows() == 0u;
+    }
+    if (ret) {
+        ret = copiedMatrix.IsStaticDeclared();
+    }
+    return ret;
+}
+
+bool MatrixTest::TestCopyAssignmentNULLPointer() {
+    int32 *pointer = NULL_PTR(int32 *);
+    Matrix<int32> originalMatrix(pointer, 2, 2);
+    Matrix<int32> copiedMatrix;
+    copiedMatrix= originalMatrix;
+    bool ret = copiedMatrix.GetDataPointer() == NULL_PTR(void*);
+    if (ret) {
+        ret = copiedMatrix.GetNumberOfColumns() == 0u;
+    }
+    if (ret) {
+        ret = copiedMatrix.GetNumberOfRows() == 0u;
+    }
+    if (ret) {
+        ret = copiedMatrix.IsStaticDeclared();
+    }
+    return ret;
 }
 

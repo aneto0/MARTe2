@@ -105,20 +105,20 @@ bool VectorTest::TestGetNumberOfElements() {
 
 bool VectorTest::TestGetDataPointer() {
     const uint32 nElements = 32;
-    bool ret=true;
+    bool ret = true;
     int32 staticArray[nElements];
 
     Vector<int32> vector1(staticArray);
 
     if (vector1.GetDataPointer() != staticArray) {
-        ret= false;
+        ret = false;
     }
 
     int32 *staticPointer = staticArray;
     Vector<int32> vector2(staticPointer, nElements);
 
     if (vector2.GetDataPointer() != staticPointer) {
-        ret= false;
+        ret = false;
     }
 
     int32 *heapPointer = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
@@ -126,12 +126,12 @@ bool VectorTest::TestGetDataPointer() {
     Vector<int32> vector3(heapPointer, nElements);
 
     if (vector3.GetDataPointer() != heapPointer) {
-        ret= false;
+        ret = false;
     }
 
     Vector<int32> vector4(nElements);
 
-    ret&= (vector4.GetDataPointer() != NULL);
+    ret &= (vector4.GetDataPointer() != NULL);
     HeapManager::Free((void*&) heapPointer);
     return ret;
 }
@@ -168,11 +168,11 @@ bool VectorTest::TestVectorOperator_Heap() {
 
     for (uint32 i = 0; i < nElements; i++) {
         if (array[i] != vector1[i]) {
-            HeapManager::Free((void*&)array);
+            HeapManager::Free((void*&) array);
             return false;
         }
     }
-    HeapManager::Free((void*&)array);
+    HeapManager::Free((void*&) array);
     return true;
 }
 
@@ -190,7 +190,8 @@ bool VectorTest::TestProduct() {
     return result == 11;
 }
 
-bool VectorTest::TestSetSize(Vector<int32> &vector1, uint32 newSize) {
+bool VectorTest::TestSetSize(Vector<int32> &vector1,
+                             uint32 newSize) {
     bool ok = true;
 
     vector1.SetSize(newSize);
@@ -198,10 +199,32 @@ bool VectorTest::TestSetSize(Vector<int32> &vector1, uint32 newSize) {
     ok &= (vector1.GetNumberOfElements() == newSize);
     if (newSize != 0) {
         ok &= (vector1.GetDataPointer() != NULL_PTR(int32*));
-    } else {
+    }
+    else {
         ok &= (vector1.GetDataPointer() == NULL_PTR(int32*));
     }
 
     return ok;
+}
+
+bool VectorTest::TestCopyConstructorNULLPointer() {
+    Vector<uint32> vec1;
+    Vector<uint32> vec2(vec1);
+    bool ret = vec2.GetDataPointer() == NULL_PTR(uint32*);
+    if (ret) {
+        ret = vec2.GetNumberOfElements() == 0u;
+    }
+    return ret;
+}
+
+bool VectorTest::TestCopyAssignmentNULLPointer() {
+    Vector<uint32> vec1;
+    Vector<uint32> vec2;
+    vec2 = vec1;
+    bool ret = vec2.GetDataPointer() == NULL_PTR(uint32*);
+    if (ret) {
+        ret = vec2.GetNumberOfElements() == 0u;
+    }
+    return ret;
 }
 

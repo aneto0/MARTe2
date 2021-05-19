@@ -254,6 +254,16 @@ public:
      */
     bool TestInverse_float64_Heap();
 
+    /**
+     * @brief copy a matrix which has a NULL pointer
+     */
+    bool TestCopyConstructorNULLPointer();
+
+    /**
+     * @brief copy a matrix which has a NULL pointer
+     */
+    bool TestCopyAssignmentNULLPointer();
+
 };
 
 /*---------------------------------------------------------------------------*/

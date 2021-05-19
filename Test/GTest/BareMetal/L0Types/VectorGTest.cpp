@@ -623,3 +623,13 @@ TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_float64) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<float64>());
 }
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructorNULLPointer) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructorNULLPointer());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignmentNULLPointer) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignmentNULLPointer());
+}
