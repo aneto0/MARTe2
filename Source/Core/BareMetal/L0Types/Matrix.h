@@ -70,7 +70,8 @@ public:
      *   GetDataPointer() != NULL &&
      *   not IsStaticDeclared()
      */
-    Matrix(uint32 nOfRows, uint32 nOfColumns);
+    Matrix(const uint32 nOfRows,
+           const uint32 nOfColumns);
 
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
@@ -83,7 +84,9 @@ public:
      *   GetDataPointer() == existingArray &&
      *   not IsStaticDeclared()
      */
-    Matrix(T **existingArray, uint32 nOfRows, uint32 nOfColumns);
+    Matrix(T **const existingArray,
+           const uint32 nOfRows,
+           const uint32 nOfColumns);
 
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
@@ -96,7 +99,9 @@ public:
      *   GetDataPointer() == existingArray &&
      *   IsStaticDeclared()
      */
-    Matrix(T *existingArray, uint32 nOfRows, uint32 nOfColumns);
+    Matrix(T *const existingArray,
+           const uint32 nOfRows,
+           const uint32 nOfColumns);
 
     /**
      * @brief Constructs a new matrix from a statically declared table [][].
@@ -113,6 +118,28 @@ public:
     Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]);
 
     /**
+     * @brief Copy constructor. Makes an independent copy of the Matrix that
+     * @details First checks that the Matrix to copy is correctly initialised, then allocates memory and finally copies the values.
+     * @param[in] that matrix to copy.
+     * @post If the matrix to copy is correctly initialised then the new matrix meet the following postconditions:
+     * <ul><li> this->dataPointer != NULL </li>
+     * <li>this->numberOfRows = that.numberOfRow</li>
+     * <li>this->numberOfColumns = that.numberOfColumns</li>
+     * <li>this->canDestry = true</li>
+     * <li>this->staticDeclared = false</li>
+     * </ul>
+     * If the matrix to copy dataPointer == NULL || numberOfElements == 0 || numberOfRows == 0, then the following postconditions are met:
+     * <ul>
+     * <li>this->dataPointer = NULL</li>
+     * <li>this->numberOfRows = 0</li>
+     * <li>numberOfColumns = 0</li>
+     * <li>canDestry = False</li>
+     * <li>staticDeclared = True</li>
+     * </ul>
+     */
+    Matrix(const Matrix<T> &that);
+
+    /**
      * @brief Destructor.
      * @details If IsStaticDeclared(), then it frees the memory pointed
      * by \a GetDataPointer().
@@ -120,8 +147,7 @@ public:
     ~Matrix();
 
     /**
-     * @brief Gets the number of columns.==23886==    at 0x4BF05E: MARTe::Matrix<int>::Product(MARTe::Matrix<int>&, MARTe::Matrix<int>&) const (Matrix.h:398)
-     *
+     * @brief Gets the number of columns.
      * @return the number of columns.
      */
     inline uint32 GetNumberOfColumns() const;
@@ -134,11 +160,36 @@ public:
 
     /**
      * @brief Returns the vector associated to the specified row.
-     * @param[in] rows The row to retrieve.
-     * @return the vector associated to the specified row.
+     * @details Checks if element < numberOfRows, then return the Vector associated with the row if exist
+     * @param[in] element The row to retrieve.
+     * @return the vector associated to the specified row if exist. Otherwise return a vector not initialised.
+     * @pre Matrix dataPointer != NULL
      */
-    Vector<T> operator[](uint32 rows);
+    Vector<T> operator[](const uint32 element);
 
+    /**
+     * @brief Copy assignment. Makes an independent copy of the Matrix that
+     * @details First checks that the Matrix to copy is different from the destination matrix, then frees memory (if needed), then allocates memory and finally
+     * copies the values. If the origin and destination of the matrixes is the same, nothing is done.
+     * @param[in] that matrix to copy.
+     * @return The Matrix copied on succeed.
+     * @post If the matrix to copy is correctly initialised  then the new matrix meet the following postconditions:
+     * <ul><li> this->dataPointer != NULL </li>
+     * <li>this->numberOfRows = that.numberOfRow</li>
+     * <li>this->numberOfColumns = that.numberOfColumns</li>
+     * <li>this->canDestry = true</li>
+     * <li>this->staticDeclared = false</li>
+     * </ul>
+     * If the matrix to copy dataPointer == NULL || numberOfElements == 0 || numberOfRows == 0, then the following postconditions are met:
+     * <ul>
+     * <li>this->dataPointer = NULL</li>
+     * <li>this->numberOfRows = 0</li>
+     * <li>numberOfColumns = 0</li>
+     * <li>canDestry = False</li>
+     * <li>staticDeclared = True</li>
+     * </ul>
+     */
+    Matrix<T>& operator =(const Matrix<T> &that);
     /**
      * @brief Returns a reference to a cell indexed by row and column.
      * @param[in] row is the index for the row
@@ -148,13 +199,14 @@ public:
      *   col >= 0 && col < GetNumberOfColumns()
      * @return a T& which can be used for reading/writing the cell.
      */
-    T& operator()(const uint32 row, const uint32 col);
+    T& operator()(const uint32 row,
+                  const uint32 col);
 
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
-    inline void *GetDataPointer() const;
+    inline void* GetDataPointer() const;
 
     /**
      * @brief Checks if GetDataPointer() is pointing at a statically allocated matrix memory block [][].
@@ -174,7 +226,8 @@ public:
      * @post
      *   result holds the product matrix between *this and factor
      */
-    bool Product(Matrix<T> &factor, Matrix<T> &result) const;
+    bool Product(Matrix<T> &factor,
+                 Matrix<T> &result) const;
 
     /**
      * @brief Performs the matrix sum.
@@ -189,7 +242,8 @@ public:
      * @post
      *   result holds the matrix sum between *this and addend.
      */
-    bool Sum(Matrix<T> &addend, Matrix<T> &result) const;
+    bool Sum(Matrix<T> &addend,
+             Matrix<T> &result) const;
 
     /**
      * @brief Performs the matrix copy.
@@ -222,7 +276,11 @@ public:
      * @post
      *   subMatrix holds the requested sub matrix from *this
      */
-    bool SubMatrix(const uint32 beginRow, const uint32 endRow, const uint32 beginColumn, const uint32 endColumn, Matrix<T> &subMatrix) const;
+    bool SubMatrix(const uint32 beginRow,
+                   const uint32 endRow,
+                   const uint32 beginColumn,
+                   const uint32 endColumn,
+                   Matrix<T> &subMatrix) const;
 
     /**
      * @brief Retrieves the transpose of this matrix.
@@ -293,6 +351,18 @@ private:
      */
     bool canDestroy;
 
+    /**
+     * @brief Frees memory if it was internally allocated.
+     * @post
+     * <ul>
+     * <li>dataPointer = NULL_PTR(void*)</li>
+     * <li>numberOfColumns = 0u;</li>
+     * <li>numberOfRows = 0u;</li>
+     * <li>canDestroy = false;</li>
+     * </ul>
+     */
+    void FreeMemory();
+
 };
 }
 
@@ -304,7 +374,7 @@ namespace MARTe {
 
 template<typename T>
 Matrix<T>::Matrix() {
-    dataPointer = static_cast<void *>(NULL);
+    dataPointer = static_cast<void*>(NULL);
     numberOfRows = 0u;
     numberOfColumns = 0u;
     staticDeclared = true;
@@ -312,21 +382,27 @@ Matrix<T>::Matrix() {
 }
 
 template<typename T>
-Matrix<T>::Matrix(uint32 nOfRows, uint32 nOfColumns) {
-    T** rows = new T*[nOfRows];
-    dataPointer = reinterpret_cast<void *>(rows);
+Matrix<T>::Matrix(const uint32 nOfRows,
+                  const uint32 nOfColumns) {
+    T **rows = new T*[nOfRows];
+    //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+    dataPointer = reinterpret_cast<void*>(rows);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     staticDeclared = false;
     for (uint32 i = 0u; i < nOfRows; i++) {
+        //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
         rows[i] = new T[nOfColumns];
     }
     canDestroy = true;
 }
 
 template<typename T>
-Matrix<T>::Matrix(T **existingArray, uint32 nOfRows, uint32 nOfColumns) {
-    dataPointer = reinterpret_cast<void *>(existingArray);
+Matrix<T>::Matrix(T **const existingArray,
+                  const uint32 nOfRows,
+                  const uint32 nOfColumns) {
+    //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to convert from T** to void *
+    dataPointer = reinterpret_cast<void*>(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     staticDeclared = false;
@@ -334,8 +410,11 @@ Matrix<T>::Matrix(T **existingArray, uint32 nOfRows, uint32 nOfColumns) {
 }
 
 template<typename T>
-Matrix<T>::Matrix(T *existingArray, uint32 nOfRows, uint32 nOfColumns) {
-    dataPointer = reinterpret_cast<void *>(existingArray);
+Matrix<T>::Matrix(T *const existingArray,
+                  const uint32 nOfRows,
+                  const uint32 nOfColumns) {
+    //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to convert from T* to void *
+    dataPointer = reinterpret_cast<void*>(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     staticDeclared = true;
@@ -353,17 +432,56 @@ Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
 }
 
 template<typename T>
-Matrix<T>::~Matrix() {
-    if (canDestroy) {
-        T** pointerToDestroy = reinterpret_cast<T**>(dataPointer);
-        for (uint32 i = 0u; i < numberOfRows; i++) {
-            delete[] pointerToDestroy[i];
+Matrix<T>::Matrix(const Matrix<T> &that) {
+    if (that.dataPointer != NULL_PTR(void*) && (that.numberOfColumns > 0u) && (that.numberOfRows > 0u)) {
+        this->numberOfColumns = that.numberOfColumns;
+        this->numberOfRows = that.numberOfRows;
+        if (that.IsStaticDeclared()) {
+            T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
+            T **rows = new T*[this->numberOfRows];
+            //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+            dataPointer = reinterpret_cast<void*>(rows);
+
+            for (uint32 i = 0u; i < this->numberOfRows; i++) {
+                //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
+                rows[i] = new T[this->numberOfColumns];
+                for (uint32 c = 0u; c < this->numberOfColumns; c++) {
+                    rows[i][c] = auxPointer[i * numberOfColumns + c];
+                }
+            }
         }
-        delete[] pointerToDestroy;
+        else {
+
+            T **auxPointer = reinterpret_cast<T**>(that.dataPointer);
+            T **rows = new T*[this->numberOfRows];
+            //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+            dataPointer = reinterpret_cast<void*>(rows);
+
+            for (uint32 i = 0u; i < this->numberOfRows; i++) {
+                //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
+                rows[i] = new T[this->numberOfColumns];
+                for (uint32 c = 0u; c < this->numberOfColumns; c++) {
+                    rows[i][c] = auxPointer[i][c];
+                }
+            }
+        }
+        staticDeclared = false;
+        canDestroy = true;
     }
-    dataPointer = NULL;
-    numberOfColumns = 0u;
-    numberOfRows = 0u;
+    else {
+        this->numberOfColumns = 0u;
+        this->numberOfRows = 0u;
+        this->dataPointer = NULL_PTR(void*);
+        this->staticDeclared = true;
+        this->canDestroy = false;
+    }
+}
+
+template<typename T>
+Matrix<T>::~Matrix() {
+    //lint -e{1551} Function may throw exception '...' in destructor. Justification FreeMemory cannot throw an exception
+    FreeMemory();
+    //lint -e{1579} Pointer member 'MARTe::Matrix<float>::dataPointer' (line 332) might have been freed by a separate function. Justification. FreeMemory frees memory if was internally allocated
 }
 
 template<typename T>
@@ -377,30 +495,86 @@ inline uint32 Matrix<T>::GetNumberOfRows() const {
 }
 
 template<typename T>
-Vector<T> Matrix<T>::operator[](uint32 element) {
+Vector<T> Matrix<T>::operator[](const uint32 element) {
     Vector<T> vec;
-
-    if (!staticDeclared) {
-        T** rows = reinterpret_cast<T**>(dataPointer);
-        vec = Vector<T>(rows[element], numberOfColumns);
-    }
-    else {
-        T* beginMemory = reinterpret_cast<T*>(dataPointer);
-        vec = Vector<T>(&beginMemory[element * numberOfColumns], numberOfColumns);
+    if (element < numberOfRows) {
+        //lint -e{613} Possible use of null pointer 'rows' in left argument to operator. Justification: in the documentation the precondition is dataPointer != NULL.
+        if (!staticDeclared) {
+            //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: needed to copy from void* to T**
+            T **rows = reinterpret_cast<T**>(dataPointer);
+            vec = Vector<T>(rows[element], numberOfColumns);
+        }
+        else {
+            //lint -e{613} Possible use of null pointer 'rows' in left argument to operator. Justification: in the documentation the precondition is dataPointer != NULL.
+            //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: needed to copy from void* to T*
+            T *beginMemory = reinterpret_cast<T*>(dataPointer);
+            uint32 index = element * numberOfColumns;
+            vec = Vector<T>(&beginMemory[index], numberOfColumns);
+        }
     }
     return vec;
 }
+template<typename T>
+Matrix<T>& Matrix<T>::operator =(const Matrix<T> &that) {
+    if (this != &that) {
+        this->FreeMemory();
+        if ((that.dataPointer != NULL_PTR(void*)) && (that.numberOfColumns > 0u) && (that.numberOfRows > 0u)) {
+            this->numberOfColumns = that.numberOfColumns;
+            this->numberOfRows = that.numberOfRows;
+            //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Cast from pointer to pointer needed.
+            if (that.IsStaticDeclared()) {
+                T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
+                T **rows = new T*[this->numberOfRows];
+                //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+                dataPointer = reinterpret_cast<void*>(rows);
+                for (uint32 i = 0u; i < this->numberOfRows; i++) {
+                    //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
+                    rows[i] = new T[this->numberOfColumns];
+                    for (uint32 c = 0u; c < this->numberOfColumns; c++) {
+                        uint32 auxIdx = (i * numberOfColumns) + c;
+                        rows[i][c] = auxPointer[auxIdx];
+                    }
+                }
+            }
+            else {
+                T **auxPointer = reinterpret_cast<T**>(that.dataPointer);
+                T **rows = new T*[this->numberOfRows];
+                //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+                dataPointer = reinterpret_cast<void*>(rows);
+
+                for (uint32 i = 0u; i < this->numberOfRows; i++) {
+                    //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
+                    rows[i] = new T[this->numberOfColumns];
+                    for (uint32 c = 0u; c < this->numberOfColumns; c++) {
+                        rows[i][c] = auxPointer[i][c];
+                    }
+                }
+            }
+            staticDeclared = false;
+            canDestroy = true;
+        }
+        else {
+            this->numberOfColumns = 0u;
+            this->numberOfRows = 0u;
+            this->dataPointer = NULL_PTR(void*);
+            this->staticDeclared = true;
+            this->canDestroy = false;
+        }
+    }
+    return *this;
+}
 
 template<typename T>
-T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
-    T* result;
+T& Matrix<T>::operator()(const uint32 row,
+                         const uint32 col) {
+    T *result;
     if (!staticDeclared) {
-        T** mat = reinterpret_cast<T**>(dataPointer);
+        T **mat = reinterpret_cast<T**>(dataPointer);
         result = &mat[row][col];
     }
     else {
-        T* mat = reinterpret_cast<T*>(dataPointer);
-        T* line = &mat[row * numberOfColumns];
+        T *mat = reinterpret_cast<T*>(dataPointer);
+        T *line = &mat[row * numberOfColumns];
         result = &line[col];
     }
     return (*result);
@@ -417,7 +591,8 @@ inline bool Matrix<T>::IsStaticDeclared() const {
 }
 
 template<typename T>
-bool Matrix<T>::Product(Matrix<T> &factor, Matrix<T> &result) const {
+bool Matrix<T>::Product(Matrix<T> &factor,
+                        Matrix<T> &result) const {
     bool cond1 = (factor.numberOfRows == numberOfColumns);
     bool cond2 = (result.numberOfRows == numberOfRows);
     bool cond3 = (result.numberOfColumns == factor.numberOfColumns);
@@ -443,7 +618,8 @@ bool Matrix<T>::Product(Matrix<T> &factor, Matrix<T> &result) const {
 }
 
 template<typename T>
-bool Matrix<T>::Sum(Matrix<T> & addend, Matrix<T> &result) const {
+bool Matrix<T>::Sum(Matrix<T> &addend,
+                    Matrix<T> &result) const {
     bool cond1 = (addend.numberOfRows == numberOfRows) && (result.numberOfRows == numberOfRows);
     bool cond2 = (addend.numberOfColumns == numberOfColumns) && (result.numberOfColumns == numberOfColumns);
     bool ret = (cond1 && cond2);
@@ -470,16 +646,20 @@ bool Matrix<T>::Copy(Matrix<T> &matrixToCopy) {
     bool cond2 = (matrixToCopy.numberOfColumns == numberOfColumns);
     bool ret = cond1 && cond2;
     if (ret) {
-        Matrix<T> temp;
         if (staticDeclared) {
-            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
+            T *temp = reinterpret_cast<T*>(dataPointer);
+            for (uint32 i = 0u; i < numberOfRows; i++) {
+                for (uint32 j = 0u; j < numberOfColumns; j++) {
+                    temp[i * numberOfColumns + j] = matrixToCopy[i][j];
+                }
+            }
         }
         else {
-            temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
-        }
-        for (uint32 i = 0u; i < numberOfRows; i++) {
-            for (uint32 j = 0u; j < numberOfColumns; j++) {
-                temp[i][j] = matrixToCopy[i][j];
+            T **temp = reinterpret_cast<T**>(dataPointer);
+            for (uint32 i = 0u; i < numberOfRows; i++) {
+                for (uint32 j = 0u; j < numberOfColumns; j++) {
+                    temp[i][j] = matrixToCopy[i][j];
+                }
             }
         }
     }
@@ -487,7 +667,11 @@ bool Matrix<T>::Copy(Matrix<T> &matrixToCopy) {
 }
 
 template<typename T>
-bool Matrix<T>::SubMatrix(const uint32 beginRow, const uint32 endRow, const uint32 beginColumn, const uint32 endColumn, Matrix<T> &subMatrix) const {
+bool Matrix<T>::SubMatrix(const uint32 beginRow,
+                          const uint32 endRow,
+                          const uint32 beginColumn,
+                          const uint32 endColumn,
+                          Matrix<T> &subMatrix) const {
     bool cond1 = (endRow >= beginRow);
     bool cond2 = (endColumn >= beginColumn);
     bool cond3 = (endRow < numberOfRows);
@@ -559,36 +743,41 @@ bool Matrix<float32>::Determinant(float32 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
 
     if (ret) {
-        Matrix<float32> temp;
+        Matrix < float32 > temp;
+        //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: The constructor shall be invoked with he float32 * or float32** to satisfy the programmer expectation
         if (staticDeclared) {
-            temp = Matrix<float32>(static_cast<float32*>(dataPointer), numberOfRows, numberOfColumns);
+            temp = Matrix < float32 > (static_cast<float32*>(dataPointer), numberOfRows, numberOfColumns);
         }
         else {
-            temp = Matrix<float32>(static_cast<float32**>(dataPointer), numberOfRows, numberOfColumns);
+            temp = Matrix < float32 > (static_cast<float32**>(dataPointer), numberOfRows, numberOfColumns);
         }
         if (numberOfRows == 1u) {
-            det = temp[0][0];
+            //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
+            det = temp[0u][0u];
         }
         else {
-            det = 0.0f;
+            det = 0.0F;
             // loop on the first row
             for (uint32 k = 0u; k < numberOfColumns; k++) {
-                Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+                Matrix < float32 > subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
                 uint32 n = 0u;
                 for (uint32 i = 1u; i < numberOfRows; i++) {
                     uint32 m = 0u;
                     for (uint32 j = 0u; j < numberOfColumns; j++) {
                         if (j != k) {
+                            //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
                             subMatrix[n][m] = temp[i][j];
                             m++;
                         }
                     }
                     n++;
                 }
-                float32 subDet = 0.0f;
+                float32 subDet = 0.0F;
+                //lint -e{534} Ignoring return value of function 'MARTe::Matrix<float>::Determinant(float &) const' (compare with line 297) [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: the return value depends on the preconditions. The precondition is already check at the beginingof the function (ret = (numberOfRows == numberOfColumns)). Therefore the return always is true.
                 subMatrix.Determinant(subDet);
-                float32 sign = (((k) & (1u)) == 0u) ? (1.0f) : (-1.0f);
-                det += (sign * temp[0][k]) * subDet;
+                float32 sign = (((k) & (1u)) == 0u) ? (1.0F) : (-1.0F);
+                //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
+                det += (sign * temp[0u][k]) * subDet;
             }
         }
     }
@@ -606,26 +795,29 @@ bool Matrix<float64>::Determinant(float64 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
 
     if (ret) {
-        Matrix<float64> temp;
+        Matrix < float64 > temp;
+        //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: The constructor shall be invoked with he float32 * or float32** to satisfy the programmer expectation
         if (staticDeclared) {
-            temp = Matrix<float64>(static_cast<float64*>(dataPointer), numberOfRows, numberOfColumns);
+            temp = Matrix < float64 > (static_cast<float64*>(dataPointer), numberOfRows, numberOfColumns);
         }
         else {
-            temp = Matrix<float64>(static_cast<float64**>(dataPointer), numberOfRows, numberOfColumns);
+            temp = Matrix < float64 > (static_cast<float64**>(dataPointer), numberOfRows, numberOfColumns);
         }
         if (numberOfRows == 1u) {
-            det = temp[0][0];
+            //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
+            det = temp[0u][0u];
         }
         else {
             det = 0.0;
             // loop on the first row
             for (uint32 k = 0u; k < numberOfColumns; k++) {
-                Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+                Matrix < float64 > subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
                 uint32 n = 0u;
                 for (uint32 i = 1u; i < numberOfRows; i++) {
                     uint32 m = 0u;
                     for (uint32 j = 0u; j < numberOfColumns; j++) {
                         if (j != k) {
+                            //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
                             subMatrix[n][m] = temp[i][j];
                             m++;
                         }
@@ -633,9 +825,11 @@ bool Matrix<float64>::Determinant(float64 &det) const {
                     n++;
                 }
                 float64 subDet = 0.0;
+                //lint -e{534} Ignoring return value of function 'MARTe::Matrix<float>::Determinant(float &) const' (compare with line 297) [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: the return value depends on the preconditions. The precondition is already check at the beginingof the function (ret = (numberOfRows == numberOfColumns)). Therefore the return always is true.
                 subMatrix.Determinant(subDet);
                 float64 sign = (((k) & (1u)) == 0u) ? (1.0) : (-1.0);
-                det += (sign * temp[0][k]) * subDet;
+                //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
+                det += (sign * temp[0u][k]) * subDet;
             }
         }
     }
@@ -652,30 +846,33 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
     bool cond1 = (numberOfColumns == numberOfRows);
     bool cond2 = (inverse.numberOfRows == numberOfRows);
     bool cond3 = (inverse.numberOfColumns == numberOfColumns);
-    float32 determinant = 0.0f;
+    float32 determinant = 0.0F;
 
     bool cond4 = Determinant(determinant);
-    bool cond5 = (determinant != 0.0f);
+    //lint -e{9137} floating point test for equality or inequality [MISRA C++ Rule 6-2-2]. Justification: the operation can be performed if determinant is exactly different from 0.0.
+    bool cond5 = (determinant != 0.0F);
     bool ret = ((cond1) && (cond2) && (cond3) && (cond4) && (cond5));
 
     if (ret) {
-        Matrix<float32> temp;
+        Matrix < float32 > temp;
+        //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: The constructor shall be invoked with he float32 * or float32** to satisfy the programmer expectation
         if (staticDeclared) {
-            temp = Matrix<float32>(static_cast<float32*>(dataPointer), numberOfRows, numberOfColumns);
+            temp = Matrix < float32 > (static_cast<float32*>(dataPointer), numberOfRows, numberOfColumns);
         }
         else {
-            temp = Matrix<float32>(static_cast<float32**>(dataPointer), numberOfRows, numberOfColumns);
+            temp = Matrix < float32 > (static_cast<float32**>(dataPointer), numberOfRows, numberOfColumns);
         }
-        Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+        Matrix < float32 > subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < numberOfColumns; j++) {
-                Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+                //Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
                 uint32 n = 0u;
                 for (uint32 h = 0u; h < numberOfRows; h++) {
                     uint32 m = 0u;
                     if (h != i) {
                         for (uint32 k = 0u; k < numberOfColumns; k++) {
                             if (k != j) {
+                                //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
                                 subMatrix[n][m] = temp[h][k];
                                 m++;
                             }
@@ -683,9 +880,11 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
                         n++;
                     }
                 }
-                float32 subDet = 0.0f;
+                float32 subDet = 0.0F;
+                //lint -e{534} Ignoring return value of function 'MARTe::Matrix<float>::Determinant(float &) const' (compare with line 297) [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: the return value depends on the preconditions. The preconditions are check above(numberOfColumns == numberOfRows), therefore always return true;
                 subMatrix.Determinant(subDet);
-                float32 sign = (((i + j) & (1u)) == 0u) ? (1.0) : (-1.0);
+                float32 sign = (((i + j) & (1u)) == 0u) ? (1.0F) : (-1.0F);
+                //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
                 inverse[j][i] = (subDet * sign) / determinant;
             }
         }
@@ -707,27 +906,30 @@ bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
     float64 determinant = 0.0;
 
     bool cond4 = Determinant(determinant);
+    //lint -e{9137} floating point test for equality or inequality [MISRA C++ Rule 6-2-2]. Justification: the operation can be performed if determinant is exactly different from 0.0.
     bool cond5 = (determinant != 0.0);
     bool ret = ((cond1) && (cond2) && (cond3) && (cond4) && (cond5));
 
     if (ret) {
-        Matrix<float64> temp;
+        Matrix < float64 > temp;
+        //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: The constructor shall be invoked with he float64 * or float64** to satisfy the programmer expectation
         if (staticDeclared) {
-            temp = Matrix<float64>(static_cast<float64*>(dataPointer), numberOfRows, numberOfColumns);
+            temp = Matrix < float64 > (static_cast<float64*>(dataPointer), numberOfRows, numberOfColumns);
         }
         else {
-            temp = Matrix<float64>(static_cast<float64**>(dataPointer), numberOfRows, numberOfColumns);
+            temp = Matrix < float64 > (static_cast<float64**>(dataPointer), numberOfRows, numberOfColumns);
         }
-        Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+        Matrix < float64 > subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < numberOfColumns; j++) {
-                Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+                //Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
                 uint32 n = 0u;
                 for (uint32 h = 0u; h < numberOfRows; h++) {
                     uint32 m = 0u;
                     if (h != i) {
                         for (uint32 k = 0u; k < numberOfColumns; k++) {
                             if (k != j) {
+                                //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
                                 subMatrix[n][m] = temp[h][k];
                                 m++;
                             }
@@ -736,13 +938,36 @@ bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
                     }
                 }
                 float64 subDet = 0.0;
+                //lint -e{534} Ignoring return value of function 'MARTe::Matrix<float>::Determinant(float &) const' (compare with line 297) [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: the return value depends on the preconditions. The precondition is already check at the beginning of the function (ret = (numberOfRows == numberOfColumns)). Therefore the return always is true.
                 subMatrix.Determinant(subDet);
                 float64 sign = (((i + j) & (1u)) == 0u) ? (1.0) : (-1.0);
+                //lint -e{1793} While calling 'MARTe::Vector<float>::operator[](unsigned int)': Initializing the implicit object parameter 'MARTe::Vector<float> &' (a non-const reference) with a non-lvalue (a temporary object of type 'MARTe::Vector<float>')
                 inverse[j][i] = (subDet * sign) / determinant;
             }
         }
     }
     return ret;
+}
+
+template<typename T>
+void Matrix<T>::FreeMemory() {
+    if (canDestroy) {
+        //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: needed to copy from void* to T**
+        T **pointerToDestroy = reinterpret_cast<T**>(dataPointer);
+        if (pointerToDestroy != NULL_PTR(T**)) {
+            for (uint32 i = 0u; i < numberOfRows; i++) {
+                if (pointerToDestroy[i] != NULL_PTR(T*)) {
+                    delete[] pointerToDestroy[i];
+                    pointerToDestroy[i] = NULL_PTR(T*);
+                }
+            }
+            delete[] pointerToDestroy;
+        }
+    }
+    dataPointer = NULL_PTR(void*);
+    numberOfColumns = 0u;
+    numberOfRows = 0u;
+    canDestroy = false;
 }
 
 }

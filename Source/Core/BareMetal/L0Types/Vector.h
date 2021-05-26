@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManager.h"
+#include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -61,6 +62,17 @@ public:
     Vector();
 
     /**
+     * @brief Copy constructor
+     * @details Creates a copy of that. The copy mechanism depends on that.canDestroy, as follow:
+     * <ul>
+     * <li>If that.canDestroy = true, the copied vector allocates its own memory, copies the values from that and sets this.canDestroy = true</li>
+     * <li>if that.canDestroy = false, this.canDestroy = false and this.GetDataPointer() = that.GetDataPointer()</li>
+     * </ul>
+     * @param[in] that is the object to copy
+     */
+    Vector(const Vector<T> &that);
+
+    /**
      * @brief Constructs a new vector with a given size
      * @param[in] nOfElements The number of elements of the vector
      * @post
@@ -87,6 +99,7 @@ public:
      * @brief Frees any existing memory and allocate enough to store nOfElements
      * if nOfElements is zero, memory is freed and pointer set to NULL
      * @param[in] nOfElements The number of elements of the vector
+     * @pre existingArray != NULL_PTR(T*)
      * @post
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() == new allocated array
@@ -116,14 +129,30 @@ public:
      * @brief Returns the element at position \a idx.
      * @param[in] idx The index of the element to retrieve.
      * @return the element at position \a idx.
+     * @pre dataPointer != NULL_PTR(T*)
+     * @warning before calling this operator the Vector dataPointer shall be initialised.
      */
-    T &operator [](uint32 idx);
+    T& operator [](const uint32 idx);
+
+    /**
+     * @brief Makes a copy of the Vector
+     * @details Creates a copy of the Vector that. First, it frees the current vector memory(if needed) and then copies the vector based on that.canDestroy:
+     * <ul>
+     * <li>If that.canDestroy = true, the copied vector allocates its own memory, copy the values from that and sets this.canDestroy = true</li>
+     * <li>if that.canDestroy = false, this.canDestroy = false and this.GetDataPointer() = that.GetDataPointer()</li>
+     * </ul>
+     * @param[in] that is the Vector to copy
+     * @return the copied Vector
+     *
+     * @warning if the vector to copy from has a NULL pointer or numberOfElements = 0, the old information of the destination vector is destroyed (if it was internally allocated) but the dataPointer is not initialised.
+     */
+    Vector<T>& operator =(const Vector<T> &that);
 
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
-    inline void * GetDataPointer() const;
+    inline T* GetDataPointer() const;
 
     /**
      * @brief Checks if GetDataPointer() is pointing at a statically allocated array memory block [].
@@ -161,7 +190,7 @@ private:
     /**
      * The data pointer to the raw data.
      */
-    void *dataPointer;
+    T *dataPointer;
 
     /**
      * The number of elements.
@@ -180,12 +209,39 @@ private:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+//lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
 template<typename T>
 Vector<T>::Vector() {
     numberOfElements = 0u;
-    dataPointer = NULL_PTR(T *);
+    dataPointer = NULL_PTR(T*);
     canDestroy = false;
+}
+
+//lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
+template<typename T>
+Vector<T>::Vector(const Vector<T> &that) {
+    this->numberOfElements = that.GetNumberOfElements();
+    if ((this->GetNumberOfElements() > 0u) && (that.dataPointer != NULL_PTR(T*))) {
+        if (that.canDestroy) {
+            this->dataPointer = new T[that.numberOfElements];
+            this->canDestroy = true;
+            T *arrayD = this->dataPointer;
+            T *arrayO = that.dataPointer;
+            for (uint32 i = 0u; i < this->numberOfElements; i++) {
+                arrayD[i] = arrayO[i];
+            }
+        }
+        else {
+            this->canDestroy = false;
+            //lint -e{1554} Direct pointer copy of member 'MARTe::Vector<double>::dataPointer' within copy constructor: 'MARTe::Vector<double>::Vector(const MARTe::Vector<double> &). Justification: when canDestroy false the memory is managed externally and only the pointer is copied.
+            this->dataPointer = that.GetDataPointer();
+        }
+    }
+    else {
+        this->dataPointer = NULL_PTR(T*);
+        this->canDestroy = false;
+        this->numberOfElements = 0u;
+    }
 }
 
 template<typename T>
@@ -194,10 +250,10 @@ Vector<T>::Vector(uint32 nOfElements) {
     numberOfElements = nOfElements;
     canDestroy = true;
 }
-
+//lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
 template<typename T>
-Vector<T>::Vector(T *existingArray,
-                  uint32 nOfElements) {
+Vector<T>::Vector(T *const existingArray,
+                  const uint32 nOfElements) {
     dataPointer = existingArray;
     numberOfElements = nOfElements;
     canDestroy = false;
@@ -206,10 +262,11 @@ Vector<T>::Vector(T *existingArray,
 template<typename T>
 void Vector<T>::SetSize(uint32 nOfElements) {
     FreeMemory();
-    if (nOfElements > 0){
+    if (nOfElements > 0) {
         dataPointer = new T[nOfElements];
         canDestroy = true;
-    } else if (nOfElements == 0){
+    }
+    else if (nOfElements == 0) {
         dataPointer = NULL_PTR(T*);
         canDestroy = false;
     }
@@ -219,25 +276,59 @@ void Vector<T>::SetSize(uint32 nOfElements) {
 template<typename T>
 template<uint32 nOfElementsStatic>
 Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
-    dataPointer = reinterpret_cast<T *>(&source[0]);
+    dataPointer = &source[0];
     numberOfElements = nOfElementsStatic;
     canDestroy = false;
 }
-
+//lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
 template<typename T>
 Vector<T>::~Vector() {
+    //lint -e{1551} Function may throw exception '...' in destructor. Justification: the FreeMemory cannot throw an exception
     FreeMemory();
+    //lint -e{1579} Pointer member 'MARTe::Vector<float>::dataPointer' (line 194) might have been freed by a separate function. Justification: FreeMemory() frees memory if needed
 }
 
+//lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
 template<typename T>
-T &Vector<T>::operator [](uint32 idx) {
-    T* array = reinterpret_cast<T*>(dataPointer);
+T& Vector<T>::operator [](const uint32 idx) {
+    T *array = dataPointer;
     return array[idx];
 }
+//lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
+template<typename T>
+Vector<T>& Vector<T>::operator =(const Vector<T> &that) {
+    if (this != &that) {
+        this->FreeMemory();
+        this->numberOfElements = that.GetNumberOfElements();
+        if ((this->GetNumberOfElements() > 0u) && (that.dataPointer != NULL_PTR(T*))) {
+            if (that.canDestroy) {
+                this->dataPointer = new T[that.numberOfElements];
+                this->canDestroy = true;
+                //lint -e{295} Note 925: cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9].Justification to pointer cast needed.
+                T *arrayD = this->dataPointer;
+                T *arrayO = that.dataPointer;
+                for (uint32 i = 0u; i < this->numberOfElements; i++) {
+                    arrayD[i] = arrayO[i];
+                }
+            }
+            else {
+                this->canDestroy = false;
+                this->dataPointer = that.GetDataPointer();
+            }
+        }
+        else {
+            this->dataPointer = NULL_PTR(T*);
+            this->canDestroy = false;
+            this->numberOfElements = 0u;
+        }
+    }
+    return *this;
+}
 
 template<typename T>
-inline void* Vector<T>::GetDataPointer() const {
+inline T* Vector<T>::GetDataPointer() const {
     return dataPointer;
+    //lint -e{1763} Member function 'MARTe::Vector<float>::GetDataPointer(void) const' marked as const indirectly modifies class [MISRA C++ Rule 9-3-1]. Justification: It is allowed to change the class via its pointer.
 }
 
 template<typename T>
@@ -251,20 +342,20 @@ bool Vector<T>::Product(Vector<T> factor,
     bool ret = (factor.numberOfElements == numberOfElements);
     if (ret) {
         result = static_cast<T>(0);
-        T* array = reinterpret_cast<T*>(dataPointer);
+        T *array = dataPointer;
         for (uint32 i = 0u; i < numberOfElements; i++) {
             result += array[i] * factor[i];
         }
     }
     return ret;
 }
-
+//lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
 template<typename T>
-void Vector<T>::FreeMemory(){
+void Vector<T>::FreeMemory() {
     if (canDestroy) {
-        delete[] reinterpret_cast<T*>(dataPointer);
-        dataPointer = NULL;
-        numberOfElements = 0;
+        delete[] dataPointer;
+        dataPointer = NULL_PTR(T*);
+        numberOfElements = 0u;
         canDestroy = false;
     }
 }
