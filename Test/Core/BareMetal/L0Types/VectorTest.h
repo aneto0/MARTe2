@@ -219,7 +219,7 @@ bool VectorTest::TestCopyConstructor() {
         ret = copiedVector.GetNumberOfElements() == originalVector.GetNumberOfElements();
     }
     for (uint32 i = 0u; (i < nOfElements) && ret; i++) {
-        ret = copiedVector[i] == i;
+        ret = copiedVector[i] == static_cast<T>(i);
     }
     return ret;
 }
@@ -238,7 +238,7 @@ bool VectorTest::TestCopyAssignment() {
         ret = copiedVector.GetNumberOfElements() == originalVector.GetNumberOfElements();
     }
     for (uint32 i = 0u; (i < nOfElements) && ret; i++) {
-        ret = copiedVector[i] == i;
+        ret = copiedVector[i] == static_cast<T>(i);
     }
     return ret;
 }
@@ -248,7 +248,7 @@ bool VectorTest::TestVectorPassedToAFunction() {
     uint32 nOfElements = 10u;
     Vector<T> originalVector(nOfElements);
     for (uint32 i = 0u; i < nOfElements; i++) {
-        originalVector[i] = i;
+        originalVector[i] = static_cast<T>(i);
     }
     return AuxiliaryFunctionIn(originalVector);
 }
@@ -260,7 +260,7 @@ bool VectorTest::TestVectorReturnedFromAFunction() {
     vec = AuxiliaryFunctionOut<T>(nOfElements);
     bool ret = true;
     for (uint32 i = 0u; i < nOfElements; i++) {
-        ret = vec[i] == i;
+        ret = vec[i] == static_cast<T>(i);
     }
     return ret;
 }
@@ -269,7 +269,7 @@ template<typename T>
 bool VectorTest::AuxiliaryFunctionIn(Vector<T> vec) {
     bool ret = true;
     for (uint32 i = 0u; (i < vec.GetNumberOfElements()) && ret; i++) {
-        ret = vec[i] == i;
+        ret = vec[i] == static_cast<T>(i);
     }
     return ret;
 }
