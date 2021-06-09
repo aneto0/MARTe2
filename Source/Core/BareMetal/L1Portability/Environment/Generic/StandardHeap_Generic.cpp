@@ -146,7 +146,7 @@ void *StandardHeap::Duplicate(const void * const data,
             const char8* inputData = static_cast<const char8 *>(data);
             /*lint -e{586} the use of strlen is necessary because
              * the size of the array is unknown */
-            size = static_cast<uint32>(strlen(inputData));
+            size = static_cast<uint32>(strlen(inputData) + 1u);
             duplicate = strdup(inputData);
 
             if (duplicate == NULL) {
