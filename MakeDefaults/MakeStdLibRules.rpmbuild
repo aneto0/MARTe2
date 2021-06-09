@@ -27,13 +27,12 @@ precondition:
 	make -f Makefile.$(M2_RPM_COMPILE_TARGET) clean
 	@if [ -e Makefile.cov ]; then make -f Makefile.cov clean; fi
 	mkdir -p $(BUILD_DIR)
-	rm -rf $(BUILD_DIR)/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 	mkdir -p $(BUILD_DIR)/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 
 $(BUILD_DIR)/SOURCES/$(M2_RPM_ID)-$(M2_RPM_VERSION).tar.gz: $(FOLDERS) precondition
 	rm -rf $(M2_RPM_ID)-$(M2_RPM_VERSION)
 	mkdir -p $(M2_RPM_ID)-$(M2_RPM_VERSION)
-	cp -rfa $(FOLDERS) $(M2_RPM_ID)-$(M2_RPM_VERSION)
+	cp -rfa --parents $(FOLDERS) $(M2_RPM_ID)-$(M2_RPM_VERSION)
 	tar -cvzf $@ $(M2_RPM_ID)-$(M2_RPM_VERSION)
 	rm -rf $(M2_RPM_ID)-$(M2_RPM_VERSION)
 	
@@ -41,3 +40,6 @@ $(BUILD_DIR)/$(M2_RPM_ID)-$(M2_RPM_VERSION).rpm : $(BUILD_DIR)/SOURCES/$(M2_RPM_
 	cp ${M2_RPM_SPEC_FILE_PATH}/${M2_RPM_SPEC_FILE} $(BUILD_DIR)/SPECS/$(M2_RPM_SPEC_FILE)
 	rpmbuild  $(M2_RPM_DEFINES) $(M2_RPM_FLAGS) $(BUILD_DIR)/SPECS/$(M2_RPM_SPEC_FILE)
 
+
+clean: $(SUBPROJC) $(SUBPROJTC)
+	rm -rf $(BUILD_DIR)/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS} 
