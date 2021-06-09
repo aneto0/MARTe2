@@ -53,10 +53,6 @@ static void PrintErrorOnStream(const char8 * const format,
     REPORT_ERROR_STATIC(ErrorManagement::FatalError,  format, lineNumber);
 }
 
-static const char8* GetCurrentTokenData(Token * const token) {
-    return (token != NULL)?(token->GetData()):(static_cast<const char8*>(NULL));
-}
-
 static uint32 GetCurrentTokenLineNumber(const Token * const token) {
     return (token != NULL)?(token->GetLineNumber()):0u;
 }
@@ -80,15 +76,10 @@ ParserI::ParserI(StreamI &stream,
     currentToken = static_cast<Token*>(NULL);
     isError = false;
     
-    // create a local copy of the stream (used by PrintErrorLine)
     uint64 pos = stream.Position();
     bool ok = stream.Seek(0ull);
     if (ok) {
-        ok = inputStream.Copy(dynamic_cast<BufferedStreamI&>(stream));
-        ok = ( (stream.Seek(pos)) && (ok) );
-    }
-    if (!ok) {
-        inputStream = "";
+        (void) stream.Seek(pos);
     }
 }
 
@@ -148,45 +139,6 @@ GrammarInfo ParserI::GetGrammarInfo() const {
     return grammar;
 }
 
-void ParserI::PrintErrorLine() {
-    
-    // retrieve the error line
-    uint32 lineNumber = GetCurrentTokenLineNumber(currentToken);
-    char8 line[200];
-    char8* startLinePtr = &line[0];
-    bool ok = inputStream.Seek(0ull);
-    if (ok) {
-        for (uint32 i = 0u; (i < lineNumber) && (ok); i++) {
-            ok = inputStream.GetLine(startLinePtr, 200u);
-        }
-        if (ok) {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", line);
-        }
-    }
-    
-    // create an arrow that points to the error
-    if ((GetCurrentTokenData(currentToken) != NULL) && (ok)) {
-        
-        const char8* errorLinePtr = StringHelper::SearchString(startLinePtr, GetCurrentTokenData(currentToken));
-        
-        /*lint -e{946,947} Justification: Subtraction between pointers is allowed when pointers point to elements of the same array [MISRA C++ Rule 5-0-17]."*/
-        if (errorLinePtr != NULL) {
-            
-            int32 tempLength = errorLinePtr - startLinePtr;   // number of characters between start of line and error token
-            uint32 length = static_cast<uint32>(tempLength);  // conversion is required by MISRA compliance
-
-            char8 arrow[length + 2u];
-            ok = StringHelper::SetChar(&arrow[0], length, ' ');
-            if (ok) {
-                arrow[length] = '^';
-                arrow[length + 1ul] = '\0';
-                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "%s", arrow);
-            }
-        }
-        
-    }
-}
-
 bool ParserI::Parse() {
     
     bool isEOF = false;
@@ -238,7 +190,6 @@ bool ParserI::Parse() {
                         (token == 0u) ? (isEOF = true) : (isError = true);
                         if (isError) {
                             PrintErrorOnStream("Syntax error 1. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
-                            PrintErrorLine();
                         }
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
@@ -247,7 +198,6 @@ bool ParserI::Parse() {
                     (token == 0u) ? (isEOF = true) : (isError = true);
                     if (isError) {
                         PrintErrorOnStream("Syntax error 2. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
-                        PrintErrorLine();
                     }
                     new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                 }
@@ -261,7 +211,6 @@ bool ParserI::Parse() {
                     else {
                         isError = true;
                         PrintErrorOnStream("Syntax error 3. Invalid expression on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
-                        PrintErrorLine();
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
                 }
