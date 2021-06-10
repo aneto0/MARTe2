@@ -57,7 +57,7 @@ fi
 %else
 #Look for all the .ex and install them in the Bin folder
 #do not consider only .ex
-find %{build_dir} -executable -type f | grep -v '\.so' | grep -v '\.a' | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
+find %{build_dir} -executable -type f | grep -v '\.so' | grep -v '\.a' | grep -v 'gtest-' | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
 %endif
 
 mkdir -p %{buildroot}/%{rpm_top_dir}/Lib
