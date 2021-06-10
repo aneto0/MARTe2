@@ -82,7 +82,7 @@ done
 
 #Create the profile.d information
 mkdir -p %{buildroot}/etc/profile.d
-echo 'export %{rpm_name}_DIR=%{rpm_top_dir}/../' > %{buildroot}/etc/profile.d/%{rpm_id}.sh
+echo 'export %{rpm_name}_DIR=%{rpm_top_dir}' > %{buildroot}/etc/profile.d/%{rpm_id}.sh
 echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$%{rpm_name}_DIR/Lib' >> %{buildroot}/etc/profile.d/%{rpm_id}.sh
 echo 'export PATH=$PATH:$%{rpm_name}_DIR/Bin' >> %{buildroot}/etc/profile.d/%{rpm_id}.sh
 cp %{buildroot}/etc/profile.d/%{rpm_id}.sh %{buildroot}/etc/profile.d/%{rpm_id}.csh
