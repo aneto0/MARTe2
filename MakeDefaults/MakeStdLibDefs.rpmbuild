@@ -36,13 +36,16 @@ M2_RPM_SPEC_FILE?=marte2-projects.spec
 #Should be set by the source Makefile
 M2_RPM_VERSION?=0.0
 M2_RPM_SRC_DIR?=Source
+M2_RPM_BIN_LIST?=
+M2_RPM_LIB_LIST?=
+M2_RPM_BUILD_DIR?=$(PWD)/$(BUILD_DIR)/BUILD
 M2_RPM_LICENSE?=EUPL
 #The name of the project (e.g. MARTe2 or MARTe2_Components). Note that a variable name $(M2_RPM_NAME)_DIR will be created based on this name.
 M2_RPM_NAME?=UNKNOWN
 #The name of the rpm file that will be generated
 M2_RPM_ID?=unknown
 #Where the project files will be installed
-M2_RPM_TOP_DIR?=\/opt
+M2_RPM_TOP_DIR?=\/opt\/$(M2_RPM_ID)
 #The RPM architecture
 M2_RPM_ARCH?=x86_64
 #Standard spec file Requires
@@ -70,6 +73,8 @@ M2_RPM_RELEASEVER?=`cat /etc/redhat-release | tr -dc '0-9' | cut -c 1`
 
 M2_RPM_DEFINES=--define "rpm_id $(M2_RPM_ID)"
 M2_RPM_DEFINES+=--define "rpm_src_dir $(M2_RPM_SRC_DIR)"
+M2_RPM_DEFINES+=--define "rpm_bin_list $(M2_RPM_BIN_LIST)"
+M2_RPM_DEFINES+=--define "rpm_lib_list $(M2_RPM_LIB_LIST)"
 M2_RPM_DEFINES+=--define "rpm_version $(M2_RPM_VERSION)"
 M2_RPM_DEFINES+=--define "rpm_name $(M2_RPM_NAME)"
 M2_RPM_DEFINES+=--define "rpm_license $(M2_RPM_LICENSE)"
@@ -87,5 +92,6 @@ M2_RPM_DEFINES+=--define "rpm_project_post $(M2_RPM_PROJECT_POST)"
 M2_RPM_DEFINES+=--define "rpm_custom_dist $(M2_RPM_CUSTOM_DIST)"
 M2_RPM_DEFINES+=--define "rpm_other_folders $(M2_RPM_OTHER_FOLDERS)"
 M2_RPM_DEFINES+=--define "rpm_releasever $(M2_RPM_RELEASEVER)"
+M2_RPM_DEFINES+=--define "build_dir $(M2_RPM_BUILD_DIR)"
 M2_RPM_DEFINES+=--define "_topdir $(PWD)/$(BUILD_DIR)"
 
