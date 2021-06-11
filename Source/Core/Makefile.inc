@@ -52,7 +52,8 @@ INCLUDES += -IScheduler/L4StateMachine
 INCLUDES += -IScheduler/L5GAMs
 
 all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTe2$(DLLEXT)
+		$(BUILD_DIR)/MARTe2$(DLLEXT) \
+		$(BUILD_DIR)/MARTe2$(LIBEXT)
 	echo  $(OBJS)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

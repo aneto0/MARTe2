@@ -26,6 +26,6 @@
 
 include Makefile.inc
 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT)
+LIBRARIES_STATIC += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT)
+LIBRARIES_STATIC += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT)
+LIBRARIES_STATIC += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT)
