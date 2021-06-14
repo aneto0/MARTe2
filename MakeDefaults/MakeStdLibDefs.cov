@@ -52,6 +52,8 @@ SUBPROJCG += $(SPB2:%.x=%.spcg)
 SUBPROJT = $(SPBT:%.x=%.spb)
 SUBPROJTC = $(SPBT:%.x=%.spc)
 
+MARTe2_TEST_ENVIRONMENT?=GTest
+
 COMPILER = g++
 CCOMPILER = gcc
 MAKE     = make
@@ -62,7 +64,7 @@ OPTIM =
 LFLAGS = -Wl,--no-as-needed --coverage
 CFLAGS = -fPIC -Wall -fprofile-arcs -ftest-coverage 
 CPPFLAGS = -fPIC -frtti -fprofile-arcs -ftest-coverage 
-CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
+CFLAGSPEC= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl -lgcov
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

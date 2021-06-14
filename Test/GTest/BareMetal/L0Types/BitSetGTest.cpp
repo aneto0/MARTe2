@@ -24,7 +24,6 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -34,7 +33,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "BitSetTest.h"
 
 #define TESTSET_NAME BareMetal_L0Types_BitSetGTest

@@ -27,7 +27,7 @@
 #If SPB is directly exported as an environment variable it will also be evaluated as part of the subprojects SPB, thus potentially overriding its value.
 #Main target and test subprojects.
 SPBM?=Source/Core.x Source/App.x
-SPBMT?=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x Docs/User/source/_static/examples/Core.x
+SPBMT?=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test.x Docs/User/source/_static/examples/Core.x
 #This really has to be defined locally.
 SUBPROJMAIN=$(SPBM:%.x=%.spb)
 SUBPROJMAINTEST=$(SPBMT:%.x=%.spb)

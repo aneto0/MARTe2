@@ -29,14 +29,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "JsonPrinterTest.h"
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintOpenMatrix) {
     JsonPrinterTest streamtest;

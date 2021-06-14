@@ -26,4 +26,3 @@
 TARGET=msc
 
 include Makefile.inc
-INCLUDES += -I../../../../Lib/gtest-1.7.0/include

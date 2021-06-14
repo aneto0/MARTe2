@@ -30,7 +30,14 @@ ROOT_DIR=../..
 MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
+
+ifeq ($(MARTe2_TEST_ENVIRONMENT), GTest)
 INCLUDES += -I$(ROOT_DIR)/Lib/gtest-1.7.0/include
+OBJSX += MARTe2UTest.x
+LIBRARIES += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
+else
+LIBRARIES += ../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTest$(OBJEXT)
+endif
 
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
@@ -40,6 +47,7 @@ INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L4Configuration
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L5GAMs
 INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Test/
 
 all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/MainGTest$(EXEEXT)

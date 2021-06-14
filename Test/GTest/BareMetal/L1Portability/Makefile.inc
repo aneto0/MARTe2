@@ -60,7 +60,6 @@ MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
-
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
 INCLUDES += -I../../../Core/BareMetal/L1Portability

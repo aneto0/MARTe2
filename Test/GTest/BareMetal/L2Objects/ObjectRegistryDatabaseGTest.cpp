@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ObjectRegistryDatabaseTest.h"
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

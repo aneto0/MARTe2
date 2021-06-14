@@ -30,14 +30,13 @@
 /*---------------------------------------------------------------------------*/
 
 
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "XMLPrinterTest.h"
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintOpenMatrix) {
     XMLPrinterTest streamtest;

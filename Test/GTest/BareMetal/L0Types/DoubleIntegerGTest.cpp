@@ -3,8 +3,7 @@
  *
  *  Created on: Mar 5, 2015
  */
-#include <limits.h>
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "DoubleIntegerTest.h"
 
 
