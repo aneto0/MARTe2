@@ -37,10 +37,9 @@ ROOT_DIR=../../../..
 MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
+include $(ROOT_DIR)/Test/$(MARTe2_TEST_ENVIRONMENT)/Makefile.utest
 
-
-
-INCLUDES += -I../../../
+INCLUDES += -I../../..
 INCLUDES += -I../../../Core/BareMetal/L0Types
 INCLUDES += -I../../../Core/BareMetal/L1Portability
 INCLUDES += -I../../../Core/BareMetal/L2Objects

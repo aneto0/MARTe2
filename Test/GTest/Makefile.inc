@@ -37,6 +37,7 @@ OBJSX += MARTe2UTest.x
 LIBRARIES += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
 else
 LIBRARIES += ../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTest$(OBJEXT)
+LIBRARIES += ../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTestImpl$(OBJEXT)
 endif
 
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types

@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "MARTe2UTest.h"
+#include "MARTe2UTestMacros.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,18 +42,21 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-bool UnitTest::PrepareTestEnvironment(int argc, char **argv) {
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "Preparing test environment");
-    return true;
-}
 
-bool UnitTest::Run() {
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "Running tests");
-    return true;
-}
+    bool UnitTest::PrepareTestEnvironment(int argc, char **argv) {
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Preparing test environment");
+        return true;
+    }
 
-void UnitTest::CleanTestEnvironment() {
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "Cleaning test environment");
-}
+    bool UnitTest::Run() {
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Running tests");
+        TestFramework::Instance().Run();
+        return true;
+    }
+
+    void UnitTest::CleanTestEnvironment() {
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Cleaning test environment");
+        TestFramework::Instance().Clean();
+    }
 
 }
