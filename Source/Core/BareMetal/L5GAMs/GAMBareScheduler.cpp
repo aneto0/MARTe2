@@ -60,7 +60,12 @@ bool GAMBareScheduler::ConfigureScheduler(Reference realTimeAppIn) {
 }
 
 ErrorManagement::ErrorType GAMBareScheduler::StartNextStateExecution() {
-    while(1) { Cycle(0); }
+    isAlive = true;
+    
+    while(isAlive) { 
+        Cycle(0); 
+    }
+    
     return ErrorManagement::NoError;
 }
 
@@ -68,6 +73,7 @@ void GAMBareScheduler::CustomPrepareNextState() {
 }
 
 ErrorManagement::ErrorType GAMBareScheduler::StopCurrentStateExecution() {
+    isAlive = false;
     return ErrorManagement::NoError;
 }
 

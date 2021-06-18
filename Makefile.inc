@@ -53,7 +53,7 @@ endif
 test: $(SUBPROJMAINTEST)
 	echo  $(SUBPROJMAINTEST)
 
-clean: $(SUBPROJMAINCLEAN) $(SUBPROJMAINTESTCLEAN) clean_wipe_old
+clean:: $(SUBPROJMAINCLEAN) $(SUBPROJMAINTESTCLEAN) clean_wipe_old
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

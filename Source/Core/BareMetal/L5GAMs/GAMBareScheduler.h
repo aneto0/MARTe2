@@ -45,66 +45,71 @@
 
 namespace MARTe {
 
-class GAMBareScheduler: public GAMSchedulerI {
-public:
-    CLASS_REGISTER_DECLARATION()
+    class GAMBareScheduler: public GAMSchedulerI {
 
-    /**
-     * @brief Construct a new GAMBareScheduler object
-     */
-    GAMBareScheduler();
+        public:
+            CLASS_REGISTER_DECLARATION()
 
-    /**
-     * @brief Destroy the GAMBareScheduler object
-     */
-    virtual ~GAMBareScheduler();
+            /**
+             * @brief Construct a new GAMBareScheduler object
+             */
+            GAMBareScheduler();
 
-    /**
-     * @brief Starts the single thread execution for the current state
-     * 
-     * @return ErrorManagement::NoError if the base Scheduler succeeds
-     */
-    virtual ErrorManagement::ErrorType StartNextStateExecution();
+            /**
+             * @brief Destroy the GAMBareScheduler object
+             */
+            virtual ~GAMBareScheduler();
 
-    /**
-     * @brief Does nothing
-     * 
-     * @return ErrorManagement::NoError always 
-     */
-    virtual ErrorManagement::ErrorType StopCurrentStateExecution();
+            /**
+             * @brief Starts the single thread execution for the current state
+             * @return ErrorManagement::NoError if the base Scheduler succeeds
+             */
+            virtual ErrorManagement::ErrorType StartNextStateExecution();
 
-    /**
-     * @brief Calls the parent class to generate the schedulable table and assigns
-     *          the Realtime Application reference
-     * @param realTimeAppIn The RealTime Application using the scheduler
-     * @return true If the table can be successfully constructed and the RealTimeApplication reference is valid
-     */
-    virtual bool ConfigureScheduler(Reference realTimeAppIn);
-    
-    /**
-     * @brief Does nothing, should contain custom routines to prepare the specific scheduler
-     *        to the next state execution
-     */
-    virtual void CustomPrepareNextState();
+            /**
+             * @brief Changes the flag which keeps the cycle execution running
+             * @return ErrorManagement::NoError always 
+             */
+            virtual ErrorManagement::ErrorType StopCurrentStateExecution();
 
-    /**
-     * @brief Executes a single cycle of the RealTimeApplication executables for the specified thread identifier
-     * @param threadId Identifier of the thread 
-     */
-    void Cycle(uint32 threadId);
+            /**
+             * @brief Calls the parent class to generate the schedulable table and assigns
+             *          the Realtime Application reference
+             * @param realTimeAppIn The RealTime Application using the scheduler
+             * @return true If the table can be successfully constructed and the RealTimeApplication reference is valid
+             */
+            virtual bool ConfigureScheduler(Reference realTimeAppIn);
+            
+            /**
+             * @brief Does nothing, should contain custom routines to prepare the specific scheduler
+             *        to the next state execution
+             */
+            virtual void CustomPrepareNextState();
 
 
-private:
-    /**
-     * @brief Reference to the RealTimeApplication
-     */
-    ReferenceT<RealTimeApplication> realTimeApplication;
+        private:
 
-    /**
-     * @brief Pointer to the scheduled states
-     */
-    ScheduledState * const * scheduledStates;
-};
+            /**
+             * @brief Flag used internally to control the continuation of the execution
+             */
+            bool isAlive;
+
+            /**
+             * @brief Reference to the RealTimeApplication
+             */
+            ReferenceT<RealTimeApplication> realTimeApplication;
+
+            /**
+             * @brief Pointer to the scheduled states
+             */
+            ScheduledState * const * scheduledStates;
+
+            /**
+             * @brief Executes a single cycle of the RealTimeApplication executables for the specified thread identifier
+             * @param threadId Identifier of the thread 
+             */
+            void Cycle(uint32 threadId);
+    };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
