@@ -1,8 +1,8 @@
 /**
  * @file GAMBareScheduler.cpp
  * @brief Source file for class GAMBareScheduler
- * @date 6 Aug 2016
- * @author andre
+ * @date 01/06/2021
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,8 +40,13 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 GAMBareScheduler::GAMBareScheduler() {
     scheduledStates = NULL;
+}
+
+GAMBareScheduler::~GAMBareScheduler() {
+
 }
 
 bool GAMBareScheduler::ConfigureScheduler(Reference realTimeAppIn) {
@@ -59,8 +64,7 @@ ErrorManagement::ErrorType GAMBareScheduler::StartNextStateExecution() {
     return ErrorManagement::NoError;
 }
 
-void GAMBareScheduler::CustomPrepareNextState() {
-    
+void GAMBareScheduler::CustomPrepareNextState() {   
 }
 
 ErrorManagement::ErrorType GAMBareScheduler::StopCurrentStateExecution() {
