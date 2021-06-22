@@ -46,6 +46,7 @@ INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L2Objects
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L3Streams
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L4Configuration
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L5GAMs
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L6App
 INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Test/

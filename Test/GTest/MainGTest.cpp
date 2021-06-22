@@ -30,9 +30,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "Bootstrap.h"
+#include "ConfigurationDatabase.h"
 #include "ErrorManagement.h"
 #include "MARTe2UTest.h"
 #include "Object.h"
+#include "StreamI.h"
 #include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
@@ -50,12 +54,33 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 int main(int argc, char **argv) {
+    using namespace MARTe;
     SetErrorProcessFunction(&MainGTestErrorProcessFunction);
-    bool ok = MARTe::UnitTest::PrepareTestEnvironment(argc, argv);
-    if (ok) {
-        ok = MARTe::UnitTest::Run();
+    //bool ok = MARTe::UnitTest::PrepareTestEnvironment(argc, argv);
+    Bootstrap bootstrap;
+    ConfigurationDatabase loaderParameters;
+    StreamI *configurationStream = NULL_PTR(StreamI *);
+
+    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
+    if (ret) {
+        ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
+        if (ret) {
+            ret.fatalError = (configurationStream == NULL_PTR(StreamI *));
+        }
+        else {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not GetConfigurationStream.");
+        }
     }
+    else {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not ReadParameters.");
+    }
+
+
+    if (ret) {
+        ret.fatalError = !MARTe::UnitTest::Run();
+    }
+
     MARTe::UnitTest::CleanTestEnvironment();
-    return (ok ? 0 : -1);
+    return (ret ? 0 : -1);
 }
 
