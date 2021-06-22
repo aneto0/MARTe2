@@ -166,8 +166,8 @@ class Bootstrapper {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#define ASSERT_TRUE(x) this->testResult = x; REPORT_ERROR_STATIC(((this->testResult)?(MARTe::ErrorManagement::Information):(MARTe::ErrorManagement::FatalError)), "%s", (this->testResult)?"PASS":"FAIL!")
-#define ASSERT_FALSE(x) this->testResult = !x; REPORT_ERROR_STATIC(((this->testResult)?(MARTe::ErrorManagement::Information):(MARTe::ErrorManagement::FatalError)), "%s", (this->testResult)?"PASS":"FAIL!")
+#define ASSERT_TRUE(x) this->testResult = x; printf("%s", (this->testResult)?" PASS\n":" FAIL!\n")
+#define ASSERT_FALSE(x) this->testResult = !x; printf("%s", (this->testResult)?" PASS\n":" FAIL!\n")
 
 #define TEST(x,y) 	\
 class Tester_##x##_##y : public TestMarkerInterface {\
