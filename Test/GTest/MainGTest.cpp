@@ -61,19 +61,7 @@ int main(int argc, char **argv) {
     ConfigurationDatabase loaderParameters;
     StreamI *configurationStream = NULL_PTR(StreamI *);
 
-    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
-    if (ret) {
-        ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
-        if (ret) {
-            ret.fatalError = (configurationStream == NULL_PTR(StreamI *));
-        }
-        else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not GetConfigurationStream.");
-        }
-    }
-    else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not ReadParameters.");
-    }
+    ErrorManagement::ErrorType ret = bootstrap.InitHAL(argc, argv);
 
     if (ret) {
         ret.fatalError = !(MARTe::UnitTest::PrepareTestEnvironment(argc, argv));
