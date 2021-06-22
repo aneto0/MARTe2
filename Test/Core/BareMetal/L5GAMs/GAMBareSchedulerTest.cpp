@@ -95,6 +95,7 @@ GAMBareSchedulerTest::GAMBareSchedulerTest() {
             "    +Scheduler = {"
             "        Class = GAMBareScheduler"
             "        TimingDataSource = Timings"
+            "        MaxCycles = 1"
             "    }"
             "}";
 
@@ -148,9 +149,9 @@ bool GAMBareSchedulerTest::PrepareApplication() {
     }
 
     if(retVal) {
-        retVal = scheduler->ConfigureScheduler(realTimeApplication);
+        retVal = realTimeApplication->PrepareNextState("State1");
         if(!retVal) {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Scheduler configuration failure!");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Scheduler PrepareNextState failed!");
         }
     }
 
@@ -165,6 +166,12 @@ bool GAMBareSchedulerTest::PrepareApplication() {
     return retVal;
 }
 
+bool GAMBareSchedulerTest::TestInitialise() {
+    bool retVal = PrepareApplication();
+
+    return retVal;
+}
+
 bool GAMBareSchedulerTest::TestConfigureScheduler() {
     bool retVal = PrepareApplication();
 
@@ -175,10 +182,10 @@ bool GAMBareSchedulerTest::TestStartCurrentStateExecution() {
     bool retVal = PrepareApplication();
 
     if(retVal) {
-        retVal = scheduler->StartNextStateExecution();
+        retVal = realTimeApplication->StartNextStateExecution();
     }
 
-    retVal = scheduler->StopCurrentStateExecution();
+    retVal = realTimeApplication->StopCurrentStateExecution();
 
     return retVal;
 }
@@ -187,7 +194,7 @@ bool GAMBareSchedulerTest::TestStopCurrentStateExecution() {
     bool retVal = PrepareApplication();
 
     if(retVal) {
-        retVal = scheduler->StopCurrentStateExecution();
+        retVal = realTimeApplication->StopCurrentStateExecution();
     }
     
     return retVal;

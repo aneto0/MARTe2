@@ -25,7 +25,7 @@ void TestFramework::Run() {
 	uint32 dsSize = testHolderDataStructure.GetSize();
 	for(uint32 i = 0; i < dsSize; i++) {
 		currentTest = testHolderDataStructure[i];
-		REPORT_ERROR_STATIC(ErrorManagement::Information, "Running test %d/%d |%s|.|%s|", (i+1), statsTotalTests, currentTest->suiteName, currentTest->testName);
+		printf("Running test %d/%d |%s|.|%s|", (i+1), statsTotalTests, currentTest->suiteName, currentTest->testName);
 		currentTest->Test();
 		if(currentTest->testResult) {
 			passedHolderDataStructure.Add(currentTest);
@@ -36,6 +36,7 @@ void TestFramework::Run() {
 			statsFailedTests++;
 		}
 	}
+    PrintResults();
 }
 
 void TestFramework::Clean() {
@@ -52,11 +53,10 @@ void TestFramework::PrintResults() {
 	MARTe::uint32 failedSize = failedHolderDataStructure.GetSize();
 
 	for(MARTe::uint32 i = 0; i < failedSize; i++) {
-		REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed |%s|.|%s|", failedHolderDataStructure[i]->suiteName, failedHolderDataStructure[i]->testName);
+		printf("Failed |%s|.|%s|\n", failedHolderDataStructure[i]->suiteName, failedHolderDataStructure[i]->testName);
 	}
-	
-	REPORT_ERROR_STATIC(ErrorManagement::Information, "Stats:\r\n----------------------");
-	REPORT_ERROR_STATIC(ErrorManagement::Information, "Total/Passed/Failed = %d/%d/%d", statsTotalTests, statsPassedTests, statsFailedTests);
+	printf("Stats:\r\n----------------------\n");
+	printf("Total/Passed/Failed = %d/%d/%d\n", statsTotalTests, statsPassedTests, statsFailedTests);
 }
 
 TestFramework& TestFramework::Instance() {

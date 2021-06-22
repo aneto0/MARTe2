@@ -40,7 +40,7 @@
 using namespace MARTe;
 
 /**
- * @brief 
+ * @brief Tests the GAMBareScheduler class.
  */
 class GAMBareSchedulerTest {
 
@@ -60,6 +60,11 @@ public:
      * @brief Tests the constructor
      */
     bool TestConstructor();
+
+    /**
+     * @brief Tests the Initialise method 
+     */
+    bool TestInitialise();
 
     /**
      * @brief Tests if the function configures correctly the scheduler
