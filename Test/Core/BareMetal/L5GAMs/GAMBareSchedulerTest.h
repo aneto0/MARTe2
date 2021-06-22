@@ -40,7 +40,7 @@
 using namespace MARTe;
 
 /**
- * @brief 
+ * @brief Tests the GAMBareScheduler class.
  */
 class GAMBareSchedulerTest {
 

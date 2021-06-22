@@ -3,6 +3,7 @@
  * @brief Header file for class GAMBareScheduler
  * @date 01/06/2021
  * @author Andre Neto
+ * @author Giuseppe Avon
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -44,72 +45,77 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+/**
+ * @brief A single-threaded GAM scheduler that can be used without an operating system support.
+ * @details The GAMBareScheduler will execute in an infinite loop all the GAM declared for a given RealTimeThread.
+ */
+ 
+class GAMBareScheduler: public GAMSchedulerI {
 
-    class GAMBareScheduler: public GAMSchedulerI {
+    public:
+        CLASS_REGISTER_DECLARATION()
 
-        public:
-            CLASS_REGISTER_DECLARATION()
+        /**
+         * @brief Construct a new GAMBareScheduler object
+         */
+        GAMBareScheduler();
 
-            /**
-             * @brief Construct a new GAMBareScheduler object
-             */
-            GAMBareScheduler();
+        /**
+         * @brief Destroy the GAMBareScheduler object
+         */
+        virtual ~GAMBareScheduler();
 
-            /**
-             * @brief Destroy the GAMBareScheduler object
-             */
-            virtual ~GAMBareScheduler();
+        /**
+         * @brief Starts the single thread execution for the current state, which will execute
+         *  on a single-threaded infinite loop all the GAMs until the StopCurrentStateExecution is called.
+         * @return ErrorManagement::NoError if the base Scheduler succeeds
+         */
+        virtual ErrorManagement::ErrorType StartNextStateExecution();
 
-            /**
-             * @brief Starts the single thread execution for the current state
-             * @return ErrorManagement::NoError if the base Scheduler succeeds
-             */
-            virtual ErrorManagement::ErrorType StartNextStateExecution();
+        /**
+         * @brief Changes the flag which keeps the cycle execution running
+         * @return ErrorManagement::NoError always 
+         */
+        virtual ErrorManagement::ErrorType StopCurrentStateExecution();
 
-            /**
-             * @brief Changes the flag which keeps the cycle execution running
-             * @return ErrorManagement::NoError always 
-             */
-            virtual ErrorManagement::ErrorType StopCurrentStateExecution();
-
-            /**
-             * @brief Calls the parent class to generate the schedulable table and assigns
-             *          the Realtime Application reference
-             * @param realTimeAppIn The RealTime Application using the scheduler
-             * @return true If the table can be successfully constructed and the RealTimeApplication reference is valid
-             */
-            virtual bool ConfigureScheduler(Reference realTimeAppIn);
-            
-            /**
-             * @brief Does nothing, should contain custom routines to prepare the specific scheduler
-             *        to the next state execution
-             */
-            virtual void CustomPrepareNextState();
+        /**
+         * @brief Calls the parent class to generate the schedulable table and assigns
+         *          the Realtime Application reference
+         * @param realTimeAppIn The RealTime Application using the scheduler
+         * @return true If the table can be successfully constructed and the RealTimeApplication reference is valid
+         */
+        virtual bool ConfigureScheduler(Reference realTimeAppIn);
+        
+        /**
+         * @brief Does nothing, should contain custom routines to prepare the specific scheduler
+         *        to the next state execution
+         */
+        virtual void CustomPrepareNextState();
 
 
-        private:
+    private:
 
-            /**
-             * @brief Flag used internally to control the continuation of the execution
-             */
-            bool isAlive;
+        /**
+         * @brief Flag used internally to control the continuation of the execution
+         */
+        bool isAlive;
 
-            /**
-             * @brief Reference to the RealTimeApplication
-             */
-            ReferenceT<RealTimeApplication> realTimeApplication;
+        /**
+         * @brief Reference to the RealTimeApplication
+         */
+        ReferenceT<RealTimeApplication> realTimeApplication;
 
-            /**
-             * @brief Pointer to the scheduled states
-             */
-            ScheduledState * const * scheduledStates;
+        /**
+         * @brief Pointer to the scheduled states
+         */
+        ScheduledState * const * scheduledStates;
 
-            /**
-             * @brief Executes a single cycle of the RealTimeApplication executables for the specified thread identifier
-             * @param threadId Identifier of the thread 
-             */
-            void Cycle(uint32 threadId);
-    };
+        /**
+         * @brief Executes a single cycle of the RealTimeApplication executables for the specified thread identifier
+         * @param threadId Identifier of the thread 
+         */
+        void Cycle(uint32 threadId);
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
