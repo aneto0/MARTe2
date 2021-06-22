@@ -210,6 +210,7 @@
  * Void functions must have an external effect.
  * Justification: They changed a class attribute.
  */
+-esym(1960, MARTe::GAMBareScheduler::CustomPrepareNextState*)
 -esym(1960, MARTe::TimeoutType::SetTimeoutSec*)
 -esym(1960, MARTe::TimeoutType::SetTimeoutHighResolutionTimerTicks*)
 -esym(1960, MARTe::ErrorManagement::NullErrorProcessFunction*)

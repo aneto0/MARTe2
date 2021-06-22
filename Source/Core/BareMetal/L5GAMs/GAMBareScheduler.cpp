@@ -42,18 +42,19 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-GAMBareScheduler::GAMBareScheduler() {
-    scheduledStates = NULL;
+GAMBareScheduler::GAMBareScheduler() : GAMSchedulerI() {
+    isAlive = false;
+    maxCycles = 0u;
+    nCycle = 0u;
 }
 
+/*lint -e{1540} the scheduledStates life-cycle is managed by the GAMSchedulerI*/
 GAMBareScheduler::~GAMBareScheduler() {
-
 }
 
 bool GAMBareScheduler::ConfigureScheduler(Reference realTimeAppIn) {
     bool ret = GAMSchedulerI::ConfigureScheduler(realTimeAppIn);
     if (ret) {
-        scheduledStates = GetSchedulableStates();
         realTimeApplication = realTimeApp;
         ret = realTimeApplication.IsValid();
     }
@@ -64,13 +65,27 @@ ErrorManagement::ErrorType GAMBareScheduler::StartNextStateExecution() {
     isAlive = true;
     
     while(isAlive) { 
-        Cycle(0); 
+        Cycle(0u); 
+        if (maxCycles != 0u) {
+            isAlive = (nCycle < maxCycles);
+            nCycle++;
+        }
     }
     
     return ErrorManagement::NoError;
 }
 
+bool GAMBareScheduler::Initialise(StructuredDataI & data) {
+    bool ok = GAMSchedulerI::Initialise(data);
+    if (ok) {
+        (void) (data.Read("MaxCycles", maxCycles));
+        REPORT_ERROR(ErrorManagement::Information, "MaxCycles set to %d", maxCycles);
+    }
+    return ok;
+}
+
 void GAMBareScheduler::CustomPrepareNextState() {   
+    nCycle = 0u;
 }
 
 ErrorManagement::ErrorType GAMBareScheduler::StopCurrentStateExecution() {
@@ -78,11 +93,12 @@ ErrorManagement::ErrorType GAMBareScheduler::StopCurrentStateExecution() {
     return ErrorManagement::NoError;
 }
 
-void GAMBareScheduler::Cycle(uint32 threadId) {
+/*lint -e{1762} function cannot be made constant as it indirectly modifies the scheduledStates.*/
+void GAMBareScheduler::Cycle(const uint32 threadId) {
     
     uint32 rtAppIndex = realTimeApplication->GetIndex();
-
-    ExecuteSingleCycle(
+    /*lint -e{613} scheduledStates != NULL as otherwise StartNextStateExecution (and thus Cycle) would never be called.*/
+    (void) ExecuteSingleCycle(
         scheduledStates[rtAppIndex]->threads[threadId].executables, 
         scheduledStates[rtAppIndex]->threads[threadId].numberOfExecutables);
 }

@@ -46,6 +46,11 @@ TEST(BareMetal_L5GAMs_GAMBareScheduler, TestConstructor) {
     ASSERT_TRUE(test.TestConstructor());
 }
 
+TEST(BareMetal_L5GAMs_GAMBareScheduler, TestInitialise) {
+    GAMBareSchedulerTest test;
+    ASSERT_TRUE(test.TestInitialise());
+}
+
 TEST(BareMetal_L5GAMs_GAMBareScheduler, TestConfigureScheduler) {
     GAMBareSchedulerTest test;
     ASSERT_TRUE(test.TestConfigureScheduler());
@@ -60,3 +65,4 @@ TEST(BareMetal_L5GAMs_GAMBareScheduler, TestStopCurrentStateExecution) {
     GAMBareSchedulerTest test;
     ASSERT_TRUE(test.TestStopCurrentStateExecution());
 }
+
