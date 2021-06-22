@@ -56,7 +56,7 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
 int main(int argc, char **argv) {
     using namespace MARTe;
     SetErrorProcessFunction(&MainGTestErrorProcessFunction);
-    //bool ok = MARTe::UnitTest::PrepareTestEnvironment(argc, argv);
+    
     Bootstrap bootstrap;
     ConfigurationDatabase loaderParameters;
     StreamI *configurationStream = NULL_PTR(StreamI *);
@@ -75,7 +75,10 @@ int main(int argc, char **argv) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not ReadParameters.");
     }
 
-
+    if (ret) {
+        ret.fatalError = !(MARTe::UnitTest::PrepareTestEnvironment(argc, argv));
+    }
+    
     if (ret) {
         ret.fatalError = !MARTe::UnitTest::Run();
     }
