@@ -46,7 +46,8 @@ bool UnitTest::PrepareTestEnvironment(int argc, char **argv) {
 }
 
 bool UnitTest::Run() {
-    return RUN_ALL_TESTS();
+    int res = RUN_ALL_TESTS();
+    return (res == 0u);
 }
 
 void UnitTest::CleanTestEnvironment() {

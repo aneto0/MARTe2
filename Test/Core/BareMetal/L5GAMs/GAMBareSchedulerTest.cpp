@@ -1,6 +1,6 @@
 /**
  * @file GAMBareSchedulerTest.cpp
- * @brief Source file for class GAMSchedulerITest
+ * @brief Source file for class GAMBareSchedulerTest
  * @date 18/06/2021
  * @author Giuseppe Avon
  *

@@ -1,8 +1,8 @@
 /**
- * @file MARTe2UnitTestMacros.h
- * @brief Header file for module MARTe2UnitTestMacros
+ * @file MARTe2UTestMacros.h
+ * @brief Header file for module MARTe2UTestMacros
  * @date 12/06/2021
- * @author Andre Neto
+ * @author Giuseppe Avon
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the module MARTe2UnitTestMacros
+ * @details This header file contains the declaration of the module MARTe2UTestMacros
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */

@@ -27,11 +27,19 @@
 include Makefile.inc
 
 LIBRARIES += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT) 
-LIBRARIES += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
 LIBRARIES += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
-LIBRARIES += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
 LIBRARIES += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT) 
+
+ifndef MARTe2_TEST_LINK_FILTER
+LIBRARIES += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
+LIBRARIES += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
 LIBRARIES += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreFTest$(LIBEXT)
 LIBRARIES += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
 LIBRARIES += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
 LIBRARIES += ../../Build/$(TARGET)/GTest/FileSystem/MARTeFGTest$(LIBEXT)
+else
+#Look for all the statically linked files matching the filter set by MARTe2_TEST_LINK_FILTER
+MARTe2_TEST_LINK_FILTER_TOKENS := $(subst :, ,$(MARTe2_TEST_LINK_FILTER))
+LIBRARIES += $(foreach TOKEN,$(MARTe2_TEST_LINK_FILTER_TOKENS),$(shell find $(ROOT_DIR)/Build/$(TARGET) -type f \( -iname $(TOKEN)'*Test.a' ! -iname MARTeCoreBTest$(LIBEXT) ! -iname MARTeCoreSTest$(LIBEXT) ! -iname MARTeCoreFTest$(LIBEXT) ! -iname MARTeBGTest$(LIBEXT) ! -iname MARTeSGTest$(LIBEXT) ! -iname MARTeFGTest$(LIBEXT) \)))
+endif
+
