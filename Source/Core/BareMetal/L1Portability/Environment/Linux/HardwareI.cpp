@@ -1,6 +1,6 @@
 /**
- * @file HardwareIE.h
- * @brief Header file for module HardwareIE
+ * @file HardwareI.cpp
+ * @brief Source file for module HardwareI
  * @date 23/06/2021
  * @author Andre Neto
  *
@@ -16,36 +16,30 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the module HardwareIE
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the module HardwareI (public, protected, and private). Be aware that some
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef HARDWAREIE_H_
-#define HARDWAREIE_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
-/*---------------------------------------------------------------------------*/
-
-
-/*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Module declaration                               */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 namespace MARTe {
     namespace HardwareI {
-        inline void InitEnvironment() {
+        void InitEnvironment() {
         }
     }
-}
-#endif /* HARDWAREIE_H_ */
 
+}
