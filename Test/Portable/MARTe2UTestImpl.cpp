@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "AdvancedErrorManagement.h"
 #include "CompilerTypes.h"
 #include "MARTe2UTestMacros.h"
