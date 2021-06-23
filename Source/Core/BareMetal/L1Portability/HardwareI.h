@@ -34,7 +34,6 @@
 
 #include "GeneralDefinitions.h"
 #include INCLUDE_FILE_ARCHITECTURE(BareMetal,L1Portability,ARCHITECTURE,HardwareIA.h)
-#include INCLUDE_FILE_ENVIRONMENT(BareMetal,L1Portability,ENVIRONMENT,HardwareIE.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                              */
@@ -54,7 +53,7 @@ namespace MARTe {
         /**
          * @brief Allows to initialise the Environment before any MARTe function is called.
          */
-        inline void InitEnvironment();
+        void InitEnvironment();
     }
 
 }

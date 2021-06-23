@@ -30,6 +30,7 @@ MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicConsole.x \
 		ErrorManagement_Gen.x \
+		HardwareI.x \
 		HighResolutionTimerCalibrator.x \
 		LoadableLibrary.x  \
 		MemoryCheck_Gen.x  \
