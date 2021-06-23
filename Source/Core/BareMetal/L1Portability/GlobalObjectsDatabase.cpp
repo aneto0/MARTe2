@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GlobalObjectsDatabase.h"
+#include "HardwareI.h"
 #include "HeapManager.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,6 +48,8 @@ GlobalObjectsDatabase *GlobalObjectsDatabase::Instance() {
 }
 
 GlobalObjectsDatabase::GlobalObjectsDatabase() {
+    HardwareI::InitArchitecture();
+    HardwareI::InitEnvironment();
     uint32 i;
     for (i = 0u; i < NUMBER_OF_GLOBAL_OBJECTS; i++) {
         databaseList[i] = NULL_PTR(GlobalObjectI *);
