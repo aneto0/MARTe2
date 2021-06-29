@@ -45,6 +45,7 @@ StateMachineEvent::StateMachineEvent() :
         ReferenceContainer(),
         MessageFilter(true) {
     timeout = TTInfiniteWait;
+    reset = true;
 }
 
 /*lint -e{1551} references are destroyed by design in the destructor*/
@@ -118,12 +119,19 @@ ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message>
     }
     //Found.
     if (found) {
-        err = stateMachine->EventTriggered(this);
+        if (reset) {
+            reset = false;
+            err = stateMachine->EventTriggered(this);
+        }
     }
     else {
         err.recoverableError = true;
     }
     return err;
+}
+
+void StateMachineEvent::Reset() {
+    reset = true;
 }
 
 CLASS_REGISTER(StateMachineEvent, "1.0")
