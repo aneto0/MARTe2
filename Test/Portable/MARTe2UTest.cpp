@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "AdvancedErrorManagement.h"
 #include "MARTe2UTest.h"
 #include "MARTe2UTestMacros.h"

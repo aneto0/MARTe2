@@ -48,7 +48,7 @@ namespace MARTe {
         /**
          * @brief Allows to initialise the Architecture before any MARTe function is called.
          */
-        inline void InitArchitecture();
+        void InitArchitecture();
 
         /**
          * @brief Allows to initialise the Environment before any MARTe function is called.
