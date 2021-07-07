@@ -53,6 +53,7 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 int main(int argc, char **argv) {
     using namespace MARTe;
     SetErrorProcessFunction(&MainGTestErrorProcessFunction);
