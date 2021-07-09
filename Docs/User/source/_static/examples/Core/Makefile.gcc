@@ -31,5 +31,3 @@ ifeq ($(MARTe2_LINK_MODE),Static)
 else
     LIBRARIES   = -L$(ROOT_DIR)/Build/$(TARGET)/Core -lMARTe2
 endif
-
-
