@@ -146,4 +146,5 @@ clean::  $(SUBPROJC) $(SUBPROJTC) $(SUBPROJHC)
 	@rm -f $(BUILD_DIR)/*$(DEFEXT)
 	@rm -f *_Gen.cpp
 	@rm -f *_Gen.c
+	@rm -f *.d
 
