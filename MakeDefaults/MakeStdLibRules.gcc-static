@@ -25,23 +25,21 @@
 #############################################################
 include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc
 
-$(BUILD_DIR)/%.so : createLibrary $(OBJS)
-	touch $@
-	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
-	touch $(BUILD_DIR)/lib$*.so
-	rm  $(BUILD_DIR)/lib$*.so
-	ln -fns $*.so $(BUILD_DIR)/lib$*.so
-	rm -f createLibrary
-
 $(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
-	rm -f createLibrary
+	$(COMPILER) -c $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+	$(LINKER) -r $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) -o $(BUILD_DIR)/$*.ex 
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) -shared  $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+	touch $@
+	rm -f $(BUILD_DIR)/$*.gam
+	$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
+	rm -f createLibrary
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+	touch $@
+	rm -f $(BUILD_DIR)/$*.drv
+	$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
+	rm -f createLibrary
 
 $%: force
 	@$(MAKE) -f Makefile.$(TARGET) $@

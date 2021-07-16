@@ -1,0 +1,19 @@
+include $(PICIRCLE_BSP_BASE_DIR)/Config.mk
+
+CIRCLEHOME = $(PICIRCLE_BSP_BASE_DIR)/libs/circle
+NEWLIBDIR = $(PICIRCLE_BSP_BASE_DIR)/install/$(NEWLIB_ARCH)
+
+OBJS	= CircleHAL.o
+TARGET=
+include $(PICIRCLE_BSP_BASE_DIR)/libs/circle/Rules.mk
+
+CFLAGS += 	-I "$(NEWLIBDIR)/include" \
+       	  	-I $(STDDEF_INCPATH) -I $(PICIRCLE_BSP_BASE_DIR)/include
+
+all: hal
+
+hal: clean $(OBJS)
+
+.PHONY: all
+
+-include $(DEPS)
