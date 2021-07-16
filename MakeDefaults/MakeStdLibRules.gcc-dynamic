@@ -23,4 +23,26 @@
 # $Id$
 #
 #############################################################
-include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc-dynamic
+include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc
+
+$(BUILD_DIR)/%.so : createLibrary $(OBJS)
+	touch $@
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
+	touch $(BUILD_DIR)/lib$*.so
+	rm  $(BUILD_DIR)/lib$*.so
+	ln -fns $*.so $(BUILD_DIR)/lib$*.so
+	rm -f createLibrary
+
+$(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
+	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
+	rm -f createLibrary
+
+$(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
+	$(COMPILER) $(LFLAGS) -shared  $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+
+$(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+
+$%: force
+	@$(MAKE) -f Makefile.$(TARGET) $@
+force: ;
