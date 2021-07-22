@@ -95,6 +95,8 @@
 #define NULL NULL_PTR(void *)
 #endif
 
+#include <stddef.h>
+
 namespace MARTe {
 
 /**
