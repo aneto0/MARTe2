@@ -101,13 +101,13 @@ namespace MARTe {
  * @brief Definition of a type large enough to store a pointer.
  */
 #ifdef __LP64__
-    typedef unsigned long intptr;
+    typedef size_t intptr;
 #elif defined __ILP64__
-    typedef unsigned long intptr;
+    typedef size_t intptr;
 #elif defined __LLP64__
-    typedef unsigned long long intptr;
+    typedef size_t intptr;
 #else
-    typedef unsigned long intptr;
+    typedef size_t intptr;
 #endif
 
 /**
