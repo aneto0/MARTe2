@@ -28,8 +28,4 @@ include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
 ENVIRONMENT=Linux
 ARCHITECTURE=armv8-linux
 
-OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
-OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
-OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.o) 
-
 CFLAGS += -fpermissive

@@ -57,7 +57,7 @@ const uint32 NUMBER_OF_GLOBAL_OBJECTS = 64u;
 /** This is just to avoid an exception to Rule 3-9-2 of MISRA, given that many Linux operating system calls require a long as an input
  * and the framework does not define such type*/
 typedef long oslong;
-typedef unsigned long osulong;
+typedef size_t osulong;
 
 #define __ERROR_FUNCTION_NAME__   __PRETTY_FUNCTION__
 
