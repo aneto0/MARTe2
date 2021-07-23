@@ -89,6 +89,10 @@ inline uint32 CompleteMultiply(uint32 x1,uint32 x2,uint32 &high){
 	return UMulT<uint32,uint64>(x1,x2,high);
 }
 
+inline uint64 CompleteMultiply(uint64 x1,uint64 x2,uint64 &high){
+	return UMulT<uint64,uint128>(x1,x2,high);
+}
+
 inline int8  CompleteMultiply(int8  x1,int8  x2,int8  &high){
 	return UMulT<int8,int16>(x1,x2,high);
 }
@@ -99,6 +103,10 @@ inline int16 CompleteMultiply(int16 x1,int16 x2,int16 &high){
 
 inline int32 CompleteMultiply(int32 x1,int32 x2,int32 &high){
 	return UMulT<int32,int64>(x1,x2,high);
+}
+
+inline int64 CompleteMultiply(int64 x1,int64 x2,int64 &high){
+	return UMulT<int64,int128>(x1,x2,high);
 }
 
 
