@@ -95,21 +95,19 @@
 #define NULL NULL_PTR(void *)
 #endif
 
-#include <stddef.h>
-
 namespace MARTe {
 
 /**
  * @brief Definition of a type large enough to store a pointer.
  */
 #ifdef __LP64__
-    typedef size_t intptr;
+    typedef unsigned long intptr;
 #elif defined __ILP64__
-    typedef size_t intptr;
+    typedef unsigned long intptr;
 #elif defined __LLP64__
-    typedef size_t intptr;
+    typedef unsigned long long intptr;
 #else
-    typedef size_t intptr;
+    typedef unsigned long intptr;
 #endif
 
 /**
