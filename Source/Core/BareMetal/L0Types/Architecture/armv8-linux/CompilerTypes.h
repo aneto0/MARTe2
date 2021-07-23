@@ -26,6 +26,11 @@
 
 namespace MARTe {
 
+/** 128 Bit unsigned integer. */
+typedef __int128_t uint128;
+/** 128 Bit signed integer. */
+typedef __uint128_t int128;
+
 /** 64 Bit unsigned integer. */
 typedef unsigned long long uint64;
 /** 64 Bit signed integer. */
