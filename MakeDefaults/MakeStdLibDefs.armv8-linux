@@ -27,5 +27,5 @@ include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
 
 ENVIRONMENT=Linux
 ARCHITECTURE=armv8-linux
-
+LIBRARIES +=  -lm -lpthread -lrt -ldl
 CFLAGS += -fpermissive
