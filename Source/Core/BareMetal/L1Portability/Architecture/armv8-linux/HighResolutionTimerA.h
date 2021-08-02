@@ -63,7 +63,7 @@ inline uint64 Counter() {
     return ((uint64)(cc))<<6;
 #else
     struct timespec now;
-    clock_gettime(CLOCK_REALTIME, &now);
+    clock_gettime(CLOCK_MONOTONIC, &now);
 
     double counter_x=((now.tv_sec*1000000000. + now.tv_nsec)/1e9)*(HighResolutionTimer::Frequency());
     return (uint64)counter_x;
