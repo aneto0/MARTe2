@@ -73,7 +73,7 @@ public:
      */
     virtual bool Init(SignalDirection direction,
                       DataSourceI &dataSourceIn,
-                      const char8 * const functionName,
+                      const char8 *const functionName,
                       void *gamMemoryAddress) = 0;
 
     /**
@@ -94,7 +94,7 @@ public:
      * @pre
      *   InitFunctionPointers()
      */
-    uint32 GetCopyByteSize(const uint32 copyIdx) const ;
+    uint32 GetCopyByteSize(const uint32 copyIdx) const;
 
     /**
      * @brief Gets the number of bytes to offset (w.r.t. to the Signal base address in the DataSourceI memory) for the copy operation with index \a copyIdx.
@@ -105,6 +105,8 @@ public:
      */
     uint32 GetCopyOffset(const uint32 copyIdx) const;
 
+    uint32 GetDSCopySignalIndex(const uint32 copyIdx) const;
+
     /**
      * @brief Gets the pointer in the GAM memory where the signal is to be copied to/from in the copy operation with index \a copyIdx.
      * @return the number of bytes to offset for the copy operation \a copyIdx or NULL if copyIdx >= GetNumberOfCopies().
@@ -112,7 +114,7 @@ public:
      *   InitFunctionPointers() &&
      *   copyIdx < GetNumberOfCopies()
      */
-    void *GetFunctionPointer(const uint32 copyIdx) const;
+    void* GetFunctionPointer(const uint32 copyIdx) const;
 
     /**
      * @brief Gets the name of the function that owns the Broker.
@@ -137,8 +139,8 @@ protected:
      */
     bool InitFunctionPointers(const SignalDirection direction,
                               DataSourceI &dataSource,
-                              const char8 * const functionName,
-                              void * const gamMemoryAddress);
+                              const char8 *const functionName,
+                              void *const gamMemoryAddress);
 
     /**
      * Number of copy operations to be performed by this BrokerI.
@@ -158,6 +160,11 @@ private:
     uint32 *copyOffset;
 
     /**
+     * Initial signal index of the DataSoure memory  for each copy operation. If DS memory is consecutive, the copy may imply more than one signal, nevertheless the copySignalIndex[cpIdx] indicates the first index involved
+     */
+    uint32 *copySignalIndex;
+
+    /**
      * Base address of each copy operation in the GAM memory (functionSignalPointers[numberOfCopies]).
      */
     void **functionSignalPointers;
@@ -171,6 +178,20 @@ private:
      * The function name
      */
     StreamString ownerFunctionName;
+
+    bool GetNextDataSourceIndexes(SignalDirection direction,
+                                  uint32 functionIdx,
+                                  DataSourceI &dataSource,
+                                  uint32 &signalIdx,
+                                  uint32 &byteOffsetsIdx,
+                                  uint32 &samplesIdx);
+    bool IsNextDataSourceMemoryContinuous(SignalDirection direction,
+                                          uint32 functionIdx,
+                                          DataSourceI &dataSource,
+                                          uint32 signalIdx,
+                                          uint32 byteOffsetsIdx,
+                                          uint32 samplesIdx,
+                                          void *&expectedNextAddress);
 
 };
 
