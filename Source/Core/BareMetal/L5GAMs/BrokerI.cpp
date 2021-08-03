@@ -144,13 +144,26 @@ bool BrokerI::InitFunctionPointers(const SignalDirection direction,
     bool continuousDataSourceMemory;
     //Expected next dataSource Address. To know if the memory to copy is continuous.
     void *expectedNextDSAddress;
-    //initialise the expectedNextDSAddress to the first address of the DataSource
-    if (functionNumberOfSignals > 1u) {
-        dataSource.GetFunction
-        dataSource.GetSignalMemoryBuffer(1u, 0u, expectedNextDSAddress);
-    }
-    else {
-        dataSource.GetSignalMemoryBuffer(0u, 0u, expectedNextDSAddress);
+
+    uint32 signalIdx = 0u;
+    uint32 byteOffsetsIdx = 0u;
+    uint32 samplesIdx = 0u;
+    //initialise the expectedNextDSAddress to the right value.
+    if (GetNextDataSourceIndexes(direction, functionIdx, dataSource, signalIdx, byteOffsetsIdx, samplesIdx)) {
+        uint32 byteOffsetStart;
+        uint32 byteOffsetSize;
+        uint32 signalByteSize;
+        void *dataSourceSignalAddress;
+        ret = dataSource.GetFunctionSignalByteOffsetInfo(direction, functionIdx, signalIdx, byteOffsetsIdx, byteOffsetStart, byteOffsetSize);
+        dataSource.GetSignalByteSize(signalIdx, signalByteSize);
+        byteOffsetStart = byteOffsetStart + samplesIdx * signalByteSize;
+        ret = dataSource.GetSignalMemoryBuffer(signalIdx, 0u, dataSourceSignalAddress);
+        char8 *dataSourceSignalAddressChar = reinterpret_cast<char8*>(dataSourceSignalAddress);
+        if (ret) {
+            dataSourceSignalAddressChar = &dataSourceSignalAddressChar[byteOffsetStart];
+        }
+        expectedNextDSAddress = reinterpret_cast<void*>(dataSourceSignalAddressChar);
+
     }
     for (i = 0u; (i < functionNumberOfSignals) && (ret); i++) {
         if (dataSource.IsSupportedBroker(direction, functionIdx, i, brokerClassName)) {
