@@ -67,6 +67,29 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     initialUSecs = initTime.tv_usec;
 
     if (ret == 0) {
+        /** Test modification by Giuseppe Avon
+         * Justification = /proc/cpuinfo on QEMU aarch64 RPI3B 64 bit ARMHF Raspbian image
+         * has not MHz value to look for.
+         */
+       
+        //This structure holds the real clock resolution in seconds + nanoseconds
+        struct timespec clockResResult;
+        memset(&clockResResult, 0, sizeof(struct timespec));
+
+        int getClockResResult = clock_getres(CLOCK_REALTIME, &clockResResult);
+        if(getClockResResult == 0) {
+            
+            float64 periodF = (clockResResult.tv_sec * 1.0) + (clockResResult.tv_nsec * 1.0e-9);
+            float64 frequencyF = 1.0 / periodF;
+
+            period = periodF;
+            frequency = static_cast<uint64>(frequencyF);
+        }
+        else {
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: clock_getres()");
+        }
+
+        /* As it was before modification
         char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
         memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1u);
 
@@ -97,6 +120,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
         else {
             REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fread()");
         }
+        */
     }
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
