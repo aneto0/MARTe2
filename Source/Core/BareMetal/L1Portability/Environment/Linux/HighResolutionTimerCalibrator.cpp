@@ -55,39 +55,67 @@ namespace MARTe {
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
-    const uint64 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
+    struct timespec initTime;
+    memset(&initTime, 0, sizeof(struct timespec));
+    // From man clock_gettime(2)
+    //    CLOCK_MONOTONIC_RAW (since Linux 2.6.28; Linux-specific)
+    //       Similar to CLOCK_MONOTONIC, but provides access to a raw
+    //       hardware-based time that is not subject to NTP adjustments
+    //       or the incremental adjustments performed by adjtime(3).
+    //       This clock does not count time that the system is
+    //       suspended.
+    int32 ret = clock_gettime(CLOCK_MONOTONIC_RAW, &initTime);
+
     initialTicks = HighResolutionTimer::Counter();
-    frequency = 0u;
-    period = 0.;
-
-    struct timeval initTime;
-    int32 ret = gettimeofday(&initTime, static_cast<struct timezone *>(NULL));
-
+    //We already know that using gettime, the granularity is in nanoseconds
+    //and so the frequency is expressed in GHz
+    period = 1.0e-9;
+    frequency = 1e9;
+    
     initialSecs = initTime.tv_sec;
-    initialUSecs = initTime.tv_usec;
+    initialUSecs = initTime.tv_nsec / 1000;
 
-    if (ret == 0) {
+    if(ret != 0) {
+        
+    }
+    else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: clock_gettime()");
+    }
+
+    //const uint64 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
+    //initialTicks = HighResolutionTimer::Counter();
+    //frequency = 0u;
+    //period = 0.;
+
+    //struct timeval initTime;
+    //int32 ret = gettimeofday(&initTime, static_cast<struct timezone *>(NULL));
+
+    //initialSecs = initTime.tv_sec;
+    //initialUSecs = initTime.tv_usec;
+
+    //if (ret == 0) {
         /** Test modification by Giuseppe Avon
          * Justification = /proc/cpuinfo on QEMU aarch64 RPI3B 64 bit ARMHF Raspbian image
          * has not MHz value to look for.
          */
        
         //This structure holds the real clock resolution in seconds + nanoseconds
-        struct timespec clockResResult;
-        memset(&clockResResult, 0, sizeof(struct timespec));
+        // struct timespec clockResResult;
+        // memset(&clockResResult, 0, sizeof(struct timespec));
 
-        int getClockResResult = clock_getres(CLOCK_REALTIME, &clockResResult);
-        if(getClockResResult == 0) {
+        // int getClockResResult = clock_getres(CLOCK_REALTIME, &clockResResult);
+        // if(getClockResResult == 0) {
             
-            float64 periodF = (clockResResult.tv_sec * 1.0) + (clockResResult.tv_nsec * 1.0e-9);
-            float64 frequencyF = 1.0 / periodF;
+        //     float64 periodF = clockResResult.tv_sec + (1.0e-9 * clockResResult.tv_nsec);
+        //     float64 frequencyF = nearbyint(1.0 / periodF);
 
-            period = periodF;
-            frequency = static_cast<uint64>(frequencyF);
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: clock_getres()");
-        }
+        //     period = periodF;
+        //     frequency = static_cast<uint64>(frequencyF);
+        //     printf("TEST period %.17g freq %llu -----------------------------------------------------------------------------------------\r\n", period, frequency);
+        // }
+        // else {
+        //     REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: clock_getres()");
+        // }
 
         /* As it was before modification
         char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
@@ -121,10 +149,10 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
             REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fread()");
         }
         */
-    }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
-    }
+    // }
+    // else {
+    //     REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
+    // }
 
 }
 

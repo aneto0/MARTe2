@@ -24,6 +24,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <math.h>
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -47,8 +49,8 @@ using namespace MARTe;
 static bool Tolerance(float64 a,
                       float64 b,
                       float64 tolerance) {
-    float64 diff = a - b;
-    return (diff < tolerance) && (diff > -tolerance);
+    float64 diff = fabs(a - b);
+    return diff <= fabs(tolerance);
 }
 
 bool HighResolutionTimerTest::TestFrequency() {
@@ -85,17 +87,21 @@ bool HighResolutionTimerTest::TestTicksToTime() {
     bool retValue;
     float64 sleepTime;
     //minimum time
-    sleepTime = 0;
+    sleepTime = nearbyint(0.0);
     int64 ticks = sleepTime * HighResolutionTimer::Frequency();
     retValue = Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Minimum %s", ((retValue)?"succeeded":"failed"));
     //Arbitrary time
-    sleepTime = 5;
+    sleepTime = nearbyint(5.0);
     ticks = sleepTime * HighResolutionTimer::Frequency();
     retValue &= Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Arbitrary %s", ((retValue)?"succeeded":"failed"));
     //large time
-    sleepTime = 123456789;
+    sleepTime = nearbyint(123456789.0);
     ticks = sleepTime * HighResolutionTimer::Frequency();
     retValue &= Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    printf("--------TicksToTime %.17g\r\n", HighResolutionTimer::TicksToTime(ticks, 0) - sleepTime);
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Large %s", ((retValue)?"succeeded":"failed"));
     return retValue;
 }
 
@@ -138,12 +144,18 @@ bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
 }
 
 bool HighResolutionTimerTest::TestPeriodFrequency() {
+
     int64 HRTfrequency = HighResolutionTimer::Frequency();
     float64 HRTperiod = HighResolutionTimer::Period();
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "HighResolutionTimer Frequency: %d Period: %e", HRTfrequency, HRTperiod);
-    float64 relativePeriod = 1.0 / HRTfrequency;
-    int64 relativeFrequency = (int64) (1.0 / HRTperiod);
-    return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
+
+    float64 testVal = HighResolutionTimer::Frequency() * HighResolutionTimer::Period();
+
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "HighResolutionTimer Frequency: %d Period: %e = %e", HRTfrequency, HRTperiod, testVal);
+    return (Tolerance(testVal, 1.0, 1e-9));
+
+    //float64 relativePeriod = 1.0 / HRTfrequency;
+    //uint64 relativeFrequency = static_cast<uint64>(1.0 / HRTperiod);
+    //return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
 }
 
 

@@ -27,10 +27,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include <time.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "CompilerTypes.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -40,11 +42,19 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+
+
 namespace MARTe{
 
 namespace HighResolutionTimer {
 
 inline uint32 Counter32() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+    return static_cast<uint32>((ts.tv_sec * 1e9) + ts.tv_nsec);
+
+    /* Modified by Giuseppe Avon, below original
+    * Justification: Move to POSIX compliant due to ARM porting
     volatile uint64 perf = 0LLU;
     uint32 *pperf = (uint32 *) &perf;
     asm(
@@ -54,9 +64,15 @@ inline uint32 Counter32() {
     );
 
     return (uint32) perf;
+    */
 }
 
 inline uint64 Counter() {
+        struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+    return static_cast<uint64>((ts.tv_sec * 1e9) + ts.tv_nsec);
+    /* Modified by Giuseppe Avon, below original
+    * Justification: Move to POSIX compliant due to ARM porting
     volatile uint64 perf = 0LLU;
     uint32 *pperf = (uint32 *) &perf;
     asm volatile(
@@ -65,6 +81,7 @@ inline uint64 Counter() {
             : "=a"(pperf[0]) , "=d"(pperf[1])
     );
     return perf;
+    */
 }
 
 }
