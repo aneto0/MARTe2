@@ -61,9 +61,26 @@ bool MemoryMapBroker::Init(const SignalDirection direction,
                            DataSourceI &dataSourceIn,
                            const char8 *const functionName,
                            void *const gamMemoryAddress) {
+
+    bool ret = Init(direction, dataSourceIn, functionName, gamMemoryAddress, false);
+    return ret;
+}
+
+bool MemoryMapBroker::Init(const SignalDirection direction,
+                           DataSourceI &dataSourceIn,
+                           const char8 *const functionName,
+                           void *const gamMemoryAddress,
+                           const bool optim) {
+
     dataSource = &dataSourceIn;
 
-    bool ret = InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);
+    bool ret;
+    if (optim) {
+        ret = InitFunctionPointersOptim(direction, dataSourceIn, functionName, gamMemoryAddress);
+    }
+    else {
+        ret = InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);
+    }
 
     const ClassProperties *properties = GetClassProperties();
     if (ret) {
@@ -89,13 +106,14 @@ bool MemoryMapBroker::Init(const SignalDirection direction,
     if (ret) {
         ret = dataSource->GetFunctionIndex(functionIdx, functionName);
     }
-    uint32 functionNumberOfSignals = 0u;
-    if (ret) {
-        ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, functionNumberOfSignals);
-    }
+//    uint32 functionNumberOfSignals = 0u;
+//    if (ret) {
+//        ret = dataSource->GetFunctionNumberOfSignals(direction, functionIdx, functionNumberOfSignals);
+//    }
     //The same signal can be copied from different ranges. A MemoryMapBrokerCopyTableEntry is added for each signal range.
     uint32 c = 0u;
     for (uint32 c0 = 0u; (c0 < numberOfBuffers) && (ret); c0++) {
+        //lint -e{613} Possible use of null pointer. Justification: if ret == true --> copyTable != NULL
         for (uint32 numberOfCopiesIdx = 0u; (numberOfCopiesIdx < numberOfCopies) && (ret); numberOfCopiesIdx++) {
             //if (dataSource->IsSupportedBroker(direction, functionIdx, n, brokerClassName)) {
             copyTable[c].copySize = GetCopyByteSize(numberOfCopiesIdx);

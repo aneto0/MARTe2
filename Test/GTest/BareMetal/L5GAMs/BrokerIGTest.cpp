@@ -53,9 +53,19 @@ TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetNumberOfCopies) {
     ASSERT_TRUE(test.TestGetNumberOfCopies());
 }
 
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetNumberOfCopiesOptim) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestGetNumberOfCopiesOptim());
+}
+
 TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetCopyByteSize) {
     BrokerITest test;
     ASSERT_TRUE(test.TestGetCopyByteSize());
+}
+
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetCopyByteSizeOptim) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestGetCopyByteSizeOptim());
 }
 
 TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetCopyOffset) {
@@ -63,9 +73,20 @@ TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetCopyOffset) {
     ASSERT_TRUE(test.TestGetCopyOffset());
 }
 
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetCopyOffsetOptim) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestGetCopyOffsetOptim());
+}
+
 TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetFunctionPointer) {
     BrokerITest test;
     ASSERT_TRUE(test.TestGetFunctionPointer());
+}
+
+
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetFunctionPointerOptim) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestGetFunctionPointerOptim());
 }
 
 TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetOwnerFunctionName) {
@@ -76,5 +97,20 @@ TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetOwnerFunctionName) {
 TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetOwnerDataSourceName) {
     BrokerITest test;
     ASSERT_TRUE(test.TestGetOwnerDataSourceName());
+}
+
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestInterleavedDSMemory) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestInterleavedDSMemory());
+}
+
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestInterleavedDSMemoryOptim) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestInterleavedDSMemoryOptim());
+}
+
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestFlatDSMemory) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestFlatDSMemory());
 }
 
