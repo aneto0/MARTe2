@@ -40,8 +40,10 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 MemoryMapAsyncOutputBroker::MemoryMapAsyncOutputBroker() :
-        MemoryMapBroker(), service(binder), binder(*this, &MemoryMapAsyncOutputBroker::BufferLoop) {
-    bufferMemoryMap = NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *);
+        MemoryMapBroker(),
+        service(binder),
+        binder(*this, &MemoryMapAsyncOutputBroker::BufferLoop) {
+    bufferMemoryMap = NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry*);
     numberOfBuffers = 0u;
     writeIdx = 0u;
     readSynchIdx = 0u;
@@ -63,7 +65,7 @@ MemoryMapAsyncOutputBroker::MemoryMapAsyncOutputBroker() :
 /*lint -e{1551} the destructor must guarantee that the SingleThreadService is stopped and that buffer memory is freed.*/
 MemoryMapAsyncOutputBroker::~MemoryMapAsyncOutputBroker() {
     UnlinkDataSource();
-    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *)) {
+    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry*)) {
         uint32 i;
         for (i = 0u; i < numberOfBuffers; i++) {
             uint32 c;
@@ -71,11 +73,11 @@ MemoryMapAsyncOutputBroker::~MemoryMapAsyncOutputBroker() {
                 GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(bufferMemoryMap[i].mem[c]);
             }
             delete[] bufferMemoryMap[i].mem;
-            bufferMemoryMap[i].mem = NULL_PTR(void **);
+            bufferMemoryMap[i].mem = NULL_PTR(void**);
         }
 
         delete[] bufferMemoryMap;
-        bufferMemoryMap = NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *);
+        bufferMemoryMap = NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry*);
     }
 }
 
@@ -106,13 +108,20 @@ void MemoryMapAsyncOutputBroker::UnlinkDataSource() {
 }
 
 /*lint -e{715} This function is implemented just to avoid using this Broker as MemoryMapBroker.*/
-bool MemoryMapAsyncOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                        void * const gamMemoryAddress) {
+bool MemoryMapAsyncOutputBroker::Init(const SignalDirection direction,
+                                      DataSourceI &dataSourceIn,
+                                      const char8 *const functionName,
+                                      void *const gamMemoryAddress) {
     return false;
 }
 
-bool MemoryMapAsyncOutputBroker::InitWithBufferParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                                             void * const gamMemoryAddress, const uint32 numberOfBuffersIn, const ProcessorType& cpuMaskIn, const uint32 stackSizeIn) {
+bool MemoryMapAsyncOutputBroker::InitWithBufferParameters(const SignalDirection direction,
+                                                          DataSourceI &dataSourceIn,
+                                                          const char8 *const functionName,
+                                                          void *const gamMemoryAddress,
+                                                          const uint32 numberOfBuffersIn,
+                                                          const ProcessorType &cpuMaskIn,
+                                                          const uint32 stackSizeIn) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
     numberOfBuffers = numberOfBuffersIn;
     cpuMask = cpuMaskIn;
@@ -200,7 +209,7 @@ uint32 MemoryMapAsyncOutputBroker::GetNumberOfBuffers() const {
 bool MemoryMapAsyncOutputBroker::Execute() {
     bool ret = true;
 
-    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *)) {
+    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry*)) {
         if (!ignoreBufferOverrun) {
             if (bufferMemoryMap[writeIdx].toConsume) {
                 //Buffer overrun...
@@ -211,7 +220,7 @@ bool MemoryMapAsyncOutputBroker::Execute() {
         }
         uint32 n;
         for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-            if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+            if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
                 //Copy into the buffered table from the GAM memory
                 ret = MemoryOperationsHelper::Copy(bufferMemoryMap[writeIdx].mem[n], copyTable[n].gamPointer, copyTable[n].copySize);
             }
@@ -244,7 +253,7 @@ bool MemoryMapAsyncOutputBroker::Flush() {
             posted = true;
         }
         fastSem.FastUnLock();
-        while(!flushed) {
+        while (!flushed) {
             Sleep::Sec(0.1F);
         }
     }
@@ -252,7 +261,7 @@ bool MemoryMapAsyncOutputBroker::Flush() {
 }
 
 /*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
-ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(ExecutionInfo & info) {
+ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(ExecutionInfo &info) {
     ErrorManagement::ErrorType err;
     if (info.GetStage() == ExecutionInfo::MainStage) {
         int32 synchStopIdx = 0;
@@ -270,12 +279,12 @@ ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(ExecutionInfo 
         bool ret = true;
         //Check all the buffers until writeIdx - preTriggerBuffers (inclusive)
         while ((readSynchIdx != static_cast<uint32>(synchStopIdx)) && (ret)) {
-            if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *)) {
+            if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry*)) {
                 if (bufferMemoryMap[readSynchIdx].toConsume) {
                     uint32 c;
                     for (c = 0u; (c < numberOfCopies) && (ret); c++) {
                         //Copy from the buffer to the DataSource memory
-                        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+                        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
                             ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, bufferMemoryMap[readSynchIdx].mem[c], copyTable[c].copySize);
                         }
                     }

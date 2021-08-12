@@ -46,23 +46,23 @@ namespace MARTe {
 MemoryMapMultiBufferBroker::MemoryMapMultiBufferBroker() :
         MemoryMapBroker() {
 
-    signalIdxArr = NULL_PTR(uint32 *);
-    samples = NULL_PTR(uint32 *);
-    maxOffset = NULL_PTR(int32 *);
+    signalIdxArr = NULL_PTR(uint32*);
+    samples = NULL_PTR(uint32*);
+    maxOffset = NULL_PTR(int32*);
 }
 
 MemoryMapMultiBufferBroker::~MemoryMapMultiBufferBroker() {
-    if (signalIdxArr != NULL_PTR(uint32 *)) {
+    if (signalIdxArr != NULL_PTR(uint32*)) {
         delete[] signalIdxArr;
-        signalIdxArr = NULL_PTR(uint32 *);
+        signalIdxArr = NULL_PTR(uint32*);
     }
-    if (samples != NULL_PTR(uint32 *)) {
+    if (samples != NULL_PTR(uint32*)) {
         delete[] samples;
-        samples = NULL_PTR(uint32 *);
+        samples = NULL_PTR(uint32*);
     }
-    if (maxOffset != NULL_PTR(int32 *)) {
+    if (maxOffset != NULL_PTR(int32*)) {
         delete[] maxOffset;
-        maxOffset = NULL_PTR(int32 *);
+        maxOffset = NULL_PTR(int32*);
     }
 }
 
@@ -72,7 +72,7 @@ bool MemoryMapMultiBufferBroker::CopyInputs() {
     bool ret = true;
     uint32 currentBuffer = dataSource->GetCurrentStateBuffer();
 
-    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
         for (n = 0u; (n < numberOfCopies) && (ret); n++) {
             uint32 uintoffset = 0u;
             ret = dataSource->GetInputOffset(signalIdxArr[n], samples[n], uintoffset);
@@ -118,8 +118,8 @@ bool MemoryMapMultiBufferBroker::CopyInputs() {
                         if (overSize > (maxOffset[n] - (copyOffsetN + offset))) {
                             copySizePhase = (maxOffset[n] - offset);
 
-                            (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
-                                                                &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
+                            (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8*>(copyTable[n].gamPointer)[gamOffset]),
+                                                                &((reinterpret_cast<uint8*>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
                                                                 static_cast<uint32>(copySizePhase));
                             gamOffset = static_cast<uint32>(copySizePhase);
                             offset = 0;
@@ -127,8 +127,8 @@ bool MemoryMapMultiBufferBroker::CopyInputs() {
 
                         //Copy any multiples of full data source memory copies
                         for (int32 z = 0; z < numberOfFullCopies; z++) {
-                            (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
-                                                                &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
+                            (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8*>(copyTable[n].gamPointer)[gamOffset]),
+                                                                &((reinterpret_cast<uint8*>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
                                                                 static_cast<uint32>(maxOffset[n]));
 
                             gamOffset += static_cast<uint32>(maxOffset[n]);
@@ -138,8 +138,9 @@ bool MemoryMapMultiBufferBroker::CopyInputs() {
                         copySize = (copySize - (maxOffset[n] * numberOfFullCopies)) - copySizePhase;
                     }
                 }
-                (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
-                                                    &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]), static_cast<uint32>(copySize));
+                (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8*>(copyTable[n].gamPointer)[gamOffset]),
+                                                    &((reinterpret_cast<uint8*>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
+                                                    static_cast<uint32>(copySize));
                 ret = dataSource->TerminateInputCopy(signalIdxArr[n], uintoffset, samples[n]);
             }
         }
@@ -154,7 +155,7 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
     bool ret = true;
     /*lint -e{613} null pointer checked before.*/
     uint32 currentBuffer = dataSource->GetCurrentStateBuffer();
-    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
         for (n = 0u; (n < numberOfCopies) && (ret); n++) {
             uint32 uintoffset = 0u;
             /*lint -e{613} null pointer checked before.*/
@@ -189,15 +190,15 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
                         if (overSize > (maxOffset[n] - (copyOffsetN + offset))) {
                             copySizePhase = (maxOffset[n] - offset);
 
-                            (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
-                                                                &(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
+                            (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8*>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
+                                                                &(reinterpret_cast<uint8*>(copyTable[n].gamPointer)[gamOffset]),
                                                                 static_cast<uint32>(copySizePhase));
                             gamOffset = static_cast<uint32>(copySizePhase);
                             offset = 0;
                         }
                         for (int32 z = 0; z < numberOfFullCopies; z++) {
-                            (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
-                                                                &(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
+                            (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8*>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
+                                                                &(reinterpret_cast<uint8*>(copyTable[n].gamPointer)[gamOffset]),
                                                                 static_cast<uint32>(maxOffset[n]));
 
                             gamOffset += static_cast<uint32>(maxOffset[n]);
@@ -206,8 +207,8 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
                         copySize = (copySize - (maxOffset[n] * numberOfFullCopies)) - copySizePhase;
                     }
                 }
-                (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
-                                                    &(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]), static_cast<uint32>(copySize));
+                (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8*>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
+                                                    &(reinterpret_cast<uint8*>(copyTable[n].gamPointer)[gamOffset]), static_cast<uint32>(copySize));
                 ret = dataSource->TerminateOutputCopy(signalIdxArr[n], uintoffset, samples[n]);
             }
         }
@@ -215,16 +216,18 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
     return ret;
 }
 
-bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                      void * const gamMemoryAddress) {
+bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction,
+                                      DataSourceI &dataSourceIn,
+                                      const char8 *const functionName,
+                                      void *const gamMemoryAddress) {
     dataSource = &dataSourceIn;
     bool ret = InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);
 
-    const ClassProperties * properties = GetClassProperties();
+    const ClassProperties *properties = GetClassProperties();
     if (ret) {
         ret = (properties != NULL);
     }
-    const char8* brokerClassName = NULL_PTR(const char8*);
+    const char8 *brokerClassName = NULL_PTR(const char8*);
     if (ret) {
         brokerClassName = properties->GetName();
         ret = (brokerClassName != NULL);
@@ -325,10 +328,10 @@ bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction, DataSourc
                         maxOffset[c % (numberOfCopies)] = static_cast<int32>(maxSignalOffset);
                         void *dataSourceSignalAddress;
                         ret = dataSource->GetSignalMemoryBuffer(signalIdx, c0, dataSourceSignalAddress);
-                        char8 *dataSourceSignalAddressChar = reinterpret_cast<char8 *>(dataSourceSignalAddress);
+                        char8 *dataSourceSignalAddressChar = reinterpret_cast<char8*>(dataSourceSignalAddress);
                         if (ret) {
                             dataSourceSignalAddressChar = &dataSourceSignalAddressChar[dataSourceOffset];
-                            copyTable[c].dataSourcePointer = reinterpret_cast<void *>(dataSourceSignalAddressChar);
+                            copyTable[c].dataSourcePointer = reinterpret_cast<void*>(dataSourceSignalAddressChar);
                         }
 
                         c++;
@@ -337,7 +340,6 @@ bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction, DataSourc
             }
         }
     }
-
     return ret;
 }
 

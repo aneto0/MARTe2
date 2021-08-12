@@ -96,15 +96,36 @@ public:
      * @param[in] direction the signal direction (InputSignals or OutputSignals).
      * @param[in] dataSourceIn the DataSourceI to be queried.
      * @param[in] functionName the name of GAM the to which this BrokerI is being allocated to.
-     * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored).
+     * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored)
      * @return true if all the copy information related to \a functionName can be successfully retrieved.
      * @post
      *   GetNumberOfCopies() > 0
      */
     virtual bool Init(const SignalDirection direction,
                       DataSourceI &dataSourceIn,
-                      const char8 * const functionName,
-                      void * const gamMemoryAddress);
+                      const char8 *const functionName,
+                      void *const gamMemoryAddress);
+
+    /**
+     * @brief Initialises the MemoryMapBroker.
+     * @details For each signal in the \a functionName, which wishes to use this MemoryMapBroker instance
+     * (i.e. IsSupportedBroker(class inhering from MemoryMapBroker) == true), the signal name is searched
+     *  in the provided \a dataSourceIn (see Init) and the memory address of the signal retrieved using the
+     *  GetSignalMemoryBuffer function. The information of each element to  be copied is stored in a MemoryMapBrokerCopyTableEntry.
+     * @param[in] direction the signal direction (InputSignals or OutputSignals).
+     * @param[in] dataSourceIn the DataSourceI to be queried.
+     * @param[in] functionName the name of GAM the to which this BrokerI is being allocated to.
+     * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored)
+     * @param[in] optim if true the algorithm tries to optimise the number of copies by means of grouping consecutive memory..
+     * @return true if all the copy information related to \a functionName can be successfully retrieved.
+     * @post
+     *   GetNumberOfCopies() > 0
+     */
+    virtual bool Init(const SignalDirection direction,
+                      DataSourceI &dataSourceIn,
+                      const char8 *const functionName,
+                      void *const gamMemoryAddress,
+                      const bool optim);
 
 protected:
 
@@ -116,7 +137,7 @@ protected:
     /**
      * The DataSourceI instance
      */
-    DataSourceI* dataSource;
+    DataSourceI *dataSource;
 
 };
 

@@ -50,12 +50,11 @@ namespace MARTe {
  * loaded into its memory (i.e. all the pointers returned by DataSourceI::GetSignalMemoryBuffer shall have valid values).
  */
 class DLL_API MemoryMapInterpolatedInputBroker: public MemoryMapBroker {
-public:
-    CLASS_REGISTER_DECLARATION()
+public:CLASS_REGISTER_DECLARATION()
     /**
      * @brief Default constructor. NOOP.
      */
-MemoryMapInterpolatedInputBroker    ();
+    MemoryMapInterpolatedInputBroker();
 
     /**
      * @brief Destructor. NOOP.
@@ -83,15 +82,16 @@ MemoryMapInterpolatedInputBroker    ();
      * @param[in] dataSourceXAxisIn the independent variable to compute the interpolation segments. It shall be updated by the DataSourceI every time the DataSourceI::Execute method is called.
      * @param[in] interpolationPeriodIn the interpolation period (how much the interpolatedXAxis is incremented every time a new interpolated sample is generated).
      */
-    void SetIndependentVariable(const uint64 * const dataSourceXAxisIn, const uint64 interpolationPeriodIn);
+    void SetIndependentVariable(const uint64 *const dataSourceXAxisIn,
+                                const uint64 interpolationPeriodIn);
 
     /**
      * @brief See MemoryMapBroker::Init
      */
     virtual bool Init(const SignalDirection direction,
-            DataSourceI &dataSourceIn,
-            const char8 * const functionName,
-            void * const gamMemoryAddress);
+                      DataSourceI &dataSourceIn,
+                      const char8 *const functionName,
+                      void *const gamMemoryAddress);
 
     /**
      * @brief Resets the interpolation vector to start counting from the first time value.
@@ -112,7 +112,8 @@ private:
      * @param[in] dx the interpolation segment length.
      */
     template<typename valueType>
-    void ChangeInterpolationSegment(uint32 copyIdx, uint64 dx);
+    void ChangeInterpolationSegment(uint32 copyIdx,
+                                    uint64 dx);
 
     /**
      * @brief Calls ChangeInterpolationSegment for all the broker signals.
@@ -179,35 +180,36 @@ namespace MARTe {
 
 template<typename valueType>
 void MemoryMapInterpolatedInputBroker::Interpolate(uint32 copyIdx) {
-uint32 i;
-for (i = 0u; i < numberOfElements[copyIdx]; i++) {
+    uint32 i;
+    for (i = 0u; i < numberOfElements[copyIdx]; i++) {
 
-    valueType *y0p = (valueType *) (y0[copyIdx]);
-    float64 y = static_cast<float64>(y0p[i]);
-    //How long as elapsed in this interpolation segment
-    float64 cttns = static_cast<float64>(interpolatedXAxis - x0);
-    //y = y0p + m * (t - x0), where y0p and t0p are the initial values for the interpolation period
-    float64 newy = m[copyIdx] * cttns;
-    y += newy;
-    valueType *dest = static_cast<valueType *>(copyTable[copyIdx].gamPointer);
-    dest[i] = static_cast<valueType>(y);
-}
+        valueType *y0p = (valueType*) (y0[copyIdx]);
+        float64 y = static_cast<float64>(y0p[i]);
+        //How long as elapsed in this interpolation segment
+        float64 cttns = static_cast<float64>(interpolatedXAxis - x0);
+        //y = y0p + m * (t - x0), where y0p and t0p are the initial values for the interpolation period
+        float64 newy = m[copyIdx] * cttns;
+        y += newy;
+        valueType *dest = static_cast<valueType*>(copyTable[copyIdx].gamPointer);
+        dest[i] = static_cast<valueType>(y);
+    }
 }
 
 template<typename valueType>
-void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegment(uint32 copyIdx, uint64 dx) {
-uint32 i;
-for (i = 0u; i < numberOfElements[copyIdx]; i++) {
-    valueType *y0p = (valueType *) (y0[copyIdx]);
-    valueType *y1p = (valueType *) (y1[copyIdx]);
-    valueType *y1pds = (valueType *) (copyTable[copyIdx].dataSourcePointer);
+void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegment(uint32 copyIdx,
+                                                                  uint64 dx) {
+    uint32 i;
+    for (i = 0u; i < numberOfElements[copyIdx]; i++) {
+        valueType *y0p = (valueType*) (y0[copyIdx]);
+        valueType *y1p = (valueType*) (y1[copyIdx]);
+        valueType *y1pds = (valueType*) (copyTable[copyIdx].dataSourcePointer);
 
-    y0p[i] = y1p[i];
-    y1p[i] = y1pds[i];
-    //Compute the derivative m = (y1-y0)/(x1-x0)
-    m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
-    m[copyIdx] /= dx;
-}
+        y0p[i] = y1p[i];
+        y1p[i] = y1pds[i];
+        //Compute the derivative m = (y1-y0)/(x1-x0)
+        m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
+        m[copyIdx] /= dx;
+    }
 }
 
 }
