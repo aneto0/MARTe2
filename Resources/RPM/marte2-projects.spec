@@ -36,15 +36,19 @@ Summary:	%{rpm_name} devel package
 
 %build
 %if %{?rpm_project_build:1}%{!?rpm_project_build:0}
-. {rpm_project_build}
+. %{rpm_project_build}
 %else
+if [ -f Makefile.gcc ]; then
+make -f Makefile.gcc TARGET=%{rpm_compile_target} %{rpm_build_options} %{rpm_build_extra_args}
+else
 make -f Makefile.%{rpm_compile_target} %{rpm_build_options} %{rpm_build_extra_args}
+fi
 %endif
 
 %install
 #Allow to run a project specific install script
 %if %{?rpm_project_install:1}%{!?rpm_project_install:0}
-. {rpm_project_install}
+. %{rpm_project_install}
 %else
 mkdir -p %{buildroot}/%{rpm_top_dir}/Bin
 %if %{?rpm_bin_list:1}%{!?rpm_bin_list:0}
@@ -129,6 +133,6 @@ echo 'To update the system environment variables please login again or execute "
 
 #Allow to run a project specific post install script
 %if %{?rpm_project_post:1}%{!?rpm_project_post:0}
-. {rpm_project_post}
+. %{rpm_project_post}
 %endif
 
