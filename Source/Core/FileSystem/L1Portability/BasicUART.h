@@ -29,11 +29,11 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 #include <cstring>
-#include <string>
-#include <sstream>
 #include <errno.h>
 #include <fcntl.h>
+#include <sstream>
 #include <stdlib.h>
+#include <string>
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
