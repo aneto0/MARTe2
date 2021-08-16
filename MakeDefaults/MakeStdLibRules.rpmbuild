@@ -24,7 +24,7 @@
 #############################################################
 
 precondition:
-	make -f Makefile.$(M2_RPM_COMPILE_TARGET) clean
+	@if [ -e Makefile.gcc ]; then make -f Makefile.gcc TARGET=$(M2_RPM_COMPILE_TARGET) clean; else make -f Makefile.$(M2_RPM_COMPILE_TARGET) clean; fi
 	@if [ -e Makefile.cov ]; then make -f Makefile.cov clean; fi
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
