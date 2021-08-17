@@ -26,7 +26,6 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -127,8 +126,7 @@ bool BasicUART::Open(const char8* name) {
             stream << "BasicUART::Open - cannot open serial device " << name
                    << ".";
             std::string msg = stream.str();
-            const char8* message = msg.c_str();
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, message);
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, msg.c_str());
             ok = false;
         }
         FD_SET(fileDescriptor, &readFDS);
@@ -207,23 +205,35 @@ bool BasicUART::Open(const char8* name) {
         newtio.c_cc[VMIN] = 1u;
         // VTIME - Timeout in deciseconds for noncanonical read (TIME).
         newtio.c_cc[VTIME] = 5u;
+
         ok = (cfsetspeed(&newtio, static_cast<uint32>(speedCode)) == 0);
-        if (!ok) {
-            std::stringstream stream;
+        ErrorManagement::ErrorType errorCode = ok ?
+                                    ErrorManagement::Information :
+                                    ErrorManagement::OSError;
+        std::string modifyMessage = ok ? "successfully set" :
+                                    "could not set";
+        std::stringstream stream;
+        /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
+                viable set of function and operator.*/
+        stream << "BasicUART::Open - " << modifyMessage <<" serial device "
+               << name << " speed to " << speedCode << ".";
+        std::string msg = stream.str();
+        REPORT_ERROR_STATIC_0(errorCode, msg.c_str());
+
+        if (ok) {
+            ok = (tcsetattr(fileDescriptor, TCSANOW, &newtio) != -1);
+            errorCode = ok ? ErrorManagement::Information :
+                        ErrorManagement::OSError;
+            modifyMessage.clear();
+            modifyMessage = ok ? "successfully set" : "could not set";
+            stream.str("");
+            msg.clear();
             /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
                     viable set of function and operator.*/
-            stream << "BasicUART::Open - cannot set serial device " << name
-                   << " speed to " << speedCode << ".";
-            std::string msg = stream.str();
-            const char8* message = msg.c_str();
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, message);
-        }
-        if (ok) {
-            if (tcsetattr(fileDescriptor, TCSANOW, &newtio) == -1) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUART::Op"
-                                    "en - unable to set terminal parameters.");
-                ok = false;
-            }
+            stream << "BasicUART::Open - " << modifyMessage
+                   << " serial device parameters.";
+            msg = stream.str();
+            REPORT_ERROR_STATIC_0(errorCode, msg.c_str());
         }
     }
 
@@ -234,10 +244,13 @@ void BasicUART::Close() {
 
     if (fileDescriptor != -1) {
         int32 err = close(fileDescriptor);
-        if (err != 0) {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUART::Close "
-                                "- failed to close serial interface.");
-        }
+        bool ok = (err == 0);
+        ErrorManagement::ErrorType errorCode = ok ?
+                                            ErrorManagement::Information :
+                                            ErrorManagement::OSError;
+        std::string msg = ok ? "BasicUART::Close - closed serial interface." :
+                        "BasicUART::Close - failed to close serial interface.";
+        REPORT_ERROR_STATIC_0(errorCode, msg.c_str());
         fileDescriptor = -1;
     }
 
@@ -278,8 +291,7 @@ bool BasicUART::Read(char8* buffer, uint32 &size, const uint32 timeoutUsec) {
                 // stream << "BasicUART::Read - read " << readBytes << " bytes "
                 //        "from serial device.";
                 // std::string msg = stream.str();
-                // const char8* message = msg.c_str();
-                // REPORT_ERROR_STATIC_0(ErrorManagement::Debug, message);
+                // REPORT_ERROR_STATIC_0(ErrorManagement::Debug, msg.c_str());
             }
             else {
                 std::stringstream stream;
@@ -292,8 +304,7 @@ bool BasicUART::Read(char8* buffer, uint32 &size, const uint32 timeoutUsec) {
                 stream << "BasicUART::Read - Failed to read from serial "
                         "device with error " << std::strerror(errno) << ".";
                 std::string msg = stream.str();
-                const char8* message = msg.c_str();
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, message);
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, msg.c_str());
                 ok = false;
             }
         }
@@ -319,8 +330,7 @@ bool BasicUART::Write(char8 *buffer, uint32 size) {
     // stream << "BasicUART::Write - wrote " << writtenBytes << " bytes "
     //        "to serial device.";
     // std::string msg = stream.str();
-    // const char8* message = msg.c_str();
-    // REPORT_ERROR_STATIC_0(ErrorManagement::Debug, message);
+    // REPORT_ERROR_STATIC_0(ErrorManagement::Debug, msg.c_str());
     bool ok = (writtenBytes == static_cast<ssize_t>(writeSize));
 
     return ok;

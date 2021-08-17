@@ -157,7 +157,7 @@ public:
      */
     bool WaitWrite(const uint32 timeoutUsec);
 
-private:
+protected:
 
     /**
      * The file descriptor associated to the Open operation.
