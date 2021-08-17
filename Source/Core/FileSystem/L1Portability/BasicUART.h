@@ -82,7 +82,7 @@ public:
      * @param[in] serial the speed to set.
      * @return true if the speed was successfully updated.
      */
-    bool SetSpeed(uint32 speed);
+    bool SetSpeed(const uint32 speed);
 
     /**
      * @brief Opens the UART described by the provided \a name.
@@ -125,7 +125,7 @@ public:
      * @pre
      *   Open
      */
-    bool Read(char8 *buffer, uint32 &size, uint32 timeoutUsec);
+    bool Read(char8 *buffer, uint32 &size, const uint32 timeoutUsec);
 
     /**
      * @brief Waits \a timeoutUsec micro-seconds for data to be available for
@@ -134,7 +134,7 @@ public:
      * available.
      * @return true if data is available to be read within the timeout.
      */
-    bool WaitRead(uint32 timeoutUsec);
+    bool WaitRead(const uint32 timeoutUsec);
 
     /**
      * @brief Writes \a size bytes from the \a buffer.
@@ -155,7 +155,7 @@ public:
      * available.
      * @return true if the UART is available to write within the timeout.
      */
-    bool WaitWrite(MARTe::uint32 timeoutUsec);
+    bool WaitWrite(const uint32 timeoutUsec);
 
 private:
 

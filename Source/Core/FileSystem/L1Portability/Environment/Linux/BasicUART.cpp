@@ -35,6 +35,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+/*lint -e628 []. Justification: Argument 'errno' of 'strerror()' provided
+        via <errno.h>.*/
+/*lint -e10 []. Justification: '}' present.*/
+
 struct SpeedTable {
     MARTe::int32 code;
     MARTe::uint32 speed;
@@ -64,8 +68,10 @@ const SpeedTable speedTable[] = {
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+/*lint -e{1401} [MISRA C++ Rule 8-5-1]. Justification: FD_ZERO arguments
+        correctly initialised.*/
 BasicUART::BasicUART() {
-
+    
     fileDescriptor = -1;
     speedCode = B19200;
     FD_ZERO(&readFDS);
@@ -76,10 +82,11 @@ BasicUART::BasicUART() {
 }
 
 BasicUART::~BasicUART() {
+    /*lint -e{1551} []. Justification: thrown exception non critical.*/
     Close();
 }
 
-bool BasicUART::SetSpeed(uint32 speed) {
+bool BasicUART::SetSpeed(const uint32 speed) {
 
     bool ok = (fileDescriptor == -1);
     if (ok) {
@@ -94,7 +101,8 @@ bool BasicUART::SetSpeed(uint32 speed) {
 
     return ok;
 }
-
+/*lint -e{952} [MISRA C++ Rule 7-1-1]. Justification: Parameter 'name'
+                kept as non const.*/
 bool BasicUART::Open(const char8* name) {
 
     // Info from termios.h:
@@ -109,9 +117,13 @@ bool BasicUART::Open(const char8* name) {
         ok = (name != NULL);
     }
     if (ok) {
+        /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
+                operation over signed type.*/
         fileDescriptor = open(name, O_RDWR | O_NOCTTY | O_NONBLOCK);
         if (fileDescriptor == -1) {
             std::stringstream stream;
+            /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
+                    viable set of function and operator.*/
             stream << "BasicUART::Open - cannot open serial device " << name
                    << ".";
             std::string msg = stream.str();
@@ -128,21 +140,42 @@ bool BasicUART::Open(const char8* name) {
         cfmakeraw(&newtio); 
         // Eight Data bits
         // CSIZE - Character size mask. Values are CS5, CS6, CS7, or CS8.
+        /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
+                operations over signed types.*/
+        /*lint -e{9117} [MISRA C++ Rule 5-0-4]. Justification: Known signedness
+                change due to implicit conversion.*/
+        /*lint -e{737} []. Justification: Known loss of signedness.*/
         newtio.c_cflag = (newtio.c_cflag & ~CSIZE) | CS8 | speedCode;
         // CLOCAL - Ignore modem control lines.
         // CREAD - Enable receiver.
+        /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
+                operations over signed types.*/
+        /*lint -e{9117} [MISRA C++ Rule 5-0-4]. Justification: Known signedness
+                change due to implicit conversion.*/
         newtio.c_cflag |= (CLOCAL | CREAD);
         // No parity:
         // PARENB - Enable parity generation on output and parity checking for
         // input.
         // PARODD - If set, then parity for input and output is odd; otherwise
         // even parity is used.
+        /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
+                operations over signed types.*/
+        /*lint -e{9117} [MISRA C++ Rule 5-0-4]. Justification: Known signedness
+                change due to implicit conversion.*/
         newtio.c_cflag &= ~(PARENB | PARODD);
         // No hardware handshake:
         // CRTSCTS - Enable RTS/CTS (hardware) flow control.
+        /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
+                operations over signed types.*/
+        /*lint -e{9105} [MISRA C++ Rule 2-13-3]. Justification: Known U suffix
+                missing.*/
         newtio.c_cflag &= ~CRTSCTS;
         // One stopbit:
         // CSTOPB - Set two stop bits, rather than one.
+        /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
+                operations over signed types.*/
+        /*lint -e{9117} [MISRA C++ Rule 5-0-4]. Justification: Known signedness
+                change due to implicit conversion.*/
         newtio.c_cflag &= ~CSTOPB; 
         // IGNBRK - Ignore BREAK condition on input.
         //newtio.c_iflag = IGNBRK;
@@ -151,6 +184,10 @@ bool BasicUART::Open(const char8* name) {
         // IXANY - Typing any character will restart stopped output.
         // IXOFF - Enable XON/XOFF flow control on input.
         //newtio.c_iflag |= (IXON | IXOFF | IXANY);
+        /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
+                operations over signed types.*/
+        /*lint -e{9117} [MISRA C++ Rule 5-0-4]. Justification: Known signedness
+                change due to implicit conversion.*/
         newtio.c_iflag &= ~(IXON | IXOFF | IXANY);
         // Non cannonical mode
         // ICANON - Enable canonical mode.
@@ -159,16 +196,22 @@ bool BasicUART::Open(const char8* name) {
         // preceding input character, and WERASE erases the preceding word.
         // ISIG - When any of the characters INTR, QUIT, SUSP, or DSUSP are
         // received, generate the corresponding signal.
+        /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
+                operations over signed types.*/
+        /*lint -e{9117} [MISRA C++ Rule 5-0-4]. Justification: Known signedness
+                change due to implicit conversion.*/
         newtio.c_iflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-        newtio.c_lflag = 0;
-        newtio.c_oflag = 0;
+        newtio.c_lflag = 0u;
+        newtio.c_oflag = 0u;
         // VMIN - Minimum number of characters for noncanonical read (MIN).
-        newtio.c_cc[VMIN] = 1;
+        newtio.c_cc[VMIN] = 1u;
         // VTIME - Timeout in deciseconds for noncanonical read (TIME).
-        newtio.c_cc[VTIME] = 5;
-        ok = (cfsetspeed(&newtio, speedCode) == 0);
+        newtio.c_cc[VTIME] = 5u;
+        ok = (cfsetspeed(&newtio, static_cast<uint32>(speedCode)) == 0);
         if (!ok) {
             std::stringstream stream;
+            /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
+                    viable set of function and operator.*/
             stream << "BasicUART::Open - cannot set serial device " << name
                    << " speed to " << speedCode << ".";
             std::string msg = stream.str();
@@ -200,28 +243,38 @@ void BasicUART::Close() {
 
 }
 
+/*lint -e{952} [MISRA C++ Rule 7-1-1]. Justification: Parameter 'buffer' kept
+        as non const.*/
+/*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Member function :Read()
+        kept as non const.*/
 bool BasicUART::Read(char8* buffer, uint32 &size) {
 
-    int32 readBytes = read(fileDescriptor, buffer, size);
-    size = readBytes;
-    bool ok = (readBytes == static_cast<int32>(size));
+    size_t readSize = static_cast<size_t>(size);
+    ssize_t readBytes = read(fileDescriptor, buffer, readSize);
+    size = static_cast<uint32>(readBytes);
+    bool ok = (readBytes == static_cast<ssize_t>(size));
 
     return ok;
 }
 
-bool BasicUART::Read(char8* buffer, uint32 &size, uint32 timeoutUsec) {
+/*lint -e{952} [MISRA C++ Rule 7-1-1]. Justification: Parameter 'buffer' kept
+        as non const.*/
+bool BasicUART::Read(char8* buffer, uint32 &size, const uint32 timeoutUsec) {
     
     bool ok = true;
-    uint32 leftToRead = size;
+    size_t leftToRead = static_cast<size_t>(size);
     void *rbuffer = &buffer[0u];
     while ((leftToRead > 0u) && (ok)) {
         ok = WaitRead(timeoutUsec);
         if (ok) {
-            int32 readBytes = read(fileDescriptor, rbuffer, leftToRead);
+            ssize_t readBytes = read(fileDescriptor, rbuffer, leftToRead);
             if (readBytes > 0) {
-                leftToRead -= readBytes;
-                rbuffer = &buffer[size - leftToRead];
+                leftToRead -= static_cast<size_t>(readBytes);
+                uint32 idx = size - static_cast<uint32>(leftToRead);
+                rbuffer = &buffer[idx];
                 // std::stringstream stream;
+                // /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
+                //         viable set of function and operator.*/
                 // stream << "BasicUART::Read - read " << readBytes << " bytes "
                 //        "from serial device.";
                 // std::string msg = stream.str();
@@ -230,8 +283,14 @@ bool BasicUART::Read(char8* buffer, uint32 &size, uint32 timeoutUsec) {
             }
             else {
                 std::stringstream stream;
+                /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
+                        viable set of function and operator.*/
+                /*lint -e{1055} [MISRA C++ Rule 14-8-2]. Justification: Symbol
+                        'strerror' declared.*/
+                /*lint -e{746} []. Justification: Prototype not present in 
+                        MARTe::strerror().*/
                 stream << "BasicUART::Read - Failed to read from serial "
-                        "device with error " << strerror(errno) << ".";
+                        "device with error " << std::strerror(errno) << ".";
                 std::string msg = stream.str();
                 const char8* message = msg.c_str();
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, message);
@@ -239,30 +298,41 @@ bool BasicUART::Read(char8* buffer, uint32 &size, uint32 timeoutUsec) {
             }
         }
     }
-    size = (size - leftToRead);
+    size = (size - static_cast<uint32>(leftToRead));
 
     return ok;
 }
 
+/*lint -e{952} [MISRA C++ Rule 7-1-1]. Justification: Parameter 'size' kept as
+        non const.*/
+/*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Member function :Read()
+        kept as non const.*/
+/*lint -e{818} [MISRA C++ Rule 7-1-1]. Justification: Parameter 'size' kept as
+        non const.*/
 bool BasicUART::Write(char8 *buffer, uint32 size) {
-
-    int32 writtenBytes = write(fileDescriptor, buffer, size);
+    
+    size_t writeSize = static_cast<size_t>(size);
+    ssize_t writtenBytes = write(fileDescriptor, buffer, writeSize);
     // std::stringstream stream;
+    // /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known viable set
+    //         of function and operator.*/
     // stream << "BasicUART::Write - wrote " << writtenBytes << " bytes "
     //        "to serial device.";
     // std::string msg = stream.str();
     // const char8* message = msg.c_str();
     // REPORT_ERROR_STATIC_0(ErrorManagement::Debug, message);
-    bool ok = (writtenBytes == static_cast<int32>(size));
+    bool ok = (writtenBytes == static_cast<ssize_t>(writeSize));
 
     return ok;
 }
 
-bool BasicUART::WaitRead(uint32 timeoutUsec) {
+bool BasicUART::WaitRead(const uint32 timeoutUsec) {
 
     struct timeval timeWait;
-    timeWait.tv_sec = timeoutUsec / 1000000u;
-    timeWait.tv_usec = timeoutUsec % 1000000u;
+    uint32 tmp = timeoutUsec / 1000000u;
+    timeWait.tv_sec = static_cast<time_t>(tmp);
+    tmp = timeoutUsec % 1000000u;
+    timeWait.tv_usec = static_cast<suseconds_t>(tmp);
     readFDS_done = readFDS;
     int32 readyCount = select(fileDescriptor + 1, &readFDS_done,
                                 NULL_PTR(fd_set *), NULL_PTR(fd_set *),
@@ -271,11 +341,13 @@ bool BasicUART::WaitRead(uint32 timeoutUsec) {
     return (readyCount > 0);
 }
 
-bool BasicUART::WaitWrite(MARTe::uint32 timeoutUsec) {
+bool BasicUART::WaitWrite(const uint32 timeoutUsec) {
 
     struct timeval timeWait;
-    timeWait.tv_sec = timeoutUsec / 1000000u;
-    timeWait.tv_usec = timeoutUsec % 1000000u;
+    uint32 tmp = timeoutUsec / 1000000u;
+    timeWait.tv_sec = static_cast<time_t>(tmp);
+    tmp = timeoutUsec % 1000000u;
+    timeWait.tv_usec = static_cast<suseconds_t>(tmp);
     writeFDS_done = writeFDS;
     int32 readyCount = select(fileDescriptor + 1, NULL_PTR(fd_set *),
                             &writeFDS_done, NULL_PTR(fd_set *),
