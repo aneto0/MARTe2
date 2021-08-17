@@ -10,6 +10,7 @@ BasicFileProperties.h
 BasicSocket.cpp
 BasicTCPSocket.cpp
 BasicType.h
+BasicUART.cpp
 BasicUDPSocket.cpp
 BinaryTree.h
 BitBoolean.h
