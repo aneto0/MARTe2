@@ -59,12 +59,15 @@ void SerialCallback(const void * const serialPtr) {
 /*---------------------------------------------------------------------------*/
 bool BasicUARTTest::TestConstructor() {
     using namespace MARTe;
+
     BasicUART serial;
+
     return true;
 }
 
 bool BasicUARTTest::TestSetSpeed() {
     using namespace MARTe;
+
     BasicUART serial;
     uint32 speed = 115200;
     const uint32 speedTable[31] = { 0u, 50u, 75u, 110u, 134u, 150u, 200u, 300u,
@@ -90,19 +93,23 @@ bool BasicUARTTest::TestSetSpeed() {
     }
 
     serial.Close();
+
     return ok;
 }
 
 bool BasicUARTTest::TestSetSpeed_False() {
     using namespace MARTe;
+
     BasicUART serial;
     uint32 speed = 115201;
     bool ok = !serial.SetSpeed(speed);
+
     return ok;
 }
 
 bool BasicUARTTest::TestSetSpeed_False_Open() {
     using namespace MARTe;
+
     BasicUART serial;
     uint32 speed = 115200;
     bool ok = serial.SetSpeed(speed);
@@ -113,26 +120,31 @@ bool BasicUARTTest::TestSetSpeed_False_Open() {
         ok = !serial.SetSpeed(speed);
     }
     serial.Close();
+
     return ok;
 }
 
 bool BasicUARTTest::TestOpen() {
     using namespace MARTe;
+
     BasicUART serial;
     uint32 speed = 115200;
     serial.SetSpeed(speed);
     bool ok = serial.Open(DEV_UART_0);
     serial.Close();
+
     return ok;
 }
 
 bool BasicUARTTest::TestOpen_WrongName() {
     using namespace MARTe;
+
     BasicUART serial;
     uint32 speed = 115200;
     serial.SetSpeed(speed);
     bool ok = !serial.Open("/dev/ttyUSB0adsas");
     serial.Close();
+
     return ok;
 }
 
@@ -142,8 +154,8 @@ bool BasicUARTTest::TestClose() {
 
 bool BasicUARTTest::TestRead() {
     using namespace MARTe;
-    BasicUART serial;
 
+    BasicUART serial;
     EventSem sem;
     sem.Create();
     sem.Reset();
@@ -199,13 +211,14 @@ bool BasicUARTTest::TestRead() {
         serial.Close();
     }
     sem.Close();
+
     return ok;
 }
 
 bool BasicUARTTest::TestReadTimeout() {
     using namespace MARTe;
-    BasicUART serial;
 
+    BasicUART serial;
     EventSem sem;
     sem.Create();
     sem.Reset();
@@ -241,6 +254,7 @@ bool BasicUARTTest::TestReadTimeout() {
         serial.Close();
     }
     sem.Close();
+
     return ok;
 }
 
