@@ -24,8 +24,8 @@
 
 // #define DEV_UART_0 "/dev/ttyUSB0"
 // #define DEV_UART_1 "/dev/ttyUSB0"
-#define DEV_UART_0 "/dev/pts/3"
-#define DEV_UART_1 "/dev/pts/4"
+#define DEV_UART_0 "/dev/ttyLoopWr"
+#define DEV_UART_1 "/dev/ttyLoopRd"
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */

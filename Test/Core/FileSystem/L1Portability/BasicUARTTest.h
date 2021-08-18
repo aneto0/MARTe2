@@ -44,13 +44,20 @@
 /**
  * @brief Tests the BasicUART public methods.
  * @details If target serial port device (i.e. /dev/ttyUSB0) TX-RX pins are not
- * shorted, use the folling command 'socat -d -d pty,raw,echo=0 pty,raw,echo=0'
- * and leave it runing on a separate terminal. The output should resemble: \n
- * 2021/06/10 14:23:20 socat[15190] N PTY is /dev/pts/3 \n
- * 2021/06/10 14:23:21 socat[15190] N PTY is /dev/pts/4 \n
- * 2021/06/10 14:23:21 socat[15190] N starting data transfer loop with FDs
+ * shorted, use the folling command 'socat' and leave it runing on a separate
+ * terminal. The output should resemble: \n
+ * [user@server home]# socat -d -d
+ * pty,link=/dev/ttyLoopWr,raw,echo=0,group-late=$USER,mode=760
+ * pty,link=/dev/ttyLoopRd,raw,echo=0,group-late=$USER,mode=760 \n
+ * 2021/08/18 15:28:50 socat[21538] N PTY is /dev/pts/4 \n
+ * 2021/08/18 15:28:50 socat[21538] N PTY is /dev/pts/5 \n
+ * 2021/08/18 15:28:50 socat[21538] N starting data transfer loop with FDs
  * [5,5] and [7,7] \n
- * and use these devices in the defines at the top of 'BasicUARTTest.cpp'.
+ * and use the '/dev/ttyLoopWr' and '/dev/ttyLoopRd' devices in the defines at
+ * the top of 'BasicUARTTest.cpp'. Notice that (i) this command shall be
+ * executed as 'sudo' (or 'root') and (ii) $USER is expected to return the name
+ * of the user running the tests (i.e. accessing the devices). Otherwise,
+ * change the 'group-late' and 'mode' arguments accordingly.
  */
 class BasicUARTTest {
 public:
