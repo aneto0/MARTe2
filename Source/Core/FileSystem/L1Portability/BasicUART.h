@@ -28,17 +28,19 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <cstring>
-#include <sstream>
-#include <stdlib.h>
-#include <string>
+// #include <cstring>
+// #include <sstream>
+// #include <stdlib.h>
+// #include <string>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "CompilerTypes.h"
-#include "ErrorManagement.h"
+// #include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
+#include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,BasicUARTProperties.h)
 
 /*---------------------------------------------------------------------------*/

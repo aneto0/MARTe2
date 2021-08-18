@@ -38,11 +38,15 @@
         via <errno.h>.*/
 /*lint -e10 []. Justification: '}' present.*/
 
+/*lint -e{9141} [MISRA C++ Rule 7-3-1]. Justification: 'SpeedTable' declared "
+    "as global.*/
 struct SpeedTable {
     MARTe::int32 code;
     MARTe::uint32 speed;
 };
 
+/*lint -e{9141} [MISRA C++ Rule 7-3-1]. Justification: 'speedTable' declared "
+    "as global.*/
 const SpeedTable speedTable[] = {
                                 { B0, 0u }, { B50, 50u },
                                 { B75, 75u }, { B110, 110u },
@@ -120,13 +124,8 @@ bool BasicUART::Open(const char8* name) {
                 operation over signed type.*/
         properties.fileDescriptor = open(name, O_RDWR | O_NOCTTY | O_NONBLOCK);
         if (properties.fileDescriptor == -1) {
-            std::stringstream stream;
-            /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
-                    viable set of function and operator.*/
-            stream << "BasicUART::Open - cannot open serial device " << name
-                   << ".";
-            std::string msg = stream.str();
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, msg.c_str());
+            REPORT_ERROR_STATIC(ErrorManagement::OSError, "BasicUART::Open - "
+                "cannot open serial device %s.", name);
             ok = false;
         }
         FD_SET(properties.fileDescriptor, &properties.readFDS);
@@ -209,32 +208,18 @@ bool BasicUART::Open(const char8* name) {
         ok = (cfsetspeed(&newtio, static_cast<uint32>(properties.speedCode))
             == 0);
         ErrorManagement::ErrorType errorCode = ok ?
-                                    ErrorManagement::Information :
-                                    ErrorManagement::OSError;
-        std::string modifyMessage = ok ? "successfully set" :
-                                    "could not set";
-        std::stringstream stream;
-        /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
-                viable set of function and operator.*/
-        stream << "BasicUART::Open - " << modifyMessage <<" serial device "
-               << name << " speed to " << properties.speedCode << ".";
-        std::string msg = stream.str();
-        REPORT_ERROR_STATIC_0(errorCode, msg.c_str());
+            ErrorManagement::Information :
+            ErrorManagement::OSError;
+        REPORT_ERROR_STATIC(errorCode, "BasicUART::Open - %s serial device %s "
+            "speed to %u.", ok ? "successfully set" : "could not set",
+            name, properties.speedCode);
 
         if (ok) {
             ok = (tcsetattr(properties.fileDescriptor, TCSANOW, &newtio)!=-1);
             errorCode = ok ? ErrorManagement::Information :
                         ErrorManagement::OSError;
-            modifyMessage.clear();
-            modifyMessage = ok ? "successfully set" : "could not set";
-            stream.str("");
-            msg.clear();
-            /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
-                    viable set of function and operator.*/
-            stream << "BasicUART::Open - " << modifyMessage
-                   << " serial device parameters.";
-            msg = stream.str();
-            REPORT_ERROR_STATIC_0(errorCode, msg.c_str());
+            REPORT_ERROR_STATIC(errorCode, "BasicUART::Open - %s serial device "
+                "parameters.", ok ? "successfully set" : "could not set");
         }
     }
 
@@ -247,11 +232,10 @@ void BasicUART::Close() {
         int32 err = close(properties.fileDescriptor);
         bool ok = (err == 0);
         ErrorManagement::ErrorType errorCode = ok ?
-                                            ErrorManagement::Information :
-                                            ErrorManagement::OSError;
-        std::string msg = ok ? "BasicUART::Close - closed serial interface." :
-                        "BasicUART::Close - failed to close serial interface.";
-        REPORT_ERROR_STATIC_0(errorCode, msg.c_str());
+            ErrorManagement::Information :
+            ErrorManagement::OSError;
+        REPORT_ERROR_STATIC(errorCode, "BasicUART::Close - %s serial "
+            "interface.", ok ? "closed" : "failed to close");
         properties.fileDescriptor = -1;
     }
 
@@ -268,6 +252,13 @@ bool BasicUART::Read(char8* buffer, uint32 &size) {
     size = static_cast<uint32>(readBytes);
     bool ok = (readBytes == static_cast<ssize_t>(size));
 
+    // ErrorManagement::ErrorType errorCode = ok ?
+    //     ErrorManagement::Information :
+    //     ErrorManagement::OSError;
+    // REPORT_ERROR_STATIC(errorCode, "BasicUART::Read - read %d bytes, "
+    //     "requested %u.", static_cast<int32>(readBytes),
+    //     static_cast<uint32>(readSize));
+
     return ok;
 }
 
@@ -282,31 +273,30 @@ bool BasicUART::Read(char8* buffer, uint32 &size, const uint32 timeoutUsec) {
         ok = WaitRead(timeoutUsec);
         if (ok) {
             ssize_t readBytes = read(properties.fileDescriptor, rbuffer, leftToRead);
-            if (readBytes > 0) {
+            ok = (readBytes > 0);
+            if (ok) {
                 leftToRead -= static_cast<size_t>(readBytes);
                 uint32 idx = size - static_cast<uint32>(leftToRead);
                 rbuffer = &buffer[idx];
-                // std::stringstream stream;
-                // /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
-                //         viable set of function and operator.*/
-                // stream << "BasicUART::Read - read " << readBytes << " bytes "
-                //        "from serial device.";
-                // std::string msg = stream.str();
-                // REPORT_ERROR_STATIC_0(ErrorManagement::Debug, msg.c_str());
             }
-            else {
-                std::stringstream stream;
-                /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
-                        viable set of function and operator.*/
-                /*lint -e{1055} [MISRA C++ Rule 14-8-2]. Justification: Symbol
-                        'strerror' declared.*/
-                /*lint -e{746} []. Justification: Prototype not present in 
-                        MARTe::strerror().*/
-                stream << "BasicUART::Read - Failed to read from serial "
-                        "device with error " << std::strerror(errno) << ".";
-                std::string msg = stream.str();
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, msg.c_str());
-                ok = false;
+            ErrorManagement::ErrorType errorCode = ok ?
+                ErrorManagement::Information :
+                ErrorManagement::OSError;
+            StreamString errorMessage;
+            /*lint -e{1055} [MISRA C++ Rule 14-8-2]. Justification: Symbol
+                    'strerror' declared.*/
+            /*lint -e{746} []. Justification: Prototype not present in 
+                    MARTe::strerror().*/            
+            (void) errorMessage.Printf(" with error %s.", strerror(errno));
+            //Error only verbosity, comment condition if needed.
+            if (!ok) {
+                /*lint -e{578} [MISRA C++ Rule 2-10-2]. Justification: Symbol 
+                    'Buffer' has an identical name as a global
+                    symbol 'buffer'.*/
+                REPORT_ERROR_STATIC(errorCode, "BasicUART::Read - %s read %d "
+                    "bytes%s", ok ? "" : "failed to",
+                    static_cast<int32>(readBytes),
+                    ok ? "." : errorMessage.Buffer());
             }
         }
     }
@@ -325,14 +315,13 @@ bool BasicUART::Write(char8 *buffer, uint32 size) {
     
     size_t writeSize = static_cast<size_t>(size);
     ssize_t writtenBytes = write(properties.fileDescriptor, buffer, writeSize);
-    // std::stringstream stream;
-    // /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known viable set
-    //         of function and operator.*/
-    // stream << "BasicUART::Write - wrote " << writtenBytes << " bytes "
-    //        "to serial device.";
-    // std::string msg = stream.str();
-    // REPORT_ERROR_STATIC_0(ErrorManagement::Debug, msg.c_str());
     bool ok = (writtenBytes == static_cast<ssize_t>(writeSize));
+
+    // ErrorManagement::ErrorType errorCode = ok ?
+    //     ErrorManagement::Information :
+    //     ErrorManagement::OSError;
+    // REPORT_ERROR_STATIC(errorCode, "BasicUART::Write - wrote %d bytes, "
+    //     "requested %u.", static_cast<int32>(writtenBytes), size);
 
     return ok;
 }
