@@ -71,12 +71,12 @@ namespace MARTe {
         correctly initialised.*/
 BasicUART::BasicUART() {
     
-    fileDescriptor = -1;
-    speedCode = B19200;
-    FD_ZERO(&readFDS);
-    FD_ZERO(&readFDS_done);
-    FD_ZERO(&writeFDS);
-    FD_ZERO(&writeFDS_done);
+    properties.fileDescriptor = -1;
+    properties.speedCode = B19200;
+    FD_ZERO(&properties.readFDS);
+    FD_ZERO(&properties.readFDS_done);
+    FD_ZERO(&properties.writeFDS);
+    FD_ZERO(&properties.writeFDS_done);
 
 }
 
@@ -87,14 +87,14 @@ BasicUART::~BasicUART() {
 
 bool BasicUART::SetSpeed(const uint32 speed) {
 
-    bool ok = (fileDescriptor == -1);
+    bool ok = (properties.fileDescriptor == -1);
     if (ok) {
         int32 ix = 0;
         while ( (speedTable[ix].code != __MAX_BAUD) &&
                 (speed > speedTable[ix].speed)) {
             ix++;
         }
-        speedCode = speedTable[ix].code;
+        properties.speedCode = speedTable[ix].code;
         ok = (speed == speedTable[ix].speed);
     }
 
@@ -111,15 +111,15 @@ bool BasicUART::Open(const char8* name) {
     // c_lflag - local modes;
     // c_cc[NCCS] - special characters.
 
-    bool ok = (fileDescriptor == -1);
+    bool ok = (properties.fileDescriptor == -1);
     if (ok) {
         ok = (name != NULL);
     }
     if (ok) {
         /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
                 operation over signed type.*/
-        fileDescriptor = open(name, O_RDWR | O_NOCTTY | O_NONBLOCK);
-        if (fileDescriptor == -1) {
+        properties.fileDescriptor = open(name, O_RDWR | O_NOCTTY | O_NONBLOCK);
+        if (properties.fileDescriptor == -1) {
             std::stringstream stream;
             /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
                     viable set of function and operator.*/
@@ -129,8 +129,8 @@ bool BasicUART::Open(const char8* name) {
             REPORT_ERROR_STATIC_0(ErrorManagement::OSError, msg.c_str());
             ok = false;
         }
-        FD_SET(fileDescriptor, &readFDS);
-        FD_SET(fileDescriptor, &writeFDS);
+        FD_SET(properties.fileDescriptor, &properties.readFDS);
+        FD_SET(properties.fileDescriptor, &properties.writeFDS);
     }
     if (ok) {
         struct termios newtio;
@@ -143,7 +143,7 @@ bool BasicUART::Open(const char8* name) {
         /*lint -e{9117} [MISRA C++ Rule 5-0-4]. Justification: Known signedness
                 change due to implicit conversion.*/
         /*lint -e{737} []. Justification: Known loss of signedness.*/
-        newtio.c_cflag = (newtio.c_cflag & ~CSIZE) | CS8 | speedCode;
+        newtio.c_cflag = (newtio.c_cflag & ~CSIZE) |CS8| properties.speedCode;
         // CLOCAL - Ignore modem control lines.
         // CREAD - Enable receiver.
         /*lint -e{9130} [MISRA C++ Rule 5-0-21]. Justification: Known bitwise
@@ -206,7 +206,8 @@ bool BasicUART::Open(const char8* name) {
         // VTIME - Timeout in deciseconds for noncanonical read (TIME).
         newtio.c_cc[VTIME] = 5u;
 
-        ok = (cfsetspeed(&newtio, static_cast<uint32>(speedCode)) == 0);
+        ok = (cfsetspeed(&newtio, static_cast<uint32>(properties.speedCode))
+            == 0);
         ErrorManagement::ErrorType errorCode = ok ?
                                     ErrorManagement::Information :
                                     ErrorManagement::OSError;
@@ -216,12 +217,12 @@ bool BasicUART::Open(const char8* name) {
         /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known
                 viable set of function and operator.*/
         stream << "BasicUART::Open - " << modifyMessage <<" serial device "
-               << name << " speed to " << speedCode << ".";
+               << name << " speed to " << properties.speedCode << ".";
         std::string msg = stream.str();
         REPORT_ERROR_STATIC_0(errorCode, msg.c_str());
 
         if (ok) {
-            ok = (tcsetattr(fileDescriptor, TCSANOW, &newtio) != -1);
+            ok = (tcsetattr(properties.fileDescriptor, TCSANOW, &newtio)!=-1);
             errorCode = ok ? ErrorManagement::Information :
                         ErrorManagement::OSError;
             modifyMessage.clear();
@@ -242,8 +243,8 @@ bool BasicUART::Open(const char8* name) {
 
 void BasicUART::Close() {
 
-    if (fileDescriptor != -1) {
-        int32 err = close(fileDescriptor);
+    if (properties.fileDescriptor != -1) {
+        int32 err = close(properties.fileDescriptor);
         bool ok = (err == 0);
         ErrorManagement::ErrorType errorCode = ok ?
                                             ErrorManagement::Information :
@@ -251,7 +252,7 @@ void BasicUART::Close() {
         std::string msg = ok ? "BasicUART::Close - closed serial interface." :
                         "BasicUART::Close - failed to close serial interface.";
         REPORT_ERROR_STATIC_0(errorCode, msg.c_str());
-        fileDescriptor = -1;
+        properties.fileDescriptor = -1;
     }
 
 }
@@ -263,7 +264,7 @@ void BasicUART::Close() {
 bool BasicUART::Read(char8* buffer, uint32 &size) {
 
     size_t readSize = static_cast<size_t>(size);
-    ssize_t readBytes = read(fileDescriptor, buffer, readSize);
+    ssize_t readBytes = read(properties.fileDescriptor, buffer, readSize);
     size = static_cast<uint32>(readBytes);
     bool ok = (readBytes == static_cast<ssize_t>(size));
 
@@ -280,7 +281,7 @@ bool BasicUART::Read(char8* buffer, uint32 &size, const uint32 timeoutUsec) {
     while ((leftToRead > 0u) && (ok)) {
         ok = WaitRead(timeoutUsec);
         if (ok) {
-            ssize_t readBytes = read(fileDescriptor, rbuffer, leftToRead);
+            ssize_t readBytes = read(properties.fileDescriptor, rbuffer, leftToRead);
             if (readBytes > 0) {
                 leftToRead -= static_cast<size_t>(readBytes);
                 uint32 idx = size - static_cast<uint32>(leftToRead);
@@ -323,7 +324,7 @@ bool BasicUART::Read(char8* buffer, uint32 &size, const uint32 timeoutUsec) {
 bool BasicUART::Write(char8 *buffer, uint32 size) {
     
     size_t writeSize = static_cast<size_t>(size);
-    ssize_t writtenBytes = write(fileDescriptor, buffer, writeSize);
+    ssize_t writtenBytes = write(properties.fileDescriptor, buffer, writeSize);
     // std::stringstream stream;
     // /*lint -e{9153} [MISRA C++ Rule 14-8-2]. Justification: Known viable set
     //         of function and operator.*/
@@ -343,8 +344,8 @@ bool BasicUART::WaitRead(const uint32 timeoutUsec) {
     timeWait.tv_sec = static_cast<time_t>(tmp);
     tmp = timeoutUsec % 1000000u;
     timeWait.tv_usec = static_cast<suseconds_t>(tmp);
-    readFDS_done = readFDS;
-    int32 readyCount = select(fileDescriptor + 1, &readFDS_done,
+    properties.readFDS_done = properties.readFDS;
+    int32 readyCount = select(properties.fileDescriptor + 1, &properties.readFDS_done,
                                 NULL_PTR(fd_set *), NULL_PTR(fd_set *),
                                 &timeWait);
 
@@ -358,9 +359,9 @@ bool BasicUART::WaitWrite(const uint32 timeoutUsec) {
     timeWait.tv_sec = static_cast<time_t>(tmp);
     tmp = timeoutUsec % 1000000u;
     timeWait.tv_usec = static_cast<suseconds_t>(tmp);
-    writeFDS_done = writeFDS;
-    int32 readyCount = select(fileDescriptor + 1, NULL_PTR(fd_set *),
-                            &writeFDS_done, NULL_PTR(fd_set *),
+    properties.writeFDS_done = properties.writeFDS;
+    int32 readyCount = select(properties.fileDescriptor + 1, NULL_PTR(fd_set *),
+                            &properties.writeFDS_done, NULL_PTR(fd_set *),
                             &timeWait);
 
     return (readyCount > 0);

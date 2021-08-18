@@ -29,22 +29,17 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 #include <cstring>
-#include <errno.h>
-#include <fcntl.h>
 #include <sstream>
 #include <stdlib.h>
 #include <string>
-#include <sys/select.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <termios.h>
-#include <unistd.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "CompilerTypes.h"
 #include "ErrorManagement.h"
+#include "GeneralDefinitions.h"
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,BasicUARTProperties.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -157,37 +152,12 @@ public:
      */
     bool WaitWrite(const uint32 timeoutUsec);
 
-protected:
+private:
 
     /**
-     * The file descriptor associated to the Open operation.
+     * Structure with variables/parameters for different Environments.
      */
-    int32 fileDescriptor;
-
-    /**
-     * The speed set with SetSpeed.
-     */
-    int32 speedCode;
-
-    /**
-     * The file descriptor array for the read in the select.
-     */
-    fd_set readFDS;
-
-    /**
-     * The file descriptor array ready to be read as returned by the select.
-     */
-    fd_set readFDS_done;
-
-    /**
-     * The file descriptor array for the write in the select.
-     */
-    fd_set writeFDS;
-
-    /**
-     * The file descriptor array ready to be written as returned by the select.
-     */
-    fd_set writeFDS_done;
+    BasicUARTProperties properties;
 
 };
 
