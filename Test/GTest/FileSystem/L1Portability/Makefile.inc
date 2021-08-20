@@ -27,6 +27,7 @@
 OBJSX=  BasicFileGTest.x \
 		BasicSocketGTest.x\
 		BasicTCPSocketGTest.x \
+		BasicUARTGTest.x \
 		BasicUDPSocketGTest.x \
 		DirectoryGTest.x \
 		DirectoryScannerGTest.x \
