@@ -106,10 +106,10 @@ done
 #List all the files to be added to the file-list section
 current_path=`pwd`
 cd %{buildroot}
-expattern="Include"
+expattern="Include\/"
 for src_dir in %{rpm_src_dir}
 do
-expattern=$expattern\\\|$src_dir
+expattern=$expattern\\\|$src_dir\/
 done
 
 find . -type f -printf "\"/%%P\"\n" | grep -v $expattern > $current_path/file-lists
