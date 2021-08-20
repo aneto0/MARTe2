@@ -1402,8 +1402,7 @@ uint32 AnyType::GetByteSize() const {
 
 uint32 AnyType::GetBitSize() const {
     uint32 byteSize = (dataDescriptor.numberOfBits + bitAddress);
-#if 0
-    if (dataDescriptor.isStructuredData) {
+    if (static_cast<bool>(dataDescriptor.isStructuredData)) {
         const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Peek(dataDescriptor.structuredDataIdCode);
         if (item != NULL_PTR(const ClassRegistryItem*)) {
             const ClassProperties *prop = item->GetClassProperties();
@@ -1419,7 +1418,6 @@ uint32 AnyType::GetBitSize() const {
             }
         }
     }
-#endif
     return byteSize;
 }
 
