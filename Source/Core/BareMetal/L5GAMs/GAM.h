@@ -370,6 +370,12 @@ public:
     bool AddOutputBrokers(ReferenceContainer brokers);
 
     /**
+     * @brief Sorts internally the brokers following the signal order.
+     * @return true if success, false otherwise
+     */
+    bool SortBrokers();
+
+    /**
      * @brief Gets the list of input BrokerI components that are associated to this GAM.
      * @details These BrokerI components will be responsible from copying the data from the
      * DataSourceI memory to the GAM memory.
