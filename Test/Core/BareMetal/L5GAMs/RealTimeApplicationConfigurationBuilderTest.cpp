@@ -42,12 +42,12 @@
 
 static bool CompareConfigurationDatabases(ConfigurationDatabase &db1,
                                           ConfigurationDatabase &db2,
-                                          const char8 * const currentNodeName) {
+                                          const char8 *const currentNodeName) {
     bool ok = true;
     uint32 n;
     uint32 numberOfChilds = db1.GetNumberOfChildren();
     for (n = 0u; (n < numberOfChilds) && ok; n++) {
-        const char8 * childName = db1.GetChildName(n);
+        const char8 *childName = db1.GetChildName(n);
         StreamString childFullNodeName = currentNodeName;
         if (childFullNodeName.Size() > 0u) {
             childFullNodeName += ".";
@@ -287,11 +287,11 @@ static bool TestLauncher(RealTimeApplicationConfigurationBuilder &rtAppBuilder,
     return ret;
 }
 
-static bool TestBuilder(const char8 * const config,
-                        const char8 * const appName,
-                        const char8 * const ddbName,
-                        const char8 * const expectedFunctionsConfig,
-                        const char8 * const expectedDataConfig,
+static bool TestBuilder(const char8 *const config,
+                        const char8 *const appName,
+                        const char8 *const ddbName,
+                        const char8 *const expectedFunctionsConfig,
+                        const char8 *const expectedDataConfig,
                         RealTimeApplicationConfigurationBuilderFunctions functionToCall,
                         bool expectCallFailure = false,
                         bool fromConfiguration = false) {
@@ -408,7 +408,7 @@ RealTimeApplicationConfigurationBuilderTest::~RealTimeApplicationConfigurationBu
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1(bool fromConfig) {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -491,7 +491,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -538,7 +538,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -576,7 +576,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase2(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -665,7 +665,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase2
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -712,7 +712,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase2
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = Node.DDB1"
@@ -755,7 +755,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase2
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase_IgnoreDataSource() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -845,7 +845,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase_
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -892,7 +892,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase_
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = Node.DDB1"
@@ -925,7 +925,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase_
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseFalse_InvalidApplication() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -1024,7 +1024,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseFalse_InvalidNestedGAMs(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -1116,7 +1116,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseFalse_GAMsNoIO(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -1199,7 +1199,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseFalse_TooManyTimeDataSources(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -1293,7 +1293,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseFalse_NoTimeDataSource(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -1381,7 +1381,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabaseF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -1464,7 +1464,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases1()
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -1560,7 +1560,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases1()
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -1626,7 +1626,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases1()
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases2() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -1708,7 +1708,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases2()
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -1784,7 +1784,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases2()
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -1850,7 +1850,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases2()
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases3() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -1933,7 +1933,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases3()
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases4() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -2011,7 +2011,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases4()
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -2087,7 +2087,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases4()
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -2153,7 +2153,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases4()
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases5() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -2247,7 +2247,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases5()
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -2338,7 +2338,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases5()
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -2404,7 +2404,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases5()
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases6() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -2504,7 +2504,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases6()
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -2580,7 +2580,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases6()
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -2666,7 +2666,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases6()
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_LockedDataSource() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -2766,7 +2766,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Lo
             "        TimingDataSource = Timings"
             "    }"
             "}";
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -2842,7 +2842,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Lo
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -2928,7 +2928,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Lo
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_CopyAllKnownSignalsProperties() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -3026,7 +3026,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Co
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -3129,7 +3129,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Co
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -3211,7 +3211,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Co
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_MemberAliases() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -3318,7 +3318,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Me
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -3419,7 +3419,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Me
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -3517,7 +3517,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Me
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Defaults() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -3616,7 +3616,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -3719,7 +3719,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -3801,7 +3801,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Defaults2() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -3900,7 +3900,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -4001,7 +4001,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -4084,7 +4084,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_De
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_False() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4193,7 +4193,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Fa
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_InvalidNDimensionsInStruct() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4289,7 +4289,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_InvalidNElementsInStruct() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4385,7 +4385,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_OnlyFrequencyInStruct() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4480,7 +4480,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_On
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_OnlyTriggerInStruct() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4576,7 +4576,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_On
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_OnlySyncSignalInStruct() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4671,7 +4671,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_On
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_OnlyTriggerSignalInStruct() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4766,7 +4766,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_On
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_InvalidSyncSignalInStruct() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4862,7 +4862,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_InvalidTriggerSignalInStruct() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -4959,7 +4959,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
 
 bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_UnregisteredType() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -5046,7 +5046,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Un
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -5134,7 +5134,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates(bool fromCon
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -5242,7 +5242,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates(bool fromCon
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -5317,7 +5317,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates(bool fromCon
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates2(bool fromConfig) {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -5425,7 +5425,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates2(bool fromCo
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -5536,7 +5536,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates2(bool fromCo
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -5632,7 +5632,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates2(bool fromCo
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_FunctionGroups(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -5747,7 +5747,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_FunctionGrou
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"AllGAMs.Group1.GAMA\""
@@ -5858,7 +5858,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_FunctionGrou
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -5954,7 +5954,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_FunctionGrou
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_MoreThreads(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -6080,7 +6080,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_MoreThreads(
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -6194,7 +6194,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_MoreThreads(
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -6334,7 +6334,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_MoreThreads(
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_SameGAMInMoreThreads(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -6465,8 +6465,384 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_SameGAM
     }
 }
 
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveStates_SameGAMInMoreThreads_Config(bool fromConfig) {
+    const char8 *const config = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    CheckSameGamInMoreThreads = 0"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   Type = uint32"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   Type = TestStructC"
+            "               }"
+            "            }"
+            "        }"
+            "        +GAMB = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal3 = {"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   Alias = Signal2.c1.b2"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               Signal4 = {"
+            "                   Type = uint32"
+            "                   Alias = Signal1"
+            "               }"
+            "            }"
+            "        }"
+            "        +GAMC = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               Signal5 = {"
+            "                   DataSource = Drv1"
+            "                   Type = float32"
+            "                   Alias = Signal2.c2"
+            "               }"
+            "               Signal6 = {"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   Alias = Signal2.c3"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Drv1 = {"
+            "            Class = Driver1"
+            "            Signals = {"
+            "               Signal2 = {"
+            "                   Type = TestStructC"
+            "               }"
+            "            }"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +ThreadA = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA GAMB}"
+            "                }"
+            "                +ThreadB = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMC}"
+            "                }"
+            "            }"
+            "        }"
+            "        +State2 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +ThreadA = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMB}"
+            "                }"
+            "                +ThreadB = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "        +State3 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +ThreadA = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "                +ThreadB = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMB}"
+            "                }"
+            "                +ThreadC = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    const char8 *const expectedFunctionsConfig = ""
+            "Functions = {"
+            "    \"0\" = {"
+            "        QualifiedName = \"GAMA\""
+            "        Signals = {"
+            "            InputSignals = {"
+            "                \"0\"= {"
+            "                    QualifiedName = \"Signal1\""
+            "                    Type = \"uint32\""
+            "                    DataSource = \"DDB1\""
+            "                    FullType = \"uint32\""
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                \"0\" = {"
+            "                    Type = \"int32\""
+            "                    NumberOfDimensions = 0"
+            "                    NumberOfElements = 1"
+            "                    MemberSize = 4"
+            "                    QualifiedName = \"Signal2.c1.b1\""
+            "                    FullType = \"TestStructC.TestStructB.int32\""
+            "                    DataSource = \"Drv1\""
+            "                }"
+            "                \"1\" = {"
+            "                    Type = \"int32\""
+            "                    NumberOfDimensions = 0"
+            "                    NumberOfElements = 1"
+            "                    MemberSize = 4"
+            "                    QualifiedName = \"Signal2.c1.b2\""
+            "                    FullType = \"TestStructC.TestStructB.int32\""
+            "                    DataSource = \"Drv1\""
+            "                }"
+            "                \"2\" = {"
+            "                    Type = \"float32\""
+            "                    NumberOfDimensions = 1"
+            "                    NumberOfElements = 3"
+            "                    MemberSize = 12"
+            "                    QualifiedName = \"Signal2.c2\""
+            "                    FullType = \"TestStructC.float32\""
+            "                    DataSource = \"Drv1\""
+            "                }"
+            "                \"3\" = {"
+            "                    Type = \"int32\""
+            "                    NumberOfDimensions = 2"
+            "                    NumberOfElements = 8"
+            "                    MemberSize = 32"
+            "                    QualifiedName = \"Signal2.c3\""
+            "                    FullType = \"TestStructC.int32\""
+            "                    DataSource = \"Drv1\""
+            "                }"
+            "            }"
+            "        }"
+            "        States = {"
+            "            State1 = \"ThreadA\""
+            "            State2 = \"ThreadB\""
+            "            State3 = { \"ThreadA\" \"ThreadC\" } "
+            "        }"
+            "    }"
+            "    \"1\" = {"
+            "        QualifiedName = \"GAMB\""
+            "        Signals = {"
+            "            InputSignals = {"
+            "                \"0\" = {"
+            "                    QualifiedName = \"Signal3\""
+            "                    Type = \"int32\""
+            "                    Alias = \"Signal2.c1.b2\""
+            "                    DataSource = \"Drv1\""
+            "                    FullType = \"Node.Node.int32\""
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                \"0\" = {"
+            "                    QualifiedName = \"Signal4\""
+            "                    Type = \"uint32\""
+            "                    Alias = \"Signal1\""
+            "                    DataSource = \"DDB1\""
+            "                    FullType = \"uint32\""
+            "                }"
+            "            }"
+            "        }"
+            "        States = {"
+            "            State1 = \"ThreadA\""
+            "            State2 = \"ThreadA\""
+            "            State3 = \"ThreadB\""
+            "        }"
+            "    }"
+            "    \"2\" = {"
+            "        QualifiedName = \"GAMC\""
+            "        Signals = {"
+            "            InputSignals = {"
+            "                \"0\" = {"
+            "                    QualifiedName = \"Signal5\""
+            "                    Type = \"float32\""
+            "                    Alias = \"Signal2.c2\""
+            "                    DataSource = \"Drv1\""
+            "                    FullType = \"Node.float32\""
+            "                }"
+            "                \"1\" = {"
+            "                    QualifiedName = \"Signal6\""
+            "                    Type = \"int32\""
+            "                    Alias = \"Signal2.c3\""
+            "                    DataSource = \"Drv1\""
+            "                    FullType = \"Node.int32\""
+            "                }"
+            "            }"
+            "        }"
+            "        States = {"
+            "            State1 = \"ThreadB\""
+            "        }"
+            "    }"
+            "}";
+
+    const char8 *const expectedDataConfig = ""
+            "Data = {"
+            "    \"0\" = {"
+            "        QualifiedName = \"DDB1\""
+            "        Signals = {"
+            "            IgnoreEmptyNode = 1"
+            "        }"
+            "    }"
+            "    \"1\" = {"
+            "        QualifiedName = \"Drv1\""
+            "        Signals = {"
+            "            \"0\" = {"
+            "                Type = \"int32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                MemberSize = 4"
+            "                QualifiedName = \"Signal2.c1.b1\""
+            "                FullType = \"TestStructC.TestStructB.int32\""
+            "            }"
+            "            \"1\" = {"
+            "                Type = \"int32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                MemberSize = 4"
+            "                QualifiedName = \"Signal2.c1.b2\""
+            "                FullType = \"TestStructC.TestStructB.int32\""
+            "            }"
+            "            \"2\" = {"
+            "                Type = \"float32\""
+            "                NumberOfDimensions = 1"
+            "                NumberOfElements = 3"
+            "                MemberSize = 12"
+            "                QualifiedName = \"Signal2.c2\""
+            "                FullType = \"TestStructC.float32\""
+            "            }"
+            "            \"3\" = {"
+            "                Type = \"int32\""
+            "                NumberOfDimensions = 2"
+            "                NumberOfElements = 8"
+            "                MemberSize = 32"
+            "                QualifiedName = \"Signal2.c3\""
+            "                FullType = \"TestStructC.int32\""
+            "            }"
+            "        }"
+            "    }"
+            "    \"2\" = {"
+            "        QualifiedName = \"Timings\""
+            "        IsTimingDataSource = 1"
+            "        Signals = {"
+            "            \"0\" = {"
+            "                QualifiedName = \"State1.ThreadA_CycleTime\""
+            "                Type = \"uint32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                ByteSize = 4"
+            "                FullType = \"Node.uint32\""
+            "                States = {"
+            "                     IgnoreEmptyNode = 1"
+            "                }"
+            "            }"
+            "            \"1\" = {"
+            "                QualifiedName = \"State1.ThreadB_CycleTime\""
+            "                Type = \"uint32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                ByteSize = 4"
+            "                FullType = \"Node.uint32\""
+            "                States = {"
+            "                     IgnoreEmptyNode = 1"
+            "                }"
+            "            }"
+            "            \"2\" = {"
+            "                QualifiedName = \"State2.ThreadA_CycleTime\""
+            "                Type = \"uint32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                ByteSize = 4"
+            "                FullType = \"Node.uint32\""
+            "                States = {"
+            "                     IgnoreEmptyNode = 1"
+            "                }"
+            "            }"
+            "            \"3\" = {"
+            "                QualifiedName = \"State2.ThreadB_CycleTime\""
+            "                Type = \"uint32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                ByteSize = 4"
+            "                FullType = \"Node.uint32\""
+            "                States = {"
+            "                     IgnoreEmptyNode = 1"
+            "                }"
+            "            }"
+            "            \"4\" = {"
+            "                QualifiedName = \"State3.ThreadA_CycleTime\""
+            "                Type = \"uint32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                ByteSize = 4"
+            "                FullType = \"Node.uint32\""
+            "                States = {"
+            "                     IgnoreEmptyNode = 1"
+            "                }"
+            "            }"
+            "            \"5\" = {"
+            "                QualifiedName = \"State3.ThreadB_CycleTime\""
+            "                Type = \"uint32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                ByteSize = 4"
+            "                FullType = \"Node.uint32\""
+            "                States = {"
+            "                     IgnoreEmptyNode = 1"
+            "                }"
+            "            }"
+            "            \"6\" = {"
+            "                QualifiedName = \"State3.ThreadC_CycleTime\""
+            "                Type = \"uint32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                ByteSize = 4"
+            "                FullType = \"Node.uint32\""
+            "                States = {"
+            "                     IgnoreEmptyNode = 1"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "}";
+
+    if (fromConfig) {
+        return TestBuilder(config, "$Application1", "DDB1",expectedFunctionsConfig, expectedDataConfig, ResolveStates, false, true);
+    }
+    else {
+        return TestBuilder(config, "Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, ResolveStates);
+    }
+}
+
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyncs1(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -6601,7 +6977,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyn
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyncs2(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -6735,7 +7111,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyn
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyncs3(bool fromConfig) {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -6871,7 +7247,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_MoreSyn
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveStatesFalse_InvalidApplication() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -7101,7 +7477,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -7194,7 +7570,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources1() {
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -7423,7 +7799,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources1() {
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -7685,7 +8061,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources1() {
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources2() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -7790,7 +8166,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources2() {
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -8048,7 +8424,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources2() {
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -8347,7 +8723,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources2() {
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources3() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -8448,7 +8824,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources3() {
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -8677,7 +9053,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources3() {
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -8940,7 +9316,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources3() {
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructMap() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -9014,7 +9390,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -9273,7 +9649,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"Drv1\""
@@ -9486,7 +9862,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructMap2() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -9556,7 +9932,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -12952,7 +13328,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"Drv1\""
@@ -16765,7 +17141,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructMap3() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -16829,7 +17205,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -17033,7 +17409,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"Drv1\""
@@ -17274,7 +17650,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructMapNamespaces() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -17363,7 +17739,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -17643,7 +18019,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"Drv1\""
@@ -17892,7 +18268,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructNamespaceMap() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -17962,7 +18338,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructN
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -18135,7 +18511,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructN
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"Drv1\""
@@ -18302,7 +18678,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructN
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructNamespaceMapInDs() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -18380,7 +18756,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructN
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -18639,7 +19015,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructN
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"Drv1\""
@@ -18853,7 +19229,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructN
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSource_False() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -18969,7 +19345,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSource_False() 
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_TypeMismatch() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19072,7 +19448,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Typ
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_TypeMismatch1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19178,7 +19554,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Typ
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NElementsMismatch() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19280,7 +19656,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NEl
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NElementsMismatch1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19387,7 +19763,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NEl
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NDimensionsMismatch() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19489,7 +19865,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NDi
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NDimensionsMismatch1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19595,7 +19971,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_NDi
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_DefaultMismatch() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19701,7 +20077,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Def
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_DefaultMismatch1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19808,7 +20184,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Def
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_DefaultMismatch3() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -19911,7 +20287,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourceFalse_Def
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsFalse_LeafMappedOnNode() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -20007,7 +20383,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsFalse_IncompatibleMap() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -20104,7 +20480,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsFalse_IncompatibleMap1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -20195,7 +20571,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsFalse_PartialDataSourceWithType() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -20292,7 +20668,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -20389,7 +20765,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
 
 bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsFalse_CompleteSignalInLockedDataSource() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -20490,7 +20866,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSourcesSignalsF
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -20583,7 +20959,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals1(
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -20811,7 +21187,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals1(
             "        }"
             "    }"
             "}";
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -21083,7 +21459,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals1(
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_PartialDataSource() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -21176,7 +21552,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_P
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -21404,7 +21780,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_P
             "        }"
             "    }"
             "}";
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -21676,7 +22052,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_P
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_DefaultValuesMatch() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -21780,7 +22156,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_D
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -22014,7 +22390,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_D
             "        }"
             "    }"
             "}";
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -22293,7 +22669,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_D
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_AssignNumberOfElements() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -22385,7 +22761,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -22613,7 +22989,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "        }"
             "    }"
             "}";
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -22885,7 +23261,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_AssignNumberOfDimensions() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -22977,7 +23353,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -23206,7 +23582,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -23478,7 +23854,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFalse_NoType() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -23690,7 +24066,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFalse_NoType2() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -23782,7 +24158,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFalse_InvalidNElements() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -23880,7 +24256,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFalse_IncompatibleDefaults() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -23977,7 +24353,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFalse_IncompatibleDefaultsMultiVarAsArray() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -24074,7 +24450,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignalsFa
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducers() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -24162,7 +24538,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -24432,7 +24808,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "        }"
             "    }"
             "}";
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -24792,7 +25168,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducers_Ranges() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -24890,7 +25266,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -25195,7 +25571,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "        }"
             "    }"
             "}";
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -25571,7 +25947,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducers_TimingSignals() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -25679,7 +26055,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMGroup.GAMA\""
@@ -26026,7 +26402,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -26449,7 +26825,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_MoreProducers() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -26544,7 +26920,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_MoreProducers2() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -26630,7 +27006,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_RangeOverlap() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -26732,7 +27108,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_RangeOverlap2() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -26831,7 +27207,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducer
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -27002,7 +27378,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
 
 bool RealTimeApplicationConfigurationBuilderTest::TestSet() {
 
-    const char8 * expectedFunctionsConfig = ""
+    const char8 *expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -27049,7 +27425,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestSet() {
             "   }"
             "}";
 
-    const char8 * expectedDataConfig = ""
+    const char8 *expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -27143,7 +27519,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestCopy() {
 
 bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSource() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -27234,7 +27610,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSource() 
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -27507,7 +27883,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSource() 
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -27868,7 +28244,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSource() 
 
 bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSourceFalse_InvalidDataSource() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -27959,7 +28335,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSourceFal
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -28223,7 +28599,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSourceFal
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -28616,7 +28992,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureDataSourceFal
 
 bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctions() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -28707,7 +29083,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctions() {
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -28980,7 +29356,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctions() {
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -29341,7 +29717,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctions() {
 
 bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctionsFalse_InvalidDataSource() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -29432,7 +29808,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctionsFals
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "   \"0\" = {"
             "       QualifiedName = GAMA"
@@ -29696,7 +30072,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctionsFals
             "   }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "   \"0\" = {"
             "       QualifiedName = DDB1"
@@ -30089,7 +30465,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestPostConfigureFunctionsFals
 
 bool RealTimeApplicationConfigurationBuilderTest::TestConfigureAfterInitialisation() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -30180,7 +30556,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureAfterInitialisati
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -30453,7 +30829,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureAfterInitialisati
             "    }"
             "}";
 
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -31325,7 +31701,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureAfterInitialisati
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisation() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -31413,7 +31789,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
             "    }"
             "}";
 
-    const char8 * const expectedFunctionsConfig = ""
+    const char8 *const expectedFunctionsConfig = ""
             "Functions = {"
             "    \"0\" = {"
             "        QualifiedName = \"GAMA\""
@@ -31683,7 +32059,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureBeforeInitialisat
             "        }"
             "    }"
             "}";
-    const char8 * const expectedDataConfig = ""
+    const char8 *const expectedDataConfig = ""
             "Data = {"
             "    \"0\" = {"
             "        QualifiedName = \"DDB1\""
@@ -32270,7 +32646,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestConfigureThreads() {
 }
 
 bool RealTimeApplicationConfigurationBuilderTest::TestArraysOfStructures1() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -32363,7 +32739,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestArraysOfStructures1() {
 
 bool RealTimeApplicationConfigurationBuilderTest::TestArraysOfStructures2() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -32449,7 +32825,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestArraysOfStructures2() {
 
 bool RealTimeApplicationConfigurationBuilderTest::TestStructureDefaultArrayMember() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"
@@ -32564,7 +32940,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestStructureDefaultArrayMembe
 
 bool RealTimeApplicationConfigurationBuilderTest::TestStructureDefaultArrayMemberString() {
 
-    const char8 * const config = ""
+    const char8 *const config = ""
             "$Application1 = {"
             "    Class = RealTimeApplication"
             "    +Functions = {"

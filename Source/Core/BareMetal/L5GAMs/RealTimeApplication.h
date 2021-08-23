@@ -225,6 +225,10 @@ public:
      */
     virtual void Purge(ReferenceContainer &purgeList);
 
+
+    bool CheckSameGamInMoreThreads() const;
+
+    bool CheckMultipleProducersWrites() const;
 private:
 
     /**
@@ -306,6 +310,10 @@ private:
      */
     ReferenceT<RegisteredMethodsMessageFilter> filter;
 
+
+    bool checkSameGamInMoreThreads;
+
+    bool checkMultipleProducersWrites;
 };
 
 }

@@ -216,6 +216,12 @@ public:
     bool TestResolveStatesFalse_SameGAMInMoreThreads(bool fromConfig);
 
     /**
+     * @brief Tests the ResolveStates method with the same GAM in more than one thread in the same state.
+     * It returns true because the check is disabled in the configurations
+     */
+    bool TestResolveStates_SameGAMInMoreThreads_Config(bool fromConfig);
+
+    /**
      * @brief Tests the ResolveStates method with more than one sync point in a thread.
      */
     bool TestResolveStatesFalse_MoreSyncs1(bool fromConfig);
