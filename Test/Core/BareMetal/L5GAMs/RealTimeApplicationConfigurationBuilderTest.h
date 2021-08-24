@@ -453,6 +453,18 @@ public:
     bool TestVerifyConsumersAndProducersFalse_RangeOverlap2();
 
     /**
+     * @brief Tests the VerifyConsumersAndProducers method with range overlap succeeds if
+     * check is disabled by configuration.
+     */
+    bool TestVerifyConsumersAndProducers_RangeOverlap_Config();
+
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with range overlap succeeds if
+     * check is disabled by configuration.
+     */
+    bool TestVerifyConsumersAndProducers_RangeOverlap_Config_FromConfig();
+
+    /**
      * @brief Tests the VerifyConsumersAndProducers method with producer in timing signals.
      */
     bool TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals();

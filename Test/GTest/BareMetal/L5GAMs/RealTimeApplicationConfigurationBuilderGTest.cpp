@@ -535,6 +535,17 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyCon
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_RangeOverlap2());
 }
 
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_RangeOverlap_Config) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_RangeOverlap_Config());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_RangeOverlap_Config_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_RangeOverlap_Config_FromConfig());
+}
+
+
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals());

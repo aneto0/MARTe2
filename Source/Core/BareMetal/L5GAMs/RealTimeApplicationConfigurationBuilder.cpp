@@ -73,7 +73,7 @@ RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder
         REPORT_ERROR_FULL(ErrorManagement::FatalError, "In RealTimeApplicationConfigurationBuilder failed to MoveToRoot");
     }
     realTimeApplication = NULL_PTR(RealTimeApplication*);
-    initialiseAfterInitialisation = true;
+    initialiseAfterInitialisation = false;
 }
 
 void RealTimeApplicationConfigurationBuilder::SetParameters(RealTimeApplication &realTimeApplicationIn,
@@ -2190,7 +2190,25 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const
 ////////////////////////////////
 bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
 
-    bool ret = dataSourcesDatabase.MoveAbsolute("Data");
+    bool ret = true;
+    bool checkMultipleProducersWrites = true;
+    if (initialiseAfterInitialisation) {
+        checkMultipleProducersWrites = realTimeApplication->CheckMultipleProducersWrites();
+    }
+    else {
+        ret = globalDatabase.MoveToRoot();
+        if (ret) {
+            uint8 checkMultipleProducersWritesT = 1u;
+            if (!globalDatabase.Read("CheckMultipleProducersWrites", checkMultipleProducersWritesT)) {
+                checkMultipleProducersWritesT = 1u;
+            }
+            checkMultipleProducersWrites = (checkMultipleProducersWritesT > 0u);
+        }
+    }
+
+    if (ret) {
+        ret = dataSourcesDatabase.MoveAbsolute("Data");
+    }
     uint32 numberOfDS = dataSourcesDatabase.GetNumberOfChildren();
     ConfigurationDatabase dataSourcesDatabaseBeforeMove = dataSourcesDatabase;
     for (uint32 i = 0u; (i < numberOfDS) && (ret); i++) {
@@ -2247,10 +2265,6 @@ bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
                                 }
                             }
                             else {
-                                bool checkMultipleProducersWrites = true;
-                                if (realTimeApplication != NULL_PTR(RealTimeApplication*)) {
-                                    checkMultipleProducersWrites = realTimeApplication->CheckMultipleProducersWrites();
-                                }
                                 if (checkMultipleProducersWrites) {
                                     if (!prods.IsVoid()) {
                                         if (prods.GetNumberOfElements(0u) > 1u) {
