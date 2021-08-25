@@ -1,8 +1,8 @@
 /**
- * @file EndianityA.h
- * @brief Header file for module EndianityA
- * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @file EndianityAXil.h
+ * @brief Header file for module EndianityAXil
+ * @date 25/08/2021
+ * @author Giuseppe Avon
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -28,9 +28,6 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <circle/util.h>
-
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -47,16 +44,22 @@ namespace MARTe{
 
 namespace Endianity {
 
+//NOTE: in-place __builtin_bswap does not work. That is why a tmp is used.
+
 inline void Swap32(volatile void *x) {
-    uint32* xu32 = (uint32*)x;
-    *x = bswap32(*xu32);
+    uint32 *xu32 = (uint32*)x;
+    uint32 tmp = *xu32;
+    *xu32 = __builtin_bswap32(tmp);
 }
 
 inline void Swap32(volatile void *x,
                    uint32 sizer) {
-    uint32* xu32 = (uint32*)x;
+    
+    uint32 *xu32 = (uint32*)x;
+
     while(sizer-- != 0) {
-        xu32[sizer] = bswap32(xu32[sizer]);
+        uint32 tmp = __builtin_bswap32(xu32[sizer]);
+        xu32[sizer] = tmp;
     }
 }
 
@@ -66,20 +69,25 @@ inline void MemCopySwap32(volatile void *dest,
     uint32* destu32 = (uint32*)dest;
     uint32* srcu32 = (uint32*)src;
     while(sizer-- != 0) {
-        destu32[sizer] = bswap32(srcu32[sizer]);
+        destu32[sizer] = __builtin_bswap32(srcu32[sizer]);
     }
 }
 
 inline void Swap16(volatile void *x) {
     uint16* xu16 = (uint16*)x;
-    *xu16 = bswap16(*xu16);
+    uint16 tmp = *xu16;
+
+    *xu16 = __builtin_bswap16(tmp);
 }
 
 inline void Swap16(volatile void *x,
                    uint32 sizer) {
+    
     uint16* xu16 = (uint16*)x;
+
     while(sizer-- != 0) {
-        xu16[sizer] = bswap16(xu16[sizer]);
+        uint16 tmp = __builtin_bswap16(xu16[sizer]);
+        xu16[sizer] = tmp;
     }
 }
 
@@ -90,35 +98,29 @@ inline void MemCopySwap16(volatile void *dest,
     uint16* srcu16 = (uint16*)src;
 
     while(sizer-- != 0) {
-        destu16[sizer] = bswap16(srcu16[sizer]);
+        destu16[sizer] = __builtin_bswap16(srcu16[sizer]);
     }
 }
 
 inline void Swap64(volatile void *x) {
-    uint32 *xPtr = (uint32 *)x;
-    Swap32(&xPtr[0]);
-    Swap32(&xPtr[1]);
-    uint32 tempXchg = xPtr[0];
-    xPtr[0] = xPtr[1];
-    xPtr[1] = tempXchg;
+
+    uint64* xu64 = (uint64*)x;
+    uint64 tmp = *xu64;
+
+    *xu64 = __builtin_bswap64(tmp);
 }
 
 inline void MemCopySwap64(volatile void *dest,
                           volatile const void *src,
                           uint32 sizer) {
-    //We are going to treat everything as uint32 to avoid the temp exchange variable
-    //which is in Swap64 shorthand and directly do the swap in the loop
+    
+    uint64* destu64 = (uint64*)dest;
+    uint64* srcu64 = (uint64*)src;
 
-    uint32* srcPtr = (uint32*)src;
-    uint32* destPtr = (uint32*)dest;
-    uint32 currentElement = 0u;
-    sizer += sizer;
-
-    while((sizer -= 2) != 0) {
-        destPtr[currentElement] = bswap32(&srcPtr[currentElement + 1]);
-        destPtr[currentElement + 1] = bswap32(&srcPtr[currentElement]);
-        currentElement += 2;
+    while(sizer-- != 0) {
+        destu64[sizer] = Swap64(srcu64[sizer]);
     }
+
 }
 
 inline void FromBigEndian(volatile float64 &x) {

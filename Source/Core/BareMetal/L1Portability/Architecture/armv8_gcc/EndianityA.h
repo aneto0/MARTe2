@@ -23,7 +23,15 @@
 
 #ifdef RSTA2_CIRCLE
     #include "EndianityACircle.h"
-#else
+    #define CUSTOMIZED_ENDIANITY_HEADER
+#endif
+
+#ifdef XILINX_ULTRASCALE
+    #include "EndianityAXil.h"
+    #define CUSTOMIZED_COMPILERTYPES_HEADER
+#endif
+
+#ifndef CUSTOMIZED_COMPILERTYPES_HEADER
     #include "EndianityADefault.h"
 #endif
 

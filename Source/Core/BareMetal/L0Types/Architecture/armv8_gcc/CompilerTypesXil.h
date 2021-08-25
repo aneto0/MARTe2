@@ -1,8 +1,8 @@
 /**
- * @file CompilerTypesCircle.h
- * @brief Header file for CompilerTypesCircle
- * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @file CompilerTypesXil.h
+ * @brief Header file for CompilerTypesXil
+ * @date 25/08/2021
+ * @author Giuseppe Avon
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -28,13 +28,11 @@
                      + __GNUC_MINOR__ * 100 \
                      + __GNUC_PATCHLEVEL__)
 
-#include <circle/types.h>
+#include "xil_types.h"
 
 namespace MARTe {
 
-#ifndef NULL
-    #define NULL 0
-#endif
+//Warning NULL, TRUE and FALSE are already defined in xil_types.h
 
 /** 64 Bit unsigned integer. */
 typedef u64 uint64;
@@ -62,14 +60,10 @@ typedef float float32;
 typedef double float64;
 
 /** 8 Bit character */
-typedef char char8;
+//Warning - char8 is already defined in xil_types.h
 
 /** Sufficiently large to hold a pointer address in the target architecture*/
-#if defined(__LP64__) || defined(__ILP64__) || defined (__LLP64__)
-typedef u64      uintp;
-#else
-typedef u32      uintp;
-#endif
+typedef uintptr_t      uintp;
 
 /** A tool to find indexes of structures fields.
  1024 has been used to avoid alignment problems. */

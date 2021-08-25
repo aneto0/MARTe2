@@ -23,6 +23,14 @@
 
 #ifdef RSTA2_CIRCLE
     #include "CompilerTypesCircle.h"
-#else
+    #define CUSTOMIZED_COMPILERTYPES_HEADER
+#endif
+
+#ifdef XILINX_ULTRASCALE
+    #include "CompilerTypesXil.h"
+    #define CUSTOMIZED_COMPILERTYPES_HEADER
+#endif
+
+#ifndef CUSTOMIZED_COMPILERTYPES_HEADER
     #include "CompilerTypesDefault.h"
 #endif
