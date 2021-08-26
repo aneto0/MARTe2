@@ -68,6 +68,7 @@ inline void MemCopySwap32(volatile void *dest,
                           uint32 sizer) {
     uint32* destu32 = (uint32*)dest;
     uint32* srcu32 = (uint32*)src;
+    
     while(sizer-- != 0) {
         destu32[sizer] = __builtin_bswap32(srcu32[sizer]);
     }
