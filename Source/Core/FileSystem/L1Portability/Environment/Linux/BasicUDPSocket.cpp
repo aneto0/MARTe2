@@ -154,14 +154,14 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     return (errorCode >= 0);
 }
 
-bool BasicUDPSocket::Join(const char8 *const group) {
-    uint32 opt = 1u;
+bool BasicUDPSocket::Join(const char8 *const group) const {
+    int32 opt = 1;
     /* Allow multiple sockets to use the same addr and port number */
-    bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&opt), sizeof(opt)) >= 0u;
+    bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt))) >= 0;
     if (ok) {
         InternetHost host;
         host.SetMulticastGroup(group);
-        ok = setsockopt(connectionSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP,reinterpret_cast<char*>(host.GetInternetMulticastHost()), host.MulticastSize()) >= 0;
+        ok = setsockopt(connectionSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, host.GetInternetMulticastHost(), static_cast<socklen_t>(host.MulticastSize())) >= 0;
     }
     return ok;
 }

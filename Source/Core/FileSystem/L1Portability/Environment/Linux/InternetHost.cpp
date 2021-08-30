@@ -184,7 +184,7 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
 
 InternetHost::InternetHost(const uint16 port,
                            const char8 *const addr) {
-    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+    mreq.imr_interface.s_addr = htonl(static_cast<in_addr_t>(0x00000000)); //INADDR_ANY
 
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
@@ -263,11 +263,14 @@ void InternetHost::SetMulticastGroup(const char8 *const addr) {
     mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));
 }
 
-StreamString InternetHost::GetMulticastGroup() {
+StreamString InternetHost::GetMulticastGroup() const {
     StreamString dotName(inet_ntoa(mreq.imr_multiaddr));
     return dotName;
 }
 
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: sockets will change this attribute then the full access to this
+ * member is allowed.
+ */
 InternetMulticastCore *InternetHost::GetInternetMulticastHost() {
     return &mreq;
 }
