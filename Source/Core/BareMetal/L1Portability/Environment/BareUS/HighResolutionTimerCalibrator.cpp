@@ -90,7 +90,7 @@ namespace MARTe {
 
         uint64 HighResolutionTimerCalibrator::GetTicks() {
             XTime tempTime = 0ULL;
-            XTime_GetTime(&tempTime)
+            XTime_GetTime(&tempTime);
 
             return static_cast<uint64>(tempTime);
         }

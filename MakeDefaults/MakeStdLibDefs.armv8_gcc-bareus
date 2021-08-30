@@ -25,16 +25,16 @@
 #############################################################
 include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
 
-ENVIRONMENT=BareCircle
+ENVIRONMENT=BareUS
 ARCHITECTURE=armv8_gcc
 MARTe2_LINK_MODE?=Static
 ENV_ARCH_CUSTOMIZATION=XILINX_ULTRASCALE
 
 MARTe2_TEST_ENVIRONMENT?=Portable
 
-INCLUDES+=-I$(PICIRCLE_BSP_BASE_DIR)/libs/circle/include/
-INCLUDES+=-I$(PICIRCLE_BSP_BASE_DIR)/libs/circle/addon/
-INCLUDES+=-I$(PICIRCLE_BSP_BASE_DIR)/include/
+INCLUDES+=-I$(XILINX_BSP_BASE_DIR)/psu_cortexa53_0/include
+#INCLUDES+=-I$(XILINX_SDK_BASE_DIR)/2019.1/data/embeddedsw/lib/bsp/standalone_v7_0/src/common/
+#INCLUDES+=-I$(XILINX_SDK_BASE_DIR)/2019.1/data/embeddedsw/lib/bsp/standalone_v7_0/src/arm/ARMv8/64bit/
 
 OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o)
 OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o) 
@@ -45,11 +45,7 @@ COMPILER = $(COMPILERPREFIX)-g++
 CCOMPILER = $(COMPILERPREFIX)-gcc
 LINKER = $(COMPILERPREFIX)-ld
 
-#For RPi3 in QEMU
-CPUSPECIFICFLAGS = -mcpu=cortex-a53 -mlittle-endian -mcmodel=small
-
-#For real RPi4
-#CPUSPECIFICFLAGS = -mcpu=cortex-a72 -mlittle-endian -mcmodel=small
+CPUSPECIFICFLAGS = -mcpu=cortex-a53
 
 #Flags
 #ADDITIONALFLAGS = -MD -MP -fPIC -frtti -std=c++14 -fpermissive -ffunction-sections -fdata-sections

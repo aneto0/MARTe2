@@ -24,7 +24,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <circle/screen.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -36,7 +35,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
     struct ConsoleHandle {
-        CScreenDevice *physicalScreen;
+        int dummyVal;
     };
 }
 
@@ -49,21 +48,14 @@ namespace MARTe {
 
 namespace MARTe {
 
+//TODO: Check if a console abstraction is available at Xilinx lib level
+
 BasicConsole::BasicConsole() :
         StreamI(),
         HandleI() {
-    handle = new ConsoleHandle();
-    handle->physicalScreen = new CScreenDevice(0, 0);
-    bool retVal = handle->physicalScreen->Initialize();
-
-    if(!retVal) {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicConsole::BasicConsole() Failure, cannot initialize physical console");
-    }
 }
 
 BasicConsole::~BasicConsole() {
-    delete handle->physicalScreen;
-    delete handle;
 }
 
 bool BasicConsole::Open(const FlagsType &mode) {
@@ -89,26 +81,20 @@ bool BasicConsole::Read(char8 * const output,
 bool BasicConsole::Write(const char8 * const input,
                          uint32 & size,
                          const TimeoutType &timeout) {
-    return OSWrite(input, size, TTInfiniteWait);
+    return false;
+    //return OSWrite(input, size, TTInfiniteWait);
 }
 
 bool BasicConsole::Write(const char8 * const input,
                          uint32 & size) {
-    return OSWrite(input, size, TTInfiniteWait);
+    return false;
+    //return OSWrite(input, size, TTInfiniteWait);
 }
 
 bool BasicConsole::OSWrite(const char8* const buffer,
                            uint32 &size,
                            const TimeoutType &timeout) {
-    bool retVal = true;
-
-    uint32 effectiveWriteSize = handle->physicalScreen->Write(buffer, size);
-    if(size != effectiveWriteSize) {
-        retVal = false;
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicConsole::OSWrite() Mismatch between requested and effectively written bytes");
-    }
-
-    return retVal;
+    return false;
 }
 
 bool BasicConsole::Read(char8 * const output,
@@ -125,10 +111,7 @@ bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
 
 bool BasicConsole::GetSceneSize(uint32 &numberOfColumns,
                                 uint32 &numberOfRows) const {
-    numberOfColumns = handle->physicalScreen->GetColumns();
-    numberOfRows = handle->physicalScreen->GetRows();
-
-    return true;
+    return false;
 }
 
 bool BasicConsole::Clear() {

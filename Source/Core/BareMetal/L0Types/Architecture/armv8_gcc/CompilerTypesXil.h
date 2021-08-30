@@ -61,6 +61,8 @@ typedef double float64;
 
 /** 8 Bit character */
 //Warning - char8 is already defined in xil_types.h
+//TODO: check why the already defined char8 type is not propagated across MARTe2
+typedef char char8;
 
 /** Sufficiently large to hold a pointer address in the target architecture*/
 typedef uintptr_t      uintp;
