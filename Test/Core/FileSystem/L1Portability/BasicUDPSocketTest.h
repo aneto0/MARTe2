@@ -170,7 +170,7 @@ public:
     /**
      * @brief Tests if the Join function behaves correctly
      */
-    //bool TestJoin(const ReadWriteUDPTestTable* table);
+    bool TestJoin(const ConnectListenUDPTestTable* table);
 
 public:
 

@@ -241,6 +241,11 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestSize) {
     ASSERT_TRUE(internetHostTest.TestSize());
 }
 
+TEST(FileSystem_L1Portability_InternetHostGTest,TestMulticastSize) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestMulticastSize());
+}
+
 TEST(FileSystem_L1Portability_InternetHostGTest,TestGetLocalHostName) {
     InternetHostTest internetHostTest;
     ASSERT_TRUE(internetHostTest.TestGetLocalHostName());

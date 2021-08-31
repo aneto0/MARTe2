@@ -152,6 +152,11 @@ public:
      * @brief Tests if the function returns sizeof(InternetAddressCore).
      */
     bool TestSize();
+
+    /**
+     * @brief Tests if the function returns sizeof(InternetMulticastCore).
+     */
+    bool TestMulticastSize();
 };
 
 /*---------------------------------------------------------------------------*/

@@ -287,3 +287,9 @@ bool InternetHostTest::TestSize() {
     return addr.Size() == sizeof(InternetHostCore);
 }
 
+bool InternetHostTest::TestMulticastSize() {
+
+    InternetHost addr;
+    return addr.MulticastSize() == sizeof(InternetMulticastCore);
+}
+
