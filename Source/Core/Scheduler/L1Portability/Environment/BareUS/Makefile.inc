@@ -24,32 +24,38 @@
 #
 #############################################################
 
-PACKAGE=Core/FileSystem/L1Portability
+PACKAGE=Core/Scheduler/L1Portability
 ROOT_DIR=$(MARTe2_DIR)
 MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  BasicFile.x \
-		BasicSocket.x \
-		BasicTCPSocket.x \
-		BasicUDPSocket.x \
-	    Directory.x \
-		DirectoryScanner.x \
-		InternetHost.x \
-		InternetService.x \
-		Select.x 
-		
+
+OBJSX=  EventSem.x \
+        MutexSem.x \
+        Processor.x \
+        Scheduler.x \
+        Task.x \
+        Threads.x \
+        ThreadInformation.x \
+        Empty.x 
+
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I.
+INCLUDES+=-I$(MARTe2_DIR)/Source/Core/FileSystem/L1Portability
+INCLUDES+=-I$(MARTe2_DIR)/Source/Core/FileSystem/L3Streams
+INCLUDES+=-I$(MARTe2_DIR)/Source/Core/FileSystem/L6App
 INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L0Types
 INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L1Portability
 INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L2Objects
 INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L3Streams
+INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L4Configuration
+INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L4Logger
+INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L4Messages
+INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L5GAMs
+INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L6App
 INCLUDES+=-I$(MARTe2_DIR)/Source/Core/Scheduler/L1Portability
-INCLUDES+=-I$(MARTe2_DIR)/Source/Core/FileSystem/L1Portability
 
-all: $(OBJS) $(CPPS) \
-     $(BUILD_DIR)/L1Portability$(LIBEXT)
+all: $(OBJS)    $(CPPS) \
+                $(BUILD_DIR)/L1Portability$(LIBEXT)
 	echo  $(OBJS) $(CPPS)
 
 include depends.$(TARGET)

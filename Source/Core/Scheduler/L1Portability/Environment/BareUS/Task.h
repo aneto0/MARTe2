@@ -1,8 +1,8 @@
 /**
- * @file SocketCore.cpp
- * @brief Source file for class SocketCore
- * @date 30/04/2020
- * @author Giuseppe Avon
+ * @file Task.h
+ * @brief Header file for class Task
+ * @date 24 apr 2019
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,44 +16,48 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SocketCore
+ * @details This header file contains the declaration of the class Task
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
+
+#ifndef SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_PI3_BM_TASK_H_
+#define SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_PI3_BM_TASK_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ErrorManagement.h"
-#include "SocketCore.h"
+#include "ThreadInformation.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-    SocketCore::SocketCore() {
+//TODO: This is a dummy here. Task is not used in BareUS
+#define TASK_STACK_SIZE 1024
 
-    }
+using namespace MARTe;
+class Task {
+public:
+    Task(unsigned nStackSize = TASK_STACK_SIZE); // nStackSize = 0 for main task
+    virtual ~Task(void);
 
-    SocketCore::~SocketCore() {
+    virtual void Run(void);
 
-    }
+    void SetThreadInformation(ThreadInformation &threadInfoIn);
+private:
 
-    bool SocketCore::Create(SocketKind socketKind) {
-        return false;        
-    }
+    ThreadInformation *threadInfo;
 
-    void SocketCore::Destroy() {
-        return false;
-    }
+};
 
-    //bool SocketCore::SetSocket(CSocket *inputSocket, SocketKind inputSocketKind) {
-    //}
-    
-}
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_PI3_BM_TASK_H_ */
+

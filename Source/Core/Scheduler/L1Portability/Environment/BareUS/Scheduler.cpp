@@ -1,8 +1,8 @@
 /**
- * @file InternetService.cpp
- * @brief Source file for class InternetService
- * @date 20/04/2019
- * @author Andre Neto
+ * @file Scheduler.cpp
+ * @brief Source file for class Scheduler
+ * @date 24 apr 2019
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,9 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class InternetService (public, protected, and private). Be aware that some 
+ * the class Scheduler (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -27,9 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "Scheduler.h"
 
-#include "InternetService.h"
-#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -37,36 +37,68 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-
-InternetService::InternetService() {
+Scheduler::Scheduler(void) {
 }
 
-bool InternetService::SearchByName(const char8 * const name,
-                                   const char8 * const protocol) {
+Scheduler::~Scheduler(void) {
+}
+
+void Scheduler::Yield(void) {
+}
+
+void Scheduler::Sleep(unsigned nSeconds) {
+}
+
+void Scheduler::MsSleep(unsigned nMilliSeconds) {
+}
+
+void Scheduler::usSleep(unsigned nMicroSeconds) {
+}
+
+Task *Scheduler::GetCurrentTask(void) {
+    return NULL;
+}
+
+void Scheduler::RegisterTaskSwitchHandler(SchedulerTaskHandler *pHandler) {
+}
+
+void Scheduler::RegisterTaskTerminationHandler(SchedulerTaskHandler *pHandler) {
+}
+
+unsigned int Scheduler::AddTask(Task *pTask) {
+    return 0;
+}
+
+void Scheduler::RemoveTask(Task *pTask) {
+}
+
+void Scheduler::BlockTask(Task **ppTask) {
+}
+
+void Scheduler::WakeTask(Task **ppTask) {
+}
+
+unsigned Scheduler::GetNextTask(void) {
+    return 0;
+}
+
+Scheduler *Scheduler::Get(void) {
+    return NULL;
+}
+
+bool Scheduler::IsAlive(unsigned int id) {
     return false;
-
 }
 
-bool InternetService::SearchByPort(const uint16 port,
-                                   const char8 * const protocol) {
-
-    return false;
-
+Task *Scheduler::GetTask(unsigned int id) {
+    Task *ret = NULL;
+    return ret;
 }
 
-uint16 InternetService::Port() const {
-    return 0u;
+unsigned int Scheduler::Id(Task* task) {
+    return 0;
 }
 
-const char8 *InternetService::Name() const {
-    return "";
-}
-
-const char8 *InternetService::Protocol() const {
-    return "";
-}
-
-
+unsigned int Scheduler::NumberOfThreads() {
+    return 1;
 }

@@ -1,8 +1,8 @@
 /**
- * @file InternetServiceCore.h
- * @brief Header file for class InternetServiceCore
- * @date 27/10/2015
- * @author Giuseppe Ferrò
+ * @file ThreadDatabase.h
+ * @brief Source file for class ThreadDatabase
+ * @date 14/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,33 +16,29 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class InternetServiceCore
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class ThreadDatabase (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef INTERNETSERVICECORE_H_
-#define INTERNETSERVICECORE_H_
-
+#ifndef THREADS_DATABASE_H_
+#define THREADS_DATABASE_H_
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-typedef Handle InternetServiceCore;
-}
-
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#endif /* INTERNETSERVICECORE_H_ */
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
+#endif /* THREADS_DATABASE_H_ */
+
+	

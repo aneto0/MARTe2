@@ -33,6 +33,7 @@ ENV_ARCH_CUSTOMIZATION=XILINX_ULTRASCALE
 MARTe2_TEST_ENVIRONMENT?=Portable
 
 INCLUDES+=-I$(XILINX_BSP_BASE_DIR)/psu_cortexa53_0/include
+INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src
 #INCLUDES+=-I$(XILINX_SDK_BASE_DIR)/2019.1/data/embeddedsw/lib/bsp/standalone_v7_0/src/common/
 #INCLUDES+=-I$(XILINX_SDK_BASE_DIR)/2019.1/data/embeddedsw/lib/bsp/standalone_v7_0/src/arm/ARMv8/64bit/
 

@@ -1,8 +1,8 @@
 /**
- * @file SocketCore.h
- * @brief Header file for class SocketCore
- * @date 19/04/2019
- * @author Andre Neto
+ * @file Scheduler.h
+ * @brief Header file for class Scheduler
+ * @date 24 apr 2019
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SocketCore
+ * @details This header file contains the declaration of the class Scheduler
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOCKETCORE_H_
-#define SOCKETCORE_H_
+#ifndef SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_US_SCHEDULER_H_
+#define SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_US_SCHEDULER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,18 +31,63 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "Task.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
+using namespace MARTe;
 
-typedef Handle SocketCore;
+typedef void SchedulerTaskHandler(Task *pTask);
 
-}
+class Scheduler // simple cooperative (non-preemtive) scheduler
+{
+public:
+
+    Scheduler(void);
+    ~Scheduler(void);
+
+
+    void Yield(void); // switch to next task
+
+    void Sleep(unsigned nSeconds);
+    void MsSleep(unsigned nMilliSeconds);
+    void usSleep(unsigned nMicroSeconds);
+
+    Task *GetTask(unsigned int id);
+
+    Task *GetCurrentTask(void);
+
+    static Scheduler *Get(void);
+
+    bool IsAlive(unsigned int id);
+
+    unsigned int Id(Task* task);
+
+    void RegisterTaskSwitchHandler (SchedulerTaskHandler *pHandler);
+    void RegisterTaskTerminationHandler (SchedulerTaskHandler *pHandler);
+
+    unsigned int AddTask(Task *pTask);
+
+    void BlockTask(Task **ppTask);
+    void WakeTask(Task **ppTask); // can be called from interrupt context
+    friend class CSynchronizationEvent;
+
+    void RemoveTask(Task *pTask);
+    unsigned GetNextTask(void); // returns index into m_pTask or MAX_TASKS if no task was found
+
+    unsigned int NumberOfThreads();
+
+private:
+
+    static Scheduler *p_this;
+
+};
+
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOCKETCORE_H_ */
+#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_US_SCHEDULER_H_ */
 

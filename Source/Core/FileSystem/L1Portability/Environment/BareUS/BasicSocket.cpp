@@ -1,8 +1,8 @@
 /**
  * @file BasicSocket.cpp
  * @brief Source file for class BasicSocket
- * @date 26/10/2015
- * @author Giuseppe Ferrò
+ * @date 20/04/2019
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,13 +24,16 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#ifdef LWIP_ENABLED
+#include "lwip/sockets.h"
+#endif
+
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BasicSocket.h"
 #include "ErrorManagement.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,60 +44,94 @@
 
 namespace MARTe {
 
-    BasicSocket::BasicSocket() :
-            StreamI(),
-            HandleI(),
-            source(),
-            destination(),
-            connectionSocket() {
+BasicSocket::BasicSocket() :
+        StreamI(),
+        HandleI() {
+    connectionSocket = -1;
+    isBlocking = true;
+}
 
+/*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
+BasicSocket::~BasicSocket() {
+    if (BasicSocket::IsValid()) {
+        if (!BasicSocket::Close()) {
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+        }
     }
+}
 
-    BasicSocket::~BasicSocket() {
+bool BasicSocket::SetBlocking(const bool flag) {
+    int32 ret = -1;
+    if (IsValid()) {
+#ifdef LWIP_ENABLED
+        uint32 opt = lwip_fcntl(connectionSocket, F_GETFL, 0);
+        if (flag) {
+            opt &= ~O_NONBLOCK;
+        }
+        else {
+            opt |= O_NONBLOCK;
+        }
+        ret = lwip_fcntl(connectionSocket, F_SETFL, opt);
 
-    } 
-
-    bool BasicSocket::SetBlocking(const bool flag) {
-        isBlocking = flag;
-        //Always returns true, as we deal internally with the variable
-        return true;
+        if (ret >= 0) {
+            isBlocking = flag;
+        }
+#endif
     }
-
-    bool BasicSocket::Close() {
-        connectionSocket.Destroy();
-        return true;
+    else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
     }
+    return (ret >= 0);
+}
 
-    InternetHost BasicSocket::GetSource() const {
-        return source;
+bool BasicSocket::Close() {
+    int32 ret = -1;
+#ifdef LWIP_ENABLED
+    if (IsValid()) {
+        ret = lwip_close(connectionSocket);
+        connectionSocket = -1;
+        if (ret < 0) {
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close failed");
+            ret = 0;
+        }
     }
+    else {
+        ret = -1;
+    }
+#endif
+    return (ret >= 0);
+}
 
-    InternetHost BasicSocket::GetDestination() const {
-        return destination;
-    }
+InternetHost BasicSocket::GetSource() const {
+    return source;
+}
 
-    void BasicSocket::SetDestination(const InternetHost &destinationIn) {
-        destination = destinationIn;
-    }
+InternetHost BasicSocket::GetDestination() const {
+    return destination;
+}
 
-    void BasicSocket::SetSource(const InternetHost &sourceIn) {
-        source = sourceIn;
-    }
+void BasicSocket::SetDestination(const InternetHost &destinationIn) {
+    destination = destinationIn;
+}
 
-    bool BasicSocket::IsValid() const {
-        return false;
-    }
+void BasicSocket::SetSource(const InternetHost &sourceIn) {
+    source = sourceIn;
+}
 
-    Handle BasicSocket::GetReadHandle() const {
-        return (void*)(&connectionSocket);
-    }
+bool BasicSocket::IsValid() const {
+    return (connectionSocket >= 0);
+}
 
-    Handle BasicSocket::GetWriteHandle() const {
-        return (void*)(&connectionSocket);
-    }
+Handle BasicSocket::GetReadHandle() const {
+    return connectionSocket;
+}
 
-    bool BasicSocket::IsBlocking() const {
-        return isBlocking;
-    }
+Handle BasicSocket::GetWriteHandle() const {
+    return connectionSocket;
+}
+
+bool BasicSocket::IsBlocking() const {
+    return isBlocking;
+}
 
 }

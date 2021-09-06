@@ -23,15 +23,19 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#ifdef LWIP_ENABLED
+#include "lwip/netif.h"
+#include "lwip/sockets.h"
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ErrorManagement.h"
 #include "InternetHost.h"
-#include "InternetHostCore.h"
-
-
+#include "FastPollingMutexSem.h"
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,143 +46,212 @@
 
 namespace MARTe {
 
+FastPollingMutexSem hostnameFastSem;
+
 class LocalHostInfo {
-    private:
-        //Here for the C++98 style singleton which has automagically
-        //Single creation, destruction and lazy initialization
-        LocalHostInfo(){}
-        LocalHostInfo(LocalHostInfo const&);
-        void operator=(LocalHostInfo const&);
 
-        char8* ipDottedQuadString;
-        uint8* ipQuadU8;
+public:
+    //
 
-        /**
-         * @brief   Refreshes internal variables which keep IP address in the different notations
-         *          Called internally every time a request is done.
-         */
-        void RefreshData();
-
-    public:
-        /**
-         * @brief Get the Singleton Instance object
-         * 
-         * @return LocalHostInfo& The singleton instance
-         */
-        static LocalHostInfo& GetInstance() {
-            static LocalHostInfo instance;
-            return instance;
+    static LocalHostInfo *Instance() {
+        static LocalHostInfo instance;
+        return &instance;
+    }
+    //
+    ~LocalHostInfo() {
+#ifdef LWIP_ENABLED
+        if (ipAddress != NULL) {
+            /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
+            free(reinterpret_cast<void *>(const_cast<char8 *>(ipAddress)));
         }
+        if (localHostName != NULL) {
+            /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
+            free(reinterpret_cast<void *>(const_cast<char8 *>(localHostName)));
+        }
+#endif
+    }
+    //
+    const char8 *GetLocalHostName() {
+        Init();
+        return localHostName;
+    }
+    ///
+    const char8 *GetIpAddress() {
+        Init();
+        return ipAddress;
+    }
 
-        /**
-         * @brief Gets the pointer to the char8 string which contains the IP address in dotted quad notation
-         * @return char8* Pointer to the char8 string or NULL if the operation fails
-         */
-        char8* GetIPDottedQuadString();
+    bool Initialized() const {
+        return internetAddressInfoInitialised;
+    }
 
-        /**
-         * @brief Gets the pointer to the uint8 array which contains the IP address in quad u8 notation
-         * @return uint8* Pointer to the uint8 array or NULL if the operation fails
-         */
-        uint8* GetIPQuadU8();
+private:
+    const char8 *localHostName;
+    const char8 *ipAddress;
+    bool internetAddressInfoInitialised;
+    FastPollingMutexSem internalFastSem;
+
+    /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
+    LocalHostInfo():localHostName(static_cast<const char8*>(NULL)),ipAddress(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
+        Init();
+    }
+
+    void Init() {
+#ifdef LWIP_ENABLED
+        if (!internetAddressInfoInitialised) {
+            if(internalFastSem.FastLock()!=ErrorManagement::NoError) {
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+            }
+#if LWIP_NETIF_HOSTNAME
+            localHostName = netif_default->hostname;
+#else
+            localHostName = "localhost";
+#endif
+            ipAddress = StringHelper::StringDup(ip4addr_ntoa(&netif_default->ip_addr));
+            internetAddressInfoInitialised = true;
+            internalFastSem.FastUnLock();
+        }
+#else
+    internetAddressInfoInitialised = true;
+#endif
+    }
 };
 
-void LocalHostInfo::RefreshData() {
+StreamString InternetHost::GetHostName() const {
+    //TODO
+    StreamString hostName = "";
+    return hostName;
 }
 
-char8* LocalHostInfo::GetIPDottedQuadString() {
-    return NULL;
+const char8 *InternetHost::GetLocalHostName() {
+    return LocalHostInfo::Instance()->GetLocalHostName();
 }
 
-uint8* LocalHostInfo::GetIPQuadU8() {
-    return NULL;
+const char8 *InternetHost::GetLocalAddress() {
+    return LocalHostInfo::Instance()->GetIpAddress();
 }
 
-    /*---------------------------------------------------------------------------*/
-    /*                           InternetHost                                    */
-    /*---------------------------------------------------------------------------*/
+uint32 InternetHost::GetLocalAddressAsNumber() {
 
-    InternetHost::InternetHost(const uint16 port, const char8 * const addr) : address(addr, port) {
+    uint32 ret = 0u;
+    uint32 comp[4];
+    const char8* name = LocalHostInfo::Instance()->GetIpAddress();
+    if (name != NULL) {
+#ifdef LWIP_ENABLED
+        sscanf(name, "%u.%u.%u.%u", &comp[3], &comp[2], &comp[1], &comp[0]);
+        uint32 addressN = (comp[3] + (256u * (comp[2] + (256u * (comp[1] + (256u * comp[0]))))));
+        ret= addressN;
+#endif
     }
+    return ret;
+}
 
-    uint16 InternetHost::GetPort() const {
-        return address.ipPort;
+InternetHost::InternetHost(const uint16 port,
+                           const char8 * const addr) {
+#ifdef LWIP_ENABLED
+    address.sin_family = static_cast<uint16>(AF_INET);
+#endif
+    SetPort(port);
+    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
+    if (!SetAddress(addr)) {
     }
+}
 
-    StreamString InternetHost::GetAddress() const {
-        StreamString quadDotNotation;
-        quadDotNotation.Printf( "%u.%u.%u.%u",
-                                address.ipAddressQuadU8[0],
-                                address.ipAddressQuadU8[1],
-                                address.ipAddressQuadU8[2],
-                                address.ipAddressQuadU8[3]);
+uint16 InternetHost::GetPort() const {
+    uint16 port = 0u;
+#ifdef LWIP_ENABLED
+    //port = htons(address.port);
+    port = htons(address.sin_port);
+#endif
+    return port;
+}
 
-        return quadDotNotation;
+StreamString InternetHost::GetAddress() const {
+    StreamString dotName;
+#ifdef LWIP_ENABLED
+    dotName = (inet_ntoa(address.sin_addr));
+#endif
+    return dotName;
+}
+
+/**  returns the host number associated to this InternetHost*/
+uint32 InternetHost::GetAddressAsNumber() const {
+    uint32 ipAddrUInt32 = 0u;
+#ifdef LWIP_ENABLED
+//    ipAddrUInt32 = static_cast<uint32>(ip4_addr_get_u32(&address.addr));
+    ipAddrUInt32 = static_cast<uint32>(address.sin_addr.s_addr);
+#endif
+    return ipAddrUInt32;
+}
+
+/** sets the port value  */
+void InternetHost::SetPort(const uint16 port) {
+#ifdef LWIP_ENABLED
+    //address.port = htons(port);
+    address.sin_port = htons(port);
+#endif
+}
+
+bool InternetHost::SetAddress(const char8 * const addr) {
+    bool ret = (addr != NULL);
+#ifdef LWIP_ENABLED
+    address.sin_addr.s_addr = INADDR_ANY;
+    if (ret) {
+        uint32 iaddr = inet_addr(const_cast<char8 *>(addr));
+
+        if (iaddr != 0xFFFFFFFFu) {
+            address.sin_addr.s_addr = iaddr;
+        }
+        else {
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "InternetHost: Failed inet_addr(), address=0xFFFFFFFF");
+            ret = false;
+        }
     }
+#else
+    ret = false;
+#endif
+    return ret;
+}
 
-    StreamString InternetHost::GetHostName() const {
-        //Circle does not support the typical OS's gethostbyname() function
-        //We always return an empty string which means failure
-        StreamString noHost = "";
-        return noHost;
-    }
+bool InternetHost::SetAddressByHostName(const char8 * hostName) {
+    bool ret = false;
+    //  hostName can be NULL meaning localhost
 
-    uint32 InternetHost::GetAddressAsNumber() const {
-        uint32 retVal = 0u;
-        retVal = (address.ipAddressQuadU8[0] << 24) | (address.ipAddressQuadU8[1] << 16) | (address.ipAddressQuadU8[2] << 8) | address.ipAddressQuadU8[3];
-        return retVal;
+    if (hostName == NULL) {
+        hostName = "localhost";
     }
+#ifdef LWIP_ENABLED
+    //TODO
+    /*err_t err = netconn_gethostbyname(hostName, &address.addr);
+    ret = (err == 0u);
+    if (!ret) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError,"InternetHost: Failed gethostbyname()");
+    }*/
+#endif
+    return ret;
+}
 
-    const char8 *InternetHost::GetLocalHostName() {
-        //We return the hostname chosen at startup/configuration stage and globally stored
-        //There is no need to do DNS querying or auto-resolution as the hostname can be only set by ourselves
-        //(i.e. there is no OS or concurrent process which can change this during runtime)
-        return "ZYNQUSPLUS";
-    }
+void InternetHost::SetAddressByNumber(const uint32 number) {
+#ifdef LWIP_ENABLED
+    address.sin_addr.s_addr = number;
+#endif
+}
 
-    const char8 *InternetHost::GetLocalAddress() {
-        return "127.0.0.1";
-    }
+/**  The address of the local host */
+bool InternetHost::SetLocalAddress() {
+    return SetAddressByHostName(static_cast<const char8*>(NULL));
+}
 
-    uint32 InternetHost::GetLocalAddressAsNumber() {
-        //TODO Take current ip address from the Circle library or HAL instead of local host
-        uint32 retVal = 0u;
-        retVal = (static_cast<uint8>(127) << 24) || (static_cast<uint8>(1));
-        return retVal;
-    }
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: sockets will change this attribute then the full access to this
+ * member is allowed.
+ */
+InternetHostCore *InternetHost::GetInternetHost() {
+    return &address;
+}
 
-    void InternetHost::SetPort(const uint16 port) {
-        address.SetPort(port);
-    }
-
-    bool InternetHost::SetAddress(const char8 * const addr) {
-        address.SetAddress(addr);
-        return true;
-    }
-
-    bool InternetHost::SetAddressByHostName(const char8 * hostName) {
-        return false;
-    }
-
-    void InternetHost::SetAddressByNumber(const uint32 number) {
-        address.ipAddressQuadU8[3] = (number >> 24) && 0xFF;
-        address.ipAddressQuadU8[2] = (number >> 16) && 0xFF;
-        address.ipAddressQuadU8[1] = (number >> 8) && 0xFF;
-        address.ipAddressQuadU8[0] = number && 0xFF;
-    }
-
-    /**  The address of the local host */
-    bool InternetHost::SetLocalAddress() {
-        return SetAddressByHostName(static_cast<const char8*>(NULL));
-    }
-
-    InternetHostCore *InternetHost::GetInternetHost() {
-        return &address;
-    }
-
-    uint32 InternetHost::Size() const {
-        return static_cast<uint32>(sizeof(address));
-    }
+uint32 InternetHost::Size() const {
+    return static_cast<uint32>(sizeof(address));
+}
 
 }
 

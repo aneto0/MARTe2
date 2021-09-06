@@ -27,6 +27,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include <string.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -119,7 +120,7 @@ inline void MemCopySwap64(volatile void *dest,
     uint64* srcu64 = (uint64*)src;
 
     while(sizer-- != 0) {
-        destu64[sizer] = Swap64(srcu64[sizer]);
+        destu64[sizer] = __builtin_bswap64(srcu64[sizer]);
     }
 
 }

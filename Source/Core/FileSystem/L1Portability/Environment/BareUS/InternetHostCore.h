@@ -1,8 +1,8 @@
 /**
  * @file InternetHostCore.h
  * @brief Header file for class InternetHostCore
- * @date 28/10/2015
- * @author Giuseppe Ferrò
+ * @date 19/04/2019
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -28,7 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#ifdef LWIP_ENABLED
+#include "lwip/sockets.h"
+#endif
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -38,50 +40,15 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
 
-    class 
-    InternetHostCore {
-        public:
-            /**
-             * @brief   Construct a new Internet Host Core object
-             *          Essentially is an holder for the IP/Port couple
-             */
-            InternetHostCore();
-
-            /**
-             * @brief Destroy the Internet Host Core object
-             * 
-             */
-            ~InternetHostCore();
-
-            InternetHostCore(const char8 *ipAddressDottedQuadIn, uint16 ipPortIn);
-
-            void SetAddress(const char8* ipAddressDottedQuad);
-
-            /**
-             * @brief Sets the internal port
-             */
-            void SetPort(const uint16 port);
-
-            /**
-             * @brief Internal storage for the four octets of the IP Address
-             */
-            uint8 ipAddressQuadU8[4];
-
-            /**
-             * @brief Internal storage for the IP port
-             */
-            uint16 ipPort;
-
-        private:
-
-            /**
-             * @brief Converts an IP Address from dotted quad string to quad u8
-             * 
-             * @param ipAddressDottedQuadIn Input string in dotted quad notation
-             * @param ipAddressQuadU8Out Output array of quad u8
-             */
-            static void DottedQuadToQuadU8(const char8* ipAddressDottedQuadIn, uint8* ipAddressQuadU8Out);
-    };
+#ifdef LWIP_ENABLED
+/*struct InternetHostCore {
+    ip_addr_t addr;
+    uint16 port;
+};*/
+typedef sockaddr_in InternetHostCore;
+#else
+typedef void * InternetHostCore;
+#endif
 
 }
 /*---------------------------------------------------------------------------*/

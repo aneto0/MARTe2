@@ -32,6 +32,7 @@
 #include "Bootstrap.h"
 #include "ConfigurationDatabase.h"
 #include "StandardParser.h"
+#include "platform.h"
 
 namespace MARTe {
 
@@ -61,7 +62,12 @@ namespace MARTe {
     }
 
     ErrorManagement::ErrorType Bootstrap::InitHAL(int32 argc, char8 **argv) {
+        init_platform();
         return ErrorManagement::NoError;
+    }
+
+    void Bootstrap::Printf(const char8 * const msg) {
+
     }
 
 }

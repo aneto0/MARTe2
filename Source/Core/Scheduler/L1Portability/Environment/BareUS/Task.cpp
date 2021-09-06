@@ -1,8 +1,8 @@
 /**
- * @file InternetService.cpp
- * @brief Source file for class InternetService
- * @date 20/04/2019
- * @author Andre Neto
+ * @file Task.cpp
+ * @brief Source file for class Task
+ * @date 24 apr 2019
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,9 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class InternetService (public, protected, and private). Be aware that some 
+ * the class Task (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,8 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "InternetService.h"
-#include "ErrorManagement.h"
+#include "Task.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -38,35 +39,16 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-InternetService::InternetService() {
+Task::Task(unsigned nStackSize) {
 }
 
-bool InternetService::SearchByName(const char8 * const name,
-                                   const char8 * const protocol) {
-    return false;
-
+Task::~Task(void) {
 }
 
-bool InternetService::SearchByPort(const uint16 port,
-                                   const char8 * const protocol) {
-
-    return false;
-
+void Task::Run(void) {
 }
 
-uint16 InternetService::Port() const {
-    return 0u;
-}
-
-const char8 *InternetService::Name() const {
-    return "";
-}
-
-const char8 *InternetService::Protocol() const {
-    return "";
+void Task::SetThreadInformation(ThreadInformation &threadInfoIn){
 }
 
 
-}

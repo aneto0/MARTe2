@@ -1,8 +1,8 @@
 /**
- * @file InternetServiceCore.h
- * @brief Header file for class InternetServiceCore
- * @date 27/10/2015
- * @author Giuseppe Ferrò
+ * @file Processor.cpp
+ * @brief Source file for module Processor
+ * @date 26/07/2015
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,33 +16,38 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class InternetServiceCore
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the module Processor (public, protected, and private). Be aware that some
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef INTERNETSERVICECORE_H_
-#define INTERNETSERVICECORE_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "CompilerTypes.h"
+#include "Processor.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-typedef Handle InternetServiceCore;
+namespace MARTe {
+
+namespace Processor {
+/*lint -e{9141} constant that can be reused by other classes*/
+char8 processorVendorId[13] = { '\0' };
+
+uint32 Available() {
+    return 4;
 }
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+}
 
-#endif /* INTERNETSERVICECORE_H_ */
-
+}
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
