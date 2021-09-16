@@ -332,8 +332,197 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
 
 }
 
+void StartServer_Join(BasicUDPSocketTest &param) {
+    BasicUDPSocket serverSocket;
+
+    if (!serverSocket.Open()) {
+        param.NoError = false;
+        return;
+    }
+
+    if (!param.isValidServer) {
+        serverSocket.Close();
+    }
+
+    if(!serverSocket.Join(param.server.GetAddress().Buffer())) {
+        param.retVal = false;
+        param.sem.FastLock();
+        param.exitCondition = 1;
+        param.sem.FastUnLock();
+        return;
+    }
+
+    if (!serverSocket.Listen(param.server.GetPort())) {
+        param.retVal = false;
+        param.sem.FastLock();
+        param.exitCondition = 1;
+        param.sem.FastUnLock();
+        return;
+    }
+
+    param.sem.FastLock();
+    param.exitCondition = 1;
+    param.sem.FastUnLock();
+
+    if (param.isValidClient) {
+        for (uint32 i = 0; i < param.alives; i++) {
+            char8 output[32] = { 0 };
+            uint32 sizeRead = 32;
+            if (!serverSocket.Read(output, sizeRead)) {
+                param.sem.FastLock();
+                param.NoError = false;
+                param.sem.FastUnLock();
+            }
+            else {
+                if (StringHelper::Compare(output, "HelloServer") != 0) {
+                    param.sem.FastLock();
+                    param.NoError = false;
+                    param.sem.FastUnLock();
+                }
+            }
+
+            if (param.NoError) {
+                serverSocket.SetDestination(serverSocket.GetSource());
+                const char8 *toWrite = "HelloClient";
+                uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
+                if (!serverSocket.Write(toWrite, sizeWrite)) {
+                    param.sem.FastLock();
+                    param.NoError = false;
+                    param.sem.FastUnLock();
+                }
+            }
+
+        }
+    }
+    while (Threads::NumberOfThreads() < (param.alives + 1)) {
+        Sleep::MSec(10);
+    }
+
+    param.eventSem.Post();
+    while (Threads::NumberOfThreads() > 1) {
+        Sleep::MSec(10);
+    }
+    serverSocket.Close();
+}
+
+void ClientJob_Join(BasicUDPSocketTest &param) {
+
+    BasicUDPSocket clientSocket;
+    bool go = clientSocket.Open();
+    go &= clientSocket.SetBlocking(param.isBlocking);
+
+    if (!go) {
+        param.sem.FastLock();
+        param.NoError = false;
+        param.sem.FastUnLock();
+    }
+    else {
+        if (!param.isValidClient) {
+            clientSocket.Close();
+        }
+
+        if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
+            param.sem.FastLock();
+            param.retVal = false;
+            param.sem.FastUnLock();
+        }
+
+        else {
+            const char8* toWrite = "HelloServer";
+            uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
+            if (!clientSocket.Write(toWrite, sizeWrite)) {
+                param.sem.FastLock();
+                param.NoError = false;
+                param.sem.FastUnLock();
+            }
+            else {
+                char8 output[32] = { 0 };
+                uint32 sizeRead = 32;
+                if (!clientSocket.Read(output, sizeRead)) {
+                    param.sem.FastLock();
+                    param.NoError = false;
+                    param.sem.FastUnLock();
+                }
+                else {
+                    if (StringHelper::Compare(output, "HelloClient") != 0) {
+                        param.sem.FastLock();
+                        param.NoError = false;
+                        param.sem.FastUnLock();
+                    }
+                }
+            }
+        }
+
+    }
+
+    param.eventSem.Wait();
+    clientSocket.Close();
+}
+
+static bool JoinConnectTest(BasicUDPSocketTest &param,
+                              const ConnectListenUDPTestTable* table,
+                              bool isServer) {
+
+    uint32 i = 0;
+    while (table[i].port != 0) {
+        param.server.SetPort(table[i].port);
+        param.server.SetAddress("234.0.5.1");
+
+        param.eventSem.Reset();
+        param.exitCondition = 0;
+
+        param.alives = table[i].nClients;
+
+        if (isServer) {
+            param.isValidServer = table[i].isValid;
+        }
+        else {
+            param.isValidClient = table[i].isValid;
+        }
+
+        Threads::BeginThread((ThreadFunctionType) StartServer_Join, &param);
+
+        while (param.exitCondition < 1) {
+            if (!param.NoError) {
+                param.alives = 0;
+                while (Threads::NumberOfThreads() > 0) {
+                    Sleep::MSec(10);
+                }
+                return false;
+            }
+            Sleep::MSec(10);
+        }
+
+        if (!param.retVal) {
+            return (!table[i].expected);
+        }
+
+        for (uint32 k = 0; k < table[i].nClients; k++) {
+            Threads::BeginThread((ThreadFunctionType) ClientJob_Join, &param);
+        }
+
+        while (Threads::NumberOfThreads() > 0) {
+            Sleep::MSec(10);
+        }
+
+        if ((param.retVal != table[i].expected) || (!param.NoError)) {
+            return false;
+        }
+
+        i++;
+
+    }
+
+    return true;
+
+}
+
 bool BasicUDPSocketTest::TestListen(const ConnectListenUDPTestTable* table) {
     return ListenConnectTest(*this, table, true);
+}
+
+bool BasicUDPSocketTest::TestJoin(const ConnectListenUDPTestTable* table) {
+    return JoinConnectTest(*this, table, true);
 }
 
 bool BasicUDPSocketTest::TestConnect(const ConnectListenUDPTestTable* table) {

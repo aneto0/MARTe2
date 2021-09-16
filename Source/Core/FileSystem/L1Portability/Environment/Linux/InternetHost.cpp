@@ -55,7 +55,7 @@ class LocalHostInfo {
 public:
     //
 
-    static LocalHostInfo *Instance() {
+    static LocalHostInfo* Instance() {
         static LocalHostInfo instance;
         return &instance;
     }
@@ -158,14 +158,14 @@ StreamString InternetHost::GetHostName() const {
     }
     hostnameFastSem.FastUnLock();
 
-    return (hostName.Size() == 0u) ? (static_cast<const char8 *>(NULL)):(hostName);
+    return (hostName.Size() == 0u) ? (static_cast<const char8*>(NULL)):(hostName);
 }
 
-const char8 *InternetHost::GetLocalHostName() {
+const char8* InternetHost::GetLocalHostName() {
     return LocalHostInfo::Instance()->GetLocalHostName();
 }
 
-const char8 *InternetHost::GetLocalAddress() {
+const char8* InternetHost::GetLocalAddress() {
     return LocalHostInfo::Instance()->GetIpAddress();
 }
 
@@ -173,7 +173,7 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
 
     uint32 ret = 0u;
     uint32 comp[4];
-    const char8* name = LocalHostInfo::Instance()->GetIpAddress();
+    const char8 *name = LocalHostInfo::Instance()->GetIpAddress();
     if (name != NULL) {
         sscanf(name, "%u.%u.%u.%u", &comp[3], &comp[2], &comp[1], &comp[0]);
         uint32 addressN = (comp[3] + (256u * (comp[2] + (256u * (comp[1] + (256u * comp[0]))))));
@@ -183,7 +183,8 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
 }
 
 InternetHost::InternetHost(const uint16 port,
-                           const char8 * const addr) {
+                           const char8 *const addr) {
+    mreq.imr_interface.s_addr = htonl(static_cast<in_addr_t>(0x00000000)); //INADDR_ANY
 
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
@@ -211,13 +212,13 @@ void InternetHost::SetPort(const uint16 port) {
     address.sin_port = htons(port);
 }
 
-bool InternetHost::SetAddress(const char8 * const addr) {
+bool InternetHost::SetAddress(const char8 *const addr) {
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     address.sin_addr.s_addr = INADDR_ANY;
     bool ret = (addr != NULL);
 
     if (ret) {
-        uint32 iaddr = inet_addr(const_cast<char8 *>(addr));
+        uint32 iaddr = inet_addr(const_cast<char8*>(addr));
 
         if (iaddr != 0xFFFFFFFFu) {
             address.sin_addr.s_addr = iaddr;
@@ -230,7 +231,7 @@ bool InternetHost::SetAddress(const char8 * const addr) {
     return ret;
 }
 
-bool InternetHost::SetAddressByHostName(const char8 * hostName) {
+bool InternetHost::SetAddressByHostName(const char8 *hostName) {
     bool ret = false;
     //  hostName can be NULL meaning localhost
 
@@ -258,15 +259,35 @@ bool InternetHost::SetLocalAddress() {
     return SetAddressByHostName(static_cast<const char8*>(NULL));
 }
 
+void InternetHost::SetMulticastGroup(const char8 *const addr) {
+    mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));
+}
+
+StreamString InternetHost::GetMulticastGroup() const {
+    StreamString dotName(inet_ntoa(mreq.imr_multiaddr));
+    return dotName;
+}
+
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: sockets will change this attribute then the full access to this
  * member is allowed.
  */
-InternetHostCore *InternetHost::GetInternetHost() {
+InternetMulticastCore *InternetHost::GetInternetMulticastHost() {
+    return &mreq;
+}
+
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: sockets will change this attribute then the full access to this
+ * member is allowed.
+ */
+InternetHostCore* InternetHost::GetInternetHost() {
     return &address;
 }
 
 uint32 InternetHost::Size() const {
     return static_cast<uint32>(sizeof(address));
+}
+
+uint32 InternetHost::MulticastSize() const {
+    return static_cast<uint32>(sizeof(mreq));
 }
 
 }

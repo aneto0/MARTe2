@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,InternetHostCore.h)
+#include INCLUDE_FILE_ENVIRONMENT(FileSystem,L1Portability,ENVIRONMENT,InternetMulticastCore.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -142,6 +143,17 @@ namespace MARTe {
         bool SetLocalAddress();
 
         /**
+         * @brief Set the IP address a.b.c.d belonging to a multicast group passing the equivalent input [a + 256*b + (256^2)*c + (256^3)*d].
+         * @param[in] addr is the multicast IP address
+         */
+        void SetMulticastGroup(const char8 * const addr);
+
+        /**
+         * @brief Returns the Multicast address on a StreamString object
+         */
+        StreamString GetMulticastGroup() const;
+
+        /**
          * @brief Returns access to the low-level handle.
          * @return a pointer to the handle of this structure containing
          * the InternetHostCore information.
@@ -150,10 +162,24 @@ namespace MARTe {
         InternetHostCore *GetInternetHost();
 
         /**
+         * @brief Returns access to the low-level handle.
+         * @return a pointer to the handle of this structure containing
+         * the InternetMulticastCore information.
+         * @remark The handle type definition is specific to the operating system.
+         */
+        InternetMulticastCore *GetInternetMulticastHost();
+
+        /**
          * @brief Gets the size in bytes of the handle.
          * @return the size of InternetHostCore handle.
          */
         uint32 Size() const;
+
+        /**
+         * @brief Gets the size in bytes of the handle.
+         * @return the size of InternetMulticastCore handle.
+         */
+        uint32 MulticastSize() const;
 
     private:
 
@@ -161,6 +187,11 @@ namespace MARTe {
          * The InternetHost handle.
          */
         InternetHostCore address;
+
+        /**
+         * The InternetMulticastCore handle.
+         */
+        InternetMulticastCore mreq;
 
     };
 

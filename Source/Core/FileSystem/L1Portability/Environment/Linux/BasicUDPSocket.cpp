@@ -57,7 +57,7 @@ BasicUDPSocket::~BasicUDPSocket() {
 
 }
 
-bool BasicUDPSocket::Peek(char8* const output,
+bool BasicUDPSocket::Peek(char8 *const output,
                           uint32 &size) {
 
     int32 ret = -1;
@@ -83,7 +83,7 @@ bool BasicUDPSocket::Peek(char8* const output,
 
 }
 
-bool BasicUDPSocket::Read(char8* const output,
+bool BasicUDPSocket::Read(char8 *const output,
                           uint32 &size) {
 
     int32 ret = -1;
@@ -108,7 +108,7 @@ bool BasicUDPSocket::Read(char8* const output,
     return (ret > 0);
 }
 
-bool BasicUDPSocket::Write(const char8* const input,
+bool BasicUDPSocket::Write(const char8 *const input,
                            uint32 &size) {
 
     int32 ret = -1;
@@ -154,7 +154,19 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     return (errorCode >= 0);
 }
 
-bool BasicUDPSocket::Connect(const char8 * const address,
+bool BasicUDPSocket::Join(const char8 *const group) const {
+    int32 opt = 1;
+    /* Allow multiple sockets to use the same addr and port number */
+    bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt))) >= 0;
+    if (ok) {
+        InternetHost host;
+        host.SetMulticastGroup(group);
+        ok = setsockopt(connectionSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, host.GetInternetMulticastHost(), static_cast<socklen_t>(host.MulticastSize())) >= 0;
+    }
+    return ok;
+}
+
+bool BasicUDPSocket::Connect(const char8 *const address,
                              const uint16 port) {
 
     bool ret = IsValid();
@@ -186,8 +198,8 @@ bool BasicUDPSocket::CanSeek() const {
     return false;
 }
 
-bool BasicUDPSocket::Read(char8 * const output,
-                          uint32 & size,
+bool BasicUDPSocket::Read(char8 *const output,
+                          uint32 &size,
                           const TimeoutType &timeout) {
     uint32 sizeToRead = size;
     size = 0u;
@@ -228,8 +240,8 @@ bool BasicUDPSocket::Read(char8 * const output,
     return (size > 0u);
 }
 
-bool BasicUDPSocket::Write(const char8 * const input,
-                           uint32 & size,
+bool BasicUDPSocket::Write(const char8 *const input,
+                           uint32 &size,
                            const TimeoutType &timeout) {
     uint32 sizeToWrite = size;
     size = 0u;
