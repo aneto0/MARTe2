@@ -47,7 +47,7 @@ namespace MARTe {
  * @details These methods define the timeout object which are simply two integer which represent time in milliseconds (uint32) and microseconds (uint64). Both time integers are equivalent (both represents the same
  * timeout value but with different physical units) but microseconds representation has more precision.
  *
- * Since the maxim value that can be represented with the two integers are different, the timeout infinite is based on the milliseconds representation because is the smallest range. Therefore, IsFinite() uses
+ * Since the maximum value that can be represented with the two integers are different, the timeout infinite is based on the milliseconds representation because is the smallest range. Therefore, IsFinite() uses
  * msecTimeout.
  *
  * Furthermore here are defined flags for different types of timeout.
@@ -64,6 +64,7 @@ public:
 //    inline TimeoutType();
 
     /**
+     * @deprecated - Use TimeoutType(const uint64 &usecs)
      * @brief Constructor from integer.
      * @param[in] msecs is the time in milliseconds.
      * @details Added to keep compatibility with the current objects (most of them initialise TimeoutType(int32 timeoutValue) which now conflicts with TimeoutType(const uint64 &usecs))
