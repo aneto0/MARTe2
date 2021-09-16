@@ -23,5 +23,6 @@ A typical MARTe2 project is made of: the core library; a set of reusable compone
    :caption: Contents:
 
    buildsources
+   rpm
    linux
    

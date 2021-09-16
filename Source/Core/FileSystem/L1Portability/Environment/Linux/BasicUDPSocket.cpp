@@ -208,10 +208,11 @@ bool BasicUDPSocket::Read(char8 *const output,
         if (timeout.IsFinite()) {
             struct timeval timeoutVal;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
+            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutUSec() / 1000000u);
             /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal)));
+            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutUSec() % 1000000u));
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal,
+                                   static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the read timeout");
@@ -249,10 +250,11 @@ bool BasicUDPSocket::Write(const char8 *const input,
 
             struct timeval timeoutVal;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
+            timeoutVal.tv_sec = timeout.GetTimeoutUSec() / 1000000u;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal)));
+            timeoutVal.tv_usec = (timeout.GetTimeoutUSec() % 1000000u);
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal,
+                                   static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the write timeout");

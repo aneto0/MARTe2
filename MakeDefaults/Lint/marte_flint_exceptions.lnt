@@ -17,6 +17,8 @@
 -estring(686,"*CPU_SET*")
 -estring(686,"*CPU_ISSET*")
 -estring(1960,"*__pthread_cleanup_class*")
+-estring(686,"*FD_ZERO*")
+-estring(686,"*FD_SET*")
 
 /*
  * In the macro CLASS_REGISTER_DECLARATION we cannot compare against the actual size of class.
@@ -210,6 +212,7 @@
  * Void functions must have an external effect.
  * Justification: They changed a class attribute.
  */
+-esym(1960, MARTe::GAMBareScheduler::CustomPrepareNextState*)
 -esym(1960, MARTe::TimeoutType::SetTimeoutSec*)
 -esym(1960, MARTe::TimeoutType::SetTimeoutHighResolutionTimerTicks*)
 -esym(1960, MARTe::ErrorManagement::NullErrorProcessFunction*)

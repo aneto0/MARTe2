@@ -71,11 +71,15 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
 int main(int argc, char **argv) {
     using namespace MARTe;
     SetErrorProcessFunction(&MainErrorProcessFunction);
+    ErrorManagement::ErrorType ret = bootstrap.InitHAL(argc, argv);
 
     ConfigurationDatabase loaderParameters;
     StreamI *configurationStream = NULL_PTR(StreamI *);
 
-    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
+    if (ret) {
+        ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
+    }
+    
     if (ret) {
         ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
         if (ret) {

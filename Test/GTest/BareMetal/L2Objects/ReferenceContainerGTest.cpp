@@ -28,7 +28,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
 #include <ReferenceContainerFilterObjectName.h>
 
 /*---------------------------------------------------------------------------*/
@@ -37,7 +36,7 @@
 
 #include "ReferenceContainerTest.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

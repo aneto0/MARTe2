@@ -65,7 +65,7 @@ bool Copy(void* const destination,
     }
 
     return ret;
-
+/*lint -e{593} custodial destination pointer is always to be freed by the caller*/
 }
 
 int32 Compare(const void * const mem1,

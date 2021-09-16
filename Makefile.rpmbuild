@@ -1,0 +1,61 @@
+#############################################################
+#
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id: Makefile.gcc 3 2015-01-15 16:26:07Z aneto $
+#
+#############################################################
+
+TARGET=rpmbuild
+ROOT_DIR=.
+
+FOLDERSX=Source.x MakeDefaults.x Docs.x Makefile.x86-linux.x Makefile.inc.x Resources.x
+
+MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
+
+#If not set try to get the project version from a git tag (in the format vx.y, i.e. assuming it starts with v)
+M2_RPM_VERSION?=$(shell git tag | sort -V | tail -1 | cut -c2-)
+M2_RPM_NAME?=MARTe2
+M2_RPM_ID?=marte2-core
+M2_RPM_ID_TEST?=$(M2_RPM_ID)-test
+M2_RPM_ID_RELEASE?=marte2-release
+M2_RPM_BUILD_OPTIONS=core
+#Do not allow installing both marte2-core and marte2-core-test in the same target
+M2_RPM_CONFLICTS?=$(M2_RPM_ID_TEST)
+
+M2_RPM_SPEC_FILE_DIST?=marte2-repo.spec
+
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
+
+#Core version with no tests
+all: $(OBJS) $(BUILD_DIR)/$(M2_RPM_ID)-$(M2_RPM_VERSION).rpm  
+	echo  $(OBJS)
+
+#Include test artifacts
+test: 
+	make -f Makefile.$(TARGET) M2_RPM_ID=$(M2_RPM_ID_TEST) FOLDERSX='$(FOLDERSX) Test.x Lib.x' M2_RPM_BUILD_OPTIONS=all M2_RPM_CONFLICTS=$(M2_RPM_ID)
+
+#Yum distribution file
+dist:
+	make -f Makefile.$(TARGET) M2_RPM_ID=$(M2_RPM_ID_RELEASE) FOLDERSX='Resources.x' M2_RPM_SPEC_FILE=$(M2_RPM_SPEC_FILE_DIST)
+
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
+

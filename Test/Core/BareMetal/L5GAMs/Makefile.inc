@@ -27,6 +27,7 @@
 
 OBJSX= BrokerITest.x \
        DataSourceITest.x\
+       GAMBareSchedulerTest.x\
        GAMDataSourceTest.x\
        GAMGroupTest.x\
        GAMSchedulerITest.x \

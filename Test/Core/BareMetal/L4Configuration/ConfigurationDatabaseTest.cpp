@@ -774,3 +774,47 @@ bool ConfigurationDatabaseTest::TestSetCurrentNodeAsRootNode() {
     ok &= cdb.MoveRelative("C");
     return ok;
 }
+
+bool ConfigurationDatabaseTest::TestPurge() {
+    ConfigurationDatabase cdb;
+    cdb.Purge();
+    bool ok = true;
+    ok &= cdb.Write("Node1", 1);
+    ok &= cdb.Write("Node2", 2);
+    ok &= (cdb.GetNumberOfChildren() == 2);
+    ok &= cdb.CreateAbsolute("B");
+    ok &= cdb.MoveToRoot();
+    ok &= (cdb.GetNumberOfChildren() == 3);
+    cdb.Purge();
+    ok &= (cdb.GetNumberOfChildren() == 0);
+    ok &= cdb.Write("A", 1);
+    ok &= (cdb.GetNumberOfChildren() == 1);
+    ok &= cdb.CreateAbsolute("B");
+    ok &= (cdb.GetNumberOfChildren() == 0);
+    ok &= cdb.MoveToRoot();
+    ok &= (cdb.GetNumberOfChildren() == 2);
+    ok &= cdb.MoveAbsolute("B");
+    cdb.Purge();
+    ok &= (cdb.GetNumberOfChildren() == 0);
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestCopyOperatorEqualBug() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.Write("Node1", 2);
+    ok &= cdb.Write("Node2", 3);
+    ok &= cdb.CreateAbsolute("B.C.D");
+    ok &= (cdb.GetNumberOfChildren() == 0);
+    ok &= (cdb.MoveToRoot());
+    ok &= (cdb.GetNumberOfChildren() == 3);
+    ConfigurationDatabase cdb2;
+    cdb2 = cdb;
+    //This second copy was incorrectly forcing a Purge. Let's make sure this is no longer the case
+    cdb2 = cdb;
+    uint32 node1Val = 0u;
+    ok &= cdb2.Read("Node1", node1Val);
+    ok &= (node1Val == 2);
+    ok &= cdb.MoveAbsolute("B.C.D");
+
+    return ok;
+}

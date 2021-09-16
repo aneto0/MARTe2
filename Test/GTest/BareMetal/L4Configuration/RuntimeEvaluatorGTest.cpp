@@ -30,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "RuntimeEvaluatorTest.h"
 #include "RuntimeEvaluator.h"
 #include "Vector.h"

@@ -29,13 +29,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "VectorTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -417,4 +416,219 @@ TEST(BareMetal_L0Types_VectorGTest,TestSetSizeCannotDestroy_Static) {
     Vector<int32> vector1(array);
 
     ASSERT_TRUE(vectorTest.TestSetSize(vector1, 5));
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_uint8) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<uint8>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_uint16) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<uint16>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_uint32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<uint32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_uint64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<uint64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_int8) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<int8>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_int16) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<int16>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_int32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<int32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_int64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<int64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_float32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<float32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructor_float64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructor<float64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_uint8) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<uint8>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_uint16) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<uint16>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_uint32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<uint32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_uint64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<uint64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_int8) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<int8>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_int16) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<int16>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_int32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<int32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_int64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<int64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_float32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<float32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignment_float64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignment<float64>());
+}
+
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunctiont_uint8) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<uint8>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_uint16) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<uint16>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_uint32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<uint32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_uint64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<uint64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_int8) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<int8>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_int16) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<int16>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_int32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<int32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_int64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<int64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_float32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<float32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorPassedToAFunction_float64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorPassedToAFunction<float64>());
+}
+
+
+
+
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_uint8) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<uint8>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_uint16) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<uint16>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_uint32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<uint32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunctionn_uint64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<uint64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_int8) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<int8>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_int16) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<int16>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_int32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<int32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_int64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<int64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_float32) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<float32>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestVectorReturnedFromAFunction_float64) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestVectorReturnedFromAFunction<float64>());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyConstructorNULLPointer) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyConstructorNULLPointer());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignmentNULLPointer) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestCopyAssignmentNULLPointer());
 }

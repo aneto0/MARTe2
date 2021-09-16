@@ -1,6 +1,6 @@
 /**
- * @file LoaderGTest.cpp
- * @brief Source file for class LoaderGTest
+ * @file MainGTest.cpp
+ * @brief Source file for class MainGTest
  * @date 08/01/2015
  * @author Andre Neto
  *
@@ -17,15 +17,31 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class LoaderGTest (public, protected, and private). Be aware that some
+ * the class MainGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-#include <limits.h>
-#include "gtest/gtest.h"
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+#include <stdio.h>
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "AdvancedErrorManagement.h"
+#include "Bootstrap.h"
+#include "ConfigurationDatabase.h"
 #include "ErrorManagement.h"
+#include "MARTe2UTest.h"
 #include "Object.h"
+#include "StreamI.h"
 #include "StreamString.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
 void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
                                    const char * const errorDescription) {
@@ -34,10 +50,28 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
     printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
 }
 
-int main(int argc,
-         char **argv) {
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+int main(int argc, char **argv) {
+    using namespace MARTe;
     SetErrorProcessFunction(&MainGTestErrorProcessFunction);
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    
+    Bootstrap bootstrap;
+    ConfigurationDatabase loaderParameters;
+    StreamI *configurationStream = NULL_PTR(StreamI *);
+
+    ErrorManagement::ErrorType ret = bootstrap.InitHAL(argc, argv);
+
+    if (ret) {
+        ret.fatalError = !(MARTe::UnitTest::PrepareTestEnvironment(argc, argv));
+    }
+    
+    if (ret) {
+        ret.fatalError = !MARTe::UnitTest::Run();
+    }
+
+    MARTe::UnitTest::CleanTestEnvironment();
+    return (ret ? 0 : -1);
 }
 

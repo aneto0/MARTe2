@@ -246,12 +246,13 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
         }
     }
     if (err.ErrorsCleared()) {
-        if (nextState != currentStateName) {
-            uint32 j;
-            bool ok = true;
-            for (j = 0u; (j < currentState->Size()) && (ok); j++) {
-                ReferenceT<StateMachineEvent> nextStateEventJ = currentState->Get(j);
-                if (nextStateEventJ.IsValid()) {
+        uint32 j;
+        bool ok = true;
+        for (j = 0u; (j < currentState->Size()) && (ok); j++) {
+            ReferenceT<StateMachineEvent> nextStateEventJ = currentState->Get(j);
+            if (nextStateEventJ.IsValid()) {
+                nextStateEventJ->Reset();
+                if (nextState != currentStateName) {
                     err = InstallMessageFilter(nextStateEventJ);
                     ok = err.ErrorsCleared();
                 }

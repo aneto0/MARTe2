@@ -49,26 +49,14 @@ $(BUILD_DIR)/%.a : createLibrary $(OBJS)
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.a
 	rm -f createLibrary
 	
-
 $(BUILD_DIR)/%.so : createLibrary $(OBJS)
 	mkdir -p $(BUILD_DIR)
-	touch dummy.cpp	
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  dummy.cpp -o dummy.o
-	$(COMPILER) $(LFLAGS) -shared -fPIC dummy.o $(OBJS) $(LIBRARIES) -o $(BUILD_DIR)/$*.so
+	touch $@
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
 	touch $(BUILD_DIR)/lib$*.so
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
-	rm dummy.*
 	rm -f createLibrary
-	
-	
-%.ifo :  %.h
-	$(COMPILER) -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
-	cint  -i temp/temp.pp $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.ifo
-
-%.sinfo.cpp :  %.h
-	$(COMPILER) -D_CINT -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
-	cint   -i  $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.sinfo.cpp
 
 $(BUILD_DIR)/%.def : 
 	touch a.out
@@ -82,21 +70,27 @@ $(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o
 
 $(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
 	mkdir -p $(BUILD_DIR)
-	$(COMPILER) $(CPPFLAGS) $(LFLAGS) $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $(BUILD_DIR)/$*.ex
+	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	rm -f createLibrary
 	
-
+#If the file does not exist and we are in a clean context, do not create it!
 depends.cov: dependsRaw.cov
+ifneq ($(MAKECMDGOALS),clean)
 	mkdir -p $(BUILD_DIR)
 	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateLinuxDepends.sed
 	sed -f CreateLinuxDepends.sed dependsRaw.cov >depends.cov
 	rm -f CreateLinuxDepends.sed 
+endif
 
+#If the file does not exist and we are in a clean context, do not create it (a touch is still needed to implement the include)!
 dependsRaw.cov:
+ifneq ($(MAKECMDGOALS),clean)
 	mkdir -p $(BUILD_DIR) 
 	$(COMPILER) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.cov
-	@mkdir -p temp
 	@mkdir -p $(BUILD_DIR)
+else
+	touch $@
+endif
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
 	mkdir -p $(BUILD_DIR)
@@ -109,14 +103,27 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 %.spb : 
 	$(MAKE) -C $* -f Makefile.$(TARGET)
 
-
 %.spc : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean
 
 %.spcg : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean_gen
 
-clean:  $(SUBPROJC)
+#When changing branches, if a subfolder no longer exists it also must be deleted.
+#This nuke cannot be the general clean rule because we don't want to delete all the built artefacts
+#when working at the subdirectory level
+clean_wipe_old:
+	@$(shell find . -wholename "*/cov/*$(OBJEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(DLLEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(EXEEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(LIBEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(GAMEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(DRVEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(ASMEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(GCNOEXT)" | xargs rm -f)
+	@$(shell find . -wholename "*/cov/*$(GCDAEXT)" | xargs rm -f)
+
+clean::  $(SUBPROJC) 
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)

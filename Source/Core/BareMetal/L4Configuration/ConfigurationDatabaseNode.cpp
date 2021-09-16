@@ -46,6 +46,7 @@ ConfigurationDatabaseNode::ConfigurationDatabaseNode() :
         Object() {
     granularity = 2u;
     containerSize = 0u;
+    numberOfNodes = 0u;
     maxSize = 0u;
     container = NULL_PTR(Reference *);
     muxTimeout = TTInfiniteWait;
@@ -73,6 +74,7 @@ void ConfigurationDatabaseNode::Purge() {
         container = NULL_PTR(Reference *);
     }
     containerSize = 0u;
+    numberOfNodes = 0u;
     maxSize = 0u;
     binTree.Reset();
 }
@@ -105,6 +107,10 @@ bool ConfigurationDatabaseNode::Insert(Reference ref) {
     }
     if (ok) {
         containerSize++;
+        ReferenceT<ConfigurationDatabaseNode> node = ref;
+        if (node.IsValid()) {
+            numberOfNodes++;
+        }
     }
     UnLock();
     return ok;
@@ -247,6 +253,7 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
             if (refCdbn.IsValid()) {
                 refCdbn->SetParent(Reference());
                 refCdbn->Purge();
+                numberOfNodes--;
             }
         }
     }
@@ -268,6 +275,15 @@ bool ConfigurationDatabaseNode::Lock() {
 
 void ConfigurationDatabaseNode::UnLock() {
     mux.FastUnLock();
+}
+
+uint32 ConfigurationDatabaseNode::GetNumberOfNodes() {
+    uint32 ssize = 0u;
+    if (Lock()) {
+        ssize = numberOfNodes;
+    }
+    UnLock();
+    return ssize;
 }
 
 CLASS_REGISTER(ConfigurationDatabaseNode, "1.0")

@@ -43,13 +43,16 @@ OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o)
 OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o) 
 OBJS= $(OBJS3)
 
-
 SUBPROJ = $(SPB:%.x=%.spb)
 SUBPROJC = $(SPB:%.x=%.spc)
 SUBPROJCG = $(SPB:%.x=%.spcg)
 SUBPROJ2 = $(SPB2:%.x=%.spb)
 SUBPROJC += $(SPB2:%.x=%.spc)
 SUBPROJCG += $(SPB2:%.x=%.spcg)
+SUBPROJT = $(SPBT:%.x=%.spb)
+SUBPROJTC = $(SPBT:%.x=%.spc)
+
+MARTe2_TEST_ENVIRONMENT?=GTest
 
 COMPILER = g++
 CCOMPILER = gcc
@@ -61,7 +64,7 @@ OPTIM =
 LFLAGS = -Wl,--no-as-needed --coverage
 CFLAGS = -fPIC -Wall -fprofile-arcs -ftest-coverage 
 CPPFLAGS = -fPIC -frtti -fprofile-arcs -ftest-coverage 
-CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
+CFLAGSPEC= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl -lgcov
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

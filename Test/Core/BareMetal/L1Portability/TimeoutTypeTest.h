@@ -66,11 +66,27 @@ public:
 
     /**
      * @brief Test the constructor of the TimeoutType class
-     * @detail declare a TimeoutType variable specifying the time.
+     * @detail declare a TimeoutType variable specifying the time in uint32.
      * @param[in] msec is the time in milliseconds.
-     * @return true if the TimeoutType::msecTimeout = 0xFFFFFFFFu
+     * @return true if the TimeoutType::msecTimeout = msec
      */
     bool TestConstructorNotDefault(uint32 msec);
+
+    /**
+     * @brief Test the constructor of the TimeoutType class
+     * @detail declare a TimeoutType variable specifying the time in int32.
+     * @param[in] msec is the time in milliseconds.
+     * @return true if the TimeoutType::msecTimeout = msec
+     */
+    bool TestConstructorNotDefault_2(int32 msec);
+
+    /**
+     * @brief Test the constructor of the TimeoutType class
+     * @detail declare a TimeoutType variable specifying the time in uint64.
+     * @param[in] msec is the time in milliseconds.
+     * @return true if the TimeoutType::msecTimeout = usec
+     */
+    bool TestConstructorNotDefault_3(uint64 usec);
 
     /**
      * @brief Test TimeoutType::SetTimeoutSec() function.

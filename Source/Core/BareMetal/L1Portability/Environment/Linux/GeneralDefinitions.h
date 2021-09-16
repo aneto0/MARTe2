@@ -26,7 +26,6 @@
 
 
 #include <pthread.h>
-
 #ifndef NULL
 #define NULL 0
 #endif
@@ -78,7 +77,7 @@ struct BasicConsoleProperties;
 
 typedef int32 Handle;
 static const char8 DIRECTORY_SEPARATOR = '/';
-const uint32 SCHED_GRANULARITY_US = 10000;
+const uint32 SCHED_GRANULARITY_US = 10000u;
 
 }
 

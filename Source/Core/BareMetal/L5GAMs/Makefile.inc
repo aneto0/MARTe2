@@ -29,6 +29,7 @@ OBJSX=BrokerI.x \
     ExecutableI.x \
     GAM.x \
     GAMGroup.x \
+    GAMBareScheduler.x \
     GAMSchedulerI.x \
     GAMDataSource.x \
     MemoryDataSourceI.x \

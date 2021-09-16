@@ -1,0 +1,97 @@
+#############################################################
+#
+# Copyright 2011 EFDA | European Fusion Development Agreement
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+#############################################################
+
+TARGET=rpmbuild
+
+BUILD_DIR=$(ROOT_DIR)/Build/rpmbuild
+
+FOLDERS=$(FOLDERSX:%.x=%) 
+
+M2_RPM_COMPILE_TARGET?=x86-linux
+
+M2_RPM_FLAGS=-v -ba
+M2_RPM_SPEC_FILE_PATH?=$(ROOT_DIR)/Resources/RPM/
+M2_RPM_SPEC_FILE?=marte2-projects.spec
+
+#Should be set by the source Makefile
+M2_RPM_VERSION?=0.0
+M2_RPM_SRC_DIR?=Source
+M2_RPM_BIN_LIST?=
+M2_RPM_LIB_LIST?=
+M2_RPM_BUILD_DIR?=$(PWD)/$(BUILD_DIR)/BUILD
+M2_RPM_LICENSE?=EUPL
+#The name of the project (e.g. MARTe2 or MARTe2_Components). Note that a variable name $(M2_RPM_NAME)_DIR will be created based on this name.
+M2_RPM_NAME?=UNKNOWN
+#The name of the rpm file that will be generated
+M2_RPM_ID?=unknown
+#Where the project files will be installed
+M2_RPM_TOP_DIR?=\/opt\/$(M2_RPM_ID)
+#The RPM architecture
+M2_RPM_ARCH?=x86_64
+#Standard spec file Requires
+M2_RPM_REQUIRES?=glibc
+#Standard spec file BuildRequires
+M2_RPM_BUILD_REQUIRES?=gcc
+#Main options (core, test, ...)
+M2_RPM_BUILD_OPTIONS?=all
+#Allow to compile a subset of the project folders by setting e.g. SBPM and SPBMT
+M2_RPM_BUILD_EXTRA_ARGS?='IGNORE=1'
+#RPM release number
+M2_RPM_RELEASE?=
+#Avoid e.g. that marte2-core and marte2-core-test coexist
+M2_RPM_CONFLICTS?=
+#Run user specific script in spec file after %install
+M2_RPM_PROJECT_INSTALL?=
+#Run user specific script in spec file after %post
+M2_RPM_PROJECT_POST?=
+#Custom distribution tag (e.g. ccs6.2)
+M2_RPM_CUSTOM_DIST?=
+#Other project specific folders (e.g. Resources, Startup, Configurations, ...). This is a space separated string with NO quotes (i.e. the spaces have to be properly escaped). For example M2_RPM_OTHER_FOLDERS=Startup\ Configurations
+M2_RPM_OTHER_FOLDERS?=
+#Release version
+M2_RPM_RELEASEVER?=`cat /etc/redhat-release | tr -dc '0-9' | cut -c 1`
+
+M2_RPM_DEFINES=--define "rpm_id $(M2_RPM_ID)"
+M2_RPM_DEFINES+=--define "rpm_src_dir $(M2_RPM_SRC_DIR)"
+M2_RPM_DEFINES+=--define "rpm_bin_list $(M2_RPM_BIN_LIST)"
+M2_RPM_DEFINES+=--define "rpm_lib_list $(M2_RPM_LIB_LIST)"
+M2_RPM_DEFINES+=--define "rpm_version $(M2_RPM_VERSION)"
+M2_RPM_DEFINES+=--define "rpm_name $(M2_RPM_NAME)"
+M2_RPM_DEFINES+=--define "rpm_license $(M2_RPM_LICENSE)"
+M2_RPM_DEFINES+=--define "rpm_arch $(M2_RPM_ARCH)"
+M2_RPM_DEFINES+=--define "rpm_requires $(M2_RPM_REQUIRES)"
+M2_RPM_DEFINES+=--define "rpm_compile_target $(M2_RPM_COMPILE_TARGET)"
+M2_RPM_DEFINES+=--define "rpm_top_dir $(M2_RPM_TOP_DIR)"
+M2_RPM_DEFINES+=--define "rpm_build_requires $(M2_RPM_BUILD_REQUIRES)"
+M2_RPM_DEFINES+=--define "rpm_build_options $(M2_RPM_BUILD_OPTIONS)"
+M2_RPM_DEFINES+=--define "rpm_build_extra_args $(M2_RPM_BUILD_EXTRA_ARGS)"
+M2_RPM_DEFINES+=--define "rpm_release $(M2_RPM_RELEASE)"
+M2_RPM_DEFINES+=--define "rpm_conflicts $(M2_RPM_CONFLICTS)"
+M2_RPM_DEFINES+=--define "rpm_project_install $(M2_RPM_PROJECT_INSTALL)"
+M2_RPM_DEFINES+=--define "rpm_project_post $(M2_RPM_PROJECT_POST)"
+M2_RPM_DEFINES+=--define "rpm_custom_dist $(M2_RPM_CUSTOM_DIST)"
+M2_RPM_DEFINES+=--define "rpm_other_folders $(M2_RPM_OTHER_FOLDERS)"
+M2_RPM_DEFINES+=--define "rpm_releasever $(M2_RPM_RELEASEVER)"
+M2_RPM_DEFINES+=--define "build_dir $(M2_RPM_BUILD_DIR)"
+M2_RPM_DEFINES+=--define "_topdir $(PWD)/$(BUILD_DIR)"
+

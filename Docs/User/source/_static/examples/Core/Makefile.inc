@@ -28,26 +28,25 @@ OBJSX=ErrorLoggerExample.x \
 
 PACKAGE=Examples
 ROOT_DIR=../../../../../..
-MARTe2_DIR ?= $(ROOT_DIR)
-MARTe2_MAKEDEFAULT_DIR?=$(MARTe2_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES += -I.
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L0Types
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L1Portability
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L2Objects
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L3Streams
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Configuration
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4HttpService
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Messages
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L5GAMs
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L1Portability
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L3Streams
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L4HttpService
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L1Portability
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L3Services
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L2Objects
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L3Streams
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L4Configuration
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L4HttpService
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L4Messages
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L5GAMs
+INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L3Streams
+INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L4HttpService
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L3Services
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L4Messages
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L4StateMachine
 
 all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/AtomicExample1$(EXEEXT) \

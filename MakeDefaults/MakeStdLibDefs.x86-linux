@@ -43,16 +43,22 @@ GCDAEXT=.gcda
 GCOVEXT=.gcov
 DEFEXT=.def
 
-OBJS0= $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
-OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o1) 
-OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o2) 
-OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o3) 
-OBJS= $(OBJS3)
+#Objects with different optim levels
+OBJS0=$(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+OBJS1=$(OBJS0:%.x1=$(BUILD_DIR)/%.o1) 
+OBJS2=$(OBJS1:%.x2=$(BUILD_DIR)/%.o2) 
+OBJS3=$(OBJS2:%.x3=$(BUILD_DIR)/%.o3) 
+OBJS=$(OBJS3)
 
-SUBPROJ = $(SPB:%.x=%.spb)
-SUBPROJC = $(SPB:%.x=%.spc)
-SUBPROJ2 = $(SPB2:%.x=%.spb)
-SUBPROJC += $(SPB2:%.x=%.spc)
+#Subprojects
+SUBPROJ=$(SPB:%.x=%.spb)
+#Testing subprojects
+SUBPROJT=$(SPBT:%.x=%.spb)
+#Cleaning of the subprojects
+SUBPROJC=$(SPB:%.x=%.spc)
+SUBPROJTC=$(SPBT:%.x=%.spc)
+
+MARTe2_TEST_ENVIRONMENT?=GTest
 
 COMPILER = g++
 CCOMPILER = gcc
@@ -65,6 +71,7 @@ LFLAGS = -Wl,--no-as-needed -fPIC
 #-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
 CFLAGS = -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable -fno-strict-aliasing
 CPPFLAGS = $(CFLAGS) -frtti 
-CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
+CFLAGSPEC= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lpthread -lrt -ldl
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
+

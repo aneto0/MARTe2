@@ -121,6 +121,12 @@ ConfigurationDatabaseNode    ();
      */
     void SetParent(ReferenceT<ConfigurationDatabaseNode> parentIn);
 
+    /**
+     * @brief Gets the number of nodes that are of type ConfigurationDatabaseNode.
+     * @return the numbe of nodes that are of type ConfigurationDatabaseNode.
+     */
+    uint32 GetNumberOfNodes();
+
 private:
 
     /**
@@ -148,6 +154,11 @@ private:
      * Current actual size of the array.
      */
     uint32 containerSize;
+
+    /**
+     * Number of ConfigurationDatabaseNode nodes.
+     */
+    uint32 numberOfNodes;
 
     /**
      * Maximum size of the array without requiring a realloc.

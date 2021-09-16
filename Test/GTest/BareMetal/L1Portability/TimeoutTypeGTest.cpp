@@ -25,13 +25,12 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "TimeoutTypeTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -50,6 +49,21 @@ TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorDefault) {
 TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorNotDefault) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault(10));
+}
+
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorInt32Constructor_P) {
+    TimeoutTypeTest timeoutTypeTest;
+    ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault_2(7));
+}
+
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorInt32Constructor_N) {
+    TimeoutTypeTest timeoutTypeTest;
+    ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault_2(-7));
+}
+
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructoruInt64Constructor) {
+    TimeoutTypeTest timeoutTypeTest;
+    ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault_3(1024));
 }
 
 TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestSetTimeoutSec) {
