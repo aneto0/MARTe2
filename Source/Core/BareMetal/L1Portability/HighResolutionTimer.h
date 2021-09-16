@@ -77,7 +77,7 @@ namespace MARTe {
          * @param[in] tStart is the initial ticks number.
          * @return the time elapsed in seconds
          */
-        inline float64 TicksToTime(uint64 tStop, uint64 tStart = 0);
+        inline float64 TicksToTime(uint64 tStop, uint64 tStart = 0u);
 
         /**
          * @brief Gets the current time stamp [microseconds, seconds, minutes, hour, day, month, year].
