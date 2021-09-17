@@ -63,6 +63,7 @@ namespace MARTe {
         ErrorManagement::ErrorType retVal = ErrorManagement::NoError;
 
         StreamString config = configFile;
+        config.Seek(0);
         configurationStream = &config;
 
         return retVal;
