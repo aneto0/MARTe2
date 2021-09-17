@@ -48,6 +48,8 @@ core: $(SUBPROJMAIN)
 gtest:
 ifeq ($(TARGET), x86-linux)
 	make -C Lib/gtest-1.7.0 -f Makefile.$(TARGET)
+else ifeq ($(TARGET), cov)
+	make -C Lib/gtest-1.7.0 -f Makefile.$(TARGET)
 endif
 
 test: $(SUBPROJMAINTEST)
