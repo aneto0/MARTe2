@@ -41,6 +41,7 @@ namespace MARTe {
     "        +Timer = {"
     "            Class = LinuxTimer"
     "            SleepNature = \"Default\""
+    "            ExecutionMode = \"RealTimeThread\""
     "            Signals = {"
     "                Counter = {"
     "                    Type = uint32"
