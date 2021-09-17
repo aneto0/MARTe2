@@ -39,6 +39,8 @@
 
 namespace MARTe {
 
+    StreamString configurationFile = configFile;
+
     void BareUSErrorProcessFunction(const ErrorManagement::ErrorInformation &errorInfo,
                                     const char8 * const errorDescription) {
         //Using xil_printf wrapped to automagically get the stdout routing to uart
@@ -62,9 +64,8 @@ namespace MARTe {
     ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
         ErrorManagement::ErrorType retVal = ErrorManagement::NoError;
 
-        StreamString config = configFile;
-        config.Seek(0);
-        configurationStream = &config;
+        configurationFile.Seek(0);
+        configurationStream = &configurationFile;
 
         return retVal;
     }
