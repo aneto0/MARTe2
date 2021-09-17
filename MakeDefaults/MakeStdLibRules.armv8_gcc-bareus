@@ -23,4 +23,9 @@
 # $Id$
 #
 #############################################################
-include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc-static
+ifdef MARTe2_DIR
+    include $(MARTe2_DIR)/MakeDefaults/MakeStdLibRules.gcc-static
+else
+    include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc-static
+endif
+
