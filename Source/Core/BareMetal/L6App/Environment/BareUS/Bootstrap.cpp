@@ -63,9 +63,7 @@ namespace MARTe {
         ErrorManagement::ErrorType retVal = ErrorManagement::NoError;
 
         StreamString config = configFile;
-
-        uint32 stringSize = config.Size();
-        configurationStream->Write(config.Buffer(), stringSize);
+        configurationStream = &config;
 
         return retVal;
     }
