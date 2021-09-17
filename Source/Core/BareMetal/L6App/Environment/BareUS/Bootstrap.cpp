@@ -27,18 +27,26 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "platform.h"
+#include "xil_printf.h"
 
 #include "AdvancedErrorManagement.h"
 #include "Bootstrap.h"
 #include "ConfigurationDatabase.h"
+#include "marte2config.h"
 #include "StandardParser.h"
-#include "platform.h"
-#include "xil_printf.h"
+
 
 namespace MARTe {
 
+    void BareUSErrorProcessFunction(const ErrorManagement::ErrorInformation &errorInfo,
+                                    const char8 * const errorDescription) {
+        //Using xil_printf wrapped to automagically get the stdout routing to uart
+        print(errorDescription);
+    }
+
     Bootstrap::Bootstrap() {
-        
+        ErrorManagement::SetErrorProcessFunction(BareUSErrorProcessFunction);
     }
 
     Bootstrap::~Bootstrap() {
@@ -46,6 +54,7 @@ namespace MARTe {
     }
 
     ErrorManagement::ErrorType Bootstrap::Run() {
+        
         return ErrorManagement::NoError;
     }
    
@@ -53,11 +62,36 @@ namespace MARTe {
     ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
         ErrorManagement::ErrorType retVal = ErrorManagement::NoError;
 
+        StreamString config = configFile;
+
+        uint32 stringSize = config.Size();
+        configurationStream->Write(config.Buffer(), stringSize);
+
         return retVal;
     }
 
     ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters) {
         ErrorManagement::ErrorType retVal;
+
+        //Writing defaults in loader parameters
+        retVal.parametersError = !loaderParameters.Write("Parser", "cdb");
+        if(!retVal) {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Bootstrap::ReadParameters() Failure writing default parser (cdb)");
+        }
+
+        if(retVal) {
+            retVal.parametersError = !loaderParameters.Write("Loader", "RealTimeLoader");
+            if(!retVal) {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Bootstrap::ReadParameters() Failure writing default loader (RealTimeLoader)");
+            }
+        }
+
+        if(retVal) {
+            retVal.parametersError = !loaderParameters.Write("FirstState", "State1");
+            if(!retVal) {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Bootstrap::ReadParameters() Failure setting startup state (State1)");
+            }
+        }
 
         return retVal;
     }
