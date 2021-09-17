@@ -23,7 +23,11 @@
 # $Id$
 #
 #############################################################
-include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+ifdef MARTe2_DIR
+    include $(MARTe2_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+else
+    include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+endif
 
 ENVIRONMENT=BareUS
 ARCHITECTURE=armv8_gcc
