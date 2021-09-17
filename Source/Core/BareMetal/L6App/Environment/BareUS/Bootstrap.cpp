@@ -101,7 +101,7 @@ namespace MARTe {
     }
 
     void Bootstrap::Printf(const char8 * const msg) {
-        print(msg);
+        printf(msg);
     }
 
 }
