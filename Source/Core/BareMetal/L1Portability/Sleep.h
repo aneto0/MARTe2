@@ -163,7 +163,8 @@ void Sleep::SemiBusy(const float32 totalSleepSec,
 void Sleep::MicroSeconds(uint32 totalUsecTime,
                          uint32 nonBusyUsecTime) {
     uint64 startCounter = HighResolutionTimer::Counter();
-    uint64 deltaTicks = totalUsecTime * static_cast<uint64>(static_cast<float64>(HighResolutionTimer::Frequency()) / 1e6);
+    uint64 deltaTicksUs = totalUsecTime * HighResolutionTimer::Frequency();
+    uint64 deltaTicks = deltaTicksUs / 1000000LLU;
 
     OsUsleep(nonBusyUsecTime);
 
