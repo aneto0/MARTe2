@@ -23,18 +23,24 @@
 # $Id$
 #
 #############################################################
-include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+ifdef MARTe2_DIR
+    include $(MARTe2_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+else
+    include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+endif
 
-ENVIRONMENT=BareCircle
+#export TARGET=armv8_gcc-freertos-a53-us
+
+ENVIRONMENT=FreeRTOS
 ARCHITECTURE=armv8_gcc
 MARTe2_LINK_MODE?=Static
-ENV_ARCH_CUSTOMIZATION=RSTA2_CIRCLE
+ENV_ARCH_CUSTOMIZATION=XILINX_ULTRASCALE
+CORTEX_CORE_NUMBER?=0
 
 MARTe2_TEST_ENVIRONMENT?=Portable
 
-INCLUDES+=-I$(PICIRCLE_BSP_BASE_DIR)/libs/circle/include/
-INCLUDES+=-I$(PICIRCLE_BSP_BASE_DIR)/libs/circle/addon/
-INCLUDES+=-I$(PICIRCLE_BSP_BASE_DIR)/include/
+INCLUDES+=-I$(XILINX_BSP_BASE_DIR)/psu_cortexa53_$(CORTEX_CORE_NUMBER)/include
+#INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src
 
 OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o)
 OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o) 
@@ -45,18 +51,14 @@ COMPILER = $(COMPILERPREFIX)-g++
 CCOMPILER = $(COMPILERPREFIX)-gcc
 LINKER = $(COMPILERPREFIX)-ld
 
-#For RPi3 in QEMU
-#CPUSPECIFICFLAGS = -mcpu=cortex-a53 -mlittle-endian -mcmodel=small
-
-#For real RPi4
-#CPUSPECIFICFLAGS = -mcpu=cortex-a72 -mlittle-endian -mcmodel=small
+CPUSPECIFICFLAGS = -mcpu=cortex-a53
 
 #Flags
 #ADDITIONALFLAGS = -MD -MP -fPIC -frtti -std=c++14 -fpermissive -ffunction-sections -fdata-sections
-ADDITIONALFLAGS = -frtti 
+ADDITIONALFLAGS = -frtti
 
 OPTIM = 
 
 #-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
-CFLAGS = $(CPUSPECIFICFLAGS) -Wno-parentheses -fpermissive -nostdlib $(DEBUG) -D$(ENV_ARCH_CUSTOMIZATION) -g
+CFLAGS = $(CPUSPECIFICFLAGS) -Wno-parentheses -fpermissive -nostdlib $(DEBUG) -D$(ENV_ARCH_CUSTOMIZATION)
 
