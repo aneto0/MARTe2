@@ -44,8 +44,10 @@ namespace MARTe{
 /**
  * Thread identifier in FreeRTOS
  */
-typedef TaskHandle_t ThreadIdentifier;
+typedef uint32 ThreadIdentifier;
 static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdentifier>(0);
+
+
 
 /** This is just to avoid an exception to Rule 3-9-2 of MISRA, given that many Linux operating system calls require a long as an input
  * and the framework does not define such type*/

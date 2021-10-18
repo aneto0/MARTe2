@@ -40,7 +40,7 @@ CORTEX_CORE_NUMBER?=0
 MARTe2_TEST_ENVIRONMENT?=Portable
 
 INCLUDES+=-I$(XILINX_BSP_BASE_DIR)/psu_cortexa53_$(CORTEX_CORE_NUMBER)/include
-#INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src
+INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src
 
 OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o)
 OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o) 
@@ -60,5 +60,8 @@ ADDITIONALFLAGS = -frtti
 OPTIM = 
 
 #-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
-CFLAGS = $(CPUSPECIFICFLAGS) -Wno-parentheses -fpermissive -nostdlib $(DEBUG) -D$(ENV_ARCH_CUSTOMIZATION)
+
+#TODO: _GLIBCXX_INCLUDE_NEXT_C_HEADERS Symbol is defined due to an incompatibility rising from the FreeRTOS.h inclusion
+#----------------------
+CFLAGS = $(CPUSPECIFICFLAGS) -Wno-parentheses -fpermissive -nostdlib $(DEBUG) -D$(ENV_ARCH_CUSTOMIZATION) -D_GLIBCXX_INCLUDE_NEXT_C_HEADERS
 
