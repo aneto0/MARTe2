@@ -59,8 +59,6 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
     bootstrap.Printf(err.Buffer());
 }
 
-Bootstrap
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -81,9 +79,8 @@ int _main(int argc, char **argv) {
     ConfigurationDatabase loaderParameters;
     StreamI *configurationStream = NULL_PTR(StreamI *);
 
-    if (ret) {
-        ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
-    }
+    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
+
     
     if (ret) {
         ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
