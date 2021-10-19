@@ -21,8 +21,20 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HIGHRESOLUTIONTIMER_ENV_H_
-#define HIGHRESOLUTIONTIMER_ENV_H_
+#ifdef RSTA2_CIRCLE
+    #include "HighResolutionTimerCircle.h"
+    #define CUSTOMIZED_HIGHRESOLUTIONTIMER_HEADER
+#endif
+
+#ifdef XILINX_ULTRASCALE
+    #include "HighResolutionTimerXil.h"
+    #define CUSTOMIZED_HIGHRESOLUTIONTIMER_HEADER
+#endif
+
+#ifndef CUSTOMIZED_HIGHRESOLUTIONTIMER_HEADER
+    #include "HighResolutionTimerDefault.h"
+#endif
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,10 +44,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-#include "../../HighResolutionTimer.h"
-#include "HighResolutionTimerCalibrator.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,34 +52,3 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
-
-extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
-
-namespace HighResolutionTimer {
-
-
-inline uint64 Frequency() {
-    return calibratedHighResolutionTimer.GetFrequency();
-}
-
-inline float64 Period() {
-    return calibratedHighResolutionTimer.GetPeriod();
-}
-
-inline float64 TicksToTime(const uint64 tStop,
-                           const uint64 tStart) {
-    uint64 dT = tStop - tStart;
-    return static_cast<float64>(dT) * Period();
-}
-
-inline bool GetTimeStamp(TimeStamp &date) {
-    //TODO: Do something better here with the timestamp
-    return false;
-}
-
-}
-
-}
-#endif /* HIGHRESOLUTIONTIMER_ENV_H_ */
