@@ -100,7 +100,7 @@ public:
      * @param[in] argc the number of arguments provided in the main.
      * @param[in] argv the list of arguments provided in the main.
      */
-    void Main(void (*loader)(int32 argc, char8** argv));
+    void Main(int (*loader)(int32 argc, char8** argv));
 };
 
 }
