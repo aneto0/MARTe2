@@ -59,6 +59,8 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
     bootstrap.Printf(err.Buffer());
 }
 
+Bootstrap
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -69,9 +71,12 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
  * @return 0
  */
 int main(int argc, char **argv) {
+    bootstrap.Main(_main);
+}
+
+int _main(int argc, char **argv) {
     using namespace MARTe;
     SetErrorProcessFunction(&MainErrorProcessFunction);
-    ErrorManagement::ErrorType ret = bootstrap.InitHAL(argc, argv);
 
     ConfigurationDatabase loaderParameters;
     StreamI *configurationStream = NULL_PTR(StreamI *);

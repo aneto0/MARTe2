@@ -75,11 +75,14 @@ extern "C" {
     void HardwarePrintf(const char8 * const msg);
 }
 void Bootstrap::Printf(const char8 * const msg) {
+    //TODO HARDWAREPRINTF
     xil_printf("%s\r\n", msg);
 }
 
-ErrorManagement::ErrorType Bootstrap::InitHAL(int32 argc, char8 **argv) {
-    return ErrorManagement::NoError;
+void Bootstrap::Load(void (*loader)(void)) {
+    osThreadDef(loaderTask, PreLoader, osPriorityNormal, 1, 4 * THREADS_DEFAULT_STACKSIZE);
+    osThreadCreate (osThread(loaderTask), (void *)loader);
+    HardwareMain();
 }
 
 }

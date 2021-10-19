@@ -81,7 +81,43 @@ ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &lo
 //     //HardwareMain();
 // }
 
+extern "C" {
+    void MARTe2HardwareInitialise();
+
+    void PreLoader(const void *_loader) {
+        int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
+        loader(0, NULL);
+    }
+}
+
+void Bootstrap::Main(int (*loader)(int32 argc, char8** argv)) {
+    MARTe2HardwareInitialise(); //Handle to initialise hardware
+    BaseType_t xReturned;
+    TaskHandle_t xHandle = NULL;
+
+    //TODO CHECK Priority and stack size as parameter
+    /* Create the task, storing the handle. */
+    xReturned = xTaskCreate(
+                    PreLoader,                          /* Function that implements the task. */
+                    "Main",                             /* Text name for the task. */
+                    4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
+                    loader,                             /* Parameter passed into the task. */
+                    taskIDLE_PRIORITY,                  /* Priority at which the task is created. */
+                    &xHandle );                         /* Used to pass out the created task's handle. */
+
+    if( xReturned == pdPASS )
+    {
+        /* The task was created.  Use the task's handle to delete the task. */
+        vTaskDelete( xHandle );
+    }
+
+    vTaskStartScheduler(); //Start FreeRTOS Scheduler
+
+    for(;;); //We should never reach here
+}
+
 ErrorManagement::ErrorType Bootstrap::Run() {
+    
     while (keepRunning) {
         Sleep::Sec(1.0);
     }
