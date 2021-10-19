@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#
 #include "HighResolutionTimer.h"
 #include "Sleep.h"
 
@@ -46,7 +46,6 @@ namespace MARTe {
 
 void Sleep::OsUsleep(const uint32 usecTime) {
         usleep(usecTime);
-    }
 }
 
 int32 Sleep::GetDateSeconds() {
