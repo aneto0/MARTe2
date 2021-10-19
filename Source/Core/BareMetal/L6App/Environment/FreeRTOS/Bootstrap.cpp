@@ -24,6 +24,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+//This refers to the underlying Xilinx printf
+#include "xil_printf.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -73,8 +75,11 @@ extern "C" {
     void HardwarePrintf(const char8 * const msg);
 }
 void Bootstrap::Printf(const char8 * const msg) {
-    //TODO
-    HardwarePrintf(msg);
+    xil_printf("%s\r\n", msg);
+}
+
+ErrorManagement::ErrorType Bootstrap::InitHAL(int32 argc, char8 **argv) {
+    return ErrorManagement::NoError;
 }
 
 }
