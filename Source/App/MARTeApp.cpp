@@ -152,7 +152,8 @@ int _main(int argc, char **argv) {
  * @return 0
  */
 int main(int argc, char **argv) {
-   MARTe::ErrorManagement::ErrorType ret.parametersError = bootstrap.Main(_main, argc, argv);
+   MARTe::ErrorManagement::ErrorType ret;
+   ret.parametersError = bootstrap.Main(_main, argc, argv);
     
     return (ret ? 0 : -1);
 }
