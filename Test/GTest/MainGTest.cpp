@@ -54,7 +54,7 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 int _main(int argc, char** argv) {
-    ErrorManagement::ErrorType ret;
+    MARTe::ErrorManagement::ErrorType ret;
 
     ret.fatalError = !(MARTe::UnitTest::PrepareTestEnvironment(argc, argv));
     
