@@ -152,5 +152,5 @@ int _main(int argc, char **argv) {
  * @return 0
  */
 int main(int argc, char **argv) {
-    bootstrap.Main(_main);
+    bootstrap.Main(_main, argc, argv);
 }

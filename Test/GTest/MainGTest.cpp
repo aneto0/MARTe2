@@ -53,6 +53,18 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+int _main(int argc, char** argv) {
+    ErrorManagement::ErrorType ret;
+
+    ret.fatalError = !(MARTe::UnitTest::PrepareTestEnvironment(argc, argv));
+    
+    if (ret) {
+        ret.fatalError = !MARTe::UnitTest::Run();
+    }
+
+    MARTe::UnitTest::CleanTestEnvironment();
+    return (ret ? 0 : -1);
+}
 
 int main(int argc, char **argv) {
     using namespace MARTe;
@@ -62,17 +74,6 @@ int main(int argc, char **argv) {
     ConfigurationDatabase loaderParameters;
     StreamI *configurationStream = NULL_PTR(StreamI *);
 
-    ErrorManagement::ErrorType ret = bootstrap.InitHAL(argc, argv);
-
-    if (ret) {
-        ret.fatalError = !(MARTe::UnitTest::PrepareTestEnvironment(argc, argv));
-    }
-    
-    if (ret) {
-        ret.fatalError = !MARTe::UnitTest::Run();
-    }
-
-    MARTe::UnitTest::CleanTestEnvironment();
-    return (ret ? 0 : -1);
+    ErrorManagement::ErrorType ret = bootstrap.Main(_main, argc, argv);
 }
 
