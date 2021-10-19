@@ -32,6 +32,7 @@
 #include "Bootstrap.h"
 #include "BasicFile.h"
 #include "ConfigurationDatabase.h"
+#include "marte2config.h"
 #include "StreamMemoryReference.h"
 #include "StructuredDataI.h"
 
@@ -46,12 +47,6 @@ namespace MARTe {
 static bool keepRunning = true;
 }
 
-extern "C" {
-
-    extern void HardwareMain(void);
-    extern const MARTe::char8 * const GetMARTeConfigurationString();
-    
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -62,7 +57,7 @@ namespace MARTe {
 
 StreamMemoryReference *staticConfigurationStream = NULL;
 ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
-    const char8 * const marteConfig = GetMARTeConfigurationString();
+    const char8 * const marteConfig = configFile;
     uint32 marteConfigLength = StringHelper::Length(marteConfig) + 1;
     if (staticConfigurationStream == NULL) {
         staticConfigurationStream = new StreamMemoryReference(marteConfig, marteConfigLength);
