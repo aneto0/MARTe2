@@ -179,7 +179,9 @@ bool EventSem::Post() {
         //    ok = (xSemaphoreGive(handle->semHandle) == pdTRUE);
         BaseType_t xHigherPriorityTaskWoken=pdFALSE;
         xSemaphoreGiveFromISR(handle->semHandle, &xHigherPriorityTaskWoken);
-        portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+        //TODO: Actually it seems it has been removed and refers to an old tutorial
+        //Check why was here and why it was needed
+        //portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
         //portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
         ok = true;//(xHigherPriorityTaskWoken == pdTRUE);
     }
