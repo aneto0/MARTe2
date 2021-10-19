@@ -75,5 +75,7 @@ int main(int argc, char **argv) {
     StreamI *configurationStream = NULL_PTR(StreamI *);
 
     ErrorManagement::ErrorType ret.parametersError = bootstrap.Main(_main, argc, argv);
+    
+    return (ret ? 0 : -1);
 }
 
