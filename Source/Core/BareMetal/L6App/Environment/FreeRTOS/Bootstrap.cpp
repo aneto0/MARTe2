@@ -80,7 +80,7 @@ void Bootstrap::Printf(const char8 * const msg) {
 }
 
 extern "C" {
-    void MARTe2HardwareInitialise();
+    extern void MARTe2HardwareInitialise();
 
     void PreLoader(const void *_loader) {
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
