@@ -458,7 +458,12 @@ bool HttpClient::CalculateNonce(StreamString &nonce) {
     bool ret = nonce.SetSize(0ULL);
     StreamString tid;
     if (ret) {
-        ret = tid.Printf("%08x%08x", static_cast<uint32>(Threads::Id()), this);
+        ThreadIdentifier threadId = Threads::Id();
+        uint32 threadNumber = Threads::GetThreadNumber(threadId);
+        ret = tid.Printf("%08x%08x", static_cast<uint32>(threadNumber), this);
+
+        //Original line
+        //ret = tid.Printf("%08x%08x", static_cast<uint32>(Threads::Id()), this);
     }
     if (ret) {
         uint8 buffer[16];

@@ -135,6 +135,26 @@ ThreadIdentifier Id() {
     return xTaskGetCurrentTaskHandle();
 }
 
+uint32 GetThreadNumber(const ThreadIdentifier &threadId) {
+    //Here we know that ThreadIdentifier is the FreeRTOS TaskHandle_t opaque pointer
+    //We cannot cleanly take information from that struct as it is opaque
+    //but this convenient method achieves it
+
+    TaskHandle_t xHandle = static_cast<TaskHandle_t>(threadId);
+    TaskStatus_t xTaskDetails;
+
+    //Ugly magic number to say failure happened here
+    uint32 taskNumber = 0xFFFFFFFFU;
+
+    //The 3rd parameter (pdFALSE) means we do not want to calculate the stack high water mark, which is a time consuming process
+    //The 4th parameter (eInvalid) means we do not want to obtain the state of the task being queried, which is a time consuming process
+    vTaskGetInfo(xHandle, &xTaskDetails, pdFALSE, eInvalid);
+
+    taskNumber = static_cast<uint32>(xTaskDetails.xTaskNumber);
+
+    return taskNumber;
+}
+
 /**
  * The priority will vary between 0, i.e. priorityClass = Unknown
  * and priorityLevel = 0 and 99, i.e. priorityClass = RealTime

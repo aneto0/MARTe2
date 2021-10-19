@@ -44,7 +44,7 @@ namespace MARTe{
 /**
  * Thread identifier in FreeRTOS
  */
-typedef uint32 ThreadIdentifier;
+typedef TaskHandle_t ThreadIdentifier;
 static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdentifier>(0);
 
 

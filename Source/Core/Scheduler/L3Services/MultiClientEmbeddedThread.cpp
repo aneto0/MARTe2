@@ -55,7 +55,14 @@ void MultiClientEmbeddedThread::ThreadLoop() {
     ExecutionInfo information;
     threadId = Threads::Id();
     information.Reset();
-    information.SetThreadNumber(static_cast<uint32>(threadId));
+    //TODO Aggiungere interfaccia a thread::GetThreadNumber
+    //Nel caso di linux torna get
+    uint32 threadNumber = Threads::GetThreadNumber(threadId);
+    information.SetThreadNumber(threadNumber);
+    
+    //Original line
+    //information.SetThreadNumber(static_cast<uint32>(threadId));
+
     // any error in execution will only abort the sequence - but not the thread
     // thread is killed at this stage if commands != KeepRunningCommand or if there more service threads that the minimum needed
     //Allow new threads to enter....
