@@ -74,6 +74,6 @@ int main(int argc, char **argv) {
     ConfigurationDatabase loaderParameters;
     StreamI *configurationStream = NULL_PTR(StreamI *);
 
-    ErrorManagement::ErrorType ret = bootstrap.Main(_main, argc, argv);
+    ErrorManagement::ErrorType ret.parametersError = bootstrap.Main(_main, argc, argv);
 }
 
