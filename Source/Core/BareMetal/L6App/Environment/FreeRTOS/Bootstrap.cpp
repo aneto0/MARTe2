@@ -78,10 +78,9 @@ void Bootstrap::Printf(const char8 * const msg) {
     //TODO HARDWAREPRINTF
     xil_printf("%s\r\n", msg);
 }
+extern void MARTe2HardwareInitialise();
 
 extern "C" {
-    extern void MARTe2HardwareInitialise();
-
     void PreLoader(const void *_loader) {
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
         loader(0, NULL);
