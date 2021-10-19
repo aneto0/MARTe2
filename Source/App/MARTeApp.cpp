@@ -62,15 +62,6 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-/**
- * @brief Main function.
- * @param[in] argc the number of arguments to be parsed by the MARTe::Bootstrap.
- * @param[in] argv the value of the arguments to be parsed by the MARTe::Bootstrap.
- * @return 0
- */
-int main(int argc, char **argv) {
-    bootstrap.Main(_main);
-}
 
 int _main(int argc, char **argv) {
     using namespace MARTe;
@@ -154,3 +145,12 @@ int _main(int argc, char **argv) {
     return 0;
 }
 
+/**
+ * @brief Main function.
+ * @param[in] argc the number of arguments to be parsed by the MARTe::Bootstrap.
+ * @param[in] argv the value of the arguments to be parsed by the MARTe::Bootstrap.
+ * @return 0
+ */
+int main(int argc, char **argv) {
+    bootstrap.Main(_main);
+}
