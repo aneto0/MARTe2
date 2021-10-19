@@ -100,7 +100,7 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv)) {
                     "Main",                             /* Text name for the task. */
                     4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
                     loader,                             /* Parameter passed into the task. */
-                    taskIDLE_PRIORITY,                  /* Priority at which the task is created. */
+                    tskIDLE_PRIORITY,                  /* Priority at which the task is created. */
                     &xHandle );                         /* Used to pass out the created task's handle. */
 
     if( xReturned == pdPASS )
