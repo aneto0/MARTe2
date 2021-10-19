@@ -67,7 +67,8 @@ inline float64 TicksToTime(const uint64 tStop,
 }
 
 inline bool GetTimeStamp(TimeStamp &date) {
-    return calibratedHighResolutionTimer.GetTimeStamp(date);
+    //TODO: Do something better here with the timestamp
+    return false;
 }
 
 }

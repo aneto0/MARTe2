@@ -1,8 +1,8 @@
 /**
- * @file HighResolutionTimerCalibrator.h
- * @brief Header file for class HighResolutionTimerCalibrator
- * @date 17/06/2015
- * @author Giuseppe Ferro
+ * @file HighResolutionTimer.h
+ * @brief Source file for class HighResolutionTimer
+ * @date 26/08/2021
+ * @author Giuseppe Avon
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,111 +16,82 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HighResolutionTimerCalibrator
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class HighResolutionTimerCalibrator (public, protected, and private). Be aware that some
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef HIGHRESOLUTIONTIMERCALIBRATOR_H_
-#define HIGHRESOLUTIONTIMERCALIBRATOR_H_
+#ifndef HIGHRESOLUTIONTIMERCALIBRATOR_ENV_H_
+#define HIGHRESOLUTIONTIMERCALIBRATOR_ENV_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "xtime_l.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-#include "TimeStamp.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe{
-
-
-
-
-
-/**
- * @brief A class to get the period and the frequency of the cpu clock depending on the operating system.
- */
-class HighResolutionTimerCalibrator {
-
-public:
-
-    /**
-     * @brief Estimates the period and the frequency of the cpu clock.
-     * @details The period and frequency of the CPU clock are estimated upon
-     * construction.
-     * In the Linux implementation these values are read from the /proc/cpuinfo file.
-     * The number of elapsed cpu ticks is also stored at this moment.
-     */
-    HighResolutionTimerCalibrator();
-
-    /**
-     * @brief Get the current time stamp.
-     * @param[in] timeStamp is a structure which contains the time stamp fields.
-     * @return true if the time can be successfully retrieved from the operating system.
-     */
-    bool GetTimeStamp(TimeStamp &timeStamp) const;
-
-    /**
-     * @brief Returns the calibrated CPU frequency.
-     * @return the calibrated CPU frequency.
-     */
-    uint64 GetFrequency() const;
-
-    /**
-     * @brief Returns the calibrated CPU period.
-     * @return the calibrated CPU period.
-     */
-    float64 GetPeriod() const;
-
-
-
-    uint64 Counter();
-
-
-    uint32 Counter32();
-
-private:
-
-    /**
-     * Number of cpu ticks in a second
-     */
-    uint64 frequency;
-
-    /**
-     * Time between two ticks in seconds
-     */
-    float64 period;
-};
-
-
-extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
-namespace HighResolutionTimer {
-
-inline uint32 Counter32() {
-    return calibratedHighResolutionTimer.Counter32();
-}
-
-inline uint64 Counter() {
-    return calibratedHighResolutionTimer.Counter();
-}
-
-}
-
-
-
-}
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* HIGHRESOLUTIONTIMERCALIBRATOR_H_ */
+namespace MARTe {
+
+    class HighResolutionTimerCalibrator {
+        public:
+            /**
+            * @brief Unlocks the timer and initially computes the timer frequency and period.
+            */
+            HighResolutionTimerCalibrator();
+
+            /**
+            * @brief Destructs the calibrator and eventually unlocks the timer.
+            */
+            ~HighResolutionTimerCalibrator();
+
+            /**
+            * @brief Returns underlying timer frequency
+            */
+            uint64 GetFrequency();
+
+            /**
+            * @brief Returns underlying timer period, as inverse of the frequency
+            */
+            float64 GetPeriod();
+
+            /**
+            * @brief Tells whether the timer instance is valid
+            */
+            bool IsInstanceValid();
+
+            /**
+            * @brief Calls the underlying GetClockTicks, which returns a fine grained consecutive tick counter in us
+            */
+            uint64 GetTicks();
+
+        private:
+            /**
+            * @brief Timer calibrator instance validity
+            */
+            bool isInstanceValid;
+
+            /**
+            * @brief Holds the timer frequency, which is read at construction stage
+            */
+            uint64 frequency;
+
+            /**
+            * @brief Holds the timer period, which is computed as frequency inverse and thus computed at construction stage
+            */
+            float64 period;
+    };
+
+}
+
+#endif /* HIGHRESOLUTIONTIMERCALIBRATOR_ENV_H_ */
