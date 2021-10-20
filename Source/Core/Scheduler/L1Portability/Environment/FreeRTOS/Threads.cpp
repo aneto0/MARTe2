@@ -29,6 +29,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ErrorManagement.h"
 #include "Threads.h"
 #include "ThreadsDatabase.h"
 /*---------------------------------------------------------------------------*/
@@ -297,6 +298,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             SetPriority(threadId, Threads::NormalPriorityClass, 0u);
         }
         else {
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Failure to create task");
             threadId = InvalidThreadIdentifier;
         }
 #endif
