@@ -46,9 +46,10 @@ extern void MARTe2HardwareInitialise();
 
 extern "C" {
     void HardwarePrintf(const char8 * const msg);
-    
 
     void PreLoader(void (*_loader)(void*)) {
+        xil_printf("PreLoader running\r\n");
+
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
         loader(0, NULL);
     }
@@ -87,8 +88,6 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
     }
     return ret;
 }
-
-
 
 void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
     MARTe2HardwareInitialise(); //Handle to initialise hardware
