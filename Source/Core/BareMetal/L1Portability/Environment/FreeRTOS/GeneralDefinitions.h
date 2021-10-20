@@ -55,7 +55,7 @@ typedef size_t oslong;
 typedef size_t osulong;
 
 /** Maximum number of classes that can be registered */
-const uint32 NUMBER_OF_GLOBAL_OBJECTS = 64u;
+const uint32 NUMBER_OF_GLOBAL_OBJECTS = 256u;
 
 static const char8 * const operatingSystemDLLExtensions[] = { static_cast<char8 *>(NULL) };
 

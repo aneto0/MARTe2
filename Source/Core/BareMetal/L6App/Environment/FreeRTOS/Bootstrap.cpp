@@ -92,6 +92,7 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
 
 void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
     MARTe2HardwareInitialise(); //Handle to initialise hardware
+    
     BaseType_t xReturned;
     TaskHandle_t xHandle = NULL;
 

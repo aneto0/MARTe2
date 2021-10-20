@@ -281,7 +281,14 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             }
         }
 #else
-        portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(function), (name==NULL)?("Unknown"):(name), (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), const_cast<void *>(parameters), (tskIDLE_PRIORITY) | portPRIVILEGE_BIT, &threadId);
+        BaseType_t ret = xTaskCreate(
+            reinterpret_cast<void (*)(void *)>(function), 
+            (name==NULL)?("Unknown"):(name), 
+            (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), 
+            const_cast<void *>(parameters), 
+            (tskIDLE_PRIORITY) | portPRIVILEGE_BIT, 
+            &threadId);
+
         bool ok = (ret == pdPASS);
         if (ok) {
             SetPriority(threadId, Threads::NormalPriorityClass, 0u);
