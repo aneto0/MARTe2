@@ -42,10 +42,11 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+extern void MARTe2HardwareInitialise();
 
 extern "C" {
     void HardwarePrintf(const char8 * const msg);
-    void MARTe2HardwareInitialise();
+    
 
     void PreLoader(void (*_loader)(void*)) {
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
