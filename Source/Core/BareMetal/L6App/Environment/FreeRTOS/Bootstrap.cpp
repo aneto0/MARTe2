@@ -42,22 +42,22 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-extern void MARTe2HardwareInitialise();
+
 extern "C" {
     void HardwarePrintf(const char8 * const msg);
-}
-void Bootstrap::Printf(const char8 * const msg) {
-    //TODO HARDWAREPRINTF
-    xil_printf("%s\r\n", msg);
-}
+    void MARTe2HardwareInitialise();
 
-
-extern "C" {
     void PreLoader(const void *_loader) {
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
         loader(0, NULL);
     }
 }
+
+void Bootstrap::Printf(const char8 * const msg) {
+    //TODO HARDWAREPRINTF
+    xil_printf("%s\r\n", msg);
+}
+
 namespace MARTe {
 
 //Note that some methods are implemented in FileSystem/L6App/Environment/Linux/Bootstrap.cpp
