@@ -24,8 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-//This refers to the underlying Xilinx printf
-#include "xil_printf.h"
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -70,7 +69,8 @@ Bootstrap::~Bootstrap() {
 
 void Bootstrap::Printf(const char8 * const msg) {
     //TODO HARDWAREPRINTF
-    xil_printf("%s\r\n", msg);
+    printf(msg);
+    printf("\r\n");
 }
 
 ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters) {
