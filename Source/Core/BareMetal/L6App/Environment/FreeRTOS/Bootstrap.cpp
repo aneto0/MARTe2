@@ -105,12 +105,6 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
                     tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
                     &xHandle );                         /* Used to pass out the created task's handle. */
 
-    if( xReturned == pdPASS )
-    {
-        /* The task was created.  Use the task's handle to delete the task. */
-        vTaskDelete( xHandle );
-    }
-
     vTaskStartScheduler(); //Start FreeRTOS Scheduler
 
     for(;;); //We should never reach here
