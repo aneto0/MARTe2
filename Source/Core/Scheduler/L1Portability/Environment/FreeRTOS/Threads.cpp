@@ -281,12 +281,15 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             }
         }
 #else
+        //TODO: portPRIVILEGE_BIT which was in the priority is justified only in systems that include MPU.
+        //      (MPU == Memory Protection Unit).
+        //      Setting the MPU bit creates a task in a privileged (system) mode
         BaseType_t ret = xTaskCreate(
             reinterpret_cast<void (*)(void *)>(function), 
             (name==NULL)?("Unknown"):(name), 
             (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), 
             const_cast<void *>(parameters), 
-            (tskIDLE_PRIORITY) | portPRIVILEGE_BIT, 
+            (tskIDLE_PRIORITY) /*| portPRIVILEGE_BIT*/, 
             &threadId);
 
         bool ok = (ret == pdPASS);
@@ -377,7 +380,14 @@ ThreadIdentifier FindByName(const char8 * const name) {
 #if USE_THREADS_DATABASE
     return ThreadsDatabase::Find(name);
 #else
-    return InvalidThreadIdentifier;
+    
+    ThreadIdentifier retThreadId = InvalidThreadIdentifier;
+    TaskHandle_t handle = xTaskGetHandle(name);
+    if(handle != NULL) {
+        //We know that the thread identifier is already a TaskHandle_t
+        retThreadId = static_cast<ThreadIdentifier>(handle);
+    }
+    return retThreadId;
 #endif
 }
 
