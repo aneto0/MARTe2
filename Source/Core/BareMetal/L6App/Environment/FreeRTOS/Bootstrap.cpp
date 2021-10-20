@@ -47,18 +47,14 @@ extern void MARTe2HardwareInitialise();
 extern "C" {
     void HardwarePrintf(const char8 * const msg);
 
+    /**
+    *
+    */
     void PreLoader(void (*_loader)(void*)) {
-        xil_printf("PreLoader running\r\n");
-
-        int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
-        loader(0, NULL);
-    }
-
-    void EmptyPreloader() {
-        for(int i=0;;i++) {
-
-            xil_printf("Cycle %d\r\n", i);
-        }
+        for(;;)
+            xil_printf("PreLoader running\r\n");
+        //int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
+        //loader(0, NULL);
     }
 }
 
@@ -104,11 +100,10 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
     //TODO CHECK Priority and stack size as parameter
     /* Create the task, storing the handle. */
     xReturned = xTaskCreate(
-                    EmptyPreloader,                          /* Function that implements the task. */
+                    PreLoader,                     /* Function that implements the task. */
                     "Main",                             /* Text name for the task. */
                     4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
-                    EmptyPreloader,
-                    //(void*)loader,                      /* Parameter passed into the task. */
+                    (void*)loader,                      /* Parameter passed into the task. */
                     tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
                     &xHandle );                         /* Used to pass out the created task's handle. */
 
