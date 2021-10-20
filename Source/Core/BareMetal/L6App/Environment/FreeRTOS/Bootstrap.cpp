@@ -47,15 +47,10 @@ extern "C" {
     void HardwarePrintf(const char8 * const msg);
     void MARTe2HardwareInitialise();
 
-    void PreLoader(const void *_loader) {
+    void PreLoader(void (*_loader)(void*)) {
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
         loader(0, NULL);
     }
-}
-
-void Bootstrap::Printf(const char8 * const msg) {
-    //TODO HARDWAREPRINTF
-    xil_printf("%s\r\n", msg);
 }
 
 namespace MARTe {
@@ -68,6 +63,11 @@ Bootstrap::Bootstrap() {
 
 Bootstrap::~Bootstrap() {
 
+}
+
+void Bootstrap::Printf(const char8 * const msg) {
+    //TODO HARDWAREPRINTF
+    xil_printf("%s\r\n", msg);
 }
 
 ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters) {
@@ -100,7 +100,7 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
                     PreLoader,                          /* Function that implements the task. */
                     "Main",                             /* Text name for the task. */
                     4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
-                    loader,                             /* Parameter passed into the task. */
+                    (void*)loader,                      /* Parameter passed into the task. */
                     tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
                     &xHandle );                         /* Used to pass out the created task's handle. */
 
