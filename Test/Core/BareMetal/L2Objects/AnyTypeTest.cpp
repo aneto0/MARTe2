@@ -752,13 +752,26 @@ bool AnyTypeTest::TestPositionOperator_MatrixStructuredStaticDeclared() {
         AnyType vector = at[i];
         for (uint32 j = 0; j < nCols; j++) {
             AnyType element = at[i][j];
+            TestATStructure* vectorDataPtr = (TestATStructure*)vector.GetDataPointer();
+            if(vectorDataPtr != NULL) {
+                if(vectorDataPtr[j].member1 != (i + j)) {
+                    return false;
+                }
+            }
 
-            if ((*((TestATStructure*) (vector.GetDataPointer()) + j)).member1 != (i + j)) {
-                return false;
+            TestATStructure* elementDataPtr = (TestATStructure*)element.GetDataPointer();
+            if(elementDataPtr != NULL) {
+                if(elementDataPtr->member1 != (i + j)) {
+                    return false;
+                }
             }
-            if ((*(TestATStructure*) (element.GetDataPointer())).member1 != (i + j)) {
-                return false;
-            }
+
+            // if ((*((TestATStructure*) (vector.GetDataPointer()) + j)).member1 != (i + j)) {
+            //     return false;
+            // }
+            // if ((*(TestATStructure*) (element.GetDataPointer())).member1 != (i + j)) {
+            //     return false;
+            // }
         }
     }
     return true;
