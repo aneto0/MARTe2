@@ -25,6 +25,7 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include "FreeRTOS.h"
+#include <stdlib.h>
 #include "task.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -259,6 +260,18 @@ bool Kill(const ThreadIdentifier &threadId) {
     return ok;
 }
 
+typedef struct {
+    ThreadFunctionType function;
+    void * parameters;
+}ThreadCallbackParameters;
+
+void ThreadCallback(void* args) {
+    ThreadCallbackParameters *tempArgs = static_cast<ThreadCallbackParameters*>(args);
+    tempArgs->function(tempArgs->parameters);
+    vTaskDelete(NULL);
+    free(args);
+}
+
 /*lint -e{715} the exceptionHandlerBehaviour implementation has not been agreed yet.*/
 ThreadIdentifier BeginThread(const ThreadFunctionType function,
                              const void * const parameters,
@@ -285,11 +298,17 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         //TODO: portPRIVILEGE_BIT which was in the priority is justified only in systems that include MPU.
         //      (MPU == Memory Protection Unit).
         //      Setting the MPU bit creates a task in a privileged (system) mode
+        //      Can this still be valid in this context?
+        
+        ThreadCallbackParameters *tParams = static_cast<ThreadCallbackParameters*>(malloc(sizeof(ThreadCallbackParameters)));
+        tParams->function = function;
+        tParams->parameters = parameters;
+
         BaseType_t ret = xTaskCreate(
-            reinterpret_cast<void (*)(void *)>(function), 
+            ThreadCallback, 
             (name==NULL)?("Unknown"):(name), 
             (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), 
-            const_cast<void *>(parameters), 
+            static_cast<void *>(tParams), 
             (tskIDLE_PRIORITY) /*| portPRIVILEGE_BIT*/, 
             &threadId);
 
