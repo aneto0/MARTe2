@@ -268,8 +268,8 @@ typedef struct {
 void ThreadCallback(void* args) {
     ThreadCallbackParameters *tempArgs = static_cast<ThreadCallbackParameters*>(args);
     tempArgs->function(tempArgs->parameters);
-    vTaskDelete(NULL);
     free(args);
+    vTaskDelete(NULL);
 }
 
 /*lint -e{715} the exceptionHandlerBehaviour implementation has not been agreed yet.*/
