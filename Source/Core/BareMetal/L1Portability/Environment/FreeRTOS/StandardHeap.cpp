@@ -61,7 +61,7 @@ void *StandardHeap::Malloc(const uint32 size) {
     void* pointer = NULL_PTR(void*);
 
     if (size != 0u) {
-        pointer = malloc(static_cast<osulong>(size));
+        pointer = pvPortMalloc(static_cast<size_t>(size));
     }
 
     if (pointer != NULL) {
@@ -89,7 +89,7 @@ void *StandardHeap::Malloc(const uint32 size) {
 /*lint -e{586} use of free function (deprecated) */
 void StandardHeap::Free(void *&data) {
     if (data != NULL) {
-        free(data);
+        vPortFree(data);
     }
 //    delete[] (reinterpret_cast<char8 *>(data));
     data = NULL_PTR(void *);
