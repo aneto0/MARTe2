@@ -97,7 +97,7 @@ inline void operator delete(void *ptr) {
 */
 static const MARTe::char8 DIRECTORY_SEPARATOR = '/';
 
-const MARTe::uint32 SCHED_GRANULARITY_US = 10000u;
+const MARTe::uint32 SCHED_GRANULARITY_US = portTICK_PERIOD_MS * 1000u;
 
 const MARTe::uint32 IOBUFFER_GRANULARITY = 16u;
 
