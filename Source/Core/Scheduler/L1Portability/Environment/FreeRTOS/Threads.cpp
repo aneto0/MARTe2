@@ -375,9 +375,26 @@ uint32 NumberOfThreads() {
 #if USE_THREADS_DATABASE
     return ThreadsDatabase::NumberOfThreads();
 #else
+    //TODO: uxTaskGetNumberOfTasks may return an inconsistent value under some circustances, see ref manual
+    /*
     volatile UBaseType_t uxTaskCount = 0u;
     uxTaskCount = uxTaskGetNumberOfTasks();
     return static_cast<uint32>(uxTaskCount);
+    */
+    volatile UBaseType_t uxTaskCount = 0u;
+    uxTaskCount = uxTaskGetNumberOfTasks();
+    TaskStatus_t *taskStatusArray = static_cast<TaskStatus_t*>(pvPortMalloc(sizeof(TaskStatus_t) * uxTaskCount));
+    uint32 totalRunTime;
+    
+    UBaseType_t retVal = uxTaskGetSystemState(taskStatusArray, uxTaskCount, &totalRunTime);
+    uint32 countOfActiveTasks = 0u;
+
+    for(int i = 0; i < uxTaskCount; i++) {
+        if(taskStatusArray[i].eCurrentState != eDeleted){
+            ++countOfActiveTasks;
+        }
+    }
+    return countOfActiveTasks;
 #endif
 }
 
