@@ -810,6 +810,8 @@ bool ReferenceContainerTest::TestPurge_Shared() {
         return false;
     }
 
+    uint32 numOfThreadsBefore = Threads::NumberOfThreads();
+
     for (uint32 i = 0u; i < 3u; i++) {
         Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
     }
