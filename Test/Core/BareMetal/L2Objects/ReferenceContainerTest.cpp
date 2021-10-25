@@ -810,25 +810,21 @@ bool ReferenceContainerTest::TestPurge_Shared() {
         return false;
     }
 
+    //See how many threads are already running, as in some implementations
+    //(e.g. FreeRTOS) there may be at least one task already there before.
     uint32 numOfThreadsBefore = Threads::NumberOfThreads();
-    Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
-    uint32 numOfThreadsAfter1 = Threads::NumberOfThreads();
     
-    Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
-    uint32 numOfThreadsAfter2 = Threads::NumberOfThreads();
-
-    Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
-    uint32 numOfThreadsAfter3 = Threads::NumberOfThreads();
-
-    // for (uint32 i = 0u; i < 3u; i++) {
-    //     Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
-    // }
+    for (uint32 i = 0u; i < 3u; i++) {
+        Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
+    }
 
     Atomic::Increment(&spinLock);
 
     uint32 numOfThreads = Threads::NumberOfThreads();
 
-    while (numOfThreads > 0u) {
+    //Wait until the same number of threads as before starting everything up
+    //is still running.
+    while (numOfThreads > numOfThreadsBefore) {
         Sleep::MSec(100);
         numOfThreads = Threads::NumberOfThreads();
     }
