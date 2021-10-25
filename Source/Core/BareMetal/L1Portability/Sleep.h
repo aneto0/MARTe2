@@ -166,10 +166,11 @@ void Sleep::MicroSeconds(uint32 totalUsecTime,
     uint64 deltaTicksUs = totalUsecTime * HighResolutionTimer::Frequency();
     uint64 deltaTicks = deltaTicksUs / 1000000LLU;
 
-    OsUsleep(nonBusyUsecTime);
-
     while ((HighResolutionTimer::Counter() - startCounter) < deltaTicks) {
     }
+
+    //We leave the OS sleep function at last, as it may implicitly call a yielding function (e.g. FreeRTOS)
+    OsUsleep(nonBusyUsecTime);
 }
 
 }
