@@ -497,6 +497,9 @@ bool ReferenceTTest::TestInFunctionOnStack() {
 
     storedRef = ReferenceT<Object>("Object");
 
+    //See how many threads are already running, as in some implementations
+    //(e.g. FreeRTOS) there may be at least one task already there before.
+    uint32 numOfThreadsBefore = Threads::NumberOfThreads();
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnStack, this);
 
     uint32 totalNRefs = 33;
@@ -512,7 +515,7 @@ bool ReferenceTTest::TestInFunctionOnStack() {
 
     eventSem.Post();
 
-    while (Threads::NumberOfThreads() != 0) {
+    while (Threads::NumberOfThreads() != numOfThreadsBefore) {
         Sleep::MSec(10);
     }
     Sleep::MSec(10);
@@ -537,6 +540,10 @@ bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
     storedRef = ReferenceT<Object>("Object");
 
     this->nRefs = nRefs;
+
+    //See how many threads are already running, as in some implementations
+    //(e.g. FreeRTOS) there may be at least one task already there before.
+    uint32 numOfThreadsBefore = Threads::NumberOfThreads();
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
 
     uint32 totalNRefs = (nRefs + 1);
@@ -551,7 +558,7 @@ bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
     }
     eventSem.Post();
 
-    while (Threads::NumberOfThreads() != 0) {
+    while (Threads::NumberOfThreads() != numOfThreadsBefore) {
         Sleep::MSec(10);
     }
     Sleep::MSec(10);
