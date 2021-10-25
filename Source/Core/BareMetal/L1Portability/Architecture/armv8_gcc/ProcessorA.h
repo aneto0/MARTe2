@@ -79,7 +79,7 @@ namespace MARTe{
         }
 
         inline const char8 *VendorId() {
-            return 1;
+            return "";
         }
 
     }
