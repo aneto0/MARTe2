@@ -375,7 +375,9 @@ uint32 NumberOfThreads() {
 #if USE_THREADS_DATABASE
     return ThreadsDatabase::NumberOfThreads();
 #else
-    return uxTaskGetNumberOfTasks();
+    volatile UBaseType_t uxArraySize = 0u;
+    uxArraySize = uxTaskGetNumberOfTasks();
+    return static_cast<uint32>(uxArraySize);
 #endif
 }
 
