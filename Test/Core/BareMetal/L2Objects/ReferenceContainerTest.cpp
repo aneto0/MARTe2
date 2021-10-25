@@ -785,7 +785,7 @@ static void PurgeRoutine(ReferenceContainerTest &param) {
         Sleep::MSec(10);
     }
     param.containerU1->Purge();
-    //Threads::EndThread();
+    Threads::EndThread();
 }
 
 bool ReferenceContainerTest::TestPurge_Shared() {
