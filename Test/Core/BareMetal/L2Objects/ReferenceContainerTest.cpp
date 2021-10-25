@@ -811,10 +811,18 @@ bool ReferenceContainerTest::TestPurge_Shared() {
     }
 
     uint32 numOfThreadsBefore = Threads::NumberOfThreads();
+    Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
+    uint32 numOfThreadsAfter1 = Threads::NumberOfThreads();
+    
+    Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
+    uint32 numOfThreadsAfter2 = Threads::NumberOfThreads();
 
-    for (uint32 i = 0u; i < 3u; i++) {
-        Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
-    }
+    Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
+    uint32 numOfThreadsAfter3 = Threads::NumberOfThreads();
+
+    // for (uint32 i = 0u; i < 3u; i++) {
+    //     Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
+    // }
 
     Atomic::Increment(&spinLock);
 
