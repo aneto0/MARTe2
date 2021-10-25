@@ -469,6 +469,10 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
     ClassRegistryDatabase::Instance();
 
     storedRef = Reference("Object");
+    
+    //See how many threads are already running, as in some implementations
+    //(e.g. FreeRTOS) there may be at least one task already there before.
+    uint32 numOfThreadsBefore = Threads::NumberOfThreads();
 
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
 
@@ -489,7 +493,7 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
 
     eventSem.Post();
 
-    while (Threads::NumberOfThreads() != 0) {
+    while (Threads::NumberOfThreads() != numOfThreadsBefore) {
         Sleep::MSec(10);
     }
     Sleep::MSec(10);
