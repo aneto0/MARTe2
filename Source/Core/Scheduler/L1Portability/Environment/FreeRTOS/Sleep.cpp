@@ -25,7 +25,7 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include "FreeRTOS.h"
-#include "sleep.h"
+#include "task.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -45,7 +45,8 @@
 namespace MARTe {
 
 void Sleep::OsUsleep(const uint32 usecTime) {
-        usleep(usecTime);
+        TickType_t delayInTicks = pdMS_TO_TICKS(usecTime / 1000); 
+        vTaskDelay(delayInTicks);
 }
 
 int32 Sleep::GetDateSeconds() {
