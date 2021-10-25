@@ -816,8 +816,11 @@ bool ReferenceContainerTest::TestPurge_Shared() {
 
     Atomic::Increment(&spinLock);
 
-    while (Threads::NumberOfThreads() > 0u) {
+    uint32 numOfThreads = Threads::NumberOfThreads();
+
+    while (numOfThreads > 0u) {
         Sleep::MSec(100);
+        numOfThreads = Threads::NumberOfThreads();
     }
 
     if (containerU1.NumberOfReferences() != 1) {
