@@ -1418,7 +1418,7 @@ StreamString configSimpleInvalidMessage = ""
 /*---------------------------------------------------------------------------*/
 
 FastSchedulerTest::FastSchedulerTest() {
-
+    numOfThreadsBefore = Threads::NumberOfThreads();
 }
 
 FastSchedulerTest::~FastSchedulerTest() {
@@ -1566,7 +1566,7 @@ bool FastSchedulerTest::TestIntegrated() {
     ok &= (MessageI::SendMessage(messageStop, NULL) == ErrorManagement::NoError);
     Sleep::Sec(1.);
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1615,7 +1615,7 @@ bool FastSchedulerTest::TestIntegrated_TriggerErrorMessage() {
     //Wait for the StateMachine to be the only thread alive.
     Sleep::Sec(1.);
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1694,7 +1694,7 @@ bool FastSchedulerTest::TestPurge() {
     ok &= (MessageI::SendMessage(messageStop, NULL) == ErrorManagement::NoError);
 
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1761,7 +1761,7 @@ bool FastSchedulerTest::TestStartNextStateExecution() {
         }
         ObjectRegistryDatabase::Instance()->Purge();
 
-        while (Threads::NumberOfThreads() > 0) {
+        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
             Sleep::MSec(10);
         }
     }
@@ -1784,7 +1784,7 @@ bool FastSchedulerTest::TestStartNextStateExecution_False_PrepareNextState() {
     app->StopCurrentStateExecution();
     ObjectRegistryDatabase::Instance()->Purge();
 
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::MSec(10);
     }
     return !err.ErrorsCleared();
@@ -2001,7 +2001,7 @@ bool FastSchedulerTest::TestIntegrated_WaitForAll() {
 
     ObjectRegistryDatabase::Instance()->Purge();
 
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::MSec(10);
     }
 
@@ -2264,7 +2264,7 @@ bool FastSchedulerTest::TestIntegrated_NoWait() {
 
     ObjectRegistryDatabase::Instance()->Purge();
 
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::MSec(10);
     }
 
