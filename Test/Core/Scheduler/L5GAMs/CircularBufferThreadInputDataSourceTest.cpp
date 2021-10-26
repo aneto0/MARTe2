@@ -445,7 +445,9 @@ static bool InitialiseMemoryMapInputBrokerEnviromentRecall(const char8 * const c
 /*---------------------------------------------------------------------------*/
 
 CircularBufferThreadInputDataSourceTest::CircularBufferThreadInputDataSourceTest() {
-
+    //Taking a snapshot of the number of threads which were running before starting the test
+    //This comes handy when running in FreeRTOS
+    numOfThreadsBefore = Threads::NumberOfThreads();
 }
 #include <stdio.h>
 CircularBufferThreadInputDataSourceTest::~CircularBufferThreadInputDataSourceTest() {
@@ -453,7 +455,7 @@ CircularBufferThreadInputDataSourceTest::~CircularBufferThreadInputDataSourceTes
     ObjectRegistryDatabase::Instance()->Purge();
     uint32 nThreads = Threads::NumberOfThreads();
     printf("Killing threads\n");
-    while (nThreads > 0u) {
+    while (nThreads > numOfThreadsBefore) {
         printf("Thread killed\n");
         ThreadInformation tinfo;
         Threads::GetThreadInfoCopy(tinfo, 0u);
