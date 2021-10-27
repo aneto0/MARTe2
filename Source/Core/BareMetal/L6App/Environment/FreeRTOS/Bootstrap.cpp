@@ -48,12 +48,15 @@
 extern void MARTe2HardwareInitialise();
 
 extern "C" {
+    TaskHandle_t marte2MainTask;
     void HardwarePrintf(const char8 * const msg);
 
     /**
     *
     */
-    void PreLoader(void (*_loader)(void*)) {        
+    void PreLoader(void (*_loader)(void*)) {      
+        //The preloader suspends itself until the hw initialisation ends
+        vTaskSuspend(NULL);  
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
         loader(0, NULL);
 
@@ -101,7 +104,7 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
 
     MARTe2HardwareInitialise(); //Handle to initialise hardware
     BaseType_t xReturned;
-    TaskHandle_t xHandle = NULL;
+    //TaskHandle_t xHandle = NULL;
 
     //TODO CHECK Priority and stack size as parameter
     /* Create the task, storing the handle. */
@@ -111,7 +114,7 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
                     4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
                     (void*)loader,                      /* Parameter passed into the task. */
                     tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
-                    &xHandle );                         /* Used to pass out the created task's handle. */
+                    &marte2MainTask);                         /* Used to pass out the created task's handle. */
 
     vTaskStartScheduler(); //Start FreeRTOS Scheduler
 
