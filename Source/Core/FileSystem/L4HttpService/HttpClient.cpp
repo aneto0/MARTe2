@@ -232,7 +232,7 @@ bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead, const int32 comma
     }
 
     if (!reConnect) {
-        reConnect = (!socket.IsConnected());
+        reConnect = (!tcpSocket.IsConnected());
     }
 
     int32 errorCode;
@@ -314,7 +314,7 @@ bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead, const int32 comma
 
         // close if the server says so...
         if (!protocol.KeepAlive()) {
-            (void) socket.Close();
+            (void) tcpSocket.Close();
         }
     }
 
@@ -323,13 +323,13 @@ bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead, const int32 comma
 }
 
 bool HttpClient::Connect(const TimeoutType &msecTimeout) {
-    (void) socket.Close();
-    bool ret = socket.Open();
+    (void) tcpSocket.Close();
+    bool ret = tcpSocket.Open();
     if (ret) {
-        ret = socket.SetBlocking(true);
+        ret = tcpSocket.SetBlocking(true);
     }
     if (ret) {
-        ret = socket.Connect(urlHost.Buffer(), urlPort, msecTimeout);
+        ret = tcpSocket.Connect(urlHost.Buffer(), urlPort, msecTimeout);
     }
     return ret;
 }
