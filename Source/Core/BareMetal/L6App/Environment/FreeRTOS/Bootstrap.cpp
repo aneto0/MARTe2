@@ -102,7 +102,7 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
     if(hwInitSem != NULL) {
         MARTe2HardwareInitialise(); //Handle to initialise hardware
 
-        if(xSemaphoreTake(hwInitSem, pdMS_TO_TICKS(60000) == pdTRUE)) {
+        if(xSemaphoreTake(hwInitSem, portMAX_DELAY) == pdTRUE) {
             BaseType_t xReturned;
             TaskHandle_t xHandle = NULL;
 
