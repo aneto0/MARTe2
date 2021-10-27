@@ -54,10 +54,6 @@ extern "C" {
     *
     */
     void PreLoader(void (*_loader)(void*)) {        
-        //Wait 10 secs to allow the hardware init function to settle
-        printf("PreLoader starting up\r\n");
-        vTaskDelay(pdMS_TO_TICKS(10000));
-
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
         loader(0, NULL);
 
