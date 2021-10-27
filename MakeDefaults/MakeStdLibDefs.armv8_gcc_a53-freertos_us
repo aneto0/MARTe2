@@ -63,5 +63,5 @@ OPTIM =
 
 #TODO: _GLIBCXX_INCLUDE_NEXT_C_HEADERS Symbol is defined due to an incompatibility rising from the FreeRTOS.h inclusion
 #----------------------
-CFLAGS = $(CPUSPECIFICFLAGS) -Wno-parentheses -fpermissive -nostdlib $(DEBUG) -D$(ENV_ARCH_CUSTOMIZATION) -D_GLIBCXX_INCLUDE_NEXT_C_HEADERS
+CFLAGS = $(CPUSPECIFICFLAGS) -Wno-parentheses -fpermissive -nostdlib $(DEBUG) -DLWIP_ENABLED -D$(ENV_ARCH_CUSTOMIZATION) -D_GLIBCXX_INCLUDE_NEXT_C_HEADERS
 
