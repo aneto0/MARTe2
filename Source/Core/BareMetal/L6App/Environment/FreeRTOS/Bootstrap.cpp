@@ -56,7 +56,7 @@ extern "C" {
     void PreLoader(void (*_loader)(void*)) {        
         if(xTaskNotifyWait(
             0x00,                           /* Do not clear any notification bits on entry */
-            ULONG_MAX,                      /* Reset the notification value to 0 on exit */
+            0xFFFFFFFFu,                    /* Reset the notification value to 0 on exit */
             NULL,                           /* Do not pass values alongside notification */
             portMAX_DELAY) == pdTRUE) {     /* Block indefinitely */
             int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
