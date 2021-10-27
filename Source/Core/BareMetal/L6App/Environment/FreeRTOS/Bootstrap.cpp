@@ -25,6 +25,10 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "task.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -44,6 +48,7 @@
 extern void MARTe2HardwareInitialise();
 
 extern "C" {
+    extern SemaphoreHandle_t hwInitSem;
     void HardwarePrintf(const char8 * const msg);
 
     /**
@@ -91,22 +96,37 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
 }
 
 void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
-    MARTe2HardwareInitialise(); //Handle to initialise hardware
-    
-    BaseType_t xReturned;
-    TaskHandle_t xHandle = NULL;
+    //TODO: Check if is acceptable this kind of approach
+    hwInitSem = xSemaphoreCreateCounting(1, 0);
 
-    //TODO CHECK Priority and stack size as parameter
-    /* Create the task, storing the handle. */
-    xReturned = xTaskCreate(
-                    PreLoader,                     /* Function that implements the task. */
-                    "Main",                             /* Text name for the task. */
-                    4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
-                    (void*)loader,                      /* Parameter passed into the task. */
-                    tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
-                    &xHandle );                         /* Used to pass out the created task's handle. */
+    if(hwInitSem != NULL) {
+        MARTe2HardwareInitialise(); //Handle to initialise hardware
 
-    vTaskStartScheduler(); //Start FreeRTOS Scheduler
+        if(xSemaphoreTake(hwInitSem, pdMS_TO_TICKS(60000) == pdTRUE)) {
+            BaseType_t xReturned;
+            TaskHandle_t xHandle = NULL;
+
+            //TODO CHECK Priority and stack size as parameter
+            /* Create the task, storing the handle. */
+            xReturned = xTaskCreate(
+                            PreLoader,                     /* Function that implements the task. */
+                            "Main",                             /* Text name for the task. */
+                            4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
+                            (void*)loader,                      /* Parameter passed into the task. */
+                            tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
+                            &xHandle );                         /* Used to pass out the created task's handle. */
+
+            vTaskStartScheduler(); //Start FreeRTOS Scheduler
+        }
+        else {
+            //TODO: review if this action is acceptable
+            printf("Hardware initialisation failed after timeout\r\n");
+            printf("Please review initialisation max time\r\n");
+        }
+    }
+    else {
+        printf("Failure during hardware initialisation semaphore\r\n");
+    }
 
     for(;;); //We should never reach here
 }
