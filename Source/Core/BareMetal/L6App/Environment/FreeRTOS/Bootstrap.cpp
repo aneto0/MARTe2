@@ -49,22 +49,17 @@ extern void MARTe2HardwareInitialise();
 
 extern "C" {
     void HardwarePrintf(const char8 * const msg);
-    extern TaskHandle_t marte2MainTaskHandle;
+
     /**
     *
     */
     void PreLoader(void (*_loader)(void*)) {        
-        if(xTaskNotifyWait(
-            0x00,                           /* Do not clear any notification bits on entry */
-            0xFFFFFFFFu,                    /* Reset the notification value to 0 on exit */
-            NULL,                           /* Do not pass values alongside notification */
-            portMAX_DELAY) == pdTRUE) {     /* Block indefinitely */
-            int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
-            loader(0, NULL);
-        } else {
-            printf("Preloader notification wait failure\r\n");
-        }
+        //Wait 10 secs to allow the hardware init function to settle
+        
+        vTaskDelay(pdMS_TO_TICKS(10000));
 
+        int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
+        loader(0, NULL);
     }
 }
 
@@ -105,19 +100,20 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
 
 void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
     //TODO: Check if is acceptable this kind of approach
+
     MARTe2HardwareInitialise(); //Handle to initialise hardware
     BaseType_t xReturned;
-    
+    TaskHandle_t xHandle = NULL;
 
     //TODO CHECK Priority and stack size as parameter
     /* Create the task, storing the handle. */
     xReturned = xTaskCreate(
-                    PreLoader,                          /* Function that implements the task. */
+                    PreLoader,                     /* Function that implements the task. */
                     "Main",                             /* Text name for the task. */
                     4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
                     (void*)loader,                      /* Parameter passed into the task. */
                     tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
-                    &marte2MainTaskHandle);     /* Used to pass out the created task's handle. */
+                    &xHandle );                         /* Used to pass out the created task's handle. */
 
     vTaskStartScheduler(); //Start FreeRTOS Scheduler
 
