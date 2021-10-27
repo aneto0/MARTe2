@@ -55,8 +55,11 @@ extern "C" {
     *
     */
     void PreLoader(void (*_loader)(void*)) {
-        int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
-        loader(0, NULL);
+        if(xSemaphoreTake(hwInitSem, portMAX_DELAY) == pdTRUE) {
+            int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
+            loader(0, NULL);
+        }
+
     }
 }
 
@@ -101,28 +104,20 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
 
     if(hwInitSem != NULL) {
         MARTe2HardwareInitialise(); //Handle to initialise hardware
+        BaseType_t xReturned;
+        TaskHandle_t xHandle = NULL;
 
-        if(xSemaphoreTake(hwInitSem, portMAX_DELAY) == pdTRUE) {
-            BaseType_t xReturned;
-            TaskHandle_t xHandle = NULL;
+        //TODO CHECK Priority and stack size as parameter
+        /* Create the task, storing the handle. */
+        xReturned = xTaskCreate(
+                        PreLoader,                     /* Function that implements the task. */
+                        "Main",                             /* Text name for the task. */
+                        4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
+                        (void*)loader,                      /* Parameter passed into the task. */
+                        tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
+                        &xHandle );                         /* Used to pass out the created task's handle. */
 
-            //TODO CHECK Priority and stack size as parameter
-            /* Create the task, storing the handle. */
-            xReturned = xTaskCreate(
-                            PreLoader,                     /* Function that implements the task. */
-                            "Main",                             /* Text name for the task. */
-                            4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
-                            (void*)loader,                      /* Parameter passed into the task. */
-                            tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
-                            &xHandle );                         /* Used to pass out the created task's handle. */
-
-            vTaskStartScheduler(); //Start FreeRTOS Scheduler
-        }
-        else {
-            //TODO: review if this action is acceptable
-            printf("Hardware initialisation failed after timeout\r\n");
-            printf("Please review initialisation max time\r\n");
-        }
+        vTaskStartScheduler(); //Start FreeRTOS Scheduler
     }
     else {
         printf("Failure during hardware initialisation semaphore\r\n");
