@@ -117,7 +117,7 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
                     4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
                     (void*)loader,                      /* Parameter passed into the task. */
                     tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
-                    &marte2MainTaskHandledle );     /* Used to pass out the created task's handle. */
+                    &marte2MainTaskHandle);     /* Used to pass out the created task's handle. */
 
     vTaskStartScheduler(); //Start FreeRTOS Scheduler
 
