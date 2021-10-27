@@ -48,7 +48,7 @@
 extern void MARTe2HardwareInitialise();
 
 extern "C" {
-    extern SemaphoreHandle_t hwInitSem;
+    SemaphoreHandle_t hwInitSem;
     void HardwarePrintf(const char8 * const msg);
 
     /**
