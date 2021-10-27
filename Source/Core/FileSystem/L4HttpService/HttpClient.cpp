@@ -73,7 +73,7 @@ static bool SearchKey(const char8 * const key, const char8 * const name, StreamS
 /*---------------------------------------------------------------------------*/
 
 HttpClient::HttpClient() :
-        Object(), socket(), protocol(socket) {
+        Object(), tcpSocket(), protocol(tcpSocket) {
     urlPort = 0u;
     urlHost = "";
     lastOperationId = 0;
@@ -82,7 +82,7 @@ HttpClient::HttpClient() :
 
 /*lint -e{1551} no exception will be thrown*/
 HttpClient::~HttpClient() {
-    (void) socket.Close();
+    (void) tcpSocket.Close();
 }
 
 /*lint -e{1536} the pointer is exposed deliberately*/
