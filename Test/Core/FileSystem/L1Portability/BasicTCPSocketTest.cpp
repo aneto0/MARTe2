@@ -164,7 +164,7 @@ static void StartServer_Listen(BasicTCPSocketTest &param) {
         }
 
         param.eventSem.Post();
-        while (Threads::NumberOfThreads() > (param.alives + 1)) {
+        while (Threads::NumberOfThreads() > 1) {
             Sleep::MSec(10);
         }
     }
@@ -227,9 +227,13 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
             param.isValidClient = table[i].isValid;
         }
         
-        uint32 numOfThreadsBefore = Threads::NumberOfThreads();
+        uint32 numOfThreadsBefore = 0u;
+        uint32 numOfSpawnedThreads = 0u;
+
         if (table[i].isServer) {    
+            numOfThreadsBefore = Threads::NumberOfThreads();
             Threads::BeginThread((ThreadFunctionType) StartServer_Listen, &param);
+            ++numOfSpawnedThreads;
             while (param.exitCondition < 1) {
                 if (!param.NoError) {
                     param.alives = 0;
@@ -247,6 +251,7 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
 
         for (uint32 k = 0; k < table[i].nClientsIn; k++) {
             Threads::BeginThread((ThreadFunctionType) ClientJob_Listen, &param);
+            ++numOfSpawnedThreads;
             param.nClients++;
         }
 
