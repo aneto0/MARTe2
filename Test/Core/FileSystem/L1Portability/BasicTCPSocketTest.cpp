@@ -164,7 +164,7 @@ static void StartServer_Listen(BasicTCPSocketTest &param) {
         }
 
         param.eventSem.Post();
-        while (Threads::NumberOfThreads() > 1) {
+        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
             Sleep::MSec(10);
         }
     }
