@@ -268,7 +268,7 @@ typedef struct {
 void ThreadCallback(void* args) {
     ThreadCallbackParameters *tempArgs = static_cast<ThreadCallbackParameters*>(args);
     tempArgs->function(tempArgs->parameters);
-    free(args);
+    vPortFree(args);
     vTaskDelete(NULL);
 }
 
@@ -300,7 +300,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         //      Setting the MPU bit creates a task in a privileged (system) mode
         //      Can this still be valid in this context?
         
-        ThreadCallbackParameters *tParams = static_cast<ThreadCallbackParameters*>(malloc(sizeof(ThreadCallbackParameters)));
+        ThreadCallbackParameters *tParams = static_cast<ThreadCallbackParameters*>(pvPortMalloc(sizeof(ThreadCallbackParameters)));
         tParams->function = function;
         tParams->parameters = parameters;
 
@@ -313,6 +313,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             &threadId);
 
         bool ok = (ret == pdPASS);
+
         if (ok) {
             SetPriority(threadId, Threads::NormalPriorityClass, 0u);
         }
@@ -381,7 +382,7 @@ uint32 NumberOfThreads() {
     uxTaskCount = uxTaskGetNumberOfTasks();
     return static_cast<uint32>(uxTaskCount);
     
-    //Alternative method to count threads
+    //Alternative method to count threads (heavier load)
     // volatile UBaseType_t uxTaskCount = 0u;
     // uxTaskCount = uxTaskGetNumberOfTasks();
     // TaskStatus_t *taskStatusArray = static_cast<TaskStatus_t*>(pvPortMalloc(sizeof(TaskStatus_t) * uxTaskCount));
