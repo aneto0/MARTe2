@@ -317,7 +317,7 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
             Threads::BeginThread((ThreadFunctionType) ClientJob_Listen, &param);
         }
 
-        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+        while (Threads::NumberOfThreads() > numOfThreadsBefore + 1) {
             Sleep::MSec(10);
         }
 
