@@ -214,9 +214,9 @@ void StartServer_Listen(BasicUDPSocketTest &param) {
     }
 
     param.eventSem.Post();
-    while (Threads::NumberOfThreads() > 1) {
-        Sleep::MSec(10);
-    }
+//    while (Threads::NumberOfThreads() > 1) {
+//        Sleep::MSec(10);
+//    }
     serverSocket.Close();
 }
 

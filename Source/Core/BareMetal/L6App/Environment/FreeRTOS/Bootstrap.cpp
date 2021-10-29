@@ -46,10 +46,10 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 extern void MARTe2HardwareInitialise();
-
+extern void HardwarePrintf(const char8 * const msg);
 extern "C" {
     TaskHandle_t marte2MainTask;
-    void HardwarePrintf(const char8 * const msg);
+
 
     /**
     *
