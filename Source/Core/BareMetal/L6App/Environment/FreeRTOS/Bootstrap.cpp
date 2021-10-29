@@ -77,9 +77,7 @@ Bootstrap::~Bootstrap() {
 }
 
 void Bootstrap::Printf(const char8 * const msg) {
-    //TODO HARDWAREPRINTF
-    printf(msg);
-    printf("\r\n");
+    HardwarePrintf(msg);
 }
 
 ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters) {
