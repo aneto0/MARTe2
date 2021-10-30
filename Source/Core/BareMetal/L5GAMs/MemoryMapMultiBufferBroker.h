@@ -77,7 +77,10 @@ public:
      * @post
      *   GetNumberOfCopies() > 0
      */
-    virtual bool Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress);
+    virtual bool Init(const SignalDirection direction,
+                      DataSourceI &dataSourceIn,
+                      const char8 *const functionName,
+                      void *const gamMemoryAddress);
 
 protected:
 

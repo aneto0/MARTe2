@@ -27,6 +27,6 @@ TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES += BareMetal/cov/MARTeCoreB$(LIBEXT)
-LIBRARIES += Scheduler/cov/MARTeCoreS$(LIBEXT)
-LIBRARIES += FileSystem/cov/MARTeCoreF$(LIBEXT)
+LIBRARIES_STATIC += BareMetal/cov/MARTeCoreB$(LIBEXT)
+LIBRARIES_STATIC += Scheduler/cov/MARTeCoreS$(LIBEXT)
+LIBRARIES_STATIC += FileSystem/cov/MARTeCoreF$(LIBEXT)

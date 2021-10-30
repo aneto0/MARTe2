@@ -62,8 +62,13 @@
  --emacro( (*), CPU_SET )
  --emacro( {*}, CPU_SET )
  --emacro( (*), CPU_ISSET )
- --emacro( {*}, CPU_ISSET )
  
+/*
+ * Ignore all the errors related to the FD_ZERO and FD_SET macros
+ */
+ --emacro( {*}, FD_ZERO )
+ --emacro( {*}, FD_SET )
+
  /*
   * Ignore errors related to the fact that REPORT_ERROR_0 and REPORT_ERROR_STATIC_0 were seen defined both with and without parameters. The reason 
   * for this is that the MACRO chooser in AdvancedErrorManagement.h uses the version without parameters to automatically select the correct macro to use. 

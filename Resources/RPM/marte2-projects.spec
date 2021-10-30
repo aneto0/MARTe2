@@ -36,15 +36,19 @@ Summary:	%{rpm_name} devel package
 
 %build
 %if %{?rpm_project_build:1}%{!?rpm_project_build:0}
-. {rpm_project_build}
+. %{rpm_project_build}
 %else
+if [ -f Makefile.gcc ]; then
+make -f Makefile.gcc TARGET=%{rpm_compile_target} %{rpm_build_options} %{rpm_build_extra_args}
+else
 make -f Makefile.%{rpm_compile_target} %{rpm_build_options} %{rpm_build_extra_args}
+fi
 %endif
 
 %install
 #Allow to run a project specific install script
 %if %{?rpm_project_install:1}%{!?rpm_project_install:0}
-. {rpm_project_install}
+. %{rpm_project_install}
 %else
 mkdir -p %{buildroot}/%{rpm_top_dir}/Bin
 %if %{?rpm_bin_list:1}%{!?rpm_bin_list:0}
@@ -77,7 +81,7 @@ find %{build_dir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}
 #Try to copy other user defined folders (e.g. Resources, Configurations, ...)
 for other_folder in %{rpm_other_folders}
 do
-test -e $other_folder && cp -R $other_folder %{buildroot}/%{rpm_top_dir}
+test -e $other_folder && cp -R --parents $other_folder %{buildroot}/%{rpm_top_dir}
 done
 
 #Create the profile.d information
@@ -102,10 +106,10 @@ done
 #List all the files to be added to the file-list section
 current_path=`pwd`
 cd %{buildroot}
-expattern="Include"
+expattern="Include\/"
 for src_dir in %{rpm_src_dir}
 do
-expattern=$expattern\\\|$src_dir
+expattern=$expattern\\\|$src_dir\/
 done
 
 find . -type f -printf "\"/%%P\"\n" | grep -v $expattern > $current_path/file-lists
@@ -129,6 +133,6 @@ echo 'To update the system environment variables please login again or execute "
 
 #Allow to run a project specific post install script
 %if %{?rpm_project_post:1}%{!?rpm_project_post:0}
-. {rpm_project_post}
+. %{rpm_project_post}
 %endif
 

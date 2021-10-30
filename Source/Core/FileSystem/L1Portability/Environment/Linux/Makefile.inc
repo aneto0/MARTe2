@@ -31,6 +31,7 @@ MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 OBJSX=  BasicFile.x \
 		BasicSocket.x \
 		BasicTCPSocket.x \
+		BasicUART.x \
 		BasicUDPSocket.x \
 		Directory.x \
 		DirectoryScanner.x \

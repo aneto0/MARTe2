@@ -116,6 +116,21 @@ TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestListen) {
     ASSERT_TRUE(basicUDPSocketTest.TestListen(table));
 }
 
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestJoin) {
+    BasicUDPSocketTest basicUDPSocketTest;
+
+    const ConnectListenUDPTestTable table[]={
+            {4444,2,true, true},
+            {4444,32,true, true},
+            {4444,64,true, true},
+            {4444,128,true, true},
+            {4444,32,false, false},
+            {0,0,0}
+    };
+
+    ASSERT_TRUE(basicUDPSocketTest.TestJoin(table));
+}
+
 
 TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestConnect) {
     BasicUDPSocketTest basicUDPSocketTest;

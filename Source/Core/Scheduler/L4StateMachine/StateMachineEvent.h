@@ -105,6 +105,11 @@ public:
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 
+    /**
+     * @brief Allow to send the message after a new state transition is concluded.
+     */
+    void Reset();
+
 private:
 
     /**
@@ -126,6 +131,11 @@ private:
      * The name of the state to go in case of error
      */
     StreamString nextStateError;
+
+    /**
+     * Only Consume the message once per state transistion.
+     */
+    bool reset;
 };
 }
 

@@ -46,47 +46,49 @@ MemoryMapInterpolatedInputBroker::MemoryMapInterpolatedInputBroker() :
     interpolationPeriod = 0LLU;
     interpolatedXAxis = 0LLU;
     reset = false;
-    dataSourceXAxis = NULL_PTR(uint64 *);
-    m = NULL_PTR(float64 *);
-    y0 = NULL_PTR(void **);
-    y1 = NULL_PTR(void **);
-    numberOfElements = NULL_PTR(uint32 *);
+    dataSourceXAxis = NULL_PTR(uint64*);
+    m = NULL_PTR(float64*);
+    y0 = NULL_PTR(void**);
+    y1 = NULL_PTR(void**);
+    numberOfElements = NULL_PTR(uint32*);
 }
 
 /*lint -e{1551} memory is freed in the destructor*/
 MemoryMapInterpolatedInputBroker::~MemoryMapInterpolatedInputBroker() {
-    if (numberOfElements != NULL_PTR(uint32 *)) {
+    if (numberOfElements != NULL_PTR(uint32*)) {
         delete numberOfElements;
     }
-    if (y0 != NULL_PTR(void **)) {
+    if (y0 != NULL_PTR(void**)) {
         uint32 i;
         for (i = 0u; i < numberOfCopies; i++) {
             GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(y0[i]);
         }
         delete y0;
     }
-    if (y1 != NULL_PTR(void **)) {
+    if (y1 != NULL_PTR(void**)) {
         uint32 i;
         for (i = 0u; i < numberOfCopies; i++) {
             GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(y1[i]);
         }
         delete y1;
     }
-    if (m != NULL_PTR(float64 *)) {
+    if (m != NULL_PTR(float64*)) {
         delete m;
     }
     /*lint -e{1740} the dataSourceXAxis is freed by the DataSourceI*/
 }
 
-bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                            void * const gamMemoryAddress) {
+bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction,
+                                            DataSourceI &dataSourceIn,
+                                            const char8 *const functionName,
+                                            void *const gamMemoryAddress) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
 
     if (ok) {
         numberOfElements = new uint32[numberOfCopies];
         m = new float64[numberOfCopies];
-        y0 = new void *[numberOfCopies];
-        y1 = new void *[numberOfCopies];
+        y0 = new void*[numberOfCopies];
+        y1 = new void*[numberOfCopies];
     }
     uint32 i;
     /*lint -e{613} copyTable cannot be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false*/
@@ -103,14 +105,15 @@ bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, Dat
     return ok;
 }
 
-void MemoryMapInterpolatedInputBroker::SetIndependentVariable(const uint64 * const dataSourceXAxisIn, const uint64 interpolationPeriodIn) {
+void MemoryMapInterpolatedInputBroker::SetIndependentVariable(const uint64 *const dataSourceXAxisIn,
+                                                              const uint64 interpolationPeriodIn) {
     dataSourceXAxis = dataSourceXAxisIn;
     interpolationPeriod = interpolationPeriodIn;
 }
 
 /*lint -e{613} copyTable should be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false and this function should not be called*/
 void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegments() {
-    if (dataSourceXAxis != NULL_PTR(uint64 *)) {
+    if (dataSourceXAxis != NULL_PTR(uint64*)) {
         x0 = x1;
         x1 = *dataSourceXAxis;
         uint32 i;
@@ -162,7 +165,7 @@ void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegments() {
 }
 
 void MemoryMapInterpolatedInputBroker::Reset() {
-    bool ok = (dataSourceXAxis != NULL_PTR(uint64 *));
+    bool ok = (dataSourceXAxis != NULL_PTR(uint64*));
     if (ok) {
         ChangeInterpolationSegments();
         interpolatedXAxis = *dataSourceXAxis;
@@ -172,12 +175,12 @@ void MemoryMapInterpolatedInputBroker::Reset() {
 
 /*lint -e{613} copyTable should be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false and this function should not be called*/
 bool MemoryMapInterpolatedInputBroker::Execute() {
-    bool ok = (dataSourceXAxis != NULL_PTR(uint64 *));
+    bool ok = (dataSourceXAxis != NULL_PTR(uint64*));
     uint32 i;
     if (reset) {
         //Just copy the first data point after a reset
         for (i = 0u; (i < numberOfCopies) && (ok); i++) {
-            if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+            if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
                 ok = MemoryOperationsHelper::Copy(copyTable[i].gamPointer, copyTable[i].dataSourcePointer, copyTable[i].copySize);
             }
         }

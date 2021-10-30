@@ -59,9 +59,19 @@ public:
     bool TestGetNumberOfCopies();
 
     /**
+     * @brief Tests the GetNumberOfCopies method.
+     */
+    bool TestGetNumberOfCopiesOptim();
+
+    /**
      * @brief Tests the GetCopyByteSize method.
      */
     bool TestGetCopyByteSize();
+
+    /**
+     * @brief Tests the GetCopyByteSize method.
+     */
+    bool TestGetCopyByteSizeOptim();
 
     /**
      * @brief Tests the GetCopyOffset method.
@@ -69,11 +79,21 @@ public:
     bool TestGetCopyOffset();
 
     /**
+     * @brief Tests the GetCopyOffset method.
+     */
+    bool TestGetCopyOffsetOptim();
+
+    /**
      * @brief Tests the GetFunctionPointer method.
      */
     bool TestGetFunctionPointer();
 
-     /**
+    /**
+     * @brief Tests the GetFunctionPointer method.
+     */
+    bool TestGetFunctionPointerOptim();
+
+    /**
      * @brief Tests the GetOwnerFunctionName method.
      */
     bool TestGetOwnerFunctionName();
@@ -83,6 +103,26 @@ public:
      */
     bool TestGetOwnerDataSourceName();
 
+    /**
+     * @brief Tests that the query functions to BrokerI are not overlapping.
+     * @details This test is design to demonstrate that the BrokerI fails when the DS memory is interleaved (Signal1_sample1, Signal2_sample1, Signal1_sample2, Signal2_sample2).... and samples is greater than 1.
+     * The test check that the memory to be copied from the dataSource is overlapping itself since the DS memory is interleaved while the BrokerI assumes flat memory.
+     */
+    bool TestInterleavedDSMemory();
+
+    /**
+     * @brief Tests that the query functions to BrokerI are not overlapping.
+     * @details This test is design to demonstrate that the BrokerI fails when the DS memory is interleaved (Signal1_sample1, Signal2_sample1, Signal1_sample2, Signal2_sample2).... and samples is greater than 1.
+     * The test check that the memory to be copied from the dataSource is overlapping itself since the DS memory is interleaved while the BrokerI assumes flat memory.
+     */
+    bool TestInterleavedDSMemoryOptim();
+
+    /**
+     * @brief Tests that the query functions to BrokerI are not overlapping.
+     * @details This test is design to demonstrate that the BrokerI fails when the DS memory is interleaved and samples is greater than 1.
+     * The test check that the memory to be copied from the dataSource is overlapping itself since the DS memory is interleaved while the BrokerI assumes flat memory.
+     */
+    bool TestFlatDSMemory();
 
 };
 

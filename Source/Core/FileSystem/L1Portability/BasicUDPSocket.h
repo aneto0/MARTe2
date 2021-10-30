@@ -71,7 +71,7 @@ public:
      * @see StreamI::Read
      */
     virtual bool Read(char8* const output,
-                      uint32 &size);
+            uint32 &size);
 
     /**
      * @brief Read without removing data from the socket pipe.
@@ -82,13 +82,13 @@ public:
      *   size is the number of read bytes.
      */
     virtual bool Peek(char8* const output,
-                      uint32 &size);
+            uint32 &size);
 
     /**
      * @see StreamI::Write
      */
     virtual bool Write(const char8* const input,
-                       uint32 &size);
+            uint32 &size);
 
     /**
      * @brief Opens an UDP socket.
@@ -104,6 +104,13 @@ public:
     bool Listen(const uint16 port);
 
     /**
+     * @brief Sets the multicast group where the socket will register itself.
+     * @param[in] group the multicast IP address.
+     * @return true if the socket is successfully registered to the multicast group..
+     */
+    bool Join(const char8 * const group) const;
+
+    /**
      * @brief Sets the writing destination address.
      * @param[in] address the destination IP address.
      * @param[in] port the destination port.
@@ -114,7 +121,7 @@ public:
      *   GetDestination() == InternetHost(port, address)
      */
     bool Connect(const char8 * const address,
-                 const uint16 port);
+            const uint16 port);
 
     /**
      * @brief The UDP socket support writing.
@@ -138,15 +145,15 @@ public:
      * @see StreamI::Read
      */
     virtual bool Read(char8 * const output,
-                      uint32 & size,
-                      const TimeoutType &timeout);
+            uint32 & size,
+            const TimeoutType &timeout);
 
     /**
      * @see StreamI::Write
      */
     virtual bool Write(const char8 * const input,
-                       uint32 & size,
-                       const TimeoutType &timeout);
+            uint32 & size,
+            const TimeoutType &timeout);
 
     /**
      * @brief Unsupported feature.
