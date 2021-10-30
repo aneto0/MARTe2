@@ -25,6 +25,10 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #ifdef LWIP_ENABLED
+#include "lwip/opt.h"
+#include "lwip/dhcp.h"
+#include "lwip/netif.h"
+#include "lwip/tcpip.h"
 #include "lwip/sockets.h"
 #endif
 /*---------------------------------------------------------------------------*/
@@ -181,15 +185,27 @@ bool BasicUDPSocket::Connect(const char8 * const address,
 }
 
 bool BasicUDPSocket::CanWrite() const {
-    return IsValid();
+    return true;
 }
 
 bool BasicUDPSocket::CanRead() const {
-    return IsValid();
+    return true;
 }
 
 bool BasicUDPSocket::CanSeek() const {
-    return IsValid();
+    return false;
+}
+
+bool BasicUDPSocket::Join(const char8 *const group) const {
+    int32 opt = 1;
+    /* Allow multiple sockets to use the same addr and port number */
+    bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt))) >= 0;
+    if (ok) {
+        InternetHost host;
+        host.SetMulticastGroup(group);
+        ok = setsockopt(connectionSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, host.GetInternetMulticastHost(), static_cast<socklen_t>(host.MulticastSize())) >= 0;
+    }
+    return ok;
 }
 
 bool BasicUDPSocket::Read(char8 * const output,

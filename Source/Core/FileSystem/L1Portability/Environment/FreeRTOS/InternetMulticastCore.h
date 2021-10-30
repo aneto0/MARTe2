@@ -29,7 +29,7 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 #ifdef USE_LWIP
-#include "lwip/socket.h"
+#include "lwip/sockets.h"
 #endif
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -39,7 +39,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
-#ifdef USE_LWIP
+#ifdef LWIP_ENABLED
 typedef ip_mreq InternetMulticastCore;
 #else
 typedef void* InternetMulticastCore;

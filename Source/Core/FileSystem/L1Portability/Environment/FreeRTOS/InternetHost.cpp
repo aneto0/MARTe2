@@ -117,6 +117,21 @@ private:
     }
 };
 
+void InternetHost::SetMulticastGroup(const char8 *const addr) {
+    #ifdef LWIP_ENABLED
+    mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));
+    #endif
+}
+
+StreamString InternetHost::GetMulticastGroup() const {
+    #ifdef LWIP_ENABLED
+    StreamString dotName(inet_ntoa(mreq.imr_multiaddr));
+    return dotName;
+    #else
+    return "";
+    #endif
+}
+
 StreamString InternetHost::GetHostName() const {
     //TODO
     StreamString hostName = "";
