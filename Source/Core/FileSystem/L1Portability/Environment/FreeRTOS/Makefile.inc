@@ -32,6 +32,7 @@ OBJSX=  BasicFile.x \
     BasicSocket.x \
     BasicTCPSocket.x \
     BasicUDPSocket.x \
+    BasicUART.x \
     Directory.x \
     DirectoryScanner.x \
     InternetHost.x \

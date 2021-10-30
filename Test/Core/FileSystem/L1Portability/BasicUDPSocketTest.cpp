@@ -58,7 +58,7 @@ BasicUDPSocketTest::BasicUDPSocketTest() {
     isTimeout = false;
     isValidServer = true;
     isValidClient = true;
-    numOfThreadsBefore = Threads::NumberOfThreads();
+
 }
 
 bool BasicUDPSocketTest::TestDefaultConstructor() {
@@ -214,9 +214,9 @@ void StartServer_Listen(BasicUDPSocketTest &param) {
     }
 
     param.eventSem.Post();
-//    while (Threads::NumberOfThreads() > 1) {
-//        Sleep::MSec(10);
-//    }
+    while (Threads::NumberOfThreads() > 1) {
+        Sleep::MSec(10);
+    }
     serverSocket.Close();
 }
 
@@ -294,14 +294,13 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
         else {
             param.isValidClient = table[i].isValid;
         }
-        
-        uint32 numOfThreadsBefore = Threads::NumberOfThreads();
+
         Threads::BeginThread((ThreadFunctionType) StartServer_Listen, &param);
 
         while (param.exitCondition < 1) {
             if (!param.NoError) {
                 param.alives = 0;
-                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+                while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -317,7 +316,7 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
             Threads::BeginThread((ThreadFunctionType) ClientJob_Listen, &param);
         }
 
-        while (Threads::NumberOfThreads() > numOfThreadsBefore + 1) {
+        while (Threads::NumberOfThreads() > 0) {
             Sleep::MSec(10);
         }
 
@@ -689,7 +688,7 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
         while (exitCondition < 1) {
             if (!NoError) {
                 alives = 0;
-                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+                while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -702,7 +701,7 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
             Threads::BeginThread((ThreadFunctionType) ClientJob_Read, this);
         }
 
-        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+        while (Threads::NumberOfThreads() > 0) {
             Sleep::MSec(50);
         }
 
@@ -817,7 +816,7 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
         while (exitCondition < 1) {
             if (!NoError) {
                 alives = 0;
-                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+                while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -829,7 +828,7 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
             Threads::BeginThread((ThreadFunctionType) ClientJob_Peek, this);
         }
 
-        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+        while (Threads::NumberOfThreads() > 0) {
             Sleep::MSec(10);
         }
 
@@ -976,7 +975,7 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
         while (exitCondition < 1) {
             if (!NoError) {
                 alives = 0;
-                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+                while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -988,7 +987,7 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
             Threads::BeginThread((ThreadFunctionType) ClientJob_Write, this);
         }
 
-        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+        while (Threads::NumberOfThreads() > 0) {
             Sleep::MSec(10);
         }
 
