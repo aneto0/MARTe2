@@ -123,6 +123,10 @@ void InternetHost::SetMulticastGroup(const char8 *const addr) {
     #endif
 }
 
+uint32 InternetHost::MulticastSize() const {
+    return static_cast<uint32>(sizeof(mreq));
+}
+
 StreamString InternetHost::GetMulticastGroup() const {
     #ifdef LWIP_ENABLED
     StreamString dotName(inet_ntoa(mreq.imr_multiaddr));
