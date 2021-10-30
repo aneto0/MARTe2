@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
+#include <string.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -42,12 +42,18 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+MARTe::Bootstrap bootstrap;
+
+//TODO Verify max string length
+char tempPrintBuffer[256];
 
 void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
                                    const char * const errorDescription) {
     MARTe::StreamString errorCodeStr;
     MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    size_t writeLen = snprintf(tempPrintBuffer, 256, "[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    //bootstrap.Printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    bootstrap.Printf(tempPrintBuffer);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -70,7 +76,6 @@ int main(int argc, char **argv) {
     using namespace MARTe;
     SetErrorProcessFunction(&MainGTestErrorProcessFunction);
     
-    Bootstrap bootstrap;
     ConfigurationDatabase loaderParameters;
     StreamI *configurationStream = NULL_PTR(StreamI *);
 
