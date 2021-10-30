@@ -132,6 +132,10 @@ StreamString InternetHost::GetMulticastGroup() const {
     #endif
 }
 
+InternetMulticastCore *InternetHost::GetInternetMulticastHost() {
+    return &mreq;
+}
+
 StreamString InternetHost::GetHostName() const {
     //TODO
     StreamString hostName = "";
