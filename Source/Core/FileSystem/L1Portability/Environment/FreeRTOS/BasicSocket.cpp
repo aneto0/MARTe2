@@ -96,6 +96,7 @@ bool BasicSocket::Close() {
         }
     }
     else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close() closing an invalid socket");
         ret = -1;
     }
 #endif
