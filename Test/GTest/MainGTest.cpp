@@ -42,7 +42,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-#define MAX_ERROR_PROCESS_FUNCTION_LENGTH MARTe::MAX_ERROR_MESSAGE_SIZE + 64
+#define MAX_ERROR_PROCESS_FUNCTION_LENGTH (2 * MARTe::MAX_ERROR_MESSAGE_SIZE)
 MARTe::Bootstrap bootstrap;
 
 //TODO Verify max string length
@@ -59,6 +59,7 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
 
     printSMR.Seek(0);
     printSMR.Printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    printSMR[printSMR.Size()] = '\0';          
     bootstrap.Printf(printSMR.Buffer());
 }
 
