@@ -88,11 +88,12 @@ bool BasicSocket::Close() {
     int32 ret = -1;
 #ifdef LWIP_ENABLED
     if (IsValid()) {
-        //Avoiding close() to be non-blocking
-        uint32 opt = lwip_fcntl(connectionSocket, F_GETFL, 0);
-        opt |= O_NONBLOCK;
-        ret = lwip_fcntl(connectionSocket, F_SETFL, opt);
-
+        //Avoiding close() to be non-blocking if the socket is in non-blocking mode
+        if(isBlocking) {
+            uint32 opt = lwip_fcntl(connectionSocket, F_GETFL, 0);
+            opt |= O_NONBLOCK;
+            ret = lwip_fcntl(connectionSocket, F_SETFL, opt);
+        }
         ret = lwip_close(connectionSocket);
         connectionSocket = -1;
 
