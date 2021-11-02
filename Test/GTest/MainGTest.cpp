@@ -59,7 +59,7 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
 
     printSMR.Seek(0);
     printSMR.Printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    printSMR[printSMR.Size()] = '\0';          
+    tempPrintBuffer[printSMR.Size()] = '\0';          
     bootstrap.Printf(printSMR.Buffer());
 }
 
