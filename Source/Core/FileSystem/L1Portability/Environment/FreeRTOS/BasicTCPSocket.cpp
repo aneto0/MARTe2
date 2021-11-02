@@ -65,6 +65,7 @@ bool BasicTCPSocket::Open() {
     if(ret) {
         //SO_REUSEADDR is here to restart a closed/killed process on the same address
         //as TIME_WAIT state to ensure all data is transferred
+        //Here because close is not always honored immediately, to avoid bind failures especially in tests
         const int32 one = 1;
         ret = (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &one, static_cast<uint32>(sizeof(one))) >= 0);
         if(!ret) {
