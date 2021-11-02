@@ -90,9 +90,10 @@ bool BasicSocket::Close() {
     if (IsValid()) {
         ret = lwip_close(connectionSocket);
         connectionSocket = -1;
-        if (ret < 0) {
+
+        if (ret != 0) {
             REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close failed");
-            ret = 0;
+            ret = -1;
         }
     }
     else {
