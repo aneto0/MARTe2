@@ -42,18 +42,24 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+#define MAX_ERROR_PROCESS_FUNCTION_LENGTH MARTe::MAX_ERROR_MESSAGE_SIZE + 64
 MARTe::Bootstrap bootstrap;
 
 //TODO Verify max string length
-char tempPrintBuffer[256];
+char tempPrintBuffer[MAX_ERROR_PROCESS_FUNCTION_LENGTH];
+MARTe::StreamMemoryReference printSMR(&tempPrintBuffer[0], MAX_ERROR_PROCESS_FUNCTION_LENGTH);
 
 void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
                                    const char * const errorDescription) {
     MARTe::StreamString errorCodeStr;
     MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    size_t writeLen = snprintf(tempPrintBuffer, 256, "[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    //size_t writeLen = snprintf(tempPrintBuffer, 256, "[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     //bootstrap.Printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    bootstrap.Printf(tempPrintBuffer);
+    //bootstrap.Printf(tempPrintBuffer);
+
+    printSMR.Seek(0);
+    printSMR.Printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    bootstrap.Printf(printSMR.Buffer());
 }
 
 /*---------------------------------------------------------------------------*/
