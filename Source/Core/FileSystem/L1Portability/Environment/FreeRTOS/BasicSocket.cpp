@@ -88,6 +88,7 @@ bool BasicSocket::Close() {
     int32 ret = -1;
 #ifdef LWIP_ENABLED
     if (IsValid()) {
+        
         ret = lwip_close(connectionSocket);
         connectionSocket = -1;
 
