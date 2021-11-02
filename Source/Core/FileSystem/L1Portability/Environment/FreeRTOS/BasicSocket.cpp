@@ -55,7 +55,7 @@ BasicSocket::BasicSocket() :
 BasicSocket::~BasicSocket() {
     if (BasicSocket::IsValid()) {
         if (!BasicSocket::Close()) {
-            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close() the socket handle is invalid");
         }
     }
 }
@@ -79,7 +79,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
 #endif
     }
     else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::SetBlocking() The socket handle is invalid");
     }
     return (ret >= 0);
 }
