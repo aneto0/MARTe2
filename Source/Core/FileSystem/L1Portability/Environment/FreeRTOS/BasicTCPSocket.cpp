@@ -60,10 +60,12 @@ bool BasicTCPSocket::Open() {
 #ifdef LWIP_ENABLED
     /*lint -e{641} .Justification: The function socket returns an integer.*/
     connectionSocket = socket(PF_INET, SOCK_STREAM, 0);
-    const int32 one = 1;
     ret = (connectionSocket >= 0);
 
     if(ret) {
+        //SO_REUSEADDR is here to restart a closed/killed process on the same address
+        //as TIME_WAIT state to ensure all data is transferred
+        const int32 one = 1;
         ret = (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &one, static_cast<uint32>(sizeof(one))) >= 0);
         if(!ret) {
             REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the address as reusable");

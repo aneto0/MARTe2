@@ -152,8 +152,19 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     if (IsValid()) {
         InternetHost server;
         server.SetPort(port);
-        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
+        //SO_REUSEADDR is here to ensure more than one process may bind to the same SOCK_DGRAM UDP port
+        const int32 one = 1;
+        errorCode = (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &one, static_cast<uint32>(sizeof(one))) >= 0);
+        if(errorCode == 0) {
+            /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
+            errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
+            if(errorCode != 0) {
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Cannot bind");
+            }
+        }
+        else {
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket cannot be set in reuse mode");
+        }
     }
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
