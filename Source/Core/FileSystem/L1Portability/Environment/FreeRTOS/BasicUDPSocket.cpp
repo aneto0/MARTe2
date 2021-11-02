@@ -152,10 +152,6 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     if (IsValid()) {
         InternetHost server;
         server.SetPort(port);
-        //SO_REUSEADDR is here to ensure more than one process may bind to the same SOCK_DGRAM UDP port
-        //Here because close is not always honored immediately, to avoid bind failures especially in tests
-        const int32 one = 1;
-        errorCode = (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &one, static_cast<uint32>(sizeof(one))) >= 0);
         
         if(errorCode == 0) {
             /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
