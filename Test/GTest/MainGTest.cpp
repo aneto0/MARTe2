@@ -56,7 +56,7 @@ void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformatio
     //size_t writeLen = snprintf(tempPrintBuffer, 256, "[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     //bootstrap.Printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     //bootstrap.Printf(tempPrintBuffer);
-
+    memset(tempPrintBuffer, 0, MAX_ERROR_PROCESS_FUNCTION_LENGTH);
     printSMR.Seek(0);
     printSMR.Printf("[%s - %s:%d]: %s\r\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     tempPrintBuffer[printSMR.Size()] = '\0';          
