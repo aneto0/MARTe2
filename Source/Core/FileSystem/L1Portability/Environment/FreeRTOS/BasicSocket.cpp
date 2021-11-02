@@ -66,10 +66,10 @@ bool BasicSocket::SetBlocking(const bool flag) {
 #ifdef LWIP_ENABLED
         uint32 opt = lwip_fcntl(connectionSocket, F_GETFL, 0);
         if (flag) {
-            opt &= ~O_NONBLOCK;
+            opt |= O_NONBLOCK;
         }
         else {
-            opt |= O_NONBLOCK;
+            opt &= ~O_NONBLOCK;
         }
         ret = lwip_fcntl(connectionSocket, F_SETFL, opt);
 
