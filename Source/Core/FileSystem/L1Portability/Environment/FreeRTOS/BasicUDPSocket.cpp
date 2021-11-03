@@ -153,15 +153,10 @@ bool BasicUDPSocket::Listen(const uint16 port) {
         InternetHost server;
         server.SetPort(port);
         
-        if(errorCode == 0) {
-            /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-            errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
-            if(errorCode != 0) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Cannot bind");
-            }
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket cannot be set in reuse mode");
+        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
+        errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
+        if(errorCode != 0) {
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Cannot bind");
         }
     }
     else {
