@@ -209,8 +209,8 @@ bool BasicUDPSocket::Join(const char8 *const group) const {
     retVal = (inet_aton(group, &multicastIP) != 0);
     if(!retVal) {
         StreamString tempErrorStr;
-        tempErrorStr.Printf("BasicUDPSocket::Join() Invalid group address %s, error %d", group, err)
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Join() Invalid group address");
+        tempErrorStr.Printf("BasicUDPSocket::Join() Invalid group address %s", group);
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, tempErrorStr.Buffer());
     }
 
     if(retVal) {
