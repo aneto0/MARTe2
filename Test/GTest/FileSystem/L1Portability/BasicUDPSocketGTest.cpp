@@ -100,6 +100,7 @@ TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestClose) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestClose());
 }
+#endif
 
 TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestListen) {
     BasicUDPSocketTest basicUDPSocketTest;
@@ -126,7 +127,7 @@ TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestListen) {
 
     ASSERT_TRUE(basicUDPSocketTest.TestListen(table));
 }
-#endif
+
 TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestJoin) {
     BasicUDPSocketTest basicUDPSocketTest;
 
