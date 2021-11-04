@@ -119,9 +119,8 @@ private:
 
 void InternetHost::SetMulticastGroup(const char8 *const addr) {
     #ifdef LWIP_ENABLED
-    mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));
-    //0.0.0.0 means interface index 0 or, equally, default interface    
-    mreq.imr_interface.s_addr = inet_addr("0.0.0.0");
+    mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));  
+    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
     #endif
 }
 
@@ -196,6 +195,8 @@ StreamString InternetHost::GetAddress() const {
 #ifdef LWIP_ENABLED
     dotName = (inet_ntoa(address.sin_addr));
 #endif
+    //TODO: Remove from here
+    printf("We are here -------%s-------\r\n", dotName.Buffer());
     return dotName;
 }
 
