@@ -226,7 +226,13 @@ bool BasicUDPSocket::Join(const char8 *const group) const {
     if (ok) {
         InternetHost host;
         host.SetMulticastGroup(group);
-        ok = setsockopt(connectionSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, host.GetInternetMulticastHost(), static_cast<socklen_t>(host.MulticastSize())) >= 0;
+
+        ok = setsockopt(
+            connectionSocket, 
+            IPPROTO_IP, 
+            IP_ADD_MEMBERSHIP, 
+            (char*)host.GetInternetMulticastHost(), 
+            static_cast<socklen_t>(host.MulticastSize())) >= 0;
     }
     return ok;
 }
