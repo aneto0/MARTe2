@@ -202,41 +202,21 @@ bool BasicUDPSocket::CanSeek() const {
 }
 
 bool BasicUDPSocket::Join(const char8 *const group) const {
-    bool retVal;
+    int32 opt = 1;
+    /* Allow multiple sockets to use the same addr and port number */
+    bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt))) >= 0;
+    if (ok) {
+        InternetHost host;
+        host.SetMulticastGroup(group);
 
-    ip_addr_t multicastIP;
-
-    retVal = (inet_aton(group, &multicastIP) != 0);
-    if(!retVal) {
-        StreamString tempErrorStr;
-        tempErrorStr.Printf("BasicUDPSocket::Join() Invalid group address %s", group);
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, tempErrorStr.Buffer());
+        ok = setsockopt(
+            connectionSocket, 
+            IPPROTO_IP, 
+            IP_ADD_MEMBERSHIP, 
+            (char*)host.GetInternetMulticastHost(), 
+            static_cast<socklen_t>(host.MulticastSize())) >= 0;
     }
-
-    if(retVal) {
-        retVal = (igmp_joingroup(IP_ADDR_ANY, (ip_addr_t*)&multicastIP) == ERR_OK);
-        if(!retVal) {
-            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Join() igmp_joingroup() failed");
-        }
-    }
-
-    return retVal;
-
-//    int32 opt = 1;
-//    /* Allow multiple sockets to use the same addr and port number */
-//    bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt))) >= 0;
-//    if (ok) {
-//        InternetHost host;
-//        host.SetMulticastGroup(group);
-
-//        ok = setsockopt(
-//            connectionSocket, 
-//            IPPROTO_IP, 
-//            IP_ADD_MEMBERSHIP, 
-//            (char*)host.GetInternetMulticastHost(), 
-//            static_cast<socklen_t>(host.MulticastSize())) >= 0;
-//    }
-//    return ok;
+    return ok;
 }
 
 bool BasicUDPSocket::Read(char8 * const output,
