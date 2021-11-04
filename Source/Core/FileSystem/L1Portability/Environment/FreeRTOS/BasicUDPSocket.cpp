@@ -27,6 +27,7 @@
 #ifdef LWIP_ENABLED
 #include "lwip/opt.h"
 #include "lwip/dhcp.h"
+#include "lwip/igmp.h"
 #include "lwip/netif.h"
 #include "lwip/tcpip.h"
 #include "lwip/sockets.h"
@@ -201,6 +202,24 @@ bool BasicUDPSocket::CanSeek() const {
 }
 
 bool BasicUDPSocket::Join(const char8 *const group) const {
+    bool retVal;
+
+    ip_addr_t multicastIP;
+
+    retVal = (inet_aton(group, &multicastIP) == ERR_OK);
+    if(!retVal) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Join() Invalid group address");
+    }
+
+    if(retVal) {
+        retVal = (igmp_joingroup(IP_ADDR_ANY, (ip_addr_t*)&multicastIP) == ERR_OK);
+        if(!retVal) {
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Join() igmp_joingroup() failed");
+        }
+    }
+
+    return retVal;
+
     int32 opt = 1;
     /* Allow multiple sockets to use the same addr and port number */
     bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt))) >= 0;
