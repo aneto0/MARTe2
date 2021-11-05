@@ -195,8 +195,6 @@ StreamString InternetHost::GetAddress() const {
 #ifdef LWIP_ENABLED
     dotName = (inet_ntoa(address.sin_addr));
 #endif
-    //TODO: Remove from here
-    printf("We are here -------%s-------\r\n", dotName.Buffer());
     return dotName;
 }
 
