@@ -23,7 +23,6 @@
 # $Id$
 #
 #############################################################
-
 ifdef MARTe2_DIR
 	include $(MARTe2_DIR)/MakeDefaults/MakeStdLibRules.gcc
 else
