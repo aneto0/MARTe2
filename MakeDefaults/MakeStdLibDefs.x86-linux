@@ -23,11 +23,7 @@
 # $Id$
 #
 #############################################################
-ifdef MARTe2_DIR
-    include $(MARTe2_DIR)/MakeDefaults/MakeStdLibDefs.gcc-dynamic
-else
-    include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc-dynamic
-endif
+include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc-dynamic
 
 #The name of the parent target (i.e. the Makefiles that use this definition are Makefile.gcc)
 ENVIRONMENT=Linux
