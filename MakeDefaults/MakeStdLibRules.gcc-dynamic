@@ -23,7 +23,11 @@
 # $Id$
 #
 #############################################################
-include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc
+ifdef MARTe2_DIR
+	include $(MARTe2_DIR)/MakeDefaults/MakeStdLibRules.gcc
+else
+	include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc
+endif
 
 $(BUILD_DIR)/%.so : createLibrary $(OBJS)
 	touch $@

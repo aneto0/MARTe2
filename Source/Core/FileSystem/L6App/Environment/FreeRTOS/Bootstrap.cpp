@@ -56,6 +56,7 @@ static bool keepRunning = true;
 namespace MARTe {
 
 StreamMemoryReference *staticConfigurationStream = NULL;
+
 ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
     const char8 * const marteConfig = configFile;
     uint32 marteConfigLength = StringHelper::Length(marteConfig) + 1;
@@ -65,23 +66,6 @@ ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &lo
     configurationStream = staticConfigurationStream;
     return true;
 }
-
-// extern "C" {
-//     void PreLoader(const void *_loader) {
-//         void (*loader) (void) = (void (*) (void))_loader;
-//         //Wait for LWIP and friends...
-//         //Sleep::Sec(10.0);
-//         loader();
-//     }
-// }
-
-// void Bootstrap::Load(void (*loader)(void)) {
-//     osThreadDef(loaderTask, PreLoader, osPriorityNormal, 1, 4 * THREADS_DEFAULT_STACKSIZE);
-//     osThreadCreate (osThread(loaderTask), (void *)loader);
-//     //HardwareMain();
-// }
-
-
 
 ErrorManagement::ErrorType Bootstrap::Run() {
     
