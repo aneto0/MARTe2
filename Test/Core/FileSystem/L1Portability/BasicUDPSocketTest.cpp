@@ -313,7 +313,11 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
         }
 
         for (uint32 k = 0; k < table[i].nClients; k++) {
-            Threads::BeginThread((ThreadFunctionType) ClientJob_Listen, &param);
+            ThreadIdentifier tId = Threads::BeginThread((ThreadFunctionType) ClientJob_Listen, &param);
+            if(tId == InvalidThreadIdentifier) {
+            	REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Failure creating ClientJob listen thread");
+            	return false;
+            }
         }
 
         while (Threads::NumberOfThreads() > 0) {
@@ -340,6 +344,16 @@ void StartServer_Join(BasicUDPSocketTest &param) {
         return;
     }
 
+    bool error = serverSocket.SetBlocking(param.isBlocking);
+
+    if (!error) {
+        param.sem.FastLock();
+        param.NoError = false;
+        param.sem.FastUnLock();
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::StartServer_Join() Cannot put the socket in blocking mode");
+        return;
+    }
+
     if (!param.isValidServer) {
         serverSocket.Close();
     }
@@ -349,6 +363,7 @@ void StartServer_Join(BasicUDPSocketTest &param) {
         param.sem.FastLock();
         param.exitCondition = 1;
         param.sem.FastUnLock();
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::StartServer_Join() Cannot join");
         return;
     }
 
@@ -357,6 +372,7 @@ void StartServer_Join(BasicUDPSocketTest &param) {
         param.sem.FastLock();
         param.exitCondition = 1;
         param.sem.FastUnLock();
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::StartServer_Join() Cannot listen");
         return;
     }
 
@@ -415,16 +431,19 @@ void ClientJob_Join(BasicUDPSocketTest &param) {
         param.sem.FastLock();
         param.NoError = false;
         param.sem.FastUnLock();
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::ClientJob_Join() Cannot put the socket in blocking mode");
     }
     else {
         if (!param.isValidClient) {
             clientSocket.Close();
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::ClientJob_Join() Closing client socket, !isValidClient");
         }
 
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
             param.sem.FastLock();
             param.retVal = false;
             param.sem.FastUnLock();
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::ClientJob_Join() Cannot connect");
         }
 
         else {
@@ -434,6 +453,7 @@ void ClientJob_Join(BasicUDPSocketTest &param) {
                 param.sem.FastLock();
                 param.NoError = false;
                 param.sem.FastUnLock();
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::ClientJob_Join() Cannot write");
             }
             else {
                 char8 output[32] = { 0 };
@@ -442,12 +462,14 @@ void ClientJob_Join(BasicUDPSocketTest &param) {
                     param.sem.FastLock();
                     param.NoError = false;
                     param.sem.FastUnLock();
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::ClientJob_Join() Cannot read");
                 }
                 else {
                     if (StringHelper::Compare(output, "HelloClient") != 0) {
                         param.sem.FastLock();
                         param.NoError = false;
                         param.sem.FastUnLock();
+                        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocketTest::ClientJob_Join() Read data is not matching written data");
                     }
                 }
             }
@@ -466,6 +488,7 @@ static bool JoinConnectTest(BasicUDPSocketTest &param,
     uint32 i = 0;
     while (table[i].port != 0) {
         param.server.SetPort(table[i].port);
+        //234.0.0.0-234.255.255.255	Unicast-Prefix-based IPv4 Multicast Addresses [RFC6034] Reg. 2010-08-11
         param.server.SetAddress("234.0.5.1");
 
         param.eventSem.Reset();
@@ -480,12 +503,14 @@ static bool JoinConnectTest(BasicUDPSocketTest &param,
             param.isValidClient = table[i].isValid;
         }
 
+        uint32 numOfThreadsBefore = Threads::NumberOfThreads();
+
         Threads::BeginThread((ThreadFunctionType) StartServer_Join, &param);
 
         while (param.exitCondition < 1) {
             if (!param.NoError) {
                 param.alives = 0;
-                while (Threads::NumberOfThreads() > 0) {
+                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -501,8 +526,11 @@ static bool JoinConnectTest(BasicUDPSocketTest &param,
             Threads::BeginThread((ThreadFunctionType) ClientJob_Join, &param);
         }
 
-        while (Threads::NumberOfThreads() > 0) {
+        uint32 currentNumOfThreads = Threads::NumberOfThreads();
+
+        while (currentNumOfThreads > numOfThreadsBefore) {
             Sleep::MSec(10);
+            currentNumOfThreads = Threads::NumberOfThreads();
         }
 
         if ((param.retVal != table[i].expected) || (!param.NoError)) {

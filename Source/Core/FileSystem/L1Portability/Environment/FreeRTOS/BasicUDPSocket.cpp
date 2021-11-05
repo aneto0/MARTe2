@@ -204,17 +204,31 @@ bool BasicUDPSocket::CanSeek() const {
 bool BasicUDPSocket::Join(const char8 *const group) const {
     int32 opt = 1;
     /* Allow multiple sockets to use the same addr and port number */
-    bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt))) >= 0;
+    int32 setSockOptResult = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt)));
+    bool ok = (setSockOptResult >= 0);
+    if(!ok) {
+        StreamString errorMessage;
+        errorMessage.Printf("BasicUDPSocket::Join() SetSockOpt SO_REUSEADDR failed with error code %d", setSockOptResult);
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, errorMessage.Buffer());
+    }
+
     if (ok) {
         InternetHost host;
         host.SetMulticastGroup(group);
-
-        ok = setsockopt(
+        
+        int32 addMembershipResult = setsockopt(
             connectionSocket, 
             IPPROTO_IP, 
             IP_ADD_MEMBERSHIP, 
             host.GetInternetMulticastHost(), 
-            static_cast<socklen_t>(host.MulticastSize())) >= 0;
+            static_cast<socklen_t>(host.MulticastSize()));
+        
+        ok =  (addMembershipResult >= 0);
+        if(!ok) {
+            StreamString errorMessage;
+            errorMessage.Printf("BasicUDPSocket::Join() SetSockOpt IP_ADDR_MEMBERSHIP failed with error code %d", addMembershipResult);
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, errorMessage.Buffer());
+        }
     }
     return ok;
 }
