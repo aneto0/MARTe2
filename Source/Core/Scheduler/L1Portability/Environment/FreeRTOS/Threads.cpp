@@ -261,6 +261,7 @@ bool Kill(const ThreadIdentifier &threadId) {
 }
 
 typedef struct {
+    ThreadIdentifier threadId;
     ThreadFunctionType function;
     void * parameters;
 }ThreadCallbackParameters;
@@ -268,6 +269,19 @@ typedef struct {
 void ThreadCallback(void* args) {
     ThreadCallbackParameters *tempArgs = static_cast<ThreadCallbackParameters*>(args);
     tempArgs->function(tempArgs->parameters);
+    
+    #if USE_THREADS_DATABASE
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ThreadInformation *threadInfo = ThreadsDatabase::RemoveEntry(tempArgs->threadId);
+
+        if(threadInfo!=NULL) {
+            delete threadInfo;
+        }
+    }
+    ThreadsDatabase::UnLock();
+    #endif
+
     vPortFree(args);
     vTaskDelete(NULL);
 }
@@ -285,8 +299,32 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
 #if USE_THREADS_DATABASE
         ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
         if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
-            portBASE_TYPE ret = xTaskCreate(reinterpret_cast<void (*)(void *)>(SystemThreadFunction), (name==NULL)?("Unknown"):(name), (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), static_cast<void *>(threadInfo), (tskIDLE_PRIORITY) | portPRIVILEGE_BIT, &threadId);
+            //TODO: portPRIVILEGE_BIT which was in the priority is justified only in systems that include MPU.
+            //      (MPU == Memory Protection Unit).
+            //      Setting the MPU bit creates a task in a privileged (system) mode
+            //      Can this still be valid in this context?
+            // portBASE_TYPE ret = xTaskCreate(
+            //     reinterpret_cast<void (*)(void *)>(SystemThreadFunction), 
+            //     (name==NULL)?("Unknown"):(name), 
+            //     (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), 
+            //     static_cast<void *>(threadInfo), 
+            //     (tskIDLE_PRIORITY) /*| portPRIVILEGE_BIT*/,
+            //     &threadId);
+            
+            ThreadCallbackParameters *tParams = static_cast<ThreadCallbackParameters*>(pvPortMalloc(sizeof(ThreadCallbackParameters)));
+            tParams->function = function;
+            tParams->parameters = parameters;
+            
+            BaseType_t ret = xTaskCreate(
+                ThreadCallback, 
+                (name==NULL)?("Unknown"):(name), 
+                (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), 
+                static_cast<void*>(tParams),
+                (tskIDLE_PRIORITY) /*| portPRIVILEGE_BIT*/,
+                &threadId);
+
             bool ok = (ret == pdPASS);
+            
             if (ok) {
                 ok = threadInfo->ThreadPost();
             }
@@ -301,6 +339,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         //      Can this still be valid in this context?
         
         ThreadCallbackParameters *tParams = static_cast<ThreadCallbackParameters*>(pvPortMalloc(sizeof(ThreadCallbackParameters)));
+        tParams->threadId = InvalidThreadIdentifier;
         tParams->function = function;
         tParams->parameters = parameters;
 
@@ -315,6 +354,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         bool ok = (ret == pdPASS);
 
         if (ok) {
+            tParams->threadId = threadId;
             SetPriority(threadId, Threads::NormalPriorityClass, 0u);
         }
         else {
