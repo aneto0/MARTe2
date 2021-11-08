@@ -69,21 +69,22 @@ ErrorManagement::ErrorType GAMBareScheduler::StartNextStateExecution() {
 
     while(isAlive) { 
         Cycle(0u); 
+
+        uint32 absTime = 0u;
+        if (lastCycleTimeStamp != 0u) {
+            uint64 tmp = (HighResolutionTimer::Counter() - lastCycleTimeStamp);
+            float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
+            absTime = static_cast<uint32>(ticksToTime);  //us
+        }
+        uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
+        if (!MemoryOperationsHelper::Copy(nextState->threads[0].cycleTime, &absTime, sizeToCopy)) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not copy cycle time information.");
+        }
+        lastCycleTimeStamp = HighResolutionTimer::Counter();
+
         if (maxCycles != 0u) {
             isAlive = (nCycle < maxCycles);
             nCycle++;
-
-            uint32 absTime = 0u;
-            if (lastCycleTimeStamp != 0u) {
-                uint64 tmp = (HighResolutionTimer::Counter() - lastCycleTimeStamp);
-                float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
-                absTime = static_cast<uint32>(ticksToTime);  //us
-            }
-            uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
-            if (!MemoryOperationsHelper::Copy(nextState->threads[0].cycleTime, &absTime, sizeToCopy)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Could not copy cycle time information.");
-            }
-            lastCycleTimeStamp = HighResolutionTimer::Counter();
         }
     }
     
