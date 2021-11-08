@@ -32,13 +32,14 @@
 #include "Bootstrap.h"
 #include "BasicFile.h"
 #include "ConfigurationDatabase.h"
-#include "marte2config.h"
 #include "StreamMemoryReference.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+extern const char * configFile;
+
 namespace MARTe {
 
 /**
