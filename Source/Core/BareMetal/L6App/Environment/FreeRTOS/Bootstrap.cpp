@@ -84,11 +84,11 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
     ErrorManagement::ErrorType ret;
     ret.parametersError = !loaderParameters.Write("Loader", "RealTimeLoader");
     if (ret) {
-        //ret.parametersError = !loaderParameters.Write("FirstState", "State1");
-        ret.parametersError = !loaderParameters.Write("MessageDestination", "StateMachine");
-        if (ret) {
-            ret.parametersError = !loaderParameters.Write("MessageFunction", "START");
-        }
+        ret.parametersError = !loaderParameters.Write("FirstState", "Idle");
+        //ret.parametersError = !loaderParameters.Write("MessageDestination", "StateMachine");
+        //if (ret) {
+        //    ret.parametersError = !loaderParameters.Write("MessageFunction", "START");
+        //}
     }
     if (ret) {
         ret.parametersError = !loaderParameters.Write("Parser", "cdb");

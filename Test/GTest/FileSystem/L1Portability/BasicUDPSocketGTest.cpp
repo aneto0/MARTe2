@@ -40,7 +40,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#if 0
+
 TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TesDefaultConstructor) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestDefaultConstructor());
@@ -126,7 +126,7 @@ TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestListen) {
 
     ASSERT_TRUE(basicUDPSocketTest.TestListen(table));
 }
-#endif
+
 TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestJoin) {
     BasicUDPSocketTest basicUDPSocketTest;
 
@@ -141,11 +141,11 @@ TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestJoin) {
     };
     #else
     const ConnectListenUDPTestTable table[]={
-//            {4444,1,true, true},
+            {4444,1,true, true},
             {4444,2,true, true},
-//            {4444,4,true, true},
-//            {4444,8,true, true},
-//            {4444,2,false, false},
+            {4444,4,true, true},
+            {4444,6,true, true},
+            {4444,2,false, false},
             {0,0,0}
     };
     #endif
@@ -153,7 +153,7 @@ TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestJoin) {
     ASSERT_TRUE(basicUDPSocketTest.TestJoin(table));
 }
 
-#if 0
+
 TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestConnect) {
     BasicUDPSocketTest basicUDPSocketTest;
     #ifndef MARTe2_REDUCED_TESTS
@@ -275,4 +275,3 @@ TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestWrite) {
     ASSERT_TRUE(basicUDPSocketTest.TestWrite(table));
 }
 
-#endif
