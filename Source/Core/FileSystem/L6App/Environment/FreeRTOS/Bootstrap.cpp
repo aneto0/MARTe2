@@ -71,7 +71,7 @@ ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &lo
 ErrorManagement::ErrorType Bootstrap::Run() {
     
     while (keepRunning) {
-        Sleep::Sec(1.0);
+        vTaskSuspend(NULL);
     }
     if (staticConfigurationStream != NULL) {
         delete staticConfigurationStream;
