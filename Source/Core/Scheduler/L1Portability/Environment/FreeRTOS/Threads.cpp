@@ -320,7 +320,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 (name==NULL)?("Unknown"):(name), 
                 (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), 
                 static_cast<void*>(tParams),
-                (configMAX_PRIORITIES - 1) /*| portPRIVILEGE_BIT*/,
+                tskIDLE_PRIORITY /*| portPRIVILEGE_BIT*/,
                 &threadId);
 
             bool ok = (ret == pdPASS);
