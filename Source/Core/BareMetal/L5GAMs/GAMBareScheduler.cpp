@@ -63,7 +63,8 @@ bool GAMBareScheduler::ConfigureScheduler(Reference realTimeAppIn) {
 
 ErrorManagement::ErrorType GAMBareScheduler::StartNextStateExecution() {
     isAlive = true;
-    ScheduledState *nextState = GetSchedulableStates()[0];
+    
+    ScheduledState *nextState = GetSchedulableStates()[realTimeApplication->GetIndex()];
     uint64 lastCycleTimeStamp = 0u;
 
     while(isAlive) { 
