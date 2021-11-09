@@ -24,20 +24,23 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#ifdef LWIP_ENABLED
+ #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
 #include "lwip/opt.h"
 #include "lwip/dhcp.h"
 #include "lwip/igmp.h"
 #include "lwip/netif.h"
 #include "lwip/tcpip.h"
+#include "lwip/udp.h"
 #include "lwip/sockets.h"
 #endif
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "BasicUDPSocket.h"
 #include "ErrorManagement.h"
+#include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -46,11 +49,18 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+extern void NetworkInterfaceHook(void* netifParams);
+#endif
+
 namespace MARTe {
 
 BasicUDPSocket::BasicUDPSocket() :
         BasicSocket() {
-
+    #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+        connectionSocket.socketKind = SocketCoreKindUDP;
+        connectionSocket.UDPHandle = NULL;
+    #endif
 }
 
 BasicUDPSocket::~BasicUDPSocket() {
@@ -61,7 +71,7 @@ bool BasicUDPSocket::Peek(char8* const output,
                           uint32 &size) {
 
     int32 ret = -1;
-#ifdef LWIP_ENABLED
+ #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     uint32 sizeToRead = size;
     size = 0u;
     if (IsValid()) {
@@ -81,6 +91,9 @@ bool BasicUDPSocket::Peek(char8* const output,
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
 #endif
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Peek() Cannot peek raw lwIP socket");
+#endif
     return (ret > 0);
 
 }
@@ -89,7 +102,7 @@ bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
 
     int32 ret = -1;
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     uint32 sizeToRead = size;
     size = 0u;
     if (IsValid()) {
@@ -109,6 +122,10 @@ bool BasicUDPSocket::Read(char8* const output,
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
 #endif
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    //TODO: To be implemented
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Read() Not implemented");
+#endif
     return (ret > 0);
 }
 
@@ -116,7 +133,7 @@ bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
 
     int32 ret = -1;
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     uint32 sizeToWrite = size;
     size = 0u;
     if (IsValid()) {
@@ -136,20 +153,33 @@ bool BasicUDPSocket::Write(const char8* const input,
 
     }
 #endif
-    return (ret > 0);
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    ip_addr_t destIPAddress;
+    destIPAddress.addr = (destination.GetInternetHost())->sin_addr.s_addr;
+    uint16 destPort = (destination.GetInternetHost())->sin_port;
+    struct pbuf *packetBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
+    MemoryOperationsHelper::Copy(packetBuffer->payload, input, size);
+    err_t err = udp_sendto(connectionSocket.UDPHandle, packetBuffer, &destIPAddress, destPort);
+    NetworkInterfaceHook(NULL);
+    pbuf_free(packetBuffer);
+    ret = err;
+#endif
+    return (ret != 0);
 }
 
 bool BasicUDPSocket::Open() {
 #ifdef LWIP_ENABLED
     connectionSocket = (socket(PF_INET, SOCK_DGRAM, 0));
-#endif
     return (connectionSocket >= 0);
+#endif
+    connectionSocket.UDPHandle = udp_new();
+    return (connectionSocket.UDPHandle != NULL);
 }
 
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 bool BasicUDPSocket::Listen(const uint16 port) {
     int32 errorCode = -1;
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     if (IsValid()) {
         InternetHost server;
         server.SetPort(port);
@@ -164,6 +194,12 @@ bool BasicUDPSocket::Listen(const uint16 port) {
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
 #endif
+
+#if defined(LWIP_RAW_ENABLED) && ! defined(LWIP_ENABLED)
+
+
+#endif /* ! LWIP_ENABLED */
+
     return (errorCode >= 0);
 }
 
@@ -202,10 +238,12 @@ bool BasicUDPSocket::CanSeek() const {
 }
 
 bool BasicUDPSocket::Join(const char8 *const group) const {
+    bool ok = false;
+    #ifdef LWIP_ENABLED
     int32 opt = 1;
     /* Allow multiple sockets to use the same addr and port number */
     int32 setSockOptResult = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt)));
-    bool ok = (setSockOptResult >= 0);
+    ok = (setSockOptResult >= 0);
     if(!ok) {
         StreamString errorMessage;
         errorMessage.Printf("BasicUDPSocket::Join() SetSockOpt SO_REUSEADDR failed with error code %d", setSockOptResult);
@@ -230,6 +268,7 @@ bool BasicUDPSocket::Join(const char8 *const group) const {
             REPORT_ERROR_STATIC_0(ErrorManagement::OSError, errorMessage.Buffer());
         }
     }
+    #endif
     return ok;
 }
 

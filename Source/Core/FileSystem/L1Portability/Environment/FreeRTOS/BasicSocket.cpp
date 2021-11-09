@@ -47,8 +47,17 @@ namespace MARTe {
 BasicSocket::BasicSocket() :
         StreamI(),
         HandleI() {
+
+    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     connectionSocket = -1;
     isBlocking = true;
+    #endif
+
+    #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    connectionSocket.UDPHandle = NULL;
+    connectionSocket.TCPHandle = NULL;
+    connectionSocket.socketKind = SocketCoreKindUndefined;
+    #endif
 }
 
 /*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
@@ -63,7 +72,7 @@ BasicSocket::~BasicSocket() {
 bool BasicSocket::SetBlocking(const bool flag) {
     int32 ret = -1;
     if (IsValid()) {
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
         uint32 opt = lwip_fcntl(connectionSocket, F_GETFL, 0);
         if (flag) {
             opt &= ~O_NONBLOCK;
@@ -77,6 +86,12 @@ bool BasicSocket::SetBlocking(const bool flag) {
             isBlocking = flag;
         }
 #endif
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    //TODO: this can be handled better, if blocking, the socket itself may call the network interface update hook
+    //      as natively, lwIP is non-blocking by design
+    ret = -1;
+    REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "BasicSocket::SetBlocking() lwIP in raw mode is non-blocking by design");
+#endif
     }
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::SetBlocking() The socket handle is invalid");
@@ -86,7 +101,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
 
 bool BasicSocket::Close() {
     int32 ret = -1;
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     if (IsValid()) {
         //Avoiding close() to be non-blocking if the socket is in non-blocking mode
         if(!isBlocking) {
@@ -105,6 +120,29 @@ bool BasicSocket::Close() {
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close() closing an invalid socket");
         ret = -1;
+    }
+#endif
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    //TODO: TCP side must be implemented
+    if(IsValid()) {
+        if(connectionSocket.socketKind == SocketCoreKindTCP) {
+            ret = -1;
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close() Not implemented");
+        }
+        else if(connectionSocket.socketKind == SocketCoreKindUDP) {
+            if(connectionSocket.UDPHandle != NULL) {
+                udp_disconnect(connectionSocket.UDPHandle);
+                udp_remove(connectionSocket.UDPHandle);
+                ret = 0;
+            }
+            else {
+                ret = -1;
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close() Trying to close a null socket");
+            }
+        }
+        else {
+            REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::Close() A wrong socket kind was specified");
+        }
     }
 #endif
     return (ret >= 0);
@@ -127,15 +165,32 @@ void BasicSocket::SetSource(const InternetHost &sourceIn) {
 }
 
 bool BasicSocket::IsValid() const {
+    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     return (connectionSocket >= 0);
+    #endif
+    #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    return (connectionSocket.UDPHandle != NULL);
+    #endif
 }
 
 Handle BasicSocket::GetReadHandle() const {
+    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     return connectionSocket;
+    #endif
+    #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::GetReadHandle() Cannot get handle in lwIP raw mode");
+    return 0;
+    #endif
 }
 
 Handle BasicSocket::GetWriteHandle() const {
+    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     return connectionSocket;
+    #endif
+    #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::GetReadHandle() Cannot get handle in lwIP raw mode");
+    return 0;
+    #endif
 }
 
 bool BasicSocket::IsBlocking() const {

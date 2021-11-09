@@ -37,8 +37,43 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
 typedef Handle SocketCore;
+#endif
 
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+#include "lwip/udp.h"
+#include "lwip/tcp.h"
+
+/**
+ * When lwIP operates in raw mode, two different handles are needed, based on the underlying socket kind
+ */
+
+typedef enum _e_socketcore_kind {
+    SocketCoreKindUndefined,
+    SocketCoreKindTCP,
+    SocketCoreKindUDP
+}SocketCoreKind;
+
+class SocketCore {
+    public:
+        /**
+         * @brief The UDP handle (PCB)
+         */
+        udp_pcb *UDPHandle;
+
+        /**
+         * @brief The TCP handle (PCB)
+         */
+        tcp_pcb *TCPHandle;
+
+        /**
+         * @brief Indicates the underlying socket type
+         */
+        SocketCoreKind socketKind;
+};
+
+#endif
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

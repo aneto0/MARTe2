@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
 #include "lwip/sockets.h"
 #endif
 /*---------------------------------------------------------------------------*/
@@ -40,7 +40,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
 
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
 /*struct InternetHostCore {
     ip_addr_t addr;
     uint16 port;
