@@ -44,6 +44,10 @@ namespace MARTe{
 typedef sockaddr_in InternetHostCore;
 #endif
 #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+struct ip4_addr {
+  u32_t addr;
+};
+typedef struct ip4_addr ip4_addr_t;
 struct InternetHostCore {
     ip_addr_t addr;
     uint16 port;
