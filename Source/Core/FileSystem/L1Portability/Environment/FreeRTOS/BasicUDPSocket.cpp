@@ -155,8 +155,8 @@ bool BasicUDPSocket::Write(const char8* const input,
 #endif
 #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
     ip_addr_t destIPAddress;
-    destIPAddress.addr = (destination.GetInternetHost())->sin_addr.s_addr;
-    uint16 destPort = (destination.GetInternetHost())->sin_port;
+    destIPAddress = (destination.GetInternetHost())->addr;
+    uint16 destPort = (destination.GetInternetHost())->port;
     struct pbuf *packetBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
     MemoryOperationsHelper::Copy(packetBuffer->payload, input, size);
     err_t err = udp_sendto(connectionSocket.UDPHandle, packetBuffer, &destIPAddress, destPort);

@@ -40,16 +40,18 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
 
-#if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
-/*struct InternetHostCore {
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
+typedef sockaddr_in InternetHostCore;
+#endif
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+struct InternetHostCore {
     ip_addr_t addr;
     uint16 port;
-};*/
-typedef sockaddr_in InternetHostCore;
-#else
+};
+#endif
+#if !defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
 typedef void * InternetHostCore;
 #endif
-
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
