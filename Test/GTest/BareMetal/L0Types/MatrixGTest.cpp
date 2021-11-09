@@ -681,6 +681,8 @@ TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByPointerHeap_float64) {
     delete[] matrix;
 }
 
+
+
 TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByPointerStatic_int8) {
     MatrixTest matrixTest;
     const int32 nRows = 2;
@@ -912,27 +914,55 @@ TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByTable_float64) {
 }
 
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_int8) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<int8>());
+}
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_uint8) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<uint8>());
+}
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_int16) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<int16>());
+}
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_uint16) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<uint16>());
+}
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_int32) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<int32>());
+}
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_uint32) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<uint32>());
+}
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_int64) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<int64>());
+}
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_uint64) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<uint64>());
+}
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_float32) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<float32>());
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorByCanDestroyNonStaticMatrix_float64) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyConstructorByCanDestroyNonStaticMatrix<float64>());
+}
 
 TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByPointerHeap_uint8) {
     MatrixTest matrixTest;
@@ -1343,9 +1373,58 @@ TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByTable_float64) {
     ASSERT_TRUE(matrixTest.TestCopyAssignmentByTable(matrix));
 }
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_int8) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<int8>());
+}
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_uint8) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<uint8>());
+}
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_int16) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<int16>());
+}
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_uint16) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<uint16>());
+}
 
 
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_int32) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<int32>());
+}
 
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_uint32) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<uint32>());
+}
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_int64) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<int64>());
+}
+
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_uint64) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<uint64>());
+}
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_float32) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<float32>());
+}
+
+TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentByCanDestroyNonStaticMatrix_float64) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopyAssignmentByCanDestroyNonStaticMatrix<float64>());
+}
 
 TEST(BareMetal_L0Types_MatrixGTest,TestGetNumberOfColumns_32) {
     MatrixTest matrixTest;
@@ -1491,7 +1570,6 @@ TEST(BareMetal_L0Types_MatrixGTest,TestCopyConstructorNULLPointer) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestCopyConstructorNULLPointer());
 }
-
 
 TEST(BareMetal_L0Types_MatrixGTest,TestCopyAssignmentNULLPointer) {
     MatrixTest matrixTest;

@@ -918,10 +918,10 @@ bool MatrixTest::TestCopyConstructorNULLPointer() {
 }
 
 bool MatrixTest::TestCopyAssignmentNULLPointer() {
-    int32 *pointer = NULL_PTR(int32 *);
+    int32 *pointer = NULL_PTR(int32*);
     Matrix<int32> originalMatrix(pointer, 2, 2);
     Matrix<int32> copiedMatrix;
-    copiedMatrix= originalMatrix;
+    copiedMatrix = originalMatrix;
     bool ret = copiedMatrix.GetDataPointer() == NULL_PTR(void*);
     if (ret) {
         ret = copiedMatrix.GetNumberOfColumns() == 0u;
