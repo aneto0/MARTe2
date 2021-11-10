@@ -321,7 +321,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
                            const TimeoutType &timeout) {
     uint32 sizeToWrite = size;
     size = 0u;
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     if (IsValid()) {
         if (timeout.IsFinite()) {
 
@@ -357,6 +357,11 @@ bool BasicUDPSocket::Write(const char8 * const input,
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
 #endif
+#if defined(LWIP_RAW_ENABLED) && ! defined(LWIP_ENABLED)
+#endif
+    if (BasicUDPSocket::Write(input, sizeToWrite)) {
+        size = sizeToWrite;
+    }
     return (size > 0u);
 }
 
