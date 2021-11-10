@@ -138,7 +138,7 @@ uint32 InternetHost::MulticastSize() const {
 }
 
 StreamString InternetHost::GetMulticastGroup() const {
-    #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
+    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     StreamString dotName(inet_ntoa(mreq.imr_multiaddr));
     return dotName;
     #else
@@ -149,7 +149,7 @@ StreamString InternetHost::GetMulticastGroup() const {
 }
 
 InternetMulticastCore *InternetHost::GetInternetMulticastHost() {
-    #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
+    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     return &mreq;
     #else
     //TODO Implement the GetInternetMulticastHost
