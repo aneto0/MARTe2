@@ -218,12 +218,7 @@ StreamString InternetHost::GetAddress() const {
     dotName = (inet_ntoa(address.sin_addr));
 #endif
 #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
-    char strAddress[INET_ADDRSTRLEN];
-    char* ptr = inet_ntop(AF_INET, &(address.addr), strAddress, INET_ADDRSTRLEN);
-    if(ptr != NULL_PTR(char*)) {
-        dotName.Seek(0);
-        dotName.Printf("%s", strAddress);
-    }
+    dotName = (inet_ntoa(address.addr));
 #endif
     return dotName;
 }
