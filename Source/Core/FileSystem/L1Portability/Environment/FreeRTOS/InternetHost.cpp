@@ -121,15 +121,19 @@ class LocalHostInfo {
 };
 
 void InternetHost::SetMulticastGroup(const char8 *const addr) {
-    #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
+    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));  
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
     #endif
+    //TODO: Implement set multicast group for the lwIP raw scenario
 }
 
 uint32 InternetHost::MulticastSize() const {
-    #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
-    return static_cast<uint32>(sizeof(mreq));
+    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
+        return static_cast<uint32>(sizeof(mreq));
+    #else
+    //TODO: Implement MulticastSize for the lwIP raw scenario
+        return 0u;
     #endif
 }
 
