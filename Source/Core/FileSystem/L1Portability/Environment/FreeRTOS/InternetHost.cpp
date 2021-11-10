@@ -190,9 +190,8 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
 InternetHost::InternetHost(const uint16 port,
                            const char8 * const addr) {
 #if defined(LWIP_RAW_ENABLED) || defined(LWIP_ENABLED)    
-    if(!SetPort(port)) {
-        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "InternetHost::InternetHost() SetPort() failed.");
-    }
+    SetPort(port);
+
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     if(!SetAddress(addr)) {
         REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "InternetHost::InternetHost() SetAddress() failed.");
