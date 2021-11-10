@@ -232,7 +232,7 @@ uint32 InternetHost::GetAddressAsNumber() const {
     #endif
     #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
         //InternetHostCore wraps ip_addr_t which for IPv4 is a struct with a single u32
-        ipAddrUInt32 = address.addr;
+        ipAddrUInt32 = address.addr.addr;
     #endif
         return ipAddrUInt32;
 }
@@ -265,23 +265,7 @@ bool InternetHost::SetAddress(const char8 * const addr) {
 #endif
 #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
     if(ret) {
-        int32 retVal = inet_pton(AF_INET, addr, &address.addr);
-        switch(retVal) {
-            case 0: {
-                REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "InternetHost::SetAddress() Provided address does not contain a valid IP address string");
-                ret = false;
-                break;
-            }
-            case -1: {
-                //TODO Check if this is really necessary here because AF_INET is hardcoded and should be always valid in this context
-                REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "InternetHost::SetAddress() InternetHost does not contain a valid family");
-                ret = false;
-                break;
-            }
-            case 1: {
-                ret = true;
-            }
-        }
+        address.addr.addr = inet_addr(addr);
     }
 #endif
 #if !defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
@@ -315,7 +299,7 @@ void InternetHost::SetAddressByNumber(const uint32 number) {
     address.sin_addr.s_addr = number;
 #endif
 #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
-    address.addr = htons(number);
+    address.addr.addr = htons(number);
 #endif
 }
 

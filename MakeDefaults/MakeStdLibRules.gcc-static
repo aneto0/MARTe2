@@ -29,9 +29,11 @@ else
 	include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc
 endif
 
-$(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
+$(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC)
+	touch $@
 	$(COMPILER) -c $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
 	$(LINKER) -r $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) -o $(BUILD_DIR)/$*.ex 
+	rm -f createLibrary
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
 	touch $@

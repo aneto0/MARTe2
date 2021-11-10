@@ -25,13 +25,16 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
  #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
-#include "lwip/opt.h"
+
 #include "lwip/dhcp.h"
+#include "lwip/err.h"
 #include "lwip/igmp.h"
 #include "lwip/netif.h"
+#include "lwip/opt.h"
+#include "lwip/pbuf.h"
+#include "lwip/sockets.h"
 #include "lwip/tcpip.h"
 #include "lwip/udp.h"
-#include "lwip/sockets.h"
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -132,13 +135,13 @@ bool BasicUDPSocket::Read(char8* const output,
 bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
 
-    int32 ret = -1;
+    err_t err;
 #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     uint32 sizeToWrite = size;
     size = 0u;
     if (IsValid()) {
         /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0,
+        int32 ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0,
                                         reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()), destination.Size()));
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
@@ -146,6 +149,8 @@ bool BasicUDPSocket::Write(const char8* const input,
         }
         else {
             REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed sendto()");
+            //Outside the err_enum_t scope
+            err = -20;
         }
     }
     else {
@@ -157,14 +162,16 @@ bool BasicUDPSocket::Write(const char8* const input,
     ip_addr_t destIPAddress;
     destIPAddress = (destination.GetInternetHost())->addr;
     uint16 destPort = (destination.GetInternetHost())->port;
+
     struct pbuf *packetBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
     MemoryOperationsHelper::Copy(packetBuffer->payload, input, size);
-    err_t err = udp_sendto(connectionSocket.UDPHandle, packetBuffer, &destIPAddress, destPort);
-    NetworkInterfaceHook(NULL);
+    err = udp_sendto(connectionSocket.UDPHandle, packetBuffer, &destIPAddress, destPort);
     pbuf_free(packetBuffer);
-    ret = err;
+
+    NetworkInterfaceHook(NULL);
+
 #endif
-    return (ret != 0);
+    return (err == ERR_OK);
 }
 
 bool BasicUDPSocket::Open() {
@@ -173,6 +180,7 @@ bool BasicUDPSocket::Open() {
     return (connectionSocket >= 0);
 #endif
     connectionSocket.UDPHandle = udp_new();
+    printf("-------> UDP PCB %p\r\n", connectionSocket.UDPHandle);
     return (connectionSocket.UDPHandle != NULL);
 }
 
