@@ -26,6 +26,7 @@
 #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
 #include "lwip/netif.h"
 #include "lwip/sockets.h"
+#include "lwip/inet.h"
 #endif
 
 /*---------------------------------------------------------------------------*/
