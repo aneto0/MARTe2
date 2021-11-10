@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
 #include "lwip/sockets.h"
+#include "lwip/ip_addr.h"
 #endif
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -44,14 +45,10 @@ namespace MARTe{
 typedef sockaddr_in InternetHostCore;
 #endif
 #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
-struct ip4_addr {
-  u32_t addr;
-};
-typedef struct ip4_addr ip4_addr_t;
-struct InternetHostCore {
+typedef struct {
     ip_addr_t addr;
     uint16 port;
-};
+}InternetHostCore;
 #endif
 #if !defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
 typedef void * InternetHostCore;

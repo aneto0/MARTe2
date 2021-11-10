@@ -207,7 +207,7 @@ bool BasicUDPSocket::Connect(const char8 * const address,
                              const uint16 port) {
 
     bool ret = IsValid();
-#ifdef LWIP_ENABLED
+#if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
     if (ret) {
         destination.SetPort(port);
         ret = true;

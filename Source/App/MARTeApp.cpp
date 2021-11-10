@@ -55,7 +55,7 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
     MARTe::StreamString errorCodeStr;
     MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
     MARTe::StreamString err;
-    err.Printf("[%s - %s:%d]: %s", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    err.Printf("[%s - %s:%d]: %s\r\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     bootstrap.Printf(err.Buffer());
 }
 
