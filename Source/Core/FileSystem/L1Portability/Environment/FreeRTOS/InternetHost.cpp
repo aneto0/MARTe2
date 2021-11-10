@@ -165,18 +165,18 @@ StreamString InternetHost::GetHostName() const {
 }
 
 const char8 *InternetHost::GetLocalHostName() {
-    return LocalHostInfo::Instance()->GetLocalHostName();
+    return LocalHostInfo::Instance().GetLocalHostName();
 }
 
 const char8 *InternetHost::GetLocalAddress() {
-    return LocalHostInfo::Instance()->GetIpAddress();
+    return LocalHostInfo::Instance().GetIpAddress();
 }
 
 uint32 InternetHost::GetLocalAddressAsNumber() {
 
     uint32 ret = 0u;
     uint32 comp[4];
-    const char8* name = LocalHostInfo::Instance()->GetIpAddress();
+    const char8* name = LocalHostInfo::Instance().GetIpAddress();
     if (name != NULL) {
         #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
             sscanf(name, "%u.%u.%u.%u", &comp[3], &comp[2], &comp[1], &comp[0]);
