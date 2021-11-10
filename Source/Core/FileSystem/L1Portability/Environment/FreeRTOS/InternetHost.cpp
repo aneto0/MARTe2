@@ -53,7 +53,7 @@ class LocalHostInfo {
     public:
         static LocalHostInfo& Instance() {
             static LocalHostInfo instance;
-            return &instance;
+            return instance;
         }
 
         ~LocalHostInfo() {
@@ -116,6 +116,8 @@ class LocalHostInfo {
         internetAddressInfoInitialised = true;
         #endif
         }
+        S(S const&);              // Singleton! Do not Implement!
+        void operator=(S const&); // Singleton! Do not implement"
 };
 
 void InternetHost::SetMulticastGroup(const char8 *const addr) {
