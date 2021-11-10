@@ -116,8 +116,8 @@ class LocalHostInfo {
         internetAddressInfoInitialised = true;
         #endif
         }
-        S(S const&);              // Singleton! Do not Implement!
-        void operator=(S const&); // Singleton! Do not implement"
+        LocalHostInfo(LocalHostInfo const&);              // Singleton! Do not Implement!
+        void operator=(LocalHostInfo const&); // Singleton! Do not implement"
 };
 
 void InternetHost::SetMulticastGroup(const char8 *const addr) {
