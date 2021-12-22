@@ -52,11 +52,31 @@ static MARTe::Bootstrap bootstrap;
  * @param[in] errorDescription error textual description.
  */
 void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
-    MARTe::StreamString errorCodeStr;
-    MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    MARTe::StreamString err;
-    err.Printf("[%s - %s:%d]: %s\r\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    bootstrap.Printf(err.Buffer());
+	using namespace MARTe;
+//	static char8 errBuffer[MAX_ERROR_MESSAGE_SIZE];
+//	static StreamMemoryReference err(errBuffer, MAX_ERROR_MESSAGE_SIZE);
+//
+//	static char8 errCodeBuffer[MAX_ERROR_MESSAGE_SIZE];
+//	static StreamMemoryReference errCode(errCodeBuffer, MAX_ERROR_MESSAGE_SIZE);
+//
+//	//err.Seek(0);
+//	err.SetSize(0);
+//
+//	//errCode.Seek(0);
+//	errCode.SetSize(0);
+//
+////	for(int i = 0; i < MAX_ERROR_MESSAGE_SIZE; i++) {
+////		errCodeBuffer[i] = errBuffer[i] = 0;
+////	}
+//
+//    ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errCode);
+//
+//    err.Printf("[%s - %s:%d]: %s", errCode.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+//    bootstrap.Printf(err.Buffer());
+//    bootstrap.Printf("\r\n");
+
+	bootstrap.Printf(errorDescription);
+	bootstrap.Printf("\r\n");
 }
 
 /*---------------------------------------------------------------------------*/
