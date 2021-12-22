@@ -55,7 +55,7 @@ extern "C" {
     */
     void PreLoader(void (*_loader)(void*)) {      
         //The preloader suspends itself until the hw initialisation ends
-//        vTaskSuspend(NULL);  
+        vTaskSuspend(NULL);  
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
         loader(0, NULL);
 

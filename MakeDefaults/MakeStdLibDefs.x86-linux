@@ -37,5 +37,5 @@ MARTe2_TEST_ENVIRONMENT?=GTest
 
 LFLAGS = -Wl,--no-as-needed -fPIC 
 #-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
-CFLAGSPEC+= -DUSE_PTHREAD -pthread
+CFLAGSPEC+= -DUSE_PTHREAD -pthread -Wno-deprecated-declarations
 LIBRARIES +=  -lm -lpthread -lrt -ldl
