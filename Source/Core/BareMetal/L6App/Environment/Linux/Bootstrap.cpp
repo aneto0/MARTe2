@@ -207,4 +207,8 @@ void Bootstrap::Printf(const char8 * const msg) {
     printf("%s\n", msg);
 }
 
+void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
+    loader(argc, argv);
+}
+
 }

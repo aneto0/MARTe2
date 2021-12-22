@@ -106,12 +106,12 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
     //TODO CHECK Priority and stack size as parameter
     /* Create the task, storing the handle. */
     xReturned = xTaskCreate(
-                    PreLoader,                     /* Function that implements the task. */
+                    PreLoader,                          /* Function that implements the task. */
                     "Main",                             /* Text name for the task. */
                     4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
                     (void*)loader,                      /* Parameter passed into the task. */
                     tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
-                    &marte2MainTask);                         /* Used to pass out the created task's handle. */
+                    &marte2MainTask);                   /* Used to pass out the created task's handle. */
 
     vTaskStartScheduler(); //Start FreeRTOS Scheduler
 
