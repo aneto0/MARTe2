@@ -140,7 +140,7 @@ When the name is preceded by a minus sign (-) (e.g. -L1PortabilityBGTest.a) the 
 layers will be built and, if and only if the specified name is found, it will be removed from the list of the linked objects.
 
 When operating in Layer mode, the MARTe2 naming convention helps filtering in/out the right tier as a capital letter (B for BareMetal, 
-S for Scheduler and F for FileSystem) is appended to the layer name itself (e.g. L1PortabilityBGTest.a)
+S for Scheduler and F for FileSystem) is appended to the layer name itself (e.g. L1PortabilityBGTest.a or L2ObjectsBGTest.a)
 
 Note that the filter cannot operate in mixed black/whitelist mode (e.g. you cannot mix L1PortabilityBGTest.a:-L2ObjectsBGTest.a). If you both include and exclude
 an error will be generated.
