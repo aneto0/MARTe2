@@ -85,6 +85,62 @@ The MakeDefaults directory can be configured by means of the MARTe2_MAKEDEFAULT_
 Once the TARGET environment variable is set, inside that folder you must have (at least) MakeStdLibDefs.arch-env and MakeStdLibRules.arch-env files.
 
 At this point, these two files may combine already existing Architecture/Environment or specify new ones. Using the MARTe2_PORTABLE_ENV_DIR and
-MARTe2_PORTABLE_ARCH_DIR directories, you can also move outside the MARTe2 directory tree your own porting implementation, leaving unaffected the original
-folder content and structure.
+MARTe2_PORTABLE_ARCH_DIR environment variables, you can also move outside the MARTe2 directory tree your own porting implementation, leaving unaffected the original
+folder content and structure, given however they remain hierarchically structured as their bundled counterpart.
 
+
+Architecture/Environment unbinding
+----------------------------------
+
+In some scenarios it may be difficult a total separation between architecture and environment. When this happens, it is advisable to use the following
+pattern. This approach can be already found inside some of the actual MARTe2 porting.
+
+- Create a standard porting file, where instead of the real implementation you only put a #define guarded include
+- Only in the included file, use the needed "mixed" approach
+- In your MakeStdLibDefs.arch-env add the ENV_ARCH_CUSTOMIZATION variable
+
+For example, the CompilerTypes.h file for the Xilinx Ultrascale+ implementation has a non-generic armv8 gcc porting. To achieve that, a standard
+CompilerTypes.h is produced:
+.. code-block:: bash
+    #ifdef XILINX_ULTRASCALE
+    #include "CompilerTypesXil.h"
+    #define CUSTOMIZED_COMPILERTYPES_HEADER
+    #endif
+
+    #ifndef CUSTOMIZED_COMPILERTYPES_HEADER
+    #include "CompilerTypesDefault.h"
+    #endif
+
+As shown above, the ENV_ARCH_CUSTOMIZATION is brought inside the CompilerTypes.h file and its value is used to distinguish between "clean" and
+targeted implementation. Note also the approach allows multiple implementations and a fallback CompilerTypesDefault.h implementation. The fallback
+implementation is, effectively, the default clean one.
+
+Portable test environment
+-------------------------
+
+MARTe2 "standard" test suite is based on GTest. Another option, which comes handy when porting MARTe2 is the availability of a portable test environment.
+The portable test environment is based on a mechanism that offers an interface compatible to the one offered by GTest but way simpler 
+in terms of implementation. Standard makefiles default to the GTest suite, the setting of the MARTe2_TEST_ENVIRONMENT variable to "Portable" instead,
+switches to the Portable. The portable environment, used in conjunction with the static test mode, produces a whole test executable which can be
+executed on the ported environment.
+
+To reduce the size of the executable or the scope of the tests, a test link filter is available. It is enabled only when MARTe2_TEST_ENVIRONMENT is set to 
+"Portable" and enables another two options: MARTe2_TEST_LINK_FILTER_MODE and MARTe2_FILTER_ITEMS
+
+The MARTe2_TEST_LINK_FILTER_MODE environment variable controls the level at which the filter has to operate while the MARTe2_FILTER_ITEMS controls what,
+also according to the mode, has to be included or excluded from the linking step in the executable generation.
+
+The MARTe2_TEST_LINK_FILTER_MODE can be:
+- Layer, the filtering happens at whole Tier/Layer level, meaning that the MARTe2_FILTER_ITEMS will contain the name of the layers which have to be included/excluded;
+- Library, the filtering happens at single test object level, meaning that the MARTe2_FILTER_ITEMS will contain the name of the test objects that have to be included/excluded;
+
+The MARTe2_FILTER_ITEMS environment variable must contain a colon (:) separated list of the names of the layers/library to include or exclude.
+When only the name is specified (e.g. L1PortabilityBGTest.a) the linking operates in whitelist mode and includes only the specified library.
+When the name is preceded by a minus sign (-) (e.g. -L1PortabilityBGTest.a) the linking operates in blacklist mode, a whole list of the available
+layers will be built and, if and only if the specified name is found, it will be removed from the list of the linked objects.
+
+When operating in Layer mode, the MARTe2 naming convention helps filtering in/out the right tier as a capital letter (B for BareMetal, 
+S for Scheduler and F for FileSystem) is appended to the layer name itself (e.g. L1PortabilityBGTest.a)
+
+Note that the filter cannot operate in mixed black/whitelist mode (e.g. you cannot mix L1PortabilityBGTest.a:-L2ObjectsBGTest.a). If you both include and exclude
+an error will be generated.
