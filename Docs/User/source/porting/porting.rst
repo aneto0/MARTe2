@@ -243,3 +243,49 @@ or fail-safe value.
 
 Also consider that, given that the Architecture and Environment directories are different, porting may be only oriented to just one of them.
 This could be achieved by setting accordingly the MARTe2_PORTABLE_ARCH_DIR and MARTe2_PORTABLE_ENV_DIR.
+
+Step 6 - Quick file to change reference
+---------------------------------------
+
+Files which are needed are (1)
+
+BareMetal - L0Types - Architecture - CompilerTypes.h
+
+BareMetal - L1Portability - Architecture - AtomicA.h (2)
+BareMetal - L1Portability - Architecture - EndianityA.h (3)
+BareMetal - L1Portability - Architecture - FastMathA.h
+BareMetal - L1Portability - Architecture - HardwareIA.h (4)
+BareMetal - L1Portability - Architecture - HighResolutionTimerA.h (5)
+BareMetal - L1Portability - Architecture - ProcessorA.h (6)
+
+BareMetal - L1Portability - Environment - BasicConsole.cpp (7)
+BareMetal - L1Portability - Environment - GeneralDefinitions.h (8)
+BareMetal - L1Portability - Environment - HardwareI.cpp (9)
+BareMetal - L1Portability - Environment - HighResolutionTimer.h (10) + HighResolutionTimerCalibrator.h/.cpp
+BareMetal - L1Portability - Environment - LoadableLibrary.cpp (11)
+BareMetal - L1Portability - Environment - Sleep.cpp (12)
+BareMetal - L1Portability - Environment - StandardHeap.cpp (13)
+BareMetal - L1Portability - Environment - Timestamp.cpp (14)
+
+ - (1): provided stubs are empty do-nothing implementation of the described methods.
+ - (2): when porting AtomicA.h, prefer intrinsics over inline assembly where possible (e.g. __atomic_test_and_set)
+ - (3): when porting EndianityA.h, ensure your platform endianess and implement accordingly the To/From functions. 
+  Some of them may result in do-nothing functions (e.g. the ToLittleEndian in a little endian architecture).
+  Consider that some architectures may be both configured as big and little.
+  Prefer intrinsics to achieve endiannes swap (e.g. __bswap/16/32/64).
+ - (4): HardwareIA.h holds the function that will be called at startup, which is intended to be called as hardware initialisation.
+ - (5): Native microseconds-granular counters are preferred, to suit internal calculations (delays, etc).
+ - (6): Can also be implemented to return a fixed compile-time value if cpuid mechanism is unwanted/unnecessary as not fundamental.
+ - (7): Can also be empty-implemented like the stub, if the console is unavailable (e.g. headless or unsupervised) or unneeded.
+ - (8): Catch all container for all baseline stuff (e.g. handles and constants).
+ - (9): Contains the code which must be run before MARTe2 GlobalObjectsDatabase construction, see HardwareIA.h and notes above.
+ - (10): If the vanilla 32/64 bit counter is available without further initialisations, the implementation can be straightforwardly
+         included in HighResolutionTimer.h (stateless, no class, direct inline methods). Else, if the HRT needs a stateful implementation
+         or a peripheral initialisation beforehand, the HRT calibrator approach can be used. This means that you have an instance of the 
+         calibrator, which is a class in charge of the initialisation and preparation of the timer/counter which lies statically and externally
+         referenced from the HighResolutionTimer.h file inside the inlined methods. This approach can be translated anywhere else, to suit
+         similar needs.
+ - (11): If the porting is based on dynamic linking and runtime module loading, place here suitable functions (see Linux dlopen())
+ - (12): Sleep functions here are meant to be, if available, a non-busy sleep alternative from the OS (e.g. yielding like the FreeRTOS vTaskDelay()).
+ - (13): Must implement own heap management function (alloc/free/realloc/...). Use OS-aware primitives when available (e.g. FreeRTOS vPortMalloc/vPortFree)
+ - (14): Timestamp functions can be left empty if the platform has not RTC
