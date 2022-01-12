@@ -144,3 +144,102 @@ S for Scheduler and F for FileSystem) is appended to the layer name itself (e.g.
 
 Note that the filter cannot operate in mixed black/whitelist mode (e.g. you cannot mix L1PortabilityBGTest.a:-L2ObjectsBGTest.a). If you both include and exclude
 an error will be generated.
+
+
+MARTe2 startup hooks
+--------------------
+
+Some embedded deployment scenarios require that hardware initialisation functions start before everything else goes up. This is particularly useful
+when deploying the full MARTe2 Application, which owns already a main() entry point.
+MARTe2 has currently two (2) hooks which are called during the startup phase, before the GlobalObjectsDatabase constructor begins its initialisation loop:
+ - InitHardware()
+ - InitPlatform()
+
+Their declaration stays inside BareMetal/L1Portability/HardwareI.h and you should provide an implementation (at least an empty one if not needed).
+Implementation of these methods are intended to initialise the underlying hardware platform before the MARTe initialisation process begins, like in
+embedded or microcontroller-based platforms, where peripherals (e.g. U[S]ART) should be initialised beforehand (e.g. console output functions).
+They are called subsequently, one after the other without any other intermediate call (e.g. InitHardware(); InitPlatform();).
+
+
+
+Bootstrapping advices
+---------------------
+
+If the platform initialisation does not require to be executed before the GlobalObjectsDatabase construction, it can be
+accomplished at a later stage in the ported Bootstrap.cpp. This is the case of the current FreeRTOS implementation, where a MARTe2HardwareInitialise()
+extern function is expected to be implemented from the hardware platform side.
+
+In the specific aforementioned FreeRTOS implementation, as the platform hardware initialisation may be required to run in a task execution environment,
+MARTe2 waits for a vTaskNotification to resume its operations. The minimal MARTe2HardwareInitialise() call must notify the caller task to start MARTe2.
+
+
+Walkthrough
+-----------
+
+The porting guide is supported by the following walkthrough, in order to speedup the boilerplate operations needed to begin the MARTe2 porting process.
+
+Step 1 - Makefile Rules and Definitions
+---------------------------------------
+
+In the first step you will need to create a suitable directory to hold the two Makefile Rules and Definitions for your architecture.
+Makefile naming convention needs for these two to be named with the following scheme [architecture]-[environment] where
+ - [architecture] can also be split into subarchitectures (e.g. armv8_gcc or x86_gcc or x86_cl)
+ - [environment] can also be split into subenvironments (e.g. freertos_us or bare_us)
+
+Step 2 - Change MakeStdLibDefs file
+-----------------------------------
+Inherit an existing MakeStdLibDefs with default needed compiler defines by changing the first inclusion. You can use a shipped one or start from
+one of them to adapt to the ported platform.
+
+Update the ENVIRONMENT and ARCHITECTURE (see above) with the names your architecture and environment combination should have. Note that
+these two names will match the two Architecture/Environment subdirectories under each ported layer
+For tidyness, their name should be given accordingly to their internally set ARCHITECTURE and ENVIRONMENT variables.
+
+Update the MARTe2_LINK_MODE variable to suit your environment. Allowed values are Static or anything else (also none or undefined). This value will
+affect the MARTeApp linking step.
+
+Update the MARTe2_TEST_ENVIRONMENT variable to suit your needs. Allowed values are Portable and GTest. This value will affect the MARTe2 test suite 
+generation.
+
+Append, by using INCLUDES+=, eventual additional directories which are needed during the compilation process. Keep in mind that these are
+the ones where both ported architecture and environment code will source. Usually here goes the BSP (Board Support Package) path where all the includable
+headers reside. To keep the code clean and independent from the path, you can use your own environment variable to point the includes to the right place.
+
+Update the (a) COMPILERPREFIX, (b) COMPILER, (c) CCOMPILER and (d) LINKER with your (a) prefix for all the names (e.g. aarch64-none-elf), (b) C++ compiler (e.g. -g++), 
+(c) C compiler (e.g. -gcc) and (d) linker (e.g. -ld). The COMPILERPREFIX could be omitted, as its purpose is solely aestethic, avoiding repetition.
+
+Update the CPUSPECIFICFLAG, ADDITIONALFLAGS, OPTIM and CFLAGS according to your own platform specifications. Note that the only significant variable
+is CFLAGS, which is built appending the others.
+
+
+Step 3 - Change MakeStdLibRules file
+------------------------------------
+
+Inherit an existing MakeStdLibRules with default needed compiler defines by changing the first inclusion. You can use a shipped one or start from one
+of them to adapt to the ported platform. Please note here that rules are also named with a convention and they inherit/override settings (e.g. gcc-dynamic vs gcc-static).
+
+
+Step 4 - Set the right environment variables
+--------------------------------------------
+
+In contrast to standard shipped MARTe2, the MARTe2_DIR environment variable must be set in order for the makefiles chain to become able to pick
+MARTe2 and own ported files. This becomes true especially if using the external Makedefaults/Architecture/Environment directories configuration.
+
+At a bare minimum, the following environment variables must be set:
+ - MARTe2_MAKEDEFAULT_DIR (where aforementioned MakeStdLibDefs and MakeStdLibRules reside)
+ - MARTe2_PORTABLE_ENV_DIR (where the environment-related porting files reside)
+ - MARTe2_PORTABLE_ARCH_DIR (where the architecture-related porting files reside)
+
+After the bare minimum variables, you must also consider the BSP files location which will be needed for your own platform porting. This variable
+will be used in the aforementioned INCLUDES+= line inside the MakeStdLibDefs file previously written.
+
+
+Step 5 - Create the architecture and environment files
+------------------------------------------------------
+
+Use the provided stubs to speedup the development process or take them from an existing implementation. Consider that the stubs or, 
+alternatively, your own must provide an implementation for every function defined (no __weaks symbols) eventually returning a failure
+or fail-safe value.
+
+Also consider that, given that the Architecture and Environment directories are different, porting may be only oriented to just one of them.
+This could be achieved by setting accordingly the MARTe2_PORTABLE_ARCH_DIR and MARTe2_PORTABLE_ENV_DIR.
