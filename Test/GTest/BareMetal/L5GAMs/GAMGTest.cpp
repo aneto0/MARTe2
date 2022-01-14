@@ -203,6 +203,11 @@ TEST(BareMetal_L5GAMs_GAMGTest,TestAddOutputBrokers_InvalidBroker) {
     ASSERT_TRUE(test.TestAddOutputBrokers_InvalidBroker());
 }
 
+TEST(BareMetal_L5GAMs_GAMGTest,TestSortBrokers) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestSortBrokers());
+}
+
 TEST(BareMetal_L5GAMs_GAMGTest,TestGetInputBrokers) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetInputBrokers());

@@ -2494,6 +2494,79 @@ bool GAMTest::TestAddOutputBrokers_InvalidBroker() {
     return !gam.AddOutputBrokers(twoBrokers);
 }
 
+bool GAMTest::TestSortBrokers() {
+    bool ret = InitialiseGAMEnviroment(gamTestConfig2);
+    if (ret) {
+        ReferenceT<GAMTestGAM1> testGAM = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = testGAM.IsValid();
+        if (ret) {
+            ReferenceContainer inputBrokers;
+            ret = testGAM->GetInputBrokers(inputBrokers);
+            if (ret) {
+                ReferenceT<BrokerI> element = inputBrokers.Get(0);
+                ret = element.IsValid();
+                if (ret) {
+                    StreamString dsName = element->GetOwnerDataSourceName();
+                    ret = dsName == "DDB2";
+                }
+                if(ret){
+                    element = inputBrokers.Get(1);
+                    ret = element.IsValid();
+                    if (ret) {
+                        StreamString dsName = element->GetOwnerDataSourceName();
+                        ret = dsName == "DDB1";
+                    }
+                }
+            }
+            if(ret){
+                ReferenceContainer outputBrokers;
+                ret = testGAM->GetOutputBrokers(outputBrokers);
+                ReferenceT<BrokerI> element = outputBrokers.Get(0);
+                ret = element.IsValid();
+                if (ret) {
+                    StreamString dsName = element->GetOwnerDataSourceName();
+                    ret = dsName == "DDB1";
+                }
+            }
+        }
+    }
+    if (ret) {
+        ReferenceT<GAMTestGAM1> testGAM = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
+        ret = testGAM.IsValid();
+        if (ret) {
+            ReferenceContainer outputBrokers;
+            ret = testGAM->GetOutputBrokers(outputBrokers);
+            if (ret) {
+                ReferenceT<BrokerI> element = outputBrokers.Get(0);
+                ret = element.IsValid();
+                if (ret) {
+                    StreamString dsName = element->GetOwnerDataSourceName();
+                    ret = dsName == "DDB2";
+                }
+                if(ret){
+                    element = outputBrokers.Get(1);
+                    ret = element.IsValid();
+                    if (ret) {
+                        StreamString dsName = element->GetOwnerDataSourceName();
+                        ret = dsName == "DDB1";
+                    }
+                }
+            }
+            if(ret){
+                ReferenceContainer inputBrokers;
+                ret = testGAM->GetInputBrokers(inputBrokers);
+                ReferenceT<BrokerI> element = inputBrokers.Get(0);
+                ret = element.IsValid();
+                if (ret) {
+                    StreamString dsName = element->GetOwnerDataSourceName();
+                    ret = dsName == "DDB1";
+                }
+            }
+        }
+    }
+    return ret;
+}
+
 bool GAMTest::TestGetInputBrokers() {
     return TestAddInputBrokers();
 }
