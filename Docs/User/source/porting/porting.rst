@@ -242,7 +242,9 @@ alternatively, your own must provide an implementation for every function define
 or fail-safe value.
 
 Also consider that, given that the Architecture and Environment directories are different, porting may be only oriented to just one of them.
-This could be achieved by setting accordingly the MARTe2_PORTABLE_ARCH_DIR and MARTe2_PORTABLE_ENV_DIR.
+This could be achieved by setting accordingly the MARTe2_PORTABLE_ARCH_DIR and MARTe2_PORTABLE_ENV_DIR variables.
+
+Caveat: If other ancillary files are needed, aside the mandatory porting ones, keep in mind to add their .x line in the Makefile.inc
 
 Step 6 - Quick file to change reference
 ---------------------------------------
@@ -267,6 +269,32 @@ BareMetal - L1Portability - Environment - Sleep.cpp (12)
 BareMetal - L1Portability - Environment - StandardHeap.cpp (13)
 BareMetal - L1Portability - Environment - Timestamp.cpp (14)
 
+BareMetal - L6App - Environment - Bootstrap.cpp (15)
+
+FileSystem - L1Portability - Environment - BasicFile.cpp (16)
+FileSystem - L1Portability - Environment - BasicFileProperties.h (17)
+FileSystem - L1Portability - Environment - BasicSocket.cpp (18)
+FileSystem - L1Portability - Environment - BasicTCPSocket.cpp
+FileSystem - L1Portability - Environment - BasicUART.cpp (19)
+FileSystem - L1Portability - Environment - BasicUARTProperties.h
+FileSystem - L1Portability - Environment - Directory.cpp (20)
+FileSystem - L1Portability - Environment - DirectoryCore.h
+FileSystem - L1Portability - Environment - DirectoryScanner.cpp
+FileSystem - L1Portability - Environment - InternetHost.cpp (21)
+FileSystem - L1Portability - Environment - InternetHostCore.h
+FileSystem - L1Portability - Environment - InternetMulticastCore.h
+FileSystem - L1Portability - Environment - InternetService.cpp (22)
+FileSystem - L1Portability - Environment - InternetServiceCore.h
+FileSystem - L1Portability - Environment - Select.cpp (23)
+FileSystem - L1Portability - Environment - SelectProperties.h
+FileSystem - L1Portability - Environment - SocketCore.h (24)
+
+Scheduler - L1Portability - Environment - EventSem.cpp
+Scheduler - L1Portability - Environment - MutexSem.cpp
+Scheduler - L1Portability - Environment - Processor.cpp
+Scheduler - L1Portability - Environment - Threads.cpp (25)
+Scheduler - L1Portability - Environment - ThreadDatabase.h (26)
+
  - (1): provided stubs are empty do-nothing implementation of the described methods.
  - (2): when porting AtomicA.h, prefer intrinsics over inline assembly where possible (e.g. __atomic_test_and_set)
  - (3): when porting EndianityA.h, ensure your platform endianess and implement accordingly the To/From functions. 
@@ -289,3 +317,20 @@ BareMetal - L1Portability - Environment - Timestamp.cpp (14)
  - (12): Sleep functions here are meant to be, if available, a non-busy sleep alternative from the OS (e.g. yielding like the FreeRTOS vTaskDelay()).
  - (13): Must implement own heap management function (alloc/free/realloc/...). Use OS-aware primitives when available (e.g. FreeRTOS vPortMalloc/vPortFree)
  - (14): Timestamp functions can be left empty if the platform has not RTC
+ - (15): Functions can be semantically split between BareMetal/L6App and FileSystem/L6App bootstraps
+ - (16): Handle variable, used across FileSystem implementations, stays in GeneralDefinitions.h. It assumes a POSIX style handle.
+ - (17): Place here convenient structure to hold basic file information (see Linux implementation).
+ - (18): Needs aformentioned Handle and InternetHost class to be defined, see below.
+ - (19): Use BasicUARTProperties.h to define a suitable structure for UART configuration data (bps, data, stop, parity bits, ...)
+ - (20): Use DirectoryCore.h to define a suitable structure to hold directory stat.
+ - (21): Use InternetHostCore.h to define a suitable structure to hold IP/host data.
+ - (22): Use InternetServiceCore.h to define a suitable structure to hold IP/service data.
+ - (23): Use SelectProperties.h to define a suitable structure to hold select data (POSIX fd_set style).
+ - (24): Used by BasicSocket as base handle.
+ - (25): If the OS/BM does not include a thread database, the ThreadDatabase can be used instead, see ThreadDatabase.h
+ - (26): Defaults to a MARTe2 based GenericThreadDatabase, which can be used to store/retrieve currently spawned threads.
+         Be aware that, if not using the database, that some informations may be different between the real number of running threads
+         and the MARTe2 perceived one. For example, if bypassing the ThreadsDatabase, asking directly to the OS the number of threads
+         returns a number that may be inconsistent for the MARTe2 point-of-view. This is especially true in some tests, which expect
+         a zero (0) number of threads still running after the completion. The zero (0) value has to be intended as "MARTe2 has 0 threads running"
+         and not as "The system has 0 threads running". (See socket test suite).
