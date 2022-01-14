@@ -1612,28 +1612,29 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                                             }
                                         }
                                         else {
-                                            uint32 numberOfThreadsGAM=1u;
-                                            numberOfThreadsGAM=atStateThread.GetNumberOfElements(0u);
+                                            uint32 numberOfThreadsGAM = atStateThread.GetNumberOfElements(0u);
                                             Vector<StreamString> threadsGAM(numberOfThreadsGAM+1u);
                                             uint32 stateNDims=atStateThread.GetNumberOfDimensions();
                                             if(stateNDims == 0u) {
                                                 StreamString curThreadsGAM;
                                                 ret = functionsDatabase.Read(stateName, curThreadsGAM);
-                                                threadsGAM[0]=curThreadsGAM;
+                                                threadsGAM[0u] = curThreadsGAM;
                                             }
                                             else {
 
                                                 Vector<StreamString> curThreadsGAM(numberOfThreadsGAM);
                                                 ret = functionsDatabase.Read(stateName, curThreadsGAM);
-                                                for(uint32 i=0u; i<numberOfThreadsGAM; i++) {
-                                                    threadsGAM[i]=curThreadsGAM[i];
+                                                for(uint32 n=0u; n<numberOfThreadsGAM; n++) {
+                                                    threadsGAM[n] = curThreadsGAM[n];
                                                 }
                                             }
 
-                                            threadsGAM[numberOfThreadsGAM]=threadName;
-                                            ret=functionsDatabase.Delete(stateName);
+                                            threadsGAM[numberOfThreadsGAM] = threadName;
+                                            if (ret) {
+                                                ret = functionsDatabase.Delete(stateName);
+                                            }
                                             if(ret) {
-                                                functionsDatabase.Write(stateName, threadsGAM);
+                                                ret = functionsDatabase.Write(stateName, threadsGAM);
                                             }
                                         }
                                     }
@@ -1665,7 +1666,7 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 *const g
                                                             const char8 *const stateName,
                                                             const char8 *const threadName,
                                                             uint32 &syncSignals,
-                                                            bool checkSameGamInMoreThreads) {
+                                                            const bool checkSameGamInMoreThreads) {
     StreamString functionNumber;
     StreamString gamNameStr = gamNameIn;
 
@@ -1713,28 +1714,29 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 *const g
                 }
             }
             else {
-                uint32 numberOfThreadsGAM = 1u;
-                numberOfThreadsGAM = atStateThread.GetNumberOfElements(0u);
+                uint32 numberOfThreadsGAM = atStateThread.GetNumberOfElements(0u);
                 Vector<StreamString> threadsGAM(numberOfThreadsGAM + 1u);
                 uint32 stateNDims = atStateThread.GetNumberOfDimensions();
                 if (stateNDims == 0u) {
                     StreamString curThreadsGAM;
                     ret = functionsDatabase.Read(&stateName[1], curThreadsGAM);
-                    threadsGAM[0] = curThreadsGAM;
+                    threadsGAM[0u] = curThreadsGAM;
                 }
                 else {
 
                     Vector<StreamString> curThreadsGAM(numberOfThreadsGAM);
                     ret = functionsDatabase.Read(&stateName[1], curThreadsGAM);
-                    for (uint32 i = 0u; i < numberOfThreadsGAM; i++) {
-                        threadsGAM[i] = curThreadsGAM[i];
+                    for (uint32 n = 0u; n < numberOfThreadsGAM; n++) {
+                        threadsGAM[n] = curThreadsGAM[n];
                     }
                 }
 
                 threadsGAM[numberOfThreadsGAM] = &threadName[1];
-                ret = functionsDatabase.Delete(&stateName[1]);
                 if (ret) {
-                    functionsDatabase.Write(&stateName[1], threadsGAM);
+                    ret = functionsDatabase.Delete(&stateName[1]);
+                }
+                if (ret) {
+                    ret = functionsDatabase.Write(&stateName[1], threadsGAM);
                 }
             }
         }
@@ -1828,7 +1830,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
     }
     ConfigurationDatabase local;
     if (ret) {
-        local.Write("CheckSameGamInMoreThreads", checkSameGamInMoreThreadsT);
+        ret = local.Write("CheckSameGamInMoreThreads", checkSameGamInMoreThreadsT);
+    }
+    if (ret) {
         //ret = local.AddToCurrentNode(globalDatabase.GetCurrentNode());
         ret = local.CreateAbsolute(globalDatabase.GetName());
     }
@@ -2193,7 +2197,9 @@ bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
     bool ret = true;
     bool checkMultipleProducersWrites = true;
     if (initialiseAfterInitialisation) {
-        checkMultipleProducersWrites = realTimeApplication->CheckMultipleProducersWrites();
+        if (realTimeApplication != NULL_PTR(RealTimeApplication *)) {
+            checkMultipleProducersWrites = realTimeApplication->CheckMultipleProducersWrites();
+        }
     }
     else {
         ret = globalDatabase.MoveToRoot();
