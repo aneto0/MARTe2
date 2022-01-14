@@ -129,14 +129,34 @@ public:
     bool TestSetLocalAddress();
 
     /**
+     * @brief Tests if the function sets the correct IP Multicast group.
+     */
+    bool TestSetMulticastGroup();
+
+    /**
+     * @brief Tests if the function returns the correct IP Multicast group.
+     */
+    bool TestGetMulticastGroup();
+
+    /**
      * @brief Tests if the InternetAddressCore structure is returned correctly.
      */
     bool TestGetInternetHost(const InternetHostTestTable *table);
 
     /**
+     * @brief Tests if the Multicast structure is returned correctly.
+     */
+    bool TestGetInternetMulticastHost();
+
+    /**
      * @brief Tests if the function returns sizeof(InternetAddressCore).
      */
     bool TestSize();
+
+    /**
+     * @brief Tests if the function returns sizeof(InternetMulticastCore).
+     */
+    bool TestMulticastSize();
 };
 
 /*---------------------------------------------------------------------------*/

@@ -81,7 +81,7 @@ find %{build_dir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}
 #Try to copy other user defined folders (e.g. Resources, Configurations, ...)
 for other_folder in %{rpm_other_folders}
 do
-test -e $other_folder && cp -R $other_folder %{buildroot}/%{rpm_top_dir}
+test -e $other_folder && cp -RL --parents $other_folder %{buildroot}/%{rpm_top_dir}
 done
 
 #Create the profile.d information
@@ -106,10 +106,10 @@ done
 #List all the files to be added to the file-list section
 current_path=`pwd`
 cd %{buildroot}
-expattern="Include"
+expattern="Include\/"
 for src_dir in %{rpm_src_dir}
 do
-expattern=$expattern\\\|$src_dir
+expattern=$expattern\\\|$src_dir\/
 done
 
 find . -type f -printf "\"/%%P\"\n" | grep -v $expattern > $current_path/file-lists

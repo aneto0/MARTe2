@@ -118,22 +118,25 @@ public:
     Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]);
 
     /**
-     * @brief Copy constructor. Makes an independent copy of the Matrix that
-     * @details First checks that the Matrix to copy is correctly initialised, then allocates memory and finally copies the values.
+     * @brief Copy constructor. Makes a copy of that. The memory management depends on the that.canDestroy
+     * @details First checks that the Matrix to copy is different from the destination matrix, then frees memory (if needed) and finally
+     * copies the matrix based on that.canDestroy:
+     *     - if that.canDestroy --> allocates memory and then copies the values. (set this.canDestroy = true)
+     *     - if !that.canDestroy --> copies the that.dataPointer. (set this.canDestroy = false)
      * @param[in] that matrix to copy.
      * @post If the matrix to copy is correctly initialised then the new matrix meet the following postconditions:
      * <ul><li> this->dataPointer != NULL </li>
      * <li>this->numberOfRows = that.numberOfRow</li>
      * <li>this->numberOfColumns = that.numberOfColumns</li>
-     * <li>this->canDestry = true</li>
-     * <li>this->staticDeclared = false</li>
+     * <li>this->canDestroy = that->canDestroy</li>
+     * <li>this->staticDeclared = that->staticDeclared</li>
      * </ul>
      * If the matrix to copy dataPointer == NULL || numberOfElements == 0 || numberOfRows == 0, then the following postconditions are met:
      * <ul>
      * <li>this->dataPointer = NULL</li>
      * <li>this->numberOfRows = 0</li>
      * <li>numberOfColumns = 0</li>
-     * <li>canDestry = False</li>
+     * <li>canDestroy = False</li>
      * <li>staticDeclared = True</li>
      * </ul>
      */
@@ -168,24 +171,27 @@ public:
     Vector<T> operator[](const uint32 element);
 
     /**
-     * @brief Copy assignment. Makes an independent copy of the Matrix that
-     * @details First checks that the Matrix to copy is different from the destination matrix, then frees memory (if needed), then allocates memory and finally
-     * copies the values. If the origin and destination of the matrixes is the same, nothing is done.
+     * @brief Copy assignment. Makes a copy of that. The memory management depends on the that.canDestroy
+     * @details First checks that the Matrix to copy is different from the destination matrix, then frees memory (if needed) and finally
+     * copies the matrix based on that.canDestroy:
+     *     - if that.canDestroy --> allocates memory and then copies the values. (set this.canDestroy = true)
+     *     - if !that.canDestroy --> copies the that.dataPointer. (set this.canDestroy = false)
+     * If the origin and destination of the matrixes is the same, nothing is done.
      * @param[in] that matrix to copy.
      * @return The Matrix copied on succeed.
      * @post If the matrix to copy is correctly initialised  then the new matrix meet the following postconditions:
      * <ul><li> this->dataPointer != NULL </li>
      * <li>this->numberOfRows = that.numberOfRow</li>
      * <li>this->numberOfColumns = that.numberOfColumns</li>
-     * <li>this->canDestry = true</li>
-     * <li>this->staticDeclared = false</li>
+     * <li>this->canDestroy = that.canDestroy</li>
+     * <li>this->staticDeclared = that->saticDeclared</li>
      * </ul>
      * If the matrix to copy dataPointer == NULL || numberOfElements == 0 || numberOfRows == 0, then the following postconditions are met:
      * <ul>
      * <li>this->dataPointer = NULL</li>
      * <li>this->numberOfRows = 0</li>
      * <li>numberOfColumns = 0</li>
-     * <li>canDestry = False</li>
+     * <li>canDestroy = False</li>
      * <li>staticDeclared = True</li>
      * </ul>
      */
@@ -206,7 +212,7 @@ public:
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
-    inline void* GetDataPointer() const;
+    inline void* GetDataPointer();
 
     /**
      * @brief Checks if GetDataPointer() is pointing at a statically allocated matrix memory block [][].
@@ -437,36 +443,51 @@ Matrix<T>::Matrix(const Matrix<T> &that) {
         this->numberOfColumns = that.numberOfColumns;
         this->numberOfRows = that.numberOfRows;
         if (that.IsStaticDeclared()) {
-            T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
-            T **rows = new T*[this->numberOfRows];
-            //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
-            dataPointer = reinterpret_cast<void*>(rows);
+            if (that.canDestroy) {// No matrix constructor allows IsStaticDeclared() == true && canDestroy == true, therefore this copy constructor never falls here
+                T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
+                T **rows = new T*[this->numberOfRows];
+                //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+                dataPointer = reinterpret_cast<void*>(rows);
 
-            for (uint32 i = 0u; i < this->numberOfRows; i++) {
-                //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
-                rows[i] = new T[this->numberOfColumns];
-                for (uint32 c = 0u; c < this->numberOfColumns; c++) {
-                    rows[i][c] = auxPointer[i * numberOfColumns + c];
+                for (uint32 i = 0u; i < this->numberOfRows; i++) {
+                    //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
+                    rows[i] = new T[this->numberOfColumns];
+                    for (uint32 c = 0u; c < this->numberOfColumns; c++) {
+                        rows[i][c] = auxPointer[i * numberOfColumns + c];
+                    }
                 }
+                this->canDestroy = true;
             }
+            else {
+                this->canDestroy = false;
+                //lint -e{1555} Direct pointer copy. Justification: that matrix does not manage its memory neither the copy.
+                this->dataPointer = that.dataPointer;
+            }
+            staticDeclared = true;
         }
         else {
+            if (that.canDestroy) {
+                T **auxPointer = reinterpret_cast<T**>(that.dataPointer);
+                T **rows = new T*[this->numberOfRows];
+                //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+                dataPointer = reinterpret_cast<void*>(rows);
 
-            T **auxPointer = reinterpret_cast<T**>(that.dataPointer);
-            T **rows = new T*[this->numberOfRows];
-            //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
-            dataPointer = reinterpret_cast<void*>(rows);
-
-            for (uint32 i = 0u; i < this->numberOfRows; i++) {
-                //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
-                rows[i] = new T[this->numberOfColumns];
-                for (uint32 c = 0u; c < this->numberOfColumns; c++) {
-                    rows[i][c] = auxPointer[i][c];
+                for (uint32 i = 0u; i < this->numberOfRows; i++) {
+                    //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
+                    rows[i] = new T[this->numberOfColumns];
+                    for (uint32 c = 0u; c < this->numberOfColumns; c++) {
+                        rows[i][c] = auxPointer[i][c];
+                    }
                 }
+                this->canDestroy = true;
             }
+            else {
+                this->canDestroy = false;
+                //lint -e{1555} Direct pointer copy. Justification: that matrix does not manage its memory neither the copy.
+                this->dataPointer = that.dataPointer;
+            }
+            staticDeclared = false;
         }
-        staticDeclared = false;
-        canDestroy = true;
     }
     else {
         this->numberOfColumns = 0u;
@@ -523,35 +544,52 @@ Matrix<T>& Matrix<T>::operator =(const Matrix<T> &that) {
             this->numberOfRows = that.numberOfRows;
             //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Cast from pointer to pointer needed.
             if (that.IsStaticDeclared()) {
-                T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
-                T **rows = new T*[this->numberOfRows];
-                //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
-                dataPointer = reinterpret_cast<void*>(rows);
-                for (uint32 i = 0u; i < this->numberOfRows; i++) {
-                    //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
-                    rows[i] = new T[this->numberOfColumns];
-                    for (uint32 c = 0u; c < this->numberOfColumns; c++) {
-                        uint32 auxIdx = (i * numberOfColumns) + c;
-                        rows[i][c] = auxPointer[auxIdx];
+                if (that.canDestroy) { // No matrix constructor allows IsStaticDeclared() == true && canDestroy == true, therefore this copy assignment never falls here
+                    T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
+                    T **rows = new T*[this->numberOfRows];
+                    //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+                    dataPointer = reinterpret_cast<void*>(rows);
+                    for (uint32 i = 0u; i < this->numberOfRows; i++) {
+                        //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
+                        rows[i] = new T[this->numberOfColumns];
+                        for (uint32 c = 0u; c < this->numberOfColumns; c++) {
+                            uint32 auxIdx = (i * numberOfColumns) + c;
+                            rows[i][c] = auxPointer[auxIdx];
+                        }
                     }
+                    canDestroy = true;
                 }
+                else {
+                    this->canDestroy = false;
+                    //lint -e{1555} Direct pointer copy. Justification: that matrix does not manage its memory neither the copy.
+                    this->dataPointer = that.dataPointer;
+                }
+                staticDeclared = true;
             }
             else {
-                T **auxPointer = reinterpret_cast<T**>(that.dataPointer);
-                T **rows = new T*[this->numberOfRows];
-                //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
-                dataPointer = reinterpret_cast<void*>(rows);
+                if (that.canDestroy) {
+                    T **auxPointer = reinterpret_cast<T**>(that.dataPointer);
+                    T **rows = new T*[this->numberOfRows];
+                    //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
+                    dataPointer = reinterpret_cast<void*>(rows);
 
-                for (uint32 i = 0u; i < this->numberOfRows; i++) {
-                    //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
-                    rows[i] = new T[this->numberOfColumns];
-                    for (uint32 c = 0u; c < this->numberOfColumns; c++) {
-                        rows[i][c] = auxPointer[i][c];
+                    for (uint32 i = 0u; i < this->numberOfRows; i++) {
+                        //lint -e{613} Possible use of null pointer 'rows' in left argument to operator '['. Justification: The memory allocated above
+                        rows[i] = new T[this->numberOfColumns];
+                        for (uint32 c = 0u; c < this->numberOfColumns; c++) {
+                            rows[i][c] = auxPointer[i][c];
+                        }
                     }
+                    canDestroy = true;
                 }
+                else {
+                    this->canDestroy = false;
+                    //lint -e{1555} Direct pointer copy. Justification: that matrix does not manage its memory neither the copy.
+                    this->dataPointer = that.dataPointer;
+                }
+                staticDeclared = false;
             }
-            staticDeclared = false;
-            canDestroy = true;
+
         }
         else {
             this->numberOfColumns = 0u;
@@ -581,7 +619,7 @@ T& Matrix<T>::operator()(const uint32 row,
 }
 
 template<typename T>
-inline void* Matrix<T>::GetDataPointer() const {
+inline void* Matrix<T>::GetDataPointer() {
     return dataPointer;
 }
 

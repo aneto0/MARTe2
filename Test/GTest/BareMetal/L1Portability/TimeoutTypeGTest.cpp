@@ -51,6 +51,21 @@ TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorNotDefault) {
     ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault(10));
 }
 
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorInt32Constructor_P) {
+    TimeoutTypeTest timeoutTypeTest;
+    ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault_2(7));
+}
+
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorInt32Constructor_N) {
+    TimeoutTypeTest timeoutTypeTest;
+    ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault_2(-7));
+}
+
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructoruInt64Constructor) {
+    TimeoutTypeTest timeoutTypeTest;
+    ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault_3(1024));
+}
+
 TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestSetTimeoutSec) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestSetTimeoutSec(1));

@@ -63,8 +63,8 @@ bool InternetHostTest::TestDefaultConstructor() {
 }
 
 bool InternetHostTest::TestFullConstructor(uint16 port,
-                                              const char8 * address,
-                                              const char8 * expected) {
+                                           const char8 *address,
+                                           const char8 *expected) {
 
     InternetHost addr(port, address);
     if (addr.GetPort() != port) {
@@ -129,7 +129,6 @@ bool InternetHostTest::TestGetLocalHostName() {
 
     StreamString ret = InternetHost::GetLocalHostName();
 
-
     return true;
 
 }
@@ -139,17 +138,16 @@ bool InternetHostTest::TestGetLocalAddress() {
     StreamString ret = InternetHost::GetLocalAddress();
     bool ok = (StringHelper::Length(ret.Buffer()) > 0);
     StreamString tok;
-    uint32 i=0;
+    uint32 i = 0;
     char8 terminator;
     ret.Seek(0);
-    while(ret.GetToken(tok, ".", terminator)){
+    while (ret.GetToken(tok, ".", terminator)) {
         tok = "";
         i++;
     }
     ok &= (i == 4u);
     return ok;
 }
-
 
 bool InternetHostTest::TestGetLocalAddressAsNumber() {
     return (InternetHost::GetLocalAddressAsNumber() != 0u);
@@ -220,6 +218,20 @@ bool InternetHostTest::TestSetLocalAddress() {
     return ((dotAddr == "127.0.1.1") || (dotAddr == "127.0.0.1"));
 }
 
+bool InternetHostTest::TestSetMulticastGroup() {
+    InternetHost host;
+    host.SetMulticastGroup("234.0.0.1");
+    StreamString maddr = host.GetMulticastGroup();
+    return maddr == "234.0.0.1";
+}
+
+bool InternetHostTest::TestGetMulticastGroup() {
+    InternetHost host;
+    host.SetMulticastGroup("234.0.0.1");
+    StreamString maddr = host.GetMulticastGroup();
+    return maddr == "234.0.0.1";
+}
+
 #define Windows 2
 #define Linux 1
 bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
@@ -240,11 +252,11 @@ bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
 #else
         //ENVIRONMENT==Windows
         /*if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
-            return false;
-        }
-        if (copy->sin_port != htons(addr.GetPort())) {
-            return false;
-        }*/
+         return false;
+         }
+         if (copy->sin_port != htons(addr.GetPort())) {
+         return false;
+         }*/
 #endif
 
         i++;
@@ -252,9 +264,32 @@ bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
     return true;
 }
 
+bool InternetHostTest::TestGetInternetMulticastHost() {
+
+    InternetHost addr;
+    addr.SetMulticastGroup("234.0.0.1");
+    InternetMulticastCore *copy = addr.GetInternetMulticastHost();
+
+#if ENVIRONMENT == Linux
+        StreamString dotName(inet_ntoa(copy->imr_multiaddr));
+        if (dotName != addr.GetMulticastGroup()) {
+            return false;
+        }
+
+#endif
+
+    return true;
+}
+
 bool InternetHostTest::TestSize() {
 
     InternetHost addr;
     return addr.Size() == sizeof(InternetHostCore);
+}
+
+bool InternetHostTest::TestMulticastSize() {
+
+    InternetHost addr;
+    return addr.MulticastSize() == sizeof(InternetMulticastCore);
 }
 

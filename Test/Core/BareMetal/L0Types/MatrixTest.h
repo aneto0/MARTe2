@@ -102,6 +102,12 @@ public:
     bool TestCopyConstructorByTable(T (&matrix)[nRows][nCols]);
 
     /**
+     * @brief Tests the copy constructor from a matrix created by passing directly a matrix which manages its own memory and is not static declared
+     */
+    template<typename T>
+    bool TestCopyConstructorByCanDestroyNonStaticMatrix();
+
+    /**
      * @brief Tests the copy assignment from a matrix created by passing a double pointer which represents a matrix on heap.
      */
     template<typename T>
@@ -123,6 +129,12 @@ public:
      */
     template<typename T, uint32 nRows, uint32 nCols>
     bool TestCopyAssignmentByTable(T (&matrix)[nRows][nCols]);
+
+    /**
+     * @brief Tests the copy assignment from a matrix created with canDestroy = true & IsStatic = false.
+     */
+    template<typename T>
+    bool TestCopyAssignmentByCanDestroyNonStaticMatrix();
 
     /**
      * @brief Tests if the function returns the correct number of columns of the matrix.
@@ -338,7 +350,9 @@ bool MatrixTest::TestCopyConstructorByPointerHeap(T **matrix,
             }
         }
     }
-
+    if (originalMatrix.GetDataPointer() != copiedMatrix.GetDataPointer()) {
+        return false;
+    }
     return !copiedMatrix.IsStaticDeclared();
 }
 
@@ -355,8 +369,10 @@ bool MatrixTest::TestCopyConstructorByPointerStatic(T2 matrix,
             }
         }
     }
-
-    return !copiedMatrix.IsStaticDeclared();
+    if (originalMatrix.GetDataPointer() != copiedMatrix.GetDataPointer()) {
+        return false;
+    }
+    return copiedMatrix.IsStaticDeclared();
 }
 
 template<typename T, uint32 nRows, uint32 nCols>
@@ -370,6 +386,33 @@ bool MatrixTest::TestCopyConstructorByTable(T (&matrix)[nRows][nCols]) {
             }
         }
     }
+    if (originalMatrix.GetDataPointer() != copiedMatrix.GetDataPointer()) {
+        return false;
+    }
+    return copiedMatrix.IsStaticDeclared();
+}
+
+template<typename T>
+bool MatrixTest::TestCopyConstructorByCanDestroyNonStaticMatrix() {
+    uint32 nRows = 2;
+    uint32 nCols = 2;
+    Matrix<T> originalMatrix(nRows, nCols);
+    for (uint32 row = 0u; row < nRows; row++) {
+        for (uint32 col = 0u; col < nCols; col++) {
+            originalMatrix[row][col] = row * row + col * 2;
+        }
+    }
+    Matrix<T> copiedMatrix(originalMatrix);
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            if (copiedMatrix[i][j] != originalMatrix[i][j]) {
+                return false;
+            }
+        }
+    }
+    if (originalMatrix.GetDataPointer() == copiedMatrix.GetDataPointer()) {
+        return false;
+    }
     return !copiedMatrix.IsStaticDeclared();
 }
 
@@ -379,7 +422,8 @@ bool MatrixTest::TestCopyAssignmentByPointerHeap(T **matrix,
                                                  uint32 nCols) {
 
     Matrix<T> originalMatrix(matrix, nRows, nCols);
-    Matrix<T> copiedMatrix = originalMatrix;
+    Matrix<T> copiedMatrix;
+    copiedMatrix = originalMatrix;
     for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
             if (copiedMatrix[i][j] != matrix[i][j]) {
@@ -387,7 +431,9 @@ bool MatrixTest::TestCopyAssignmentByPointerHeap(T **matrix,
             }
         }
     }
-
+    if (originalMatrix.GetDataPointer() != copiedMatrix.GetDataPointer()) {
+        return false;
+    }
     return !copiedMatrix.IsStaticDeclared();
 }
 
@@ -396,7 +442,8 @@ bool MatrixTest::TestCopyAssignmentByPointerStatic(T2 matrix,
                                                    Matrix<T> &originalMatrix,
                                                    uint32 nRows,
                                                    uint32 nCols) {
-    Matrix<T> copiedMatrix = originalMatrix;
+    Matrix<T> copiedMatrix;
+    copiedMatrix = originalMatrix;
     for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
             if (copiedMatrix[i][j] != matrix[i][j]) {
@@ -404,20 +451,51 @@ bool MatrixTest::TestCopyAssignmentByPointerStatic(T2 matrix,
             }
         }
     }
-
-    return !copiedMatrix.IsStaticDeclared();
+    if (originalMatrix.GetDataPointer() != copiedMatrix.GetDataPointer()) {
+        return false;
+    }
+    return copiedMatrix.IsStaticDeclared();
 }
 
 template<typename T, uint32 nRows, uint32 nCols>
 bool MatrixTest::TestCopyAssignmentByTable(T (&matrix)[nRows][nCols]) {
     Matrix<T> originalMatrix(matrix);
-    Matrix<T> copiedMatrix = originalMatrix;
+    Matrix<T> copiedMatrix;
+    copiedMatrix = originalMatrix;
     for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
             if (copiedMatrix[i][j] != matrix[i][j]) {
                 return false;
             }
         }
+    }
+    if (originalMatrix.GetDataPointer() != copiedMatrix.GetDataPointer()) {
+        return false;
+    }
+    return copiedMatrix.IsStaticDeclared();
+}
+
+template<typename T>
+bool MatrixTest::TestCopyAssignmentByCanDestroyNonStaticMatrix() {
+    uint32 nRows = 2;
+    uint32 nCols = 2;
+    Matrix<T> originalMatrix(nRows, nCols);
+    for (uint32 row = 0u; row < nRows; row++) {
+        for (uint32 col = 0u; col < nCols; col++) {
+            originalMatrix[row][col] = row * 2 + col * row;
+        }
+    }
+    Matrix<T> copiedMatrix;
+    copiedMatrix = originalMatrix;
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            if (copiedMatrix[i][j] != originalMatrix[i][j]) {
+                return false;
+            }
+        }
+    }
+    if (originalMatrix.GetDataPointer() == copiedMatrix.GetDataPointer()) {
+        return false;
     }
     return !copiedMatrix.IsStaticDeclared();
 }

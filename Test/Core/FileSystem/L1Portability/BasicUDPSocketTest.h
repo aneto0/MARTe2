@@ -167,6 +167,11 @@ public:
      */
     bool TestWrite(const ReadWriteUDPTestTable* table);
 
+    /**
+     * @brief Tests if the Join function behaves correctly
+     */
+    bool TestJoin(const ConnectListenUDPTestTable* table);
+
 public:
 
     InternetHost server;
