@@ -216,6 +216,12 @@ public:
     bool TestResolveStatesFalse_SameGAMInMoreThreads(bool fromConfig);
 
     /**
+     * @brief Tests the ResolveStates method with the same GAM in more than one thread in the same state.
+     * It returns true because the check is disabled in the configurations
+     */
+    bool TestResolveStates_SameGAMInMoreThreads_Config(bool fromConfig);
+
+    /**
      * @brief Tests the ResolveStates method with more than one sync point in a thread.
      */
     bool TestResolveStatesFalse_MoreSyncs1(bool fromConfig);
@@ -445,6 +451,18 @@ public:
      * @brief Tests the VerifyConsumersAndProducers method with range overlap fail same signal.
      */
     bool TestVerifyConsumersAndProducersFalse_RangeOverlap2();
+
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with range overlap succeeds if
+     * check is disabled by configuration.
+     */
+    bool TestVerifyConsumersAndProducers_RangeOverlap_Config();
+
+    /**
+     * @brief Tests the VerifyConsumersAndProducers method with range overlap succeeds if
+     * check is disabled by configuration.
+     */
+    bool TestVerifyConsumersAndProducers_RangeOverlap_Config_FromConfig();
 
     /**
      * @brief Tests the VerifyConsumersAndProducers method with producer in timing signals.

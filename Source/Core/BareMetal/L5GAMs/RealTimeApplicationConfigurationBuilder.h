@@ -1041,7 +1041,8 @@ private:
     bool AddStateToGAM(const char8 * const gamNameIn,
                        const char8 * const stateName,
                        const char8 * const threadName,
-                       uint32 &syncSignals);
+                       uint32 &syncSignals,
+                       bool checkSameGamInMoreThreads = true);
 
     /**
      * @brief Adds to the TimingDataSource all the GAM timing signals (x__ReadTime, x_ExecTime and, x_WriteTime where x is the GAM name).
