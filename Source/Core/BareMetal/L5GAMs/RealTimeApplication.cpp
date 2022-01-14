@@ -405,95 +405,6 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
 }
 
 bool RealTimeApplication::AddBrokersToFunctions() {
-#if 0
-    bool ret = functionsDatabase.MoveAbsolute("Functions");
-    uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
-    for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-        const char8 *functionId = functionsDatabase.GetChildName(i);
-        ret = functionsDatabase.MoveRelative(functionId);
-        if (ret) {
-            StreamString functionName;
-            ret = functionsDatabase.Read("QualifiedName", functionName);
-
-            if (functionsDatabase.MoveRelative("Signals.InputSignals")) {
-                //take into account ByteSize
-                uint32 numberOfInputSignals = functionsDatabase.GetNumberOfChildren() - 1u;
-                for (uint32 j = 0u; (j < numberOfInputSignals) && ret; j++) {
-                    const char8 *signalId = functionsDatabase.GetChildName(j);
-                    ret = functionsDatabase.MoveRelative(signalId);
-                    if (ret) {
-                        StreamString dsName;
-                        ret = functionsDatabase.Read("DataSource", dsName);
-                        if (ret) {
-                            StreamString fullDataSourcePath = "Data.";
-                            fullDataSourcePath += dsName;
-                            ReferenceT<DataSourceI> dataSource = Find(fullDataSourcePath.Buffer());
-                            ret = dataSource.IsValid();
-                            if (ret) {
-                                ret = dataSource->AddBrokers(InputSignals);
-                                REPORT_ERROR(ErrorManagement::Information, "Getting input brokers for %s", dataSource->GetName());
-                            }
-                            else {
-                                REPORT_ERROR(ErrorManagement::FatalError, "DataSource %s not valid", fullDataSourcePath.Buffer());
-                            }
-                        }
-                        if (ret) {
-                            ret = functionsDatabase.MoveToAncestor(1u);
-                        }
-                    }
-                    else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Failed moving to signal %s.%s", functionName.Buffer(), signalId);
-                    }
-                }
-                if (ret) {
-                    ret = functionsDatabase.MoveToAncestor(2u);
-                }
-            }
-            if (functionsDatabase.MoveRelative("Signals.OutputSignals")) {
-                //take into account ByteSize
-                uint32 numberOfOutputSignals = functionsDatabase.GetNumberOfChildren() - 1u;
-                for (uint32 j = 0u; (j < numberOfOutputSignals) && ret; j++) {
-                    const char8 *signalId = functionsDatabase.GetChildName(j);
-                    ret = functionsDatabase.MoveRelative(signalId);
-                    if (ret) {
-                        StreamString dsName;
-                        ret = functionsDatabase.Read("DataSource", dsName);
-                        if (ret) {
-                            StreamString fullDataSourcePath = "Data.";
-                            fullDataSourcePath += dsName;
-                            ReferenceT<DataSourceI> dataSource = Find(fullDataSourcePath.Buffer());
-                            ret = dataSource.IsValid();
-                            if (ret) {
-                                ret = dataSource->AddBrokers(OutputSignals);
-                                REPORT_ERROR(ErrorManagement::Information, "Getting output brokers for %s", dataSource->GetName());
-                            }
-                            else {
-                                REPORT_ERROR(ErrorManagement::FatalError, "DataSource %s not valid", fullDataSourcePath.Buffer());
-                            }
-                        }
-                        if (ret) {
-
-                            ret = functionsDatabase.MoveToAncestor(1u);
-                        }
-                    }
-                    else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Failed moving to signal %s.%s", functionName.Buffer(), signalId);
-                    }
-                }
-                if (ret) {
-                    ret = functionsDatabase.MoveToAncestor(2u);
-                }
-            }
-            if (ret) {
-                ret = functionsDatabase.MoveToAncestor(1u);
-            }
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed moving to %s", functionId);
-        }
-    }
-#endif
-#if 1
     //pre: called after ConfigureApplication(*)
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
     if (ret) {
@@ -532,7 +443,6 @@ bool RealTimeApplication::AddBrokersToFunctions() {
             function->SortBrokers();
         }
     }
-#endif
     return ret;
 }
 
