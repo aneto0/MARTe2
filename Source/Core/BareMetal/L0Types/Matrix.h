@@ -128,7 +128,7 @@ public:
      * <ul><li> this->dataPointer != NULL </li>
      * <li>this->numberOfRows = that.numberOfRow</li>
      * <li>this->numberOfColumns = that.numberOfColumns</li>
-     * <li>this->canDestroyry = that->canDestroy</li>
+     * <li>this->canDestroy = that->canDestroy</li>
      * <li>this->staticDeclared = that->staticDeclared</li>
      * </ul>
      * If the matrix to copy dataPointer == NULL || numberOfElements == 0 || numberOfRows == 0, then the following postconditions are met:
@@ -443,7 +443,7 @@ Matrix<T>::Matrix(const Matrix<T> &that) {
         this->numberOfColumns = that.numberOfColumns;
         this->numberOfRows = that.numberOfRows;
         if (that.IsStaticDeclared()) {
-            if (that.canDestroy) {// No matrix constructor with allows IsStaticDeclared() == true && canDestroy == true, therefore this copy constructor never falls here
+            if (that.canDestroy) {// No matrix constructor allows IsStaticDeclared() == true && canDestroy == true, therefore this copy constructor never falls here
                 T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
                 T **rows = new T*[this->numberOfRows];
                 //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
@@ -544,7 +544,7 @@ Matrix<T>& Matrix<T>::operator =(const Matrix<T> &that) {
             this->numberOfRows = that.numberOfRows;
             //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Cast from pointer to pointer needed.
             if (that.IsStaticDeclared()) {
-                if (that.canDestroy) { // No matrix constructor with allows IsStaticDeclared() == true && canDestroy == true, therefore this copy assignment never falls here
+                if (that.canDestroy) { // No matrix constructor allows IsStaticDeclared() == true && canDestroy == true, therefore this copy assignment never falls here
                     T *auxPointer = reinterpret_cast<T*>(that.dataPointer);
                     T **rows = new T*[this->numberOfRows];
                     //lint -e{925} cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9]. Justification: Operation needed to copy T type to void type
