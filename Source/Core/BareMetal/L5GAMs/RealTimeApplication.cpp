@@ -437,10 +437,10 @@ bool RealTimeApplication::AddBrokersToFunctions() {
 
     //sort the data sources
     uint32 numberOfFunctions = functionsContainer->Size();
-    for (uint32 i = 0u; i < numberOfFunctions; i++) {
+    for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
         ReferenceT<GAM> function = functionsContainer->Get(i);
         if (function.IsValid()) {
-            function->SortBrokers();
+            ret = function->SortBrokers();
         }
     }
     return ret;

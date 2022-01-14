@@ -250,7 +250,7 @@ bool BasicUDPSocket::Write(const char8 *const input,
 
             struct timeval timeoutVal;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = timeout.GetTimeoutUSec() / 1000000u;
+            timeoutVal.tv_sec = static_cast<oslong>(timeout.GetTimeoutUSec() / 1000000u);
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = (timeout.GetTimeoutUSec() % 1000000u);
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal,

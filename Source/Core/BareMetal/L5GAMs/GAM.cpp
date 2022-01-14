@@ -632,16 +632,16 @@ bool GAM::SortBrokers() {
         StreamString dataSourceName;
         ret = GetSignalDataSourceName(InputSignals, i, dataSourceName);
         if (ret) {
-            uint32 numberOfInputBrokers = inputBrokers.Size();
-            uint32 count = 0u;
-            for (uint32 i = 0u; (i < numberOfInputBrokers) && ret; i++) {
-                ReferenceT<BrokerI> broker = inputBrokers.Get(i);
+            int32 numberOfInputBrokers = static_cast<int32>(inputBrokers.Size());
+            int32 count = 0;
+            for (int32 n = 0; (n < numberOfInputBrokers) && ret; n++) {
+                ReferenceT<BrokerI> broker = inputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
                 if (dsName == dataSourceName) {
-                    if (count != i) {
+                    if (count != n) {
                         ret = inputBrokers.Delete(broker);
                         if (ret) {
-                            inputBrokers.Insert(broker, count);
+                            ret = inputBrokers.Insert(broker, count);
                         }
                         count++;
                     }
@@ -654,16 +654,16 @@ bool GAM::SortBrokers() {
         StreamString dataSourceName;
         ret = GetSignalDataSourceName(OutputSignals, i, dataSourceName);
         if (ret) {
-            uint32 numberOfOutputBrokers = outputBrokers.Size();
-            uint32 count = 0u;
-            for (uint32 i = 0u; (i < numberOfOutputBrokers) && ret; i++) {
-                ReferenceT<BrokerI> broker = outputBrokers.Get(i);
+            int32 numberOfOutputBrokers = static_cast<int32>(outputBrokers.Size());
+            int32 count = 0;
+            for (int32 n = 0; (n < numberOfOutputBrokers) && ret; n++) {
+                ReferenceT<BrokerI> broker = outputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
                 if (dsName == dataSourceName) {
-                    if (count != i) {
+                    if (count != n) {
                         ret = outputBrokers.Delete(broker);
                         if (ret) {
-                            outputBrokers.Insert(broker, count);
+                            ret = outputBrokers.Insert(broker, count);
                         }
                         count++;
                     }
