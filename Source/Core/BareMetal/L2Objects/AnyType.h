@@ -115,7 +115,7 @@ public:
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,
                    const uint8 bitAddressIn,
-                   const void* const dataPointerIn);
+                   const void *const dataPointerIn);
 
     /**
      * @brief Generic constructor for a non-constant type.
@@ -132,7 +132,7 @@ public:
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,
                    const uint8 bitAddressIn,
-                   void* const dataPointerIn);
+                   void *const dataPointerIn);
 
     /**
      * @brief Checks if the AnyType is empty.
@@ -427,7 +427,7 @@ public:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(volatile void * const p);
+    inline AnyType(volatile void *const p);
     /**
      * @brief Constructor from constant void pointer.
      * @param[in] p is the constant void pointer input.
@@ -437,7 +437,7 @@ public:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(volatile const void * const p);
+    inline AnyType(volatile const void *const p);
 
     /**
      * @brief Constructor from constant char pointer.
@@ -448,7 +448,7 @@ public:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(volatile const char8 * const p);
+    inline AnyType(volatile const char8 *const p);
 
     /**
      * @brief Constructor from char pointer.
@@ -459,7 +459,7 @@ public:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(volatile char8 * const p);
+    inline AnyType(volatile char8 *const p);
 
     /**
      * @brief Constructor from Object (or inherited class).
@@ -494,7 +494,7 @@ public:
      *   GetNumberOfDimensions() == src.GetNumberOfDimensions() &&
      *   GetNumberOfElements(0:2) == src.GetNumberOfElements(0:2)
      */
-    inline AnyType & operator=(const AnyType &src);
+    inline AnyType& operator=(const AnyType &src);
 
     /**
      * @brief Constructor by BitBoolean.
@@ -687,7 +687,7 @@ public:
      * @post
      *   GetDataPointer() == p
      */
-    inline void SetDataPointer(void* const p);
+    inline void SetDataPointer(void *const p);
 
     /**
      * @brief Returns the pointer to the data.
@@ -813,7 +813,7 @@ private:
     /**
      * Pointer to the data.
      */
-    void * dataPointer;
+    void *dataPointer;
 
     /**
      * The descriptor of the element. It gives
@@ -876,7 +876,7 @@ AnyType::AnyType(const AnyType &x) {
 
 AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
                  const uint8 bitAddressIn,
-                 const void* const dataPointerIn) {
+                 const void *const dataPointerIn) {
     Init();
     this->dataDescriptor = dataDescriptorIn;
     this->dataDescriptor.isConstant = true;
@@ -886,7 +886,7 @@ AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
 
 AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
                  const uint8 bitAddressIn,
-                 void* const dataPointerIn) {
+                 void *const dataPointerIn) {
     Init();
     this->dataDescriptor = dataDescriptorIn;
     this->dataPointer = dataPointerIn;
@@ -901,14 +901,14 @@ bool AnyType::IsVoid() const {
 
 AnyType::AnyType(char8 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = Character8Bit;
 }
 
 AnyType::AnyType(const char8 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<char8*>(&i));
+    dataPointer = static_cast<void*>(const_cast<char8*>(&i));
     bitAddress = 0u;
     dataDescriptor = Character8Bit;
     dataDescriptor.isConstant = true;
@@ -918,21 +918,21 @@ AnyType::AnyType(const char8 &i) {
 
 AnyType::AnyType(int8 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = SignedInteger8Bit;
 }
 
 AnyType::AnyType(uint8 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = UnsignedInteger8Bit;
 }
 
 AnyType::AnyType(const int8 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<int8 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<int8*>(&i));
     bitAddress = 0u;
     dataDescriptor = SignedInteger8Bit;
     dataDescriptor.isConstant = true;
@@ -940,7 +940,7 @@ AnyType::AnyType(const int8 &i) {
 
 AnyType::AnyType(const uint8 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<uint8 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<uint8*>(&i));
     bitAddress = 0u;
     dataDescriptor = UnsignedInteger8Bit;
     dataDescriptor.isConstant = true;
@@ -950,21 +950,21 @@ AnyType::AnyType(const uint8 &i) {
 
 AnyType::AnyType(int16 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = SignedInteger16Bit;
 }
 
 AnyType::AnyType(uint16 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = UnsignedInteger16Bit;
 }
 
 AnyType::AnyType(const int16 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<int16 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<int16*>(&i));
     bitAddress = 0u;
     dataDescriptor = SignedInteger16Bit;
     dataDescriptor.isConstant = true;
@@ -972,7 +972,7 @@ AnyType::AnyType(const int16 &i) {
 
 AnyType::AnyType(const uint16 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<uint16 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<uint16*>(&i));
     bitAddress = 0u;
     dataDescriptor = UnsignedInteger16Bit;
     dataDescriptor.isConstant = true;
@@ -982,21 +982,21 @@ AnyType::AnyType(const uint16 &i) {
 
 AnyType::AnyType(int32 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = SignedInteger32Bit;
 }
 
 AnyType::AnyType(uint32 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = UnsignedInteger32Bit;
 }
 
 AnyType::AnyType(const int32 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<int32 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<int32*>(&i));
     bitAddress = 0u;
     dataDescriptor = SignedInteger32Bit;
     dataDescriptor.isConstant = true;
@@ -1004,7 +1004,7 @@ AnyType::AnyType(const int32 &i) {
 
 AnyType::AnyType(const uint32 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<uint32 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<uint32*>(&i));
     bitAddress = 0u;
     dataDescriptor = UnsignedInteger32Bit;
     dataDescriptor.isConstant = true;
@@ -1014,21 +1014,21 @@ AnyType::AnyType(const uint32 &i) {
 
 AnyType::AnyType(int64 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = SignedInteger64Bit;
 }
 
 AnyType::AnyType(uint64 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = UnsignedInteger64Bit;
 }
 
 AnyType::AnyType(const int64 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<int64 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<int64*>(&i));
     bitAddress = 0u;
     dataDescriptor = SignedInteger64Bit;
     dataDescriptor.isConstant = true;
@@ -1036,7 +1036,7 @@ AnyType::AnyType(const int64 &i) {
 
 AnyType::AnyType(const uint64 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<uint64 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<uint64*>(&i));
     bitAddress = 0u;
     dataDescriptor = UnsignedInteger64Bit;
     dataDescriptor.isConstant = true;
@@ -1046,14 +1046,14 @@ AnyType::AnyType(const uint64 &i) {
 
 AnyType::AnyType(float32 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = Float32Bit;
 }
 
 AnyType::AnyType(const float32 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<float32 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<float32*>(&i));
     bitAddress = 0u;
     dataDescriptor = Float32Bit;
     dataDescriptor.isConstant = true;
@@ -1062,14 +1062,14 @@ AnyType::AnyType(const float32 &i) {
 /*---------------------------------------------------------------------------*/
 AnyType::AnyType(float64 &i) {
     Init();
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void*>(&i);
     bitAddress = 0u;
     dataDescriptor = Float64Bit;
 }
 
 AnyType::AnyType(const float64 &i) {
     Init();
-    dataPointer = static_cast<void *>(const_cast<float64 *>(&i));
+    dataPointer = static_cast<void*>(const_cast<float64*>(&i));
     bitAddress = 0u;
     dataDescriptor = Float64Bit;
     dataDescriptor.isConstant = true;
@@ -1077,7 +1077,7 @@ AnyType::AnyType(const float64 &i) {
 
 /*---------------------------------------------------------------------------*/
 
-AnyType::AnyType(volatile void * const p) {
+AnyType::AnyType(volatile void *const p) {
     Init();
     dataPointer = (void*) p;
     bitAddress = 0u;
@@ -1087,9 +1087,9 @@ AnyType::AnyType(volatile void * const p) {
     dataDescriptor.numberOfBits = sizeof(void*) * 8u;
 }
 
-AnyType::AnyType(volatile const void * const p) {
+AnyType::AnyType(volatile const void *const p) {
     Init();
-    dataPointer = const_cast<void *>(p);
+    dataPointer = const_cast<void*>(p);
     bitAddress = 0u;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
@@ -1097,22 +1097,22 @@ AnyType::AnyType(volatile const void * const p) {
     dataDescriptor.numberOfBits = sizeof(void*) * 8u;
 }
 
-AnyType::AnyType(volatile const char8 * const p) {
+AnyType::AnyType(volatile const char8 *const p) {
     Init();
-    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p));
+    dataPointer = reinterpret_cast<void*>(const_cast<char8*>(p));
     bitAddress = 0u;
     dataDescriptor = ConstCharString;
 }
 
-AnyType::AnyType(volatile char8 * const p) {
+AnyType::AnyType(volatile char8 *const p) {
     Init();
-    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p));
+    dataPointer = reinterpret_cast<void*>(const_cast<char8*>(p));
     bitAddress = 0u;
     dataDescriptor = CharString;
 }
 
 /*lint -e{1555} Justification: an AnyType copied from another AnyType points at the same under underlying element memory.*/
-AnyType &AnyType::operator=(const AnyType &src) {
+AnyType& AnyType::operator=(const AnyType &src) {
     if (this != &src) {
         dataPointer = src.dataPointer;
         bitAddress = src.bitAddress;
@@ -1130,12 +1130,12 @@ AnyType &AnyType::operator=(const AnyType &src) {
 template<typename baseType>
 void AnyType::CreateFromOtherType(AnyType &dest,
                                   baseType &obj) {
-    dest.dataPointer = static_cast<void *>(&obj);
+    dest.dataPointer = static_cast<void*>(&obj);
     dest.bitAddress = 0u;
 
     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
-    if (classItem != NULL_PTR(ClassRegistryItem *)) {
+    if (classItem != NULL_PTR(ClassRegistryItem*)) {
         dest.dataDescriptor.isStructuredData = true;
         dest.dataDescriptor.isConstant = false;
         dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
@@ -1145,12 +1145,12 @@ void AnyType::CreateFromOtherType(AnyType &dest,
 template<typename baseType>
 void AnyType::CreateFromOtherType(AnyType &dest,
                                   const baseType &obj) {
-    dest.dataPointer = static_cast<void *>(const_cast<baseType *>(&obj));
+    dest.dataPointer = static_cast<void*>(const_cast<baseType*>(&obj));
     dest.bitAddress = 0u;
 
     ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
-    if (classItem != NULL_PTR(ClassRegistryItem *)) {
+    if (classItem != NULL_PTR(ClassRegistryItem*)) {
         dest.dataDescriptor.isStructuredData = true;
         dest.dataDescriptor.isConstant = true;
         dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
@@ -1165,7 +1165,7 @@ AnyType::AnyType(BitBoolean<baseType, bitOffset> &bitBool) {
     dataDescriptor.type = UnsignedInteger;
     dataDescriptor.numberOfBits = 1u;
     bitAddress = bitBool.BitOffset();
-    dataPointer = static_cast<void *>(&bitBool);
+    dataPointer = static_cast<void*>(&bitBool);
 }
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
@@ -1177,7 +1177,7 @@ AnyType::AnyType(BitRange<baseType, bitSize, bitOffset> &bitRange) {
     dataDescriptor.type = type;
     dataDescriptor.numberOfBits = bitRange.GetNumberOfBits();
     bitAddress = bitRange.BitOffset();
-    dataPointer = static_cast<void *>(&bitRange);
+    dataPointer = static_cast<void*>(&bitRange);
 }
 
 template<typename baseType, uint8 bitSize>
@@ -1189,7 +1189,7 @@ AnyType::AnyType(FractionalInteger<baseType, bitSize> &fractionalInt) {
     dataDescriptor.type = type;
     dataDescriptor.numberOfBits = fractionalInt.GetNumberOfBits();
     bitAddress = 0;
-    dataPointer = static_cast<void *>(&fractionalInt);
+    dataPointer = static_cast<void*>(&fractionalInt);
 }
 
 template<typename baseType, uint8 bitSize>
@@ -1201,7 +1201,7 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
     dataDescriptor.type = type;
     dataDescriptor.numberOfBits = fractionalInt.GetNumberOfBits();
     bitAddress = 0u;
-    dataPointer = static_cast<void *>(const_cast<FractionalInteger<baseType, bitSize> *>(&fractionalInt));
+    dataPointer = static_cast<void*>(const_cast<FractionalInteger<baseType, bitSize>*>(&fractionalInt));
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1247,7 +1247,7 @@ AnyType::AnyType(const char8 (&source)[nOfElementsStatic]) {
 template<typename T, uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     Init();
-    dataPointer = (void *) (&source);
+    dataPointer = (void*) (&source);
     numberOfDimensions = 2u;
     numberOfElements[0] = nOfColumnsStatic;
     numberOfElements[1] = nOfRowsStatic;
@@ -1261,7 +1261,7 @@ AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
 template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 AnyType::AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     Init();
-    dataPointer = (void *) (&source);
+    dataPointer = (void*) (&source);
     numberOfDimensions = 2u;
     numberOfElements[0] = nOfColumnsStatic;
     numberOfElements[1] = nOfRowsStatic;
@@ -1275,7 +1275,7 @@ AnyType::AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic]) {
 template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic, uint32 nOfChars>
 AnyType::AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic][nOfChars]) {
     Init();
-    dataPointer = (void *) (&source);
+    dataPointer = (void*) (&source);
     numberOfDimensions = 3u;
     numberOfElements[0] = nOfColumnsStatic;
     numberOfElements[1] = nOfRowsStatic;
@@ -1344,7 +1344,7 @@ void* AnyType::GetDataPointer() const {
     return dataPointer;
 }
 
-void AnyType::SetDataPointer(void * const p) {
+void AnyType::SetDataPointer(void *const p) {
     dataPointer = p;
 }
 
@@ -1391,31 +1391,48 @@ inline void AnyType::Init() {
     numberOfElements[1] = 1u;
     numberOfElements[2] = 1u;
     staticDeclared = true;
-    dataPointer = static_cast<void *>(NULL);
+    dataPointer = static_cast<void*>(NULL);
     bitAddress = 0u;
     dataDescriptor = VoidType;
 }
 
 uint32 AnyType::GetByteSize() const {
-    return ((dataDescriptor.numberOfBits + bitAddress) + 7u) / 8u;
+    return (GetBitSize() + 7u) / 8u;
 }
 
 uint32 AnyType::GetBitSize() const {
-    return (dataDescriptor.numberOfBits + bitAddress);
+    uint32 byteSize = (dataDescriptor.numberOfBits + bitAddress);
+    if (static_cast<bool>(dataDescriptor.isStructuredData)) {
+        const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Peek(dataDescriptor.structuredDataIdCode);
+        if (item != NULL_PTR(const ClassRegistryItem*)) {
+            const ClassProperties *prop = item->GetClassProperties();
+            if (prop != NULL_PTR(const ClassProperties*)) {
+                byteSize = prop->GetSize()*8u;
+            }
+            else{
+                //it is possible that only introspection exists
+                const Introspection *intro=item->GetIntrospection();
+                if (intro != NULL_PTR(const Introspection*)) {
+                    byteSize = intro->GetClassSize()*8u;
+                }
+            }
+        }
+    }
+    return byteSize;
 }
 
 uint32 AnyType::GetDataSize() const {
 
     uint32 totalDataSize = 0u;
-    uint32 arrayLength   = 1u;
-    uint32 dataByteSize  = GetByteSize();
+    uint32 arrayLength = 1u;
+    uint32 dataByteSize = GetByteSize();
 
     for (uint32 dimIdx = 0u; dimIdx < numberOfDimensions; dimIdx++) {
 
-        arrayLength = arrayLength*numberOfElements[dimIdx];
+        arrayLength = arrayLength * numberOfElements[dimIdx];
     }
 
-    totalDataSize = arrayLength*dataByteSize;
+    totalDataSize = arrayLength * dataByteSize;
 
     return totalDataSize;
 }
