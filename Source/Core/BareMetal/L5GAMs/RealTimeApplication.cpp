@@ -53,8 +53,7 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 RealTimeApplication::RealTimeApplication() :
-        ReferenceContainer(),
-        MessageI() {
+        ReferenceContainer(), MessageI() {
     filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     filter->SetDestination(this);
     ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
@@ -62,8 +61,9 @@ RealTimeApplication::RealTimeApplication() :
         REPORT_ERROR(ErrorManagement::FatalError, "Failed to install message filters");
     }
     defaultDataSourceName = "";
-    index = 1u;
-
+    index=1u;
+    checkSameGamInMoreThreads=true;
+    checkMultipleProducersWrites=true;
 }
 
 /*lint -e{1551} Guarantess that the execution is stopped upon destrucion of the RealTimeApplication*/
@@ -74,10 +74,27 @@ RealTimeApplication::~RealTimeApplication() {
     }
 
 }
-bool RealTimeApplication::Initialise(StructuredDataI &data) {
+bool RealTimeApplication::Initialise(StructuredDataI & data) {
     index = 1u;
 
     bool ret = ReferenceContainer::Initialise(data);
+
+    if(ret){
+        uint8 checkSameGamInMoreThreadsT=1u;
+        if(!data.Read("CheckSameGamInMoreThreads", checkSameGamInMoreThreadsT)){
+            checkSameGamInMoreThreadsT=1u;
+        }
+        checkSameGamInMoreThreads=(checkSameGamInMoreThreadsT>0u);
+    }
+    if(ret){
+        uint8 checkMultipleProducersWritesT=1u;
+        if(!data.Read("CheckMultipleProducersWrites", checkMultipleProducersWritesT)){
+            checkMultipleProducersWritesT=1u;
+        }
+        checkMultipleProducersWrites=(checkMultipleProducersWritesT>0u);
+    }
+
+
     if (data.MoveRelative("+Data")) {
         if (!data.Read("DefaultDataSource", defaultDataSourceName)) {
             defaultDataSourceName = "";
@@ -261,8 +278,7 @@ bool RealTimeApplication::ConfigureApplication() {
     return ret;
 }
 
-bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
-                                               ConfigurationDatabase &dataDatabaseIn) {
+bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn, ConfigurationDatabase &dataDatabaseIn) {
 
     RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
     bool ret = configuration.Set(functionsDatabaseIn, dataDatabaseIn);
@@ -347,7 +363,7 @@ bool RealTimeApplication::AllocateGAMMemory() {
     bool ret = functionsDatabase.MoveAbsolute("Functions");
     uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-        const char8 *functionId = functionsDatabase.GetChildName(i);
+        const char8 * functionId = functionsDatabase.GetChildName(i);
         ret = functionsDatabase.MoveRelative(functionId);
         if (ret) {
             StreamString fullGAMName = "Functions.";
@@ -381,7 +397,7 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
     uint32 numberOfDs = dataSourcesDatabase.GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfDs) && (ret); i++) {
-        const char8 *dsId = dataSourcesDatabase.GetChildName(i);
+        const char8* dsId = dataSourcesDatabase.GetChildName(i);
         ret = dataSourcesDatabase.MoveRelative(dsId);
         if (ret) {
             StreamString fullDsName = "Data.";
@@ -410,7 +426,7 @@ bool RealTimeApplication::AddBrokersToFunctions() {
     if (ret) {
         uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
         for (uint32 i = 0u; (i < numberOfDataSources) && (ret); i++) {
-            const char8 *dataSourceId = dataSourcesDatabase.GetChildName(i);
+            const char8 * dataSourceId = dataSourcesDatabase.GetChildName(i);
             ret = dataSourcesDatabase.MoveRelative(dataSourceId);
             StreamString fullDataSourcePath = "Data.";
             if (ret) {
@@ -422,12 +438,14 @@ bool RealTimeApplication::AddBrokersToFunctions() {
                 ret = dataSource.IsValid();
             }
             if (ret) {
+
                 ret = dataSource->AddBrokers(InputSignals);
                 REPORT_ERROR(ErrorManagement::Information, "Getting input brokers for %s", dataSource->GetName());
                 if (ret) {
                     ret = dataSource->AddBrokers(OutputSignals);
                     REPORT_ERROR(ErrorManagement::Information, "Getting output brokers for %s", dataSource->GetName());
                 }
+
             }
             if (ret) {
                 ret = dataSourcesDatabase.MoveToAncestor(1u);
@@ -443,6 +461,7 @@ bool RealTimeApplication::AddBrokersToFunctions() {
             ret = function->SortBrokers();
         }
     }
+
     return ret;
 }
 
@@ -559,6 +578,16 @@ void RealTimeApplication::Purge(ReferenceContainer &purgeList) {
     dataSourcesDatabase.Purge();
     ReferenceContainer::Purge(purgeList);
 }
+
+
+bool RealTimeApplication::CheckSameGamInMoreThreads() const{
+    return checkSameGamInMoreThreads;
+}
+
+bool RealTimeApplication::CheckMultipleProducersWrites() const{
+    return checkMultipleProducersWrites;
+}
+
 
 CLASS_REGISTER(RealTimeApplication, "1.0")
 
