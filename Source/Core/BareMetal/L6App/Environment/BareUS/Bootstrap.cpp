@@ -99,4 +99,8 @@ namespace MARTe {
         xil_printf("%s\r\n", msg);
     }
 
+    void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
+        loader(argc, argv);
+    }
+
 }
