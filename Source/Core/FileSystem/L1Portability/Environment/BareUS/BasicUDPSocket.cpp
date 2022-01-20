@@ -24,15 +24,26 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#ifdef LWIP_ENABLED
+ #if defined(LWIP_ENABLED) || defined(LWIP_RAW_ENABLED)
+
+#include "lwip/dhcp.h"
+#include "lwip/err.h"
+#include "lwip/igmp.h"
+#include "lwip/netif.h"
+#include "lwip/opt.h"
+#include "lwip/pbuf.h"
 #include "lwip/sockets.h"
+#include "lwip/tcpip.h"
+#include "lwip/udp.h"
 #endif
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "BasicUDPSocket.h"
 #include "ErrorManagement.h"
+#include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,11 +52,18 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+extern void NetworkInterfaceHook(void* netifParams);
+#endif
+
 namespace MARTe {
 
 BasicUDPSocket::BasicUDPSocket() :
         BasicSocket() {
-
+    #ifdef LWIP_ENABLED
+        connectionSocket.socketKind = SocketCoreKindUDP;
+        connectionSocket.UDPHandle = NULL;
+    #endif
 }
 
 BasicUDPSocket::~BasicUDPSocket() {
@@ -57,24 +75,7 @@ bool BasicUDPSocket::Peek(char8* const output,
 
     int32 ret = -1;
 #ifdef LWIP_ENABLED
-    uint32 sizeToRead = size;
-    size = 0u;
-    if (IsValid()) {
-        uint32 sourceSize = source.Size();
-        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        ret = static_cast<int32>(lwip_recvfrom(connectionSocket, output, static_cast<size_t>(sizeToRead), MSG_PEEK,
-                                          reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), reinterpret_cast<socklen_t*>(&sourceSize)));
-        if (ret >= 0) {
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
-            size = static_cast<uint32>(ret);
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
-        }
-    }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
-    }
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Peek() Cannot peek raw lwIP socket");
 #endif
     return (ret > 0);
 
@@ -85,24 +86,8 @@ bool BasicUDPSocket::Read(char8* const output,
 
     int32 ret = -1;
 #ifdef LWIP_ENABLED
-    uint32 sizeToRead = size;
-    size = 0u;
-    if (IsValid()) {
-        uint32 sourceSize = source.Size();
-        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(sizeToRead), 0,
-                                          reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), reinterpret_cast<socklen_t*>(&sourceSize)));
-        if (ret >= 0) {
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
-            size = static_cast<uint32>(ret);
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
-        }
-    }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
-    }
+    //TODO: To be implemented
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Read() Not implemented");
 #endif
     return (ret > 0);
 }
@@ -110,28 +95,21 @@ bool BasicUDPSocket::Read(char8* const output,
 bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
 
-    int32 ret = -1;
+    err_t err;
 #ifdef LWIP_ENABLED
-    uint32 sizeToWrite = size;
-    size = 0u;
-    if (IsValid()) {
-        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0,
-                                        reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()), destination.Size()));
-        if (ret >= 0) {
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
-            size = static_cast<uint32>(ret);
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed sendto()");
-        }
-    }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
+    ip_addr_t destIPAddress;
+    destIPAddress = (destination.GetInternetHost())->addr;
+    uint16 destPort = (destination.GetInternetHost())->port;
 
-    }
+    struct pbuf *packetBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
+    MemoryOperationsHelper::Copy(packetBuffer->payload, input, size);
+    err = udp_sendto(connectionSocket.UDPHandle, packetBuffer, &destIPAddress, destPort);
+    pbuf_free(packetBuffer);
+
+    NetworkInterfaceHook(NULL);
+
 #endif
-    return (ret > 0);
+    return (err == ERR_OK);
 }
 
 bool BasicUDPSocket::Join(const char8 *const group) const {
@@ -142,25 +120,18 @@ bool BasicUDPSocket::Join(const char8 *const group) const {
 
 bool BasicUDPSocket::Open() {
 #ifdef LWIP_ENABLED
-    connectionSocket = (socket(PF_INET, SOCK_DGRAM, 0));
+    connectionSocket.UDPHandle = udp_new();
+    return (connectionSocket.UDPHandle != NULL);
 #endif
-    return (connectionSocket >= 0);
 }
 
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 bool BasicUDPSocket::Listen(const uint16 port) {
     int32 errorCode = -1;
-#ifdef LWIP_ENABLED
-    if (IsValid()) {
-        InternetHost server;
-        server.SetPort(port);
-        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
-    }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
-    }
-#endif
+#if defined(LWIP_RAW_ENABLED) && ! defined(LWIP_ENABLED)
+
+#endif /* ! LWIP_ENABLED */
+
     return (errorCode >= 0);
 }
 
@@ -187,15 +158,21 @@ bool BasicUDPSocket::Connect(const char8 * const address,
 }
 
 bool BasicUDPSocket::CanWrite() const {
-    return IsValid();
+    return true;
 }
 
 bool BasicUDPSocket::CanRead() const {
-    return IsValid();
+    return true;
 }
 
 bool BasicUDPSocket::CanSeek() const {
-    return IsValid();
+    return false;
+}
+
+bool BasicUDPSocket::Join(const char8 *const group) const {
+    bool ok = false;
+    
+    return ok;
 }
 
 bool BasicUDPSocket::Read(char8 * const output,
@@ -203,42 +180,6 @@ bool BasicUDPSocket::Read(char8 * const output,
                           const TimeoutType &timeout) {
     uint32 sizeToRead = size;
     size = 0u;
-#ifdef LWIP_ENABLED
-    if (IsValid()) {
-
-        if (timeout.IsFinite()) {
-            struct timeval timeoutVal;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
-            /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal,
-                                   static_cast<socklen_t>(sizeof(timeoutVal)));
-
-            if (ret < 0) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the read timeout");
-            }
-            else {
-                if (BasicUDPSocket::Read(output, sizeToRead)) {
-                    size = sizeToRead;
-                }
-            }
-            timeoutVal.tv_sec = 0;
-            timeoutVal.tv_usec = 0;
-            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the read timeout");
-            }
-        }
-        else {
-            if (BasicUDPSocket::Read(output, sizeToRead)) {
-                size = sizeToRead;
-            }
-        }
-    }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
-    }
-#endif
     return (size > 0u);
 }
 
@@ -247,42 +188,11 @@ bool BasicUDPSocket::Write(const char8 * const input,
                            const TimeoutType &timeout) {
     uint32 sizeToWrite = size;
     size = 0u;
-#ifdef LWIP_ENABLED
-    if (IsValid()) {
-        if (timeout.IsFinite()) {
-
-            struct timeval timeoutVal;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal,
-                                   static_cast<socklen_t>(sizeof(timeoutVal)));
-
-            if (ret < 0) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the write timeout");
-            }
-            else {
-                if (BasicUDPSocket::Write(input, sizeToWrite)) {
-                    size = sizeToWrite;
-                }
-            }
-            timeoutVal.tv_sec = 0;
-            timeoutVal.tv_usec = 0;
-            if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the write timeout");
-            }
-        }
-        else {
-            if (BasicUDPSocket::Write(input, sizeToWrite)) {
-                size = sizeToWrite;
-            }
-        }
+    #ifdef LWIP_ENABLED
+    if (BasicUDPSocket::Write(input, sizeToWrite)) {
+        size = sizeToWrite;
     }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
-    }
-#endif
+    #endif
     return (size > 0u);
 }
 

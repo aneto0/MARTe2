@@ -47,37 +47,66 @@ namespace MARTe {
 BasicSocket::BasicSocket() :
         StreamI(),
         HandleI() {
-    connectionSocket = -1;
-    isBlocking = true;
+
+    #ifdef LWIP_ENABLED
+    connectionSocket.UDPHandle = NULL;
+    connectionSocket.TCPHandle = NULL;
+    connectionSocket.socketKind = SocketCoreKindUndefined;
+    #endif
 }
 
 /*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
 BasicSocket::~BasicSocket() {
     if (BasicSocket::IsValid()) {
         if (!BasicSocket::Close()) {
-            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close() the socket handle is invalid");
         }
     }
 }
 
 bool BasicSocket::SetBlocking(const bool flag) {
+<<<<<<< HEAD
     /* Our BareMetal is always blocking */
+=======
+    bool ret = false;
+    if (IsValid()) {
+#ifdef LWIP_ENABLED
+    //TODO: this can be handled better, if blocking, the socket itself may call the network interface update hook
+    //      as natively, lwIP is non-blocking by design
+    ret = flag;
+    REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "BasicSocket::SetBlocking() lwIP in raw mode is non-blocking by design");
+#endif
+    }
+    else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::SetBlocking() The socket handle is invalid");
+    }
+>>>>>>> ddd50a477d9e6b144fc30edfea8cff54c8de7148
     return flag;
 }
 
 bool BasicSocket::Close() {
     int32 ret = -1;
 #ifdef LWIP_ENABLED
-    if (IsValid()) {
-        ret = lwip_close(connectionSocket);
-        connectionSocket = -1;
-        if (ret < 0) {
-            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close failed");
-            ret = 0;
+    //TODO: TCP side must be implemented
+    if(IsValid()) {
+        if(connectionSocket.socketKind == SocketCoreKindTCP) {
+            ret = -1;
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close() Not implemented");
         }
-    }
-    else {
-        ret = -1;
+        else if(connectionSocket.socketKind == SocketCoreKindUDP) {
+            if(connectionSocket.UDPHandle != NULL) {
+                udp_disconnect(connectionSocket.UDPHandle);
+                udp_remove(connectionSocket.UDPHandle);
+                ret = 0;
+            }
+            else {
+                ret = -1;
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close() Trying to close a null socket");
+            }
+        }
+        else {
+            REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::Close() A wrong socket kind was specified");
+        }
     }
 #endif
     return (ret >= 0);
@@ -100,19 +129,23 @@ void BasicSocket::SetSource(const InternetHost &sourceIn) {
 }
 
 bool BasicSocket::IsValid() const {
-    return (connectionSocket >= 0);
+    #ifdef LWIP_ENABLED
+    return (connectionSocket.UDPHandle != NULL);
+    #endif
 }
 
 Handle BasicSocket::GetReadHandle() const {
-    return connectionSocket;
+    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::GetReadHandle() Cannot get handle in lwIP raw mode");
+    return 0;
 }
 
 Handle BasicSocket::GetWriteHandle() const {
-    return connectionSocket;
+    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::GetReadHandle() Cannot get handle in lwIP raw mode");
+    return 0;
 }
 
 bool BasicSocket::IsBlocking() const {
-    return isBlocking;
+    return true;
 }
 
 }
