@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #ifdef LWIP_ENABLED
 #include "lwip/sockets.h"
+#include "lwip/ip_addr.h"
 #endif
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -41,11 +42,11 @@
 namespace MARTe{
 
 #ifdef LWIP_ENABLED
-/*struct InternetHostCore {
+struct InternetHostCore {
     ip_addr_t addr;
     uint16 port;
-};*/
-typedef sockaddr_in InternetHostCore;
+};
+//typedef sockaddr_in InternetHostCore;
 #else
 typedef void * InternetHostCore;
 #endif

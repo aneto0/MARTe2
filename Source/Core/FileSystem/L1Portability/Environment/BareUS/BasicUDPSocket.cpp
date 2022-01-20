@@ -134,6 +134,12 @@ bool BasicUDPSocket::Write(const char8* const input,
     return (ret > 0);
 }
 
+bool BasicUDPSocket::Join(const char8 *const group) const {
+    bool ok = false;
+    /* lwIP needs IGMP, which in turn needs SOCKET_API which in turn needs FreeRTOS or libMetal. Here we are BareMetal */
+    return ok;
+}
+
 bool BasicUDPSocket::Open() {
 #ifdef LWIP_ENABLED
     connectionSocket = (socket(PF_INET, SOCK_DGRAM, 0));

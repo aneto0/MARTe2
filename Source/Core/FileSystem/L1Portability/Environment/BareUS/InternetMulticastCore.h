@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#ifdef USE_LWIP
+#ifdef LWIP_ENABLED
 #include "lwip/sockets.h"
 #endif
 /*---------------------------------------------------------------------------*/
@@ -39,11 +39,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
-#ifdef LWIP_ENABLED
-typedef ip_mreq InternetMulticastCore;
-#else
+
+/* lwIP needs IGMP, which in turn needs SOCKET_API which in turn needs FreeRTOS or libMetal. Here we are BareMetal */
 typedef void* InternetMulticastCore;
-#endif
+
 
 
 }

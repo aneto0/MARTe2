@@ -61,27 +61,8 @@ BasicSocket::~BasicSocket() {
 }
 
 bool BasicSocket::SetBlocking(const bool flag) {
-    int32 ret = -1;
-    if (IsValid()) {
-#ifdef LWIP_ENABLED
-        uint32 opt = lwip_fcntl(connectionSocket, F_GETFL, 0);
-        if (flag) {
-            opt &= ~O_NONBLOCK;
-        }
-        else {
-            opt |= O_NONBLOCK;
-        }
-        ret = lwip_fcntl(connectionSocket, F_SETFL, opt);
-
-        if (ret >= 0) {
-            isBlocking = flag;
-        }
-#endif
-    }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
-    }
-    return (ret >= 0);
+    /* Our BareMetal is always blocking */
+    return flag;
 }
 
 bool BasicSocket::Close() {
