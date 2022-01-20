@@ -43,7 +43,6 @@ namespace MARTe {
 
     void BareUSErrorProcessFunction(const ErrorManagement::ErrorInformation &errorInfo,
                                     const char8 * const errorDescription) {
-        //Using xil_printf wrapped to automagically get the stdout routing to uart
         print(errorDescription);
     }
 

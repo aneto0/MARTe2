@@ -24,9 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include "FreeRTOS.h"
-#include "task.h"
-
+#
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -43,14 +41,6 @@
 namespace MARTe {
 
 void Sleep::OsUsleep(const uint32 usecTime) {
-    if (usecTime > 0u) {
-        //FreeRTOS vTaskDelay supports delay in OS ticks
-        //The minimum achievable delay is bound to the os tick rate.
-        float64 msecTime = (usecTime / 1000.0);
-        TickType_t ticksDelay = pdMS_TO_TICKS(static_cast<TickType_t>(msecTime));
-        vTaskDelay(ticksDelay);
-    }
-
 }
 
 int32 Sleep::GetDateSeconds() {
