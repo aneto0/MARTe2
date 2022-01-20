@@ -96,10 +96,6 @@ namespace MARTe {
         return retVal;
     }
 
-    ErrorManagement::ErrorType Bootstrap::InitHAL(int32 argc, char8 **argv) {
-        return ErrorManagement::NoError;
-    }
-
     void Bootstrap::Printf(const char8 * const msg) {
         xil_printf("%s\r\n", msg);
     }
