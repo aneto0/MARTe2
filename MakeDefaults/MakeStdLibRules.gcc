@@ -83,10 +83,6 @@ $(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o $(OBJS)
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
-$(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
-	rm -f createLibrary
-
 #If the file does not exist and we are in a clean context, do not create it!
 depends.$(TARGET): dependsRaw.$(TARGET) 
 ifneq ($(MAKECMDGOALS),clean)
@@ -103,12 +99,6 @@ ifneq ($(MAKECMDGOALS),clean)
 else
 	touch $@
 endif
-
-$(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) -shared  $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
-
-$(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 %.spb : 
 	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) 
