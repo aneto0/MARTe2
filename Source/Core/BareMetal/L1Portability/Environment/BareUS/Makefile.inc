@@ -45,7 +45,6 @@ include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L0Types
 INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L1Portability
-INCLUDES+=-I../../../../HAL
 
 all: $(OBJS) $(CPPS) \
      $(BUILD_DIR)/L1Portability$(LIBEXT)
