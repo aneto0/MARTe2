@@ -128,7 +128,7 @@ bool BasicUDPSocket::Open() {
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 bool BasicUDPSocket::Listen(const uint16 port) {
     int32 errorCode = -1;
-#if defined(LWIP_RAW_ENABLED) && ! defined(LWIP_ENABLED)
+#ifdef LWIP_ENABLED
 
 #endif /* ! LWIP_ENABLED */
 
