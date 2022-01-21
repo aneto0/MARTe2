@@ -90,8 +90,7 @@ class LocalHostInfo {
         /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
         LocalHostInfo():localHostName(static_cast<const char8*>(NULL)),
                         ipAddress(static_cast<const char8*>(NULL)),
-                        internetAddressInfoInitialised(false),
-                        internalFastSem() {
+                        internetAddressInfoInitialised(false) {
             Init();
         }
 
