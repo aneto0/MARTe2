@@ -118,16 +118,15 @@ private:
 };
 
 void InternetHost::SetMulticastGroup(const char8 *const addr) {
-    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
-    mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));  
-    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+    #ifdef LWIP_ENABLED
+
     #endif
     //TODO: Implement set multicast group for the lwIP raw scenario
 }
 
 uint32 InternetHost::MulticastSize() const {
-    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
-        return static_cast<uint32>(sizeof(mreq));
+    #ifdef LWIP_ENABLED
+        
     #else
     //TODO: Implement MulticastSize for the lwIP raw scenario
         return 0u;
@@ -135,9 +134,8 @@ uint32 InternetHost::MulticastSize() const {
 }
 
 StreamString InternetHost::GetMulticastGroup() const {
-    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
-    StreamString dotName(inet_ntoa(mreq.imr_multiaddr));
-    return dotName;
+    #ifdef LWIP_ENABLED
+
     #else
     //TODO Implement the GetMulticastGroup
     REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "InternetHost::GetMulticastGroup() not implemented, returns empty string.");
@@ -146,8 +144,8 @@ StreamString InternetHost::GetMulticastGroup() const {
 }
 
 InternetMulticastCore *InternetHost::GetInternetMulticastHost() {
-    #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
-    return &mreq;
+    #ifdef LWIP_ENABLED
+
     #else
     //TODO Implement the GetInternetMulticastHost
     REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "InternetHost::GetInternetMulticastHost() not implemented, returns null ptr.");
