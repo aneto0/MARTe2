@@ -52,7 +52,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
+#ifdef LWIP_ENABLED
 extern void NetworkInterfaceHook(void* netifParams);
 #endif
 
@@ -167,12 +167,6 @@ bool BasicUDPSocket::CanRead() const {
 
 bool BasicUDPSocket::CanSeek() const {
     return false;
-}
-
-bool BasicUDPSocket::Join(const char8 *const group) const {
-    bool ok = false;
-    
-    return ok;
 }
 
 bool BasicUDPSocket::Read(char8 * const output,
