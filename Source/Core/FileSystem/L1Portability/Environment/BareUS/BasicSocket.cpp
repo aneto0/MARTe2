@@ -65,9 +65,7 @@ BasicSocket::~BasicSocket() {
 }
 
 bool BasicSocket::SetBlocking(const bool flag) {
-<<<<<<< HEAD
-    /* Our BareMetal is always blocking */
-=======
+
     bool ret = false;
     if (IsValid()) {
 #ifdef LWIP_ENABLED
@@ -80,7 +78,6 @@ bool BasicSocket::SetBlocking(const bool flag) {
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::SetBlocking() The socket handle is invalid");
     }
->>>>>>> ddd50a477d9e6b144fc30edfea8cff54c8de7148
     return flag;
 }
 
