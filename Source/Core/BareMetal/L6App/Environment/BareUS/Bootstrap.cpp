@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "platform.h"
-#include "xil_printf.h"
 
 #include "AdvancedErrorManagement.h"
 #include "Bootstrap.h"
@@ -43,7 +42,7 @@ namespace MARTe {
 
     void BareUSErrorProcessFunction(const ErrorManagement::ErrorInformation &errorInfo,
                                     const char8 * const errorDescription) {
-        print(errorDescription);
+        printf(errorDescription);
     }
 
     Bootstrap::Bootstrap() {
@@ -60,14 +59,14 @@ namespace MARTe {
     }
    
 
-    ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
-        ErrorManagement::ErrorType retVal = ErrorManagement::NoError;
-        configurationFile = configFile;
-        configurationFile.Seek(0);
-        configurationStream = &configurationFile;
+    // ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
+    //     ErrorManagement::ErrorType retVal = ErrorManagement::NoError;
+    //     configurationFile = configFile;
+    //     configurationFile.Seek(0);
+    //     configurationStream = &configurationFile;
 
-        return retVal;
-    }
+    //     return retVal;
+    // }
 
     ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters) {
         ErrorManagement::ErrorType retVal;
