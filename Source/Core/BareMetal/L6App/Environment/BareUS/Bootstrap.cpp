@@ -52,13 +52,7 @@ namespace MARTe {
 
     Bootstrap::~Bootstrap() {
 
-    }
-
-    ErrorManagement::ErrorType Bootstrap::Run() {
-        
-        return ErrorManagement::NoError;
-    }
-   
+    }   
 
     // ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
     //     ErrorManagement::ErrorType retVal = ErrorManagement::NoError;
