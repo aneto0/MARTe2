@@ -47,7 +47,8 @@ extern const char * configFile;
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
+    
+    StreamMemoryReference *staticConfigurationStream = NULL;
 
     ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
         const char8 * const marteConfig = configFile;
