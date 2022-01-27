@@ -21,3 +21,4 @@ __pycache__
 .vscode
 .clang
 compile_commands.json
+.cache
