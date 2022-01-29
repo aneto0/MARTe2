@@ -85,7 +85,7 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
 
     //If we have the compilation variable MARTe2_READPARAMETERS_LOADER defined, then we can use that
     //otherwise we use our default one, the RealTimeLoader
-    #ifdef (MARTe2_READPARAMETERS_LOADER)
+    #ifdef MARTe2_READPARAMETERS_LOADER
         ret.parametersError = !loaderParameters.Write("Loader", MARTe2_READPARAMETERS_LOADER);
     #else
         ret.parametersError = !loaderParameters.Write("Loader", "RealTimeLoader");
@@ -94,7 +94,7 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
     if (ret) {
         //If we have the compilation variable MARTe2_READPARAMETERS_FIRSTSTATE defined, then we can use that
         //otherwise we use our default one, Idle
-        #ifdef (MARTe2_READPARAMETERS_FIRSTSTATE)
+        #ifdef MARTe2_READPARAMETERS_FIRSTSTATE
             ret.parametersError = !loaderParameters.Write("FirstState", MARTe2_READPARAMETERS_FIRSTSTATE);
         #else
             ret.parametersError = !loaderParameters.Write("FirstState", "Idle");
@@ -110,7 +110,11 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         #endif
     }
     if (ret) {
-        ret.parametersError = !loaderParameters.Write("Parser", "cdb");
+        #ifdef MARTe2_READPARAMETERS_PARSER
+            ret.parametersError = !loaderParameters.Write("Parser", MARTe2_READPARAMETERS_PARSER);
+        #else
+            ret.parametersError = !loaderParameters.Write("Parser", "cdb");
+        #endif
     }
     return ret;
 }

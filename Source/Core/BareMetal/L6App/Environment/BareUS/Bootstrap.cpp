@@ -64,29 +64,43 @@ namespace MARTe {
     // }
 
     ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters) {
-        ErrorManagement::ErrorType retVal;
+        //TODO Check me
+        ErrorManagement::ErrorType ret;
 
-        //Writing defaults in loader parameters
-        retVal.parametersError = !loaderParameters.Write("Parser", "cdb");
-        if(!retVal) {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Bootstrap::ReadParameters() Failure writing default parser (cdb)");
+        //If we have the compilation variable MARTe2_READPARAMETERS_LOADER defined, then we can use that
+        //otherwise we use our default one, the RealTimeLoader
+        #ifdef MARTe2_READPARAMETERS_LOADER
+            ret.parametersError = !loaderParameters.Write("Loader", MARTe2_READPARAMETERS_LOADER);
+        #else
+            ret.parametersError = !loaderParameters.Write("Loader", "RealTimeLoader");
+        #endif
+
+        if (ret) {
+            //If we have the compilation variable MARTe2_READPARAMETERS_FIRSTSTATE defined, then we can use that
+            //otherwise we use our default one, Idle
+            #ifdef MARTe2_READPARAMETERS_FIRSTSTATE
+                ret.parametersError = !loaderParameters.Write("FirstState", MARTe2_READPARAMETERS_FIRSTSTATE);
+            #else
+                ret.parametersError = !loaderParameters.Write("FirstState", "Idle");
+            #endif
+
+            //If we have both MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION
+            //we can send a first message to the state machine startup. Otherwise, nothing will be sent
+            #if defined (MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION) && defined (MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION)
+                ret.parametersError = !loaderParameters.Write("MessageDestination", "StateMachine");
+                if (ret) {
+                    ret.parametersError = !loaderParameters.Write("MessageFunction", "START");
+                }
+            #endif
         }
-
-        if(retVal) {
-            retVal.parametersError = !loaderParameters.Write("Loader", "RealTimeLoader");
-            if(!retVal) {
-                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Bootstrap::ReadParameters() Failure writing default loader (RealTimeLoader)");
-            }
+        if (ret) {
+            #ifdef MARTe2_READPARAMETERS_PARSER
+                ret.parametersError = !loaderParameters.Write("Parser", MARTe2_READPARAMETERS_PARSER);
+            #else
+                ret.parametersError = !loaderParameters.Write("Parser", "cdb");
+            #endif
         }
-
-        if(retVal) {
-            retVal.parametersError = !loaderParameters.Write("FirstState", "State1");
-            if(!retVal) {
-                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Bootstrap::ReadParameters() Failure setting startup state (State1)");
-            }
-        }
-
-        return retVal;
+        return ret;
     }
 
     void Bootstrap::Printf(const char8 * const msg) {
