@@ -103,9 +103,9 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         //If we have both MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION
         //we can send a first message to the state machine startup. Otherwise, nothing will be sent
         #if defined (MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION) && defined (MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION)
-            ret.parametersError = !loaderParameters.Write("MessageDestination", "StateMachine");
+            ret.parametersError = !loaderParameters.Write("MessageDestination", MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION);
             if (ret) {
-                ret.parametersError = !loaderParameters.Write("MessageFunction", "START");
+                ret.parametersError = !loaderParameters.Write("MessageFunction", MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION);
             }
         #endif
     }
