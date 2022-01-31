@@ -466,9 +466,9 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
 
     storedRef = Reference("Object");
 
-    Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
-
     this->nRefs = nRefs;
+
+    Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
 
     uint32 totalNRefs = (nRefs + 1);
 

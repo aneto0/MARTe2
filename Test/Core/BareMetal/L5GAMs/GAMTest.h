@@ -217,6 +217,11 @@ public:
     bool TestAddOutputBrokers_InvalidBroker();
 
     /**
+     * @brief Tests the SortBrokers method.
+     */
+    bool TestSortBrokers();
+
+    /**
      * @brief Tests the GetInputBrokers method.
      */
     bool TestGetInputBrokers();

@@ -196,6 +196,18 @@ public:
      */
     bool TestGetIndex();
 
+
+    /**
+     * @brief Test the CheckSameGamInMoreThreads method
+     */
+    bool TestCheckSameGamInMoreThreads();
+
+    /**
+     * @brief Test the CheckMultipleProducersWrites method
+     */
+    bool TestCheckMultipleProducersWrites();
+
+
     StreamString config;
 };
 

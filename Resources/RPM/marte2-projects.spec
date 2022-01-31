@@ -81,7 +81,7 @@ find %{build_dir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}
 #Try to copy other user defined folders (e.g. Resources, Configurations, ...)
 for other_folder in %{rpm_other_folders}
 do
-test -e $other_folder && cp -R --parents $other_folder %{buildroot}/%{rpm_top_dir}
+test -e $other_folder && cp -RL --parents $other_folder %{buildroot}/%{rpm_top_dir}
 done
 
 #Create the profile.d information
