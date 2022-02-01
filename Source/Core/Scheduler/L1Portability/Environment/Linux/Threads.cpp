@@ -144,6 +144,7 @@ void SetPriority(const ThreadIdentifier &threadId,
             threadInfo->SetPriorityLevel(prioLevel);
             threadInfo->SetPriorityClass(priorityClass);
 
+            int32 policy = SCHED_OTHER;//Default Linux time-sharing scheduling
             uint32 priorityClassNumber = 0u;
             switch (priorityClass) {
                 case UnknownPriorityClass:
@@ -157,16 +158,15 @@ void SetPriority(const ThreadIdentifier &threadId,
                 break;
                 case RealTimePriorityClass:
                 priorityClassNumber = 3u;
+                policy = SCHED_FIFO;//Only put FIFO (more aggressive) for the RealTimePriorityClass
                 break;
             }
             uint32 priorityLevelToAssign = 28u * priorityClassNumber;
             priorityLevelToAssign += (static_cast<uint32>(prioLevel));
 
-            int32 policy = 0;
             sched_param param;
             ok = (pthread_getschedparam(threadId, &policy, &param) == 0);
             if (ok) {
-                policy = SCHED_FIFO;
                 param.sched_priority = static_cast<int32>(priorityLevelToAssign);
                 if (pthread_setschedparam(threadId, policy, &param) != 0) {
                     threadInfo->SetPriorityLevel(oldPriorityLevel);
