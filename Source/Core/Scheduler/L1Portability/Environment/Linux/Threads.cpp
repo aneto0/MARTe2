@@ -165,7 +165,8 @@ void SetPriority(const ThreadIdentifier &threadId,
             priorityLevelToAssign += (static_cast<uint32>(prioLevel));
 
             sched_param param;
-            ok = (pthread_getschedparam(threadId, &policy, &param) == 0);
+            int32 ignore = 0;
+            ok = (pthread_getschedparam(threadId, &ignore, &param) == 0);
             if (ok) {
                 param.sched_priority = static_cast<int32>(priorityLevelToAssign);
                 if (pthread_setschedparam(threadId, policy, &param) != 0) {
