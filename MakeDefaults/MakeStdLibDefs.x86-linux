@@ -69,7 +69,7 @@ MARTe2_OPTIM ?=
 OPTIM = $(MARTe2_OPTIM)
 LFLAGS = -Wl,--no-as-needed -fPIC 
 #-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
-CFLAGS = -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable -fno-strict-aliasing
+CFLAGS = -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable -fno-strict-aliasing -Wno-deprecated-declarations
 CPPFLAGS = $(CFLAGS) -frtti 
 CFLAGSPEC= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lpthread -lrt -ldl
