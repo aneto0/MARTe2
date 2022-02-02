@@ -31,6 +31,7 @@
 #include "ConfigurationDatabase.h"
 #include "LoggerConsumerI.h"
 #include "LoggerConsumerITest.h"
+#include "TimeStamp.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -177,13 +178,27 @@ bool LoggerConsumerITest::TestPrintToStream() {
         test.PrintToStream(&page, err);
         //printf("%s\n", err.Buffer());
         //Note that the Thread identified is currently not being handled.
-        StreamString expectedPrint;
+        //Depending on the localtime, this test can fail due to people working in other timezones
+        //Adding a method to check the time and instead use a non-static version of getHours should fix this
+        TimeStamp ts;
+        ts.ConvertFromEpoch(static_cast<oslong>(page.errorInfo.timeSeconds));
+
+        std::string hours;
+        std::stringstream ss;
+
+        ss << ts.GetHour();
+        ss >> hours;
+        char const* hour = hours.c_str();
+        expectedPrint = "|Debug|1000000000|";
+        expectedPrint += hour;
+
         if (sizeof(void *) == 8u) {
-            expectedPrint = "|Debug|1000000000|1:2:3 (1000000000)|Obj1|0x00000000AABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream";
+            expectedPrint += ":2:3 (1000000000)|Obj1|0x00000000AABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.c>
         }
         else {
-            expectedPrint = "|Debug|1000000000|1:2:3 (1000000000)|Obj1|0xAABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream";
+            expectedPrint += ":2:3 (1000000000)|Obj1|0xAABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|L>
         }
+
         ok = (err == expectedPrint);
     }
 
@@ -218,13 +233,27 @@ bool LoggerConsumerITest::TestPrintToStream_WithKeys() {
         //printf("%s\n", err.Buffer());
         //Note that the Thread identified is currently not being handled.
         StreamString expectedPrint;
+        //Depending on the localtime, this test can fail due to people working in other timezones
+        //Adding a method to check the time and instead use a non-static version of getHours should fix this
+        TimeStamp ts;
+        ts.ConvertFromEpoch(static_cast<oslong>(page.errorInfo.timeSeconds));
+
+        std::string hours;
+        std::stringstream ss;
+
+        ss << ts.GetHour();
+        ss >> hours;
+        char const* hour = hours.c_str();
+        expectedPrint = "|E=Debug|TM=1000000000|TM=";
+        expectedPrint += hour;
+
         if (sizeof(void *) == 8u) {
-            expectedPrint =
-                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream";
+            expectedPrint +=
+                    ":2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream";
         }
         else {
-            expectedPrint =
-                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream";
+            expectedPrint +=
+                    ":2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream";
         }
         ok = (err == expectedPrint);
     }
