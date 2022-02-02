@@ -205,6 +205,9 @@ ErrorManagement::ErrorType EmbeddedThreadI::Start() {
 
         err.fatalError = (GetThreadId() == 0u);
     }
+    if (err.ErrorsCleared()) {
+        Threads::SetPriority(threadId, priorityClass, priorityLevel);
+    }
 
     return err;
 }
