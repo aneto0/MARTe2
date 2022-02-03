@@ -136,6 +136,26 @@ public:
      * @brief Tests the Stop method.
      */
     bool TestStop();
+
+    /**
+     * @brief Tests the Reconfigure method.
+     */
+    bool TestReconfigure();
+
+    /**
+     * @brief Tests the GetLastValidConfiguration method.
+     */
+    bool TestGetLastValidConfiguration();
+
+    /**
+     * @brief Tests the GetLastValidConfiguration method after a failed reconfiguration.
+     */
+    bool TestGetLastValidConfiguration_AfterFailure();
+
+    /**
+     * @brief Tests the ReloadLastValidConfiguration method.
+     */
+    bool TestReloadLastValidConfiguration();
 };
 
 /*---------------------------------------------------------------------------*/

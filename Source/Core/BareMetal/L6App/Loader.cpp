@@ -99,9 +99,6 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
             REPORT_ERROR_STATIC(ret, "Failed to add domain tokens %s", domainTokens.Buffer());
         }
     }
-
-    StreamString parserType;
-    StreamString parserError;
     //Read the parser type
     if (ret.ErrorsCleared()) {
         ret.parametersError = !data.Read("Parser", parserType);
@@ -113,16 +110,35 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
         ret.initialisationError = !configuration.Seek(0LLU);
     }
     if (ret.ErrorsCleared()) {
+        StreamString parserError;
+        ret = Reconfigure(configuration, parserError);
+    }
+    if (ret.ErrorsCleared()) {
+        if (data.Read("MessageDestination", messageDestination)) {
+            ret.parametersError = !data.Read("MessageFunction", messageFunction);
+            if (!ret) {
+                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "When the MessageDestination is set the MessageFunction shall also be set");
+            }
+        }
+    }
+    return ret;
+}
+
+ErrorManagement::ErrorType Loader::Reconfigure(StreamI &configuration, StreamString &parserError) {
+    ErrorManagement::ErrorType ret;
+    ConfigurationDatabase newParsedConfiguration;
+    ret.fatalError = !newParsedConfiguration.MoveToRoot();
+    if (ret.ErrorsCleared()) {
         if (parserType == "xml") {
-            XMLParser parser(configuration, parsedConfiguration, &parserError);
+            XMLParser parser(configuration, newParsedConfiguration, &parserError);
             ret.initialisationError = !parser.Parse();
         }
         else if (parserType == "json") {
-            JsonParser parser(configuration, parsedConfiguration, &parserError);
+            JsonParser parser(configuration, newParsedConfiguration, &parserError);
             ret.initialisationError = !parser.Parse();
         }
         else if (parserType == "cdb") {
-            StandardParser parser(configuration, parsedConfiguration, &parserError);
+            StandardParser parser(configuration, newParsedConfiguration, &parserError);
             ret.initialisationError = !parser.Parse();
         }
         else {
@@ -136,21 +152,43 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
         }
     }
     if (ret.ErrorsCleared()) {
-        ret.fatalError = !parsedConfiguration.MoveToRoot();
+        ret.fatalError = !newParsedConfiguration.MoveToRoot();
     }
     if (ret.ErrorsCleared()) {
-        ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(parsedConfiguration);
+        ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(newParsedConfiguration);
         if (!ret) {
             REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Failed to initialise the ObjectRegistryDatabase");
         }
     }
     if (ret.ErrorsCleared()) {
-        if (data.Read("MessageDestination", messageDestination)) {
-            ret.parametersError = !data.Read("MessageFunction", messageFunction);
-            if (!ret) {
-                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "When the MessageDestination is set the MessageFunction shall also be set");
-            }
-        }
+        ret.fatalError = !newParsedConfiguration.MoveToRoot();
+    }
+    if (ret.ErrorsCleared()) {
+        ret.fatalError = !parsedConfiguration.MoveToRoot();
+    }
+    if (ret.ErrorsCleared()) {
+        parsedConfiguration.Purge();
+        ret.fatalError = !newParsedConfiguration.Copy(parsedConfiguration);
+    }
+    return ret; 
+}
+
+ErrorManagement::ErrorType Loader::ReloadLastValidConfiguration() {
+    ErrorManagement::ErrorType ret;
+    if (ret.ErrorsCleared()) {
+        ret.fatalError = !parsedConfiguration.MoveToRoot();
+    }
+    if (ret.ErrorsCleared()) {
+        ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(parsedConfiguration);
+    }
+    return ret;
+}
+
+ErrorManagement::ErrorType Loader::GetLastValidConfiguration(ConfigurationDatabase &output) {
+    ErrorManagement::ErrorType ret;
+    ret.fatalError = !parsedConfiguration.MoveToRoot();
+    if (ret.ErrorsCleared()) {
+        ret.fatalError = !parsedConfiguration.Copy(output);
     }
     return ret;
 }

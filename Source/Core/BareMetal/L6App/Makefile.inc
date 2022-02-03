@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=Loader.x RealTimeLoader.x
+OBJSX=ConfigHandler.x ConfigStreamI.x Loader.x RealTimeLoader.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

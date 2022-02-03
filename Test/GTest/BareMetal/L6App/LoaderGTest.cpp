@@ -132,3 +132,24 @@ TEST(BareMetal_L6App_LoaderGTest,TestConfigure_SchedulerGranularity) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_SchedulerGranularity());
 }
+
+TEST(BareMetal_L6App_LoaderGTest,TestReconfigure) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestReconfigure());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestGetLastValidConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestGetLastValidConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestGetLastValidConfiguration_AfterFailure) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestGetLastValidConfiguration_AfterFailure());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestReloadLastValidConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestReloadLastValidConfiguration());
+}
+

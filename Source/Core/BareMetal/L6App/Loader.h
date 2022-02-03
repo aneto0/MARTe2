@@ -75,6 +75,33 @@ public:
     virtual ErrorManagement::ErrorType Configure(StructuredDataI &data, StreamI &configuration);
 
     /**
+     * @brief Allows to reconfigure an application.
+     * @details It will parse the input configuration and attempt to call ObjectRegistryDatabase::Initialise.
+     * It is expected that the caller will have called ObjectRegistryDatabase::Purge before.
+     * After this function is successfully called, the GetLastValidConfiguration will return the updated configuration.
+     * @param[in] configuration the stream with the new configuration to be loaded.
+     * @param[out] parserError any parser errors that may be raised.
+     * @return ErrorManagement::NoError if the configuration is successfully parsed and the ObjectRegistryDatabase::Initialise is successful.
+     * @pre
+     *   Optional - ObjectRegistryDatabase::Purge
+     */
+    virtual ErrorManagement::ErrorType Reconfigure(StreamI &configuration, StreamString &parserError);
+
+    /**
+     * @brief Reloads the last valid configuration.
+     * @details It is expected that the caller will have called ObjectRegistryDatabase::Purge before.
+     * @return ErrorManagement::NoError if the last valid configuration is successfully loaded.
+     */
+    ErrorManagement::ErrorType ReloadLastValidConfiguration();
+
+    /**
+     * @brief Returns the last valid configuration.
+     * @param[out] output the destination ConfigurationDatabase.
+     * @return ErrorManagement::NoError if the current valid configuration is successfully copied to the output.
+     */
+    ErrorManagement::ErrorType GetLastValidConfiguration(ConfigurationDatabase &output);
+
+    /**
      * @brief If the MessageDestination was specified in Initialise, sends the Message to the specified destination.
      * @return ErrorManagement::NoError if the MessageDestination was specified and if the Message was successfully sent. An error is returned otherwise.
      */
@@ -91,6 +118,11 @@ protected:
      * @brief The loader parameters.
      */
     ConfigurationDatabase parsedConfiguration;
+
+    /**
+     * @brief The selected type of parser.
+     */
+    StreamString parserType;
 
 private:
     /**
