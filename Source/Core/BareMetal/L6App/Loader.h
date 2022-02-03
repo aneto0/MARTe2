@@ -71,6 +71,7 @@ public:
      * - MessageFunction (optional, but compulsory if MessageDestination is set): the name of the Function to be called in the MessageDestination.
      * @param[in] configuration the MARTe configuration stream to be loaded (and parsed using the Parser defined above).
      * @return ErrorManagement::NoError if the Parser is specified, the \a configuration can be parsed and if the ObjectRegistryDatabase can be Initialised with the parsed configuration. An error is returned otherwise.
+     * If successful the Loader instance will be added to the ObjectRegistryDatabase.
      */
     virtual ErrorManagement::ErrorType Configure(StructuredDataI &data, StreamI &configuration);
 

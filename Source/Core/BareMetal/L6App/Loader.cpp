@@ -121,6 +121,10 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
             }
         }
     }
+    if (ret.ErrorsCleared()) {
+        //Add the Loader to the ObjectRegistryDatabase
+        ret.initialisationError = !ObjectRegistryDatabase::Instance()->Insert(this);
+    }
     return ret;
 }
 

@@ -65,27 +65,28 @@ CLASS_METHOD_REGISTER(LoaderTestMessageObject1, Callback)
 /*---------------------------------------------------------------------------*/
 bool LoaderTest::TestConstructor() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     return true;
 }
 
 bool LoaderTest::TestConfigure() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ok = (ProcessorType::GetDefaultCPUs() == 0x1u);
     ObjectRegistryDatabase::Instance()->Purge();
+    printf("ObjectRegistryDatabase::Instance()->Size() = %d\n", ObjectRegistryDatabase::Instance()->Size());
     return ok;
 }
 
 bool LoaderTest::TestConfigure_CPUs() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
@@ -93,7 +94,7 @@ bool LoaderTest::TestConfigure_CPUs() {
     params.Write("Parser", "cdb");
     uint32 defaultCPUs = 0xfu;
     params.Write("DefaultCPUs", defaultCPUs);
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ok = (ProcessorType::GetDefaultCPUs() == defaultCPUs);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
@@ -101,7 +102,7 @@ bool LoaderTest::TestConfigure_CPUs() {
 
 bool LoaderTest::TestConfigure_SchedulerGranularity() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
@@ -110,7 +111,7 @@ bool LoaderTest::TestConfigure_SchedulerGranularity() {
     uint32 currentValue = Sleep::GetSchedulerGranularity();
     uint32 schedulerGranularity = 123456;
     params.Write("SchedulerGranularity", schedulerGranularity);
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ok = (Sleep::GetSchedulerGranularity() == schedulerGranularity);
     Sleep::SetSchedulerGranularity(currentValue);
     ObjectRegistryDatabase::Instance()->Purge();
@@ -120,84 +121,84 @@ bool LoaderTest::TestConfigure_SchedulerGranularity() {
 
 bool LoaderTest::TestConfigure_Json() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "\"+A\" : {\n"
             "   \"Class\" : \"ReferenceContainer\"\n"
             "}\n";
     ConfigurationDatabase params;
     params.Write("Parser", "json");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
 bool LoaderTest::TestConfigure_Xml() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "<+A>"
             "   <Class>ReferenceContainer</Class>"
             "</+A>";
     ConfigurationDatabase params;
     params.Write("Parser", "xml");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
 bool LoaderTest::TestConfigure_False_NoParser() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
-    bool ok = !l.Configure(params, config);
+    bool ok = !l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
 bool LoaderTest::TestConfigure_False_BadParser() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "zdb");
-    bool ok = !l.Configure(params, config);
+    bool ok = !l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
 bool LoaderTest::TestConfigure_False_FailedParser() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={{"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = !l.Configure(params, config);
+    bool ok = !l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
 bool LoaderTest::TestConfigure_False_FailedConfiguration() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ZReferenceContainer"
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = !l.Configure(params, config);
+    bool ok = !l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
 bool LoaderTest::TestConfigure_False_FailedMessageFunction() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -207,21 +208,21 @@ bool LoaderTest::TestConfigure_False_FailedMessageFunction() {
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("MessageDestination", "B");
-    bool ok = !l.Configure(params, config);
+    bool ok = !l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
 bool LoaderTest::TestConfigure_BuildTokens() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("BuildTokens", "_=");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ok = ReferenceContainer::IsBuildToken('_');
     ok &= ReferenceContainer::IsBuildToken('=');
     ok &= ReferenceContainer::IsBuildToken('+');
@@ -233,14 +234,14 @@ bool LoaderTest::TestConfigure_BuildTokens() {
 
 bool LoaderTest::TestConfigure_BuildTokens_False() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("BuildTokens", "_=!@#$%^&*()");
-    bool ok = !l.Configure(params, config);
+    bool ok = !l->Configure(params, config);
     ReferenceContainer::RemoveBuildToken('_');
     ReferenceContainer::RemoveBuildToken('=');
     ReferenceContainer::RemoveBuildToken('!');
@@ -259,14 +260,14 @@ bool LoaderTest::TestConfigure_BuildTokens_False() {
 
 bool LoaderTest::TestConfigure_DomainTokens() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("DomainTokens", "_=");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ok = ReferenceContainer::IsDomainToken('_');
     ok &= ReferenceContainer::IsDomainToken('=');
     ok &= ReferenceContainer::IsDomainToken('$');
@@ -278,14 +279,14 @@ bool LoaderTest::TestConfigure_DomainTokens() {
 
 bool LoaderTest::TestConfigure_DomainTokens_False() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("DomainTokens", "_=!@#$%^&*()");
-    bool ok = !l.Configure(params, config);
+    bool ok = !l->Configure(params, config);
     ReferenceContainer::RemoveDomainToken('_');
     ReferenceContainer::RemoveDomainToken('=');
     ReferenceContainer::RemoveDomainToken('!');
@@ -302,7 +303,7 @@ bool LoaderTest::TestConfigure_DomainTokens_False() {
 }
 bool LoaderTest::TestStart() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -313,9 +314,9 @@ bool LoaderTest::TestStart() {
     params.Write("Parser", "cdb");
     params.Write("MessageDestination", "B");
     params.Write("MessageFunction", "Callback");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     if (ok) {
-        ok = l.Start();
+        ok = l->Start();
     }
     ReferenceT<LoaderTestMessageObject1> obj;
     if (ok) {
@@ -332,7 +333,7 @@ bool LoaderTest::TestStart() {
 
 bool LoaderTest::TestStart_WrongMessage() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -343,9 +344,9 @@ bool LoaderTest::TestStart_WrongMessage() {
     params.Write("Parser", "cdb");
     params.Write("MessageDestination", "C");
     params.Write("MessageFunction", "Callback");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     if (ok) {
-        ok = !l.Start();
+        ok = !l->Start();
     }
 
     ObjectRegistryDatabase::Instance()->Purge();
@@ -354,7 +355,7 @@ bool LoaderTest::TestStart_WrongMessage() {
 
 bool LoaderTest::TestStart_NoMessage() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -363,9 +364,9 @@ bool LoaderTest::TestStart_NoMessage() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     if (ok) {
-        ok = l.Start();
+        ok = l->Start();
     }
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
@@ -373,7 +374,7 @@ bool LoaderTest::TestStart_NoMessage() {
 
 bool LoaderTest::TestStop() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -382,9 +383,9 @@ bool LoaderTest::TestStop() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     if (ok) {
-        ok = l.Stop();
+        ok = l->Stop();
     }
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
@@ -392,7 +393,7 @@ bool LoaderTest::TestStop() {
 
 bool LoaderTest::TestReconfigure() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -401,7 +402,7 @@ bool LoaderTest::TestReconfigure() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     if (ok) {
         Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
         ok = ref.IsValid();
@@ -420,7 +421,7 @@ bool LoaderTest::TestReconfigure() {
     (void)config.Seek(0LLU);
     if  (ok) {
         StreamString ignored;
-        ok = l.Reconfigure(config, ignored);
+        ok = l->Reconfigure(config, ignored);
     }
     if (ok) {
         Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
@@ -431,7 +432,7 @@ bool LoaderTest::TestReconfigure() {
         ok = ref.IsValid();
     }
     if (ok) {
-        ok = l.Stop();
+        ok = l->Stop();
     }
 
     ObjectRegistryDatabase::Instance()->Purge();
@@ -440,7 +441,7 @@ bool LoaderTest::TestReconfigure() {
     
 bool LoaderTest::TestGetLastValidConfiguration() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -449,10 +450,10 @@ bool LoaderTest::TestGetLastValidConfiguration() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ConfigurationDatabase output1;
     if (ok) {
-        ok = l.GetLastValidConfiguration(output1);
+        ok = l->GetLastValidConfiguration(output1);
     }
     if (ok) {
         ok = output1.MoveAbsolute("+A");
@@ -467,11 +468,11 @@ bool LoaderTest::TestGetLastValidConfiguration() {
     (void)config.Seek(0LLU);
     if  (ok) {
         StreamString ignored;
-        ok = l.Reconfigure(config, ignored);
+        ok = l->Reconfigure(config, ignored);
     }
     ConfigurationDatabase output2;
     if (ok) {
-        ok = l.GetLastValidConfiguration(output2);
+        ok = l->GetLastValidConfiguration(output2);
     }
     if (ok) {
         ok = !output2.MoveAbsolute("+A");
@@ -481,7 +482,7 @@ bool LoaderTest::TestGetLastValidConfiguration() {
     }
 
     if (ok) {
-        ok = l.Stop();
+        ok = l->Stop();
     }
 
     ObjectRegistryDatabase::Instance()->Purge();
@@ -490,7 +491,7 @@ bool LoaderTest::TestGetLastValidConfiguration() {
 
 bool LoaderTest::TestGetLastValidConfiguration_AfterFailure() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -499,10 +500,10 @@ bool LoaderTest::TestGetLastValidConfiguration_AfterFailure() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ConfigurationDatabase output1;
     if (ok) {
-        ok = l.GetLastValidConfiguration(output1);
+        ok = l->GetLastValidConfiguration(output1);
     }
     if (ok) {
         ok = output1.MoveAbsolute("+A");
@@ -517,11 +518,11 @@ bool LoaderTest::TestGetLastValidConfiguration_AfterFailure() {
     (void)config.Seek(0LLU);
     if  (ok) {
         StreamString ignored;
-        ok = !l.Reconfigure(config, ignored);
+        ok = !l->Reconfigure(config, ignored);
     }
     ConfigurationDatabase output2;
     if (ok) {
-        ok = l.GetLastValidConfiguration(output2);
+        ok = l->GetLastValidConfiguration(output2);
     }
     if (ok) {
         ok = output2.MoveAbsolute("+A");
@@ -531,7 +532,7 @@ bool LoaderTest::TestGetLastValidConfiguration_AfterFailure() {
     }
 
     if (ok) {
-        ok = l.Stop();
+        ok = l->Stop();
     }
 
     ObjectRegistryDatabase::Instance()->Purge();
@@ -541,7 +542,7 @@ bool LoaderTest::TestGetLastValidConfiguration_AfterFailure() {
 
 bool LoaderTest::TestReloadLastValidConfiguration() {
     using namespace MARTe;
-    Loader l;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}"
@@ -550,10 +551,10 @@ bool LoaderTest::TestReloadLastValidConfiguration() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Configure(params, config);
+    bool ok = l->Configure(params, config);
     ConfigurationDatabase output1;
     if (ok) {
-        ok = l.GetLastValidConfiguration(output1);
+        ok = l->GetLastValidConfiguration(output1);
     }
     if (ok) {
         ok = output1.MoveAbsolute("+A");
@@ -568,7 +569,7 @@ bool LoaderTest::TestReloadLastValidConfiguration() {
     (void)config.Seek(0LLU);
     if  (ok) {
         StreamString ignored;
-        ok = !l.Reconfigure(config, ignored);
+        ok = !l->Reconfigure(config, ignored);
     }
     if (ok) {
         Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
@@ -576,14 +577,14 @@ bool LoaderTest::TestReloadLastValidConfiguration() {
     }
     ObjectRegistryDatabase::Instance()->Purge();
     if (ok) {
-        ok = l.ReloadLastValidConfiguration();
+        ok = l->ReloadLastValidConfiguration();
     }
     if (ok) {
         Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
         ok = ref.IsValid();
     }
     if (ok) {
-        ok = l.Stop();
+        ok = l->Stop();
     }
 
     ObjectRegistryDatabase::Instance()->Purge();
