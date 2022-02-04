@@ -31,9 +31,12 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabase.h"
+#include "ConfigurationLoaderHashI.h"
 #include "Loader.h"
+#include "MessageI.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "RegisteredMethodsMessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,15 +50,16 @@ namespace MARTe {
  * The class will find the MARTe::Loader class and use it to apply new configurations.
  *
  * If a ConfigurationHashI object is set, it will be used to verify that the configuration matches with the one
- *  offered by the caller. In order to do so, the configuration stream shall have a field "Hash = MYCOMPUTEDHASH" at the root level. The hash shall be computed using the GetSeed as the algorithm seed.
+ *  offered by the caller. The hash shall be computed using the GetSeed as the algorithm seed.
  *
  * Three messages may be set as described in the example below.
  *
  * <pre>
  *  +MyConfigurationLoader = {
  *    Class = ConfigurationLoader
- *    ReloadOld = true //Reload old configuration in case of (re)configuration failure? Default = true
+ *    ReloadLast = true //Reload old configuration in case of (re)configuration failure? Default = true. If true the FailedConfiguration message will not to be sent.
  *    +Messages = {
+ *      Class = ReferenceContainer
  *      +PreConfiguration = { //Optional message to send before the configuration is applied.
  *        Class = Message
  *        Destination = SomeObject
@@ -76,12 +80,12 @@ namespace MARTe {
  *      }
  *    }
  *    +Hash = { //Optional. If set the configuration will be verified against the Hash function.
- *      Class = MyHasher
+ *      Class = ConfigurationLoaderHashI
  *    }
  *  }
  * </pre>
  */
-class ConfigurationLoader: public ReferenceContainer {
+class ConfigurationLoader: public ReferenceContainer, public MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -106,7 +110,7 @@ public:
      * @brief Returns a unique seed that can be used to hash a configuration request.
      * @return a unique seed based on the HighResolutionTimer::Counter
      */
-    virtual uint64 GetSeed();
+    virtual uint32 GetSeed();
 
     /**
      * @brief Applies a new configuration as delivered by the StreamI interface.
@@ -117,18 +121,53 @@ public:
      * @param[in] source the StreamI with the configuration request.
      * @return true if the reconfiguration was successful.
      */
-    ErrorManagement::ErrorType ApplyConfiguration(StreamI &source);
+    ErrorManagement::ErrorType ApplyConfiguration(StreamI &source, StreamString &errStream);
 
     /**
      * @brief TODO
      */
-    ErrorManagement::ErrorType ApplyConfigurationWithHash(StreamString &source, StreamString &hash);
+    ErrorManagement::ErrorType ApplyConfigurationWithHash(StreamString &source, const uint32 hash, StreamString &errStream);
 
 private:
+    /**
+     * Helper function to send message.
+     */
+    ErrorManagement::ErrorType SendConfigurationMessage(ReferenceT<Message> msg);
+
     /**
      * The application bootstrap loader.
      */
     ReferenceT<Loader> loader;
+
+    /**
+     * The message to send before the configuration is applied.
+     */
+    ReferenceT<Message> preConfigMsg;
+
+    /**
+     * The message to send if a configuration error is detected.
+     */
+    ReferenceT<Message> failedConfigMsg;
+
+    /**
+     * The message to send after the configuration is applied.
+     */
+    ReferenceT<Message> postConfigMsg;
+
+    /**
+     * If true and the configuration fails, it will automatically reload the last good configuration.
+     */
+    bool reloadLast;
+
+    /**
+     * Last offered seed.
+     */
+    uint8 lastSeed;
+
+    /**
+     * Hash component.
+     */
+    ReferenceT<ConfigurationLoaderHashI> loaderHash;
 };
 }
 /*---------------------------------------------------------------------------*/
