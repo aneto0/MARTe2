@@ -130,6 +130,13 @@ bool ConfigurationLoader::Initialise(StructuredDataI & data) {
 ErrorManagement::ErrorType ConfigurationLoader::ApplyConfiguration(StreamI &source, StreamString &errStream) {
     ErrorManagement::ErrorType ret = SendConfigurationMessage(preConfigMsg);
     if (ret.ErrorsCleared()) {
+        //Make sure this class is not removed...
+        Reference keepAlive = this;
+        uint32 nOfObjs = ObjectRegistryDatabase::Instance()->Size();
+        REPORT_ERROR(ErrorManagement::Debug, "Purging ObjectRegistryDatabase with %d objects", nOfObjs);
+        ObjectRegistryDatabase::Instance()->Purge();
+        nOfObjs = ObjectRegistryDatabase::Instance()->Size();
+        REPORT_ERROR(ErrorManagement::Debug, "Purge ObjectRegistryDatabase. Number of left objects: %d", nOfObjs);
         ret = loader->Reconfigure(source, errStream);
         if (!ret.ErrorsCleared()) {
             bool sendFailedConfigMsg = !reloadLast;
