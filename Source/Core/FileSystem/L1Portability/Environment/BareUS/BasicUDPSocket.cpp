@@ -101,7 +101,7 @@ bool BasicUDPSocket::Write(const char8* const input,
     destIPAddress = (destination.GetInternetHost())->addr;
     uint16 destPort = (destination.GetInternetHost())->port;
 
-    struct pbuf *packetBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
+    struct pbuf *packetBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_POOL);
     MemoryOperationsHelper::Copy(packetBuffer->payload, input, size);
     err = udp_sendto(connectionSocket.UDPHandle, packetBuffer, &destIPAddress, destPort);
     pbuf_free(packetBuffer);
