@@ -60,6 +60,7 @@ enum SignalDirection {
  * <pre>
  * +ThisDataSourceIObjectName = {
  *    Class = ClassThatImplementsDataSourceI
+ *    DefaultBrokerOptim = true //Optional. Can be true or false, default = false. If true, the Init of the BrokerI is called with optim = true.
  *    Signals = {
  *        +*NAME = {
  *            +Type = BasicType|StructuredType
@@ -696,6 +697,11 @@ private:
      * Accelerator for the signal names.
      */
     ConfigurationDatabase signalNameCache;
+
+    /**
+     * Default broker optimisation
+     */
+    bool defaultBrokerOptim;
 };
 
 }

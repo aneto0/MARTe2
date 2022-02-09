@@ -51,6 +51,7 @@ namespace MARTe {
 DataSourceI::DataSourceI() :
         ReferenceContainer() {
     numberOfSignals = 0u;
+    defaultBrokerOptim = false;
 }
 
 DataSourceI::~DataSourceI() {
@@ -59,6 +60,21 @@ DataSourceI::~DataSourceI() {
 
 bool DataSourceI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
+    StreamString defaultBrokerOptimStr;
+    if (ret) {
+        if (data.Read("DefaultBrokerOptim", defaultBrokerOptimStr)) {
+            if (defaultBrokerOptimStr == "true") {
+                defaultBrokerOptim = true;
+            } 
+            else if (defaultBrokerOptimStr == "false") {
+                defaultBrokerOptim = false;
+            } 
+            else {
+                ret = false;
+                REPORT_ERROR(ErrorManagement::ParametersError, "DefaultBrokerOptim shall be either true or false. %s is not valid", defaultBrokerOptimStr.Buffer());
+            }
+        }
+    }
     if (data.MoveRelative("Signals")) {
         ret = signalsDatabase.Write("Signals", data);
         if (ret) {
@@ -722,7 +738,7 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
                         brokerName += suggestedBrokerNameIn.Buffer();
                         broker->SetName(brokerName.Buffer());
 
-                        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+                        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr, defaultBrokerOptim);
                         if (ret) {
                             //Insert at the beginning the sync/trigger broker
                             if (isSyncOrTrigger) {
@@ -818,7 +834,7 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
                         brokerName += suggestedBrokerNameIn.Buffer();
                         broker->SetName(brokerName.Buffer());
 
-                        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+                        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr, defaultBrokerOptim);
                         if (ret) {
                             //Insert at the end the sync/trigger broker
                             if (!isSyncOrTrigger) {
