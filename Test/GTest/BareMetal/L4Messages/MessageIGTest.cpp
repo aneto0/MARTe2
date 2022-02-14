@@ -80,6 +80,11 @@ TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidDestination
     ASSERT_TRUE(target.TestSendMessage_False_InvalidDestination());
 }
 
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidDestination_Not_Exist) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_InvalidDestination_Not_Exist());
+}
+
 TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidFunction) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage_False_InvalidFunction());
