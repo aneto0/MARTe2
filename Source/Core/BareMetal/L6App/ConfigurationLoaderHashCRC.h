@@ -20,8 +20,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CONFIGURATION_LOADER_HASH_I_H_
-#define CONFIGURATION_LOADER_HASH_I_H_
+#ifndef CONFIGURATION_LOADER_HASH_CRC_H_
+#define CONFIGURATION_LOADER_HASH_CRC_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "ConfigurationLoaderHashI.h"
 #include "CRC.h"
 #include "Object.h"
 
@@ -50,7 +51,7 @@ namespace MARTe {
  * </pre>
  *
  */
-class ConfigurationLoaderHashCRC : public Object {
+class ConfigurationLoaderHashCRC : public Object, public ConfigurationLoaderHashI {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
@@ -98,5 +99,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* CONFIGURATION_LOADER_HASH_I_H_ */
+#endif /* CONFIGURATION_LOADER_HASH_CRC_H_ */
 

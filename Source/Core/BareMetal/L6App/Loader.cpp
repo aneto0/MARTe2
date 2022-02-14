@@ -49,6 +49,8 @@ namespace MARTe {
 
 Loader::Loader() :
         Object() {
+    firstLoading = true;
+    reloadLast = false;
 }
 
 Loader::~Loader() {
@@ -110,8 +112,11 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
         ret.initialisationError = !configuration.Seek(0LLU);
     }
     if (ret.ErrorsCleared()) {
-        StreamString parserError;
-        ret = Reconfigure(configuration, parserError);
+        StreamString errStream;
+        ret = Reconfigure(configuration, errStream);
+    }
+    if (ret.ErrorsCleared()) {
+        ret = PostInit();
     }
     if (ret.ErrorsCleared()) {
         if (data.Read("MessageDestination", messageDestination)) {
@@ -121,28 +126,24 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
             }
         }
     }
-    if (ret.ErrorsCleared()) {
-        //Add the Loader to the ObjectRegistryDatabase
-        ret.initialisationError = !ObjectRegistryDatabase::Instance()->Insert(this);
-    }
     return ret;
 }
 
-ErrorManagement::ErrorType Loader::Reconfigure(StreamI &configuration, StreamString &parserError) {
+ErrorManagement::ErrorType Loader::Reconfigure(StreamI &configuration, StreamString &errStream) {
     ErrorManagement::ErrorType ret;
     ConfigurationDatabase newParsedConfiguration;
     ret.fatalError = !newParsedConfiguration.MoveToRoot();
     if (ret.ErrorsCleared()) {
         if (parserType == "xml") {
-            XMLParser parser(configuration, newParsedConfiguration, &parserError);
+            XMLParser parser(configuration, newParsedConfiguration, &errStream);
             ret.initialisationError = !parser.Parse();
         }
         else if (parserType == "json") {
-            JsonParser parser(configuration, newParsedConfiguration, &parserError);
+            JsonParser parser(configuration, newParsedConfiguration, &errStream);
             ret.initialisationError = !parser.Parse();
         }
         else if (parserType == "cdb") {
-            StandardParser parser(configuration, newParsedConfiguration, &parserError);
+            StandardParser parser(configuration, newParsedConfiguration, &errStream);
             ret.initialisationError = !parser.Parse();
         }
         else {
@@ -151,39 +152,122 @@ ErrorManagement::ErrorType Loader::Reconfigure(StreamI &configuration, StreamStr
         }
         if (!ret) {
             StreamString errPrint;
-            (void) errPrint.Printf("Failed to parse %s", parserError.Buffer());
+            (void) errPrint.Printf("Failed to parse %s", errStream.Buffer());
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, errPrint.Buffer());
         }
     }
     if (ret.ErrorsCleared()) {
-        ret.fatalError = !newParsedConfiguration.MoveToRoot();
+        ret = Reconfigure(newParsedConfiguration, errStream);
+    }
+    else {
+        if (!firstLoading) {
+            bool sendFailedConfigMsg = !reloadLast;
+            if (reloadLast) {
+                REPORT_ERROR_STATIC(ErrorManagement::Information, "Reloading last valid configuration");
+                ErrorManagement::ErrorType retReload = ReloadLastValidConfiguration();
+                if (!retReload.ErrorsCleared()) {
+                    sendFailedConfigMsg = true;
+                }
+            }
+            if (sendFailedConfigMsg) {
+                (void) SendConfigurationMessage(failedConfigMsg);
+            }
+        }
+    }
+    firstLoading = false;
+    return ret; 
+}
+
+ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, StreamString &errStream) {
+    ErrorManagement::ErrorType ret;
+    if (!firstLoading) {
+        ret = SendConfigurationMessage(preConfigMsg);
     }
     if (ret.ErrorsCleared()) {
-        ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(newParsedConfiguration);
+        //Make sure this class is not removed...
+        Reference keepAlive = this;
+        uint32 nOfObjs = ObjectRegistryDatabase::Instance()->Size();
+        REPORT_ERROR(ErrorManagement::Debug, "Purging ObjectRegistryDatabase with %d objects", nOfObjs);
+        ObjectRegistryDatabase::Instance()->Purge();
+        nOfObjs = ObjectRegistryDatabase::Instance()->Size();
+        REPORT_ERROR(ErrorManagement::Debug, "Purge ObjectRegistryDatabase. Number of objects left: %d", nOfObjs);
+        ret.fatalError = !configuration.MoveToRoot();
+    }
+    if (ret.ErrorsCleared()) {
+        ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(configuration);
         if (!ret) {
             REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Failed to initialise the ObjectRegistryDatabase");
         }
     }
     if (ret.ErrorsCleared()) {
-        ret.fatalError = !newParsedConfiguration.MoveToRoot();
+        ret.fatalError = !configuration.MoveToRoot();
     }
     if (ret.ErrorsCleared()) {
         ret.fatalError = !parsedConfiguration.MoveToRoot();
     }
     if (ret.ErrorsCleared()) {
         parsedConfiguration.Purge();
-        ret.fatalError = !newParsedConfiguration.Copy(parsedConfiguration);
+        ret.fatalError = !configuration.Copy(parsedConfiguration);
+    }
+    if (ret.ErrorsCleared()) {
+        ret = SendConfigurationMessage(postConfigMsg);
+    }
+    else {
+        if (!firstLoading) {
+            bool sendFailedConfigMsg = !reloadLast;
+            if (reloadLast) {
+                REPORT_ERROR_STATIC(ErrorManagement::Information, "Reloading last valid configuration");
+                ErrorManagement::ErrorType retReload = ReloadLastValidConfiguration();
+                if (!retReload.ErrorsCleared()) {
+                    sendFailedConfigMsg = true;
+                }
+            }
+            if (sendFailedConfigMsg) {
+                (void) SendConfigurationMessage(failedConfigMsg);
+            }
+        }
+    }
+    firstLoading = false;
+    return ret; 
+}
+
+ErrorManagement::ErrorType Loader::Reconfigure(StreamString &configuration, StreamString &errStream, uint32 hash) {
+    ErrorManagement::ErrorType err;
+    err.fatalError = !loaderHash.IsValid();
+    if (err.ErrorsCleared()) {
+        uint32 computedHash = loaderHash->ComputeHash(configuration.Buffer(), configuration.Size());
+        err.fatalError = (computedHash != hash);
+        if (!err.ErrorsCleared()) {
+            (void)errStream.Printf("Computed hash (%d) does not match offered hash (%d)", computedHash, hash);
+            REPORT_ERROR(ErrorManagement::FatalError, errStream.Buffer());
+        }
+    }
+    if (err.ErrorsCleared()) {
+        (void)configuration.Seek(0LLU);
+        err = Reconfigure(configuration, errStream);
+    }
+    return err;
+}
+
+uint32 Loader::GetSeed() {
+    uint32 ret = 0u;
+    if (loaderHash.IsValid()) {
+        ret = loaderHash->GetSeed();
     }
     return ret; 
 }
 
 ErrorManagement::ErrorType Loader::ReloadLastValidConfiguration() {
     ErrorManagement::ErrorType ret;
+    ObjectRegistryDatabase::Instance()->Purge();
     if (ret.ErrorsCleared()) {
         ret.fatalError = !parsedConfiguration.MoveToRoot();
     }
     if (ret.ErrorsCleared()) {
         ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(parsedConfiguration);
+    }
+    if (ret.ErrorsCleared()) {
+        (void) SendConfigurationMessage(reloadedConfiguration);
     }
     return ret;
 }
@@ -195,6 +279,82 @@ ErrorManagement::ErrorType Loader::GetLastValidConfiguration(ConfigurationDataba
         ret.fatalError = !parsedConfiguration.Copy(output);
     }
     return ret;
+}
+
+ErrorManagement::ErrorType Loader::PostInit() {
+    ErrorManagement::ErrorType err;
+    ReferenceT<ReferenceContainer> rc = ObjectRegistryDatabase::Instance()->Find("LoaderPostInit");
+    if (rc.IsValid()) {
+        ReferenceT<ConfigurationDatabase> params = rc->Find("Parameters");
+        if (params.IsValid()) {
+            StreamString reloadLastStr;
+            if (params->Read("ReloadLast", reloadLastStr)) {
+                if (reloadLastStr == "true") {
+                    reloadLast = true;
+                }
+                else if (reloadLastStr == "false") {
+                    reloadLast = false;
+                }
+                else {
+                    err.parametersError = true;
+                    REPORT_ERROR(err, "ReloadLast shall be either set to true or false. %s is not supported.", reloadLastStr.Buffer());
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            ReferenceT<ConfigurationLoaderHashI> hashI = rc->Find("Hash");
+            loaderHash = hashI;
+        }
+        ReferenceT<ReferenceContainer> msgs = rc->Find("Messages");
+        if (msgs.IsValid()) {
+            //Load all the Messages
+            for (uint32 j=0u; (err.ErrorsCleared()) && (j<msgs->Size()); j++) {
+                ReferenceT <Message> msg = msgs->Get(j);
+                err.parametersError = !msg.IsValid();
+                if (err.ErrorsCleared()) {
+                    StreamString msgName = msg->GetName();
+                    if (msgName == "PreConfiguration") {
+                        preConfigMsg = msg;
+                    }
+                    else if (msgName == "PostConfiguration") {
+                        postConfigMsg = msg;
+                    }
+                    else if (msgName == "FailedConfiguration") {
+                        failedConfigMsg = msg;
+                    }
+                    else if (msgName == "ReloadedConfiguration") {
+                        reloadedConfiguration = msg;
+                    }
+                    else {
+                        err.parametersError = true;
+                        REPORT_ERROR(err, "Message %s is not supported.", msgName.Buffer());
+                    }
+                }
+                else {
+                    err.parametersError = true;
+                    REPORT_ERROR(err, "Found an invalid Message in container %s", msgs->GetName());
+                }
+            }
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::Information, "LoaderPostInit not set");
+    }
+    return err;
+}
+
+ErrorManagement::ErrorType Loader::SendConfigurationMessage(ReferenceT<Message> msg) {
+    ErrorManagement::ErrorType err;
+    if (msg.IsValid()) {
+        msg->SetAsReply(false);
+        err = MessageI::SendMessage(msg, this);
+        if (!err.ErrorsCleared()) {
+            StreamString destination = msg->GetDestination();
+            StreamString function = msg->GetFunction();
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not send message to %s [%s]", destination.Buffer(), function.Buffer());
+        }
+    }
+    return err;
 }
 
 ErrorManagement::ErrorType Loader::Start() {

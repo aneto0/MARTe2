@@ -41,7 +41,6 @@ namespace MARTe {
 /**
  * @brief Abstract class to facilitate the implementation of configuration hash mechanism. 
  * TODO
- *
  */
 class ConfigurationLoaderHashI {
 public:
@@ -49,13 +48,13 @@ public:
      * @brief Returns a unique seed that can be used to hash a configuration request.
      * @return a unique seed seed that can be used to hash a configuration request.
      */
-    virtual uint32 GetSeed();
+    virtual uint32 GetSeed() = 0;
 
     /**
      * @brief Compute hash against input string.
      * @return the computed hash.
      */
-    virtual uint32 ComputeHash(const char8 *input, uint32 inputSize);
+    virtual uint32 ComputeHash(const char8 *input, uint32 inputSize) = 0;
 };
 }
 /*---------------------------------------------------------------------------*/

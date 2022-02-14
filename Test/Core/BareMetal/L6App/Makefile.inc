@@ -24,7 +24,6 @@
 #
 #############################################################
 
-
 OBJSX= LoaderTest.x RealTimeLoaderTest.x
 
 PACKAGE=Core/BareMetal

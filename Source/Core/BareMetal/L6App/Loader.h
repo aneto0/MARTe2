@@ -28,6 +28,7 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabase.h"
+#include "ConfigurationLoaderHashI.h"
 #include "Message.h"
 #include "ParserI.h"
 #include "ProcessorType.h"
@@ -47,6 +48,48 @@ namespace MARTe {
 /**
  * @brief Starts a generic MARTe application from a given configuration stream.
  * @details The Loader parses (see Initialise) a given configuration stream and sends (see Start) a Message to a provided destination.
+ * A second initialisation stage is available, so that further parameters can be read once the configuration input is parsed for the first time. The parameters are expected to be found at the root level of the ObjectRegistryDatabase, following structure below. Note thatiIf a ConfigurationHashI object is set, it will be used to verify that the configuration matches with the one
+ *  offered by the caller. The hash shall be computed using the GetSeed as the algorithm seed. Three messages may be also be set as described in the example below.
+ * <pre>
+ *  //The names of the nodes shall not be modified.
+ *  +LoaderPostInit = {
+ *    Class = ReferenceContainer
+ *    +Parameters = {
+ *        Class = ConfigurationDatabase
+ *        ReloadLast = true //Reload old configuration in case of (re)configuration failure? Default = true. If true the FailedConfiguration message will not to be sent.
+ *    }
+ *    +Messages = {
+ *      Class = ReferenceContainer
+ *      +PreConfiguration = { //Optional message to send before the configuration is applied.
+ *        Class = Message
+ *        Destination = SomeObject
+ *        Function = SomeFunction
+ *        Mode = ExpectsReply
+ *      }
+ *      +PostConfiguration = { //Optional message to send if the configuration was successfully applied.
+ *        Class = Message
+ *        Destination = SomeObject
+ *        Function = SomeFunction
+ *        Mode = ExpectsReply
+ *      }
+ *      +FailedConfiguration = { //Optional message to send if the configuration failed. Note that given that the ObjectRegistryDatabase will have been purged, it is likely that this message will not reach its destination...
+ *        Class = Message
+ *        Destination = SomeObject
+ *        Function = SomeFunction
+ *        Mode = ExpectsReply
+ *      }
+ *      +ReloadedConfiguration = { //Optional message to send if the configuration was reloaded as a consequence of a failed reconfiguration attempt.
+ *        Class = Message
+ *        Destination = SomeObject
+ *        Function = SomeFunction
+ *        Mode = ExpectsReply
+ *      }
+
+ *    }
+ *    +Hash = { //Optional. If set the configuration will be verified against the Hash function.
+ *      Class = ConfigurationLoaderHashI
+ *    }
+ *  }
  */
 class DLL_API Loader: public Object {
 public:
@@ -78,19 +121,42 @@ public:
     /**
      * @brief Allows to reconfigure an application.
      * @details It will parse the input configuration and attempt to call ObjectRegistryDatabase::Initialise.
-     * It is expected that the caller will have called ObjectRegistryDatabase::Purge before.
+     * It will call ObjectRegistryDatabase::Purge before applying the new configuration.
      * After this function is successfully called, the GetLastValidConfiguration will return the updated configuration.
      * @param[in] configuration the stream with the new configuration to be loaded.
-     * @param[out] parserError any parser errors that may be raised.
+     * @param[out] errStream any errors that may be raised, including parser errors.
+     * @return ErrorManagement::NoError if the configuration is successfully parsed and the ObjectRegistryDatabase::Initialise is successful.
+     */
+    ErrorManagement::ErrorType Reconfigure(StreamI &configuration, StreamString &errStream);
+
+    /**
+     * @brief Allows to reconfigure an application.
+     * @details It will attempt to call ObjectRegistryDatabase::Initialise.
+     * It will call ObjectRegistryDatabase::Purge before applying the new configuration.
+     * After this function is successfully called, the GetLastValidConfiguration will return the updated configuration.
+     * @param[in] configuration the StructuredDataI with the new configuration to be loaded.
+     * @param[out] errStream any errors that may be raised.
      * @return ErrorManagement::NoError if the configuration is successfully parsed and the ObjectRegistryDatabase::Initialise is successful.
      * @pre
      *   Optional - ObjectRegistryDatabase::Purge
      */
-    virtual ErrorManagement::ErrorType Reconfigure(StreamI &configuration, StreamString &parserError);
+    ErrorManagement::ErrorType Reconfigure(StructuredDataI &configuration, StreamString &errStream);
+
+    /**
+     * @brief TODO
+     */
+    ErrorManagement::ErrorType Reconfigure(StreamString &configuration, StreamString &errStream, uint32 hash);
+
+    /**
+     * @brief Returns a unique seed that can be used to hash a configuration request.
+     * @details Only implemented if a ConfigurationLoaderHashI has been set.
+     * @return see ConfigurationLoaderHashI::GetSeed.
+     */
+    virtual uint32 GetSeed();
 
     /**
      * @brief Reloads the last valid configuration.
-     * @details It is expected that the caller will have called ObjectRegistryDatabase::Purge before.
+     * @details This function will call ObjectRegistryDatabase::Purge.
      * @return ErrorManagement::NoError if the last valid configuration is successfully loaded.
      */
     ErrorManagement::ErrorType ReloadLastValidConfiguration();
@@ -127,6 +193,16 @@ protected:
 
 private:
     /**
+     * Load post-init parameters.
+     */
+    ErrorManagement::ErrorType PostInit();
+
+    /**
+     * Helper function to send message.
+     */
+    ErrorManagement::ErrorType SendConfigurationMessage(ReferenceT<Message> msg);
+
+    /**
      * @brief The destination of the message to be sent at Start.
      */
     StreamString messageDestination;
@@ -136,6 +212,45 @@ private:
      */
     StreamString messageFunction;
 
+    /**
+     * The message to send before the configuration is applied.
+     */
+    ReferenceT<Message> preConfigMsg;
+
+    /**
+     * The message to send if a configuration error is detected.
+     */
+    ReferenceT<Message> failedConfigMsg;
+
+    /**
+     * The message to send if the last configuration was reloaded, as a consequence of an error.
+     */
+    ReferenceT<Message> reloadedConfiguration;
+
+    /**
+     * The message to send after the configuration is applied.
+     */
+    ReferenceT<Message> postConfigMsg;
+
+    /**
+     * If true and the configuration fails, it will automatically reload the last good configuration.
+     */
+    bool reloadLast;
+
+    /**
+     * Last offered seed.
+     */
+    uint8 lastSeed;
+
+    /**
+     * Hash component.
+     */
+    ReferenceT<ConfigurationLoaderHashI> loaderHash;
+
+    /**
+     * First loading?
+     */
+    bool firstLoading;
 };
 
 }

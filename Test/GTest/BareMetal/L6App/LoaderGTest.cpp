@@ -138,6 +138,16 @@ TEST(BareMetal_L6App_LoaderGTest,TestReconfigure) {
     ASSERT_TRUE(test.TestReconfigure());
 }
 
+TEST(BareMetal_L6App_LoaderGTest,TestReconfigure_StructuredDataI) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestReconfigure_StructuredDataI());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestReconfigure_Hash) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestReconfigure_Hash());
+}
+
 TEST(BareMetal_L6App_LoaderGTest,TestGetLastValidConfiguration) {
     LoaderTest test;
     ASSERT_TRUE(test.TestGetLastValidConfiguration());
@@ -152,4 +162,36 @@ TEST(BareMetal_L6App_LoaderGTest,TestReloadLastValidConfiguration) {
     LoaderTest test;
     ASSERT_TRUE(test.TestReloadLastValidConfiguration());
 }
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_ReloadLast_true) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit_ReloadLast_true());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_ReloadLast_false) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit_ReloadLast_false());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_ReloadLast_invalid) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit_ReloadLast_invalid());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestMessage_PreConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestMessage_PreConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestMessage_PostConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestMessage_PostConfiguration());
+}
+
+
 

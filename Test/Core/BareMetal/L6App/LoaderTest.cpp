@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "CLASSMETHODREGISTER.h"
+#include "ConfigurationLoaderHashCRC.h"
 #include "Loader.h"
 #include "LoaderTest.h"
 #include "MessageI.h"
@@ -411,7 +412,6 @@ bool LoaderTest::TestReconfigure() {
         Reference ref = ObjectRegistryDatabase::Instance()->Find("C");
         ok = !ref.IsValid();
     }
-    ObjectRegistryDatabase::Instance()->Purge();
     config = "+C={"
             "   Class = ReferenceContainer"
             "}"
@@ -438,7 +438,108 @@ bool LoaderTest::TestReconfigure() {
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
-    
+
+bool LoaderTest::TestReconfigure_StructuredDataI() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = "+A={"
+            "   Class = ReferenceContainer"
+            "}"
+            "+B={"
+            "   Class = LoaderTestMessageObject1"
+            "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
+        ok = ref.IsValid();
+    }
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("C");
+        ok = !ref.IsValid();
+    }
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("+C");
+    cdb.MoveAbsolute("+C");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.CreateAbsolute("+D");
+    cdb.Write("Class", "ReferenceContainer");
+    cdb.MoveAbsolute("+D");
+    if  (ok) {
+        StreamString ignored;
+        ok = l->Reconfigure(cdb, ignored);
+    }
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
+        ok = !ref.IsValid();
+    }
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("C");
+        ok = ref.IsValid();
+    }
+    if (ok) {
+        ok = l->Stop();
+    }
+
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+bool LoaderTest::TestReconfigure_Hash() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = ""
+            "+LoaderPostInit={"
+            "   Class = ReferenceContainer"
+            "   +Hash = {"
+            "       Class = ConfigurationLoaderHashCRC"
+            "       Key = 0x1"
+            "   }"
+            "}"
+            "+H={"
+            "   Class = ConfigurationLoaderHashCRC"
+            "   Key = 0x1"
+            "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
+    config = "+C={"
+            "   Class = ReferenceContainer"
+            "}"
+            "+D={"
+            "   Class = LoaderTestMessageObject1"
+            "}";
+
+    ReferenceT<ConfigurationLoaderHashCRC> hasher = ObjectRegistryDatabase::Instance()->Find("H");
+    if (ok) {
+        ok = hasher.IsValid();
+    }
+    uint32 expectedHash = 0u;
+    if (ok) {
+        expectedHash = hasher->ComputeHash(config.Buffer(), config.Size());
+    }
+    if (ok) {
+        StreamString ignored;
+        ok = l->Reconfigure(config, ignored, expectedHash);
+    }
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("H");
+        ok = !ref.IsValid();
+    }
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("C");
+        ok = ref.IsValid();
+    }
+    if (ok) {
+        ok = l->Stop();
+    }
+
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+
 bool LoaderTest::TestGetLastValidConfiguration() {
     using namespace MARTe;
     ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -559,7 +660,106 @@ bool LoaderTest::TestReloadLastValidConfiguration() {
     if (ok) {
         ok = output1.MoveAbsolute("+A");
     }
+    config = "+C={"
+            "   Class = ReferenceContainerzz"
+            "}"
+            "+D={"
+            "   Class = LoaderTestMessageObject1"
+            "}";
+    (void)config.Seek(0LLU);
+    if  (ok) {
+        StreamString ignored;
+        ok = !l->Reconfigure(config, ignored);
+    }
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
+        ok = !ref.IsValid();
+    }
+    if (ok) {
+        ok = l->ReloadLastValidConfiguration();
+    }
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
+        ok = ref.IsValid();
+    }
+    if (ok) {
+        ok = l->Stop();
+    }
+
     ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+bool LoaderTest::TestLoaderPostInit() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = 
+        "+LoaderPostInit={"
+        "   Class = ReferenceContainer"
+        "}"
+        "+A={"
+        "   Class = LoaderTestMessageObject1"
+        "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok; 
+}
+
+bool LoaderTest::TestLoaderPostInit_ReloadLast_true() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = 
+        "+LoaderPostInit={"
+        "   Class = ReferenceContainer"
+        "   +Parameters = {"
+        "       Class = ConfigurationDatabase"
+        "       ReloadLast = \"true\""
+        "   }"
+        "}"
+        "+A={"
+        "   Class = LoaderTestMessageObject1"
+        "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
+    config = "+C={"
+            "   Class = ReferenceContainerzz"
+            "}"
+            "+D={"
+            "   Class = LoaderTestMessageObject1"
+            "}";
+    (void)config.Seek(0LLU);
+    if  (ok) {
+        StreamString ignored;
+        ok = !l->Reconfigure(config, ignored);
+    }
+    if (ok) {
+        Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
+        ok = ref.IsValid();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok; 
+}
+
+bool LoaderTest::TestLoaderPostInit_ReloadLast_false() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = 
+        "+LoaderPostInit={"
+        "   Class = ReferenceContainer"
+        "   +Parameters = {"
+        "       Class = ConfigurationDatabase"
+        "       ReloadLast = \"false\""
+        "   }"
+        "}"
+        "+A={"
+        "   Class = LoaderTestMessageObject1"
+        "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
     config = "+C={"
             "   Class = ReferenceContainerzz"
             "}"
@@ -576,19 +776,121 @@ bool LoaderTest::TestReloadLastValidConfiguration() {
         ok = !ref.IsValid();
     }
     ObjectRegistryDatabase::Instance()->Purge();
+    return ok; 
+}
+
+bool LoaderTest::TestLoaderPostInit_ReloadLast_invalid() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = 
+        "+LoaderPostInit={"
+        "   Class = ReferenceContainer"
+        "   +Parameters = {"
+        "       Class = ConfigurationDatabase"
+        "       ReloadLast = \"invalid\""
+        "   }"
+        "}"
+        "+A={"
+        "   Class = LoaderTestMessageObject1"
+        "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return !ok; 
+}
+
+bool LoaderTest::TestMessage_PreConfiguration() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = 
+        "+LoaderPostInit={"
+        "   Class = ReferenceContainer"
+        "   +Messages = {"
+        "       Class = ReferenceContainer"
+        "       +PreConfiguration = {"
+        "           Class = Message"
+        "           Destination = TestObj"
+        "           Function = Callback"
+        "           Mode = ExpectsReply"
+        "       }"
+        "   }"
+        "}"
+        "+TestObj = {"
+        "   Class = LoaderTestMessageObject1"
+        "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
+    ReferenceT<LoaderTestMessageObject1> testObj = ObjectRegistryDatabase::Instance()->Find("TestObj");
     if (ok) {
-        ok = l->ReloadLastValidConfiguration();
-    }
-    if (ok) {
-        Reference ref = ObjectRegistryDatabase::Instance()->Find("A");
-        ok = ref.IsValid();
-    }
-    if (ok) {
-        ok = l->Stop();
+        ok = testObj.IsValid();
     }
 
+    config = "+C={"
+            "   Class = ReferenceContainer"
+            "}"
+            "+D={"
+            "   Class = LoaderTestMessageObject1"
+            "}";
+    (void)config.Seek(0LLU);
+    if  (ok) {
+        StreamString ignored;
+        ok = l->Reconfigure(config, ignored);
+    }
+    if (ok) {
+        ok = testObj->functionCalled;
+    }
     ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
+    return ok; 
+}
+
+bool LoaderTest::TestMessage_PostConfiguration() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = 
+        "+LoaderPostInit={"
+        "   Class = ReferenceContainer"
+        "   +Messages = {"
+        "       Class = ReferenceContainer"
+        "       +PostConfiguration = {"
+        "           Class = Message"
+        "           Destination = TestObj"
+        "           Function = Callback"
+        "           Mode = ExpectsReply"
+        "       }"
+        "   }"
+        "}"
+        "+TestObj = {"
+        "   Class = LoaderTestMessageObject1"
+        "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
+
+    config = "+C={"
+            "   Class = ReferenceContainer"
+            "}"
+            "+D={"
+            "   Class = LoaderTestMessageObject1"
+            "}"
+            "+TestObj = {"
+            "   Class = LoaderTestMessageObject1"
+            "}";
+    (void)config.Seek(0LLU);
+    if  (ok) {
+        StreamString ignored;
+        ok = l->Reconfigure(config, ignored);
+    }
+    ReferenceT<LoaderTestMessageObject1> testObj = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = testObj.IsValid();
+    }
+    if (ok) {
+        ok = testObj->functionCalled;
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok; 
 }
 
 

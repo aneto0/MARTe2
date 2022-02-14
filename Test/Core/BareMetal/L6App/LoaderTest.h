@@ -143,6 +143,16 @@ public:
     bool TestReconfigure();
 
     /**
+     * @brief Tests the Reconfigure method with a StructuredDataI.
+     */
+    bool TestReconfigure_StructuredDataI();
+
+    /**
+     * @brief Tests the Reconfigure method with a hash.
+     */
+    bool TestReconfigure_Hash();
+
+    /**
      * @brief Tests the GetLastValidConfiguration method.
      */
     bool TestGetLastValidConfiguration();
@@ -156,6 +166,38 @@ public:
      * @brief Tests the ReloadLastValidConfiguration method.
      */
     bool TestReloadLastValidConfiguration();
+
+    /**
+     * @brief Tests the LoaderPostInit function with no parameters.
+     */
+    bool TestLoaderPostInit();
+
+    /**
+     * @brief Tests the LoaderPostInit function with ReloadLast=true. 
+     */
+    bool TestLoaderPostInit_ReloadLast_true();
+
+    /**
+     * @brief Tests the LoaderPostInit function with ReloadLast=false. 
+     */
+    bool TestLoaderPostInit_ReloadLast_false();
+
+    /**
+     * @brief Tests the LoaderPostInit function with ReloadLast=invalid. 
+     */
+    bool TestLoaderPostInit_ReloadLast_invalid();
+
+    /**
+     * @brief Tests that the PreConfiguration message is sent.
+     */
+    bool TestMessage_PreConfiguration();
+
+    /**
+     * @brief Tests that the PostConfiguration message is sent.
+     */
+    bool TestMessage_PostConfiguration();
+
+
 };
 
 /*---------------------------------------------------------------------------*/
