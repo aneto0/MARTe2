@@ -183,6 +183,11 @@ TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_ReloadLast_invalid) {
     ASSERT_TRUE(test.TestLoaderPostInit_ReloadLast_invalid());
 }
 
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_KeepAlive) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit_KeepAlive());
+}
+
 TEST(BareMetal_L6App_LoaderGTest,TestMessage_PreConfiguration) {
     LoaderTest test;
     ASSERT_TRUE(test.TestMessage_PreConfiguration());
@@ -193,5 +198,14 @@ TEST(BareMetal_L6App_LoaderGTest,TestMessage_PostConfiguration) {
     ASSERT_TRUE(test.TestMessage_PostConfiguration());
 }
 
+TEST(BareMetal_L6App_LoaderGTest,TestMessage_FailedConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestMessage_FailedConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestMessage_ReloadedConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestMessage_ReloadedConfiguration());
+}
 
 

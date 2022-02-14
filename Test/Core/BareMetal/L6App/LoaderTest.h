@@ -188,6 +188,11 @@ public:
     bool TestLoaderPostInit_ReloadLast_invalid();
 
     /**
+     * @brief Tests the LoaderPostInit function with KeepAlive objects. 
+     */
+    bool TestLoaderPostInit_KeepAlive();
+
+    /**
      * @brief Tests that the PreConfiguration message is sent.
      */
     bool TestMessage_PreConfiguration();
@@ -196,6 +201,16 @@ public:
      * @brief Tests that the PostConfiguration message is sent.
      */
     bool TestMessage_PostConfiguration();
+
+    /**
+     * @brief Tests that the FailedConfiguration message is sent.
+     */
+    bool TestMessage_FailedConfiguration();
+
+    /**
+     * @brief Tests that the ReloadedConfiguration message is sent.
+     */
+    bool TestMessage_ReloadedConfiguration();
 
 
 };

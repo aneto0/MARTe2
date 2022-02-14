@@ -54,6 +54,7 @@ Loader::Loader() :
 }
 
 Loader::~Loader() {
+    keepAliveObjs.Purge();
 }
 
 ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &configuration) {
@@ -222,6 +223,13 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
                     sendFailedConfigMsg = true;
                 }
             }
+            //Always reload the keep alive objects
+            for (uint32 c=0u; c<keepAliveObjs.Size(); c++) {
+                bool ret = ObjectRegistryDatabase::Instance()->Insert(keepAliveObjs.Get(c));
+                if (!ret) {
+                    REPORT_ERROR_STATIC(ErrorManagement::Warning, "Could not insert keep alive object with name %s", keepAliveObjs.Get(c)->GetName());
+                }
+            }
             if (sendFailedConfigMsg) {
                 (void) SendConfigurationMessage(failedConfigMsg);
             }
@@ -298,6 +306,26 @@ ErrorManagement::ErrorType Loader::PostInit() {
                 else {
                     err.parametersError = true;
                     REPORT_ERROR(err, "ReloadLast shall be either set to true or false. %s is not supported.", reloadLastStr.Buffer());
+                }
+            }
+            AnyType arrayDescription = params->GetType("KeepAlive");
+            if(arrayDescription.GetDataPointer() != NULL_PTR(void *)) {
+                uint32 numberOfElements = arrayDescription.GetNumberOfElements(0u);
+                if (numberOfElements > 0u) {
+                    StreamString *keepAliveArray = new StreamString[numberOfElements];
+                    Vector<StreamString> keepAliveVector(keepAliveArray, numberOfElements);
+                    err.parametersError = !params->Read("KeepAlive", keepAliveVector);
+                    for (uint32 z=0u; (err.ErrorsCleared()) && (z<numberOfElements); z++) {
+                        Reference r = ObjectRegistryDatabase::Instance()->Find(keepAliveArray[z].Buffer());
+                        err.parametersError = !r.IsValid();
+                        if (err.ErrorsCleared()) {
+                            err.fatalError = !keepAliveObjs.Insert(r);
+                        }
+                        else {
+                            REPORT_ERROR(err, "Object with name %s not found.", keepAliveArray[z].Buffer());
+                        }
+                    }
+                    delete [] keepAliveArray;
                 }
             }
         }

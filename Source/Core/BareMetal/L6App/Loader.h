@@ -56,7 +56,8 @@ namespace MARTe {
  *    Class = ReferenceContainer
  *    +Parameters = {
  *        Class = ConfigurationDatabase
- *        ReloadLast = true //Reload old configuration in case of (re)configuration failure? Default = true. If true the FailedConfiguration message will not to be sent.
+ *        ReloadLast = true //Optional. Reload old configuration in case of (re)configuration failure? Default = true. If true the FailedConfiguration message will not to be sent.
+ *        KeepAlive = "MyObj1 MyObj2 MyObj3" //Optional. Array with name of the objects (at the root level) that shall not be purged and will always (i.e. even in case of error) be readded to the ObjectRegistryDatabase after a reconfiguration is triggered.
  *    }
  *    +Messages = {
  *      Class = ReferenceContainer
@@ -72,7 +73,7 @@ namespace MARTe {
  *        Function = SomeFunction
  *        Mode = ExpectsReply
  *      }
- *      +FailedConfiguration = { //Optional message to send if the configuration failed. Note that given that the ObjectRegistryDatabase will have been purged, it is likely that this message will not reach its destination...
+ *      +FailedConfiguration = { //Optional message to send if the configuration failed. Note that given that the ObjectRegistryDatabase will have been purged, it is likely that this message will not reach its destination...see KeepAlive.
  *        Class = Message
  *        Destination = SomeObject
  *        Function = SomeFunction
@@ -251,6 +252,11 @@ private:
      * First loading?
      */
     bool firstLoading;
+
+    /**
+     * Objects that are always to be kept alive.
+     */
+    ReferenceContainer keepAliveObjs;
 };
 
 }
