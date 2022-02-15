@@ -93,6 +93,11 @@ public:
     bool TestSendMessage_False_InvalidDestination();
 
     /**
+     * @brief Tests the SendMessage method with invalid destination (that does not exist)
+     */
+    bool TestSendMessage_False_InvalidDestination_Not_Exist();
+
+    /**
      * @brief Tests the SendMessage method with invalid function
      */
     bool TestSendMessage_False_InvalidFunction();

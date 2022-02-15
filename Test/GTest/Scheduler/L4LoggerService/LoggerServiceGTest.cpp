@@ -39,63 +39,63 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestConstructor) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestConstructor) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestConstructor());
 }
 
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestInitialise) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestInitialise) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestInitialise_Defaults) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestInitialise_Defaults) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestInitialise_Defaults());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestInitialise_False_NoCPUs) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestInitialise_False_NoCPUs) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_NoCPUs());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestInitialise_False_NoConsumers) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestInitialise_False_NoConsumers) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_NoConsumers());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestInitialise_False_NotLoggerConsumerI) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestInitialise_False_NotLoggerConsumerI) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_NotLoggerConsumerI());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestInitialise_False_StackSize_Zero) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestInitialise_False_StackSize_Zero) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_StackSize_Zero());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestInitialise_False_NumberOfLoggerPages_Zero) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestInitialise_False_NumberOfLoggerPages_Zero) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_NumberOfLoggerPages_Zero());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestGetCPUMask) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestGetCPUMask) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestGetCPUMask());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestGetNumberOfLogPages) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestGetNumberOfLogPages) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestGetNumberOfLogPages());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestGetStackSize) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestGetStackSize) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestGetStackSize());
 }
 
-TEST(Scheduler_L3Services_LoggerServiceGTest,TestExecute) {
+TEST(Scheduler_L4LoggerService_LoggerServiceGTest,TestExecute) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestExecute());
 }
