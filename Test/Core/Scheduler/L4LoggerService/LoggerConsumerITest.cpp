@@ -3,6 +3,7 @@
  * @brief Source file for class LoggerConsumerITest
  * @date 13/03/2017
  * @author Andre Neto
+ * @author Edward Jones 
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -177,12 +178,16 @@ bool LoggerConsumerITest::TestPrintToStream() {
         test.PrintToStream(&page, err);
         //printf("%s\n", err.Buffer());
         //Note that the Thread identified is currently not being handled.
+        //Depending on the localtime, this test can fail due to people working in other timezones
+        //Adding a method to check the time and instead use a non-static version of getHours should fix this
+        TimeStamp ts;
+        ts.ConvertFromEpoch(static_cast<oslong>(page.errorInfo.timeSeconds));
         StreamString expectedPrint;
         if (sizeof(void *) == 8u) {
-            expectedPrint = "|Debug|1000000000|1:2:3 (1000000000)|Obj1|0x00000000AABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream";
+            expectedPrint.Printf("|Debug|1000000000|%d:2:3 (1000000000)|Obj1|0x00000000AABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream", ts.GetHour());
         }
         else {
-            expectedPrint = "|Debug|1000000000|1:2:3 (1000000000)|Obj1|0xAABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream";
+            expectedPrint.Printf("|Debug|1000000000|%d:2:3 (1000000000)|Obj1|0xAABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream", ts.GetHour());
         }
         ok = (err == expectedPrint);
     }
@@ -217,14 +222,16 @@ bool LoggerConsumerITest::TestPrintToStream_WithKeys() {
         test.PrintToStream(&page, err);
         //printf("%s\n", err.Buffer());
         //Note that the Thread identified is currently not being handled.
+        //Depending on the localtime, this test can fail due to people working in other timezones
+        //Adding a method to check the time and instead use a non-static version of getHours should fix this
+        TimeStamp ts;
+        ts.ConvertFromEpoch(static_cast<oslong>(page.errorInfo.timeSeconds));
         StreamString expectedPrint;
         if (sizeof(void *) == 8u) {
-            expectedPrint =
-                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream";
+            expectedPrint.Printf("|E=Debug|TM=1000000000|TM=%d:2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream", ts.GetHour());
         }
         else {
-            expectedPrint =
-                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream";
+            expectedPrint.Printf("|E=Debug|TM=1000000000|TM=%d:2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream", ts.GetHour());
         }
         ok = (err == expectedPrint);
     }
