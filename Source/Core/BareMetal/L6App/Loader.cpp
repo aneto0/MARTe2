@@ -120,6 +120,15 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
         ret = PostInit();
     }
     if (ret.ErrorsCleared()) {
+        //Remove LoaderPostInit and the KeepAlive components, so that they are not potentially loaded as part of a Reconfiguration exercise 
+        (void) parsedConfiguration.Delete("+LoaderPostInit");
+        for (uint32 i=0; (ret.ErrorsCleared()) && (i<keepAliveObjs.Size()); i++) {
+            StreamString objFullName;
+            (void) objFullName.Printf("+%s", keepAliveObjs.Get(i)->GetName());
+            ret.parametersError = !parsedConfiguration.Delete(objFullName.Buffer());
+        }
+    }
+    if (ret.ErrorsCleared()) {
         if (data.Read("MessageDestination", messageDestination)) {
             ret.parametersError = !data.Read("MessageFunction", messageFunction);
             if (!ret) {
@@ -160,22 +169,6 @@ ErrorManagement::ErrorType Loader::Reconfigure(StreamI &configuration, StreamStr
     if (ret.ErrorsCleared()) {
         ret = Reconfigure(newParsedConfiguration, errStream);
     }
-    else {
-        if (!firstLoading) {
-            bool sendFailedConfigMsg = !reloadLast;
-            if (reloadLast) {
-                REPORT_ERROR_STATIC(ErrorManagement::Information, "Reloading last valid configuration");
-                ErrorManagement::ErrorType retReload = ReloadLastValidConfiguration();
-                if (!retReload.ErrorsCleared()) {
-                    sendFailedConfigMsg = true;
-                }
-            }
-            if (sendFailedConfigMsg) {
-                (void) SendConfigurationMessage(failedConfigMsg);
-            }
-        }
-    }
-    firstLoading = false;
     return ret; 
 }
 
@@ -233,6 +226,11 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
             if (sendFailedConfigMsg) {
                 (void) SendConfigurationMessage(failedConfigMsg);
             }
+            else {
+                if (reloadLast) {
+                    (void) SendConfigurationMessage(reloadedConfigurationMsg);
+                }
+            }
         }
     }
     firstLoading = false;
@@ -273,9 +271,6 @@ ErrorManagement::ErrorType Loader::ReloadLastValidConfiguration() {
     }
     if (ret.ErrorsCleared()) {
         ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(parsedConfiguration);
-    }
-    if (ret.ErrorsCleared()) {
-        (void) SendConfigurationMessage(reloadedConfiguration);
     }
     return ret;
 }
@@ -351,7 +346,7 @@ ErrorManagement::ErrorType Loader::PostInit() {
                         failedConfigMsg = msg;
                     }
                     else if (msgName == "ReloadedConfiguration") {
-                        reloadedConfiguration = msg;
+                        reloadedConfigurationMsg = msg;
                     }
                     else {
                         err.parametersError = true;

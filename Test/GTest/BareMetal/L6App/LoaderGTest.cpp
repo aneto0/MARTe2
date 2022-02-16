@@ -208,4 +208,9 @@ TEST(BareMetal_L6App_LoaderGTest,TestMessage_ReloadedConfiguration) {
     ASSERT_TRUE(test.TestMessage_ReloadedConfiguration());
 }
 
+TEST(BareMetal_L6App_LoaderGTest,TestGetSeed) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestGetSeed());
+}
+
 

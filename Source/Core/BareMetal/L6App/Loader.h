@@ -138,13 +138,15 @@ public:
      * @param[in] configuration the StructuredDataI with the new configuration to be loaded.
      * @param[out] errStream any errors that may be raised.
      * @return ErrorManagement::NoError if the configuration is successfully parsed and the ObjectRegistryDatabase::Initialise is successful.
-     * @pre
-     *   Optional - ObjectRegistryDatabase::Purge
      */
     ErrorManagement::ErrorType Reconfigure(StructuredDataI &configuration, StreamString &errStream);
 
     /**
-     * @brief TODO
+     * @brief Validates the configuration against a given hash. The Loader will compute the hash of the input \a configuration using the provided ConfigurationLoaderHashI - see class description. 
+     * @param[in] configuration the new new configuration to be applied.
+     * @param[out] errStream any errors that may be raised.
+     * @param[in] hash independently computed hash.
+     * @return ErrorManagement::NoError if the hash matches the hash computed by the ConfigurationLoaderHashI, the configuration is successfully parsed and the ObjectRegistryDatabase::Initialise is successful.
      */
     ErrorManagement::ErrorType Reconfigure(StreamString &configuration, StreamString &errStream, uint32 hash);
 
@@ -226,7 +228,7 @@ private:
     /**
      * The message to send if the last configuration was reloaded, as a consequence of an error.
      */
-    ReferenceT<Message> reloadedConfiguration;
+    ReferenceT<Message> reloadedConfigurationMsg;
 
     /**
      * The message to send after the configuration is applied.

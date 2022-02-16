@@ -212,6 +212,10 @@ public:
      */
     bool TestMessage_ReloadedConfiguration();
 
+    /**
+     * @brief Tests the GetSeed method.
+     */
+    bool TestGetSeed();
 
 };
 

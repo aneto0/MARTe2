@@ -996,6 +996,64 @@ bool LoaderTest::TestMessage_FailedConfiguration() {
 }
 
 bool LoaderTest::TestMessage_ReloadedConfiguration() {
-    return false;
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString config = 
+        "+LoaderPostInit={"
+        "   Class = ReferenceContainer"
+        "   +Parameters = {"
+        "       Class = ConfigurationDatabase"
+        "       ReloadLast = \"true\""
+        "       KeepAlive = {TestObj}"
+        "   }"
+        "   +Messages = {"
+        "       Class = ReferenceContainer"
+        "       +ReloadedConfiguration = {"
+        "           Class = Message"
+        "           Destination = TestObj"
+        "           Function = Callback"
+        "           Mode = ExpectsReply"
+        "       }"
+        "   }"
+        "}"
+        "+TestObj = {"
+        "   Class = LoaderTestMessageObject1"
+        "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    bool ok = l->Configure(params, config);
+    ReferenceT<LoaderTestMessageObject1> testObj = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = testObj.IsValid();
+    }
+    config = "+C={"
+            "   Class = ReferenceContainerzz"
+            "}"
+            "+D={"
+            "   Class = LoaderTestMessageObject1"
+            "}";
+    (void)config.Seek(0LLU);
+    if  (ok) {
+        StreamString ignored;
+        ok = !l->Reconfigure(config, ignored);
+    }
+    if (ok) {
+        ok = testObj->functionCalled;
+    }
+
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok; 
 }
+
+bool LoaderTest::TestGetSeed() {
+    using namespace MARTe;
+    ReferenceT<Loader> l = Reference("Loader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = (l->GetSeed() == 0);
+    if (ok) {
+        ok = TestReconfigure_Hash();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
 
