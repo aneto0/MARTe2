@@ -53,6 +53,7 @@ Loader::Loader() :
     reloadLast = false;
 }
 
+//lint -e{1551} purge must be called in the destructor
 Loader::~Loader() {
     keepAliveObjs.Purge();
 }
@@ -179,7 +180,6 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
         ret = SendConfigurationMessage(preConfigMsg);
     }
     if (ret.ErrorsCleared()) {
-        //lint -e{1788} just to make sure this class is not removed...
         Reference keepAlive = this;
         uint32 nOfObjs = ObjectRegistryDatabase::Instance()->Size();
         REPORT_ERROR(ErrorManagement::Debug, "Purging ObjectRegistryDatabase with %d objects", nOfObjs);
@@ -187,11 +187,12 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
         nOfObjs = ObjectRegistryDatabase::Instance()->Size();
         REPORT_ERROR(ErrorManagement::Debug, "Purge ObjectRegistryDatabase. Number of objects left: %d", nOfObjs);
         ret.fatalError = !configuration.MoveToRoot();
+        //lint -e{1788} keepAlive variable is just to make sure this class is not removed...
     }
     if (ret.ErrorsCleared()) {
         ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(configuration);
-        if (!ret) {
-            errStream.Printf("%s", "Failed to initialise the ObjectRegistryDatabase");
+        if (!ret.ErrorsCleared()) {
+            (void)errStream.Printf("%s", "Failed to initialise the ObjectRegistryDatabase");
             REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, errStream.Buffer());
         }
     }
@@ -243,7 +244,8 @@ ErrorManagement::ErrorType Loader::Reconfigure(StreamString &configuration, Stre
     ErrorManagement::ErrorType err;
     err.fatalError = !loaderHash.IsValid();
     if (err.ErrorsCleared()) {
-        uint32 computedHash = loaderHash->ComputeHash(configuration.Buffer(), configuration.Size());
+        //lint -e{864} no dependency in the order how the configuration variable is used.
+        uint32 computedHash = loaderHash->ComputeHash(configuration.Buffer(), static_cast<uint32>(configuration.Size()));
         err.fatalError = (computedHash != hash);
         if (!err.ErrorsCleared()) {
             (void)errStream.Printf("Computed hash (%d) does not match offered hash (%d)", computedHash, hash);
@@ -333,6 +335,7 @@ ErrorManagement::ErrorType Loader::PostInit() {
         ReferenceT<ReferenceContainer> msgs = rc->Find("Messages");
         if (msgs.IsValid()) {
             //Load all the Messages
+            //lint -e{9007} no side effects in msgs->Size()
             for (uint32 j=0u; (err.ErrorsCleared()) && (j<msgs->Size()); j++) {
                 ReferenceT <Message> msg = msgs->Get(j);
                 err.parametersError = !msg.IsValid();
@@ -368,6 +371,7 @@ ErrorManagement::ErrorType Loader::PostInit() {
     return err;
 }
 
+/*lint -e{1762} Member function cannot be made const */
 ErrorManagement::ErrorType Loader::SendConfigurationMessage(ReferenceT<Message> msg) {
     ErrorManagement::ErrorType err;
     if (msg.IsValid()) {

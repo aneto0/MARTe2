@@ -67,13 +67,14 @@ bool ConfigurationLoaderHashCRC::Initialise(StructuredDataI & data) {
     return ok;
 }
 
-uint32 ConfigurationLoaderHashCRC::ComputeHash(const char8 *input, const uint32 inputSize) {
-   //The seed should be the same
-    uint32 hashMemSize = sizeof(uint32) + inputSize;
+uint32 ConfigurationLoaderHashCRC::ComputeHash(const char8 * const input, const uint32 inputSize) {
+    //The seed should be the same
+    uint32 hashMemSize = static_cast<uint32>(sizeof(uint32) + inputSize);
     uint8 *hashMem = new uint8[hashMemSize];
+    //lint -e{927} -e{826} both sides have sizeof(uint32) size
     *(reinterpret_cast<uint32 *>(hashMem)) = lastSeed;
-    MemoryOperationsHelper::Copy(reinterpret_cast<void *>(&hashMem[sizeof(uint32)]), reinterpret_cast<const void *>(input), inputSize);
-    uint32 computedHash = crc.Compute(hashMem, hashMemSize, 0u, false);
+    (void) MemoryOperationsHelper::Copy(reinterpret_cast<void *>(&hashMem[sizeof(uint32)]), reinterpret_cast<const void *>(input), inputSize);
+    uint32 computedHash = crc.Compute(hashMem, static_cast<int32>(hashMemSize), 0u, false);
     delete[] hashMem;
 
     return computedHash;
