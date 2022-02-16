@@ -241,11 +241,6 @@ private:
     bool reloadLast;
 
     /**
-     * Last offered seed.
-     */
-    uint8 lastSeed;
-
-    /**
      * Hash component.
      */
     ReferenceT<ConfigurationLoaderHashI> loaderHash;

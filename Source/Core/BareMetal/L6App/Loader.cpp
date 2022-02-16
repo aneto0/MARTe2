@@ -122,7 +122,8 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
     if (ret.ErrorsCleared()) {
         //Remove LoaderPostInit and the KeepAlive components, so that they are not potentially loaded as part of a Reconfiguration exercise 
         (void) parsedConfiguration.Delete("+LoaderPostInit");
-        for (uint32 i=0; (ret.ErrorsCleared()) && (i<keepAliveObjs.Size()); i++) {
+        //lint -e{1788} -e{9007} keepAliveObjs size is not changed.
+        for (uint32 i=0u; (ret.ErrorsCleared()) && (i<keepAliveObjs.Size()); i++) {
             StreamString objFullName;
             (void) objFullName.Printf("+%s", keepAliveObjs.Get(i)->GetName());
             ret.parametersError = !parsedConfiguration.Delete(objFullName.Buffer());
@@ -178,7 +179,7 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
         ret = SendConfigurationMessage(preConfigMsg);
     }
     if (ret.ErrorsCleared()) {
-        //Make sure this class is not removed...
+        //lint -e{1788} just to make sure this class is not removed...
         Reference keepAlive = this;
         uint32 nOfObjs = ObjectRegistryDatabase::Instance()->Size();
         REPORT_ERROR(ErrorManagement::Debug, "Purging ObjectRegistryDatabase with %d objects", nOfObjs);
@@ -190,7 +191,8 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
     if (ret.ErrorsCleared()) {
         ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(configuration);
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Failed to initialise the ObjectRegistryDatabase");
+            errStream.Printf("%s", "Failed to initialise the ObjectRegistryDatabase");
+            REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, errStream.Buffer());
         }
     }
     if (ret.ErrorsCleared()) {
@@ -218,8 +220,8 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
             }
             //Always reload the keep alive objects
             for (uint32 c=0u; c<keepAliveObjs.Size(); c++) {
-                bool ret = ObjectRegistryDatabase::Instance()->Insert(keepAliveObjs.Get(c));
-                if (!ret) {
+                bool retIns = ObjectRegistryDatabase::Instance()->Insert(keepAliveObjs.Get(c));
+                if (!retIns) {
                     REPORT_ERROR_STATIC(ErrorManagement::Warning, "Could not insert keep alive object with name %s", keepAliveObjs.Get(c)->GetName());
                 }
             }

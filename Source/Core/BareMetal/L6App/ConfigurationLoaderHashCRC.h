@@ -47,7 +47,6 @@ namespace MARTe {
  *   Class = ConfigurationLoaderHashCRC
  *   Key = 0x11111 //Key to compute the CRC table.
  * }
- * TODO
  * </pre>
  *
  */

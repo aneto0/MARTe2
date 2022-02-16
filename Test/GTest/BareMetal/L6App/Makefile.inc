@@ -22,7 +22,7 @@
 #
 #############################################################
 
-OBJSX= LoaderGTest.x RealTimeLoaderGTest.x
+OBJSX= ConfigurationLoaderHashCRCGTest.x LoaderGTest.x RealTimeLoaderGTest.x
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
