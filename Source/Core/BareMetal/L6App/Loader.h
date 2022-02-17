@@ -183,6 +183,11 @@ public:
      */
     virtual ErrorManagement::ErrorType Stop();
 
+    /**
+     * Load post-init parameters.
+     */
+    virtual ErrorManagement::ErrorType PostInit();
+
 protected:
     /**
      * @brief The loader parameters.
@@ -194,11 +199,12 @@ protected:
      */
     StreamString parserType;
 
-private:
     /**
-     * Load post-init parameters.
+     * @brief The post-init parameters
      */
-    ErrorManagement::ErrorType PostInit();
+    ReferenceT<ConfigurationDatabase> postInitParameters;
+
+private:
 
     /**
      * Helper function to send message.

@@ -202,30 +202,33 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
     if (ret.ErrorsCleared()) {
         ret.fatalError = !parsedConfiguration.MoveToRoot();
     }
+    
+    bool sendFailedConfigMsg = !reloadLast;
     if (ret.ErrorsCleared()) {
         parsedConfiguration.Purge();
         ret.fatalError = !configuration.Copy(parsedConfiguration);
     }
-    if (ret.ErrorsCleared()) {
-        ret = SendConfigurationMessage(postConfigMsg);
-    }
-    else {
-        if (!firstLoading) {
-            bool sendFailedConfigMsg = !reloadLast;
-            if (reloadLast) {
+    if (!firstLoading) {
+        if (!ret.ErrorsCleared()) { //Error occurred
+            if (reloadLast) {//Attempt to reload the last configuration?
                 REPORT_ERROR_STATIC(ErrorManagement::Information, "Reloading last valid configuration");
                 ErrorManagement::ErrorType retReload = ReloadLastValidConfiguration();
                 if (!retReload.ErrorsCleared()) {
                     sendFailedConfigMsg = true;
                 }
             }
-            //Always reload the keep alive objects
-            for (uint32 c=0u; c<keepAliveObjs.Size(); c++) {
-                bool retIns = ObjectRegistryDatabase::Instance()->Insert(keepAliveObjs.Get(c));
-                if (!retIns) {
-                    REPORT_ERROR_STATIC(ErrorManagement::Warning, "Could not insert keep alive object with name %s", keepAliveObjs.Get(c)->GetName());
-                }
+        }
+        //Always reload the keep alive objects
+        for (uint32 c=0u; c<keepAliveObjs.Size(); c++) {
+            bool retIns = ObjectRegistryDatabase::Instance()->Insert(keepAliveObjs.Get(c));
+            if (retIns) {
+                REPORT_ERROR_STATIC(ErrorManagement::Information, "Inserted keep alive object with name %s", keepAliveObjs.Get(c)->GetName());
             }
+            else {
+                REPORT_ERROR_STATIC(ErrorManagement::Warning, "Could not insert keep alive object with name %s", keepAliveObjs.Get(c)->GetName());
+            }
+        }
+        if (!ret.ErrorsCleared()) { //ErrorOccurred. Send messages?
             if (sendFailedConfigMsg) {
                 (void) SendConfigurationMessage(failedConfigMsg);
             }
@@ -236,6 +239,11 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
             }
         }
     }
+    //Send the post after the keep alive objects are added again (and iff there were no errors)
+    if (ret.ErrorsCleared()) {
+        ret = SendConfigurationMessage(postConfigMsg);
+    }
+ 
     firstLoading = false;
     return ret; 
 }
@@ -292,10 +300,10 @@ ErrorManagement::ErrorType Loader::PostInit() {
     ErrorManagement::ErrorType err;
     ReferenceT<ReferenceContainer> rc = ObjectRegistryDatabase::Instance()->Find("LoaderPostInit");
     if (rc.IsValid()) {
-        ReferenceT<ConfigurationDatabase> params = rc->Find("Parameters");
-        if (params.IsValid()) {
+        postInitParameters = rc->Find("Parameters");
+        if (postInitParameters.IsValid()) {
             StreamString reloadLastStr;
-            if (params->Read("ReloadLast", reloadLastStr)) {
+            if (postInitParameters->Read("ReloadLast", reloadLastStr)) {
                 if (reloadLastStr == "true") {
                     reloadLast = true;
                 }
@@ -307,13 +315,13 @@ ErrorManagement::ErrorType Loader::PostInit() {
                     REPORT_ERROR(err, "ReloadLast shall be either set to true or false. %s is not supported.", reloadLastStr.Buffer());
                 }
             }
-            AnyType arrayDescription = params->GetType("KeepAlive");
+            AnyType arrayDescription = postInitParameters->GetType("KeepAlive");
             if(arrayDescription.GetDataPointer() != NULL_PTR(void *)) {
                 uint32 numberOfElements = arrayDescription.GetNumberOfElements(0u);
                 if (numberOfElements > 0u) {
                     StreamString *keepAliveArray = new StreamString[numberOfElements];
                     Vector<StreamString> keepAliveVector(keepAliveArray, numberOfElements);
-                    err.parametersError = !params->Read("KeepAlive", keepAliveVector);
+                    err.parametersError = !postInitParameters->Read("KeepAlive", keepAliveVector);
                     for (uint32 z=0u; (err.ErrorsCleared()) && (z<numberOfElements); z++) {
                         Reference r = ObjectRegistryDatabase::Instance()->Find(keepAliveArray[z].Buffer());
                         err.parametersError = !r.IsValid();
@@ -376,7 +384,7 @@ ErrorManagement::ErrorType Loader::SendConfigurationMessage(ReferenceT<Message> 
     ErrorManagement::ErrorType err;
     if (msg.IsValid()) {
         msg->SetAsReply(false);
-        err = MessageI::SendMessage(msg, this);
+        err = MessageI::SendMessageAndWaitReply(msg, this);
         if (!err.ErrorsCleared()) {
             StreamString destination = msg->GetDestination();
             StreamString function = msg->GetFunction();
