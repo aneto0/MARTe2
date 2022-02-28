@@ -76,7 +76,7 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
 //    bootstrap.Printf("\r\n");
 
 	bootstrap.Printf(errorDescription);
-	bootstrap.Printf("\r\n");
+	//bootstrap.Printf("\r\n");
 }
 
 /*---------------------------------------------------------------------------*/

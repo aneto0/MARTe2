@@ -36,9 +36,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+extern void init_platform();
+
 namespace MARTe {
     namespace HardwareI {
         void InitEnvironment() {
+            init_platform();
         }
     }
 

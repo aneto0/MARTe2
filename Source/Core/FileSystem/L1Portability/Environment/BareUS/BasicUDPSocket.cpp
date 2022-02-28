@@ -148,6 +148,9 @@ bool BasicUDPSocket::Connect(const char8 * const address,
                 ret = false;
             }
         }
+        if (ret) {
+            NetworkInterfaceHook(NULL);
+        }
     }
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");

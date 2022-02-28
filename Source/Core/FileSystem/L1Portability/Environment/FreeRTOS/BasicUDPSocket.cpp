@@ -161,7 +161,7 @@ bool BasicUDPSocket::Write(const char8* const input,
 #if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
     ip_addr_t destIPAddress;
     destIPAddress = (destination.GetInternetHost())->addr;
-    uint16 destPort = (destination.GetInternetHost())->port;
+    uint16 destPort = htons((destination.GetInternetHost())->port);
 
     struct pbuf *packetBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
     MemoryOperationsHelper::Copy(packetBuffer->payload, input, size);
@@ -180,7 +180,6 @@ bool BasicUDPSocket::Open() {
     return (connectionSocket >= 0);
 #endif
     connectionSocket.UDPHandle = udp_new();
-    printf("-------> UDP PCB %p\r\n", connectionSocket.UDPHandle);
     return (connectionSocket.UDPHandle != NULL);
 }
 

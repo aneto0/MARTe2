@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "platform.h"
 
 
 #include "AdvancedErrorManagement.h"
@@ -36,6 +35,7 @@
 #include "marte2config.h"
 #include "StandardParser.h"
 
+extern void MARTe2HardwareInitialise();
 
 namespace MARTe {
 
@@ -108,6 +108,7 @@ namespace MARTe {
     }
 
     void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
+        MARTe2HardwareInitialise(); //Handle to initialise hardware
         loader(argc, argv);
     }
 

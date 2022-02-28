@@ -55,11 +55,16 @@ extern "C" {
     */
     void PreLoader(void (*_loader)(void*)) {      
         //The preloader suspends itself until the hw initialisation ends
+    	printf("Waiting resume signal from initialisation\r\n");
         vTaskSuspend(NULL);  
+        printf("Resume signal received\r\n");
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
+        printf("Starting PreLoader\r\n");
         loader(0, NULL);
 
-        printf("PreLoader started\r\n");
+        printf("PreLoader terminated\r\n");
+
+        vTaskDelete(NULL);
     }
 }
 
