@@ -36,7 +36,7 @@ public:
 		uint32 position;
 	};
 
-	inline CStringBinding(CCString in,PatternMatchCallBack callBackIn=NULL): string(in){
+	inline CStringBinding(CCString in,PatternMatchCallBackClass *callBackIn=NULL): string(in){
 		stringSize = string.GetSize();
 		relativePosition = 0;
 		nameLength = 0;
@@ -50,25 +50,20 @@ public:
 	 */
 	inline bool GetC(int16 & c){
 
-//		bool ret = true;
 		if (relativePosition < stringSize){
 			c = string[relativePosition];
 			relativePosition++;
 		} else {
-//			ret = false;
 			c = 256;
 		}
-//		return ret;
 		return true;
 	}
 
 	inline void SaveStatus(Status &status){
 		status.position = relativePosition;
-//printf("Save to %i : %s\n",status.position,string.GetList()+status.position);
 	}
 
 	inline bool RestoreStatus(const Status &status){
-//printf("Restore to %i : %s\n",status.position,string.GetList()+status.position);
 		bool ret = true;
 		if (status.position <= stringSize){
 			relativePosition = status.position;
@@ -100,28 +95,34 @@ public:
 	inline void GetResult(CCString &modifiedInput){
 		modifiedInput = string.GetList() + relativePosition;
 		if (callBack){
-			callBack(emptyString,0,string,relativePosition);
+			callBack->Matched(emptyString,0,string,relativePosition);
 		}
 	}
 
-	inline void StartVariableName(CCString startVarName){
-		nameStart = startVarName;
-	}
+    inline void StartVariableName(CCString startVarName,CCString &oldVariableName){
+        oldVariableName = nameStart;
+        nameStart = startVarName;
+    }
 
-	inline void StartVariable(CCString endVarName){
+	inline void StartVariable(CCString endVarName,uint32 &oldNameLength,uint32 &oldValueStart){
+        oldNameLength = nameLength;
 		nameLength = (endVarName.GetList() - nameStart.GetList());
 		if (nameLength > 0){
 			nameLength--;
 		}
+		oldValueStart = valueStart;
 		valueStart = relativePosition;
 	}
 
-	inline void EndVariable(){
-//printf("%i:%i:%s:",relativePosition,valueStart,string.GetList()+valueStart);
-		if (callBack){
-			callBack(nameStart.GetList(),nameLength,string.GetList()+valueStart,relativePosition-valueStart);
-		}
-	}
+    inline void EndVariable(CCString &oldVariableName,uint32 &oldNameLength,uint32 &oldValueStart,bool matched){
+        if (callBack && matched){
+            callBack->Matched(nameStart.GetList(),nameLength,string.GetList()+valueStart,relativePosition-valueStart);
+        }
+        nameStart  = oldVariableName;
+        nameLength = oldNameLength;
+        valueStart = oldValueStart;
+    }
+
 
 private:
 
@@ -158,7 +159,7 @@ private:
 	/**
 	 *
 	 */
-	PatternMatchCallBack callBack;
+	PatternMatchCallBackClass *callBack;
 
 };
 
@@ -171,7 +172,7 @@ public:
 	struct Status{
 		uint32 position;
 	};
-	inline BufferedStreamIBinding(StreamI &in,PatternMatchCallBack callBackIn=NULL): stream(in),bufferT(buffer()){
+	inline BufferedStreamIBinding(StreamI &in,PatternMatchCallBackClass *callBackIn=NULL): stream(in),bufferT(buffer()){
 		startPosition 		= in.Position();
 		relativePosition 	= 0;
 		nameLength 			= 0;
@@ -234,30 +235,35 @@ public:
 	inline void GetResult(){
 		stream.Seek(startPosition+relativePosition);
 		if (callBack){
-			callBack(emptyString,0,buffer,relativePosition);
+			callBack->Matched(emptyString,0,buffer,relativePosition);
 		}
 	}
 
-	inline void StartVariableName(CCString startVarName){
-		nameStart = startVarName;
-	}
+    inline void StartVariableName(CCString startVarName,CCString &oldVariableName){
+        oldVariableName = nameStart;
+        nameStart = startVarName;
+    }
 
-	inline void StartVariable(CCString endVarName){
-		nameLength = (endVarName.GetList() - nameStart.GetList());
-		if (nameLength > 0){
-			nameLength--;
-		}
-		valueStart = relativePosition;
-	}
+    inline void StartVariable(CCString endVarName,uint32 &oldNameLength,uint32 &oldValueStart){
+        oldNameLength = nameLength;
+        nameLength = (endVarName.GetList() - nameStart.GetList());
+        if (nameLength > 0){
+            nameLength--;
+        }
+        oldValueStart = valueStart;
+        valueStart = relativePosition;
+    }
 
-	inline void EndVariable(){
-		if (callBack){
-			callBack(nameStart.GetList(),nameLength,buffer.GetList()+valueStart,relativePosition-valueStart);
-		}
-	}
+    inline void EndVariable(CCString &oldVariableName,uint32 &oldNameLength,uint32 &oldValueStart,bool matched){
+        if (callBack && matched){
+            callBack->Matched(nameStart.GetList(),nameLength,buffer.GetList()+valueStart,relativePosition-valueStart);
+        }
+        nameStart  = oldVariableName;
+        nameLength = oldNameLength;
+        valueStart = oldValueStart;
+    }
 
 private:
-
 
 	/**
 	 * stream start position
@@ -303,7 +309,7 @@ private:
 	/**
 	 *
 	 */
-	PatternMatchCallBack callBack;
+	PatternMatchCallBackClass *callBack;
 
 
 };
@@ -390,7 +396,7 @@ ErrorManagement::ErrorType MatchRules(CCString &line,const ZeroTerminatedArray<c
     return ret;
 }
 
-ErrorManagement::ErrorType Scan(StreamI &input,CCString &pattern,PatternMatchCallBack callBack){
+ErrorManagement::ErrorType Scan(StreamI &input,CCString &pattern,PatternMatchCallBackClass *callBack){
     ErrorManagement::ErrorType ret;
 
 	ret.unsupportedFeature = !input.CanSeek();
@@ -408,7 +414,7 @@ ErrorManagement::ErrorType Scan(StreamI &input,CCString &pattern,PatternMatchCal
     return ret;
 }
 
-ErrorManagement::ErrorType Scan(CCString &input,CCString &pattern,PatternMatchCallBack callBack){
+ErrorManagement::ErrorType Scan(CCString &input,CCString &pattern,PatternMatchCallBackClass *callBack){
     ErrorManagement::ErrorType ret;
 
 	CStringBinding cb(input,callBack);

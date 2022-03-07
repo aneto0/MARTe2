@@ -31,12 +31,12 @@
 #include "AnyObject.h"
 #include "ConfigurationDatabaseTest.h"
 
-#include "../../../../Source/Core/BareMetal/L2Objects/Private/AnyObjectT.h"
 #include "IntrospectionTestHelper.h"
 #include "Matrix.h"
 #include "ObjectRegistryDatabase.h"
 #include "StandardParser.h"
 #include "Vector.h"
+#include "../../../../Source/Core/BareMetal/L2Objects/Private/AnyObjectS.h"
 
 using namespace MARTe;
 

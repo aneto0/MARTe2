@@ -234,57 +234,16 @@ printf ("%c %i %i\n",name[0],nameLength,retCode.format_as_integer);
 
             } else
             if (name.CompareContent("STRING",nameLength)==0){
-                ReferenceT<AnyObjectT<DynamicCString> > x(HeapManager::standardHeapId);
 
-                  retCode.fatalError = !x.IsValid();
-                  REPORT_ERROR(retCode,"failed creation of AnyObjectT<DynamicCString> >");
+                ReferenceT<AnyObjectT<xx> > x(HeapManager::standardHeapId);
 
-                  if (retCode){
-                      x->operator ()().Append(value,valueLength);
-                      parameters.Insert(x);
-                  }
-
-            } else
-            if (name.CompareContent("MATRIX",nameLength)==0){
-                StreamMemoryReference smr(value,valueLength);
-                AnyType src(smr);
-                smr.Seek(0);
-#if 1
-                ReferenceT<AnyObjectT<Matrix<double> > > dest(HeapManager::standardHeapId);
-                retCode.fatalError = !dest.IsValid();
+                retCode.fatalError = !x.IsValid();
                 REPORT_ERROR(retCode,"failed creation of AnyObjectT<DynamicCString> >");
 
-                printf("<<matrix %i %i>>\n",dest.operator ->()->GetNumberOfRows(),dest.operator ->()->GetNumberOfColumns());
-
                 if (retCode){
-                    AnyType at;
-                    dest.ToAnyType(at);
-                    retCode = src.CopyTo(at);
-//                    retCode = src.CopyTo(dest.operator->());
-                    REPORT_ERROR(retCode,"failed conversion");
+                    parameters.Insert(x);
                 }
-                printf("<<matrix %i %i>>\n",dest.operator ->()->GetNumberOfRows(),dest.operator ->()->GetNumberOfColumns());
-#else
-                ReferenceT<AnyObjectT<Vector<double> > > dest(HeapManager::standardHeapId);
-                retCode.fatalError = !dest.IsValid();
-                REPORT_ERROR(retCode,"failed creation of AnyObjectT<DynamicCString> >");
 
-                printf("<<matrix %i>>\n",dest.operator ->()->GetNumberOfElements());
-
-                if (retCode){
-                    AnyType at;
-                    dest.ToAnyType(at);
-                    retCode = src.CopyTo(at);
-//                    retCode = src.CopyTo(dest.operator->());
-                    REPORT_ERROR(retCode,"failed conversion");
-                }
-                printf("<<matrix %i>>\n",dest.operator ->()->GetNumberOfElements());
-
-#endif
-
-                if (retCode){
-                    parameters.Insert(dest);
-                }
             } else
             if (name.CompareContent("LINE",nameLength)==0){
                 StreamString output;
@@ -350,8 +309,8 @@ CCString RPNCode=
         "POW\n"
         "TAN\n"
         "CAST \"int32\"\n"
-        "CONST {{0.50000 15},{8 , a }, {b , 0.15E25, -56} }\n"
         "CONST float32 {0.50000 15,8 , a , b , 0.15E25, -56} \n"
+        "CONST {{0.50000 15},{8 , a }, {b , 0.15E25, -56} }\n"
         "WRITE D\n"
         "READ D\n"
         "READ C\n"

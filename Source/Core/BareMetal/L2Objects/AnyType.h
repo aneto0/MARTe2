@@ -131,14 +131,16 @@ public:
      */
     inline AnyType(const VariableDescriptor &dataDescriptorIn,const void* const dataPointerIn);
 
-#if 0
+#if 1
     /**
      * @brief constructor from Reference
      * @param[in] reference is the Reference to get the pointer from.
      * Note that ToAnyType is a virtual function of Object. By default the TypeDescriptor describes the class of the object
      */
-    inline AnyType(Reference &reference);
+    AnyType(Reference &reference);
+#endif
 
+#if 0
     /**
      * @brief constructor from specialized Reference
      * @param[in] reference is the Reference to get the pointer from.
@@ -328,11 +330,8 @@ AnyType::AnyType(const AnyType &x):variableDescriptor(x.variableDescriptor) {
     this->pointer2Variable = x.pointer2Variable;
 }
 
-#if 0
-AnyType::AnyType(Reference &reference):AnyType(){
-	reference.ToAnyType(*this);
-}
 
+#if 0
 template <class T>
 AnyType::AnyType(ReferenceT<T> &reference):AnyType(){
 	reference.ToAnyType(*this);

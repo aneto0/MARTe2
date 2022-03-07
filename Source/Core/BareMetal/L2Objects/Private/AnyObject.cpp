@@ -22,14 +22,15 @@
 */
 
 #include "Private/AnyObjectM.h"
-#include "Private/AnyObjectT.h"
+#include "Private/AnyObjectS.h"
 #include "AnyObject.h"
 #include "HeapManager.h"
+
 #include "ReferenceT.h"
 
 #define CHECKANDMAKE(size)													\
 		if (sizeToCopy <= size){											\
-			ReferenceT<AnyObjectT<size> > ao(HeapManager::standardHeapId);	\
+			ReferenceT<AnyObjectS<size> > ao(HeapManager::standardHeapId);	\
 			if (ao.IsValid()){												\
 				ao->Setup(sizeToCopy,pointer,descriptor);					\
 				reference = ao;												\

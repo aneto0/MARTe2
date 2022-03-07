@@ -202,9 +202,6 @@ public:
      * Installing a further specialized ObjectBuilderT will correctly override the default
      * as the default will be installed first during the access to the record.
      */
-//    template <class T>
-//    static ClassRegistryItem *Instance();
-
     template <class T>
     static ClassRegistryItem *Instance(typename enable_if<isSameOrBaseOf(Object,T), T>::type *x=NULL);
 
@@ -277,7 +274,6 @@ private:
 /*---------------------------------------------------------------------------*/
 
 
-
 template <class T>
 ClassRegistryItem *ClassRegistryItem::Instance(typename enable_if<isSameOrBaseOf(Object,T), T>::type *x){
 
@@ -290,11 +286,13 @@ ClassRegistryItem *ClassRegistryItem::Instance(typename enable_if<isSameOrBaseOf
 
 	//spinlock
 	FastPollingMutexSem mux(flag);
-	while (mux.FastTryLock() && (instance == NULL_PTR(ClassRegistryItem *))){
-		if (instance == NULL_PTR(ClassRegistryItem *)){
+	bool isNullInstance = (instance == NULL_PTR(ClassRegistryItem *));
+	while (mux.FastTryLock() && isNullInstance){
+		if (isNullInstance){
 			builder = new ObjectBuilderT<T> (false);
 			instance = new ClassRegistryItem(typeid(T).name(),sizeof(T),builder);
 		}
+		isNullInstance = (instance == NULL_PTR(ClassRegistryItem *));
 	}
     return instance;
 }
@@ -309,10 +307,12 @@ ClassRegistryItem *ClassRegistryItem::Instance(typename enable_if<!isSameOrBaseO
 
 	//spinlock
 	FastPollingMutexSem mux(flag);
-	while (mux.FastTryLock() && (instance == NULL_PTR(ClassRegistryItem *))){
-		if (instance == NULL_PTR(ClassRegistryItem *)){
+    bool isNullInstance = (instance == NULL_PTR(ClassRegistryItem *));
+	while (mux.FastTryLock() && isNullInstance){
+		if (isNullInstance){
 			instance = new ClassRegistryItem(typeid(T).name(),sizeof(T),NULL);
 		}
+        isNullInstance = (instance == NULL_PTR(ClassRegistryItem *));
 	}
     return instance;
 }

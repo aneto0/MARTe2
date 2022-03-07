@@ -236,15 +236,28 @@ ErrorManagement::ErrorType EventSem::Wait(const MilliSeconds &timeout) {
     else {
         if (ok) {
             struct timespec timesValues;
-            timeb tb;
-            ok = (ftime(&tb) == 0);
+//            timeb tb;
+//            ok = (ftime(&tb) == 0);
+
+            ok = (clock_gettime(CLOCK_REALTIME, &timesValues)==0);
+//            timeb tb;
+//            ok = (ftime(&tb) == 0);
 
             if (ok) {
-            	uint32 ms = timeout.GetTimeRaw()+tb.millitm;
-            	uint32 s = ms/1000U;
-            	ms = ms - (s * 1000U);
-                timesValues.tv_sec  = static_cast<int32>(s+tb.time);
-                timesValues.tv_nsec = static_cast<int32>(ms * 1000000U);
+                time_t deltaMs = static_cast<time_t>(timeout.GetTimeRaw()%1000U);
+                time_t deltaS = static_cast<time_t>(timeout.GetTimeRaw()/1000U);
+                timesValues.tv_nsec += deltaMs*1000000U;
+                timesValues.tv_sec += deltaS;
+                if (timesValues.tv_nsec > 1000000000U){
+                    timesValues.tv_sec++;
+                    timesValues.tv_nsec -= 1000000000U;
+                }
+
+//            	uint32 ms = timeout.GetTimeRaw()+tb.millitm;
+//            	uint32 s = ms/1000U;
+//            	ms = ms - (s * 1000U);
+//                timesValues.tv_sec  = static_cast<int32>(s+tb.time);
+//                timesValues.tv_nsec = static_cast<int32>(ms * 1000000U);
 
                 ok = (pthread_mutex_timedlock(&handle->mutexHandle, &timesValues) == 0);
                 if (ok) {

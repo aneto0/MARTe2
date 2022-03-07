@@ -94,7 +94,7 @@ public:
 private:
 
     /** attempt at stopping copy operator  misbehaviour */
-    operator BitRange<baseType, numberOfBits, bitOffset>() const { return *this; }
+    //operator BitRange<baseType, numberOfBits, bitOffset>() const { return *this; }
 
     /**
      * The number value.
@@ -135,12 +135,23 @@ void BitRange<baseType, numberOfBits, bitOffset>::operator=(inputType input) {
     // masks the number
     temporaryValue &= mask;
 
+//TODO create a compiler independent solution
+//
+//#pragma warning( push )
+//#pragma warning( pop )
+//#pragma warning( disable : 4100 )
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+
     // clears the bit range in the value
     value &= notMask;
+
+#pragma GCC diagnostic pop
 
     // puts the value in the bit range
     value |= temporaryValue;
 }
+
 
 template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
 BitRange<baseType, numberOfBits, bitOffset>::operator baseType() const {

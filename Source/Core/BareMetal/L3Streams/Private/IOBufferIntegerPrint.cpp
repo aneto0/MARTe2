@@ -478,19 +478,16 @@ static bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
     }
 
     if (format.binaryNotation == DecimalNotation) {
-        ret = IntegerToStreamDecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, format.fullNotation);
+        ret = IntegerToStreamDecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, format.binaryPadded, format.fullNotation);
     }
     if (format.binaryNotation == HexNotation) {
-        ret = IntegerToStreamExadecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
-                                                format.fullNotation);
+        ret = IntegerToStreamExadecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize, format.fullNotation);
     }
     if (format.binaryNotation == OctalNotation) {
-        ret = IntegerToStreamOctalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
-                                           format.fullNotation);
+        ret = IntegerToStreamOctalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize, format.fullNotation);
     }
     if (format.binaryNotation == BitNotation) {
-        ret = IntegerToStreamBinaryNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
-                                            format.fullNotation);
+        ret = IntegerToStreamBinaryNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize, format.fullNotation);
     }
 
     return ret;
@@ -637,9 +634,16 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
                                     uint16 maximumSize = 0u,
                                     bool padded = false,
                                     const bool leftAligned = false,
+                                    const bool padWithTrailingZeroes = false,
                                     const bool addPositiveSign = false) {
 
     bool ret = false;
+
+    char8 padding = ' ';
+    if (padWithTrailingZeroes){
+        padding = '0';
+        padded = true;
+    }
 
     // if no limits set the numberSize as big enough for the largest integer
     if (maximumSize == 0u) {
@@ -722,7 +726,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             // fill up to from 1 maximumSize with ' '
             if ((padded) && (!leftAligned)) {
                 for (uint32 i = 1u; ok && (i < maximumSize); i++) {
-                    if (!ioBuffer.PutC(' ')) {
+                    if (!ioBuffer.PutC(padding)) {
                         REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                         ok = false;
                     }
@@ -741,7 +745,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             // fill up from numberSize to maximumSize with ' '
             if ((padded) && (!leftAligned)) {
                 for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
-                    if (!ioBuffer.PutC(' ')) {
+                    if (!ioBuffer.PutC(padding)) {
                         REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                         ok = false;
                     }
@@ -771,7 +775,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
         // fill up from numberSize to maximumSize with ' '
         if ((padded) && (leftAligned)) {
             for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
-                if (!ioBuffer.PutC(' ')) {
+                if (!ioBuffer.PutC(padding)) {
                     REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
@@ -817,6 +821,8 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
                                        const bool leftAligned = false,
                                        const uint16 zeroPaddedBitSize = 0u,
                                        const bool addHeader = false) {
+
+
     // put here size of number
     uint16 headerSize = 0u;
 

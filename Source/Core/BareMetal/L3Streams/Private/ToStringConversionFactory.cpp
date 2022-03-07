@@ -806,12 +806,18 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(VariableDescript
 
 	IOBufferWrapper *wrapper = NULL_PTR(IOBufferWrapper *);
 	if (isCompare){
+	    /**
+	     * supports all strings but no Stream
+	     */
 		if (destTd.SameAs(DynamicCharString) ||
 			destTd.SameTypeAs(ConstCharString) ||
 		    destTd.SameTypeAs(CharString(0))){
 			wrapper = new IOBufferCStringCompareWrapper();
 		}
 	} else {
+	    /**
+	     * supports only writable Strings and Streams
+	     */
 		if (destTd.SameTypeAs(StreamIType(0))){
 			wrapper = new IOBufferWrapperStream(destTd.StorageSize());
 		} else

@@ -31,9 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "../../../../Source/Core/BareMetal/L2Objects/Private/AnyObjectT.h"
 #include "Vector.h"
 #include "Matrix.h"
+#include "../../../../Source/Core/BareMetal/L2Objects/Private/AnyObjectS.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

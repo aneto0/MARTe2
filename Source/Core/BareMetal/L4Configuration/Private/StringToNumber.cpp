@@ -31,10 +31,8 @@
 
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
-//#include "IOBuffer.h"
-#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "StringToNumber.h"
-
 #include "GeneralDefinitions.h"
 
 
@@ -583,7 +581,7 @@ static bool StringToNormalFloatPrivate(CCString input,T &number) {
             else {
                 if (digit != '\0') {
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                    COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token ", digit);
                 }
                 //return false is nothing is read
                 canReturn = true;
@@ -624,7 +622,7 @@ static bool StringToNormalFloatPrivate(CCString input,T &number) {
                     else {
                         if (digit != '\0') {
                             ret = false;
-                            REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                            COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token (",digit,")");
                         }
                         canReturn = true;
                     }

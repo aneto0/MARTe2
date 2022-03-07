@@ -83,9 +83,15 @@ static const PatternInformation emptyPattern = {emptyString,emptyString, 0,false
 
 /**
  * @brief callback used by Scan
- *
  */
-typedef void (*PatternMatchCallBack)(CCString name, uint32 nameLength, CCString value, uint32 valueLength);
+class PatternMatchCallBackClass{
+public:
+    virtual ~PatternMatchCallBackClass(){}
+    /**
+     * when a $(pattern) is matched this method is called
+     */
+    virtual void Matched(CCString name, uint32 nameLength, CCString value, uint32 valueLength)=0;
+};
 
 
 /**
@@ -131,7 +137,7 @@ typedef void (*PatternMatchCallBack)(CCString name, uint32 nameLength, CCString 
  * 		   but is also not matched <A> is matched and <B> is not
  * 		   The grammar allows also to name an atom using the syntax $text(<atom>)
  * 		   text is a sequence of any char terminated by the (
- * 		   *,+,?,{} cannot be used in front of a ?, but you can use *($text(<atom>))
+ * 		   *,+,?,{} cannot be used in front of a $, but you can use *($text(<atom>))
  *
  * @param[in] pattern is a string containing the pattern to match. see function details.
  * @param[in,out] input is the stream/string to be parsed to check the match with the pattern.
@@ -171,12 +177,12 @@ ErrorManagement::ErrorType MatchRules(CCString &input,const ZeroTerminatedArray<
  * @see Match(StreamI &input,CCString &pattern);
  * @param[in] pattern needs to have some named atoms
  */
-ErrorManagement::ErrorType Scan(CCString &input,CCString &pattern,PatternMatchCallBack callBack);
+ErrorManagement::ErrorType Scan(CCString &input,CCString &pattern,PatternMatchCallBackClass *callBack);
 
 /**
- * @see Scan(CCString &input,CCString &pattern,PatternMatchCallBack callBack)
+ * @see Scan(CCString &input,CCString &pattern,PatternMatchCallBackClass callBack)
  */
-ErrorManagement::ErrorType Scan(StreamI &input,CCString &pattern,PatternMatchCallBack callBack);
+ErrorManagement::ErrorType Scan(StreamI &input,CCString &pattern,PatternMatchCallBackClass *callBack);
 
 
 /*---------------------------------------------------------------------------*/

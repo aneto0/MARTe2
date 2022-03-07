@@ -51,30 +51,30 @@ ListNode::~ListNode()
 
 
 ErrorManagement::ErrorType ListNode::InsertAfter(ListNode *node, uint32 skipNo){
-	ErrorManagement::ErrorType err;
+	ErrorManagement::ErrorType ret;
 
 	if (node == NULL){
-		err.parametersError = true;
+		ret.parametersError = true;
 	} else
 	if (node->next != NULL){
-		err.illegalOperation = true;
+		ret.illegalOperation = true;
 	}
 	ListNode *location = this;
 
-	while ((skipNo > 0) && (err)){
+	while ((skipNo > 0) && (ret)){
 		location = location->next;
 		skipNo--;
 		if (location == NULL){
-			err.outOfRange = true;
+			ret.outOfRange = true;
 		}
 	}
 
-	if  (err){
+	if  (ret){
 		node->next = location->next;
 		location->next = node;
 	}
 
-	return err;
+	return ret;
 }
 
 ErrorManagement::ErrorType ListNode::RemoveAfter(ListNode *&node, uint32 skipNo){

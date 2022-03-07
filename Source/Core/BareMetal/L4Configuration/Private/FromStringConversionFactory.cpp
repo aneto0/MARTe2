@@ -219,6 +219,7 @@ public:
 			} else {
 				integerType num;
 				ok.fatalError = !StringToNumber(token.GetList(),num);
+                REPORT_ERROR(ok,"StringToNumber failed");
 				if (ok){
 					if (compare){
 						ok.comparisonFailure = (num != destI[i]);
@@ -275,6 +276,7 @@ public:
 			} else {
 				integerBitsSize num;
 				ok.fatalError = !StringToNumber(token.GetList(),num);
+                REPORT_ERROR(ok,"StringToNumber failed");
 				if (ok){
 					if (compare){
 						integerBitsSize num2;
@@ -343,6 +345,7 @@ public:
 			} else {
 				floatType num;
 				ok.fatalError = !StringToNumber(token.GetList(),num);
+                REPORT_ERROR(ok,"StringToNumber failed");
 				if (ok){
 					if (compare){
 						ok.comparisonFailure = (num != destF[i]);
@@ -396,22 +399,52 @@ TypeConversionOperatorI *FromStringConversionFactory::GetOperator(VariableDescri
     TypeDescriptor sourceTd = sourceVd.GetFinalTypeDescriptor();
     TypeDescriptor destTd   = destVd.GetFinalTypeDescriptor();
 
-	if (sourceTd.IsCharStreamType() && !sourceTd.IsFormattedCharStreamType()){
+
+    bool matching = sourceTd.IsCharStreamType();
+    if (matching){
+        matching = !sourceTd.IsFormattedCharStreamType();
+    }
+
+	if (matching){
+	    matching = false;
 		if (sourceTd.SameTypeAs(StreamIType(0))){
 			reader = new StreamReader(destTd.StorageSize());
+			matching = true;
 		} else
 		if (sourceTd.SameAs(StreamStringType(sizeof(StreamString))) ){
 			reader = new SStringReader();
+            matching = true;
 		} else
 		if (sourceTd.SameAs(DynamicCharString) ||
 			sourceTd.SameAs(ConstCharString) ||
 			sourceTd.SameTypeAs(CharString(0))){
 			reader = new CCStringReader();
+            matching = true;
 		}
 	}
+/*
+    // avoid String to Matrix/Vector  being processed here
+    // same number of dimensions
+    if (matching){
+        TypeDescriptor td =InvalidType(0);
+        uint32 nOfDimensionsS  = 20;
+        sourceVd.GetVariableDimensions(NULL,td,nOfDimensionsS,NULL);
+        uint32 nOfDimensionsD  = 20;
+        destVd.GetVariableDimensions(NULL,td,nOfDimensionsD,NULL);
+
+        matching = (nOfDimensionsS == nOfDimensionsD);
+
+printf (">>%i %i %s %s<<\n",nOfDimensionsS,nOfDimensionsD,sourceVd.GetModifiers(),destVd.GetModifiers());
+    }
+*/
+    // either both have more than one dimensions or neither
+	if (matching){
+	    matching = !((CCString(sourceVd.GetModifiers()).GetSize()==0) ^ (CCString(destVd.GetModifiers()).GetSize()==0));
+	}
+
 
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
-	if (reader != NULL){
+	if (matching && (reader != NULL)){
 		if (!destTd.IsStructuredData()){
 			TD_FullType fullType = destTd.GetFullTypeCode();
 			uint32 storageSize = destTd.StorageSize();

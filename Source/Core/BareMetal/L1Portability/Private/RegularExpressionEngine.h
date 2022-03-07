@@ -587,11 +587,14 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
             	}
             } break;
             case '$':{
+                CCString oldVariableName;
+                uint32 oldNameLength = 0;
+                uint32 oldValueStart = 0;
             	if (status == Matching){
 
-                	input.StartVariableName(pattern);
+                	input.StartVariableName(pattern,oldVariableName);
                 	if (ScanVariableName(pattern)){
-                    	input.StartVariable(pattern);
+                    	input.StartVariable(pattern,oldNameLength,oldValueStart);
 
                 		// rely on PatternMatch to balance the )
                 		parenCount = 0;
@@ -613,9 +616,8 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
                 		status = Error;
                 		ret.syntaxError = true;
                 	}
-            	}
-            	if (status == Matching){
-            		input.EndVariable();
+
+                	input.EndVariable(oldVariableName,oldNameLength,oldValueStart,(status == Matching));
             	}
             } break;
             case '(':{

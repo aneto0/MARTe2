@@ -24,6 +24,7 @@
 #include "Stack.h"
 #include "StaticStack.h"
 #include "AnyType.h"
+#include "RegularExpression.h"
 
 #include "RuntimeEvaluator.h"
 #include "Private/RuntimeEvaluatorVariables.h"
@@ -356,6 +357,121 @@ static inline ErrorManagement::ErrorType Allocate(
     return ret;
 }
 
+#if 0  // WIP
+
+#include "ReferenceT.h"
+#include "AnyObjectT.h"
+#include "StreamMemoryReference.h"
+
+
+
+class LineParseResult: public RegularExpression::PatternMatchCallBackClass{
+private:
+    static CCString rule;
+
+public:
+    Queue<Reference> parameters;
+
+    DynamicCString command;
+
+    ErrorManagement::ErrorType retCode;
+
+public:
+    LineParseResult(){
+
+    }
+
+    virtual void Matched(CCString name, uint32 nameLength, CCString value, uint32 valueLength){
+
+        if ((nameLength >0) && retCode){
+            if (name.CompareContent("COMMAND",nameLength)==0){
+                if (command.GetSize() == 0){
+                    command().Append(value.GetList(),valueLength);
+                } else {
+                    retCode.internalSetupError = true;
+                    REPORT_ERROR(retCode," second command parsed?");
+                }
+            } else
+
+            if (name.CompareContent("VARNAME",nameLength)==0){
+                // search for a variable with this name
+
+
+
+
+                ReferenceT<AnyObjectT<DynamicCString> > x(HeapManager::standardHeapId);
+
+                retCode.fatalError = !x.IsValid();
+                REPORT_ERROR(retCode,"failed creation of AnyObjectT<DynamicCString> >");
+
+                if (retCode){
+                    x->operator ()().Append(value,valueLength);
+                    parameters.Insert(x);
+                }
+            } else
+
+            if (name.CompareContent("NUMBER",nameLength)==0){
+                StreamMemoryReference smr(value,valueLength);
+                TypeDescriptor td = Float32Bit;
+                Reference ref = AnyObject::Allocate(td.StorageSize(),td);
+                AnyType dest ;
+                ref.ToAnyType(dest);
+                AnyType src(smr);
+                smr.Seek(0);
+                retCode = src.CopyTo(dest);
+                REPORT_ERROR(retCode,"failed conversion");
+
+                if (retCode){
+                    parameters.Insert(ref);
+                }
+
+            } else
+            if (name.CompareContent("LINE",nameLength)==0){
+                StreamString output;
+                output.Printf("COMMAND = %s ",command);
+                command = "";
+
+                while ((parameters.Size() > 0) && retCode){
+                    Reference ref;
+                    retCode = parameters.Remove(ref);
+                    REPORT_ERROR(retCode,"failed parameters.Remove");
+
+                    if (retCode){
+                        output.Printf(" (%Q)%! ",ref,ref);
+                    }
+                }
+
+                printf("%s\n",output.Buffer().GetList());
+            }
+
+        }
+
+    }
+
+    void Parse(CCString line ){
+        ErrorManagement::ErrorType ret;
+        ret = RegularExpression::Scan(line,rule,this);
+    }
+
+};
+
+//CCString MyCallBackClass::rule = "*($COMMAND([\\w_]*[\\d\\w_])*(*[\t ][$VARNAME([\\w_]*[\\d\\w_])|$VALUE(?($CAST(\\([\\w_]*[\\d\\w_]\\)))[$NUMBER(+\\d?(.*\\d)|.*\\d)?([eE]!(?[+\\-]{1,5}\\d))|\"$STRING(*[^\"])\"])])\n)";
+//$NUMBER(+\\d?(.*\\d)|.*\\d)?([eE]!?[+\\-]{1,5}\\d)
+//CCString MyCallBackClass::rule = "*($LINE($COMMAND([\\w_]*[\\d\\w_])*(*[\t ][$VARNAME([\\w_]*[\\d\\w_])|$NUMBER(+\\d?(.*\\d)|.*\\d)?([eE]!?[+\\-]{1,5}\\d)|\"$STRING(*[^\"])\"])\n))";
+
+CCString LineParseResult::rule =
+        "*($LINE("
+               "$COMMAND([\\w_]*[\\d\\w_])"
+               "*(*[\t ]("
+                    "$VARNAME([\\w_]*[\\d\\w_])|"
+                    "$NUMBER(+\\d?(.*\\d)|.*\\d)?([eE]!?[+\\-]{1,5}\\d)|"
+                    "$VECTOR(\\{*[\\d\\w\t ,.\\-+]\\})|"
+                    "$MATRIX(\\{+(*[\t ,]\\{*[\\d\\w\t ,.\\-+]\\})*[\t ,]\\})|"
+                    "\"$STRING(*[^\"])\""
+               "))*[\t ]\n"
+        "))";
+
+#endif
 
 ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
     ErrorManagement::ErrorType ret;
@@ -380,11 +496,29 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
     // compilation STEP 3: compile code
     bool finished = false;
     while ((!finished)  && ret){
+
         DynamicCString line;
         uint32 limit;
 
         // divide RPNCode into lines
         RPNCode = DynamicCString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
+
+
+#if 0 // WIP
+
+
+        LineParseResult mcbc(this);
+        ErrorManagement::ErrorType ret;
+        mcbc.Parse(line);
+
+
+
+
+        if (hasCommand){
+
+#else
+
+//        Queue<Reference> parameters;
 
         finished = (line.GetSize()==0);
         // extract command and parameter
@@ -400,12 +534,17 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
         }
         bool hasParameter1 = (parameter1.GetSize()> 0);
         bool hasParameter2 = (parameter2.GetSize()> 0);
+        bool hasCommand = (command.GetSize() > 0);
 
         // now analyze the command
-        if (command.GetSize() > 0){
+        if (hasCommand){
+
             // assign invalid value
             CodeMemoryElement code2 = TypeCharacteristics<CodeMemoryElement>::MaxValue();
             bool matchOutput = false;
+
+
+            // SPECIAL COMMANDS PREAMBLE
 
             // TRAP RREAD
             // TRAP RWRITE
@@ -647,6 +786,10 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                 }
             }
 
+            // END SPECIAL COMMANDS PREAMBLE
+#endif
+
+
             CodeMemoryElement code = InvalidCodeMemoryElement;
             /**
              * FIND A MATCHING PCODE
@@ -735,8 +878,8 @@ DynamicCString typeList;
 ShowStack(typeList(),matchOutput,typeStack);
 printf("stack after allocation: %s\n",typeList.GetList());fflush(stdout);
 #endif
-        }
-    }
+        }  // has Command
+    }  // loop
 
     // final checks
     if (ret){

@@ -54,12 +54,18 @@ namespace MARTe{
 
 /**
  * @brief A tool to create AnyObject that contains scalar/vectors/arrays of fixed size objects
+ * It handles arrays or trees up to two dimensions, content can be fixed size or strings
+ * Each row can either have the same size (matrix) or not (Vector<Vector>)
+ * It produces a memory structure that can
  */
 class DLL_API ProgressiveTypeCreator{
 
 public:
 	/**
-	 * @brief Creates the object selecting the type to convert to and the default PageSize
+	 * @brief Creates the object selecting the default PageSize
+	 * Pagesize will grow if not sufficient to hold one row
+	 * Multiple rows will be fitted on a PageSize if possible
+	 * Rows will not span different Pages
 	 */
 	ProgressiveTypeCreator(uint32 pageSizeIn );
 
@@ -70,11 +76,13 @@ public:
 
 	/**
 	 * @brief first call - sets the output type
+	 * From this the type of data storage is determined: fixed size or strings
 	 */
 	ErrorManagement::ErrorType Start(TypeDescriptor typeIn);
 
 	/**
 	 * @brief frees memory and readies the system for Start(). works on any state
+	 * After this only Start is accepted
 	 */
 	void Clean();
 
@@ -85,17 +93,23 @@ public:
 
 	/**
 	 * @brief Marks the end of a row of elements. Callable after Start()
+	 * Signal the system that a second layer is possible (matrix or Vector<Vector>>
 	 */
 	ErrorManagement::ErrorType EndVector();
 
 	/**
 	 * @brief Marks the end of the object construction. Callable after Start()
+	 * Enables last stage: GetReference()
 	 */
 	ErrorManagement::ErrorType End();
 
 	/**
 	 * @brief Allows retrieving the Object that has been built.
 	 * Can only be done after End has been called. Callable after End()
+	 * status is brought back to initial value, equivalent to Clean()
+	 * Memory used to hold the object is severed from this object and linked to the reference x
+	 * x references an AnyObject or a MemoryPageObject depending on complexity
+	 * memory used during the creation is either transferred to the MemoryPageObject or recycled
 	 */
 	ErrorManagement::ErrorType GetReference(Reference &x);
 

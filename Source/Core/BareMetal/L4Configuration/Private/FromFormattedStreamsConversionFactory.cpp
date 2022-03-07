@@ -248,11 +248,39 @@ TypeConversionOperatorI *FromFormattedStreamsConversionFactory::GetOperator(Vari
 
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
-    TypeDescriptor sourceTd = sourceVd.GetFinalTypeDescriptor();
-    TypeDescriptor destTd   = destVd.GetFinalTypeDescriptor();
+    TypeDescriptor sourceTd  = sourceVd.GetFinalTypeDescriptor();
+    TypeDescriptor destTd    = destVd.GetFinalTypeDescriptor();
+
+
+    bool matching = destTd.SameTypeAs(StructuredDataIType(0));
+    if (matching){
+        matching = sourceTd.IsFormattedCharStreamType();
+    }
+    if (matching){
+        matching = matching && (isCompare == false);
+    }
+
+    /*
+    // avoid String to Matrix/Vector  being processed here
+    if (matching){
+        TypeDescriptor td =InvalidType(0);
+        uint32 nOfDimensionsS  = 20;
+        sourceVd.GetVariableDimensions(NULL,td,nOfDimensionsS,NULL);
+        uint32 nOfDimensionsD  = 20;
+        destVd.GetVariableDimensions(NULL,td,nOfDimensionsD,NULL);
+
+        matching = (nOfDimensionsS == nOfDimensionsD);
+    }
+    */
+    // either both have more than one dimensions or neither
+    // replaces commented block above requiring less computations
+    if (matching){
+        matching = !((CCString(sourceVd.GetModifiers()).GetSize()==0) ^ (CCString(destVd.GetModifiers()).GetSize()==0));
+    }
+
 
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
-	if (destTd.SameTypeAs(StructuredDataIType(0)) && sourceTd.IsFormattedCharStreamType() && (isCompare == false)){
+	if (matching){
 		DynamicCString format;
 		CStringTool cs = format();
 

@@ -44,9 +44,17 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-//#include "Windows.h"
+#include "Reference.h"
 
 namespace MARTe {
+
+
+#if 1
+AnyType::AnyType(Reference &reference){
+    pointer2Variable = NULL_PTR(void *);
+    reference.ToAnyType(*this);
+}
+#endif
 
 ErrorManagement::ErrorType AnyType::SetFormattedStreamType(CCString format){
 	ErrorManagement::ErrorType ret;

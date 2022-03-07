@@ -1,7 +1,7 @@
 /**
  * @file AnyObjectT.h
  * @brief Header file for class AnyObjectT
- * @date 30/10/2017
+ * @date Sep 2, 2020
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,14 +16,15 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AnyObjectT
+ * @details This header file contains the declaration of the class AnyType
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
- */
+*/
+
+#ifndef ANYOBJECTT_H_
+#define ANYOBJECTT_H_
 
 
-#ifndef ANYOBJECT_T_H_
-#define ANYOBJECT_T_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -34,22 +35,24 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Object.h"
-#include "MemoryOperators.h"
-#include "AnyType.h"
+
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+namespace MARTe{
 
 /**
- * @brief An Object derivative either referring to or containing a generic variable described by an AnyType .
- * @details This class allows to associate a name and a reference to an AnyType.
- * It may holds and manage a memory space with a copy of the data of a generic variable or is a simply a reference to it
+ * @brief Create an Object derivative embedding the class T
+ * @details This class allows to associate a name and a reference to any class T.
+ * T must have a simple constructor with no parameters
  */
-template <unsigned int objectSize>
-class AnyObjectT: public Object {
+template <typename T>
+class AnyObjectT: public Object, public T {
 
 public:
 
@@ -58,7 +61,7 @@ public:
     /**
      * @brief Default constructor. NOOP.
      */
-	AnyObjectT();
+    AnyObjectT();
 
     /**
      * @brief Default destructor.
@@ -66,31 +69,12 @@ public:
      */
     virtual ~AnyObjectT();
 
-    /**
-     * @brief Allows to setup an Anytype of any type....
-     * @param[in] pointer is the address of the memory to be copied (if NULL the memory will be left non-initialised)
-     * @param[in] sizeToCopy is the amount of bytes to be copied
-     * @param[in] descriptor is the variable descriptor to be used to describe this variable,
-    */
-	void Setup(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor);
-
     /*
-	 * @brief The main interface provided by an AnyObjectT is the ability to provide its data via an AnyType.
-	 * @return a valid AnyType that describes the content of this object and allows read only access to its content
-	 */
+     * @brief The main interface provided by an AnyObjectS is the ability to provide its data via an AnyType.
+     * @return a valid AnyType that describes the content of this object and allows read only access to its content
+     */
     virtual void ToAnyType(AnyType &at);
 
-private:
-
-    /**
-     * @brief The Type and address of the data
-     */
-    VariableDescriptor vd;
-
-    /**
-     *
-     */
-    char8 data[objectSize];
 };
 
 
@@ -99,35 +83,28 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template <unsigned int objectSize>
-AnyObjectT<objectSize>::AnyObjectT():vd(InvalidType(0),""){
+template <class T>
+AnyObjectT<T>::AnyObjectT():Object(),T(){
 };
 
-template <unsigned int objectSize>
-AnyObjectT<objectSize>::~AnyObjectT(){
-
+template <class T>
+AnyObjectT<T>::~AnyObjectT(){
+//    printf("*");
 };
 
-template <unsigned int objectSize>
-void AnyObjectT<objectSize>::ToAnyType(AnyType &at){
-	at = AnyType(vd,&data);
-}
-
-template <unsigned int objectSize>
-void AnyObjectT<objectSize>::Setup(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor){
-	vd = descriptor;
-	if (sizeToCopy > objectSize){
-		sizeToCopy = objectSize;
-	}
-	if (pointer != NULL){
-	    Memory::Copy(data,pointer,sizeToCopy);
-	}
+template <typename T>
+void AnyObjectT<T>::ToAnyType(AnyType &at){
+    T *p = this;
+    at = AnyType(*p);
 }
 
 
-TEMPLATE_CLASS_REGISTER(AnyObjectT<objectSize>,"1.0",unsigned int objectSize)
+
+TEMPLATE_CLASS_REGISTER(AnyObjectT<T>,"1.0",typename  T)
+
 
 
 }
 
-#endif /* ANYOBJECT_H_ */
+
+#endif /* ANYOBJECTT_H_ */

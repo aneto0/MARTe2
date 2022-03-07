@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <Private/AnyObjectT.h>
+#include <Private/AnyObjectS.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -276,7 +276,7 @@ void PrepareTestObject(){
     static Vector<CCString> vv2[4] = {a1,a2,a3,a4};
     static Vector<CCString> vv3[4] = {a1,a2,a3,a4};
     static Vector<CCString> vvx[4];
-    static Vector<CCString> vv4[][4] = {{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},vvx};
+    static Vector<CCString> vv4[][4] = {{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{}};
 
     test1Class.CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
 
@@ -1186,7 +1186,7 @@ void Test(){
 	xx = temp;
 	PrintType(xx);printf("\n");
 
-	ReferenceT<AnyObjectT<9> > ao8(HeapManager::standardHeapId);
+	ReferenceT<AnyObjectS<9> > ao8(HeapManager::standardHeapId);
 	ao8->Setup(sizeof(temp),&temp,VariableDescriptor(&temp));
 
 	xx = ao8.operator MARTe::AnyType();

@@ -115,6 +115,11 @@ protected:
 	 * a counter of how many element in the list
 	 */
 	uint32 		size;
+
+	/**
+	 * allow accessing to the next field from descendents
+	 */
+	inline ListNode *Next();
 };
 
 
@@ -135,6 +140,12 @@ template <class loadClass>
 inline uint32 List<loadClass>::Size() const{
 	return size;
 };
+
+template <class loadClass>
+inline ListNode *List<loadClass>::Next(){
+    return next;
+}
+
 
 template <class loadClass>
 template <class compatible>

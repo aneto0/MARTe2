@@ -61,7 +61,9 @@ namespace TypeConversionManager{
 
 	/**
      * @brief allow access to optimal functor for data conversion
-	 * The operator must be destroyed at the end of its use
+     * The operator must be destroyed at the end of its use
+     * @param[in,out] destTd is the type of the destination variable to write to.
+     * @param[in,out] sourceTd is the type of the source variable to write from.
 	 */
 	const TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) ;
 

@@ -36,6 +36,7 @@
 #include "StaticList.h"
 #include "Vector.h"
 #include "List.h"
+#include "Queue.h"
 #include "CCString.h"
 #include "CompositeErrorManagement.h"
 #include "Reference.h"
@@ -574,6 +575,11 @@ public:
 
 
 private:
+
+    /**
+     * parses a line and extracts the command name and the parameter
+     */
+    ErrorManagement::ErrorType          ParseLine(CCString line,DynamicCString &command, Queue<Reference> parameters);
 
     /**
      * Checks existence of name using FindInputVariable

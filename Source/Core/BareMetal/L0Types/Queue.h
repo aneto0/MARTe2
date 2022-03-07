@@ -132,6 +132,9 @@ ErrorManagement::ErrorType Queue<loadClass>::Insert( loadClass &data){
 
 template <class loadClass>
 ErrorManagement::ErrorType Queue<loadClass>::Remove( loadClass &data){
+    if (lastAdded == List<loadClass>::Next()){
+        lastAdded = this;
+    }
 	return List<loadClass>::Remove(data,0);
 }
 

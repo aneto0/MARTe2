@@ -37,7 +37,6 @@ StreamReader::~StreamReader(){
 
 CCString StreamReader::GetToken(const uint8 *ptr,uint32 index){
 	const CCString separators=" \r\n\t";
-	CCString ret;
 	bool ok = true;
 
 	buffer().Truncate(0);
@@ -49,26 +48,18 @@ CCString StreamReader::GetToken(const uint8 *ptr,uint32 index){
 			char8 c = 0;
 			uint32 size =1 ;
 			ok = stream->Read(&c,size);
-			while ( ok && (size == 1) && (!separators.In(c))){
+			while ( ok && (size == 1) && (separators.In(c))){
 				size = 1;
 				ok = stream->Read(&c,size);
 			}
-			if (ok){
-				size = 1;
-				ok = stream->Read(&c,size);
-				while ( ok && (size == 1) && (!separators.In(c))){
-					buffer().Append(c);
-					size = 1;
-					ok = stream->Read(&c,size);
-				}
+            while ( ok && (size == 1) && (!separators.In(c))){
+                    buffer().Append(c);
+                    size = 1;
+                    ok = stream->Read(&c,size);
 			}
 		}
 	}
-	if (ok){
-		ret = CCString(buffer.GetList());
-	}
-
-	return ret;
+	return CCString(buffer.GetList());
 }
 
 CCString SStringReader::GetToken(const uint8 *ptr,uint32 index){
