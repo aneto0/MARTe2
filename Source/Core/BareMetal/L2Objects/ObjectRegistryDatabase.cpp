@@ -141,7 +141,7 @@ const char8 * const ObjectRegistryDatabase::GetClassName() const {
 }
 
 /*lint -e{1550} */
-void *ObjectRegistryDatabase::operator new(const osulong size) throw () {
+void *ObjectRegistryDatabase::operator new(const size_t size) throw () {
     return GlobalObjectI::operator new(size);
 }
 

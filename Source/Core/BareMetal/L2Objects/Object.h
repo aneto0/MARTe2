@@ -321,7 +321,7 @@ private:
      * @brief Disallow the usage of new.
      * @param[in] size the size of the object.
      */
-    static void *operator new(osulong size) throw ();
+    static void *operator new(size_t size) throw ();
 
     /**
      * @brief Extracts the data of an input object and puts it into an object

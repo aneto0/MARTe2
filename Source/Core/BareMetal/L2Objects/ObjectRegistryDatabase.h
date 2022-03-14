@@ -86,7 +86,7 @@ private:
      * @param[in] size the size of the object.
      */
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The new operator must wrap GlobalObjectsI::new(*) */
-    static void *operator new(const osulong size) throw ();
+    static void *operator new(const size_t size) throw ();
 
     /**
      * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.

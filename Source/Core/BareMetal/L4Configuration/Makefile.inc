@@ -35,8 +35,6 @@ OBJSX=	AnyObject.x \
 		JsonParser.x \
 		LexicalAnalyzer.x \
 		MathExpressionParser.x \
-		RuntimeEvaluator.x \
-		RuntimeEvaluatorFunction.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		TypeConversion.x \
@@ -45,8 +43,10 @@ OBJSX=	AnyObject.x \
 		ParserI.x \
 		StandardParser.x \
 		ValidateBasicType.x \
-		XMLParser.x
-        
+		XMLParser.x \
+		RuntimeEvaluator.x \
+		RuntimeEvaluatorFunction.x 
+
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults

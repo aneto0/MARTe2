@@ -1,8 +1,8 @@
 /**
- * @file GlobalObjectI.h
- * @brief Header file for class GlobalObjectI
- * @date 25/09/2015
- * @author Andre' Neto
+ * @file HardwareIA.h
+ * @brief Header file for module HardwareIA
+ * @date 23/06/2021
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,70 +16,36 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GlobalObjectI
+ * @details This header file contains the declaration of the module HardwareIA
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GLOBALOBJECTI_H_
-#define GLOBALOBJECTI_H_
+#ifndef HARDWAREIA_H_
+#define HARDWAREIA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-
-/**
- * @brief Interface definition for all the framework global objects.
- * @details All the framework global objects (singletons included) shall
- * implement this interface and register in the GlobalObjectsDatabase by calling
- * the GlobalObjectsDatabase->Add method.
- */
-class DLL_API GlobalObjectI {
-
-public:
-
-    /**
-     * @brief Destructor.
-     * @details This destructor is pure virtual, so it will be a NOOP.
-     */
-    virtual ~GlobalObjectI();
-
-    /**
-     * @brief Gets the name of the class.
-     * @return the class name.
-     */
-    virtual const char8 * const GetClassName() const = 0;
-
-    /**
-     * @brief Guarantees that the class is instantiated in the StandardHeap.
-     * @param[in] size is the memory size to be allocated.
-     * @return a new instance of the class allocated in the StandardHeap.
-     */
-    static void * operator new(const size_t size);
-
-    /**
-     * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.
-     * @param[in] p is the pointer to be freed.
-     */
-    static void operator delete(void *p);
-};
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GLOBALOBJECTI_H_ */
+namespace MARTe {
+    namespace HardwareI {
+        inline void InitArchitecture() {
+        }
+    }
+}
+#endif /* HARDWAREIA_H_ */
 

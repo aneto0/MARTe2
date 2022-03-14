@@ -82,7 +82,7 @@
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
      /*lint -e{1511} This function will be redeclared in descendants */                                                \
-     static void * operator new(const MARTe::osulong size, MARTe::HeapI *heap = static_cast<MARTe::HeapI *>(NULL));    \
+     static void * operator new(const size_t size, MARTe::HeapI *heap = static_cast<MARTe::HeapI *>(NULL));    \
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
