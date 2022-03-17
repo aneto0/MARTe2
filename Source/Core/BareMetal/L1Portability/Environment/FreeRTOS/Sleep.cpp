@@ -41,6 +41,14 @@
 namespace MARTe {
 
 void Sleep::OsUsleep(const uint32 usecTime) {
+    
+    TickType_t ticksToSleep = pdMS_TO_TICKS(usecTime / 1000.0);
+
+    if (ticksToSleep > 0u) {
+        vTaskDelay(ticksToSleep);
+    } else {
+        taskYIELD();
+    }
 }
 
 int32 Sleep::GetDateSeconds() {
