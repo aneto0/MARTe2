@@ -1,5 +1,5 @@
 .. date: 10/01/2022
-   author: Andre' Neto
+   author: Giuseppe Avon
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
    Licensed under the EUPL, Version 1.1 or - as soon they will be approved
@@ -20,7 +20,7 @@ Essentially, porting comes down to a sequence of basic steps, some of them are m
 
 Porting fundamentals
 --------------------
-Starting from fundamentals, MARTe2 structure will be again represented from the porting point-of-view.
+Starting from fundamentals, the MARTe2 structure will be again represented from the porting point-of-view.
 MARTe2 porting consists essentially in adaptations on the outer layers (lowermost and uppermost) of its layered structure. Specifically:
 
    - Core/BareMetal
@@ -39,24 +39,18 @@ MARTe2 porting consists essentially in adaptations on the outer layers (lowermos
      
      - L1Portability *(Environment)*
 
-As you may have noticed, layers may contain one or both *Architecture* and *Environment* subdirectories. While the first contains **hardware 
-related porting code**, the latter contains **software and "operating system"** code. The term **"operating system"** is intentionally quoted. Actually the term is abused
-as MARTe2 can also be ported on bare metal, **directly** on hardware without an operating system but with an hardware abstraction layer of software instead,
-which wraps calls to the underlying platform.
+As described above, layers may contain one or both *Architecture* and *Environment* subdirectories. While the first contains **hardware 
+related porting code**, the latter contains **software and "operating system"** code. The term **"operating system"** is intentionally quoted. Actually the term is abused as MARTe2 can also be ported on bare metal, **directly** on hardware without an operating system but with an hardware abstraction layer of software instead, which wraps calls to the underlying platform.
 
-Each of the Architecture and Environment subfolders contains other folders in turn, which represent the specific platform and operating system for the
-porting couple. Their naming must follow a convention and must encourage code reusation across combinations. One fundamental advice is to avoid
-binding Architectures to Environment and to maintain clean and streamlined versions of the two. Should this be impossible, a scheme to avoid
-direct binding and leave room for code re-utilisation will be further explained (see Architecture/Environment unbinding section). This is done to avoid
-``ARCH x ENV`` combinations proliferation of (mostly) copy-paste code.
+Each of the Architecture and Environment subfolders may contain other folders in turn, which represent the specific platform and operating system for the porting couple. Their naming must follow a convention and must encourage code reusation across combinations. One fundamental advice is to avoid binding Architectures to Environment and to maintain clean and streamlined versions of the two. Should this be impossible, a scheme to avoid
+direct binding and leave room for code re-utilisation will be further explained (see Architecture/Environment unbinding section). This is done to avoid ``ARCH x ENV`` combinations proliferation of (mostly) copy-paste code.
 
-Bundled Architecture and Environment follow this principle, although specific platforms have some exceptions which are handled in a further descripted
-section (Architecture/Environment unbinding).
+Bundled Architecture and Environment follow this principle, although specific platforms have some exceptions which are handled in a further descripted section (Architecture/Environment unbinding).
 
 Bundled Architecture/Environment folders **must** reside in a specific directory, located inside MARTe2 directory tree (e.g. Source/Core/BareMetal/L0Types/Architecture/x86_gcc).
-In order to avoid cluttering, have clear separation and allow own "unofficial" portings, their placement can be customised by using environment settings.
+In order to avoid cluttering, have clear separation and allow independent "unofficial" portings, their placement can be customised by using environment settings.
 
-Aforementioned mechanism works leveraging a Makefile-based structure where 
+The aforementioned mechanism works leveraging a Makefile-based structure where 
    - The **MakeDefaults** directory contains definitions (**MakeStdLibDefs**) and rules (**MakeStdLibRules**) for each couple of Architecture and Environment
    - The **MakeDefaults** directory can be placed inside the MARTe2 one for bundled configuration or moved outside for customisation
    - Each top-level Makefile knows its own MARTe2 tier (BareMetal/FileSystem/Scheduler) and level (L0, L1, ..., L6). This is particulary true in L0, where ``TIER`` and ``LAYER`` symbols are needed to build include paths
@@ -77,29 +71,24 @@ the following two files:
    MakeStdLibDefs.armv8_gcc_a53-freertos_us
    MakeStdLibRules.armv8_gcc_a53-freertos_us
 
-The **MakeStdLibDefs** file defines two new variables (i.e. ``ENVIRONMENT=FreeRTOS`` and ``ARCHITECTURE=armv8_gcc``) which are used for the subsequent Makefiles to 
-search and find the right *Environment* and *Architecture* subdirectories.
-Please **note** that the files have further naming convention, which can be used to do subdivisions. In the specific example, the ``_a53`` suffix stands
-for the eventual CPU specialisation and ``_us`` stands for Ultrascale+ environment.
+The **MakeStdLibDefs** file defines two new variables (i.e. ``ENVIRONMENT=FreeRTOS`` and ``ARCHITECTURE=armv8_gcc``) which are used for the subsequent Makefiles to search and find the right *Environment* and *Architecture* subdirectories.
+Please **note** that the files may have further naming convention, which can be used to do subdivisions. In the specific example, the ``_a53`` suffix stands for the eventual CPU specialisation and ``_us`` stands for Ultrascale+ environment.
 
 Base folder customisation
 ----------------------------
 
-In order to have own porting, without affecting cloned MARTe2 repository, **MakeDefaults** directory can be customised.
+In order to have independent portings, without affecting the cloned MARTe2 repository, the **MakeDefaults** directory can be customised.
 The **MakeDefaults** directory can be configured by means of the ``MARTe2_MAKEDEFAULT_DIR``
 
-Once the ``TARGET`` environment variable is set, inside that folder you must have (at least) **MakeStdLibDefs.arch-env** and **MakeStdLibRules.arch-env** files.
+Once the ``TARGET`` environment variable is set, inside that folder you must have (at least) the **MakeStdLibDefs.arch-env** and the **MakeStdLibRules.arch-env** files.
 
-At this point, these two files may combine already existing *Architecture/Environment* or specify new ones. Using the ``MARTe2_PORTABLE_ENV_DIR`` and
-``MARTe2_PORTABLE_ARCH_DIR`` environment variables, you can also move outside the MARTe2 directory tree your own porting implementation, leaving unaffected the original
-folder content and structure, given however they remain hierarchically structured as their bundled counterpart.
+At this point, these two files may combine already existing *Architecture/Environment* or specify new ones. Using the ``MARTe2_PORTABLE_ENV_DIR`` and ``MARTe2_PORTABLE_ARCH_DIR`` environment variables, you can also move outside the MARTe2 directory tree your own porting implementation, leaving unaffected the original folder content and structure, given however they remain hierarchically structured as their bundled counterpart.
 
 
 Architecture/Environment unbinding
 ------------------------------------
 
-In some scenarios it may be difficult a total separation between architecture and environment. When this happens, it is advisable to use the following
-pattern. This approach can be already found inside some of the actual MARTe2 porting.
+In some scenarios it may be difficult a total separation between architecture and environment. When this happens, it is advisable to use the following pattern. This approach can be already found inside some of the actual MARTe2 portings.
 
    - Create a standard porting file, where instead of the real implementation you only put a ``#define`` guarded include
    - Only in the included file, use the needed *"mixed"* approach
@@ -118,24 +107,18 @@ CompilerTypes.h is produced:
    #include "CompilerTypesDefault.h"
    #endif
    
-As shown above, the ``ENV_ARCH_CUSTOMIZATION`` is brought inside the ``CompilerTypes.h`` file and its value is used to distinguish between *clean* and
-*targeted* implementation. Note also the approach allows multiple implementations and a fallback ``CompilerTypesDefault.h`` implementation. The fallback
-implementation is, effectively, the default clean one.
+As shown above, the ``ENV_ARCH_CUSTOMIZATION`` is brought inside the ``CompilerTypes.h`` file and its value is used to distinguish between *clean* and *targeted* implementation. Note also the approach allows multiple implementations and a fallback ``CompilerTypesDefault.h`` implementation. The fallback implementation is, effectively, the default clean one.
 
 Portable test environment
 ---------------------------
 
 MARTe2 *default* test suite is based on **GTest**. Another option, which comes handy when porting MARTe2 is the availability of a portable test environment.
 The portable test environment is based on a mechanism that offers an interface compatible to the one offered by GTest but way simpler
-in terms of implementation and dependencies. Standard makefiles default to the **GTest** suite, the setting of the ``MARTe2_TEST_ENVIRONMENT`` variable to ``"Portable"`` instead,
-switches to the Portable. The **portable** environment, used in conjunction with the static test mode, produces a whole test executable which can be
-executed on the ported environment.
+in terms of implementation and dependencies. Standard makefiles default to the **GTest** suite, the setting of the ``MARTe2_TEST_ENVIRONMENT`` variable to ``"Portable"`` instead, switches to the Portable. The **portable** environment, used in conjunction with the static test mode, produces a whole test executable which can be executed on the ported environment.
 
-To reduce the size of the executable or the scope of the tests, a test link filter is available. It is enabled only when ``MARTe2_TEST_ENVIRONMENT`` is set to 
-``"Portable"`` and enables another two options: ``MARTe2_TEST_LINK_FILTER_MODE`` and ``MARTe2_FILTER_ITEMS``.
+To reduce the size of the executable or the scope of the tests, a test link filter is available. It is enabled only when ``MARTe2_TEST_ENVIRONMENT`` is set to ``"Portable"`` and enables another two options: ``MARTe2_TEST_LINK_FILTER_MODE`` and ``MARTe2_FILTER_ITEMS``.
 
-The ``MARTe2_TEST_LINK_FILTER_MODE`` environment variable controls the level at which the filter has to operate while the ``MARTe2_FILTER_ITEMS`` controls what,
-also according to the mode, has to be included or excluded from the linking step in the executable generation.
+The ``MARTe2_TEST_LINK_FILTER_MODE`` environment variable controls the level at which the filter has to operate while the ``MARTe2_FILTER_ITEMS`` controls what, also according to the mode, has to be included or excluded from the linking step in the executable generation.
 
 The ``MARTe2_TEST_LINK_FILTER_MODE`` can be:
 - ``Layer``, the filtering happens at whole *Tier/Layer* level, meaning that the ``MARTe2_FILTER_ITEMS`` will contain the name of the layers which have to be included/excluded;
@@ -143,21 +126,18 @@ The ``MARTe2_TEST_LINK_FILTER_MODE`` can be:
 
 The ``MARTe2_FILTER_ITEMS`` environment variable **must** contain a **colon (:) separated list** of the names of the layers/library to include or exclude.
 When **only the name** is specified (e.g. L1PortabilityBGTest.a) the linking operates in *whitelist* mode and includes only the specified library.
-When the name is preceded by a **minus sign (-)** (e.g. -L1PortabilityBGTest.a) the linking operates in *blacklist* mode, a whole list of the available
-layers will be built and, if and only if the specified name is found, it will be removed from the list of the linked objects.
+When the name is preceded by a **minus sign (-)** (e.g. -L1PortabilityBGTest.a) the linking operates in *blacklist* mode, a whole list of the available layers will be built and, if and only if the specified name is found, it will be removed from the list of the linked objects.
 
 When operating in Layer mode, the MARTe2 naming convention helps filtering in/out the right tier as a capital letter (B for BareMetal, 
 S for Scheduler and F for FileSystem) is appended to the layer name itself (e.g. L1PortabilityBGTest.a or L2ObjectsBGTest.a)
 
-Note that the filter **cannot** operate in **mixed black/whitelist mode** (e.g. you **cannot** mix L1PortabilityBGTest.a:-L2ObjectsBGTest.a). If you both include and exclude
-an **error** will be generated.
+Note that the filter **cannot** operate in **mixed black/whitelist mode** (e.g. you **cannot** mix L1PortabilityBGTest.a:-L2ObjectsBGTest.a). If you both include and exclude an **error** will be generated.
 
 
 MARTe2 startup hooks
 ----------------------
 
-Some embedded deployment scenarios require that hardware initialisation functions start before everything else goes up. This is particularly useful
-when deploying the full MARTe2 Application, which owns already a main() entry point.
+Some embedded deployment scenarios require that hardware initialisation functions start before any other code is executed. This is particularly useful when deploying the full MARTe2 Application, which owns already a main() entry point.
 MARTe2 has currently two (2) hooks which are called during the startup phase, before the GlobalObjectsDatabase constructor begins its initialisation loop:
  
  .. code-block:: c++
@@ -166,11 +146,8 @@ MARTe2 has currently two (2) hooks which are called during the startup phase, be
    InitPlatform() {[...]}
 
 Their declaration stays inside ``BareMetal/L1Portability/HardwareI.h`` and you **should** provide an implementation (**at least an empty one** if not needed).
-Implementation of these methods are intended to initialise the underlying hardware platform **before** the MARTe initialisation process begins, like in
-embedded or microcontroller-based platforms, where peripherals (e.g. U[S]ART) should be **initialised beforehand** (e.g. console output functions).
+Implementation of these methods are intended to initialise the underlying hardware platform **before** the MARTe initialisation process begins, like in embedded or microcontroller-based platforms, where peripherals (e.g. U[S]ART) should be **initialised beforehand** (e.g. console output functions).
 They are called subsequently, one after the other without any other intermediate call (e.g. ``InitHardware(); InitPlatform();``).
-
-
 
 Bootstrapping advices
 -----------------------
@@ -179,8 +156,7 @@ If the platform initialisation **does not require to be executed before** the ``
 accomplished at a later stage in the ported ``Bootstrap.cpp``. This is the case of the current FreeRTOS implementation, where a ``MARTe2HardwareInitialise()``
 extern function is expected to be implemented from the hardware platform side.
 
-In the specific aforementioned FreeRTOS implementation, as the platform hardware initialisation may be required to run in a task execution environment,
-MARTe2 waits for a ``vTaskNotification`` to resume its operations. In that scenario, the minimal ``MARTe2HardwareInitialise()`` call must notify the caller task to start MARTe2.
+In the specific aforementioned FreeRTOS implementation, as the platform hardware initialisation may be required to run in a task execution environment, MARTe2 waits for a ``vTaskNotification`` to resume its operations. In that scenario, the minimal ``MARTe2HardwareInitialise()`` call must notify the caller task to start MARTe2.
 
 
 Walkthrough
