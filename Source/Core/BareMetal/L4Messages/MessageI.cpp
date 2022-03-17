@@ -31,6 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
 #include "MessageI.h"
 #include "Object.h"
 #include "ObjectRegistryDatabase.h"
@@ -65,6 +66,10 @@ ReferenceT<MessageI> MessageI::FindDestination(CCString destination) {
         Reference destinationObject = ord->Find(destination);
         if (destinationObject.IsValid()) {
             destinationObject_MessageI = destinationObject;
+        }
+        else {
+            /*lint -e{1793} GetList() is used to allow CCString to be passed to the REPORT_ERROR_STATIC*/
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "The destination object with name %s does not exist", destination.GetList());
         }
     }
 
@@ -142,7 +147,8 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
             ret = destinationObject->messageFilters.ReceiveMessage(message);
         }
         else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::UnsupportedFeature, "The destination object does not have a MessageI interface.");
+            /*lint -e{1793} GetList() is used to allow CCString to be passed to the REPORT_ERROR_STATIC*/
+            REPORT_ERROR_STATIC(ErrorManagement::UnsupportedFeature, "The destination object with name %s does not have a MessageI interface.", message->GetDestination().GetList());
             ret.unsupportedFeature = true;
         }
     }

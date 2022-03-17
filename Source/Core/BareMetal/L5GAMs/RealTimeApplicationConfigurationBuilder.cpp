@@ -47,18 +47,23 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder() : Object() {
+RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder() :
+        Object() {
     realTimeApplication = NULL_PTR(RealTimeApplication*);
     initialiseAfterInitialisation = true;
 }
 
-RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(RealTimeApplication & realTimeApplicationIn, const char8 * const defaultDataSourceNameIn) : Object() {
+RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(RealTimeApplication &realTimeApplicationIn,
+                                                                                 const char8 *const defaultDataSourceNameIn) :
+        Object() {
     defaultDataSourceName = defaultDataSourceNameIn;
     realTimeApplication = &realTimeApplicationIn;
     initialiseAfterInitialisation = true;
 }
 
-RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn, const char8 * const defaultDataSourceNameIn) : Object() {
+RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn,
+                                                                                 const char8 *const defaultDataSourceNameIn) :
+        Object() {
     defaultDataSourceName = defaultDataSourceNameIn;
     bool ret = globalDatabaseIn.Copy(globalDatabase);
     if (ret) {
@@ -68,10 +73,11 @@ RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder
         REPORT_ERROR_FULL(ErrorManagement::FatalError, "In RealTimeApplicationConfigurationBuilder failed to MoveToRoot");
     }
     realTimeApplication = NULL_PTR(RealTimeApplication*);
-    initialiseAfterInitialisation = true;
+    initialiseAfterInitialisation = false;
 }
 
-void RealTimeApplicationConfigurationBuilder::SetParameters(RealTimeApplication &realTimeApplicationIn, const char8 * const defaultDataSourceNameIn) {
+void RealTimeApplicationConfigurationBuilder::SetParameters(RealTimeApplication &realTimeApplicationIn,
+                                                            const char8 *const defaultDataSourceNameIn) {
     defaultDataSourceName = defaultDataSourceNameIn;
     realTimeApplication = &realTimeApplicationIn;
     initialiseAfterInitialisation = true;
@@ -373,7 +379,7 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                 if (ret) {
                     ret = dataSourcesIndexesCache.Write(qualifiedName.Buffer(), dataSourceN.Buffer());
                 }
-                if (ret){
+                if (ret) {
                     ret = dataSourcesSignalIndexCache.CreateAbsolute(dataSourceN.Buffer());
                 }
                 if (ret) {
@@ -467,7 +473,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabases() {
     if (ret) {
         uint32 n;
         uint32 nOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
-        for (n=0u; (n<nOfDataSources) && (ret); n++) {
+        for (n = 0u; (n < nOfDataSources) && (ret); n++) {
             ret = dataSourcesDatabase.MoveToChild(n);
             if (ret) {
                 ret = dataSourcesSignalIndexCache.MoveAbsolute(dataSourcesDatabase.GetName());
@@ -478,7 +484,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabases() {
             if (ret) {
                 uint32 s;
                 uint32 nSignals = dataSourcesDatabase.GetNumberOfChildren();
-                for (s=0u; (s<nSignals) && (ret); s++) {
+                for (s = 0u; (s < nSignals) && (ret); s++) {
                     ret = dataSourcesDatabase.MoveToChild(s);
                     StreamString qname;
                     if (ret) {
@@ -502,7 +508,8 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabases() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase, const SignalDirection direction) {
+bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabase(ConfigurationDatabase &signalDatabase,
+                                                                     const SignalDirection direction) {
     const char8 *signalDirection;
     if (direction == InputSignals) {
         signalDirection = "InputSignals";
@@ -615,7 +622,10 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabase(Configurati
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctionsDatabase, const char8 * const signalName, ConfigurationDatabase &resolvedSignal, uint32 &signalNumber) {
+bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctionsDatabase,
+                                                            const char8 *const signalName,
+                                                            ConfigurationDatabase &resolvedSignal,
+                                                            uint32 &signalNumber) {
     bool ret = true;
     StreamString signalType;
 
@@ -673,7 +683,8 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 }
                 else {
                     ret = false;
-                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "DataSource not specified for %s and DefaultDataSource not specified", signalName);
+                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "DataSource not specified for %s and DefaultDataSource not specified",
+                                        signalName);
                 }
             }
         }
@@ -707,7 +718,8 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 if (signalDatabase.Read("NumberOfDimensions", numberOfDimensions)) {
                     ret = (numberOfDimensions <= 3u);
                     if (!ret) {
-                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Invalid NumberOfDimensions for signal %s. Structured types only support NumberOfDimensions <= 1", signalName);
+                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
+                                            "Invalid NumberOfDimensions for signal %s. Structured types only support NumberOfDimensions <= 1", signalName);
                     }
                 }
                 //TODO the NumberOfElements will have to be read as an array!
@@ -781,16 +793,19 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                                     syncSet = false;
                                 }
                                 else {
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
-                                                        "Specified a synchronising signal %s with no synchronised frequency in structured %s. Please define the \"Frequency\" field",
-                                                        syncSignalName.Buffer(), fsignalName.Buffer());
+                                    REPORT_ERROR_STATIC(
+                                            ErrorManagement::InitialisationError,
+                                            "Specified a synchronising signal %s with no synchronised frequency in structured %s. Please define the \"Frequency\" field",
+                                            syncSignalName.Buffer(), fsignalName.Buffer());
                                 }
                             }
                             else {
                                 ret = frequency.IsVoid();
                                 if (!ret) {
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
-                                                        "Specified a frequency with no synchronised signal in structured %s. Please define the \"SyncSignal\" field", fsignalName.Buffer());
+                                    REPORT_ERROR_STATIC(
+                                            ErrorManagement::InitialisationError,
+                                            "Specified a frequency with no synchronised signal in structured %s. Please define the \"SyncSignal\" field",
+                                            fsignalName.Buffer());
 
                                 }
                             }
@@ -801,30 +816,36 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                                     triggerSet = false;
                                 }
                                 else {
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
-                                                        "Specified a TriggerSignal %s with no synchronised trigger in structured %s. Please define the \"Trigger = 1\" field",
-                                                        triggerSignalName.Buffer(), fsignalName.Buffer());
+                                    REPORT_ERROR_STATIC(
+                                            ErrorManagement::InitialisationError,
+                                            "Specified a TriggerSignal %s with no synchronised trigger in structured %s. Please define the \"Trigger = 1\" field",
+                                            triggerSignalName.Buffer(), fsignalName.Buffer());
                                 }
                             }
                             else {
                                 ret = trigger.IsVoid();
                                 if (!ret) {
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
-                                                        "Specified Trigger = 1 with no trigger signal in structured %s. Please define the \"TriggerSignal\" field", fsignalName.Buffer());
+                                    REPORT_ERROR_STATIC(
+                                            ErrorManagement::InitialisationError,
+                                            "Specified Trigger = 1 with no trigger signal in structured %s. Please define the \"TriggerSignal\" field",
+                                            fsignalName.Buffer());
 
                                 }
                             }
 
                             if (ret) {
-                                REPORT_ERROR_STATIC(ErrorManagement::Debug, "Calling SignalIntrospectionToStructuredData for %s [%s]", fsignalName.Buffer(), signalType.Buffer());
-                                ret = SignalIntrospectionToStructuredData(signalDatabase, signalType.Buffer(), fsignalName.Buffer(), fAlias.Buffer(), dataSourceName.Buffer(), syncSignalName.Buffer(),
-                                                                          triggerSignalName.Buffer(), fullType.Buffer(), ranges, samples, frequency, trigger, resolvedSignal, signalNumber, syncSet,
-                                                                          triggerSet, isFunctionsDatabase);
+                                REPORT_ERROR_STATIC(ErrorManagement::Debug, "Calling SignalIntrospectionToStructuredData for %s [%s]", fsignalName.Buffer(),
+                                                    signalType.Buffer());
+                                ret = SignalIntrospectionToStructuredData(signalDatabase, signalType.Buffer(), fsignalName.Buffer(), fAlias.Buffer(),
+                                                                          dataSourceName.Buffer(), syncSignalName.Buffer(), triggerSignalName.Buffer(),
+                                                                          fullType.Buffer(), ranges, samples, frequency, trigger, resolvedSignal, signalNumber,
+                                                                          syncSet, triggerSet, isFunctionsDatabase);
                             }
                             if (ret) {
                                 ret = syncSet;
                                 if (!ret) {
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Invalid synchronising member specified in %s", fsignalName.Buffer());
+                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Invalid synchronising member specified in %s",
+                                                        fsignalName.Buffer());
                                 }
                             }
                             if (ret) {
@@ -854,9 +875,10 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 ret = resolvedSignal.Write("QualifiedName", signalName);
             }
             //Loop and copy all known properties at this time.
-            const char8 *properties[] = { "Type", "NumberOfDimensions", "NumberOfElements", "Alias", "Ranges", "DataSource", "Samples", "Default", "Frequency", "Trigger", NULL_PTR(char8 *) };
+            const char8 *properties[] = { "Type", "NumberOfDimensions", "NumberOfElements", "Alias", "Ranges", "DataSource", "Samples", "Default", "Frequency",
+                    "Trigger", NULL_PTR(char8*) };
             uint32 p = 0u;
-            while ((properties[p] != NULL_PTR(char8 *)) && (ret)) {
+            while ((properties[p] != NULL_PTR(char8*)) && (ret)) {
                 AnyType element = signalDatabase.GetType(properties[p]);
                 if (element.GetTypeDescriptor() != VoidType) {
                     ret = resolvedSignal.Write(properties[p], element);
@@ -920,7 +942,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
             SignalDirection directions[] = { InputSignals, OutputSignals };
             for (uint32 j = 0u; j < 2u; j++) {
                 bool exists = false;
-                const char8 *signalDirection = NULL_PTR(const char8 *);
+                const char8 *signalDirection = NULL_PTR(const char8*);
                 if (ret) {
                     signalDirection = "InputSignals";
                     if (directions[j] == OutputSignals) {
@@ -999,7 +1021,8 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                                         StreamString stateName = temp.GetChildName(st);
                                         states[st] = stateName;
                                     }
-                                    ret = ResolveConsumersAndProducers((directions[j] == InputSignals), states, functionId.Buffer(), functionName.Buffer(), signalId.Buffer());
+                                    ret = ResolveConsumersAndProducers((directions[j] == InputSignals), states, functionId.Buffer(), functionName.Buffer(),
+                                                                       signalId.Buffer());
                                 }
                             }
                         }
@@ -1010,7 +1033,8 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                             ret = ResolveFunctionsMemory(directions[j], functionDatabaseFunction, totalByteSize, allocatedByteSize, functionName.Buffer());
                         }
                         if (!ret) {
-                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to resolve for data source %s and function %s", dataSourceName.Buffer(), functionName.Buffer());
+                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to resolve for data source %s and function %s", dataSourceName.Buffer(),
+                                                functionName.Buffer());
                         }
                     }
                     if (ret) {
@@ -1040,12 +1064,14 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::FindDataSourceNumber(StreamString dataSourceName, StreamString &dataSourceNumber) {
+bool RealTimeApplicationConfigurationBuilder::FindDataSourceNumber(StreamString dataSourceName,
+                                                                   StreamString &dataSourceNumber) {
     bool ret = dataSourcesIndexesCache.Read(dataSourceName.Buffer(), dataSourceNumber);
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString functionName, StreamString dataSourceName) {
+bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString functionName,
+                                                                    StreamString dataSourceName) {
 
     StreamString originalSignalName;
 
@@ -1131,7 +1157,8 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
                 }
             }
             if (!ret) {
-                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "The data source assigned to the signal %s in %s is incompatible", originalSignalName.Buffer(), functionName.Buffer());
+                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "The data source assigned to the signal %s in %s is incompatible",
+                                    originalSignalName.Buffer(), functionName.Buffer());
             }
         }
         if (ret) {
@@ -1152,8 +1179,8 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
             ret = dataSourcesDatabase.CreateRelative(signalId.Buffer());
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Cannot add the signal %s in GAM %s because the related DataSource is locked", originalSignalName.Buffer(),
-                                functionName.Buffer());
+            REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Cannot add the signal %s in GAM %s because the related DataSource is locked",
+                                originalSignalName.Buffer(), functionName.Buffer());
         }
         if (ret) {
             ret = dataSourcesDatabase.Write("QualifiedName", signalName.Buffer());
@@ -1167,9 +1194,9 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
     }
     if (ret) {
         //Loop through all properties.
-        const char8 *properties[] = { "Type", "NumberOfDimensions", "NumberOfElements", "Default", "MemberSize", NULL_PTR(char8 *) };
+        const char8 *properties[] = { "Type", "NumberOfDimensions", "NumberOfElements", "Default", "MemberSize", NULL_PTR(char8*) };
         uint32 p = 0u;
-        while ((properties[p] != NULL_PTR(char8 *)) && (ret)) {
+        while ((properties[p] != NULL_PTR(char8*)) && (ret)) {
             AnyType elementSignalDatabase = functionsDatabase.GetType(properties[p]);
             AnyType elementDataSourceDatabase = dataSourcesDatabase.GetType(properties[p]);
             //Property already exists, check compatibility!
@@ -1191,8 +1218,9 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
                         if (!retPrintf) {
                             fullPropertyName = "Unknown";
                         }
-                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Mismatch in signal with name: %s: %s asked for %s while %s asked for %s", fullPropertyName.Buffer(),
-                                            functionName.Buffer(), sElementSignalDatabase.Buffer(), dataSourceName.Buffer(), sElementDataSourceDatabase.Buffer());
+                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Mismatch in signal with name: %s: %s asked for %s while %s asked for %s",
+                                            fullPropertyName.Buffer(), functionName.Buffer(), sElementSignalDatabase.Buffer(), dataSourceName.Buffer(),
+                                            sElementDataSourceDatabase.Buffer());
                     }
                 }
                 else {
@@ -1306,7 +1334,8 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                         ret = (signalName.Size() > 0u);
                     }
                     if (!ret) {
-                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "QualifiedName was not defined for signal at position: %s in %s", signalId.Buffer(), dataSourceName.Buffer());
+                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "QualifiedName was not defined for signal at position: %s in %s",
+                                            signalId.Buffer(), dataSourceName.Buffer());
                     }
                 }
                 StreamString type;
@@ -1382,7 +1411,8 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                             ret = dataSourcesDatabase.MoveRelative(signalId.Buffer());
                         }
                         else {
-                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Undefined type for signal %s in %s", signalName.Buffer(), dataSourceName.Buffer());
+                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Undefined type for signal %s in %s", signalName.Buffer(),
+                                                dataSourceName.Buffer());
 
                         }
                     }
@@ -1397,7 +1427,8 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                         else {
                             ret = numberOfElements > 0u;
                             if (!ret) {
-                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "NumberOfElements of signal %s in %s cannot be zero", signalName.Buffer(), dataSourceName.Buffer());
+                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "NumberOfElements of signal %s in %s cannot be zero",
+                                                    signalName.Buffer(), dataSourceName.Buffer());
 
                             }
                         }
@@ -1409,8 +1440,10 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                         if (!dataSourcesDatabase.Read("NumberOfDimensions", numberOfDimensions)) {
                             numberOfDimensions = 0u;
                             if (numberOfElements > 1u) {
-                                REPORT_ERROR_STATIC(ErrorManagement::Warning, "NumberOfDimensions is not defined for signal: %s in %s with NumberOfElements > 1, assuming it as 1 (vector)",
-                                                    signalName.Buffer(), dataSourceName.Buffer());
+                                REPORT_ERROR_STATIC(
+                                        ErrorManagement::Warning,
+                                        "NumberOfDimensions is not defined for signal: %s in %s with NumberOfElements > 1, assuming it as 1 (vector)",
+                                        signalName.Buffer(), dataSourceName.Buffer());
                                 numberOfDimensions = 1u;
                             }
                             ret = dataSourcesDatabase.Write("NumberOfDimensions", numberOfDimensions);
@@ -1430,7 +1463,8 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                     }
 
                     if (ret) {
-                        ret = WriteDefault(dataSourcesDatabase, signalName.Buffer(), dataSourceName.Buffer(), signalTypeDescriptor, numberOfDimensions, numberOfElements, signalNumberOfBytes);
+                        ret = WriteDefault(dataSourcesDatabase, signalName.Buffer(), dataSourceName.Buffer(), signalTypeDescriptor, numberOfDimensions,
+                                           numberOfElements, signalNumberOfBytes);
                     }
                 }
                 s++;
@@ -1555,23 +1589,52 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
                                 }
                                 if (ret) {
                                     // the same gam cannot be declared in two different threads!!
-                                    ret = (functionsDatabase.GetType(stateName).IsVoid());
+                                    AnyType atStateThread = functionsDatabase.GetType(stateName);
+                                    ret = (atStateThread.IsVoid());
                                     if (ret) {
                                         ret = functionsDatabase.Write(stateName, threadName);
                                     }
                                     else {
-                                        StreamString presentThread;
-                                        ret = functionsDatabase.Read(stateName, presentThread);
-                                        if (ret) {
-                                            ret = (presentThread == threadName);
-                                            if (!ret) {
-                                                StreamString gamName;
-                                                if (functionsDatabase.MoveToAncestor(1u)) {
-                                                    if (!functionsDatabase.Read("QualifiedName", gamName)) {
-                                                        gamName = "UnknownGAM";
+                                        if(realTimeApplication->CheckSameGamInMoreThreads()) {
+                                            StreamString presentThread;
+                                            ret = functionsDatabase.Read(stateName, presentThread);
+                                            if (ret) {
+                                                ret = (presentThread == threadName);
+                                                if (!ret) {
+                                                    StreamString gamName;
+                                                    if (functionsDatabase.MoveToAncestor(1u)) {
+                                                        if (!functionsDatabase.Read("QualifiedName", gamName)) {
+                                                            gamName = "UnknownGAM";
+                                                        }
                                                     }
+                                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "The GAM %s is declared in more than one thread in %s", gamName.Buffer(), stateName);
                                                 }
-                                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "The GAM %s is declared in more than one thread in %s", gamName.Buffer(), stateName);
+                                            }
+                                        }
+                                        else {
+                                            uint32 numberOfThreadsGAM = atStateThread.GetNumberOfElements(0u);
+                                            Vector<StreamString> threadsGAM(numberOfThreadsGAM+1u);
+                                            uint32 stateNDims=atStateThread.GetNumberOfDimensions();
+                                            if(stateNDims == 0u) {
+                                                StreamString curThreadsGAM;
+                                                ret = functionsDatabase.Read(stateName, curThreadsGAM);
+                                                threadsGAM[0u] = curThreadsGAM;
+                                            }
+                                            else {
+
+                                                Vector<StreamString> curThreadsGAM(numberOfThreadsGAM);
+                                                ret = functionsDatabase.Read(stateName, curThreadsGAM);
+                                                for(uint32 n=0u; n<numberOfThreadsGAM; n++) {
+                                                    threadsGAM[n] = curThreadsGAM[n];
+                                                }
+                                            }
+
+                                            threadsGAM[numberOfThreadsGAM] = threadName;
+                                            if (ret) {
+                                                ret = functionsDatabase.Delete(stateName);
+                                            }
+                                            if(ret) {
+                                                ret = functionsDatabase.Write(stateName, threadsGAM);
                                             }
                                         }
                                     }
@@ -1599,9 +1662,14 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStates() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 * const gamNameIn, const char8 * const stateName, const char8 * const threadName, uint32 &syncSignals) {
+bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 *const gamNameIn,
+                                                            const char8 *const stateName,
+                                                            const char8 *const threadName,
+                                                            uint32 &syncSignals,
+                                                            const bool checkSameGamInMoreThreads) {
     StreamString functionNumber;
     StreamString gamNameStr = gamNameIn;
+
     bool ret = FindFunctionNumber(gamNameStr, functionNumber);
     if (ret) {
         ret = functionsDatabase.MoveAbsolute("Functions");
@@ -1622,22 +1690,53 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 * const 
     }
     if (ret) {
         // the same gam cannot be declared in two different threads!!
-        ret = (functionsDatabase.GetType(&stateName[1]).IsVoid());
+        AnyType atStateThread = functionsDatabase.GetType(&stateName[1]);
+        ret = (atStateThread.IsVoid());
         if (ret) {
             ret = functionsDatabase.Write(&stateName[1], &threadName[1]);
         }
         else {
-            StreamString presentThread;
-            ret = functionsDatabase.Read(stateName, presentThread);
-            if (ret) {
-                if (presentThread != threadName) {
-                    StreamString gamName;
-                    if (functionsDatabase.MoveToAncestor(1u)) {
-                        if (!functionsDatabase.Read("QualifiedName", gamName)) {
-                            gamName = "UnknownGAM";
+            if (checkSameGamInMoreThreads) {
+                StreamString presentThread;
+                ret = functionsDatabase.Read(&stateName[1], presentThread);
+                if (ret) {
+                    ret = (presentThread == &threadName[1]);
+                    if (!ret) {
+                        StreamString gamName;
+                        if (functionsDatabase.MoveToAncestor(1u)) {
+                            if (!functionsDatabase.Read("QualifiedName", gamName)) {
+                                gamName = "UnknownGAM";
+                            }
                         }
+                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "The GAM %s is declared in more than one thread in %s", gamName.Buffer(),
+                                            stateName);
                     }
-                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "The GAM %s is declared in more than one thread in %s", gamName.Buffer(), stateName);
+                }
+            }
+            else {
+                uint32 numberOfThreadsGAM = atStateThread.GetNumberOfElements(0u);
+                Vector<StreamString> threadsGAM(numberOfThreadsGAM + 1u);
+                uint32 stateNDims = atStateThread.GetNumberOfDimensions();
+                if (stateNDims == 0u) {
+                    StreamString curThreadsGAM;
+                    ret = functionsDatabase.Read(&stateName[1], curThreadsGAM);
+                    threadsGAM[0u] = curThreadsGAM;
+                }
+                else {
+
+                    Vector<StreamString> curThreadsGAM(numberOfThreadsGAM);
+                    ret = functionsDatabase.Read(&stateName[1], curThreadsGAM);
+                    for (uint32 n = 0u; n < numberOfThreadsGAM; n++) {
+                        threadsGAM[n] = curThreadsGAM[n];
+                    }
+                }
+
+                threadsGAM[numberOfThreadsGAM] = &threadName[1];
+                if (ret) {
+                    ret = functionsDatabase.Delete(&stateName[1]);
+                }
+                if (ret) {
+                    ret = functionsDatabase.Write(&stateName[1], threadsGAM);
                 }
             }
         }
@@ -1645,14 +1744,29 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 * const 
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDatabase &local, const char8 * const functionName, const char8 * const stateName, const char8 * const threadName,
+bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDatabase &local,
+                                                                 const char8 *const functionName,
+                                                                 const char8 *const stateName,
+                                                                 const char8 *const threadName,
                                                                  uint32 &syncSignals) {
+
+    bool ret = local.MoveToRoot();
+    bool checkSameGamInMoreThreads = true;
+    if (ret) {
+        uint8 checkSameGamInMoreThreadsT = 1u;
+        if (!local.Read("CheckSameGamInMoreThreads", checkSameGamInMoreThreadsT)) {
+            checkSameGamInMoreThreadsT = 1u;
+        }
+        checkSameGamInMoreThreads = (checkSameGamInMoreThreadsT > 0u);
+    }
     StreamString functionPathStr = functionName;
     StreamString token = "+";
     char8 terminator;
-    bool ret = local.MoveAbsolute("+Functions");
-    if (!ret) {
-        ret = local.MoveAbsolute("$Functions");
+    if (ret) {
+        ret = local.MoveAbsolute("+Functions");
+        if (!ret) {
+            ret = local.MoveAbsolute("$Functions");
+        }
     }
 
     if (ret) {
@@ -1676,7 +1790,7 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDa
         uint32 numberOfGAMs = output.GetNumberOfChildren();
         if (numberOfGAMs == 0u) {
             StreamString gamName = functionName;
-            ret = AddStateToGAM(gamName.Buffer(), stateName, threadName, syncSignals);
+            ret = AddStateToGAM(gamName.Buffer(), stateName, threadName, syncSignals, checkSameGamInMoreThreads);
         }
         else {
             uint32 i;
@@ -1700,11 +1814,24 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDa
 }
 
 bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
-    bool ret = globalDatabase.MoveAbsolute("+Functions");
-    if (!ret) {
-        ret = globalDatabase.MoveAbsolute("$Functions");
+
+    bool ret = globalDatabase.MoveToRoot();
+
+    uint8 checkSameGamInMoreThreadsT = 1u;
+    if (!globalDatabase.Read("CheckSameGamInMoreThreads", checkSameGamInMoreThreadsT)) {
+        checkSameGamInMoreThreadsT = 1u;
+    }
+
+    if (ret) {
+        ret = globalDatabase.MoveAbsolute("+Functions");
+        if (!ret) {
+            ret = globalDatabase.MoveAbsolute("$Functions");
+        }
     }
     ConfigurationDatabase local;
+    if (ret) {
+        ret = local.Write("CheckSameGamInMoreThreads", checkSameGamInMoreThreadsT);
+    }
     if (ret) {
         //ret = local.AddToCurrentNode(globalDatabase.GetCurrentNode());
         ret = local.CreateAbsolute(globalDatabase.GetName());
@@ -1722,7 +1849,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
         uint32 numberOfStates = globalDatabase.GetNumberOfChildren();
         uint32 i;
         for (i = 0u; (i < numberOfStates) && (ret); i++) {
-            const char8 * stateName = globalDatabase.GetChildName(i);
+            const char8 *stateName = globalDatabase.GetChildName(i);
             if (globalDatabase.MoveRelative(stateName)) {
                 ret = globalDatabase.MoveRelative("+Threads");
                 if (!ret) {
@@ -1732,7 +1859,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
                     uint32 numberOfThreads = globalDatabase.GetNumberOfChildren();
                     uint32 j;
                     for (j = 0u; (j < numberOfThreads) && (ret); j++) {
-                        const char8 * threadName = globalDatabase.GetChildName(j);
+                        const char8 *threadName = globalDatabase.GetChildName(j);
                         if (globalDatabase.MoveRelative(threadName)) {
                             StreamString threadFullName = &stateName[1];
                             threadFullName += ".";
@@ -1758,13 +1885,15 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
                                     if (ret) {
                                         ret = (syncSignals <= 1u);
                                         if (!ret) {
-                                            REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "More than one synchronising signal found in %s.%s", &stateName[1], &threadName[1]);
+                                            REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "More than one synchronising signal found in %s.%s",
+                                                                &stateName[1], &threadName[1]);
                                         }
                                     }
 
                                 }
                                 else {
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "The Functions element must be defined as vector %s.%s", &stateName[1], &threadName[1]);
+                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "The Functions element must be defined as vector %s.%s",
+                                                        &stateName[1], &threadName[1]);
                                 }
                             }
                             else {
@@ -1791,7 +1920,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AddThreadCycleTime(const char8 * const threadFullName) {
+bool RealTimeApplicationConfigurationBuilder::AddThreadCycleTime(const char8 *const threadFullName) {
     bool ret = dataSourcesDatabase.MoveAbsolute("Data");
     uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
 
@@ -1853,7 +1982,7 @@ bool RealTimeApplicationConfigurationBuilder::AddThreadCycleTime(const char8 * c
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::WriteTimeSignalInfo(const char8 * const signalName) {
+bool RealTimeApplicationConfigurationBuilder::WriteTimeSignalInfo(const char8 *const signalName) {
     bool ret = dataSourcesDatabase.Write("QualifiedName", signalName);
     if (ret) {
         ret = dataSourcesDatabase.Write("Type", "uint32");
@@ -1958,8 +2087,11 @@ bool RealTimeApplicationConfigurationBuilder::CheckTimeSignalInfo() {
 ////////////////////////////////
 ////////////////////////////////
 
-bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const bool consumers, Vector<StreamString> &states, const char8 * const functionId, const char8 * const functionName,
-                                                                           const char8 * const signalId) {
+bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const bool consumers,
+                                                                           Vector<StreamString> &states,
+                                                                           const char8 *const functionId,
+                                                                           const char8 *const functionName,
+                                                                           const char8 *const signalId) {
     const char8 *operationType = "Consumers";
     if (!consumers) {
         operationType = "Producers";
@@ -1986,12 +2118,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const
             StreamString operationTypeSignal = "Signal";
             operationTypeSignal += operationType;
             AnyType existentArray = dataSourcesDatabase.GetType(operationTypeGAM.Buffer());
-            StreamString *newGAMArray = NULL_PTR(StreamString *);
-            StreamString *newGAMNamesArray = NULL_PTR(StreamString *);
-            StreamString *newSignalArray = NULL_PTR(StreamString *);
+            StreamString *newGAMArray = NULL_PTR(StreamString*);
+            StreamString *newGAMNamesArray = NULL_PTR(StreamString*);
+            StreamString *newSignalArray = NULL_PTR(StreamString*);
 
             uint32 numberOfExistentElements = 0u;
-            if (existentArray.GetDataPointer() != NULL_PTR(void *)) {
+            if (existentArray.GetDataPointer() != NULL_PTR(void*)) {
                 numberOfExistentElements = existentArray.GetNumberOfElements(0u);
                 const uint32 numberOfNewsElements = (numberOfExistentElements + 1u);
                 newGAMArray = new StreamString[numberOfNewsElements];
@@ -2020,7 +2152,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const
             Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements + 1u);
             Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements + 1u);
 
-            if (existentArray.GetDataPointer() != NULL_PTR(void *)) {
+            if (existentArray.GetDataPointer() != NULL_PTR(void*)) {
                 ret = dataSourcesDatabase.Delete(operationTypeGAM.Buffer());
                 if (ret) {
                     ret = dataSourcesDatabase.Delete(operationTypeGAMNames.Buffer());
@@ -2062,7 +2194,27 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const
 ////////////////////////////////
 bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
 
-    bool ret = dataSourcesDatabase.MoveAbsolute("Data");
+    bool ret = true;
+    bool checkMultipleProducersWrites = true;
+    if (initialiseAfterInitialisation) {
+        if (realTimeApplication != NULL_PTR(RealTimeApplication *)) {
+            checkMultipleProducersWrites = realTimeApplication->CheckMultipleProducersWrites();
+        }
+    }
+    else {
+        ret = globalDatabase.MoveToRoot();
+        if (ret) {
+            uint8 checkMultipleProducersWritesT = 1u;
+            if (!globalDatabase.Read("CheckMultipleProducersWrites", checkMultipleProducersWritesT)) {
+                checkMultipleProducersWritesT = 1u;
+            }
+            checkMultipleProducersWrites = (checkMultipleProducersWritesT > 0u);
+        }
+    }
+
+    if (ret) {
+        ret = dataSourcesDatabase.MoveAbsolute("Data");
+    }
     uint32 numberOfDS = dataSourcesDatabase.GetNumberOfChildren();
     ConfigurationDatabase dataSourcesDatabaseBeforeMove = dataSourcesDatabase;
     for (uint32 i = 0u; (i < numberOfDS) && (ret); i++) {
@@ -2114,17 +2266,21 @@ bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
                                 //the time data source must not have producers!!
                                 ret = prods.IsVoid();
                                 if (!ret) {
-                                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "The time signal %s in %s cannot be produced", dsSignalName.Buffer(), dataSourceName.Buffer());
+                                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "The time signal %s in %s cannot be produced", dsSignalName.Buffer(),
+                                                        dataSourceName.Buffer());
                                 }
                             }
                             else {
-                                if (!prods.IsVoid()) {
-                                    if (prods.GetNumberOfElements(0u) > 1u) {
-                                        // Check the range overlap
-                                        ret = BuildProducersRanges();
-                                        if (!ret) {
-                                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Producers of %s in %s overlap write operations on the same memory area", dsSignalName.Buffer(),
-                                                                dataSourceName.Buffer());
+                                if (checkMultipleProducersWrites) {
+                                    if (!prods.IsVoid()) {
+                                        if (prods.GetNumberOfElements(0u) > 1u) {
+                                            // Check the range overlap
+                                            ret = BuildProducersRanges();
+                                            if (!ret) {
+                                                REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                                                                    "Producers of %s in %s overlap write operations on the same memory area",
+                                                                    dsSignalName.Buffer(), dataSourceName.Buffer());
+                                            }
                                         }
                                     }
                                 }
@@ -2208,7 +2364,8 @@ bool RealTimeApplicationConfigurationBuilder::BuildProducersRanges() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::CheckProducersRanges(const uint32 * const rangesArray, const uint32 numberOfElements) const {
+bool RealTimeApplicationConfigurationBuilder::CheckProducersRanges(const uint32 *const rangesArray,
+                                                                   const uint32 numberOfElements) const {
     bool ret = ((numberOfElements % 2u) == 0u);
     for (uint32 i = 1u; (i < numberOfElements) && ret; i += 2u) {
         for (uint32 j = i + 2u; (j < numberOfElements) && (ret); j += 2u) {
@@ -2238,7 +2395,7 @@ bool RealTimeApplicationConfigurationBuilder::AddTimingSignals() {
                 ret = functionsDatabase.Read("QualifiedName", functionName);
             }
 
-            const char8 * postfix[] = { "_ReadTime", "_ExecTime", "_WriteTime", NULL_PTR(const char8*) };
+            const char8 *postfix[] = { "_ReadTime", "_ExecTime", "_WriteTime", NULL_PTR(const char8*) };
             for (uint32 k = 0u; (postfix[k] != NULL) && ret; k++) {
                 StreamString signalNameStr = functionName;
                 signalNameStr += postfix[k];
@@ -2287,14 +2444,14 @@ bool RealTimeApplicationConfigurationBuilder::AddTimingSignals() {
             ret = currentStateIdx.Printf("%d", currentStateNextIndex);
             ConfigurationDatabase dataSourcesDatabaseBeforeCreate;
 
-            if(ret) {
+            if (ret) {
                 dataSourcesDatabaseBeforeCreate = dataSourcesDatabase;
                 ret = dataSourcesDatabase.CreateRelative(currentStateIdx.Buffer());
             }
             if (ret) {
                 ret = WriteTimeSignalInfo("CurrentState");
             }
-            if(ret){
+            if (ret) {
                 dataSourcesDatabase = dataSourcesDatabaseBeforeCreate;
             }
         }
@@ -2313,7 +2470,7 @@ bool RealTimeApplicationConfigurationBuilder::AddTimingSignals() {
 ////////////////////////////////
 ////////////////////////////////
 
-bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(const char8 * const functionName) {
+bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(const char8 *const functionName) {
 
     uint32 signalNumberOfBytes = 0u;
     uint32 numberOfElements = 0u;
@@ -2337,7 +2494,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
         ret = (signalTypeDescriptor != InvalidType);
     }
 
-    uint32 *offsetMatrixBackend = NULL_PTR(uint32 *);
+    uint32 *offsetMatrixBackend = NULL_PTR(uint32*);
     uint32 numberOfRanges = 0u;
     if (ret) {
         //If Ranges are defined, compute the total signal size.
@@ -2362,13 +2519,15 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
                             uint32 maxIdx = rangesMat(n, 1u);
                             if (minIdx > maxIdx) {
                                 ret = false;
-                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Illegal Ranges for signal %s in %s: minimum index must be <= maximum index", signalName.Buffer(),
+                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
+                                                    "Illegal Ranges for signal %s in %s: minimum index must be <= maximum index", signalName.Buffer(),
                                                     functionName);
                             }
                             if (ret) {
                                 if (maxIdx >= numberOfElements) {
                                     ret = false;
-                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Illegal Ranges for signal %s in %s: maximum index must be < NumberOfElements", signalName.Buffer(),
+                                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
+                                                        "Illegal Ranges for signal %s in %s: maximum index must be < NumberOfElements", signalName.Buffer(),
                                                         functionName);
                                 }
                             }
@@ -2381,7 +2540,8 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
                         }
                     }
                     else {
-                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Ranges must be a nx2 matrix for %s in %s", signalName.Buffer(), functionName);
+                        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Ranges must be a nx2 matrix for %s in %s", signalName.Buffer(),
+                                            functionName);
                     }
                     delete[] rangesMatBackend;
                 }
@@ -2409,12 +2569,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
         ret = functionsDatabase.Write("ByteSize", signalNumberOfBytes);
     }
     if (ret) {
-        if (offsetMatrixBackend != NULL_PTR(uint32 *)) {
+        if (offsetMatrixBackend != NULL_PTR(uint32*)) {
             Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
             ret = functionsDatabase.Write("ByteOffset", offsetMat);
         }
     }
-    if (offsetMatrixBackend != NULL_PTR(uint32 *)) {
+    if (offsetMatrixBackend != NULL_PTR(uint32*)) {
         delete[] offsetMatrixBackend;
     }
     return ret;
@@ -2426,8 +2586,11 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
 ////////////////////////////////
 ////////////////////////////////
 
-bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const SignalDirection direction, const ConfigurationDatabase &functionsDatabaseAfterMove, uint32 &totalByteSize,
-                                                                     uint32 &allocatedByteSize, const char8 * const functionName) {
+bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const SignalDirection direction,
+                                                                     const ConfigurationDatabase &functionsDatabaseAfterMove,
+                                                                     uint32 &totalByteSize,
+                                                                     uint32 &allocatedByteSize,
+                                                                     const char8 *const functionName) {
 
     const char8 *signalDirection = "InputSignals";
     if (direction == OutputSignals) {
@@ -2439,7 +2602,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
     StreamString alias;
     StreamString dataSourceName;
     uint32 numberOfOffsetElements = 0u;
-    uint32 *offsetMatrixBackend = NULL_PTR(uint32 *);
+    uint32 *offsetMatrixBackend = NULL_PTR(uint32*);
     uint32 samplesBackend = 1u;
     uint32 byteSize = 0u;
     float32 frequencyBackend = -1.0F;
@@ -2467,7 +2630,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
 
     if (ret) {
         AnyType existentByteOffset = functionsDatabase.GetType("ByteOffset");
-        if (existentByteOffset.GetDataPointer() != NULL_PTR(void *)) {
+        if (existentByteOffset.GetDataPointer() != NULL_PTR(void*)) {
             numberOfOffsetElements = existentByteOffset.GetNumberOfElements(1u);
             // create a static matrix
             const uint32 offsetMatrixBackendNElements = numberOfOffsetElements * 2u;
@@ -2580,12 +2743,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
         ret = functionsDatabase.Write("Alias", alias.Buffer());
     }
     if (ret) {
-        if (offsetMatrixBackend != NULL_PTR(void *)) {
+        if (offsetMatrixBackend != NULL_PTR(void*)) {
             Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
             ret = functionsDatabase.Write("ByteOffset", offsetMat);
         }
     }
-    if (offsetMatrixBackend != NULL_PTR(void *)) {
+    if (offsetMatrixBackend != NULL_PTR(void*)) {
         delete[] offsetMatrixBackend;
     }
     if (ret) {
@@ -2626,7 +2789,8 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
 ////////////////////////////////
 ////////////////////////////////
 
-bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(const SignalDirection direction, const char8 * const functionName) {
+bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(const SignalDirection direction,
+                                                                                const char8 *const functionName) {
     const char8 *signalDirection = "InputSignals";
     if (direction == OutputSignals) {
         signalDirection = "OutputSignals";
@@ -2762,8 +2926,8 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                                 if (!dataSourcesDatabase.Read("QualifiedName", signalName)) {
                                     signalName = "UnknownSignal";
                                 }
-                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(), signalName.Buffer(),
-                                                    dataSource->GetName());
+                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(),
+                                                    signalName.Buffer(), dataSource->GetName());
                             }
                         }
                     }
@@ -2833,12 +2997,14 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
                     if (ret) {
                         ret = AssignBrokersToSignals(InputSignals, dataSource);
                         if (!ret) {
-                            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignBrokersToSignals(InputSignals) to DataSource %s", dataSource->GetName());
+                            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignBrokersToSignals(InputSignals) to DataSource %s",
+                                                dataSource->GetName());
                         }
                         if (ret) {
                             ret = AssignBrokersToSignals(OutputSignals, dataSource);
                             if (!ret) {
-                                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignBrokersToSignals(OutputSignals) to DataSource %s", dataSource->GetName());
+                                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignBrokersToSignals(OutputSignals) to DataSource %s",
+                                                    dataSource->GetName());
                             }
                         }
                     }
@@ -2850,8 +3016,9 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AssignBrokersToSignals(const SignalDirection direction, ReferenceT<DataSourceI> dataSource) {
-    const char8 * dirStr = "InputSignals";
+bool RealTimeApplicationConfigurationBuilder::AssignBrokersToSignals(const SignalDirection direction,
+                                                                     ReferenceT<DataSourceI> dataSource) {
+    const char8 *dirStr = "InputSignals";
     if (direction == OutputSignals) {
         dirStr = "OutputSignals";
     }
@@ -2876,7 +3043,8 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToSignals(const Signa
                     if (!dataSourcesDatabase.Read("QualifiedName", signalName)) {
                         signalName = "UnknownSignal";
                     }
-                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(), signalName.Buffer(), dataSource->GetName());
+                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(),
+                                        signalName.Buffer(), dataSource->GetName());
                 }
 
                 if (ret) {
@@ -2981,7 +3149,8 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functionsDatabaseOut, ConfigurationDatabase &dataSourcesDatabaseOut) {
+bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functionsDatabaseOut,
+                                                   ConfigurationDatabase &dataSourcesDatabaseOut) {
     bool ret = functionsDatabase.MoveToRoot();
     if (ret) {
         functionsDatabaseOut = functionsDatabase;
@@ -2995,7 +3164,8 @@ bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functi
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::Set(ConfigurationDatabase &functionsDatabaseIn, ConfigurationDatabase &dataSourcesDatabaseIn) {
+bool RealTimeApplicationConfigurationBuilder::Set(ConfigurationDatabase &functionsDatabaseIn,
+                                                  ConfigurationDatabase &dataSourcesDatabaseIn) {
     functionsDatabase.Purge();
     bool ret = functionsDatabaseIn.Copy(functionsDatabase);
     if (ret) {
@@ -3005,11 +3175,15 @@ bool RealTimeApplicationConfigurationBuilder::Set(ConfigurationDatabase &functio
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::FindFunctionNumber(StreamString functionName, StreamString &functionNumber) {
+bool RealTimeApplicationConfigurationBuilder::FindFunctionNumber(StreamString functionName,
+                                                                 StreamString &functionNumber) {
     return functionsIndexesCache.Read(functionName.Buffer(), functionNumber);
 }
 
-bool RealTimeApplicationConfigurationBuilder::CheckTypeCompatibility(StreamString &fullType, StreamString &otherFullType, StreamString &signalName, StreamString &dataSourceSignalName) const {
+bool RealTimeApplicationConfigurationBuilder::CheckTypeCompatibility(StreamString &fullType,
+                                                                     StreamString &otherFullType,
+                                                                     StreamString &signalName,
+                                                                     StreamString &dataSourceSignalName) const {
     //If they are equal just move on with it.
     bool ret = (fullType == otherFullType);
     if (!ret) {
@@ -3060,16 +3234,17 @@ bool RealTimeApplicationConfigurationBuilder::CheckTypeCompatibility(StreamStrin
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::CacheSignalIntrospections(const char8 * const typeName, const char8 * const signalName,
-                                                                        const char8 * const fullTypeName,
-                                                                        ConfigurationDatabase & data,
+bool RealTimeApplicationConfigurationBuilder::CacheSignalIntrospections(const char8 *const typeName,
+                                                                        const char8 *const signalName,
+                                                                        const char8 *const fullTypeName,
+                                                                        ConfigurationDatabase &data,
                                                                         uint32 &signalNumber) {
 
     //Try to find the registered type in the ClassRegistryDatabase
     const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(typeName);
-    const Introspection *intro = NULL_PTR(Introspection *);
+    const Introspection *intro = NULL_PTR(Introspection*);
 
-    bool ret = (item != NULL_PTR(ClassRegistryItem *));
+    bool ret = (item != NULL_PTR(ClassRegistryItem*));
 
     if (ret) {
         /*lint -e{613} NULL pointer checking done before entering here */
@@ -3082,7 +3257,7 @@ bool RealTimeApplicationConfigurationBuilder::CacheSignalIntrospections(const ch
     ret = (intro != NULL);
     if (ret) {
         uint32 numberOfMembers = 0u;
-        if (intro != NULL_PTR(Introspection *)) {
+        if (intro != NULL_PTR(Introspection*)) {
             numberOfMembers = intro->GetNumberOfMembers();
         }
         uint32 i;
@@ -3162,13 +3337,13 @@ bool RealTimeApplicationConfigurationBuilder::CacheSignalIntrospections(const ch
                 }
                 uint32 byteSize = 0u;
                 if ((i + 1u) < numberOfMembers) {
-                    if (intro != NULL_PTR(const Introspection *)) {
+                    if (intro != NULL_PTR(const Introspection*)) {
                         const IntrospectionEntry nextEntry = intro->operator[](i + 1u);
                         byteSize = nextEntry.GetMemberByteOffset() - entry.GetMemberByteOffset();
                     }
                 }
                 else {
-                    if (intro != NULL_PTR(const Introspection *)) {
+                    if (intro != NULL_PTR(const Introspection*)) {
                         byteSize = intro->GetClassSize() - entry.GetMemberByteOffset();
                     }
                 }
@@ -3212,13 +3387,13 @@ bool RealTimeApplicationConfigurationBuilder::CacheSignalIntrospections(const ch
 bool RealTimeApplicationConfigurationBuilder::CacheAllSignalsIntrospections() {
     bool ret = true;
     ClassRegistryDatabase *crd = ClassRegistryDatabase::Instance();
-    if (crd != NULL_PTR(ClassRegistryDatabase *)) {
+    if (crd != NULL_PTR(ClassRegistryDatabase*)) {
         uint32 nItems = crd->GetSize();
-        for (uint32 n=0u; (n<nItems) && (ret); n++) {
+        for (uint32 n = 0u; (n < nItems) && (ret); n++) {
             const ClassRegistryItem *item = crd->Peek(n);
-            if (item != NULL_PTR(const ClassRegistryItem *)) {
+            if (item != NULL_PTR(const ClassRegistryItem*)) {
                 const Introspection *intro = item->GetIntrospection();
-                if (intro != NULL_PTR(const Introspection *)) {
+                if (intro != NULL_PTR(const Introspection*)) {
                     StreamString typeName = item->GetClassProperties()->GetName();
                     uint32 signalNumber = 0u;
                     ret = cachedIntrospections.CreateAbsolute(typeName.Buffer());
@@ -3234,17 +3409,29 @@ bool RealTimeApplicationConfigurationBuilder::CacheAllSignalsIntrospections() {
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase, const char8 * const typeName, const char8 * const signalName,
-                                                                                  const char8 * const alias, const char8 * const dataSourceName, const char8 * const syncSignalName,
-                                                                                  const char8 * const triggerSignalName, const char8 * const fullTypeName, const AnyType & ranges,
-                                                                                  const AnyType & samples, const AnyType & frequency, const AnyType & trigger, ConfigurationDatabase & data,
-                                                                                  uint32 &signalNumber, bool &syncSet, bool &triggerSet, const bool isFunctionDatabase) {
+bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase,
+                                                                                  const char8 *const typeName,
+                                                                                  const char8 *const signalName,
+                                                                                  const char8 *const alias,
+                                                                                  const char8 *const dataSourceName,
+                                                                                  const char8 *const syncSignalName,
+                                                                                  const char8 *const triggerSignalName,
+                                                                                  const char8 *const fullTypeName,
+                                                                                  const AnyType &ranges,
+                                                                                  const AnyType &samples,
+                                                                                  const AnyType &frequency,
+                                                                                  const AnyType &trigger,
+                                                                                  ConfigurationDatabase &data,
+                                                                                  uint32 &signalNumber,
+                                                                                  bool &syncSet,
+                                                                                  bool &triggerSet,
+                                                                                  const bool isFunctionDatabase) {
     //Try to find the registered type in the ClassRegistryDatabase
     bool ret = cachedIntrospections.MoveAbsolute(typeName);
     uint32 numberOfSignals = cachedIntrospections.GetNumberOfChildren();
     uint32 n;
     REPORT_ERROR(ErrorManagement::Debug, "Going to introspect %d signals", numberOfSignals);
-    for (n=0u; (n<numberOfSignals) && (ret); n++) {
+    for (n = 0u; (n < numberOfSignals) && (ret); n++) {
         ret = cachedIntrospections.MoveToChild(n);
         if (ret) {
             //Got to the final BasicType. Add a node with the signal number as the name...
@@ -3269,7 +3456,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         char8 terminator;
         StreamString token;
         if (ret) {
-            while(cachedQualifiedName.GetToken(token, ".", terminator)) {
+            while (cachedQualifiedName.GetToken(token, ".", terminator)) {
                 if (cachedAliasName.Size() > 0U) {
                     cachedAliasName += ".";
                 }
@@ -3320,8 +3507,9 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
             if (signalDatabase.MoveRelative("Defaults")) {
                 AnyType defaultValueAnyType = signalDatabase.GetType(fullSignalName.Buffer());
                 if (defaultValueAnyType.GetTypeDescriptor() != voidAnyType.GetTypeDescriptor()) {
-                    ret = data.Write("Default", defaultValueAnyType );
-                    REPORT_ERROR(ErrorManagement::Debug, "Writing Default value %! (from Defaults) for signal %s", defaultValueAnyType , fullSignalName.Buffer());
+                    ret = data.Write("Default", defaultValueAnyType);
+                    REPORT_ERROR(ErrorManagement::Debug, "Writing Default value %! (from Defaults) for signal %s", defaultValueAnyType,
+                                 fullSignalName.Buffer());
                 }
             }
         }
@@ -3334,7 +3522,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         StreamString memberAliasKey;
         if (signalDatabase.MoveRelative("MemberAliases")) {
             uint32 nn;
-            for (nn=0u; (nn<signalDatabase.GetNumberOfChildren()) && (!patchAlias); nn++) {
+            for (nn = 0u; (nn < signalDatabase.GetNumberOfChildren()) && (!patchAlias); nn++) {
                 memberAliasKey = signalDatabase.GetChildName(nn);
                 //Check if the declared member alias is part of the full signal name. If so patch
                 patchAlias = (fullSignalName.Locate(memberAliasKey.Buffer()) == 0);
@@ -3406,7 +3594,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                     nOfTypeTokensToSkip--;
                 }
                 (void) cachedFullType.Seek(0LLU);
-                for (uint32 m=0u; m<nOfTypeTokensToSkip; m++) {
+                for (uint32 m = 0u; m < nOfTypeTokensToSkip; m++) {
                     (void) cachedFullType.GetToken(tokenT, ".", terminator);
                     tokenT = "";
                 }
@@ -3443,7 +3631,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                         StreamString subTypeDot = ".";
                         subTypeDot += subType;
                         const char8 *foundStr = (StringHelper::SearchString(fullTypeName, subTypeDot.Buffer()));
-                        tokenize = (foundStr != NULL_PTR(char8 *));
+                        tokenize = (foundStr != NULL_PTR(char8*));
                         if (tokenize) {
                             //Check if ends with . or \0
                             tokenize = (foundStr[subTypeDot.Size()] == '\0');
@@ -3514,7 +3702,11 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::SearchGAMs(ConfigurationDatabase &inputDatabase, ConfigurationDatabase &outputDatabase, StreamString & fullPath, uint32 &index, bool found) {
+bool RealTimeApplicationConfigurationBuilder::SearchGAMs(ConfigurationDatabase &inputDatabase,
+                                                         ConfigurationDatabase &outputDatabase,
+                                                         StreamString &fullPath,
+                                                         uint32 &index,
+                                                         bool found) {
 
     bool ret = true;
     StreamString className;
@@ -3635,7 +3827,8 @@ bool RealTimeApplicationConfigurationBuilder::SearchGAMs(ConfigurationDatabase &
     return ret;
 }
 
-uint32 RealTimeApplicationConfigurationBuilder::GetNumberOfSyncSignals(const char8 * const direction, bool &ok) {
+uint32 RealTimeApplicationConfigurationBuilder::GetNumberOfSyncSignals(const char8 *const direction,
+                                                                       bool &ok) {
     uint32 syncCounter = 0u;
     ConfigurationDatabase functionsDatabaseOriginal = functionsDatabase;
     if (functionsDatabase.MoveRelative(direction)) {
@@ -3660,7 +3853,10 @@ uint32 RealTimeApplicationConfigurationBuilder::GetNumberOfSyncSignals(const cha
     return syncCounter;
 }
 
-bool RealTimeApplicationConfigurationBuilder::SearchDataSources(ConfigurationDatabase &inputDatabase, ConfigurationDatabase &outputDatabase, StreamString & fullPath, uint32 &index,
+bool RealTimeApplicationConfigurationBuilder::SearchDataSources(ConfigurationDatabase &inputDatabase,
+                                                                ConfigurationDatabase &outputDatabase,
+                                                                StreamString &fullPath,
+                                                                uint32 &index,
                                                                 uint32 &timingDataSourceCounter) {
     bool ret = true;
 
@@ -3798,18 +3994,27 @@ void RealTimeApplicationConfigurationBuilder::CleanCaches() {
     dataSourcesIndexesCache.Purge();
     REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging functionsIndexesCache. Number of children:%d", functionsIndexesCache.GetNumberOfChildren());
     functionsIndexesCache.Purge();
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging dataSourcesSignalIndexCache. Number of children:%d", dataSourcesSignalIndexCache.GetNumberOfChildren());
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging dataSourcesSignalIndexCache. Number of children:%d",
+                        dataSourcesSignalIndexCache.GetNumberOfChildren());
     dataSourcesSignalIndexCache.Purge();
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging dataSourcesFunctionIndexesCache. Number of children:%d", dataSourcesFunctionIndexesCache.GetNumberOfChildren());
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging dataSourcesFunctionIndexesCache. Number of children:%d",
+                        dataSourcesFunctionIndexesCache.GetNumberOfChildren());
     dataSourcesFunctionIndexesCache.Purge();
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging functionsMemoryIndexesCache. Number of children:%d", functionsMemoryIndexesCache.GetNumberOfChildren());
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purging functionsMemoryIndexesCache. Number of children:%d",
+                        functionsMemoryIndexesCache.GetNumberOfChildren());
     functionsMemoryIndexesCache.Purge();
     REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purged functionsMemoryIndexesCache. Number of children:%d", functionsMemoryIndexesCache.GetNumberOfChildren());
     cachedIntrospections.Purge();
     REPORT_ERROR_STATIC(ErrorManagement::Debug, "Purged cachedIntrospections. Number of children:%d", cachedIntrospections.GetNumberOfChildren());
 }
 
-bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi, const char8 * const signalName, const char8 * const dataSourceName, const TypeDescriptor &signalTypeDescriptor, const uint32 numberOfDimensions, const uint32 numberOfElements, const uint32 signalNumberOfBytes) const {
+bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi,
+                                                           const char8 *const signalName,
+                                                           const char8 *const dataSourceName,
+                                                           const TypeDescriptor &signalTypeDescriptor,
+                                                           const uint32 numberOfDimensions,
+                                                           const uint32 numberOfElements,
+                                                           const uint32 signalNumberOfBytes) const {
     bool ret = true;
     StreamString defaultVal;
     if (sdi.Read("Default", defaultVal)) {
@@ -3841,7 +4046,7 @@ bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi,
         if (ret) {
             defaultValueAnyType = cdb.GetType("Default");
         }
-        uint32 defValDims = defaultValueAnyType .GetNumberOfDimensions();
+        uint32 defValDims = defaultValueAnyType.GetNumberOfDimensions();
         if (isString) {
             //Yet another exception for char8[]
             if (numberOfElements > 1u) {
@@ -3853,11 +4058,11 @@ bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi,
         uint8 usedDimensions = (numberOfDimensions > 0u) ? (1u) : (0u);
         if (ret) {
             //Now check that the number of elements is compatible between the signal definitions and its default value
-            uint32 elements0 = defaultValueAnyType .GetNumberOfElements(0u);
+            uint32 elements0 = defaultValueAnyType.GetNumberOfElements(0u);
             //Another exception for the char8[]
             if (isString && (elements0 <= 1u)) {
                 //Check that the string fits inside the char8[] size
-                StreamString ss = reinterpret_cast<const char8 *>(defaultValueAnyType .GetDataPointer());
+                StreamString ss = reinterpret_cast<const char8*>(defaultValueAnyType.GetDataPointer());
                 ret = (ss.Size() <= numberOfElements);
             }
             else {
@@ -3874,14 +4079,16 @@ bool RealTimeApplicationConfigurationBuilder::WriteDefault(StructuredDataI &sdi,
                 }
             }
             if (!ret) {
-                const char8 * const typeNameStr = TypeDescriptor::GetTypeNameFromTypeDescriptor(signalTypeDescriptor);
-                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Default value of signal %s of type %s in %s must be defined as a vector for multi-dimensional variables", signalName, typeNameStr, dataSourceName);
+                const char8 *const typeNameStr = TypeDescriptor::GetTypeNameFromTypeDescriptor(signalTypeDescriptor);
+                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
+                                    "Default value of signal %s of type %s in %s must be defined as a vector for multi-dimensional variables", signalName,
+                                    typeNameStr, dataSourceName);
             }
         }
         //If everything is OK, construct a temporary AnyType with the correct characteristics and read the Default value to be stored in the target database (sdi)
         if (ret) {
             void *ptr = HeapManager::Malloc(signalNumberOfBytes);
-            ret = (ptr != NULL_PTR(void *));
+            ret = (ptr != NULL_PTR(void*));
             if (ret) {
                 AnyType at = AnyType(signalTypeDescriptor, 0u, ptr);
                 at.SetNumberOfDimensions(static_cast<uint8>(defValDims));

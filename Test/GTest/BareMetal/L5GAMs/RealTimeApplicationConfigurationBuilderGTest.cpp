@@ -268,6 +268,16 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveSt
     ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMInMoreThreads(true));
 }
 
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_SameGAMInMoreThreads_Config) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates_SameGAMInMoreThreads_Config(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_SameGAMInMoreThreads_Config_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates_SameGAMInMoreThreads_Config(true));
+}
+
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs1) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs1(false));
@@ -524,6 +534,17 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyCon
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_RangeOverlap2());
 }
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_RangeOverlap_Config) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_RangeOverlap_Config());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_RangeOverlap_Config_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_RangeOverlap_Config_FromConfig());
+}
+
 
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals) {
     RealTimeApplicationConfigurationBuilderTest test;

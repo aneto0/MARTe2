@@ -27,7 +27,7 @@
 
 #include <pthread.h>
 #include <math.h>
-#include <sys/timeb.h>
+#include <sys/time.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -233,14 +233,15 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
     else {
         if (ok) {
             struct timespec timesValues;
-            timeb tb;
-            ok = (ftime(&tb) == 0);
+            struct timeval tv;
+	    struct timezone tz;
+            ok = (gettimeofday(&tv, &tz) == 0);
 
             if (ok) {
-                float64 sec = static_cast<float64>(timeout.GetTimeoutMSec());
-                sec += static_cast<float64>(tb.millitm);
-                sec *= 1e-3;
-                sec += static_cast<float64>(tb.time);
+                float64 sec = static_cast<float64>(timeout.GetTimeoutUSec());
+                sec += static_cast<float64>(tv.tv_usec);
+                sec *= 1e-6;
+                sec += static_cast<float64>(tv.tv_sec);
 
                 float64 roundValue = floor(sec);
                 timesValues.tv_sec = static_cast<int32>(roundValue);

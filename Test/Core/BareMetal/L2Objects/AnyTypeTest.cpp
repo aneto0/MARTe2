@@ -42,15 +42,11 @@ struct TestATStructure {
     uint32 member1;
 };
 
-
 DECLARE_CLASS_MEMBER(TestATStructure, member1, uint32, "", "");
 
-static const IntrospectionEntry* fields[] = { &TestATStructure_member1_introspectionEntry, 0 };
-
+static const IntrospectionEntry *fields[] = { &TestATStructure_member1_introspectionEntry, 0 };
 
 DECLARE_STRUCT_INTROSPECTION(TestATStructure, fields);
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -440,7 +436,7 @@ bool AnyTypeTest::TestAnyType_ConstPointerToConts() {
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == Pointer);
-    retVal &= (td.numberOfBits == sizeof(void *) * 8u);
+    retVal &= (td.numberOfBits == sizeof(void*) * 8u);
 
     return retVal;
 }
@@ -454,13 +450,13 @@ bool AnyTypeTest::TestAnyType_ConstPointer() {
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == Pointer);
-    retVal &= (td.numberOfBits == sizeof(void *) * 8u);
+    retVal &= (td.numberOfBits == sizeof(void*) * 8u);
 
     return retVal;
 }
 
 bool AnyTypeTest::TestAnyType_ConstCharPointerToConst() {
-    const char8 * const charPtr = "hello";
+    const char8 *const charPtr = "hello";
     AnyType anytype(charPtr);
 
     retVal = (anytype.GetDataPointer() == charPtr);
@@ -469,7 +465,7 @@ bool AnyTypeTest::TestAnyType_ConstCharPointerToConst() {
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == BT_CCString);
-    retVal &= (td.numberOfBits == sizeof(const char *) * 8u);
+    retVal &= (td.numberOfBits == sizeof(const char*) * 8u);
 
     return retVal;
 }
@@ -596,7 +592,7 @@ bool AnyTypeTest::TestCreateFromOtherConstType() {
 
 bool AnyTypeTest::TestSetDataPointer() {
     int32 x = 1;
-    void* ptr = (void*) &x;
+    void *ptr = (void*) &x;
     AnyType at;
     at.SetDataPointer(ptr);
     return at.GetDataPointer() == ptr;
@@ -616,22 +612,11 @@ bool AnyTypeTest::TestSetTypeDescriptor() {
     bool ok = true;
     AnyType at;
     uint32 numberOfTypes = 11u;
-    TypeDescriptor types[] = {
-        SignedInteger8Bit,
-        SignedInteger16Bit,
-        SignedInteger32Bit,
-        SignedInteger64Bit,
-        UnsignedInteger8Bit,
-        UnsignedInteger16Bit,
-        UnsignedInteger32Bit,
-        UnsignedInteger64Bit,
-        Float32Bit,
-        Float64Bit,
-        InvalidType
-        };
+    TypeDescriptor types[] = { SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit, UnsignedInteger16Bit,
+            UnsignedInteger32Bit, UnsignedInteger64Bit, Float32Bit, Float64Bit, InvalidType };
     for (uint32 typeIdx = 0u; (typeIdx < numberOfTypes) && ok; typeIdx++) {
         at.SetTypeDescriptor(types[typeIdx]);
-        ok = ( at.GetTypeDescriptor() == types[typeIdx] );
+        ok = (at.GetTypeDescriptor() == types[typeIdx]);
     }
     return ok;
 }
@@ -700,15 +685,20 @@ bool AnyTypeTest::TestGetBitSize() {
 
 bool AnyTypeTest::TestGetByteSize() {
 
-    for (uint32 i = 0u; i < 63; i++) {
+    bool ret = true;
+    for (uint32 i = 0u; (i < 63) && ret; i++) {
         uint64 x = i;
         AnyType at(UnsignedInteger64Bit, i, &x);
-        if (at.GetByteSize() != ((64 + i + 7) / 8)) {
-            return false;
-        }
+        ret = (at.GetByteSize() == ((64 + i + 7) / 8));
     }
 
-    return true;
+    if (ret) {
+        TestObjectHelper1 obj;
+        AnyType anytype(obj);
+        ret = (anytype.GetByteSize() == sizeof(TestObjectHelper1));
+    }
+
+    return ret;
 }
 
 bool AnyTypeTest::TestGetDataSize() {
@@ -716,14 +706,14 @@ bool AnyTypeTest::TestGetDataSize() {
     uint32 numberOfDimensions = 3u;
     uint32 numberOfElements[] = { 1u, 2u, 3u };
     uint32 totalSize = (64u / 8u) * numberOfElements[0u] * numberOfElements[1u] * numberOfElements[2u];
-    
+
     AnyType at;
     at.SetTypeDescriptor(type);
     at.SetNumberOfDimensions(numberOfDimensions);
     at.SetNumberOfElements(0u, numberOfElements[0u]);
     at.SetNumberOfElements(1u, numberOfElements[1u]);
     at.SetNumberOfElements(2u, numberOfElements[2u]);
-    
+
     return at.GetDataSize() == totalSize;
 }
 
@@ -782,7 +772,7 @@ bool AnyTypeTest::TestPositionOperator_MatrixStructuredHeapDeclared() {
     const uint32 nRows = 2;
     const uint32 nCols = 2;
 
-    TestATStructure** test = new TestATStructure*[nRows];
+    TestATStructure **test = new TestATStructure*[nRows];
 
     for (uint32 i = 0; i < nRows; i++) {
         test[i] = new TestATStructure[nCols];
@@ -829,9 +819,9 @@ bool AnyTypeTest::TestPositionOperator_MatrixStructuredHeapDeclared() {
     }
 
     for (uint32 i = 0; i < nRows; i++) {
-        delete [] test[i];
+        delete[] test[i];
     }
-    delete [] test;
+    delete[] test;
 
     return ret;
 }
@@ -901,7 +891,7 @@ bool AnyTypeTest::TestPositionOperator_MatrixBasicHeapDeclared() {
     }
 
     for (uint32 i = 0; i < nRows; i++) {
-        delete [] test[i];
+        delete[] test[i];
     }
     HeapManager::Free((void*&) test);
 
@@ -956,7 +946,7 @@ bool AnyTypeTest::TestPositionOperator_VectorCString() {
 
     const uint32 nElements = 3;
 
-    const char8* test[] = { "Hello", "Ciao", "Hola" };
+    const char8 *test[] = { "Hello", "Ciao", "Hola" };
     AnyType at(test);
 
     for (uint32 i = 0; i < nElements; i++) {
@@ -972,14 +962,14 @@ bool AnyTypeTest::TestPositionOperator_VectorCString() {
 bool AnyTypeTest::TestPositionOperator_VectorPointer() {
     const uint32 nElements = 3;
 
-    const char8* var[] = { "Hello", "Ciao", "Hola" };
-    void* test[] = { &var[0], &var[1], &var[2] };
+    const char8 *var[] = { "Hello", "Ciao", "Hola" };
+    void *test[] = { &var[0], &var[1], &var[2] };
     AnyType at(test);
 
     for (uint32 i = 0; i < nElements; i++) {
         AnyType element = at[i];
 
-        if (element.GetDataPointer()!=test[i]) {
+        if (element.GetDataPointer() != test[i]) {
             return false;
         }
     }

@@ -474,9 +474,9 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
     //(e.g. FreeRTOS) there may be at least one task already there before.
     uint32 numOfThreadsBefore = Threads::NumberOfThreads();
 
-    Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
-
     this->nRefs = nRefs;
+
+    Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
 
     uint32 totalNRefs = (nRefs + 1);
 
