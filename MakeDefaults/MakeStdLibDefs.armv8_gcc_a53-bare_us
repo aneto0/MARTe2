@@ -54,7 +54,7 @@ COMPILER = $(COMPILERPREFIX)-g++
 CCOMPILER = $(COMPILERPREFIX)-gcc
 LINKER = $(COMPILERPREFIX)-ld
 
-CPUSPECIFICFLAGS = -mcpu=cortex-a53
+CPUSPECIFICFLAGS = -mcpu=cortex-a53 -mtune=cortex-a53 -march=armv8-a -mfix-cortex-a53-835769 -mfix-cortex-a53-843419
 ADDITIONALFLAGS = -frtti
 OPTIM = 
 
