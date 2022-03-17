@@ -1,8 +1,8 @@
 /**
  * @file AtomicA.h
  * @brief Header file for module AtomicA
- * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @date 17/06/2021
+ * @author Giuseppe Avon
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
