@@ -28,7 +28,7 @@ PACKAGE=Core/BareMetal/L6App
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  Bootstrap.x Kernel.x
+OBJSX=  Bootstrap.x 
 		
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
