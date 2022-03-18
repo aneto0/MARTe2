@@ -219,6 +219,14 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
 bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction,
                                       DataSourceI &dataSourceIn,
                                       const char8 *const functionName,
+                                      void *const gamMemoryAddress,
+                                      const bool optim) {
+    return Init(direction, dataSourceIn, functionName, gamMemoryAddress);
+}
+
+bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction,
+                                      DataSourceI &dataSourceIn,
+                                      const char8 *const functionName,
                                       void *const gamMemoryAddress) {
     dataSource = &dataSourceIn;
     bool ret = InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);

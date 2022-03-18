@@ -82,6 +82,15 @@ public:
                       const char8 *const functionName,
                       void *const gamMemoryAddress);
 
+    /**
+     * @brief Calls Init(), i.e. optim is ignored.
+     */
+    virtual bool Init(const SignalDirection direction,
+                      DataSourceI &dataSourceIn,
+                      const char8 *const functionName,
+                      void *const gamMemoryAddress,
+                      const bool optim);
+
 protected:
 
     /**
