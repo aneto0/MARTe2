@@ -174,7 +174,7 @@ DLL_API ThreadIdentifier Id(void);
 * @param[in] threadId The internal identifier (handle) of the thread whose number is asked for
 * @return The current thread number
 */
-DLL_API uint32 GetThreadNumber(const ThreadIdentifier &threadId);
+//DLL_API uint32 GetThreadNumber(const ThreadIdentifier &threadId);
 
 /**
  * @brief Asynchronously kill a thread.

@@ -70,89 +70,14 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     //We already know that using gettime, the granularity is in nanoseconds
     //and so the frequency is expressed in GHz
     period = 1.0e-9;
-    frequency = 1e9;
+    frequency = 1000000000u;
     
     initialSecs = initTime.tv_sec;
     initialUSecs = initTime.tv_nsec / 1000;
 
-    if(ret != 0) {
-        
-    }
-    else {
+    if(ret == 0) {
         REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: clock_gettime()");
     }
-
-    //const uint64 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
-    //initialTicks = HighResolutionTimer::Counter();
-    //frequency = 0u;
-    //period = 0.;
-
-    //struct timeval initTime;
-    //int32 ret = gettimeofday(&initTime, static_cast<struct timezone *>(NULL));
-
-    //initialSecs = initTime.tv_sec;
-    //initialUSecs = initTime.tv_usec;
-
-    //if (ret == 0) {
-        /** Test modification by Giuseppe Avon
-         * Justification = /proc/cpuinfo on QEMU aarch64 RPI3B 64 bit ARMHF Raspbian image
-         * has not MHz value to look for.
-         */
-       
-        //This structure holds the real clock resolution in seconds + nanoseconds
-        // struct timespec clockResResult;
-        // memset(&clockResResult, 0, sizeof(struct timespec));
-
-        // int getClockResResult = clock_getres(CLOCK_REALTIME, &clockResResult);
-        // if(getClockResResult == 0) {
-            
-        //     float64 periodF = clockResResult.tv_sec + (1.0e-9 * clockResResult.tv_nsec);
-        //     float64 frequencyF = nearbyint(1.0 / periodF);
-
-        //     period = periodF;
-        //     frequency = static_cast<uint64>(frequencyF);
-        //     printf("TEST period %.17g freq %llu -----------------------------------------------------------------------------------------\r\n", period, frequency);
-        // }
-        // else {
-        //     REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: clock_getres()");
-        // }
-
-        /* As it was before modification
-        char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
-        memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1u);
-
-        FILE *f = fopen("/proc/cpuinfo", "r");
-        size_t size = LINUX_CPUINFO_BUFFER_SIZE;
-        if (f != NULL) {
-            size = fread(&buffer[0], static_cast<size_t>(1u), size, f);
-            fclose(f);
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen()");
-        }
-
-        if (size > 0u) {
-            const char8 *pattern = "MHz";
-            const char8 *p = StringHelper::SearchString(&buffer[0], pattern);
-            if (p != NULL) {
-                p = StringHelper::SearchString(p, ":");
-                p++;
-                float64 freqMHz = strtof(p, static_cast<char8 **>(0));
-                if (freqMHz > 0.) {
-                    float64 frequencyF = freqMHz *= 1.0e6;
-                    period = 1.0 / frequencyF;
-                    frequency = static_cast<uint64>(frequencyF);
-                }
-            }
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fread()");
-        }
-        */
-    // }
-    // else {
-    //     REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
-    // }
 
 }
 

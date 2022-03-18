@@ -216,6 +216,7 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
     return ret;
 }
 
+/*lint -e{715} optim is not available in this implementation.*/
 bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction,
                                       DataSourceI &dataSourceIn,
                                       const char8 *const functionName,
