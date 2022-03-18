@@ -44,84 +44,71 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 
 bool SleepTest::TestGetDateSeconds() {
-    //TODO: TEST INVALIDATED REMOVE THIS FROM HERE
-    return Sleep::GetDateSeconds() == 0; //time(NULL);
+    return (Sleep::GetDateSeconds() != 0);
 }
-/*
-bool SleepTest::TestAtLeast(float64 sec) {
-    bool testResult = false;
-    float64 maxSleepTime = 2 * 1000 * sec;
-    int initialTime = clock();
 
-    Sleep::AtLeast(sec);
-
-    testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
-
-    return testResult;
-}
-*/
 bool SleepTest::TestNoMore(float64 sec) {
-    //TODO: TEST INVALIDATED REMOVE THIS FROM HERE
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-    int initialTime = 0;//clock();
+    uint64 initialCounter = HighResolutionTimer::Counter();
 
     Sleep::NoMore(sec);
 
-    testResult = 0; //(((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
+    uint64 sleptTime = (HighResolutionTimer::Counter() - initialCounter) * HighResolutionTimer::Period();
+    testResult = (sleptTime <= maxSleepTime);
 
     return testResult;
 }
 
 bool SleepTest::TestSec(float64 sec) {
-    //TODO: TEST INVALIDATED REMOVE THIS FROM HERE
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-    int initialTime = 0; //clock();
+    uint64 initialCounter = HighResolutionTimer::Counter();
 
     Sleep::Sec(sec);
 
-    testResult = 0;//(((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
+    uint64 sleptTime = (HighResolutionTimer::Counter() - initialCounter) * HighResolutionTimer::Period();
+    testResult = (sleptTime <= maxSleepTime);
 
     return testResult;
 }
 
 bool SleepTest::TestMSec(int32 msec) {
-    //TODO: TEST INVALIDATED REMOVE THIS FROM HERE
     bool testResult = false;
     float64 maxSleepTime = 2 * msec; /* 100% margin */
-    int initialTime = 0; //clock();
+    uint64 initialCounter = HighResolutionTimer::Counter();
 
     Sleep::MSec(msec);
 
-    testResult = 0; //(((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
+    uint64 sleptTime = (HighResolutionTimer::Counter() - initialCounter) * HighResolutionTimer::Period();
+    testResult = (sleptTime <= maxSleepTime);
 
     return testResult;
 }
 
 bool SleepTest::TestBusy(float64 sec) {
-    //TODO: TEST INVALIDATED REMOVE THIS FROM HERE
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-    int initialTime = 0; //clock();
+    uint64 initialCounter = HighResolutionTimer::Counter();
 
     Sleep::Busy(sec);
 
-    testResult = 0; //(((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
+    uint64 sleptTime = (HighResolutionTimer::Counter() - initialCounter) * HighResolutionTimer::Period();
+    testResult = (sleptTime <= maxSleepTime);
 
     return testResult;
 }
 
 bool SleepTest::TestSemiBusy(float64 totalSleepSec,
                              float64 nonBusySleepSec) {
-    //TODO: TEST INVALIDATED REMOVE THIS FROM HERE
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * totalSleepSec; /* 100% margin */
-    int initialTime = 0;//clock();
+    uint64 initialCounter = HighResolutionTimer::Counter();
 
     Sleep::SemiBusy(totalSleepSec, nonBusySleepSec);
 
-    testResult = 0;//(((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
+    uint64 sleptTime = (HighResolutionTimer::Counter() - initialCounter) * HighResolutionTimer::Period();
+    testResult = (sleptTime <= maxSleepTime);
 
     return testResult;
 }
