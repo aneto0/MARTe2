@@ -32,8 +32,6 @@ MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 OBJSX=  EventSem.x \
         MutexSem.x \
         Processor.x \
-        Scheduler.x \
-        Task.x \
         Threads.x \
         ThreadInformation.x \
         Empty.x 
