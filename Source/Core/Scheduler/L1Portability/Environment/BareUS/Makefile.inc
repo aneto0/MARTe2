@@ -33,8 +33,7 @@ OBJSX=  EventSem.x \
         MutexSem.x \
         Processor.x \
         Threads.x \
-        ThreadInformation.x \
-        Empty.x 
+        ThreadInformation_Gen.x 
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
