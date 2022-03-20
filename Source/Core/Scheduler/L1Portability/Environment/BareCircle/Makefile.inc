@@ -35,7 +35,7 @@ OBJSX=  EventSem.x \
         Scheduler.x \
         Task.x \
         Threads.x \
-        ThreadInformation.x \
+        ThreadInformation_Gen.x \
         Empty.x 
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
