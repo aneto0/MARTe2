@@ -29,7 +29,7 @@ ROOT_DIR=$(MARTe2_DIR)
 MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicConsole.x \
-		ErrorManagement.x \
+		ErrorManagement_Gen.x \
 		HardwareI.x \
 		HighResolutionTimerCalibrator.x \
 		LoadableLibrary.x  \
@@ -37,8 +37,8 @@ OBJSX=  BasicConsole.x \
 		MemoryOperationsHelper.x \
 		Sleep.x \
 		StandardHeap.x \
-		StringHelperExtras.x \
-		StringHelper.x \
+		StringHelperExtras_Gen.x \
+		StringHelper_Gen.x \
 		TimeStamp.x
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
