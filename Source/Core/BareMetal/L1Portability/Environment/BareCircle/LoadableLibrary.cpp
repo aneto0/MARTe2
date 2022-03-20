@@ -42,66 +42,20 @@
 namespace MARTe{
 
 HANDLE LoadableLibrary::GetModule() {
-    //return module;
     return NULL;
 }
 
 void LoadableLibrary::SetModule(HANDLE const m) {
-    //module = m;
 }
 
 void LoadableLibrary::Close() {
-    // HANDLE m = GetModule();
-    // if (m != 0) {
-    //     (void)dlclose(m);
-    // }
-
 }
 
 bool LoadableLibrary::Open(char8 const * const dllName) {
-    // bool ret = true;
-
-    // HANDLE m = GetModule();
-    // if (m != 0) {
-    //     Close ();
-    // }
-
-    // /*lint -e{9130} (bitwise operator '|' applied to signed underlying type) the operands are defined
-    //  * in operating system api*/
-    // m = dlopen(dllName, RTLD_NOW | RTLD_GLOBAL);
-    // if (m == NULL) {
-    //     const char8 *err1 = "LoadableLibrary: Failed dlopen(): ";
-    //     char8 *err2 = dlerror();
-    //     uint32 errLen = (StringHelper::Length(err1) + StringHelper::Length(err2) + 1u);
-    //     char8 err[errLen];
-    //     (void) StringHelper::Concatenate(err1, err2, &err[0]);
-    //     REPORT_ERROR_STATIC_0(ErrorManagement::Warning, &err[0]);
-    //     ret = false;
-    // }
-    // SetModule(m);
-    // return ret;
-
     return true;
 }
 
 void *LoadableLibrary::Function(char8 const * const name) {
-    // void* ret = static_cast<void*>(NULL);
-
-    // if (name != NULL) {
-    //     HANDLE m = GetModule();
-    //     if (m != NULL) {
-    //         ret = dlsym(m, name);
-    //     }
-    //     else {
-    //         REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "LoadableLibrary: Failed GetModule()");
-    //     }
-    // }
-    // else {
-    //     REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "LoadableLibrary: Invalid input arguments");
-
-    // }
-
-    // return ret;
     return NULL;
 }
 

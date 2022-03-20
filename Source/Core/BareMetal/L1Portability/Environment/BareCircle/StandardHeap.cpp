@@ -57,9 +57,6 @@ StandardHeap::~StandardHeap() {
 
 /*lint -e{586} use of malloc function (deprecated) */
 void *StandardHeap::Malloc(const uint32 size) {
-    //void *pointer = malloc(size);
-    //void *pointer = new char8[size];
-    
     void* pointer = NULL_PTR(void*);
 
     if (size != 0u) {
