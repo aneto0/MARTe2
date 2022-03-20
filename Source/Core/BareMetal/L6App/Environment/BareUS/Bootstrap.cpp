@@ -54,15 +54,6 @@ namespace MARTe {
 
     }   
 
-    // ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
-    //     ErrorManagement::ErrorType retVal = ErrorManagement::NoError;
-    //     configurationFile = configFile;
-    //     configurationFile.Seek(0);
-    //     configurationStream = &configurationFile;
-
-    //     return retVal;
-    // }
-
     ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters) {
         //TODO Check me
         ErrorManagement::ErrorType ret;
