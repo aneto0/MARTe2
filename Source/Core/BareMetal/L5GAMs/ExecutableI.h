@@ -56,10 +56,19 @@ public:
     virtual ~ExecutableI();
 
     /**
+     * \deprecated 
      * @brief Method called by a GAMSchedulerI to trigger the execution of the component.
+     * @details Deprecated in favor of ErrorManagement::ErrorType Process.
      * @return true if the component is successfully executed.
      */
-    virtual bool Execute() = 0;
+    virtual bool Execute();
+
+    /**
+     * @brief Method called by a GAMSchedulerI to trigger the execution of the component.
+     * @return ErrorManagement::NoError if the component is successfully executed; ErrorManagement::Completed if the component
+     *  wants to inform the scheduler that it should terminate its execution cycle; ErrorManagement::FatalError otherwise.
+     */
+    virtual ErrorManagement::ErrorType Process();
 
     /**
      * @brief Sets the address in memory where the signal which contains the last execution time of this component is stored.

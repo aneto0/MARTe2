@@ -53,4 +53,14 @@ void ExecutableI::SetTimingSignalAddress(uint32 * const timingSignalAddressIn) {
     timingSignalAddress = timingSignalAddressIn;
 }
 
+bool ExecutableI::Execute() {
+    return false;
+}
+
+ErrorManagement::ErrorType ExecutableI::Process() {
+    ErrorManagement::ErrorType ret;
+    ret.fatalError = !Execute();
+    return ret;
+}
+
 }
