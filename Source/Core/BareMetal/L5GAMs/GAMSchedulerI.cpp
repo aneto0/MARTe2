@@ -401,18 +401,13 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
     // warning: possible segmentation faults if the previous operations
     // lack or fail and the pointers are invalid.
 
-    bool stop = false;
     bool ret = true;
     uint64 absTicks = HighResolutionTimer::Counter();
-    for (uint32 i = 0u; (i < numberOfExecutables) && (!stop); i++) {
+    for (uint32 i = 0u; (i < numberOfExecutables) && (ret); i++) {
         // save the time before
         // execute the gam/broker
-        ErrorManagement::ErrorType err = executables[i]->Process();
-        ret = (err == ErrorManagement::NoError);
-        if (!ret) {
-            //If a stop was requested by an ErrorManagement::Completed, this is not an error, but the cycle is stopped anyway.
-            ret = (err == ErrorManagement::Completed);
-            stop = true;
+        if (executables[i]->IsEnabled()) {
+            ret = executables[i]->Execute();
         }
 
         uint64 tmp = (HighResolutionTimer::Counter() - absTicks);

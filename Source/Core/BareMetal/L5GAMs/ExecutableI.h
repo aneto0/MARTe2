@@ -56,19 +56,22 @@ public:
     virtual ~ExecutableI();
 
     /**
-     * \deprecated 
      * @brief Method called by a GAMSchedulerI to trigger the execution of the component.
-     * @details Deprecated in favor of ErrorManagement::ErrorType Process.
      * @return true if the component is successfully executed.
      */
-    virtual bool Execute();
+    virtual bool Execute() = 0;
 
     /**
-     * @brief Method called by a GAMSchedulerI to trigger the execution of the component.
-     * @return ErrorManagement::NoError if the component is successfully executed; ErrorManagement::Completed if the component
-     *  wants to inform the scheduler that it should terminate its execution cycle; ErrorManagement::FatalError otherwise.
+     * @brief If NOT set the Execute method should not be called by a user of this class (e.g. the GAMSchedulerI).
+     * @param[in] isEnabled true if the Execute method should be called.
      */
-    virtual ErrorManagement::ErrorType Process();
+    void SetEnabled(bool isEnabled);
+
+    /**
+     * @brief Returns true if the ExecutableI is enabled.
+     * @return true if the ExecutableI is enabled.
+     */
+    bool IsEnabled() const;
 
     /**
      * @brief Sets the address in memory where the signal which contains the last execution time of this component is stored.
@@ -87,6 +90,11 @@ public:
 private:
 
     uint32 * timingSignalAddress;
+
+    /**
+     * True if the executable is enabled.
+     */
+    bool enabled;
 };
 
 
