@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyTypeCreator.h"
+#include "ConfigurationDatabase.h"
 #include "LexicalAnalyzer.h"
 #include "ParserI.h"
 #include "StructuredDataI.h"
@@ -156,6 +157,21 @@ protected:
      */
     void BlockEnd();
 
+    /**
+     * @brief Creates a new vector of nodes in the StructuredData.
+     */
+    void CreateNodeV();
+
+    /**
+     * @brief Creates a new element in a vector of nodes in the StructuredData.
+     */
+    void CreateNodeVE();
+
+    /**
+     * @brief Ends a vector of blocks.
+     */
+    void EndVectorB();
+
 private:
 
     /**
@@ -202,6 +218,11 @@ private:
      * The number of dimensions of the variable (0=scalar, 1=vector, 2=matrix)
      */
     uint8 numberOfDimensions;
+
+    /**
+     * The current structured index.
+     */
+    ConfigurationDatabase vectorStructureIdx;
 
 };
 

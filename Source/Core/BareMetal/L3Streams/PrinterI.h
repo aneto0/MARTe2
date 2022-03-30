@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BufferedStreamI.h"
+#include "StreamString.h"
+#include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -134,7 +136,7 @@ public:
     virtual bool PrintCloseVector() = 0;
 
     /**
-     * @brief Prints the open matrix separator on the stream
+     * @brief Prints the open block separator on the stream
      * @return true if the print succeeds, false otherwise.
      * @param[in] blockName the name of the block
      * @pre
@@ -193,6 +195,52 @@ public:
      *   stream != NULL
      */
     virtual bool PrintEnd();
+
+    /**
+     * @brief Prints the open array of nodes separator on the stream
+     * @return true if the print succeeds, false otherwise.
+     * @param[in] blockName the name of the block
+     * @pre
+     *   stream != NULL
+     */
+    virtual bool PrintOpenArrayOfBlocks(const char8 * const blockName);
+
+    /**
+     * @brief Prints the close array of nodes separator on the stream
+     * @return true if the print succeeds, false otherwise.
+     * @param[in] blockName the name of the block
+     * @pre
+     *   stream != NULL
+     */
+    virtual bool PrintCloseArrayOfBlocks(const char8 * const blockName);
+
+    /**
+     * @brief Prints a block inside an array of blocks.
+     * @return true if the print succeeds, false otherwise.
+     * @param[in] blockName the name of the block
+     * @pre
+     *   stream != NULL
+     */
+    virtual bool PrintOpenInsideArrayOfBlocks(const char8 * const blockName);
+
+    /**
+     * @brief Closes a block inside an array of blocks.
+     * @return true if the print succeeds, false otherwise.
+     * @param[in] blockName the name of the block
+     * @pre
+     *   stream != NULL
+     */
+    virtual bool PrintCloseInsideOfArrayOfBlocks(const char8 * const blockName);
+
+
+    /**
+     * @brief Prints a StructuredDataI to the output stream.
+     * @param[in] sdi the StructuredDataI to print.
+     * @param[in] collapseArraysOfNodes if true, arrays of nodes (e.g. A[0] = {}, A[1] {}, ...) will be collapsed into a single array (e.g. A = [{}, {}, ...)
+     * @param[in] level current recursion level
+     * @return true if the StructuredDataI is sucessfully printed.
+     */
+    bool PrintStructuredDataI(StructuredDataI &sdi, bool collapseArraysOfNodes, uint32 level = 0u);
 
 protected:
 

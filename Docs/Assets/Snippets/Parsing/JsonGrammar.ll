@@ -6,8 +6,10 @@ cdbFile:
         expressions { expressions }
 
 expressions:
-        __GetNodeName  STRING   \: variables	                            __AddLeaf
+        __GetNodeName  STRING   \: variables	                       __AddLeaf
+        __GetNodeName  STRING   \: ( __GetTypeCast STRING ) variables  __AddLeaf
         __CreateNode   STRING   \: block            	                    
+        __CreateNodeV  STRING   \: vectorb 
         bblock
 
 variables:
@@ -18,6 +20,9 @@ variables:
 scalar:
 		__AddScalar token 
 
+vectorb:
+        \[ { blockv }+ __EndVectorB \] 
+
 vector:
         \[ { scalar }+ __EndVector \] 
 
@@ -26,6 +31,9 @@ matrix:
 
 block:
         \{ expressions { expressions } __BlockEnd \}
+
+blockv:
+        __CreateNodeVE block
 
 bblock:
         \{ expressions { expressions } \}

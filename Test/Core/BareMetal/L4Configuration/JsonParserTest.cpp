@@ -444,6 +444,59 @@ bool JsonParserTest::TestParseErrors(const char8 *configStringIn) {
 
 }
 
+bool JsonParserTest::TestArrayOfNodes() {
+    ConfigurationDatabase database;
+    StreamString errors;
+    StreamString configString = ""
+        "{\n"
+        "  \"A\": 1,\n"
+        "  \"B\": [\n"
+        "    {\n"
+        "      \"B\": [\n"
+        "        {\n"
+        "          \"C\": 1,\n"
+        "          \"D\": 2\n"
+        "        },\n"
+        "        {\n"
+        "          \"C\": 3,\n"
+        "          \"D\": 4\n"
+        "        }\n"
+        "      ]\n"
+        "    },\n"
+        "    {\n"
+        "      \"C\": [\n"
+        "        {\n"
+        "          \"C\": 5,\n"
+        "          \"D\": 6\n"
+        "        },\n"
+        "        {\n"
+        "          \"C\": 7,\n"
+        "          \"D\": {\n"
+        "            \"E\": 8\n"
+        "            \"F\": [1, 2, 3, 4]\n"
+        "            \"G\": [[1.0, 2], [3.1, 4]]\n"
+        "          }\n"
+        "        }\n"
+        "      ]\n"
+        "    }\n"
+        "  ],\n"
+        "  \"C\": 1\n"
+        "}\n";
 
+    configString.Seek(0);
+    JsonParser myParser(configString, database, &errors);
+    bool ok = myParser.Parse();
+    if (ok) {
+        ok = database.MoveToRoot();
+    }
+    if (ok) {
+        ok = database.MoveRelative("B[0].B[1]");
+    }
+    if (ok) {
+        ok = database.MoveAbsolute("B[1].C[1].D");
+    }
+
+    return ok;
+}
 
 

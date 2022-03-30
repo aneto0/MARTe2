@@ -45,66 +45,70 @@ namespace MARTe {
 
 /*lint -e{9117} data generated from slk*/
 static uint32 Production[] = {0
-
-,3,9,10,24 ,3,10,11,19 ,6,11,25,1,2,12,26 ,5,11,27,1,2,16 
-,2,11,17 ,2,12,13 ,2,12,14 ,2,12,15 ,3,13,28,18 
-,5,14,3,13,20,4 ,5,15,3,14,21,4 ,5,16,5,11,22,6 
-,5,17,5,11,23,6 ,2,18,1 ,2,18,7 ,3,19,11,19 
-,1,19 ,3,20,13,20 ,2,20,29 ,3,21,14,21 ,2,21,30 
-,3,22,11,22 ,2,22,31 ,3,23,11,23 ,1,23 
+,3,11,12,29 ,3,12,13,23 ,6,13,30,1,2,14,31 ,10,13,30,1,2,3,32,1,4,14,31 
+,5,13,33,1,2,19 ,5,13,34,1,2,16 ,2,13,21 ,2,14,15 
+,2,14,17 ,2,14,18 ,3,15,35,22 ,5,16,5,20,24,6 
+,5,17,5,15,25,6 ,5,18,5,17,26,6 ,5,19,7,13,27,8 
+,3,20,40,19 ,5,21,7,13,28,8 ,2,22,1 ,2,22,9 
+,3,23,13,23 ,1,23 ,3,24,20,24 ,2,24,36 ,3,25,15,25 
+,2,25,37 ,3,26,17,26 ,2,26,38 ,3,27,13,27 ,2,27,39 
+,3,28,13,28 ,1,28 
 ,0};
 
 /*lint -e{9117} data generated from slk*/
 static uint32 Production_row[] = {0
-
-,1,5,9,16,22,25,28,31,34,38,44,50,56,62,65,68
-,72,74,78,81,85,88,92,95,99
+,1,5,9,16,27,33,39,42,45,48,51,55,61,67,73,79
+,83,89,92,95,99,101,105,108,112,115,119,122,126,129,133
 ,0};
 
 /*lint -e{9117} data generated from slk*/
 static uint32 ParseArray[] = {
-
-0,0,6,16,27,10,18,16,6,19,17,22,18,24,11,22,23,24,25
-,1,2,26,9,1,2,5,14,12,9,20,21,13,15,0,0
-};
+0,0,8,20,0,0,33,11,24,20,8,28,21,25,30,11,24,28,29
+,1,30,31,2,32,18,1,23,22,2,7,26,27,19,12,13,14,15,16,17
+,0,0,0};
 
 /*lint -e{9117} data generated from slk*/
 static uint32 Parse_row[] = {0
-
-,18,19,20,1,21,2,11,22,26,25,2,5,26,10,12
+,18,21,22,1,6,28,29,30,29,30,31,23,2,20,7,25
+,10,13
 ,0};
 
 /*lint -e{9117} data generated from slk*/
 static uint32 Conflict[] = {
-
-0,0,7,28,8,3,0,3,7,4,0,3
+0,0,9,34,0,3,10,4,3,35,9,5,3,3,6,0,3
 };
 
 /*lint -e{9117} data generated from slk*/
 static uint32 Conflict_row[] = {0
-
-,1,1,4
-,0};
-
+,1,1,4,7
+,0
+};
 
 /*
- #define START_SYMBOL 9
- #define END_OF_SLK_INPUT_ 8
+ #define START_SYMBOL 11
+ #define END_OF_SLK_INPUT_ 10
  #define START_STATE 0
- #define START_CONFLICT 26
- #define END_CONFLICT 29
- #define START_ACTION 24
- #define END_ACTION 32
- #define TOTAL_CONFLICTS 3
- */
+ #define START_CONFLICT 32
+ #define END_CONFLICT 36
+ #define START_ACTION 29
+ #define END_ACTION 41
+ #define TOTAL_CONFLICTS 4
+*/
 
-static const uint32 Constants[] = { 9u, 8u, 0u, 26u, 29u, 24u, 32u, 3u };
+static const uint32 Constants[] = { 11u, 10u, 0u, 32u, 36u, 29u, 41u, 4u };
 
-
-static const char8 * Terminal_name[] = { "0"
-
-, "STRING", ":", "[", "]", "{", "}", "NUMBER", "END_OF_SLK_INPUT" };
-
+static const char8 * Terminal_name[] ={"0"
+,"STRING"
+,":"
+,"("
+,")"
+,"["
+,"]"
+,"{"
+,"}"
+,"NUMBER"
+,"END_OF_SLK_INPUT"
+};
 
 static const char8 *GetTerminalName(const uint32 symbol) {
     return Terminal_name[symbol];
@@ -118,12 +122,15 @@ JsonParser::JsonParser(StreamI &stream,
     Action [ 1 ] = &JsonParser::End;
     Action [ 2 ] = &JsonParser::GetNodeName;
     Action [ 3 ] = &JsonParser::AddLeaf;
-    Action [ 4 ] = &JsonParser::CreateNode;
-    Action [ 5 ] = &JsonParser::AddScalar;
-    Action [ 6 ] = &JsonParser::EndVector;
-    Action [ 7 ] = &JsonParser::EndMatrix;
-    Action [ 8 ] = &JsonParser::BlockEnd;
-
+    Action [ 4 ] = &JsonParser::GetTypeCast;
+    Action [ 5 ] = &JsonParser::CreateNode;
+    Action [ 6 ] = &JsonParser::CreateNodeV;
+    Action [ 7 ] = &JsonParser::AddScalar;
+    Action [ 8 ] = &JsonParser::EndVectorB;
+    Action [ 9 ] = &JsonParser::EndVector;
+    Action [ 10 ] = &JsonParser::EndMatrix;
+    Action [ 11 ] = &JsonParser::BlockEnd;
+    Action [ 12 ] = &JsonParser::CreateNodeVE;
 }
 
 JsonParser::~JsonParser() {

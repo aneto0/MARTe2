@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "JsonPrinter.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -130,4 +131,21 @@ bool JsonPrinter::PrintEnd() {
     return stream->Printf("%s", "}");
 }
 
+bool JsonPrinter::PrintOpenArrayOfBlocks(const char8 * const blockName) {
+    return stream->Printf("\"%s\" : [", blockName);
 }
+
+bool JsonPrinter::PrintCloseArrayOfBlocks(const char8 * const blockName) {
+    return stream->Printf("%s", "]");
+}
+
+bool JsonPrinter::PrintOpenInsideArrayOfBlocks(const char8 * const blockName) {
+    return stream->Printf("%s", "{");
+}
+
+bool JsonPrinter::PrintCloseInsideOfArrayOfBlocks(const char8 * const blockName) {
+    return stream->Printf("%s", "}");
+}
+
+}
+
