@@ -53,7 +53,6 @@ static bool PrinterIGetNodeArrayName(const char8 * const nodeName, StreamString 
 
 static uint32 PrinterIGetNodeArraySize(StructuredDataI &sdi, const char8 * const nodeArrayName) {
     uint32 size = sdi.GetNumberOfChildren();
-    StreamString fullName;
     bool done = (size == 0u);
     while (!done) {
         StreamString fullName = "";
@@ -100,23 +99,27 @@ bool PrinterI::PrintEnd() {
     return true;
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. blockName is not required by the default implementation.*/
 bool PrinterI::PrintOpenArrayOfBlocks(const char8 * const blockName) {
     return false;
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. blockName is not required by the default implementation.*/
 bool PrinterI::PrintCloseArrayOfBlocks(const char8 * const blockName) {
     return false;
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. blockName is not required by the default implementation.*/
 bool PrinterI::PrintOpenInsideArrayOfBlocks(const char8 * const blockName) {
     return false;
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. blockName is not required by the default implementation.*/
 bool PrinterI::PrintCloseInsideOfArrayOfBlocks(const char8 * const blockName) {
     return false;
 }
 
-bool PrinterI::PrintStructuredDataI(StructuredDataI &sdi, bool collapseArraysOfNodes, uint32 level) {
+bool PrinterI::PrintStructuredDataI(StructuredDataI &sdi, const bool collapseArraysOfNodes, const uint32 level) {
     bool ok = true;
     if (level == 0u) {
         ok = PrintBegin();
@@ -134,6 +137,9 @@ bool PrinterI::PrintStructuredDataI(StructuredDataI &sdi, bool collapseArraysOfN
             }
             else if (previousWasVariable) {
                 ok = PrintVariableSeparator();
+            }
+            else {
+                //NOOP
             }
             if (sdi.MoveRelative(nodeName)) {
                 previousWasBlock = true;

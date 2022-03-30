@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "JsonPrinter.h"
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -135,14 +134,17 @@ bool JsonPrinter::PrintOpenArrayOfBlocks(const char8 * const blockName) {
     return stream->Printf("\"%s\" : [", blockName);
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. blockName is not required by the JSON implementation.*/
 bool JsonPrinter::PrintCloseArrayOfBlocks(const char8 * const blockName) {
     return stream->Printf("%s", "]");
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. blockName is not required by the JSON implementation.*/
 bool JsonPrinter::PrintOpenInsideArrayOfBlocks(const char8 * const blockName) {
     return stream->Printf("%s", "{");
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. blockName is not required by the JSON implementation.*/
 bool JsonPrinter::PrintCloseInsideOfArrayOfBlocks(const char8 * const blockName) {
     return stream->Printf("%s", "}");
 }
