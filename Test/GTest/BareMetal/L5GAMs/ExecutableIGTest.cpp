@@ -1,7 +1,7 @@
 /**
- * @file ExecutableI.cpp
- * @brief Source file for class ExecutableI
- * @date 19/07/2016
+ * @file ExecutableIGTest.cpp
+ * @brief Source file for class ExecutableIGTest
+ * @date 26/03/2022
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,20 +17,19 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ExecutableI (public, protected, and private). Be aware that some 
+ * the class ExecutableIGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
-#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ExecutableI.h"
+#include "ExecutableITest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,28 +38,28 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-
-ExecutableI::ExecutableI() {
-    timingSignalAddress = NULL_PTR(uint32 * const);
-    enabled = true;
+TEST(BareMetal_L5GAMs_ExecutableIGTest,TestConstructor) {
+    ExecutableITest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-/*lint -e{1540} the timingSignalAddress is to freed by the class that uses the ExecutableI, typically a GAMSchedulerI.*/
-ExecutableI::~ExecutableI() {
+TEST(BareMetal_L5GAMs_ExecutableIGTest,TestSetEnabled) {
+    ExecutableITest test;
+    ASSERT_TRUE(test.TestSetEnabled());
 }
 
-void ExecutableI::SetTimingSignalAddress(uint32 * const timingSignalAddressIn) {
-    timingSignalAddress = timingSignalAddressIn;
+TEST(BareMetal_L5GAMs_ExecutableIGTest,TestIsEnabled) {
+    ExecutableITest test;
+    ASSERT_TRUE(test.TestIsEnabled());
 }
 
-void ExecutableI::SetEnabled(const bool isEnabled) {
-    enabled = isEnabled;
+TEST(BareMetal_L5GAMs_ExecutableIGTest,TestGetTimingSignalAddress) {
+    ExecutableITest test;
+    ASSERT_TRUE(test.TestGetTimingSignalAddress());
 }
 
-bool ExecutableI::IsEnabled() const {
-    return enabled;
+TEST(BareMetal_L5GAMs_ExecutableIGTest,TestSetTimingSignalAddress) {
+    ExecutableITest test;
+    ASSERT_TRUE(test.TestSetTimingSignalAddress());
 }
 
-
-}

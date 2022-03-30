@@ -62,6 +62,18 @@ public:
     virtual bool Execute() = 0;
 
     /**
+     * @brief If NOT set the Execute method should not be called by a user of this class (e.g. the GAMSchedulerI).
+     * @param[in] isEnabled true if the Execute method should be called.
+     */
+    void SetEnabled(bool isEnabled);
+
+    /**
+     * @brief Returns true if the ExecutableI is enabled.
+     * @return true if the ExecutableI is enabled.
+     */
+    bool IsEnabled() const;
+
+    /**
      * @brief Sets the address in memory where the signal which contains the last execution time of this component is stored.
      * @details The last execution time units are micro-seconds and are measured w.r.t. to the start of a cycle.
      * @param[in] timingSignalAddressIn the address of the timing signal.
@@ -78,6 +90,11 @@ public:
 private:
 
     uint32 * timingSignalAddress;
+
+    /**
+     * True if the executable is enabled.
+     */
+    bool enabled;
 };
 
 
