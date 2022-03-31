@@ -21,7 +21,7 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-:ifdef XILINX_ULTRASCALE
+#ifdef XILINX_ULTRASCALE
     #include "HighResolutionTimerXil.h"
     #define CUSTOMIZED_HIGHRESOLUTIONTIMER_HEADER
 #endif

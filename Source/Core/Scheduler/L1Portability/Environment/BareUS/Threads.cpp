@@ -31,8 +31,7 @@
 
 #include "Threads.h"
 #include "ThreadsDatabase.h"
-#include "Scheduler.h"
-#include "Task.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,13 +47,7 @@ namespace Threads {
  */
 static ThreadIdentifier SystemThreadFunction(ThreadInformation * const threadInfo) {
     ThreadIdentifier id = 0u;
-    if (threadInfo != NULL) {
-        //Start the user thread
-        Task *newTask= new Task();
-        newTask->SetThreadInformation(*threadInfo);
-
-        id=Scheduler::Get()->AddTask(newTask);
-    }
+ 
     return id;
 }
 
@@ -86,7 +79,7 @@ uint32 GetCPUs(const ThreadIdentifier &threadId) {
 }
 
 ThreadIdentifier Id() {
-    return Scheduler::Get()->Id(Scheduler::Get()->GetCurrentTask());
+    return 0;
 }
 
 /*
@@ -113,19 +106,14 @@ PriorityClassType GetPriorityClass(const ThreadIdentifier &threadId) {
  */
 bool IsAlive(const ThreadIdentifier &threadId) {
 
-    return Scheduler::Get()->IsAlive(threadId);
+    return false;
 }
 
 /*
  * Note that a thread cannot be deleted if it locks a mutex semaphore.
  */
 bool Kill(const ThreadIdentifier &threadId) {
-    Task* x = Scheduler::Get()->GetTask(threadId);
-    bool ret = (x != NULL);
-    if (ret) {
-        Scheduler::Get()->RemoveTask(x);
-    }
-    return ret;
+    return false;
 }
 
 /*lint -e{715} the exceptionHandlerBehaviour implementation has not been agreed yet.*/
@@ -136,14 +124,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                              const uint32 exceptionHandlerBehaviour,
                              ProcessorType runOnCPUs) {
 
-    ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
-    ThreadIdentifier id = InvalidThreadIdentifier;
-    if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
-        //CStaticAssertErrorCondition(InitialisationError,"Threads::ThreadsBeginThread (%s) threadInitialisationInterfaceConstructor returns NULL", name);
-        id=SystemThreadFunction(threadInfo);
-    }
-
-    return id;
+    return 0;
 }
 
 void EndThread() {
@@ -159,7 +140,7 @@ ThreadIdentifier FindByIndex(const uint32 &n) {
 }
 
 uint32 NumberOfThreads() {
-    return Scheduler::Get()->NumberOfThreads();
+    return 0u;
 
 }
 
