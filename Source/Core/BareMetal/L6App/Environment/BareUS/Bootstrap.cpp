@@ -32,7 +32,6 @@
 #include "AdvancedErrorManagement.h"
 #include "Bootstrap.h"
 #include "ConfigurationDatabase.h"
-#include "marte2config.h"
 #include "StandardParser.h"
 
 extern void MARTe2HardwareInitialise();
