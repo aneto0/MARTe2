@@ -149,11 +149,6 @@ bool GetThreadInfoCopy(ThreadInformation &copy,
     return false;
 }
 
-uint32 GetThreadNumber(const ThreadIdentifier &threadId) {
-    //TODO: Verify here if 1 is a suitable constant
-    return 1u;
-}
-
 /*
  bool GetThreadInfoCopy(ThreadInformation &copy,
  const ThreadIdentifier &threadId) {

@@ -1298,17 +1298,18 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     ReferenceT<HttpService> service = god->Find("Application.HttpServerTest");
-    ret = service.IsValid();
+    if (ret) {
+        ret = service.IsValid();
+    }
     if (ret) {
         ret = service->Start();
     }
-
+    StreamString readOut;
     if (ret) {
-        StreamString readOut;
-        ret = !test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 1u);
+        ret = !test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 0u);
     }
-    if (ret) {
-        ret = service->Stop();
+    if (service.IsValid()) {
+        (void) service->Stop();
     }
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;

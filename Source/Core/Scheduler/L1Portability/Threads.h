@@ -169,14 +169,6 @@ DLL_API void EndThread();
 DLL_API ThreadIdentifier Id(void);
 
 /**
-* @brief Gets the current thread number. Unlike Id(), which returns a type which may be an handle, 
-*        uses internals to get an integer number as identifier.
-* @param[in] threadId The internal identifier (handle) of the thread whose number is asked for
-* @return The current thread number
-*/
-DLL_API uint32 GetThreadNumber(const ThreadIdentifier &threadId);
-
-/**
  * @brief Asynchronously kill a thread.
  * @details Allows to force the termination of a thread.
  * @param[in] threadId the id of the thread to kill.
