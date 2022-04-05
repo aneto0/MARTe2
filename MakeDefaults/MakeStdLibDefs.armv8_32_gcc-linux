@@ -23,6 +23,9 @@
 # $Id$
 #
 #############################################################
+MARTe2_TEST_ENVIRONMENT?=Portable
+COMPILER_PREFIX?=arm-linux-gnueabihf-
+
 ifdef MARTe2_DIR
     include $(MARTe2_DIR)/MakeDefaults/MakeStdLibDefs.gcc
 else
@@ -32,9 +35,7 @@ endif
 ENVIRONMENT=Linux
 ARCHITECTURE=armv8_gcc
 
-COMPILER_PREFIX?=arm-linux-gnueabihf-
-MARTe2_TEST_ENVIRONMENT?=Portable
 LFLAGS = -Wl,--no-as-needed -fPIC 
-CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value -Wno-shift-count-overflow -Wno-narrowing
+CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value -Wno-shift-count-overflow -Wno-narrowing -std=c++11
 LIBRARIES +=  -lm -lpthread -lrt -ldl
 

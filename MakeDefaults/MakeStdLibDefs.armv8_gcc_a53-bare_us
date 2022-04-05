@@ -23,6 +23,9 @@
 # $Id$
 #
 #############################################################
+MARTe2_TEST_ENVIRONMENT?=Portable
+COMPILER_PREFIX=aarch64-none-elf-
+
 ifdef MARTe2_DIR
     include $(MARTe2_DIR)/MakeDefaults/MakeStdLibDefs.gcc
 else
@@ -33,8 +36,6 @@ ENVIRONMENT=BareUS
 ARCHITECTURE=armv8_gcc
 MARTe2_LINK_MODE?=Static
 ENV_ARCH_CUSTOMIZATION=XILINX_ULTRASCALE
-
-MARTe2_TEST_ENVIRONMENT?=Portable
 
 MARTe2_READPARAMETERS_LOADER?=\"RealTimeLoader\"
 MARTe2_READPARAMETERS_FIRSTSTATE?=\"Idle\"
@@ -48,8 +49,6 @@ INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src
 OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o)
 OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o) 
 OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o) 
-
-COMPILER_PREFIX=aarch64-none-elf-
 
 CPUSPECIFICFLAGS = -mcpu=cortex-a53 -mtune=cortex-a53 -march=armv8-a -mfix-cortex-a53-835769 -mfix-cortex-a53-843419
 ADDITIONALFLAGS = -frtti
