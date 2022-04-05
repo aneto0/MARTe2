@@ -114,6 +114,9 @@ endif
 #when working at the subdirectory level
 clean_wipe_old:
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)1" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)2" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)3" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DLLEXT)" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(EXEEXT)" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(LIBEXT)" | xargs rm -f)
@@ -127,6 +130,9 @@ clean_wipe_old:
 clean::  $(SUBPROJC) $(SUBPROJTC) $(SUBPROJHC) 
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)1
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)2
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)3
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)
 	@rm -f $(BUILD_DIR)/*$(EXEEXT)
 	@rm -f $(BUILD_DIR)/*$(LIBEXT)

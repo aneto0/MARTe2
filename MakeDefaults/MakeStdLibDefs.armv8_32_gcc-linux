@@ -32,10 +32,10 @@ endif
 ENVIRONMENT=Linux
 ARCHITECTURE=armv8_gcc
 
-COMPILERPREFIX?=aarch64-linux-gnu-
+COMPILERPREFIX?=arm-linux-gnueabihf-
 
 MARTe2_TEST_ENVIRONMENT?=Portable
 LFLAGS = -Wl,--no-as-needed -fPIC 
-CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value
+CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value -Wno-shift-count-overflow
 LIBRARIES +=  -lm -lpthread -lrt -ldl
 

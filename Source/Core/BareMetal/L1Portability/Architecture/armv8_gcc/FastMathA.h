@@ -43,7 +43,7 @@
 namespace MARTe {
 
 namespace FastMath {
-
+#ifdef __LP64__
 #ifdef __SIZEOF_INT128__
 /** 128 Bit unsigned integer. */
 typedef unsigned __int128 uint128;
@@ -54,6 +54,10 @@ typedef __int128 int128;
 #else
 typedef __int128_t int128;
 typedef __uint128_t uint128;
+#endif
+#else //not supported in 32 bit architectures.
+typedef int64 int128;
+typedef uint64 uint128;
 #endif
 
 inline float Sin(const float angle) {
