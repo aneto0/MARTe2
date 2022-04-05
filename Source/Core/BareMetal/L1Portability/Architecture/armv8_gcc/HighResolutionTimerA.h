@@ -45,8 +45,6 @@ namespace MARTe{
     namespace HighResolutionTimer {
         
         //We keep this empty as all the implementation stays in the HighResolutionTimer.h from Environment
-
     }
-
 }
 #endif /* HIGHRESOLUTIONTIMERA_H_ */
