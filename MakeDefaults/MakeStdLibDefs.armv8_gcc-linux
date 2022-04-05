@@ -30,7 +30,7 @@ else
 endif
 
 ENVIRONMENT=Linux
-ARCHITECTURE=armv8_gcc-linux
+ARCHITECTURE=armv8_gcc
 MARTe2_TEST_ENVIRONMENT?=GTest
 LFLAGS = -Wl,--no-as-needed -fPIC 
 CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value
