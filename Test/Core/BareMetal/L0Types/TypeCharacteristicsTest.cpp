@@ -85,7 +85,7 @@ bool TypeCharacteristicsTest::TestMaxValueInt8BZ2(){
 }
 
 bool TypeCharacteristicsTest::TestMaxValueUInt32(){
-    uint32 maxUInt = 4294967295u; //(2^32)-1
+    uint32 maxUInt = 4294967295; //(2^32)-1
     retVal = (TypeCharacteristics<uint32>::MaxValue() == maxUInt);
     return retVal;
 }

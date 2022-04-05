@@ -365,7 +365,7 @@ TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt16_Nmax) {
 
 TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt32_Nmax) {
     FastMathTest test;
-    ASSERT_TRUE(test.TestCompleteMultiply<int32>(-2147483648U,-2147483648U,1073741824U,0U));
+    ASSERT_TRUE(test.TestCompleteMultiply<int32>(-2147483648L,-2147483648L,1073741824L,0L));
 }
 
 TEST(BareMetal_L1Portability_FastMathGTest,TestCompleteMultiplyInt64_Nmax) {
