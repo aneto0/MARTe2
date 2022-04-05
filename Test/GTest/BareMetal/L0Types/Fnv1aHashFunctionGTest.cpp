@@ -49,15 +49,15 @@ TEST(BareMetal_L0Types_Fnv1aHashFunctionGTest,TestConstructor) {
 
 TEST(BareMetal_L0Types_Fnv1aHashFunctionGTest,TestCompute) {
     Fnv1aHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 0, 4153443133));
+    ASSERT_TRUE(test.TestCompute("ciao", 0, 4153443133u));
 }
 
 TEST(BareMetal_L0Types_Fnv1aHashFunctionGTest,TestComputeSize) {
     Fnv1aHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 4, 4153443133));
+    ASSERT_TRUE(test.TestCompute("ciao", 4, 4153443133u));
 }
 
 TEST(BareMetal_L0Types_Fnv1aHashFunctionGTest,TestComputeLessSize) {
     Fnv1aHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 3, 3783764352));
+    ASSERT_TRUE(test.TestCompute("ciao", 3, 3783764352u));
 }

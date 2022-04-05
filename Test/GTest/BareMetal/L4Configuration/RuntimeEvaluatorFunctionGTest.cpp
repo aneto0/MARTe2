@@ -612,12 +612,12 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestEqDiffTypesExec
 
     ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsEq[] = {2147483647, 2147483647};
+    int64 inputsEq[] = {2147483647U, 2147483647U};
 
     test.SetInputs(context, inputsEq);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 
-    int64 inputsNEq[] = {-2147483648, 2147483647};
+    int64 inputsNEq[] = {-2147483648U, 2147483647U};
 
     test.SetInputs(context, inputsNEq);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
@@ -636,7 +636,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestEqDiffTypesExec
 
     ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputs[] = {2147483647, 2147483650};
+    int64 inputs[] = {2147483647U, 2147483650U};
 
     test.SetInputs(context, inputs);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0, ErrorManagement::OutOfRange));
@@ -717,12 +717,12 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNeqDiffTypesExe
 
     ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsEq[] = {2147483647, 2147483647};
+    int64 inputsEq[] = {2147483647U, 2147483647U};
 
     test.SetInputs(context, inputsEq);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 
-    int64 inputsNEq[] = {-2147483648, 2147483647};
+    int64 inputsNEq[] = {-2147483648U, 2147483647U};
 
     test.SetInputs(context, inputsNEq);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
@@ -741,7 +741,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNeqDiffTypesExe
 
     ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputs[] = {2147483647, 2147483650};
+    int64 inputs[] = {2147483647U, 2147483650U};
 
     test.SetInputs(context, inputs);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0, ErrorManagement::OutOfRange));
@@ -827,17 +827,17 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGtDiffTypesExec
 
     ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsGreater[] = {2147483647, 2147483646};
+    int64 inputsGreater[] = {2147483647U, 2147483646U};
 
     test.SetInputs(context, inputsGreater);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 
-    int64 inputsEq[] = {2147483647, 2147483647};
+    int64 inputsEq[] = {2147483647U, 2147483647U};
 
     test.SetInputs(context, inputsEq);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 
-    int64 inputsLower[] = {2147483646, 2147483647};
+    int64 inputsLower[] = {2147483646U, 2147483647U};
 
     test.SetInputs(context, inputsLower);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
@@ -856,7 +856,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGtDiffTypesExec
 
     ASSERT_TRUE(test.PrepareContext(context1, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsLower[] = {2147483647, 2147483648};
+    int64 inputsLower[] = {2147483647U, 2147483648U};
 
     test.SetInputs(context1, inputsLower);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context1, 0, ErrorManagement::OutOfRange));
@@ -867,7 +867,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGtDiffTypesExec
 
     ASSERT_TRUE(test.PrepareContext(context2, UnsignedInteger32Bit, SignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsGreater[] = {2147483648, 2147483647};
+    int64 inputsGreater[] = {2147483648U, 2147483647U};
 
     test.SetInputs(context2, inputsGreater);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context2, 0, ErrorManagement::OutOfRange));
@@ -953,17 +953,17 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLtDiffTypesExec
 
     ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsGreater[] = {2147483647, 2147483646};
+    int64 inputsGreater[] = {2147483647U, 2147483646U};
 
     test.SetInputs(context, inputsGreater);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 
-    int64 inputsEq[] = {2147483647, 2147483647};
+    int64 inputsEq[] = {2147483647U, 2147483647U};
 
     test.SetInputs(context, inputsEq);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 
-    int64 inputsLower[] = {2147483646, 2147483647};
+    int64 inputsLower[] = {2147483646U, 2147483647U};
 
     test.SetInputs(context, inputsLower);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
@@ -982,7 +982,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLtDiffTypesExec
 
     ASSERT_TRUE(test.PrepareContext(context1, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsLower[] = {2147483647, 2147483648};
+    int64 inputsLower[] = {2147483647U, 2147483648U};
 
     test.SetInputs(context1, inputsLower);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context1, 0, ErrorManagement::OutOfRange));
@@ -993,7 +993,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLtDiffTypesExec
 
     ASSERT_TRUE(test.PrepareContext(context2, UnsignedInteger32Bit, SignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsGreater[] = {2147483648, 2147483647};
+    int64 inputsGreater[] = {2147483648U, 2147483647U};
 
     test.SetInputs(context2, inputsGreater);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context2, 0, ErrorManagement::OutOfRange));
@@ -1079,17 +1079,17 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGteDiffTypesExe
 
     ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsGreater[] = {2147483647, 2147483646};
+    int64 inputsGreater[] = {2147483647U, 2147483646U};
 
     test.SetInputs(context, inputsGreater);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 
-    int64 inputsEq[] = {2147483647, 2147483647};
+    int64 inputsEq[] = {2147483647U, 2147483647U};
 
     test.SetInputs(context, inputsEq);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 
-    int64 inputsLower[] = {2147483646, 2147483647};
+    int64 inputsLower[] = {2147483646U, 2147483647U};
 
     test.SetInputs(context, inputsLower);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
@@ -1108,7 +1108,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGteDiffTypesExe
 
     ASSERT_TRUE(test.PrepareContext(context1, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsLower[] = {2147483647, 2147483648};
+    int64 inputsLower[] = {2147483647U, 2147483648U};
 
     test.SetInputs(context1, inputsLower);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context1, 0, ErrorManagement::OutOfRange));
@@ -1119,7 +1119,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestGteDiffTypesExe
 
     ASSERT_TRUE(test.PrepareContext(context2, UnsignedInteger32Bit, SignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsGreater[] = {2147483648, 2147483647};
+    int64 inputsGreater[] = {2147483648U, 2147483647U};
 
     test.SetInputs(context2, inputsGreater);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context2, 0, ErrorManagement::OutOfRange));
@@ -1205,17 +1205,17 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLteDiffTypesExe
 
     ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsGreater[] = {2147483647, 2147483646};
+    int64 inputsGreater[] = {2147483647U, 2147483646U};
 
     test.SetInputs(context, inputsGreater);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 
-    int64 inputsEq[] = {2147483647, 2147483647};
+    int64 inputsEq[] = {2147483647U, 2147483647U};
 
     test.SetInputs(context, inputsEq);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
 
-    int64 inputsLower[] = {2147483646, 2147483647};
+    int64 inputsLower[] = {2147483646U, 2147483647U};
 
     test.SetInputs(context, inputsLower);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
@@ -1234,7 +1234,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLteDiffTypesExe
 
     ASSERT_TRUE(test.PrepareContext(context1, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsLower[] = {2147483647, 2147483648};
+    int64 inputsLower[] = {2147483647U, 2147483648U};
 
     test.SetInputs(context1, inputsLower);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context1, 0, ErrorManagement::OutOfRange));
@@ -1245,7 +1245,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestLteDiffTypesExe
 
     ASSERT_TRUE(test.PrepareContext(context2, UnsignedInteger32Bit, SignedInteger32Bit, UnsignedInteger8Bit));
 
-    int64 inputsGreater[] = {2147483648, 2147483647};
+    int64 inputsGreater[] = {2147483648U, 2147483647U};
 
     test.SetInputs(context2, inputsGreater);
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context2, 0, ErrorManagement::OutOfRange));
@@ -1485,14 +1485,14 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSAddExecution_S
 
     StreamString rpnCode=
             "CONST int8 -1\n"
-            "CONST int32 -2147483647\n"
+            "CONST int32 -2147483647U\n"
             "ADD\n"
             "WRITE RES1\n";
 
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648U));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSAddExecution_FailedUnderflow) {
@@ -1507,7 +1507,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSAddExecution_F
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647, ErrorManagement::Underflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647U, ErrorManagement::Underflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSAddExecution_FailedPreviousError) {
@@ -1524,7 +1524,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSAddExecution_F
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647, ErrorManagement::Underflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647U, ErrorManagement::Underflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_Successful) {
@@ -1539,7 +1539,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647U));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_FailedOverflow) {
@@ -1547,14 +1547,14 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_
 
     StreamString rpnCode=
             "CONST uint32 1\n"
-            "CONST int32 2147483647\n"
+            "CONST int32 2147483647U\n"
             "ADD\n"
             "WRITE RES1\n";
 
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648, ErrorManagement::Overflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648U, ErrorManagement::Overflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_FailedPreviousError) {
@@ -1571,7 +1571,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648, ErrorManagement::Overflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648U, ErrorManagement::Overflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSAddExecution_FailedSaturated) {
@@ -1673,7 +1673,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_S
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648U));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_FailedUnderflow) {
@@ -1688,7 +1688,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_F
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647, ErrorManagement::Underflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647U, ErrorManagement::Underflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_FailedPreviousError) {
@@ -1697,7 +1697,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_F
     StreamString rpnCode=
             "CONST int8 -10\n"
             "CONST int8 -2\n"
-            "CONST int32 2147483647\n"
+            "CONST int32 2147483647U\n"
             "SUB\n"
             "SUB\n"
             "WRITE RES1\n";
@@ -1705,7 +1705,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSubExecution_F
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647, ErrorManagement::Underflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647U, ErrorManagement::Underflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_Successful) {
@@ -1720,7 +1720,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483647U));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_FailedOverflow) {
@@ -1735,7 +1735,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648, ErrorManagement::Overflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648U, ErrorManagement::Overflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_FailedPreviousError) {
@@ -1752,7 +1752,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648, ErrorManagement::Overflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648U, ErrorManagement::Overflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSSubExecution_FailedSaturated) {
@@ -1860,7 +1860,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSMulExecution_S
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648U));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSMulExecution_FailedUnderflow) {
@@ -1875,7 +1875,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSMulExecution_F
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483646, ErrorManagement::Underflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483646U, ErrorManagement::Underflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSMulExecution_FailedPreviousError) {
@@ -1892,7 +1892,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSMulExecution_F
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483646, ErrorManagement::Underflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 2147483646U, ErrorManagement::Underflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_Successful) {
@@ -1907,7 +1907,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483648U));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_FailedOverflow) {
@@ -1922,7 +1922,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483646, ErrorManagement::Overflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483646U, ErrorManagement::Overflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_FailedPreviousError) {
@@ -1939,7 +1939,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483646, ErrorManagement::Overflow));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -2147483646U, ErrorManagement::Overflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestSSMulExecution_FailedSaturated) {
@@ -2195,7 +2195,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNegExecution_Up
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger64Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int64>(context, -4294967295));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int64>(context, -4294967295U));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNegExecution_FailedUnderflow) {

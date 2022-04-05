@@ -40,7 +40,7 @@ OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o)
 OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o) 
 OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o) 
 
-COMPILERPREFIX=aarch64-none-elf-
+COMPILER_PREFIX?=aarch64-none-elf-
 
 #For RPi3 in QEMU
 #CPUSPECIFICFLAGS = -mcpu=cortex-a53 -mlittle-endian -mcmodel=small

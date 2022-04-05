@@ -693,7 +693,7 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
     
     pushVarUint8  = 255;
     pushVarUint16 = 65535;
-    pushVarUint32 = 4294967295;
+    pushVarUint32 = 4294967295u;
     pushVarUint64 = 18446744073709551615ul;
     
     evaluator.Push(pushVarUint8);
