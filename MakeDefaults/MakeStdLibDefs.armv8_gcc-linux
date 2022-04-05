@@ -23,9 +23,16 @@
 # $Id$
 #
 #############################################################
-include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+ifdef MARTe2_DIR
+    include $(MARTe2_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+else
+    include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+endif
 
 ENVIRONMENT=Linux
-ARCHITECTURE=armv8-linux
+ARCHITECTURE=armv8_gcc-linux
+MARTe2_TEST_ENVIRONMENT?=GTest
+LFLAGS = -Wl,--no-as-needed -fPIC 
+CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value
 LIBRARIES +=  -lm -lpthread -lrt -ldl
-CFLAGS += -fpermissive
+
