@@ -151,6 +151,7 @@ bool PrinterI::PrintStructuredDataI(StructuredDataI &sdi, const bool collapseArr
                     }
                     else {
                         if (PrinterIIsNodeAnArray(nodeName)) {
+                            nodeNameNoArray = "";
                             ok = PrinterIGetNodeArrayName(nodeName, nodeNameNoArray);
                             if (ok) {
                                 ok = sdi.MoveToAncestor(1u);
