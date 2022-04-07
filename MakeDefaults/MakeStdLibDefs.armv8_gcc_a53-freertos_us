@@ -32,10 +32,8 @@ else
     include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
 endif
 
-#export TARGET=armv8_gcc-freertos-a53-us
-
 ENVIRONMENT=FreeRTOS
-ARCHITECTURE=armv8_gcc
+ARCHITECTURE=arm_gcc
 MARTe2_LINK_MODE?=Static
 ENV_ARCH_CUSTOMIZATION=XILINX_ULTRASCALE
 MARTe2_TEST_MODE=MARTe2_REDUCED_TESTS

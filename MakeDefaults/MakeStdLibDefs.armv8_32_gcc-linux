@@ -33,7 +33,7 @@ else
 endif
 
 ENVIRONMENT=Linux
-ARCHITECTURE=armv8_gcc
+ARCHITECTURE=arm_gcc
 
 LFLAGS = -Wl,--no-as-needed -fPIC 
 CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value -Wno-shift-count-overflow -Wno-narrowing -std=c++11
