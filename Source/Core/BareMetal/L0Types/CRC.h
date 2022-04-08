@@ -111,7 +111,7 @@ CRC<T>::CRC() {
     mask = mask << ((sizeof(T) * 8u) - 1u); //0x80 for uint8, 0x8000 for uint16 ...
     maskInv = 0xFFFFFFFFu;
     if (sizeof(T) < 4u) {
-        maskInv = static_cast<uint32>(1ul << (sizeof(T) * 8u));
+        maskInv = static_cast<uint32>(1ULL << (sizeof(T) * 8u));
         maskInv -= 1u;
     }
     shift = sizeof(T) - 1u;

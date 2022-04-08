@@ -38,7 +38,7 @@ ARCHITECTURE=arm_gcc
 
 #CPU_FLAGS allows cross-compilation for a given target, e.g. export CPU_FLAGS="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
 
-LFLAGS = -Wl,--no-as-needed -fPIC 
+LFLAGS = -Wl,--no-as-needed -fPIC $(CPU_FLAGS)
 CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value -Wno-narrowing -Wno-shift-count-overflow -std=c++11 $(CPU_FLAGS)
 LIBRARIES +=  -lm -lpthread -lrt -ldl
 

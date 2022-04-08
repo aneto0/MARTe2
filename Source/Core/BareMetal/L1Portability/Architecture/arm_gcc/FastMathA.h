@@ -94,7 +94,13 @@ inline uint32 CompleteMultiply(uint32 x1,uint32 x2,uint32 &high){
 }
 
 inline uint64 CompleteMultiply(uint64 x1,uint64 x2,uint64 &high){
+#ifdef __LP64__
 	return UMulT<uint64,uint128>(x1,x2,high);
+#else
+#pragma	message "128 bits not supported in target platform" 
+	high = 0;
+	return x1 * x2;
+#endif
 }
 
 inline int8  CompleteMultiply(int8  x1,int8  x2,int8  &high){
@@ -110,7 +116,14 @@ inline int32 CompleteMultiply(int32 x1,int32 x2,int32 &high){
 }
 
 inline int64 CompleteMultiply(int64 x1,int64 x2,int64 &high){
+#ifdef __LP64__
 	return UMulT<int64,int128>(x1,x2,high);
+#else
+	#pragma	message "128 bits not supported in target platform"
+	high = 0;
+	return x1 * x2;
+#endif
+	
 }
 
 
