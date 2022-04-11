@@ -656,6 +656,14 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
                            "READ F\n"
                            "READ G\n"
                            "READ H\n"
+                           "READ I\n"
+                           "READ J\n"
+                           "READ K\n"
+                           "READ L\n"
+                           "ADD\n"
+                           "ADD\n"
+                           "ADD\n"
+                           "ADD\n"
                            "ADD\n"
                            "ADD\n"
                            "ADD\n"
@@ -679,6 +687,11 @@ bool RuntimeEvaluatorTest::TestPushPopPeek() {
         ret = evaluator.SetInputVariableType("F", Float32Bit);
         ret = evaluator.SetInputVariableType("G", Float32Bit);
         ret = evaluator.SetInputVariableType("H", Float32Bit);
+        ret = evaluator.SetInputVariableType("H", Float32Bit);
+        ret = evaluator.SetInputVariableType("I", Float32Bit);
+        ret = evaluator.SetInputVariableType("J", Float32Bit);
+        ret = evaluator.SetInputVariableType("K", Float32Bit);
+        ret = evaluator.SetInputVariableType("L", Float32Bit);
     }
     
     if (ret) {
