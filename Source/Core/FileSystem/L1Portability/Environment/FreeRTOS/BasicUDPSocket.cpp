@@ -175,12 +175,23 @@ bool BasicUDPSocket::Write(const char8* const input,
 }
 
 bool BasicUDPSocket::Open() {
-#ifdef LWIP_ENABLED
+
+bool retVal = false;
+
+#if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
     connectionSocket = (socket(PF_INET, SOCK_DGRAM, 0));
-    return (connectionSocket >= 0);
+    retVal = (connectionSocket >= 0);
+    if(!retVal) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Failure in UDP socket open()");
+    }
 #endif
+
+#if defined(LWIP_RAW_ENABLED) && !defined(LWIP_ENABLED)
     connectionSocket.UDPHandle = udp_new();
-    return (connectionSocket.UDPHandle != NULL);
+    retVal = (connectionSocket.UDPHandle != NULL);
+#endif
+
+return retVal;
 }
 
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
@@ -190,11 +201,16 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     if (IsValid()) {
         InternetHost server;
         server.SetPort(port);
-        
+
+        struct sockaddr* internetHost = reinterpret_cast<struct sockaddr*>(server.GetInternetHost());
+        socklen_t addrSize = static_cast<socklen_t>(server.Size());
+
         /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
-        errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
-        if(errorCode != 0) {
+        err_t bindErr = bind(connectionSocket, internetHost, addrSize);
+        errorCode = (bindErr == ERR_OK);
+        if(bindErr != ERR_OK) {
             REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Cannot bind");
+            perror("BIND ERROR");            
         }
     }
     else {

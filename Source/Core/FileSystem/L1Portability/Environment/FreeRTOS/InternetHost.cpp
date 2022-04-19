@@ -195,7 +195,7 @@ InternetHost::InternetHost(const uint16 port,
 
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     if(!SetAddress(addr)) {
-        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "InternetHost::InternetHost() SetAddress() failed.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "InternetHost::InternetHost::SetAddress() failed.");
     }
 #endif
 }
@@ -249,8 +249,14 @@ void InternetHost::SetPort(const uint16 port) {
 
 bool InternetHost::SetAddress(const char8 * const addr) {
     bool ret = (addr != NULL);
+
+    if(!ret) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "InternetHost::SetAddress() NULL address is used");
+    }
 #if defined(LWIP_ENABLED) && !defined(LWIP_RAW_ENABLED)
-    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_addr.s_addr = htonl(INADDR_ANY);
+    address.sin_family = AF_INET;
+
     if (ret) {
         uint32 iaddr = inet_addr(const_cast<char8 *>(addr));
 
