@@ -362,8 +362,7 @@ ErrorManagement::ErrorType Loader::PostInit() {
                         reloadedConfigurationMsg = msg;
                     }
                     else {
-                        err.parametersError = true;
-                        REPORT_ERROR(err, "Message %s is not supported.", msgName.Buffer());
+                        REPORT_ERROR(ErrorManagement::Information, "Using custom Message with name %s.", msgName.Buffer());
                     }
                 }
                 else {

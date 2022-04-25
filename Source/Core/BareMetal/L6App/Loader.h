@@ -57,7 +57,7 @@ namespace MARTe {
  *    +Parameters = {
  *        Class = ConfigurationDatabase
  *        ReloadLast = true //Optional. Reload old configuration in case of (re)configuration failure? Default = true. If true the FailedConfiguration message will not to be sent.
- *        KeepAlive = "MyObj1 MyObj2 MyObj3" //Optional. Array with name of the objects (at the root level) that shall not be purged and will always (i.e. even in case of error) be readded to the ObjectRegistryDatabase after a reconfiguration is triggered.
+ *        KeepAlive = { "MyObj1" "MyObj2" "MyObj3" } //Optional. Array with name of the objects (at the root level) that shall not be purged and will always (i.e. even in case of error) be readded to the ObjectRegistryDatabase after a reconfiguration is triggered.
  *    }
  *    +Messages = {
  *      Class = ReferenceContainer
@@ -204,12 +204,12 @@ protected:
      */
     ReferenceT<ConfigurationDatabase> postInitParameters;
 
-private:
-
     /**
      * Helper function to send message.
      */
     ErrorManagement::ErrorType SendConfigurationMessage(ReferenceT<Message> msg);
+
+private:
 
     /**
      * @brief The destination of the message to be sent at Start.
