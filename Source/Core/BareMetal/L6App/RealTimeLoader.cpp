@@ -46,6 +46,7 @@ namespace MARTe {
 
 RealTimeLoader::RealTimeLoader() :
         Loader() {
+            firstLoad = true; 
 }
 
 RealTimeLoader::~RealTimeLoader() {
@@ -81,6 +82,33 @@ ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data, Stre
         ret = ErrorManagement::ParametersError;
     }
 
+    return ret;
+}
+
+ErrorManagement::ErrorType RealTimeLoader::Reconfigure(StructuredDataI &configuration, StreamString &errStream) {
+    ErrorManagement::ErrorType ret = Loader::Reconfigure(configuration, errStream);
+    if(!firstLoad){
+        if (ret.ErrorsCleared()) {
+            ObjectRegistryDatabase *objDb = ObjectRegistryDatabase::Instance();
+            uint32 nOfObjs = objDb->Size();
+            uint32 found = 0u;
+            //start all the rtapp
+            for (uint32 n = 0u; (ret) && (n < nOfObjs); n++) {
+                ReferenceT<RealTimeApplication> rtApp = objDb->Get(n);
+                if (rtApp.IsValid()) {
+                    ret.initialisationError = !rtApps.Insert(rtApp);
+                    if (ret.ErrorsCleared()) {
+                        ret.initialisationError = !rtApp->ConfigureApplication();
+                        if (!ret) {
+                            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to Configure RealTimeApplication");
+                        }
+                    }
+                    found++;
+                }
+            }
+        }
+    }
+    firstLoad = false;
     return ret;
 }
 

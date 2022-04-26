@@ -72,6 +72,8 @@ public:
      */
     virtual ErrorManagement::ErrorType Configure(StructuredDataI &data, StreamI &configuration);
 
+    virtual ErrorManagement::ErrorType Reconfigure(StructuredDataI &configuration, StreamString &errStream);
+
     /**
      * @brief Start the RealTimeApplication.
      * @details If FirstState was set, calls RealTimeApplication::StartNextStateExecution with this state. Otherwise Loader::Start is called.
@@ -96,6 +98,11 @@ private:
      * @brief The RealTimeApplication.
      */
     ReferenceContainer rtApps;
+
+    /**
+     * @brief firstLoading flag
+     */
+    bool firstLoad;
 };
 
 }

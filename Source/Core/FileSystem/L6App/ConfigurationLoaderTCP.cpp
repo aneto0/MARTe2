@@ -157,7 +157,7 @@ ErrorManagement::ErrorType ConfigurationLoaderTCP::Execute(ExecutionInfo & info)
             }
             delete [] buffer;
             err.fatalError = newCfg.Seek(0LLU); 
-            ErrorManagement::ErrorType ret = Reconfigure(newCfg, errStream);
+            ErrorManagement::ErrorType ret = Loader::Reconfigure(newCfg, errStream);
             StreamString retStr;
             if (ret.ErrorsCleared()) {
                 (void) retStr.Printf("%s\n", "OK");

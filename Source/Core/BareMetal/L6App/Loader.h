@@ -128,7 +128,7 @@ public:
      * @param[out] errStream any errors that may be raised, including parser errors.
      * @return ErrorManagement::NoError if the configuration is successfully parsed and the ObjectRegistryDatabase::Initialise is successful.
      */
-    ErrorManagement::ErrorType Reconfigure(StreamI &configuration, StreamString &errStream);
+    virtual ErrorManagement::ErrorType Reconfigure(StreamI &configuration, StreamString &errStream);
 
     /**
      * @brief Allows to reconfigure an application.
@@ -139,7 +139,7 @@ public:
      * @param[out] errStream any errors that may be raised.
      * @return ErrorManagement::NoError if the configuration is successfully parsed and the ObjectRegistryDatabase::Initialise is successful.
      */
-    ErrorManagement::ErrorType Reconfigure(StructuredDataI &configuration, StreamString &errStream);
+    virtual ErrorManagement::ErrorType Reconfigure(StructuredDataI &configuration, StreamString &errStream);
 
     /**
      * @brief Validates the configuration against a given hash. The Loader will compute the hash of the input \a configuration using the provided ConfigurationLoaderHashI - see class description. 
@@ -148,7 +148,7 @@ public:
      * @param[in] hash independently computed hash.
      * @return ErrorManagement::NoError if the hash matches the hash computed by the ConfigurationLoaderHashI, the configuration is successfully parsed and the ObjectRegistryDatabase::Initialise is successful.
      */
-    ErrorManagement::ErrorType Reconfigure(StreamString &configuration, StreamString &errStream, uint32 hash);
+    virtual ErrorManagement::ErrorType Reconfigure(StreamString &configuration, StreamString &errStream, uint32 hash);
 
     /**
      * @brief Returns a unique seed that can be used to hash a configuration request.
