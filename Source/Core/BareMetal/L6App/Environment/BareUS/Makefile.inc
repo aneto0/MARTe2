@@ -46,8 +46,6 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L1Portability
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L3Streams
 INCLUDES += -I./HAL
 
-#LIBRARIES_STATIC += ./HAL/CircleHAL.o
-
 all: $(OBJS) $(CPPS) $(SUBPROJ) $(SUBPROJH) \
      $(BUILD_DIR)/L6App$(LIBEXT)
 	echo  $(OBJS) $(CPPS)
