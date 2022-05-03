@@ -29,17 +29,105 @@ include Makefile.inc
 LIBRARIES += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT) 
 LIBRARIES += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
 LIBRARIES += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT) 
-
-ifndef MARTe2_TEST_LINK_FILTER
 LIBRARIES += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
 LIBRARIES += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
 LIBRARIES += ../../Build/$(TARGET)/Core/FileSystem/MARTeCoreFTest$(LIBEXT)
-LIBRARIES += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
-LIBRARIES += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
-LIBRARIES += ../../Build/$(TARGET)/GTest/FileSystem/MARTeFGTest$(LIBEXT)
-else
-#Look for all the statically linked files matching the filter set by MARTe2_TEST_LINK_FILTER
-MARTe2_TEST_LINK_FILTER_TOKENS := $(subst :, ,$(MARTe2_TEST_LINK_FILTER))
-LIBRARIES += $(foreach TOKEN,$(MARTe2_TEST_LINK_FILTER_TOKENS),$(shell find $(ROOT_DIR)/Build/$(TARGET) -type f \( -iname $(TOKEN)'*Test.a' ! -iname MARTeCoreBTest$(LIBEXT) ! -iname MARTeCoreSTest$(LIBEXT) ! -iname MARTeCoreFTest$(LIBEXT) ! -iname MARTeBGTest$(LIBEXT) ! -iname MARTeSGTest$(LIBEXT) ! -iname MARTeFGTest$(LIBEXT) \)))
-endif
 
+ifndef MARTe2_TEST_LINK_FILTER
+    LIBRARIES += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
+    LIBRARIES += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
+    LIBRARIES += ../../Build/$(TARGET)/GTest/FileSystem/MARTeFGTest$(LIBEXT)
+
+    #OLD CODE REMOVE FROM HERE
+    #else
+    #Look for all the statically linked files matching the filter set by MARTe2_TEST_LINK_FILTER
+    #MARTe2_TEST_LINK_FILTER_TOKENS := $(subst :, ,$(MARTe2_TEST_LINK_FILTER))
+    #LIBRARIES += $(foreach TOKEN,$(MARTe2_TEST_LINK_FILTER_TOKENS),$(shell find $(ROOT_DIR)/Build/$(TARGET) -type f \( -iname $(TOKEN)'*Test.a' ! -iname MARTeCoreBTest$(LIBEXT) ! -iname MARTeCoreSTest$(LIBEXT) ! -iname MARTeCoreFTest$(LIBEXT) ! -iname MARTeBGTest$(LIBEXT) ! -iname MARTeSGTest$(LIBEXT) ! -iname MARTeFGTest$(LIBEXT) \)))
+    #endif
+else #MARTe2_TEST_LINK_FILTER
+
+    #The MARTe2_TEST_LINK_FILTER_MODE env variable sets the filtering mode, which can be layer-based or library-based (default layer-based)
+    #The MARTe2_TEST_LINK_FILTER env variable keeps a colon (:) separated list of the L%GTest.a layers to include/exclude from the linking process
+
+    MARTe2_TEST_LINK_FILTER_MODE?=Layer
+
+    MARTe2_TEST_LINK_FILTER_MODE_CLEAN = $(strip $(MARTe2_TEST_LINK_FILTER_MODE))
+
+    #We want to avoid that an empty set variable impairs the process, so we go for the Layer mode as default
+    #which is coherent with the default behaviour of having the env variable undefined
+    ifeq ($(MARTe2_TEST_LINK_FILTER_MODE_CLEAN),)
+        MARTe2_TEST_LINK_FILTER_MODE_CLEAN = Layer
+    endif
+
+    ifeq ($(MARTe2_TEST_LINK_FILTER_MODE_CLEAN),Layer)
+        $(info Filtering by MARTe2 Layers)
+    endif
+
+    ifeq ($(MARTe2_TEST_LINK_FILTER_MODE_CLEAN),Library)
+        $(info Filtering by MARTe2 Libraries)
+    endif
+
+    ifneq ($(MARTe2_TEST_LINK_FILTER_MODE_CLEAN),Layer)
+        ifneq ($(MARTe2_TEST_LINK_FILTER_MODE_CLEAN),Library)
+        $(error Filtering is only allowed by Layer or by Library, $(MARTe2_TEST_LINK_FILTER_MODE) chosen instead, which is not supported)
+        endif
+    endif
+
+    #Check if the filter is a negative or a positive one
+    #First we take all the colon separated tokens and make it into a list, then we sort out the blacklisted and the whitelisted items
+    #as we cannot mix them (only positive or only negative logic)
+
+    MARTe2_FILTER_ITEMS := $(subst :, ,$(MARTe2_TEST_LINK_FILTER))
+    MARTe2_BLACKLISTED_ITEMS_RAW := $(filter -%, $(MARTe2_FILTER_ITEMS))
+    MARTe2_WHITELISTED_ITEMS := $(filter-out -%, $(MARTe2_FILTER_ITEMS))
+    MARTe2_FILTER_OPMODE := Invalid
+
+    #We have to strip the minus sign in front of the negated items before using it as a library name
+    MARTe2_BLACKLISTED_ITEMS += $(foreach ITEM, $(MARTe2_BLACKLISTED_ITEMS_RAW), $(subst -,,$(ITEM)))
+
+    #Now we check if we are operating in blacklist or whitelist mode
+    ifneq ($(strip $(MARTe2_WHITELISTED_ITEMS)),)
+        ifeq ($(strip $(MARTe2_BLACKLISTED_ITEMS)),)
+            $(info -------------- Going in whitelist mode --------------)
+            MARTe2_FILTER_OPMODE := Whitelist
+        endif
+    endif
+
+    ifneq ($(strip $(MARTe2_BLACKLISTED_ITEMS)),)
+        ifeq ($(strip $(MARTe2_WHITELISTED_ITEMS)),)
+            $(info -------------- Going in blacklist mode --------------)
+            MARTe2_FILTER_OPMODE := Blacklist
+        endif
+    endif
+
+    ifeq ($(MARTe2_FILTER_OPMODE),Whitelist)
+        #As we are going in whitelist mode, there is no need to distinguish between layer-based and library-based mode
+        #The whitelist can contain everything needed from both the worlds
+        LIBRARIES += $(foreach TOKEN,$(MARTe2_WHITELISTED_ITEMS),$(shell find $(ROOT_DIR)/Build/$(TARGET) -type f -iname $(TOKEN)))
+    endif
+
+    ifeq ($(MARTe2_FILTER_OPMODE),Blacklist)
+        #When going in blacklist we have to build the list of available libraries first.
+        #In order to find them into the build path, we have to scan the subdirectories by filtering the name accordingly to the mode
+        #First we take all the libraries from the test suite
+        #As the user inputs only libraries name (without path) we have to strip the whole path till the basename before filtering out
+        #We also exclude MARTe[B,S,F]Test and MARTeCore[B,S,F]Test as they already pack single L[0-5]*GTest.a
+        ifeq ($(MARTe2_TEST_LINK_FILTER_MODE_CLEAN),Layer)
+            MARTe2_AVAILABLE_LIBS := $(shell (find $(ROOT_DIR)/Build/$(TARGET) -type f -iname 'L[0-5]*GTest.a' ! -iname MARTeCoreBTest$(LIBEXT) ! -iname MARTeCoreSTest$(LIBEXT) ! -iname MARTeCoreFTest$(LIBEXT) ! -iname MARTeBGTest$(LIBEXT) ! -iname MARTeSGTest$(LIBEXT) ! -iname MARTeFGTest$(LIBEXT) -exec basename \{} \; ))
+        else
+            MARTe2_AVAILABLE_LIBS := $(shell (find $(ROOT_DIR)/Build/$(TARGET) -type f -iname '*GTest.o' ! -iname 'L[0-5]*GTest.o' ! -iname MARTeCoreBTest$(LIBEXT) ! -iname MARTeCoreSTest$(LIBEXT) ! -iname MARTeCoreFTest$(LIBEXT) ! -iname MARTeBGTest$(LIBEXT) ! -iname MARTeSGTest$(LIBEXT) ! -iname MARTeFGTest$(LIBEXT) -exec basename \{} \; ))        
+        endif
+        
+        MARTe2_FILTEREDOUT_LIBS = $(filter-out $(MARTe2_BLACKLISTED_ITEMS), $(MARTe2_AVAILABLE_LIBS))
+        LIBRARIES += $(foreach TOKEN,$(MARTe2_FILTEREDOUT_LIBS),$(shell find $(ROOT_DIR)/Build/$(TARGET) -iname $(TOKEN)))
+    endif
+
+    ifeq ($(MARTe2_FILTER_OPMODE),Invalid)
+        $(error "Command only supports one operating mode, blacklist-only or whitelist-only. Use include-only or exclude-only syntax in MARTe2_TEST_LINK_FILTER environment variable.")
+    endif
+
+    $(info -----------------------)
+    $(info $(LIBRARIES))
+    $(info -----------------------)
+
+endif

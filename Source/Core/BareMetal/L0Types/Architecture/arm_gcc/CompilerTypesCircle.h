@@ -1,8 +1,8 @@
 /**
- * @file CompilerTypes.h
- * @brief Header file for class GeneralDefinitionsA
- * @date 14/12/2015
- * @author Andre Neto
+ * @file CompilerTypesCircle.h
+ * @brief Header file for CompilerTypesCircle
+ * @date 17/06/2015
+ * @author Giuseppe Avon
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class CompilerTypes
+ * @details This header file contains the declaration of the CompilerTypes
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -24,28 +24,37 @@
 #ifndef COMPILERTYPESA_H_
 #define COMPILERTYPESA_H_
 
-#include <stdint.h>
+#define GCC_VERSION (__GNUC__ * 10000 \
+                     + __GNUC_MINOR__ * 100 \
+                     + __GNUC_PATCHLEVEL__)
+
+#include <circle/types.h>
 
 namespace MARTe {
 
+#ifndef NULL
+    #define NULL 0
+#endif
+
 /** 64 Bit unsigned integer. */
-typedef unsigned long long uint64;
+typedef u64 uint64;
 /** 64 Bit signed integer. */
-typedef long long int64;
+typedef s64 int64;
 
 /** 32 Bit unsigned integer. */
-typedef unsigned int uint32;
+typedef u32 uint32;
 /** 32 Bit signed integer. */
-typedef signed int int32;
+typedef s32 int32;
 
 /** 16 Bit unsigned integer. */
-typedef unsigned short uint16;
+typedef u16 uint16;
 /** 16 Bit signed integer. */
-typedef signed short int16;
+typedef s16 int16;
 /** 8 Bit unsigned integer. */
-typedef unsigned char uint8;
+typedef u8 uint8;
+
 /** 8 Bit signed integer. */
-typedef signed char int8;
+typedef s8 int8;
 
 /** IEEE 754 single precision float */
 typedef float float32;
@@ -57,9 +66,9 @@ typedef char char8;
 
 /** Sufficiently large to hold a pointer address in the target architecture*/
 #if defined(__LP64__) || defined(__ILP64__) || defined (__LLP64__)
-typedef uint64      uintp;
+typedef u64      uintp;
 #else
-typedef uint32      uintp;
+typedef u32      uintp;
 #endif
 
 /** A tool to find indexes of structures fields.
@@ -75,5 +84,5 @@ typedef uint32      uintp;
 #define dll_export
 
 }
-#endif /* GENERALDEFINITIONSA_H_ */
 
+#endif /* COMPILERTYPESA */

@@ -66,6 +66,8 @@ BasicTCPSocketTest::BasicTCPSocketTest() {
     createSocketOnHeap = true;
     isValidClient = true;
     isValidServer = true;
+
+    numOfThreadsBefore = Threads::NumberOfThreads();
 }
 
 bool BasicTCPSocketTest::TestDefaultConstructor() {
@@ -224,13 +226,18 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
         else {
             param.isValidClient = table[i].isValid;
         }
+        
+        uint32 numOfThreadsBefore = 0u;
+        uint32 numOfSpawnedThreads = 0u;
 
-        if (table[i].isServer) {
+        if (table[i].isServer) {    
+            numOfThreadsBefore = Threads::NumberOfThreads();
             Threads::BeginThread((ThreadFunctionType) StartServer_Listen, &param);
+            ++numOfSpawnedThreads;
             while (param.exitCondition < 1) {
                 if (!param.NoError) {
                     param.alives = 0;
-                    while (Threads::NumberOfThreads() > 0) {
+                    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
                         Sleep::MSec(10);
                     }
                     return false;
@@ -244,6 +251,7 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
 
         for (uint32 k = 0; k < table[i].nClientsIn; k++) {
             Threads::BeginThread((ThreadFunctionType) ClientJob_Listen, &param);
+            ++numOfSpawnedThreads;
             param.nClients++;
         }
 
@@ -255,7 +263,7 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
             param.eventSem.Post();
         }
 
-        while (Threads::NumberOfThreads() > 0) {
+        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
             Sleep::MSec(10);
         }
         if ((param.retVal != table[i].expected) || (!param.NoError)) {
@@ -451,7 +459,7 @@ bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
         while (exitCondition < 1) {
             if (!NoError) {
                 alives = 0;
-                while (Threads::NumberOfThreads() > 0) {
+                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -464,7 +472,7 @@ bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
             nClients++;
         }
 
-        while (Threads::NumberOfThreads() > 0) {
+        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
             Sleep::MSec(10);
         }
         if ((retVal != table[i].expected) || (!NoError)) {
@@ -565,7 +573,7 @@ bool BasicTCPSocketTest::TestPeek(const ReadWriteTestTable *table) {
         while (exitCondition < 1) {
             if (!NoError) {
                 alives = 0;
-                while (Threads::NumberOfThreads() > 0) {
+                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -578,7 +586,7 @@ bool BasicTCPSocketTest::TestPeek(const ReadWriteTestTable *table) {
             nClients++;
         }
 
-        while (Threads::NumberOfThreads() > 0) {
+        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
             Sleep::MSec(10);
         }
         if ((retVal != table[i].expected) || (!NoError)) {
@@ -728,7 +736,7 @@ bool BasicTCPSocketTest::TestWrite(const ReadWriteTestTable *table) {
         while (exitCondition < 1) {
             if (!NoError) {
                 alives = 0;
-                while (Threads::NumberOfThreads() > 0) {
+                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -741,7 +749,7 @@ bool BasicTCPSocketTest::TestWrite(const ReadWriteTestTable *table) {
             nClients++;
         }
 
-        while (Threads::NumberOfThreads() > 0) {
+        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
             Sleep::MSec(10);
         }
         if ((retVal != table[i].expected) || (!NoError)) {
@@ -876,7 +884,7 @@ bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table
             if (!NoError) {
                 alives = 0;
                 nClients = 0;
-                while (Threads::NumberOfThreads() > 0) {
+                while (Threads::NumberOfThreads() > numOfThreadsBefore) {
                     Sleep::MSec(10);
                 }
                 return false;
@@ -888,7 +896,7 @@ bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table
             Threads::BeginThread((ThreadFunctionType) ClientJob_WaitConnection, this);
         }
 
-        while (Threads::NumberOfThreads() > 0) {
+        while (Threads::NumberOfThreads() > numOfThreadsBefore) {
             Sleep::MSec(10);
         }
         if ((retVal != table[i].expected) || (!NoError)) {
@@ -1036,7 +1044,7 @@ bool BasicTCPSocketTest::TestIsConnected(bool connect,
     while (exitCondition < 1) {
         if (!NoError) {
             alives = 0;
-            while (Threads::NumberOfThreads() > 0) {
+            while (Threads::NumberOfThreads() > numOfThreadsBefore) {
                 Sleep::MSec(10);
             }
             return false;
@@ -1049,7 +1057,7 @@ bool BasicTCPSocketTest::TestIsConnected(bool connect,
         nClients++;
     }
 
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::MSec(10);
     }
 

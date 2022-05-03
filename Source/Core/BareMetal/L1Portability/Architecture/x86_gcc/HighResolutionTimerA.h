@@ -27,10 +27,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include <time.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "CompilerTypes.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -40,33 +42,13 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+
+
 namespace MARTe{
 
 namespace HighResolutionTimer {
 
-inline uint32 Counter32() {
-    volatile uint64 perf = 0LLU;
-    uint32 *pperf = (uint32 *) &perf;
-    asm(
-            "\n"
-            "        rdtsc        \n"
-            : "=a"(pperf[0]) , "=d"(pperf[1])
-    );
-
-    return (uint32) perf;
-}
-
-inline uint64 Counter() {
-    volatile uint64 perf = 0LLU;
-    uint32 *pperf = (uint32 *) &perf;
-    asm volatile(
-            "\n"
-            "        rdtsc        \n"
-            : "=a"(pperf[0]) , "=d"(pperf[1])
-    );
-    return perf;
-}
-
+    //We keep this empty as all the implementation stays in the HighResolutionTimer.h from Environment
 }
 
 }

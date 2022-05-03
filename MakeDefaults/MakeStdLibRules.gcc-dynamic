@@ -1,0 +1,52 @@
+#############################################################
+#
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+ifdef MARTe2_DIR
+	include $(MARTe2_DIR)/MakeDefaults/MakeStdLibRules.gcc
+else
+	include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc
+endif
+
+$(BUILD_DIR)/%.so : createLibrary $(OBJS)
+	touch $@
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
+	touch $(BUILD_DIR)/lib$*.so
+	rm  $(BUILD_DIR)/lib$*.so
+	ln -fns $*.so $(BUILD_DIR)/lib$*.so
+	rm -f createLibrary
+
+$(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
+	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
+	rm -f createLibrary
+
+$(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
+	$(COMPILER) $(LFLAGS) -shared  $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+
+$(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+
+$%: force
+	@$(MAKE) -f Makefile.$(TARGET) $@
+force: ;

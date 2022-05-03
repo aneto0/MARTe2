@@ -1,0 +1,148 @@
+#############################################################
+#
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+ctags : %.cpp %.c %.h
+	ctags -R
+
+%_Gen.cpp : ../Generic/%_Generic.cpp
+	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
+
+createLibrary :
+	touch createLibrary
+
+$(BUILD_DIR)/%.o : %.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+#	$(COMPILER) -E $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.e
+#	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+
+
+$(BUILD_DIR)/%.o1 : %.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c -O1 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o1
+#	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+
+$(BUILD_DIR)/%.o2 : %.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c -O2 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o2
+#	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+
+$(BUILD_DIR)/%.o3 : %.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c -O3 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o3
+#	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+
+$(BUILD_DIR)/%.o : %.c
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
+#	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
+
+$(BUILD_DIR)/%.a : createLibrary $(OBJS)
+	touch $@
+	rm -f $(BUILD_DIR)/$*.a
+	$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
+	rm -f createLibrary
+
+$(BUILD_DIR)/%.so : createLibrary $(OBJS)
+	echo ".so not built"
+	#touch $@
+	#$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
+	#touch $(BUILD_DIR)/lib$*.so
+	#rm  $(BUILD_DIR)/lib$*.so
+	#ln -fns $*.so $(BUILD_DIR)/lib$*.so
+	#rm -f createLibrary
+
+$(BUILD_DIR)/%.def : 
+	touch a.out
+	objdump -t $(@:%.def=%.a) > $@
+	rm a.out
+
+$(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o $(OBJS) 
+	touch $(BUILD_DIR)/$*.exe
+	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
+
+#If the file does not exist and we are in a clean context, do not create it!
+depends.$(TARGET): dependsRaw.$(TARGET) 
+ifneq ($(MAKECMDGOALS),clean)
+	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > Create$(TARGET)Depends.sed
+	sed -f Create$(TARGET)Depends.sed dependsRaw.$(TARGET) >depends.$(TARGET)
+	rm -f Create$(TARGET)Depends.sed 
+endif
+
+#If the file does not exist and we are in a clean context, do not create it (a touch is still needed it to implement the include)!
+dependsRaw.$(TARGET): 
+ifneq ($(MAKECMDGOALS),clean)
+	$(COMPILER) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.$(TARGET)
+	@mkdir -p $(BUILD_DIR)
+else
+	touch $@
+endif
+
+%.spb : 
+	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) 
+
+%.spc : 
+	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) clean
+
+%.sph : 
+	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) hal
+
+#When changing branches, if a subfolder no longer exists it also must be deleted.
+#This nuke cannot be the general clean rule because we don't want to delete all the built artefacts
+#when working at the subdirectory level
+clean_wipe_old:
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)1" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)2" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)3" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DLLEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(EXEEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(LIBEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(GAMEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DRVEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(ASMEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(GCNOEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(GCDAEXT)" | xargs rm -f)
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DEFEXT)" | xargs rm -f)
+
+clean::  $(SUBPROJC) $(SUBPROJTC) $(SUBPROJHC) 
+	@rm -f depends*
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)1
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)2
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)3
+	@rm -f $(BUILD_DIR)/*$(DLLEXT)
+	@rm -f $(BUILD_DIR)/*$(EXEEXT)
+	@rm -f $(BUILD_DIR)/*$(LIBEXT)
+	@rm -f $(BUILD_DIR)/*$(GAMEXT)
+	@rm -f $(BUILD_DIR)/*$(DRVEXT)
+	@rm -f $(BUILD_DIR)/*$(ASMEXT)
+	@rm -f $(BUILD_DIR)/*$(GCNOEXT)
+	@rm -f $(BUILD_DIR)/*$(GCDAEXT)
+	@rm -f $(BUILD_DIR)/*$(DEFEXT)
+	@rm -f *_Gen.cpp
+	@rm -f *_Gen.c
+	@rm -f *.d
+

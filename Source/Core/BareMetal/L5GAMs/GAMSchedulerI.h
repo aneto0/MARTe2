@@ -156,6 +156,8 @@ public:
 
     /**
      * @brief Executes a list of ExecutableIs storing their execution times with respect the start time instant.
+     * @details Note that if one of the executables returns ErrorManagement::Completed, the current cycle will be 
+     * deemed to be completed and thus no other executables will run.
      * @param[in] executables the list of ExecutablesIs to be executed
      * @param[in] numberOfExecutables how many ExecutableIs have to be executed.
      */

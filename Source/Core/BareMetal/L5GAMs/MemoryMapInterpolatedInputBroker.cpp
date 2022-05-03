@@ -56,24 +56,24 @@ MemoryMapInterpolatedInputBroker::MemoryMapInterpolatedInputBroker() :
 /*lint -e{1551} memory is freed in the destructor*/
 MemoryMapInterpolatedInputBroker::~MemoryMapInterpolatedInputBroker() {
     if (numberOfElements != NULL_PTR(uint32*)) {
-        delete numberOfElements;
+        delete [] numberOfElements;
     }
     if (y0 != NULL_PTR(void**)) {
         uint32 i;
         for (i = 0u; i < numberOfCopies; i++) {
             GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(y0[i]);
         }
-        delete y0;
+        delete [] y0;
     }
     if (y1 != NULL_PTR(void**)) {
         uint32 i;
         for (i = 0u; i < numberOfCopies; i++) {
             GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(y1[i]);
         }
-        delete y1;
+        delete [] y1;
     }
     if (m != NULL_PTR(float64*)) {
-        delete m;
+        delete [] m;
     }
     /*lint -e{1740} the dataSourceXAxis is freed by the DataSourceI*/
 }
@@ -100,6 +100,7 @@ bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction,
         m[i] = 0.;
         y0[i] = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(copyTable[i].copySize);
         y1[i] = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(copyTable[i].copySize);
+        ok = MemoryOperationsHelper::Set(y1[i], '\0', copyTable[i].copySize);
     }
 
     return ok;

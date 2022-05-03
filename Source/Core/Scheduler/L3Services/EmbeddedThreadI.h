@@ -301,6 +301,12 @@ public:
      */
     void SetCPUMask(const ProcessorType& cpuMaskIn);
 
+    /**
+     * @brief Sets a unique number to define the thread in the context of the Service.
+     * @param[in] threadNumberIn the thread number to set.
+     */
+    void SetThreadNumber(uint16 threadNumberIn);
+
 protected:
     /**
      * Embedded thread identifier.

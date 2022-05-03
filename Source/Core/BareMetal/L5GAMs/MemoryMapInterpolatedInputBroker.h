@@ -182,16 +182,24 @@ template<typename valueType>
 void MemoryMapInterpolatedInputBroker::Interpolate(uint32 copyIdx) {
     uint32 i;
     for (i = 0u; i < numberOfElements[copyIdx]; i++) {
-
         valueType *y0p = (valueType*) (y0[copyIdx]);
+/**
+ * Do not assume memory alignment... (see below)
         float64 y = static_cast<float64>(y0p[i]);
+ */
+        valueType ytemp;
+        (void) MemoryOperationsHelper::Copy(&ytemp, &y0p[i], sizeof(valueType));
+        float64 y = static_cast<float64>(ytemp);
+
         //How long as elapsed in this interpolation segment
         float64 cttns = static_cast<float64>(interpolatedXAxis - x0);
         //y = y0p + m * (t - x0), where y0p and t0p are the initial values for the interpolation period
         float64 newy = m[copyIdx] * cttns;
         y += newy;
         valueType *dest = static_cast<valueType*>(copyTable[copyIdx].gamPointer);
-        dest[i] = static_cast<valueType>(y);
+        //dest[i] = static_cast<valueType>(y);
+        ytemp = static_cast<valueType>(y);
+        (void) MemoryOperationsHelper::Copy(&dest[i], &ytemp, sizeof(valueType));
     }
 }
 
@@ -204,10 +212,22 @@ void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegment(uint32 copyIdx
         valueType *y1p = (valueType*) (y1[copyIdx]);
         valueType *y1pds = (valueType*) (copyTable[copyIdx].dataSourcePointer);
 
-        y0p[i] = y1p[i];
-        y1p[i] = y1pds[i];
+        /**
+         * Do not assume memory alignment... (see e.g. https://stackoverflow.com/questions/13804215/arm-memcpy-and-alignment)
+         * This code was giving bus errors in arm targets when the memory was not aligned to four bytes (which may the case when
+         * the GAM/DataSource signals interleave with different byte sizes).
+         *      y0p[i] = y1p[i];
+         *      y1p[i] = y1pds[i];
+         */
+        (void) MemoryOperationsHelper::Copy(&y0p[i], &y1p[i], sizeof(valueType));
+        (void) MemoryOperationsHelper::Copy(&y1p[i], &y1pds[i], sizeof(valueType));
+        valueType y0v;
+        valueType y1v;
+        (void) MemoryOperationsHelper::Copy(&y0v, &y0p[i], sizeof(valueType));
+        (void) MemoryOperationsHelper::Copy(&y1v, &y1p[i], sizeof(valueType));
         //Compute the derivative m = (y1-y0)/(x1-x0)
-        m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
+        //m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
+        m[copyIdx] = static_cast<float64>(y1v - y0v);
         m[copyIdx] /= dx;
     }
 }

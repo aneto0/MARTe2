@@ -73,8 +73,12 @@ M2_RPM_RELEASEVER?=`cat /etc/redhat-release | tr -dc '0-9' | cut -c 1`
 
 M2_RPM_DEFINES=--define "rpm_id $(M2_RPM_ID)"
 M2_RPM_DEFINES+=--define "rpm_src_dir $(M2_RPM_SRC_DIR)"
+ifdef M2_RPM_BIN_LIST
 M2_RPM_DEFINES+=--define "rpm_bin_list $(M2_RPM_BIN_LIST)"
+endif
+ifdef M2_RPM_LIB_LIST
 M2_RPM_DEFINES+=--define "rpm_lib_list $(M2_RPM_LIB_LIST)"
+endif
 M2_RPM_DEFINES+=--define "rpm_version $(M2_RPM_VERSION)"
 M2_RPM_DEFINES+=--define "rpm_name $(M2_RPM_NAME)"
 M2_RPM_DEFINES+=--define "rpm_license $(M2_RPM_LICENSE)"
@@ -85,13 +89,29 @@ M2_RPM_DEFINES+=--define "rpm_top_dir $(M2_RPM_TOP_DIR)"
 M2_RPM_DEFINES+=--define "rpm_build_requires $(M2_RPM_BUILD_REQUIRES)"
 M2_RPM_DEFINES+=--define "rpm_build_options $(M2_RPM_BUILD_OPTIONS)"
 M2_RPM_DEFINES+=--define "rpm_build_extra_args $(M2_RPM_BUILD_EXTRA_ARGS)"
+ifdef M2_RPM_RELEASE
 M2_RPM_DEFINES+=--define "rpm_release $(M2_RPM_RELEASE)"
+endif
+ifdef
 M2_RPM_DEFINES+=--define "rpm_conflicts $(M2_RPM_CONFLICTS)"
+endif
+ifdef M2_RPM_PROJECT_INSTALL
 M2_RPM_DEFINES+=--define "rpm_project_install $(M2_RPM_PROJECT_INSTALL)"
+endif
+ifdef M2_RPM_PROJECT_POST
 M2_RPM_DEFINES+=--define "rpm_project_post $(M2_RPM_PROJECT_POST)"
+endif
+ifdef M2_RPM_CUSTOM_DIST
 M2_RPM_DEFINES+=--define "rpm_custom_dist $(M2_RPM_CUSTOM_DIST)"
+endif
+ifdef M2_RPM_OTHER_FOLDERS
 M2_RPM_DEFINES+=--define "rpm_other_folders $(M2_RPM_OTHER_FOLDERS)"
+endif
+ifdef M2_RPM_RELEASEVER
 M2_RPM_DEFINES+=--define "rpm_releasever $(M2_RPM_RELEASEVER)"
+endif
 M2_RPM_DEFINES+=--define "build_dir $(M2_RPM_BUILD_DIR)"
 M2_RPM_DEFINES+=--define "_topdir $(PWD)/$(BUILD_DIR)"
+
+
 

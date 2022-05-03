@@ -73,7 +73,7 @@ static bool SearchKey(const char8 * const key, const char8 * const name, StreamS
 /*---------------------------------------------------------------------------*/
 
 HttpClient::HttpClient() :
-        Object(), socket(), protocol(socket) {
+        Object(), tcpSocket(), protocol(tcpSocket) {
     urlPort = 0u;
     urlHost = "";
     lastOperationId = 0;
@@ -82,7 +82,7 @@ HttpClient::HttpClient() :
 
 /*lint -e{1551} no exception will be thrown*/
 HttpClient::~HttpClient() {
-    (void) socket.Close();
+    (void) tcpSocket.Close();
 }
 
 /*lint -e{1536} the pointer is exposed deliberately*/
@@ -232,7 +232,7 @@ bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead, const int32 comma
     }
 
     if (!reConnect) {
-        reConnect = (!socket.IsConnected());
+        reConnect = (!tcpSocket.IsConnected());
     }
 
     int32 errorCode;
@@ -314,7 +314,7 @@ bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead, const int32 comma
 
         // close if the server says so...
         if (!protocol.KeepAlive()) {
-            (void) socket.Close();
+            (void) tcpSocket.Close();
         }
     }
 
@@ -323,13 +323,13 @@ bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead, const int32 comma
 }
 
 bool HttpClient::Connect(const TimeoutType &msecTimeout) {
-    (void) socket.Close();
-    bool ret = socket.Open();
+    (void) tcpSocket.Close();
+    bool ret = tcpSocket.Open();
     if (ret) {
-        ret = socket.SetBlocking(true);
+        ret = tcpSocket.SetBlocking(true);
     }
     if (ret) {
-        ret = socket.Connect(urlHost.Buffer(), urlPort, msecTimeout);
+        ret = tcpSocket.Connect(urlHost.Buffer(), urlPort, msecTimeout);
     }
     return ret;
 }
@@ -458,7 +458,11 @@ bool HttpClient::CalculateNonce(StreamString &nonce) {
     bool ret = nonce.SetSize(0ULL);
     StreamString tid;
     if (ret) {
-        ret = tid.Printf("%08x%08x", static_cast<uint32>(Threads::Id()), this);
+        //ThreadIdentifier threadId = Threads::Id();
+        ret = tid.Printf("%08x%08x", static_cast<uint32>(HighResolutionTimer::Counter()), this);
+
+        //Original line
+        //ret = tid.Printf("%08x%08x", static_cast<uint32>(Threads::Id()), this);
     }
     if (ret) {
         uint8 buffer[16];

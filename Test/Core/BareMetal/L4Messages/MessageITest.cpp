@@ -253,13 +253,13 @@ bool MessageITest::TestSendMessage_False_InvalidDestination() {
     bool result = false;
     ErrorManagement::ErrorType status;
     ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    ReferenceT<ObjectWithMessages> receiver = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<Object> receiver = ReferenceT<Object>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     sender->SetName("sender");
     receiver->SetName("receiver");
 
     ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
-    cdb.Write("Destination", "invalid");
+    cdb.Write("Destination", "receiver");
     cdb.Write("Function", "ReceiverMethod");
 
     if (!mess->Initialise(cdb)) {
@@ -273,9 +273,37 @@ bool MessageITest::TestSendMessage_False_InvalidDestination() {
     status = MessageI::SendMessage(mess, sender.operator->());
 
     result = (status == ErrorManagement::UnsupportedFeature);
-
+    ObjectRegistryDatabase::Instance()->Purge();
     return result;
+}
 
+bool MessageITest::TestSendMessage_False_InvalidDestination_Not_Exist() {
+    using namespace MARTe;
+    bool result = false;
+    ErrorManagement::ErrorType status;
+    ReferenceT<ObjectWithMessages> sender = ReferenceT<ObjectWithMessages>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<Object> receiver = ReferenceT<Object>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    sender->SetName("sender");
+    receiver->SetName("receiver");
+
+    ReferenceT<Message> mess = ReferenceT<Message>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb;
+    cdb.Write("Destination", "receiverDoesNotExist");
+    cdb.Write("Function", "ReceiverMethod");
+
+    if (!mess->Initialise(cdb)) {
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->Purge();
+    ObjectRegistryDatabase::Instance()->Insert(sender);
+    ObjectRegistryDatabase::Instance()->Insert(receiver);
+
+    status = MessageI::SendMessage(mess, sender.operator->());
+
+    result = (status == ErrorManagement::UnsupportedFeature);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return result;
 }
 
 bool MessageITest::TestSendMessage_False_InvalidFunction() {

@@ -163,6 +163,12 @@ void SetPriority(const ThreadIdentifier &threadId,
             }
             uint32 priorityLevelToAssign = 28u * priorityClassNumber;
             priorityLevelToAssign += (static_cast<uint32>(prioLevel));
+            //Bound the priority to its maximum
+            uint32 maxPriority = static_cast<uint32>(sched_get_priority_max(policy));
+            if (priorityLevelToAssign > maxPriority) {
+                REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "Requested a thread priority that is higher than the one supported by the selected policy - clipping to the maximum value supported by the policy.");
+                priorityLevelToAssign = maxPriority;
+            }
 
             sched_param param;
             int32 ignore = 0;
@@ -451,7 +457,6 @@ ThreadIdentifier FindByName(const char8 *const name) {
     ThreadsDatabase::UnLock();
     return ret;
 }
-
 }
 
 }

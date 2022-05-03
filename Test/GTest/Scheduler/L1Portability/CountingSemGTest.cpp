@@ -64,10 +64,13 @@ TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll100) {
     ASSERT_TRUE(semTest.TestWaitForAll(100, 10000));
 }
 
+//This test is beyond FreeRTOS reasonable setup for maximum values
+#ifndef XILINX_ULTRASCALE
 TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll1000) {
     CountingSemTest semTest;
     ASSERT_TRUE(semTest.TestWaitForAll(1000, 100000));
 }
+#endif
 
 TEST(Scheduler_L1Portability_CountingSemGTest,TestWaitForAll_ShortWait) {
     CountingSemTest semTest;

@@ -94,14 +94,12 @@ public:
     void Printf(const char8 * const msg);
 
     /**
-     * @brief Initialize HAL or Hardware layers
+     * @brief Main function callback. It allows, for example, to spawn the Main in the context of a thread.
      * 
      * @param[in] argc the number of arguments provided in the main.
      * @param[in] argv the list of arguments provided in the main.
-     * @return ErrorManagement::ErrorType 
      */
-    ErrorManagement::ErrorType InitHAL(int32 argc, char8 **argv);
-
+    void Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv);
 };
 
 }

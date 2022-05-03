@@ -435,12 +435,24 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest, TestExecute_SafeMode_Faile
     CCString rpnCode = "READ A\n"
                        "MREAD\n"
                        "WRITE ret1\n"
+                       "READ B\n"
+                       "READ C\n"
+                       "READ D\n"
+                       "ADD\n"
+                       "ADD\n"
+                       "ADD\n"
     ;
     
     float32 A = 10;
+    float32 B = 10;
+    float32 C = 10;
+    float32 D = 10;
     float32 ret1;
     
     evaluatorTest.SetTestInputVariable("A", Float32Bit, &A, 0);
+    evaluatorTest.SetTestInputVariable("B", Float32Bit, &B, 0);
+    evaluatorTest.SetTestInputVariable("C", Float32Bit, &C, 0);
+    evaluatorTest.SetTestInputVariable("D", Float32Bit, &C, 0);
     
     evaluatorTest.SetTestOutputVariable("ret1", Float32Bit, &ret1, 20);
     

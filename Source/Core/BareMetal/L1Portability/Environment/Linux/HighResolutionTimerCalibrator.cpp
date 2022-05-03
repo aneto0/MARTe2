@@ -55,51 +55,28 @@ namespace MARTe {
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
-    const uint64 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
+    struct timespec initTime;
+    memset(&initTime, 0, sizeof(struct timespec));
+    // From man clock_gettime(2)
+    //    CLOCK_MONOTONIC_RAW (since Linux 2.6.28; Linux-specific)
+    //       Similar to CLOCK_MONOTONIC, but provides access to a raw
+    //       hardware-based time that is not subject to NTP adjustments
+    //       or the incremental adjustments performed by adjtime(3).
+    //       This clock does not count time that the system is
+    //       suspended.
+    int32 ret = clock_gettime(CLOCK_MONOTONIC_RAW, &initTime);
+
     initialTicks = HighResolutionTimer::Counter();
-    frequency = 0u;
-    period = 0.;
-
-    struct timeval initTime;
-    int32 ret = gettimeofday(&initTime, static_cast<struct timezone *>(NULL));
-
+    //We already know that using gettime, the granularity is in nanoseconds
+    //and so the frequency is expressed in GHz
+    period = 1.0e-9;
+    frequency = 1000000000u;
+    
     initialSecs = initTime.tv_sec;
-    initialUSecs = initTime.tv_usec;
+    initialUSecs = initTime.tv_nsec / 1000;
 
-    if (ret == 0) {
-        char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
-        memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1u);
-
-        FILE *f = fopen("/proc/cpuinfo", "r");
-        size_t size = LINUX_CPUINFO_BUFFER_SIZE;
-        if (f != NULL) {
-            size = fread(&buffer[0], static_cast<size_t>(1u), size, f);
-            fclose(f);
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen()");
-        }
-
-        if (size > 0u) {
-            const char8 *pattern = "MHz";
-            const char8 *p = StringHelper::SearchString(&buffer[0], pattern);
-            if (p != NULL) {
-                p = StringHelper::SearchString(p, ":");
-                p++;
-                float64 freqMHz = strtof(p, static_cast<char8 **>(0));
-                if (freqMHz > 0.) {
-                    float64 frequencyF = freqMHz *= 1.0e6;
-                    period = 1.0 / frequencyF;
-                    frequency = static_cast<uint64>(frequencyF);
-                }
-            }
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fread()");
-        }
-    }
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
+    if(ret == 0) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: clock_gettime()");
     }
 
 }

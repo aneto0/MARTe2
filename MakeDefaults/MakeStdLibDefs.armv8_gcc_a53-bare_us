@@ -1,0 +1,66 @@
+#############################################################
+#
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+MARTe2_TEST_ENVIRONMENT?=Portable
+COMPILER_PREFIX=aarch64-none-elf-
+
+ifdef MARTe2_DIR
+    include $(MARTe2_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+else
+    include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+endif
+
+ENVIRONMENT=BareUS
+ARCHITECTURE=arm_gcc
+MARTe2_LINK_MODE?=Static
+ENV_ARCH_CUSTOMIZATION=XILINX_ULTRASCALE
+
+MARTe2_READPARAMETERS_LOADER?=\"RealTimeLoader\"
+MARTe2_READPARAMETERS_FIRSTSTATE?=\"Idle\"
+MARTe2_READPARAMETERS_PARSER?=\"cdb\"
+
+INCLUDES+=-I$(XILINX_BSP_BASE_DIR)/psu_cortexa53_0/include
+INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src
+#INCLUDES+=-I$(XILINX_SDK_BASE_DIR)/2019.1/data/embeddedsw/lib/bsp/standalone_v7_0/src/common/
+#INCLUDES+=-I$(XILINX_SDK_BASE_DIR)/2019.1/data/embeddedsw/lib/bsp/standalone_v7_0/src/arm/ARMv8/64bit/
+
+OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o)
+OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o) 
+OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o) 
+
+CPUSPECIFICFLAGS = -mcpu=cortex-a53 -mtune=cortex-a53 -march=armv8-a -mfix-cortex-a53-835769 -mfix-cortex-a53-843419
+ADDITIONALFLAGS = -frtti
+OPTIM = 
+
+#-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
+CFLAGS = $(CPUSPECIFICFLAGS) -Wno-parentheses -fpermissive -nostdlib $(DEBUG) -D$(ENV_ARCH_CUSTOMIZATION) -DLWIP_ENABLED -DMARTe2_READPARAMETERS_LOADER=$(MARTe2_READPARAMETERS_LOADER) -DMARTe2_READPARAMETERS_FIRSTSTATE=$(MARTe2_READPARAMETERS_FIRSTSTATE) -DMARTe2_READPARAMETERS_PARSER=$(MARTe2_READPARAMETERS_PARSER)
+
+ifneq ($MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION),)
+    CFLAGS += -DMARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION=$MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION
+endif
+
+ifneq ($(MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION),)
+    CFLAGS += -DMARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION=$MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION
+endif

@@ -26,5 +26,8 @@
 
 include Makefile.inc
 
-LIBRARIES += -L$(ROOT_DIR)/Build/$(TARGET)/Core -lMARTe2
-
+ifeq ($(MARTe2_LINK_MODE),Static)
+    LIBRARIES   = $(ROOT_DIR)/Build/$(TARGET)/Core/MARTe2.a
+else
+    LIBRARIES   = -L$(ROOT_DIR)/Build/$(TARGET)/Core -lMARTe2
+endif

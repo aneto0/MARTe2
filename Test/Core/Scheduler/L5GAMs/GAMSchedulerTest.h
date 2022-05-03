@@ -42,7 +42,12 @@ using namespace MARTe;
  * @brief Tests all the GAMScheduler functions
  */
 class GAMSchedulerTest {
-
+private:
+    /**
+    * @brief Keeps the number of threads which were running before the test execution.
+    *        This accomodates the needs of some OSs (e.g. FreeRTOS) which have a minimum number of running tests
+    */
+    uint32 numOfThreadsBefore;
 public:
 
     /**

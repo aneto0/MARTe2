@@ -308,6 +308,11 @@ void EmbeddedThreadI::SetCPUMask(const ProcessorType& cpuMaskIn) {
     }
 }
 
+void EmbeddedThreadI::SetThreadNumber(const uint16 threadNumberIn) {
+    threadNumber = threadNumberIn;
+}
+
+
 
 }
 

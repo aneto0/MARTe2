@@ -97,7 +97,7 @@ bool ZeroTerminatedArrayTest<T>::TestSubscriptOperator() {
         array[i] = value;
         value++;
     }
-    array[31] = static_cast<T>(0);
+    array[(uint32)31] = static_cast<T>(0);
 
     ZeroTerminatedArray<T> test(array);
 
@@ -118,7 +118,7 @@ bool ZeroTerminatedArrayTest<T>::TestGetSize() {
     for (uint32 i = 0; i < 31; i++) {
         test[i] = static_cast<T>(1);
     }
-    test[31] = static_cast<T>(0);
+    test[(uint32)31] = static_cast<T>(0);
     return test.GetSize() == 31;
 }
 
