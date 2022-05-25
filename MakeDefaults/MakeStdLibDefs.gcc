@@ -1,0 +1,78 @@
+#############################################################
+#
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+
+BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
+
+#The name of the parent target (i.e. the Makefiles that use this definition are Makefile.gcc)
+TARGET_PARENT=gcc
+
+EXEEXT=.ex
+DLLEXT=.so
+LIBEXT=.a
+OBJEXT=.o
+ASMEXT=.s
+DRVEXT=.drv
+GAMEXT=.gam
+GCNOEXT=.gcno
+GCDAEXT=.gcda
+GCOVEXT=.gcov
+DEFEXT=.def
+
+#Objects with different optim levels
+OBJS0=$(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+OBJS1?=$(OBJS0:%.x1=$(BUILD_DIR)/%.o1) 
+OBJS2?=$(OBJS1:%.x2=$(BUILD_DIR)/%.o2) 
+OBJS3?=$(OBJS2:%.x3=$(BUILD_DIR)/%.o3) 
+OBJS=$(OBJS3)
+
+#Subprojects
+SUBPROJ=$(SPB:%.x=%.spb)
+#Testing subprojects
+SUBPROJT=$(SPBT:%.x=%.spb)
+#Cleaning of the subprojects
+SUBPROJC=$(SPB:%.x=%.spc)
+SUBPROJTC=$(SPBT:%.x=%.spc)
+#HAL subfolder env-specific
+SUBPROJH = $(SPH:%.x=%.sph)
+SUBPROJHC = $(SPH:%.x=%.spc)
+
+MARTe2_TEST_ENVIRONMENT ?= GTest
+COMPILER ?= $(COMPILER_PREFIX)g++
+CCOMPILER ?= $(COMPILER_PREFIX)gcc
+LINKER ?= $(COMPILER_PREFIX)ld
+MAKE = make
+
+DEBUG ?= -g -ggdb
+MARTe2_OPTIM ?=
+OPTIM ?= $(MARTe2_OPTIM)
+LFLAGS ?=
+#-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
+CFLAGS ?= -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable -fno-strict-aliasing
+CPPFLAGS ?= $(CFLAGS) -frtti 
+CFLAGSPEC ?= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
+LIBRARIES ?=  
+.SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
+

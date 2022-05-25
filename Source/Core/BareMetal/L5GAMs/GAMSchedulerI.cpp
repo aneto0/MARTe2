@@ -405,8 +405,11 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
     uint64 absTicks = HighResolutionTimer::Counter();
     for (uint32 i = 0u; (i < numberOfExecutables) && (ret); i++) {
         // save the time before
-        // execute the gam
-        ret = executables[i]->Execute();
+        // execute the gam/broker
+        if (executables[i]->IsEnabled()) {
+            ret = executables[i]->Execute();
+        }
+
         uint64 tmp = (HighResolutionTimer::Counter() - absTicks);
         float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
         uint32 absTime = static_cast<uint32>(ticksToTime);  //us

@@ -1,0 +1,44 @@
+#############################################################
+#
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+MARTe2_TEST_ENVIRONMENT?=Portable
+COMPILER_PREFIX?=aarch64-linux-gnu-
+#For 32 bits remember to export teh appropriate compiler, e.g.: export COMPILER_PREFIX?=arm-linux-gnueabihf-
+
+ifdef MARTe2_DIR
+    include $(MARTe2_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+else
+    include $(ROOT_DIR)/MakeDefaults/MakeStdLibDefs.gcc
+endif
+
+ENVIRONMENT=Linux
+ARCHITECTURE=arm_gcc
+
+#CPU_FLAGS allows cross-compilation for a given target, e.g. export CPU_FLAGS="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+
+LFLAGS = -Wl,--no-as-needed -fPIC $(CPU_FLAGS)
+CFLAGSPEC += -DUSE_PTHREAD -pthread -Wno-deprecated-declarations -Wno-unused-value -Wno-narrowing -Wno-shift-count-overflow -std=c++11 $(CPU_FLAGS)
+LIBRARIES +=  -lm -lpthread -lrt -ldl
+

@@ -1291,7 +1291,7 @@ static StreamString configSimpleInvalidMessage = ""
 /*---------------------------------------------------------------------------*/
 
 GAMSchedulerTest::GAMSchedulerTest() {
-
+    numOfThreadsBefore = Threads::NumberOfThreads();
 }
 
 GAMSchedulerTest::~GAMSchedulerTest() {
@@ -1445,11 +1445,11 @@ bool GAMSchedulerTest::TestIntegrated() {
     }
     ok &= (MessageI::SendMessage(messageStop, NULL) == ErrorManagement::NoError);
 
-    while (Threads::NumberOfThreads() > 1) {
+    while (Threads::NumberOfThreads() > 1 + numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1496,11 +1496,11 @@ bool GAMSchedulerTest::TestIntegrated_TriggerErrorMessage() {
         }
     }
     //Wait for the StateMachine to be the only thread alive.
-    while (Threads::NumberOfThreads() > 1) {
+    while (Threads::NumberOfThreads() > 1 + numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1579,7 +1579,7 @@ bool GAMSchedulerTest::TestPurge() {
     ok &= (MessageI::SendMessage(messageStop, NULL) == ErrorManagement::NoError);
 
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1628,7 +1628,7 @@ bool GAMSchedulerTest::TestStartNextStateExecution() {
         app->StopCurrentStateExecution();
     }
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::MSec(10);
     }
     return err.ErrorsCleared();

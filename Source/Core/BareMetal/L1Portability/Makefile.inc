@@ -29,8 +29,9 @@ MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 #Allow portable compilation of the core (i.e. with the Architecture and Environment defined elsewhere w.r.t. to the core)
 MARTe2_PORTABLE_SPB_DIR=.
 ifdef MARTe2_PORTABLE_ENV_DIR
-MARTe2_PORTABLE_SPB_DIR=$(MARTe2_PORTABLE_ENV_DIR)/BareMetal/L1Portability
+	MARTe2_PORTABLE_SPB_DIR=$(MARTe2_PORTABLE_ENV_DIR)/BareMetal/L1Portability
 endif
+
 SPB=$(MARTe2_PORTABLE_SPB_DIR)/Environment/$(ENVIRONMENT).x
 
 OBJSX=  FastPollingEventSem.x \

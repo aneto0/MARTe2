@@ -334,61 +334,71 @@ void MemoryMapInterpolatedInputBrokerDataSourceTestHelper::Init() {
         if (signalTypes[s] == UnsignedInteger8Bit) {
             uint8 *signal = reinterpret_cast<uint8 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialIntValue;
+                uint8 val = initialIntValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(uint8));
             }
         }
         else if (signalTypes[s] == UnsignedInteger16Bit) {
             uint16 *signal = reinterpret_cast<uint16 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialIntValue;
+                uint16 val = initialIntValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(uint16));
             }
         }
         else if (signalTypes[s] == UnsignedInteger32Bit) {
             uint32 *signal = reinterpret_cast<uint32 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialIntValue;
+                uint32 val = initialIntValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(uint32));
             }
         }
         else if (signalTypes[s] == UnsignedInteger64Bit) {
             uint64 *signal = reinterpret_cast<uint64 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialIntValue;
+                uint64 val = initialIntValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(uint64));
             }
         }
         else if (signalTypes[s] == SignedInteger8Bit) {
             int8 *signal = reinterpret_cast<int8 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialIntValue;
+                int8 val = initialIntValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(int8));
             }
         }
         else if (signalTypes[s] == SignedInteger16Bit) {
             int16 *signal = reinterpret_cast<int16 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialIntValue;
+                int16 val = initialIntValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(int16));
             }
         }
         else if (signalTypes[s] == SignedInteger32Bit) {
             int32 *signal = reinterpret_cast<int32 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialIntValue;
+                int32 val = initialIntValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(int32));
             }
         }
         else if (signalTypes[s] == SignedInteger64Bit) {
             int64 *signal = reinterpret_cast<int64 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialIntValue;
+                int64 val = initialIntValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(int64));
             }
         }
         else if (signalTypes[s] == Float32Bit) {
             float32 *signal = reinterpret_cast<float32 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialFloatValue;
+                float32 val = initialFloatValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(float32));
             }
         }
         else if (signalTypes[s] == Float64Bit) {
             float64 *signal = reinterpret_cast<float64 *>(memPtr);
             for (n = 0u; (n < nElements[s]); n++) {
-                signal[n] = initialFloatValue;
+                float64 val = initialFloatValue;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(float64));
             }
         }
     }
@@ -409,61 +419,91 @@ bool MemoryMapInterpolatedInputBrokerDataSourceTestHelper::Synchronise() {
         if (signalTypes[s] == UnsignedInteger8Bit) {
             uint8 *signal = reinterpret_cast<uint8 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += intIncrement;
+                uint8 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(uint8));
+                val += intIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(uint8));
             }
         }
         else if (signalTypes[s] == UnsignedInteger16Bit) {
             uint16 *signal = reinterpret_cast<uint16 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += intIncrement;
+                uint16 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(uint16));
+                val += intIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(uint16));
             }
         }
         else if (signalTypes[s] == UnsignedInteger32Bit) {
             uint32 *signal = reinterpret_cast<uint32 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += intIncrement;
+                uint32 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(uint32));
+                val += intIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(uint32));
             }
         }
         else if (signalTypes[s] == UnsignedInteger64Bit) {
             uint64 *signal = reinterpret_cast<uint64 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += intIncrement;
+                uint64 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(uint64));
+                val += intIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(uint64));
             }
         }
         else if (signalTypes[s] == SignedInteger8Bit) {
             int8 *signal = reinterpret_cast<int8 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += intIncrement;
+                int8 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(int8));
+                val += intIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(int8));
             }
         }
         else if (signalTypes[s] == SignedInteger16Bit) {
             int16 *signal = reinterpret_cast<int16 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += intIncrement;
+                int16 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(int16));
+                val += intIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(int16));
             }
         }
         else if (signalTypes[s] == SignedInteger32Bit) {
             int32 *signal = reinterpret_cast<int32 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += intIncrement;
+                int32 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(int32));
+                val += intIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(int32));
             }
         }
         else if (signalTypes[s] == SignedInteger64Bit) {
             int64 *signal = reinterpret_cast<int64 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += intIncrement;
+                int64 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(int64));
+                val += intIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(int64));
             }
         }
         else if (signalTypes[s] == Float32Bit) {
             float32 *signal = reinterpret_cast<float32 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += floatIncrement;
+                float32 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(float32));
+                val += floatIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(float32));
             }
         }
         else if (signalTypes[s] == Float64Bit) {
             float64 *signal = reinterpret_cast<float64 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                signal[n] += floatIncrement;
+                float64 val;
+                MemoryOperationsHelper::Copy(&val, &signal[n], sizeof(float64));
+                val += floatIncrement;
+                MemoryOperationsHelper::Copy(&signal[n], &val, sizeof(float64));
             }
         }
     }
@@ -904,7 +944,9 @@ static bool CheckExpectedValue(uint64 executeNumber, uint32 valueIncrement, uint
     bool ret = true;
     uint32 n;
     for (n = 0u; (n < nElements) && (ret); n++) {
-        ret = (signal[n] == expectedValue);
+	T sn;
+	MemoryOperationsHelper::Copy(&sn, &signal[n], sizeof(T));
+        ret = (sn == expectedValue);
     }
 
     return ret;
@@ -922,7 +964,9 @@ static bool CheckExpectedValueD(uint64 executeNumber, float32 valueIncrement, fl
     bool ret = true;
     uint32 n;
     for (n = 0u; (n < nElements) && (ret); n++) {
-        float64 f1 = static_cast<float32>(signal[n]);
+	T ft; 
+	MemoryOperationsHelper::Copy(&ft, &signal[n], sizeof(T));
+        float64 f1 = ft;
         float64 f2 = static_cast<float32>(expectedValue);
         float64 min = 1e-6;
         ret = ((f1 - f2) < (min)) && ((f1 - f2) > -(min));

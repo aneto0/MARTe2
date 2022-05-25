@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
+#include <string.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -42,30 +42,34 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+#define MAX_ERROR_PROCESS_FUNCTION_LENGTH (2 * MARTe::MAX_ERROR_MESSAGE_SIZE)
+MARTe::Bootstrap bootstrap;
+
+//TODO Verify max string length
+char tempPrintBuffer[MAX_ERROR_PROCESS_FUNCTION_LENGTH];
+MARTe::StreamMemoryReference printSMR(&tempPrintBuffer[0], MAX_ERROR_PROCESS_FUNCTION_LENGTH);
 
 void MainGTestErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
                                    const char * const errorDescription) {
     MARTe::StreamString errorCodeStr;
     MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    //size_t writeLen = snprintf(tempPrintBuffer, 256, "[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    //bootstrap.Printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    //bootstrap.Printf(tempPrintBuffer);
+    memset(tempPrintBuffer, 0, MAX_ERROR_PROCESS_FUNCTION_LENGTH);
+    printSMR.Seek(0);
+    printSMR.Printf("[%s - %s:%d]: %s\r\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    tempPrintBuffer[printSMR.Size()] = '\0';          
+    bootstrap.Printf(printSMR.Buffer());
 }
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-int main(int argc, char **argv) {
-    using namespace MARTe;
-    SetErrorProcessFunction(&MainGTestErrorProcessFunction);
-    
-    Bootstrap bootstrap;
-    ConfigurationDatabase loaderParameters;
-    StreamI *configurationStream = NULL_PTR(StreamI *);
+int _main(int argc, char** argv) {
+    MARTe::ErrorManagement::ErrorType ret;
 
-    ErrorManagement::ErrorType ret = bootstrap.InitHAL(argc, argv);
-
-    if (ret) {
-        ret.fatalError = !(MARTe::UnitTest::PrepareTestEnvironment(argc, argv));
-    }
+    ret.fatalError = !(MARTe::UnitTest::PrepareTestEnvironment(argc, argv));
     
     if (ret) {
         ret.fatalError = !MARTe::UnitTest::Run();
@@ -73,5 +77,17 @@ int main(int argc, char **argv) {
 
     MARTe::UnitTest::CleanTestEnvironment();
     return (ret ? 0 : -1);
+}
+
+int main(int argc, char **argv) {
+    using namespace MARTe;
+    SetErrorProcessFunction(&MainGTestErrorProcessFunction);
+    
+    ConfigurationDatabase loaderParameters;
+    StreamI *configurationStream = NULL_PTR(StreamI *);
+
+    bootstrap.Main(_main, argc, argv);
+    
+    return 0;
 }
 

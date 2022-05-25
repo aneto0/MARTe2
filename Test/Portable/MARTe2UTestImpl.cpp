@@ -54,9 +54,10 @@ void TestFramework::Add(TestMarkerInterface* miInstance) {
 void TestFramework::Run() {
 	TestMarkerInterface* currentTest = NULL;
 	uint32 dsSize = testHolderDataStructure.GetSize();
+	printf("---TESTRESULTBEGIN---\r\n");
 	for(uint32 i = 0; i < dsSize; i++) {
 		currentTest = testHolderDataStructure[i];
-		printf("Running test %d/%d |%s|.|%s|", (i+1), statsTotalTests, currentTest->suiteName, currentTest->testName);
+		printf("[%d/%d] |%s|.|%s|", (i+1), statsTotalTests, currentTest->suiteName, currentTest->testName);
 		currentTest->Test();
 		if(currentTest->testResult) {
 			passedHolderDataStructure.Add(currentTest);
@@ -67,7 +68,9 @@ void TestFramework::Run() {
 			statsFailedTests++;
 		}
 	}
+	printf("---STATSDELIMITER---\r\n");
     PrintResults();
+	printf("---TESTRESULTEND---\r\n");
 }
 
 void TestFramework::Clean() {

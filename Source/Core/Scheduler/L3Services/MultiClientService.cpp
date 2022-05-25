@@ -95,6 +95,7 @@ ErrorManagement::ErrorType MultiClientService::AddThread() {
             thread->SetPriorityLevel(GetPriorityLevel());
             thread->SetCPUMask(GetCPUMask());
             thread->SetTimeout(GetTimeout());
+            thread->SetThreadNumber(static_cast<uint16>(threadPool.Size()));
             StreamString tname;
             (void)tname.Printf("%s_%d", GetName(), HighResolutionTimer::Counter32());
             thread->SetName(tname.Buffer());

@@ -199,7 +199,7 @@ protected:
     /**
      * The socket being used in the connection
      */
-    TCPSocket socket;
+    TCPSocket tcpSocket;
 
     /**
      * Used to send the HTTP request and receive the reply

@@ -52,16 +52,110 @@ static MARTe::Bootstrap bootstrap;
  * @param[in] errorDescription error textual description.
  */
 void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
-    MARTe::StreamString errorCodeStr;
-    MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    MARTe::StreamString err;
-    err.Printf("[%s - %s:%d]: %s", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    bootstrap.Printf(err.Buffer());
+    using namespace MARTe;
+    static const uint32 MAX_ERROR_CODE_STR_SIZE = 16u;
+    static char8 errCodeBuffer[MAX_ERROR_CODE_STR_SIZE + 1u];
+    (void) MemoryOperationsHelper::Set(&errCodeBuffer[0u], '\0', MAX_ERROR_CODE_STR_SIZE);
+    static StreamMemoryReference errCodeStr(errCodeBuffer, MAX_ERROR_CODE_STR_SIZE);
+    (void) errCodeStr.Seek(0LLU);
+    ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errCodeStr);
+    errCodeBuffer[MAX_ERROR_CODE_STR_SIZE] = '\0';
+
+    static char8 errBuffer[MAX_ERROR_MESSAGE_SIZE + 1u];
+    (void) MemoryOperationsHelper::Set(&errBuffer[0], '\0', MAX_ERROR_MESSAGE_SIZE);
+    static StreamMemoryReference errStr(&errBuffer[0], MAX_ERROR_MESSAGE_SIZE);
+    (void) errStr.Seek(0LLU);
+    (void) errStr.Printf("[%s - %s:%d]: %s", errCodeBuffer, errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    errBuffer[MAX_ERROR_MESSAGE_SIZE] = '\0';
+    bootstrap.Printf(errBuffer);
 }
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+extern "C" {
+    int _main(int argc, char **argv) {
+        using namespace MARTe;
+        SetErrorProcessFunction(&MainErrorProcessFunction);
+
+        ConfigurationDatabase loaderParameters;
+        StreamI *configurationStream = NULL_PTR(StreamI *);
+
+        ErrorManagement::ErrorType ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
+
+        
+        if (ret) {
+            ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
+            if (ret) {
+                ret.fatalError = (configurationStream == NULL_PTR(StreamI *));
+            }
+            else {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not GetConfigurationStream.");
+            }
+        }
+        else {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not ReadParameters.");
+        }
+
+        StreamString loaderClass;
+        if (ret) {
+            ret.fatalError = !loaderParameters.Read("Loader", loaderClass);
+            if (!ret) {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Loader not specified");
+            }
+        }
+
+        //Try to instantiate a new loader.
+        ReferenceT<Loader> loaderRef;
+        if (ret) {
+            loaderRef = Reference(loaderClass.Buffer(), GlobalObjectsDatabase::Instance()->GetStandardHeap());
+            if (loaderRef.IsValid()) {
+                ret = loaderRef->Configure(loaderParameters, *configurationStream);
+                if (!ret) {
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not Initialise the loader with name %s", loaderClass.Buffer());
+                }
+            }
+            else {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not instantiate loader with name %s", loaderClass.Buffer());
+                ret = ErrorManagement::FatalError;
+            }
+        }
+        if (ret) {
+            ret = loaderRef->Start();
+        }
+        if (ret) {
+            //Expects to run until an operating specific event exits
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "Application starting");
+            ret = bootstrap.Run();
+            REPORT_ERROR_STATIC(ret, "Application terminated");
+        }
+        if (ret) {
+            ret = loaderRef->Stop();
+        }
+
+        loaderRef = Reference();
+        MARTe::ObjectRegistryDatabase::Instance()->Purge();
+        loaderParameters.Purge();
+        ClassRegistryDatabase *crd = ClassRegistryDatabase::Instance();
+        uint32 numberOfItems = crd->GetSize();
+        uint32 i;
+        //List all the classes and the related number of instances that are still alive
+        for (i=0u; i<numberOfItems; i++) {
+            const ClassRegistryItem *cri = crd->Peek(i);
+            if (cri != NULL_PTR(const ClassRegistryItem *)) {
+                const ClassProperties *cp = cri->GetClassProperties();
+                if (cp != NULL_PTR(const ClassProperties *)) {
+                    ErrorManagement::ErrorType err = ErrorManagement::Information;
+                    if (cri->GetNumberOfInstances() != 0u) {
+                        err = ErrorManagement::Warning;
+                    }
+                    REPORT_ERROR_STATIC(err, "[%s] - instances: %d", cp->GetName(), cri->GetNumberOfInstances());
+                }
+            }
+        }
+        return 0;
+    }
+}
 /**
  * @brief Main function.
  * @param[in] argc the number of arguments to be parsed by the MARTe::Bootstrap.
@@ -69,86 +163,6 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
  * @return 0
  */
 int main(int argc, char **argv) {
-    using namespace MARTe;
-    SetErrorProcessFunction(&MainErrorProcessFunction);
-    ErrorManagement::ErrorType ret = bootstrap.InitHAL(argc, argv);
-
-    ConfigurationDatabase loaderParameters;
-    StreamI *configurationStream = NULL_PTR(StreamI *);
-
-    if (ret) {
-        ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
-    }
-    
-    if (ret) {
-        ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
-        if (ret) {
-            ret.fatalError = (configurationStream == NULL_PTR(StreamI *));
-        }
-        else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not GetConfigurationStream.");
-        }
-    }
-    else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not ReadParameters.");
-    }
-
-    StreamString loaderClass;
-    if (ret) {
-        ret.fatalError = !loaderParameters.Read("Loader", loaderClass);
-        if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Loader not specified");
-        }
-    }
-
-    //Try to instantiate a new loader.
-    ReferenceT<Loader> loaderRef;
-    if (ret) {
-        loaderRef = Reference(loaderClass.Buffer(), GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        if (loaderRef.IsValid()) {
-            ret = loaderRef->Configure(loaderParameters, *configurationStream);
-            if (!ret) {
-                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not Initialise the loader with name %s", loaderClass.Buffer());
-            }
-        }
-        else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not instantiate loader with name %s", loaderClass.Buffer());
-            ret = ErrorManagement::FatalError;
-        }
-    }
-    if (ret) {
-        ret = loaderRef->Start();
-    }
-    if (ret) {
-        //Expects to run until an operating specific event exits
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Application starting");
-        ret = bootstrap.Run();
-        REPORT_ERROR_STATIC(ret, "Application terminated");
-    }
-    if (ret) {
-        ret = loaderRef->Stop();
-    }
-
-    loaderRef = Reference();
-    MARTe::ObjectRegistryDatabase::Instance()->Purge();
-    loaderParameters.Purge();
-    ClassRegistryDatabase *crd = ClassRegistryDatabase::Instance();
-    uint32 numberOfItems = crd->GetSize();
-    uint32 i;
-    //List all the classes and the related number of instances that are still alive
-    for (i=0u; i<numberOfItems; i++) {
-        const ClassRegistryItem *cri = crd->Peek(i);
-        if (cri != NULL_PTR(const ClassRegistryItem *)) {
-            const ClassProperties *cp = cri->GetClassProperties();
-            if (cp != NULL_PTR(const ClassProperties *)) {
-                ErrorManagement::ErrorType err = ErrorManagement::Information;
-                if (cri->GetNumberOfInstances() != 0u) {
-                    err = ErrorManagement::Warning;
-                }
-                REPORT_ERROR_STATIC(err, "[%s] - instances: %d", cp->GetName(), cri->GetNumberOfInstances());
-            }
-        }
-    }
-    return 0;
+   bootstrap.Main(_main, argc, argv);
+   return 0;
 }
-

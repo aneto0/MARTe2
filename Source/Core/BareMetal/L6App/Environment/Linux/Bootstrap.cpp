@@ -207,8 +207,8 @@ void Bootstrap::Printf(const char8 * const msg) {
     printf("%s\n", msg);
 }
 
-ErrorManagement::ErrorType Bootstrap::InitHAL(int32 argc, char8 **argv) {
-    return ErrorManagement::NoError;
+void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
+    loader(argc, argv);
 }
 
 }

@@ -41,6 +41,14 @@
 using namespace MARTe;
 
 class CircularBufferThreadInputDataSourceTest {
+
+private:
+/**
+* @brief Keeps the number of threads which were already running before the test itself
+*        Used for portable implementations, where some threads belong to the OS itself (e.g. FreeRTOS)
+*/
+uint32 numOfThreadsBefore;
+
 public:
 
     /**

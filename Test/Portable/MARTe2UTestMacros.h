@@ -25,7 +25,7 @@
 #define MARTE2_UNIT_TEST_MACROS_H_
 
 /* Approximately define the number of tests to correctly size the output array and avoid continuous realloc  */
-#define TEST_ESTIMATED_NUMBER		 	1000u
+#define TEST_ESTIMATED_NUMBER		 	5000u
 
 /* Estimate the failure rate in order to set the size of the fail holder array */
 #define TEST_ESTIMATED_FAILURE_RATE     0.1
@@ -36,6 +36,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -173,7 +174,7 @@ class Bootstrapper {
 class Tester_##x##_##y : public TestMarkerInterface {\
 	public:  \
 		Tester_##x##_##y() : TestMarkerInterface(#x, #y) {} \
-		void Test(); \
+		virtual void Test(); \
 }; \
 static Tester_##x##_##y Test_##x##_##y; \
 Bootstrapper Bootstrapper_##x##_##y(&Test_##x##_##y); \

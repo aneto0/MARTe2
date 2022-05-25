@@ -43,6 +43,7 @@ namespace MARTe {
 
 ExecutableI::ExecutableI() {
     timingSignalAddress = NULL_PTR(uint32 * const);
+    enabled = true;
 }
 
 /*lint -e{1540} the timingSignalAddress is to freed by the class that uses the ExecutableI, typically a GAMSchedulerI.*/
@@ -52,5 +53,14 @@ ExecutableI::~ExecutableI() {
 void ExecutableI::SetTimingSignalAddress(uint32 * const timingSignalAddressIn) {
     timingSignalAddress = timingSignalAddressIn;
 }
+
+void ExecutableI::SetEnabled(const bool isEnabled) {
+    enabled = isEnabled;
+}
+
+bool ExecutableI::IsEnabled() const {
+    return enabled;
+}
+
 
 }
