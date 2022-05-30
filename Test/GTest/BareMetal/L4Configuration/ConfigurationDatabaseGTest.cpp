@@ -128,6 +128,11 @@ TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_UInt32)
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint32(7)));
 }
 
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_Bool) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(bool(true)));
+}
+
 TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_Int32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int32(7)));
@@ -203,6 +208,11 @@ TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_UInt32
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint32(7)));
 }
 
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_Bool) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(bool(true)));
+}
+
 TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_Int32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int32(7)));
@@ -276,6 +286,11 @@ TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Int1
 TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_UInt32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint32(7)));
+}
+
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Bool) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(bool(true)));
 }
 
 TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Int32) {
