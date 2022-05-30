@@ -62,6 +62,7 @@ static const TypeCastInfo basicTypeInfo[] = {
         { UnsignedInteger16Bit, "uint16" },
         { UnsignedInteger32Bit, "uint32" },
         { UnsignedInteger64Bit, "uint64" },
+        { BooleanType, "bool" },
         { Float32Bit, "float32" },
         { Float64Bit, "float64" },
         { Character8Bit, "char8" },
@@ -110,12 +111,13 @@ bool TypeDescriptor::IsNumericType() const {
     bool isFloat           = (type == Float);
     bool isSignedInteger   = (type == SignedInteger);
     bool isUnsignedInteger = (type == UnsignedInteger);
+    bool isBoolean         = (type == BT_Boolean);
     
     bool isNumeric = (isFloat || isSignedInteger || isUnsignedInteger);
     
     bool hasNonZeroSize = (numberOfBits > 0u);
     
-    return ( (!isStructuredData) && (hasNonZeroSize) && (isNumeric) );
+    return ( (!isStructuredData) && (hasNonZeroSize) && (isNumeric) && (!isBoolean));
 }
 
 TypeDescriptor TypeDescriptor::GetTypeDescriptorFromTypeName(const char8 * const typeName){

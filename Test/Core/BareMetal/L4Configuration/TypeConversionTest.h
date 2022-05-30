@@ -371,7 +371,7 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
             return false;
         }
         if (ret != table[i].expected) {
-            printf("\n%d \n", i);
+            printf("\n->%d \n", i);
 
             return false;
         }

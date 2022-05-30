@@ -180,6 +180,7 @@ public:
      * UnsignedInteger16Bit  | "uint16"
      * UnsignedInteger32Bit  | "uint32"
      * UnsignedInteger64Bit  | "uint64"
+     * BooleanType           | "bool"
      * Float32Bit            | "float32"
      * Float64Bit            | "float64"
      * Character8Bit         | "char8"
@@ -222,6 +223,7 @@ template <> inline const TypeDescriptor Type2TypeDescriptor<uint32>();
 template <> inline const TypeDescriptor Type2TypeDescriptor<uint64>();
 template <> inline const TypeDescriptor Type2TypeDescriptor<float32>();
 template <> inline const TypeDescriptor Type2TypeDescriptor<float64>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<bool>();
 
 /**
  * 8 bit Character.
@@ -287,6 +289,11 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
  * 64 bit unsigned integer descriptor
  */
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
+
+/**
+ * Boolean type descriptor
+ */
+static const TypeDescriptor BooleanType(false, BT_Boolean, sizeof(bool) * 8u);
 
 /**
  * Constant char pointer descriptor
