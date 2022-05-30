@@ -187,6 +187,7 @@ static bool IntegerToType(const AnyType &destination, const AnyType &source) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
             }
         }
+        //lint -e{9007} no read side-effects on the type comparisons below*/
         else if (destinationDescriptor.type == BT_Boolean) {
             bool* destinationBool = reinterpret_cast<bool*>(destinationPointer);
             if ((sourceDescriptor == UnsignedInteger8Bit) || (sourceDescriptor == SignedInteger8Bit)) {
