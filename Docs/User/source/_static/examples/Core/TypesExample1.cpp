@@ -88,6 +88,8 @@ int main(int argc, char **argv) {
     PrintType(anUInt8);
     PrintType(anUInt16);
     PrintType(32.0);
+    bool aBoolean = true;
+    PrintType(aBoolean);
     //An AnyType can also be manually constructed (but this is not the main use case)
     AnyType at(UnsignedInteger16Bit, 0u, &anUInt16);
     PrintType(at);

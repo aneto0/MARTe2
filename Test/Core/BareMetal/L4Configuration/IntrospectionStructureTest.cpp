@@ -84,6 +84,10 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
             "       Type = float64"
             "       NumberOfElements = 2"
             "     }"
+            "     Field7 = {"
+            "       Type = bool"
+            "       NumberOfElements = 1"
+            "     }"
             "   }"
             "}";
 
@@ -109,7 +113,7 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
         ok = (intro != NULL_PTR(const Introspection *));
     }
     if (ok) {
-        ok = (intro->GetNumberOfMembers() == 6u);
+        ok = (intro->GetNumberOfMembers() == 7u);
     }
     if (ok) {
         IntrospectionEntry entry = intro->operator [](0u);
@@ -234,6 +238,26 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
             ok = (exmsize == entry.GetMemberSize());
         }
     }
+    if (ok) {
+        IntrospectionEntry entry = intro->operator [](6u);
+        StreamString extype = "bool";
+        StreamString exname = "Field7";
+        if (ok) {
+            ok = (exname == entry.GetMemberName());
+        }
+        if (ok) {
+            ok = (extype == entry.GetMemberTypeName());
+        }
+        if (ok) {
+            StreamString exmods = "";
+            ok = (exmods == entry.GetMemberModifiers());
+        }
+        if (ok) {
+            uint32 exmsize = sizeof(bool);
+            ok = (exmsize == entry.GetMemberSize());
+        }
+    }
+
     return ok;
 }
 

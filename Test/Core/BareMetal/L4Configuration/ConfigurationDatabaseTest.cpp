@@ -1,6 +1,6 @@
 /**
- * @file ConfigurationDatabase.cpp
- * @brief Source file for class ConfigurationDatabase
+ * @file ConfigurationDatabaseTest.cpp
+ * @brief Source file for class ConfigurationDatabaseTest
  * @date 19/11/2015
  * @author Andre Neto
  *
@@ -594,6 +594,11 @@ bool ConfigurationDatabaseTest::TestCopy() {
     bool ok = sourceCDB.Write("value", 1);
     sourceCDB.CreateAbsolute("A.B.D");
     ok &= sourceCDB.Write("value", 2);
+    sourceCDB.CreateAbsolute("A.B.T");
+    ok &= sourceCDB.Write("value", true);
+    sourceCDB.CreateAbsolute("A.B.F");
+    ok &= sourceCDB.Write("value", false);
+    sourceCDB.CreateAbsolute("A.B.E");
     ConfigurationDatabase destinationCDB;
     destinationCDB.CreateAbsolute("B");
     ok &= sourceCDB.MoveAbsolute("A.B");
@@ -607,6 +612,14 @@ bool ConfigurationDatabaseTest::TestCopy() {
     ok &= destinationCDB.MoveAbsolute("B.D");
     ok &= destinationCDB.Read("value", readValue);
     ok &= (readValue == 2);
+    bool readValueB;
+    ok &= destinationCDB.MoveAbsolute("B.T");
+    ok &= destinationCDB.Read("value", readValueB);
+    ok &= (readValueB);
+    ok &= destinationCDB.MoveAbsolute("B.F");
+    ok &= destinationCDB.Read("value", readValueB);
+    ok &= (!readValueB);
+
     return ok;
 }
 
@@ -634,6 +647,11 @@ bool ConfigurationDatabaseTest::TestInitialise() {
             "    x = \"Test2\""
             "    y = {1 2 3 4}"
             "    z = {{1 2} {2 3} {3 4} {4 5}}"
+            "    w1 = \"true\""
+            "    w2 = \"yes\""
+            "    w3 = \"1\""
+            "    w4 = 1"
+            "    w5 = \"false\""
             "}";
 
     ConfigurationDatabase cdb;
@@ -690,6 +708,32 @@ bool ConfigurationDatabaseTest::TestInitialise() {
         ret &= (zValue(3, 0) == 4);
         ret &= (zValue(3, 1) == 5);
     }
+    if (ret) {
+        bool w1;
+        db2->Read("w1", w1);
+        ret = (w1);
+    }
+    if (ret) {
+        bool w2;
+        db2->Read("w2", w2);
+        ret = (w2);
+    }
+    if (ret) {
+        bool w3;
+        db2->Read("w3", w3);
+        ret = (w3);
+    }
+    if (ret) {
+        bool w4;
+        db2->Read("w4", w4);
+        ret = (w4);
+    }
+    if (ret) {
+        bool w5;
+        db2->Read("w5", w5);
+        ret = (!w5);
+    }
+
     return ret;
 }
 

@@ -104,6 +104,8 @@ namespace MARTe2Tutorial {
         ConfigurationDatabase cdb;
         cdb.CreateAbsolute("A.B");
         cdb.Write("c", 1);
+        cdb.Write("bt", true);
+        cdb.Write("bf", false);
         PrintNumberOfInstancesCDB(1);
         ConfigurationDatabaseFun1(cdb);
         PrintNumberOfInstancesCDB(2);

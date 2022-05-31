@@ -1101,33 +1101,33 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                     //native unsigned integer types.
                     if (par.GetBitAddress() == 0u) {
                         switch ((par.GetTypeDescriptor()).numberOfBits) {
-                        case 8u: {
-                            uint8 *data = static_cast<uint8 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                            break;
-                        case 16u: {
-                            uint16 *data = static_cast<uint16 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                            break;
-                        case 32u: {
-                            uint32 *data = static_cast<uint32 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                            break;
-                        case 64u: {
-                            uint64 *data = static_cast<uint64 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                            break;
-                        default: {
-                            // use native standard integer
-                            uint32 *number = static_cast<uint32 *>(dataPointer);
-                            // all the remaining cases here
-                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
-                        }
+                            case 8u: {
+                                uint8 *data = static_cast<uint8 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                                break;
+                            case 16u: {
+                                uint16 *data = static_cast<uint16 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                                break;
+                            case 32u: {
+                                uint32 *data = static_cast<uint32 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                                break;
+                            case 64u: {
+                                uint64 *data = static_cast<uint64 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                                break;
+                            default: {
+                                // use native standard integer
+                                uint32 *number = static_cast<uint32 *>(dataPointer);
+                                // all the remaining cases here
+                                uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                                ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
+                            }
                         }
                     }
                     else {
@@ -1139,7 +1139,26 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                     }
                 }
             }
-
+            else if (((par.GetTypeDescriptor()).type) == BT_Boolean) {
+                if (fd.desiredAction == PrintInfo) {
+                    const char8* infoName = "BooleanType";
+                    AnyType info = infoName;
+                    FormatDescriptor newFD = fd;
+                    newFD.desiredAction = PrintString;
+                    ret = PrintToStreamScalar(iobuff, info, newFD);
+                }
+                else {
+                    const char8* boolValue = "false";
+                    bool *datab = static_cast<bool *>(dataPointer);
+                    if (*datab) {
+                        boolValue = "true";
+                    }
+                    AnyType info = boolValue;
+                    FormatDescriptor newFD = fd;
+                    newFD.desiredAction = PrintString;
+                    ret = PrintToStreamScalar(iobuff, info, newFD);
+                }
+            }
             else if (((par.GetTypeDescriptor()).type) == SignedInteger) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Signed Integer";

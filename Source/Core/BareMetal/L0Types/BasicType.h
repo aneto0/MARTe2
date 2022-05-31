@@ -96,6 +96,11 @@ const BasicType Stream = 8u;
 const BasicType StructuredDataNode = 9u;
 
 /**
+ * The bool type
+ */
+const BasicType BT_Boolean = 10u;
+
+/**
  * The invalid type
  */
 const BasicType Invalid = 15u;

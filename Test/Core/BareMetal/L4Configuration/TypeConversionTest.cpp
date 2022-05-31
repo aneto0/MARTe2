@@ -166,6 +166,24 @@ bool TypeConversionTest::TestIntegerToCArrayScalar_Trunc() {
     return ret;
 }
 
+bool TypeConversionTest::TestBooleanToCArrayScalar_Trunc() {
+    bool ret = true;
+    char8 output[3];
+
+    bool input = true;
+
+    if (!TypeConvert(output, input)) {
+        ret = false;
+    }
+
+    if (StringHelper::Compare(output, "tr") != 0) {
+        ret = false;
+    }
+
+    return ret;
+}
+
+
 bool TypeConversionTest::TestFloatToCArrayScalar_Trunc() {
     bool ret = true;
     char8 output[5];
