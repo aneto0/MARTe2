@@ -261,6 +261,12 @@ public:
     bool TestIntegerToCArrayScalar_Trunc();
 
     /**
+     * @brief Tests the conversion from an integer to a char[] truncating the string in output
+     * because of the too small array size.
+     */
+    bool TestBooleanToCArrayScalar_Trunc();
+
+    /**
      * @brief Tests the conversion from a float to a char[] truncating the string in output
      * because of the too small array size.
      */

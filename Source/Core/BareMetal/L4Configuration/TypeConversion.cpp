@@ -382,10 +382,8 @@ static bool BooleanToType(const AnyType &destination, const AnyType &source) {
             else {
                 tempString = "false";
             }
-            if (ret) {
-                uint32 stringLength = static_cast<uint32>(tempString.Size());
-                ret = (reinterpret_cast<StreamString*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
-            }
+            uint32 stringLength = static_cast<uint32>(tempString.Size());
+            ret = (reinterpret_cast<StreamString*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
         }
         if (destinationDescriptor.type == CArray) {
             StreamString tempString;
@@ -395,20 +393,18 @@ static bool BooleanToType(const AnyType &destination, const AnyType &source) {
             else {
                 tempString = "false";
             }
-            if (ret) {
-                uint32 stringLength = static_cast<uint32>(tempString.Size());
-                uint32 arraySize = (destination.GetByteSize() * destination.GetNumberOfElements(0u));
-                if (stringLength >= arraySize) {
-                    REPORT_ERROR_STATIC(ErrorManagement::Warning, "BooleanToType: The input is too long for the output buffer.");
-                    ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                    if (arraySize > 1u) {
-                        uint32 lastCharIndex = arraySize - 1u;
-                        reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
-                    }
+            uint32 stringLength = static_cast<uint32>(tempString.Size());
+            uint32 arraySize = (destination.GetByteSize() * destination.GetNumberOfElements(0u));
+            if (stringLength >= arraySize) {
+                REPORT_ERROR_STATIC(ErrorManagement::Warning, "BooleanToType: The input is too long for the output buffer.");
+                ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
+                if (arraySize > 1u) {
+                    uint32 lastCharIndex = arraySize - 1u;
+                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
                 }
-                else {
-                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
-                }
+            }
+            else {
+                ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
             }
         }
         if (destinationDescriptor.type == BT_CCString) {
@@ -419,6 +415,7 @@ static bool BooleanToType(const AnyType &destination, const AnyType &source) {
             else {
                 tempString = "false";
             }
+            ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
         }
         if (destinationDescriptor.type == SignedInteger) {
             uint32 byteSize = destination.GetBitSize();
