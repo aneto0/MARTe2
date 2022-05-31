@@ -1,6 +1,6 @@
 /**
- * @file ConfigurationDatabase.cpp
- * @brief Source file for class ConfigurationDatabase
+ * @file ConfigurationDatabaseTest.cpp
+ * @brief Source file for class ConfigurationDatabaseTest
  * @date 19/11/2015
  * @author Andre Neto
  *
