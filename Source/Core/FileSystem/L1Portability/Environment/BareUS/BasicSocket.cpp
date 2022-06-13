@@ -34,6 +34,9 @@
 /*---------------------------------------------------------------------------*/
 #include "BasicSocket.h"
 #include "ErrorManagement.h"
+#include "SocketCore.h"
+#include "SocketCoreSingleton.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,6 +55,20 @@ BasicSocket::BasicSocket() :
     connectionSocket.UDPHandle = NULL;
     connectionSocket.TCPHandle = NULL;
     connectionSocket.socketKind = SocketCoreKindUndefined;
+    
+    //Pre-allocating for the maximum possible packet size (Jumbo frame)
+    connectionSocket.packetBuffer = (char8*)malloc(9000);
+
+    connectionSocket.packetLen = 0u;
+
+    connectionSocket.isWritten = false;
+    connectionSocket.isReadSelected = false;
+    connectionSocket.isReadSelectRaised = false;
+
+    connectionSocket.nextSocketCore = NULL_PTR(SocketCore*);
+    
+    SocketCoreSingleton::GetInstance().RegisterSocketCore(&connectionSocket);
+    
     #endif
 }
 
@@ -132,13 +149,23 @@ bool BasicSocket::IsValid() const {
 }
 
 Handle BasicSocket::GetReadHandle() const {
-    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::GetReadHandle() Cannot get handle in lwIP raw mode");
-    return 0;
+    #ifdef LWIP_ENABLED
+        //TODO: Fix this. It can only be done because I already know Handle == void*
+        Handle tmpHandle = (Handle)&connectionSocket;
+        return tmpHandle;
+    #else
+        return 0;
+    #endif
 }
 
 Handle BasicSocket::GetWriteHandle() const {
-    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::GetReadHandle() Cannot get handle in lwIP raw mode");
-    return 0;
+    #ifdef LWIP_ENABLED
+        //TODO: Fix this. It can only be done because I already know Handle == void*
+        Handle tmpHandle = (Handle)&connectionSocket;
+        return tmpHandle;
+    #else
+        return 0;
+    #endif
 }
 
 bool BasicSocket::IsBlocking() const {

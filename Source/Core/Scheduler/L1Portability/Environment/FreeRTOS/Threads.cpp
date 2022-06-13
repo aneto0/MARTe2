@@ -173,7 +173,14 @@ void SetPriority(const ThreadIdentifier &threadId,
 
     UBaseType_t priorityToSet = (priorityLevelToAssign * (configMAX_PRIORITIES)) / 100;
 
-    //TODO: Set priority here COMMENTED DUE TO INCOMPATIBLE HANDLE TYPE
+
+    //TODO: REMOVE FROM HERE -- FOR TESTING PURPOSES ONLY --
+    // if(priorityClass == RealTimePriorityClass) {
+    //     UBaseType_t pts = 4;
+    //     vTaskPrioritySet(threadId, pts);
+    //     REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "!!!!! WARNING !!!!! Forcing priority manually in code! !!!! REMOVE !!!!");
+    // }
+
     //vTaskPrioritySet(threadId, priorityToSet);
 
 #if USE_THREADS_DATABASE

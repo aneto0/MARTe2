@@ -32,6 +32,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Select.h"
+#include "SocketCore.h"
+#include "SocketCoreSingleton.h"
 #include "TimeoutType.h"
 #include "ErrorManagement.h"
 
@@ -75,34 +77,24 @@ Select::~Select() {
 }
 
 bool Select::AddReadHandle(const HandleI &handle) {
-    bool retVal = true;
-    // int32 descriptor = handle.GetReadHandle();
-    // //Check that the descriptor is valid
-    // if (descriptor >= 0) {
-    //     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    //     /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    //     /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    //     /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    //     if (!FD_ISSET(descriptor, &readHandle)) {
-    //         FD_SET(descriptor, &readHandle);
-    //         if (descriptor > highestHandle) {
-    //             highestHandle = descriptor;
-    //         }
-    //     }
-    //     else {
-    //         REPORT_ERROR_STATIC_0(ErrorManagement::Information, "Select::AddReadHandle(). The descriptor is still in the readHandle.");
-    //         retVal = false;
-    //     }
-    // }
-    // else {
-    //     REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Select::AddReadHandle(). Invalid descriptor.");
-    //     retVal = false;
-    // }
+    bool retVal = false;
+
+    SocketCore* tmpSocketCore = (SocketCore*)handle.GetReadHandle();
+    retVal = (tmpSocketCore != NULL_PTR(SocketCore*));
+
+    if(retVal) {
+        tmpSocketCore->isReadSelected = true;
+        tmpSocketCore->isReadSelectRaised = false;
+    } else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Failure to add read handle in select");
+    }
+
     return retVal;
 }
 
 bool Select::AddWriteHandle(const HandleI &handle) {
     bool retVal = true;
+
     // int32 descriptor = handle.GetWriteHandle();
     // if (descriptor >= 0) {
     //     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
@@ -129,6 +121,7 @@ bool Select::AddWriteHandle(const HandleI &handle) {
 
 bool Select::AddExceptionHandle(const HandleI &handle) {
     bool retVal = true;
+
     // int32 descriptor = handle.GetReadHandle();
     // if (descriptor >= 0) {
     //     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
@@ -298,85 +291,39 @@ void Select::ClearAllHandles() {
 }
 
 bool Select::IsSet(const HandleI &handle) const {
-    // int32 descriptor = handle.GetReadHandle();
-    // /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    // /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    // /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    // /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    // bool retVal = FD_ISSET(descriptor, &readHandle);
-    // if (!retVal) {
-    //     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    //     /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    //     /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    //     /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    //     retVal = FD_ISSET(descriptor, &writeHandle);
-    // }
-    // if (!retVal) {
-    //     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    //     /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    //     /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    //     /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    //     retVal = FD_ISSET(descriptor, &exceptionHandle);
-    // }
-    // if (!retVal) {
-    //     //It checks if it has a double handle (i.e. a different handle for reading and writing).
-    //     if (handle.GetWriteHandle() != descriptor) {
-    //         descriptor = handle.GetWriteHandle();
-    //         /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    //         /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    //         /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    //         /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    //         retVal = FD_ISSET(descriptor, &readHandle);
-    //         if (!retVal) {
-    //             /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    //             /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    //             /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    //             /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    //             retVal = FD_ISSET(descriptor, &writeHandle);
-    //         }
-    //         if (!retVal) {
-    //             /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    //             /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    //             /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    //             /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    //             retVal = FD_ISSET(descriptor, &exceptionHandle);
-    //         }
-    //     }
-    // }
-    bool retVal = true;
+    bool retVal = false;
+
+    SocketCore* tmpSocketCore = (SocketCore*)handle.GetReadHandle();
+    retVal = (tmpSocketCore != NULL_PTR(SocketCore*));
+
+    if(retVal) {
+        retVal = tmpSocketCore->isReadSelectRaised;
+    }
+
     return retVal;
 }
 
 int32 Select::WaitUntil(const TimeoutType &timeout) {
 
-    int32 retSel = -1;
-    // /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    // /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    // /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    // /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    // while ((highestHandle >= 0) && (!FD_ISSET(highestHandle, &readHandle)) && (!FD_ISSET(highestHandle, &writeHandle))
-    //         && (!FD_ISSET(highestHandle, &exceptionHandle))) {
-    //     highestHandle--;
-    // }
-    // if (highestHandle < 0) {
-    //     REPORT_ERROR_STATIC_0(ErrorManagement::Information, "Select::WaitAll(). The highestHandle is negative.");
-    // }
-    // else {
-    //     if (timeout.IsFinite()) {
-    //         struct timeval timeoutLinux;
-    //         /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
-    //         timeoutLinux.tv_usec = static_cast<int64>(timeout.GetTimeoutMSec()) * 1000;
-    //         /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
-    //         timeoutLinux.tv_sec = static_cast<int64>(timeout.GetTimeoutMSec()) / 1000;
-    //         retSel = select(highestHandle + 1, &readHandle, &writeHandle, &exceptionHandle, &timeoutLinux);
-    //     }
-    //     else {
-    //         retSel = select(highestHandle + 1, &readHandle, &writeHandle, &exceptionHandle, static_cast<timeval *>(NULL));
-    //     }
-    // }
+    int32 retSel = 0;
+    uint64 currentTicks = 0u;
+    uint64 endTicks;
+
+    if(timeout.IsFinite()) {
+        currentTicks = HighResolutionTimer::Counter();
+        //+1 is needed to do the loop infinitely when !IsFinite
+        endTicks = currentTicks + timeout.HighResolutionTimerTicks() + 1;
+    }
+
+    while( (retSel == 0) && (currentTicks < endTicks) ) {
+        retSel = SocketCoreSingleton::GetInstance().CountReadyToRead();
+
+        if(timeout.IsFinite()) {
+            currentTicks = HighResolutionTimer::Counter();
+        }
+    }
+    
     return retSel;
 }
-
-
 
 }

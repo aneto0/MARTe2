@@ -40,9 +40,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "AdvancedErrorManagement.h"
 #include "BasicUDPSocket.h"
-#include "ErrorManagement.h"
+#include "HighResolutionTimer.h"
 #include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -57,6 +57,49 @@ extern void NetworkInterfaceHook(void* netifParams);
 #endif
 
 namespace MARTe {
+
+static inline void EnableIRQ()
+{
+	asm volatile(
+		"msr	daifclr, #2"
+		:
+		:
+		: "memory");
+}
+static inline void DisableIRQ()
+{
+	asm volatile(
+		"msr	daifset, #2"
+		:
+		:
+		: "memory");
+}
+
+void UDPRegistrationCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
+    
+    //WARNING: This function runs inside an ISR context
+    
+    SocketCore* tmpSocketCore = static_cast<SocketCore*>(arg);
+    
+    //Copy locally the relevant packet data
+    MemoryOperationsHelper::Copy((char8*)tmpSocketCore->packetBuffer, (char8*)p->payload, p->len);
+    tmpSocketCore->packetSourceIpAddress = *addr;
+    tmpSocketCore->packetSourcePort = port;
+
+    //Update control variables to emulate sequential read behaviour on socket
+    tmpSocketCore->isWritten = true;
+    tmpSocketCore->packetLen = (uint32)p->len;
+    tmpSocketCore->lastPacketArrivalTimestamp = HighResolutionTimer::Counter();
+
+    //Update control variables to emulate read select behaviour on socket
+    if(tmpSocketCore->isReadSelected && !tmpSocketCore->isReadSelectRaised) {
+        tmpSocketCore->isReadSelectRaised = true;
+        tmpSocketCore->readSelectRaisedAt = tmpSocketCore->lastPacketArrivalTimestamp;
+    }
+
+    //Free the lwIP buffer and return it to the pbuf pool
+    pbuf_free(p);
+}
 
 BasicUDPSocket::BasicUDPSocket() :
         BasicSocket() {
@@ -84,12 +127,11 @@ bool BasicUDPSocket::Peek(char8* const output,
 bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
 
-    int32 ret = -1;
+    bool ret = false;
 #ifdef LWIP_ENABLED
-    //TODO: To be implemented
-    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket::Read() Not implemented");
+    ret = Read(output, size, TTInfiniteWait);
 #endif
-    return (ret > 0);
+    return ret;
 }
 
 bool BasicUDPSocket::Write(const char8* const input,
@@ -114,25 +156,43 @@ bool BasicUDPSocket::Write(const char8* const input,
 
 bool BasicUDPSocket::Join(const char8 *const group) const {
     bool ok = false;
-    /* lwIP needs IGMP, which in turn needs SOCKET_API which in turn needs FreeRTOS or libMetal. Here we are BareMetal */
+    ip_addr_t multicastIp;
+    
+    multicastIp.addr = ipaddr_addr(group);
+
+    err_t iret = igmp_joingroup(IP_ADDR_ANY,(const struct ip4_addr *)(&multicastIp));
+
+    ok = (iret == ERR_OK);
+
+    if(ok) {
+        udp_set_multicast_netif_addr(connectionSocket.UDPHandle,(const struct ip4_addr *)(&multicastIp));
+        //udp_set_multicast_ttl(connectionSocket.UDPHandle, 5);
+    }
+
     return ok;
 }
 
 bool BasicUDPSocket::Open() {
 #ifdef LWIP_ENABLED
     connectionSocket.UDPHandle = udp_new();
+
+    udp_recv(connectionSocket.UDPHandle, UDPRegistrationCallback, static_cast<void*>(&connectionSocket));
+
     return (connectionSocket.UDPHandle != NULL);
 #endif
 }
 
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 bool BasicUDPSocket::Listen(const uint16 port) {
-    int32 errorCode = -1;
-#ifdef LWIP_ENABLED
+    bool retVal = false;
+    #ifdef LWIP_ENABLED
+    
+    err_t err = udp_bind(connectionSocket.UDPHandle, IP_ADDR_ANY, port);
+    
+    retVal = (err == ERR_OK);
+    #endif /* ! LWIP_ENABLED */
 
-#endif /* ! LWIP_ENABLED */
-
-    return (errorCode >= 0);
+    return retVal;
 }
 
 bool BasicUDPSocket::Connect(const char8 * const address,
@@ -175,9 +235,58 @@ bool BasicUDPSocket::CanSeek() const {
 bool BasicUDPSocket::Read(char8 * const output,
                           uint32 & size,
                           const TimeoutType &timeout) {
-    uint32 sizeToRead = size;
-    size = 0u;
-    return (size > 0u);
+    
+    bool retVal = false;
+    bool readRetry = true;
+    bool canRead = false;
+
+    retVal = (size <= 9000);
+
+    if(!retVal) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Read currently does not support reading more than 9000 bytes per call");
+    } else {
+        uint64 currentTicks = HighResolutionTimer::Counter();
+        uint64 endTicks = 0u;
+        
+        if(timeout.IsFinite()) {
+            endTicks = currentTicks + timeout.HighResolutionTimerTicks();
+        }
+    
+        while(readRetry) {
+            DisableIRQ();
+
+            canRead = connectionSocket.isWritten;
+
+            if(!canRead) {
+                EnableIRQ();
+            }
+
+            readRetry = !canRead;
+            if(timeout.IsFinite()) {
+                if(readRetry) {
+                    currentTicks = HighResolutionTimer::Counter();
+                    readRetry = (endTicks > currentTicks);
+                }
+            }
+        }
+
+        if(canRead) {
+            retVal = (size <= connectionSocket.packetLen);
+    
+            if(retVal) {
+                size = connectionSocket.packetLen;
+                if(connectionSocket.packetBuffer != output) {
+                    MemoryOperationsHelper::Copy(output, connectionSocket.packetBuffer, size);
+                }
+
+                connectionSocket.isWritten = false;
+            }
+
+            EnableIRQ();
+        }
+    }
+
+    return retVal;
 }
 
 bool BasicUDPSocket::Write(const char8 * const input,
