@@ -105,7 +105,15 @@ public:
      */
     bool TestReadEnum_False_BadConversion();
 
+    /**
+     * @brief Tests the ReadValidated method.
+     */
+    bool TestReadValidated();
 
+    /**
+     * @brief Tests that the ReadValidated method detects an invalid condition.
+     */
+    bool TestReadValidated_InvalidCondition();
 
 #if 0
     /**

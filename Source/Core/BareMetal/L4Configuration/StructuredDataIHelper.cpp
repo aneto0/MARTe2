@@ -31,6 +31,8 @@
 #define DLL_API
 
 #include "AdvancedErrorManagement.h"
+#include "MathExpressionParser.h"
+#include "RuntimeEvaluator.h"
 #include "StructuredDataIHelper.h"
 #include "StreamString.h"
 #include "TypeConversion.h"
@@ -193,6 +195,74 @@ bool StructuredDataIHelper::ReadEnum(const char8 * const name, const AnyType &va
     }
     return !hasErrors;
 
+}
+
+bool StructuredDataIHelper::ReadValidated(const char8 * const name, const AnyType &value, const char8 * const validationExpression) {
+    StreamString validationExpressionStr = "RES = ";
+    validationExpressionStr += validationExpression;
+    validationExpressionStr += ";";
+    if (!hasErrors) {
+        hasErrors = !Read(name, value);
+    }
+    if (!hasErrors) {
+        hasErrors = !validationExpressionStr.Seek(0u);
+    }
+    MathExpressionParser mathParser(validationExpressionStr);
+    if (!hasErrors) {
+       hasErrors = !mathParser.Parse();
+       if (hasErrors) {
+           REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to parse validation expression: %s", name, validationExpressionStr.Buffer());
+       }
+    }
+    StreamString stackMachineExpr;
+    if (!hasErrors) {
+        stackMachineExpr = mathParser.GetStackMachineExpression();
+    }
+    RuntimeEvaluator *evaluator = NULL_PTR(RuntimeEvaluator *);
+    if (!hasErrors) {
+        evaluator = new RuntimeEvaluator(stackMachineExpr);
+        hasErrors = !evaluator->ExtractVariables();
+    }
+    if (!hasErrors) {
+        hasErrors = !evaluator->SetOutputVariableType("RES", UnsignedInteger8Bit);
+    }
+    if (!hasErrors) {
+        hasErrors = !evaluator->SetInputVariableType(name, value.GetTypeDescriptor());
+        if (hasErrors) {
+           REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to add input variable to expression: %s", name, validationExpression);
+       }
+
+    }
+    uint8 result;
+    if (!hasErrors) {
+        hasErrors = !evaluator->SetOutputVariableMemory("RES", &result);
+    }
+    if (!hasErrors) {
+        hasErrors = !evaluator->SetInputVariableMemory(name, value.GetDataPointer());
+    }
+    if (!hasErrors) {
+        hasErrors = !evaluator->Compile();
+        if (hasErrors) {
+           REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to compile expression: %s", name, validationExpression);
+       }
+
+    }
+    if (!hasErrors) {
+        hasErrors = !evaluator->Execute();
+        if (hasErrors) {
+           REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to execute expression: %s", name, validationExpression);
+       }
+    }
+    if (!hasErrors) {
+        hasErrors = (result != 1u);
+        if (hasErrors) {
+            REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s with value %! failed to meet validation critera: %s", name, value, validationExpression);
+        }
+        else {
+            REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s with value %! meets validation critera: %s", name, value, validationExpression);
+        }
+    }
+    return !hasErrors;
 }
 
 bool StructuredDataIHelper::MoveAbsolute(const char8 * const path) {

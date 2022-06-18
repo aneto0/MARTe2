@@ -261,6 +261,44 @@ bool StructuredDataIHelperTest::TestReadEnum_False_BadConversion() {
     return ok;
 }
 
+bool StructuredDataIHelperTest::TestReadValidated() {
+    ConfigurationDatabase cdb;
+    cdb.Write("Param", 3);
+    Reference ref("Object");
+    ref->SetName("Test");
+    StructuredDataIHelper sdi(cdb, ref);
+    uint32 param;
+    bool ok = !sdi.HasErrors();
+    if (ok) {
+        ok = sdi.ReadValidated("Param", param, "(Param > (uint32)2) && (Param < (uint32)4)");
+    }
+    if (ok) {
+        ok = !sdi.HasErrors();
+    }
+    if (ok) {
+        ok = (param == 3);
+    }
+    return ok;
+}
+
+bool StructuredDataIHelperTest::TestReadValidated_InvalidCondition() {
+    ConfigurationDatabase cdb;
+    cdb.Write("Param", 6);
+    Reference ref("Object");
+    ref->SetName("Test");
+    StructuredDataIHelper sdi(cdb, ref);
+    uint32 param;
+    bool ok = !sdi.HasErrors();
+    if (ok) {
+        ok = !sdi.ReadValidated("Param", param, "(Param > (uint32)2) && (Param < (uint32)4)");
+    }
+    if (ok) {
+        ok = sdi.HasErrors();
+    }
+    return ok;
+}
+
+
 
 
 

@@ -103,6 +103,17 @@ TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadEnum_False_Bad
     ASSERT_TRUE(sdiTest.TestReadEnum_False_BadConversion());
 }
 
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadValidated) {
+    StructuredDataIHelperTest sdiTest;
+    ASSERT_TRUE(sdiTest.TestReadValidated());
+}
+
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadValidated_InvalidCondition) {
+    StructuredDataIHelperTest sdiTest;
+    ASSERT_TRUE(sdiTest.TestReadValidated_InvalidCondition());
+}
+
+
 
 
 

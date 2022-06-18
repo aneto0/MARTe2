@@ -100,6 +100,15 @@ public:
     bool ReadEnum(const char8 * const name, const AnyType &value, const AnyType options, const AnyType optionValues, const AnyType defaultValue);
 
     /**
+     * @brief Reads and validates againt the validationExpression (e.g. "((MyParam > (uint32)2) && (MyParam < (uint32)5))", where MyParam is the name of the variable to be read).
+     * @param[in] name see StructuredDataI::Read
+     * @param[out] value see StructuredDataI::Read
+     * @param[in] validationExpression a mathematical expression that can be parsed by the MathExpressionParser and whose variable is the name of the variable to be read. Note that the final ; shall not be added to the validationExpression.
+     * @return true if the variable is successfully read and if the condition expressed in the validationExpression is met.
+     */
+    bool ReadValidated(const char8 * const name, const AnyType &value, const char8 * const validationExpression);
+
+    /**
      * @see StructuredDataI::Read
      * @details TODO 
      */
