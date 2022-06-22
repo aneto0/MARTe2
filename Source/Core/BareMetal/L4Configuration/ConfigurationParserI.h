@@ -33,8 +33,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyTypeCreator.h"
+#include "ConfigurationDatabase.h"
 #include "LexicalAnalyzer.h"
 #include "ParserI.h"
+#include "RuntimeEvaluator.h"
 #include "StructuredDataI.h"
 #include "StreamString.h"
 #include "Token.h"
@@ -131,6 +133,11 @@ protected:
     void GetTypeCast();
 
     /**
+     * @brief Handles a math expression cast.
+     */
+    void GetExprCast();
+
+    /**
      * @brief Creates a new node in the StructuredData.
      */
     void CreateNode();
@@ -157,6 +164,16 @@ protected:
     void BlockEnd();
 
 private:
+
+    /**
+     * @brief TODO
+     */
+    bool BrowseExpressionVariables(RuntimeEvaluator *evaluator);
+
+    /**
+     * @brief TODO
+     */
+    bool ExpandExpression(const char8 * const nodePath, const char8 * const nodeName, const char8 * const outputTypeName);
 
     /**
      * The type name.
@@ -202,6 +219,21 @@ private:
      * The number of dimensions of the variable (0=scalar, 1=vector, 2=matrix)
      */
     uint8 numberOfDimensions;
+
+    /**
+     * True if a math expression has been found.
+     */
+    bool handleMathExpr;
+
+    /**
+     * True if the output StructuredDataI is a ConfigurationDatabase
+     */
+    bool outputSupportsMathExpr;
+
+    /**
+     * Stores the math expressions to be processed at the end.
+     */
+    ConfigurationDatabase mathExpressionsCDB;
 
 };
 

@@ -231,7 +231,6 @@ bool StructuredDataIHelper::ReadValidated(const char8 * const name, const AnyTyp
         if (hasErrors) {
            REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to add input variable to expression: %s", name, validationExpression);
        }
-
     }
     uint8 result;
     if (!hasErrors) {
@@ -261,6 +260,9 @@ bool StructuredDataIHelper::ReadValidated(const char8 * const name, const AnyTyp
         else {
             REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s with value %! meets validation critera: %s", name, value, validationExpression);
         }
+    }
+    if (evaluator != NULL_PTR(RuntimeEvaluator *)) {
+        delete evaluator;
     }
     return !hasErrors;
 }

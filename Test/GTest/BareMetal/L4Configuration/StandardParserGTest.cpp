@@ -728,3 +728,34 @@ TEST(BareMetal_L4Configuration_StandardParserGTest,TestStandardCast) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestStandardCast());
 }
+
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestGetExprCast) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetExprCast());
+}
+
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestGetExprCast_InvalidExpression) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetExprCast_InvalidExpression());
+}
+
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestGetExprCast_InvalidOutput) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetExprCast_InvalidOutput());
+}
+
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestGetExprCast_FailCompile) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetExprCast_FailCompile());
+}
+
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestGetExprCast_FailVariableNotFound) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetExprCast_FailVariableNotFound());
+}
+
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestGetExprCast_FailVariablePathNotFound) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetExprCast_FailVariablePathNotFound());
+}
+
