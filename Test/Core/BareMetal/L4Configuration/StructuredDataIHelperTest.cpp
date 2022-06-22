@@ -298,7 +298,50 @@ bool StructuredDataIHelperTest::TestReadValidated_InvalidCondition() {
     return ok;
 }
 
+bool StructuredDataIHelperTest::TestReadArray() {
+    ConfigurationDatabase cdb;
+    uint32 arr[] = {1, 2};
+    cdb.Write("Param", arr);
+    Reference ref("Object");
+    ref->SetName("Test");
+    StructuredDataIHelper sdi(cdb, ref);
+    uint32 *param = NULL_PTR(uint32 *);
+    uint32 nOfElements = 0u;
+    bool ok = !sdi.HasErrors();
+    if (ok) {
+        ok = sdi.ReadArray("Param", param, nOfElements);
+    }
+    if (ok) {
+        ok = !sdi.HasErrors();
+    }
+    if (ok) {
+        ok = (nOfElements == 2u);
+    }
+    for (uint32 i=0; (i<nOfElements) && (ok); i++) {
+        ok = (param[i] == arr[i]);
+    }
+    if (param != NULL_PTR(uint32 *)) {
+        delete []param;
+    }
+    return ok;
+}
 
+bool StructuredDataIHelperTest::TestReadArray_False() {
+    ConfigurationDatabase cdb;
+    Reference ref("Object");
+    ref->SetName("Test");
+    StructuredDataIHelper sdi(cdb, ref);
+    uint32 *param = NULL_PTR(uint32 *);
+    uint32 nOfElements = 0u;
+    bool ok = !sdi.HasErrors();
+    if (ok) {
+        ok = !sdi.ReadArray("Param", param, nOfElements);
+    }
+    if (ok) {
+        ok = sdi.HasErrors();
+    }
+    return ok;
+}
 
 
 

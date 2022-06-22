@@ -115,6 +115,17 @@ public:
      */
     bool TestReadValidated_InvalidCondition();
 
+    /**
+     * @brief Tests the ReadArray method.
+     */
+    bool TestReadArray();
+
+    /**
+     * @brief Tests the ReadArray method without specifying an input parameter.
+     */
+    bool TestReadArray_False();
+
+
 #if 0
     /**
      * @brief Tests the CreateAbsolute function with a valid path

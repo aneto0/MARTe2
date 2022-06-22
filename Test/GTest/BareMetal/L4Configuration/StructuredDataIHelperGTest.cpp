@@ -113,6 +113,15 @@ TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadValidated_Inva
     ASSERT_TRUE(sdiTest.TestReadValidated_InvalidCondition());
 }
 
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadArray) {
+    StructuredDataIHelperTest sdiTest;
+    ASSERT_TRUE(sdiTest.TestReadArray());
+}
+
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadArray_False) {
+    StructuredDataIHelperTest sdiTest;
+    ASSERT_TRUE(sdiTest.TestReadArray_False());
+}
 
 
 

@@ -109,8 +109,11 @@ public:
     bool ReadValidated(const char8 * const name, const AnyType &value, const char8 * const validationExpression);
 
     /**
-     * @see StructuredDataI::Read
-     * @details TODO 
+     * @brief Helper method for the reading of array.
+     * @param[in] name see StructuredDataI::Read
+     * @param[in, out] arr the array to be read (the caller is responsible for freeing (with delete []) the memory!).
+     * @param[out] numberOfElements the number of elements of the array.
+     * @return true if the array is successfully read. The caller will be responsible for freeing (with delete []) the allocated memory.
      */
     template<typename T>
     inline bool ReadArray(const char8 * const name, T* &arr, uint32 &numberOfElements);
@@ -249,10 +252,10 @@ bool StructuredDataIHelper::ReadArray(const char8 * const name, T* &arr, uint32 
             arr = NULL_PTR(T*);
         }
         else {
-            REPORT_ERROR_PROXY(ErrorManagement::Information, owner, "%s successfully read array %!", name, vec);
+            REPORT_ERROR_PROXY(ErrorManagement::Information, owner, "%s successfully read : %!", name, vec);
         }
     }
-    return hasErrors;
+    return !hasErrors;
 }
 
 template<typename T>
@@ -292,7 +295,7 @@ bool StructuredDataIHelper::ReadMatrix(const char8 * const name, T** &mat, uint3
             REPORT_ERROR_PROXY(ErrorManagement::Information, owner, "%s successfully read matrix %!", name, mat);
         }
     }
-    return hasErrors;
+    return !hasErrors;
 
 }
 
