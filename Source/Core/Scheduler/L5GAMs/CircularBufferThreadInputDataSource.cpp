@@ -49,76 +49,78 @@ CircularBufferThreadInputDataSource::CircularBufferThreadInputDataSource() :
         executor(*this) {
 
     mutex.Create();
-    currentBuffer = NULL_PTR(uint32 *);
+    currentBuffer = NULL_PTR(uint32*);
     sleepInMutexSec = 1e-6F;
 
-    isRefreshed = NULL_PTR(uint8 *);
-    lastReadBuffer = NULL_PTR(uint32 *);
-    lastReadBuffer_1 = NULL_PTR(uint32 *);
+    isRefreshed = NULL_PTR(uint8*);
+    lastReadBuffer = NULL_PTR(uint32*);
+    lastReadBuffer_1 = NULL_PTR(uint32*);
 
     triggerAfterNSamples = 1u;
-    nBrokerOpPerSignal = NULL_PTR(uint32 *);
-    nBrokerOpPerSignalCounter = NULL_PTR(uint32 *);
+    nBrokerOpPerSignal = NULL_PTR(uint32*);
+    nBrokerOpPerSignalCounter = NULL_PTR(uint32*);
     numberOfChannels = 0u;
     syncSignal = 0u;
 
     timeStampSignalIndex = 0xFFFFFFFFu;
     errorCheckSignalIndex = 0xFFFFFFFFu;
 
-    numberOfInterleavedSamples = NULL_PTR(uint32 *);
-    interleavedSignalByteSize = NULL_PTR(uint32 *);
+    numberOfInterleavedSamples = NULL_PTR(uint32*);
+    interleavedSignalByteSize = NULL_PTR(uint32*);
 
-    numberOfInterleavedSignalMembers = NULL_PTR(uint32 *);
-    interleavedPacketMemberByteSize = NULL_PTR(uint32 *);
+    numberOfInterleavedSignalMembers = NULL_PTR(uint32*);
+    interleavedPacketMemberByteSize = NULL_PTR(uint32*);
 
-    headerSize = NULL_PTR(uint32 *);
+    headerSize = NULL_PTR(uint32*);
 
     signalDefinitionInterleaved = false;
     getFirst = false;
     stop = 0;
     sleepTime = 0.F;
+    (void) rootEventSem.Create();
+    (void) rootEventSem.Reset();
 
 }
 
 CircularBufferThreadInputDataSource::~CircularBufferThreadInputDataSource() {
 
-    if (isRefreshed != NULL_PTR(uint8 *)) {
+    if (isRefreshed != NULL_PTR(uint8*)) {
         delete[] isRefreshed;
-        isRefreshed = NULL_PTR(uint8 *);
+        isRefreshed = NULL_PTR(uint8*);
     }
-    if (currentBuffer != NULL_PTR(uint32 *)) {
+    if (currentBuffer != NULL_PTR(uint32*)) {
         delete[] currentBuffer;
-        currentBuffer = NULL_PTR(uint32 *);
+        currentBuffer = NULL_PTR(uint32*);
     }
-    if (lastReadBuffer != NULL_PTR(uint32 *)) {
+    if (lastReadBuffer != NULL_PTR(uint32*)) {
         delete[] lastReadBuffer;
-        lastReadBuffer = NULL_PTR(uint32 *);
+        lastReadBuffer = NULL_PTR(uint32*);
     }
-    if (lastReadBuffer_1 != NULL_PTR(uint32 *)) {
+    if (lastReadBuffer_1 != NULL_PTR(uint32*)) {
         delete[] lastReadBuffer_1;
-        lastReadBuffer_1 = NULL_PTR(uint32 *);
+        lastReadBuffer_1 = NULL_PTR(uint32*);
     }
-    if (nBrokerOpPerSignal != NULL_PTR(uint32 *)) {
+    if (nBrokerOpPerSignal != NULL_PTR(uint32*)) {
         delete[] nBrokerOpPerSignal;
-        nBrokerOpPerSignal = NULL_PTR(uint32 *);
+        nBrokerOpPerSignal = NULL_PTR(uint32*);
     }
-    if (nBrokerOpPerSignalCounter != NULL_PTR(uint32 *)) {
+    if (nBrokerOpPerSignalCounter != NULL_PTR(uint32*)) {
         delete[] nBrokerOpPerSignalCounter;
-        nBrokerOpPerSignalCounter = NULL_PTR(uint32 *);
+        nBrokerOpPerSignalCounter = NULL_PTR(uint32*);
     }
-    if (numberOfInterleavedSamples != NULL_PTR(uint32 *)) {
+    if (numberOfInterleavedSamples != NULL_PTR(uint32*)) {
         delete[] numberOfInterleavedSamples;
     }
-    if (interleavedSignalByteSize != NULL_PTR(uint32 *)) {
+    if (interleavedSignalByteSize != NULL_PTR(uint32*)) {
         delete[] interleavedSignalByteSize;
     }
-    if (numberOfInterleavedSignalMembers != NULL_PTR(uint32 *)) {
+    if (numberOfInterleavedSignalMembers != NULL_PTR(uint32*)) {
         delete[] numberOfInterleavedSignalMembers;
     }
-    if (interleavedPacketMemberByteSize != NULL_PTR(uint32 *)) {
+    if (interleavedPacketMemberByteSize != NULL_PTR(uint32*)) {
         delete[] interleavedPacketMemberByteSize;
     }
-    if (headerSize != NULL_PTR(uint32 *)) {
+    if (headerSize != NULL_PTR(uint32*)) {
         delete[] headerSize;
     }
 }
@@ -130,11 +132,12 @@ void CircularBufferThreadInputDataSource::Purge(ReferenceContainer &purgeList) {
     uint8 numberOfAttempts = 2u;
     ErrorManagement::ErrorType err;
     if (executor.GetStatus() != EmbeddedThreadI::OffState) {
-        for (uint32 i = 0u; i < numberOfAttempts; i++){
+        for (uint32 i = 0u; i < numberOfAttempts; i++) {
             err = (!executor.Stop());
-            bool ret = err.ErrorsCleared(); 
-            REPORT_ERROR( ret ? ErrorManagement::Information : ErrorManagement::FatalError,
-                "CircularBufferThreadInputDataSource::Purge SingleThreadService stoping attempt %u of %u returned %s", i+1u, numberOfAttempts, ret ? "true" : "false");
+            bool ret = err.ErrorsCleared();
+            REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError,
+                         "CircularBufferThreadInputDataSource::Purge SingleThreadService stoping attempt %u of %u returned %s", i + 1u, numberOfAttempts,
+                         ret ? "true" : "false");
             if (ret) {
                 break;
             }
@@ -147,38 +150,63 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
 
     bool ret;
     REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::Initialise");
-    
+
     ret = MemoryDataSourceI::Initialise(data);
     if (ret) {
         // Read cpu mask
         uint64 cpuMask = 0u;
         if (!data.Read("CpuMask", cpuMask)) {
             cpuMask = 0xFFFFu;
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::Initialise CpuMask was not specified. Using default: %d", cpuMask);
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::Initialise CpuMask was not specified. Using default: %d",
+                                    cpuMask);
         }
         uint8 receiverThreadPriority;
         if (!data.Read("ReceiverThreadPriority", receiverThreadPriority)) {
-            receiverThreadPriority = 31u;
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::Initialise ReceiverThreadPriority was not specified. Using default: %d", receiverThreadPriority);
+            receiverThreadPriority = 50u;
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning,
+                                    "CircularBufferThreadInputDataSource::Initialise ReceiverThreadPriority was not specified. Using default: %d",
+                                    receiverThreadPriority);
         }
         uint32 receiverThreadStackSize;
         if (!data.Read("ReceiverThreadStackSize", receiverThreadStackSize)) {
             receiverThreadStackSize = THREADS_DEFAULT_STACKSIZE;
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::Initialise ReceiverThreadStackSize was not specified. Using default: %d", receiverThreadStackSize);
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning,
+                                    "CircularBufferThreadInputDataSource::Initialise ReceiverThreadStackSize was not specified. Using default: %d",
+                                    receiverThreadStackSize);
         }
         if (!data.Read("SleepTime", sleepTime)) {
             sleepTime = 0.F;
         }
-        receiverThreadPriority %= 32u;
+        receiverThreadPriority %= 100u;
         executor.SetCPUMask(static_cast<uint32>(cpuMask));
         executor.SetStackSize(receiverThreadStackSize);
-        executor.SetPriorityClass(Threads::RealTimePriorityClass);
-        executor.SetPriorityLevel(receiverThreadPriority);
+
+        uint8 prioClass = (receiverThreadPriority / 25u);
+        float32 prioLevelT = (((static_cast<uint32>(receiverThreadPriority) % 25) * 15.F) / 24.F);
+        uint32 prioLevel = static_cast<uint8>(prioLevelT+0.5);
+
+        Threads::PriorityClassType prioClassT = Threads::NormalPriorityClass;
+        if (prioClass == 0u) {
+            prioClassT = Threads::UnknownPriorityClass;
+        }
+        else if (prioClass == 1u) {
+            prioClassT = Threads::IdlePriorityClass;
+        }
+        else if (prioClass == 2u) {
+            prioClassT = Threads::NormalPriorityClass;
+        }
+        else if (prioClass == 3u) {
+            prioClassT = Threads::RealTimePriorityClass;
+        }
+        executor.SetPriorityClass(prioClassT);
+        executor.SetPriorityLevel(prioLevel);
 
         uint32 signalDefinitionInterleavedUInt32 = 0u;
         if (!data.Read("SignalDefinitionInterleaved", signalDefinitionInterleavedUInt32)) {
             signalDefinitionInterleavedUInt32 = 0u;
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::Initialise SignalDefinitionInterleaved was not specified. Using default: %d", signalDefinitionInterleavedUInt32);
+            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning,
+                                    "CircularBufferThreadInputDataSource::Initialise SignalDefinitionInterleaved was not specified. Using default: %d",
+                                    signalDefinitionInterleavedUInt32);
         }
         signalDefinitionInterleaved = (signalDefinitionInterleavedUInt32 == 1u);
     }
@@ -195,7 +223,8 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
         getFirst = (getFirstTemp > 0u);
     }
 
-    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::Initialise returning %s", ret ? "true" : "false");
+    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::Initialise returning %s",
+                 ret ? "true" : "false");
     return ret;
 }
 /*lint -e{613} null pointer checked before.*/
@@ -256,6 +285,10 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
         }
     }
     bool ret = (nStepsForward < numberOfBuffers);
+    TimeoutType timeoutT = TTInfiniteWait;
+    if (sleepTime >= 0.F) {
+        timeoutT = static_cast<uint32>(sleepTime * 1e3);
+    }
     /*lint -e{9113} -e{9131} -e{9007} known side effects.*/
     if (ret && (stop == 0)) {
         uint32 stepsBack = nStepsForward % triggerAfterNSamples;
@@ -274,15 +307,17 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
             if (lastReadBuffer[syncSignal] >= numberOfBuffers) {
                 lastReadBuffer[syncSignal] = 0u;
             }
-            bool isArrived = false;
+            uint32 index = (lastReadBuffer[syncSignal] * numberOfSignals) + syncSignal;
+            rootEventSem.Reset();
+            (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
+            bool isArrived = (isRefreshed[index] == 1u);
+            mutex.FastUnLock();
             /*lint -e{9131} -e{9007} known dependences and side effects.*/
-            while (!(isArrived) && (stop == 0)) {
+            while ((!isArrived) && (stop == 0)) {
+                (void) rootEventSem.Wait(timeoutT);
+                (void) rootEventSem.Reset();
                 (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
-                uint32 index = (lastReadBuffer[syncSignal] * numberOfSignals) + syncSignal;
                 isArrived = (isRefreshed[index] == 1u);
-                if (!IsEqual(static_cast<float64>(sleepTime), static_cast<float64>(0.F))) {
-                    Sleep::Sec(sleepTime);
-                }
                 mutex.FastUnLock();
             }
             numberOfSamplesSinceLastTrigger--;
@@ -293,12 +328,12 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
     return ret;
 }
 
-const char8 *CircularBufferThreadInputDataSource::GetBrokerName(StructuredDataI &data,
+const char8* CircularBufferThreadInputDataSource::GetBrokerName(StructuredDataI &data,
                                                                 const SignalDirection direction) {
 
     REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::GetBrokerName");
 
-    const char8 *brokerName = NULL_PTR(const char8 *);
+    const char8 *brokerName = NULL_PTR(const char8*);
     if (direction == InputSignals) {
         float32 freq = -1.0F;
         if (!data.Read("Frequency", freq)) {
@@ -317,15 +352,15 @@ const char8 *CircularBufferThreadInputDataSource::GetBrokerName(StructuredDataI 
 
 /*lint -e{715} the default implementation returns false (only input supported).*/
 bool CircularBufferThreadInputDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                           const char8* const functionName,
-                                                           void * const gamMemPtr) {
+                                                           const char8 *const functionName,
+                                                           void *const gamMemPtr) {
     // REPORT_ERROR(ErrorManagement::Warning, "CircularBufferThreadInputDataSource::GetOutputBrokers returning false (no OutputBrokers).");
     return false;
 }
 
 /*lint -e{613} null pointer checked before.*/
-bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI & data) {
-    
+bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI &data) {
+
     bool ret;
     REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::SetConfiguredDatabase");
 
@@ -351,7 +386,8 @@ bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI 
                     TypeDescriptor td = GetSignalType(timeStampSignalIndex);
                     ret = (td == UnsignedInteger64Bit);
                     if (!ret) {
-                        REPORT_ERROR(ErrorManagement::InitialisationError, "CircularBufferThreadInputDataSource::SetConfiguredDatabase The InternalTimeStamp signal type must be uint64");
+                        REPORT_ERROR(ErrorManagement::InitialisationError,
+                                     "CircularBufferThreadInputDataSource::SetConfiguredDatabase The InternalTimeStamp signal type must be uint64");
                     }
                 }
                 if (ret) {
@@ -361,7 +397,8 @@ bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI 
                         TypeDescriptor td = GetSignalType(errorCheckSignalIndex);
                         ret = (td == UnsignedInteger32Bit);
                         if (!ret) {
-                            REPORT_ERROR(ErrorManagement::InitialisationError, "CircularBufferThreadInputDataSource::SetConfiguredDatabase The ErrorCheck signal type must be uint32");
+                            REPORT_ERROR(ErrorManagement::InitialisationError,
+                                         "CircularBufferThreadInputDataSource::SetConfiguredDatabase The ErrorCheck signal type must be uint32");
                         }
                     }
                 }
@@ -385,7 +422,10 @@ bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI 
                         (void) GetSignalNumberOfProducers(i, stateName.Buffer(), numberOfProducers);
                         ret = (numberOfProducers == 0u);
                         if (!ret) {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::SetConfiguredDatabase The signal with id=%u is written... all the signals must be only read", i);
+                            REPORT_ERROR_PARAMETERS(
+                                    ErrorManagement::FatalError,
+                                    "CircularBufferThreadInputDataSource::SetConfiguredDatabase The signal with id=%u is written... all the signals must be only read",
+                                    i);
                         }
 
                     }
@@ -405,13 +445,16 @@ bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI 
                 uint32 signalByteSize;
                 ret = GetSignalByteSize(timeStampSignalIndex, signalByteSize);
                 if (ret) {
-                    uint32 sizeCheck = static_cast<uint32> (sizeof(uint64));
+                    uint32 sizeCheck = static_cast<uint32>(sizeof(uint64));
                     if (!signalDefinitionInterleaved) {
                         sizeCheck *= (numberOfChannels);
                     }
                     ret = (signalByteSize == sizeCheck);
                     if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::SetConfiguredDatabase The size of the InternalTimeStamp signal must be %u != %u", sizeCheck, signalByteSize);
+                        REPORT_ERROR_PARAMETERS(
+                                ErrorManagement::FatalError,
+                                "CircularBufferThreadInputDataSource::SetConfiguredDatabase The size of the InternalTimeStamp signal must be %u != %u",
+                                sizeCheck, signalByteSize);
                     }
                 }
             }
@@ -422,13 +465,15 @@ bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI 
                 uint32 signalByteSize;
                 ret = GetSignalByteSize(errorCheckSignalIndex, signalByteSize);
                 if (ret) {
-                    uint32 sizeCheck = static_cast<uint32> (sizeof(uint32));
+                    uint32 sizeCheck = static_cast<uint32>(sizeof(uint32));
                     if (!signalDefinitionInterleaved) {
                         sizeCheck *= (numberOfChannels);
                     }
                     ret = (signalByteSize == sizeCheck);
                     if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::SetConfiguredDatabase The size of the ErrorCheck signal must be %u != %u", sizeCheck, signalByteSize);
+                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,
+                                                "CircularBufferThreadInputDataSource::SetConfiguredDatabase The size of the ErrorCheck signal must be %u != %u",
+                                                sizeCheck, signalByteSize);
                     }
                 }
             }
@@ -443,7 +488,8 @@ bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI 
         }
     }
 
-    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::SetConfiguredDatabase returning %s", ret ? "true" : "false");
+    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::SetConfiguredDatabase returning %s",
+                 ret ? "true" : "false");
     return ret;
 }
 
@@ -452,19 +498,19 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
 
     REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators");
 
-    if (numberOfInterleavedSamples != NULL_PTR(uint32 *)) {
+    if (numberOfInterleavedSamples != NULL_PTR(uint32*)) {
         delete[] numberOfInterleavedSamples;
     }
-    if (interleavedSignalByteSize != NULL_PTR(uint32 *)) {
+    if (interleavedSignalByteSize != NULL_PTR(uint32*)) {
         delete[] interleavedSignalByteSize;
     }
-    if (numberOfInterleavedSignalMembers != NULL_PTR(uint32 *)) {
+    if (numberOfInterleavedSignalMembers != NULL_PTR(uint32*)) {
         delete[] numberOfInterleavedSignalMembers;
     }
-    if (interleavedPacketMemberByteSize != NULL_PTR(uint32 *)) {
+    if (interleavedPacketMemberByteSize != NULL_PTR(uint32*)) {
         delete[] interleavedPacketMemberByteSize;
     }
-    if (headerSize != NULL_PTR(uint32 *)) {
+    if (headerSize != NULL_PTR(uint32*)) {
         delete[] headerSize;
     }
     numberOfInterleavedSamples = new uint32[numberOfSignals];
@@ -548,20 +594,25 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
                     }
                     else {
                         uint32 ii = i;
-                        REPORT_ERROR(ErrorManagement::InitialisationError, "CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators The signal %d byte size %d must be divided exactly by the sum of the packet member sizes %d",
-                                    ii, interleavedSignalByteSize[ii], packetSize);
+                        REPORT_ERROR(
+                                ErrorManagement::InitialisationError,
+                                "CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators The signal %d byte size %d must be divided exactly by the sum of the packet member sizes %d",
+                                ii, interleavedSignalByteSize[ii], packetSize);
                     }
                 }
                 else {
                     uint32 ii = i;
-                    REPORT_ERROR(ErrorManagement::InitialisationError, "CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators The sum of the packet member sizes %d cannot be greater than the signal %d byte size %d",
-                                packetSize, ii, interleavedSignalByteSize[ii]);
+                    REPORT_ERROR(
+                            ErrorManagement::InitialisationError,
+                            "CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators The sum of the packet member sizes %d cannot be greater than the signal %d byte size %d",
+                            packetSize, ii, interleavedSignalByteSize[ii]);
                 }
             }
         }
     }
 
-    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators returning %s", ret ? "true" : "false");
+    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError,
+                 "CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators returning %s", ret ? "true" : "false");
     return ret;
 }
 
@@ -570,19 +621,19 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
 
     REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSignalDefinitionInterleaved");
 
-    if (numberOfInterleavedSamples != NULL_PTR(uint32 *)) {
+    if (numberOfInterleavedSamples != NULL_PTR(uint32*)) {
         delete[] numberOfInterleavedSamples;
     }
-    if (interleavedSignalByteSize != NULL_PTR(uint32 *)) {
+    if (interleavedSignalByteSize != NULL_PTR(uint32*)) {
         delete[] interleavedSignalByteSize;
     }
-    if (numberOfInterleavedSignalMembers != NULL_PTR(uint32 *)) {
+    if (numberOfInterleavedSignalMembers != NULL_PTR(uint32*)) {
         delete[] numberOfInterleavedSignalMembers;
     }
-    if (interleavedPacketMemberByteSize != NULL_PTR(uint32 *)) {
+    if (interleavedPacketMemberByteSize != NULL_PTR(uint32*)) {
         delete[] interleavedPacketMemberByteSize;
     }
-    if (headerSize != NULL_PTR(uint32 *)) {
+    if (headerSize != NULL_PTR(uint32*)) {
         delete[] headerSize;
     }
     numberOfInterleavedSamples = new uint32[1u];
@@ -631,8 +682,10 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
                     if (ret) {
                         ret = (nOfSamples == nOfSamplesRead);
                         if (!ret) {
-                            REPORT_ERROR(ErrorManagement::InitialisationError, "CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSignalDefinitionInterleaved With SignalDefinitionInterleaved the number of samples shall be the same for all signals (%d != %d)",
-                                        nOfSamples, nOfSamplesRead);
+                            REPORT_ERROR(
+                                    ErrorManagement::InitialisationError,
+                                    "CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSignalDefinitionInterleaved With SignalDefinitionInterleaved the number of samples shall be the same for all signals (%d != %d)",
+                                    nOfSamples, nOfSamplesRead);
                         }
                     }
                 }
@@ -657,14 +710,15 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
         }
     }
 
-    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSignalDefinitionInterleaved returning %s", ret ? "true" : "false");
+    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError,
+                 "CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSignalDefinitionInterleaved returning %s", ret ? "true" : "false");
     return ret;
 }
 
 /*lint -e{715} the behavior of this function is independent of the currentStateName and nextStateName.*/
 /*lint -e{613} null pointer checked before.*/
-bool CircularBufferThreadInputDataSource::PrepareNextState(const char8 * const currentStateName,
-                                                           const char8 * const nextStateName) {
+bool CircularBufferThreadInputDataSource::PrepareNextState(const char8 *const currentStateName,
+                                                           const char8 *const nextStateName) {
 
     bool ret;
     REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::PrepareNextState");
@@ -741,7 +795,8 @@ bool CircularBufferThreadInputDataSource::PrepareNextState(const char8 * const c
         ret = executor.Start();
     }
 
-    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::PrepareNextState returning %s", ret ? "true" : "false");
+    REPORT_ERROR(ret ? ErrorManagement::Information : ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::PrepareNextState returning %s",
+                 ret ? "true" : "false");
     return ret;
 }
 
@@ -770,7 +825,7 @@ bool CircularBufferThreadInputDataSource::GetOutputOffset(const uint32 signalIdx
 }
 
 /*lint -e{613} null pointer checked before.*/
-ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(ExecutionInfo & info) {
+ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(ExecutionInfo &info) {
 
     ErrorManagement::ErrorType err;
     // REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::Execute");
@@ -784,14 +839,14 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
             if ((i != timeStampSignalIndex) && (i != errorCheckSignalIndex)) {
                 uint32 readBytes = signalSize[i];
                 uint32 memoryIndex = signalOffsets[i] + (currentBuffer[i] * signalSize[i]);
-                if (DriverRead(reinterpret_cast<char8*> (&(memory[memoryIndex])), readBytes, i)) {
+                if (DriverRead(reinterpret_cast<char8*>(&(memory[memoryIndex])), readBytes, i)) {
                     if (readBytes == signalSize[i]) {
                         //save the timestamp
                         if (timeStampSignalIndex != 0xFFFFFFFFu) {
                             uint32 index1 = (currentBuffer[timeStampSignalIndex] * (numberOfChannels));
-                            uint32 timeMemIndex = (signalOffsets[timeStampSignalIndex] + ((index1 + cnt) * static_cast<uint32> (sizeof(uint64))));
+                            uint32 timeMemIndex = (signalOffsets[timeStampSignalIndex] + ((index1 + cnt) * static_cast<uint32>(sizeof(uint64))));
                             void *timerPtr = &memory[timeMemIndex];
-                            *(reinterpret_cast<uint64 *> (timerPtr)) = HighResolutionTimer::Counter();
+                            *(reinterpret_cast<uint64*>(timerPtr)) = HighResolutionTimer::Counter();
                         }
                     }
                     else {
@@ -803,11 +858,11 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
                             }
                             uint32 index1 = (previousBuf * (numberOfChannels));
                             uint32 index2 = (currentBuffer[timeStampSignalIndex] * (numberOfChannels));
-                            uint32 timeMemIndex1 = (signalOffsets[timeStampSignalIndex] + ((index1 + cnt) * static_cast<uint32> (sizeof(uint64))));
-                            uint32 timeMemIndex2 = (signalOffsets[timeStampSignalIndex] + ((index2 + cnt) * static_cast<uint32> (sizeof(uint64))));
+                            uint32 timeMemIndex1 = (signalOffsets[timeStampSignalIndex] + ((index1 + cnt) * static_cast<uint32>(sizeof(uint64))));
+                            uint32 timeMemIndex2 = (signalOffsets[timeStampSignalIndex] + ((index2 + cnt) * static_cast<uint32>(sizeof(uint64))));
                             void *timerPtr2 = &(memory[timeMemIndex2]);
                             void *timerPtr1 = &(memory[timeMemIndex1]);
-                            *reinterpret_cast<uint64*> (timerPtr2) = *reinterpret_cast<uint64*> (timerPtr1);
+                            *reinterpret_cast<uint64*>(timerPtr2) = *reinterpret_cast<uint64*>(timerPtr1);
                         }
                     }
                 }
@@ -815,7 +870,7 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
                     //driver read error
                     if (errorCheckSignalIndex != 0xFFFFFFFFu) {
                         uint32 index = (currentBuffer[errorCheckSignalIndex] * (numberOfChannels));
-                        errorMemIndex = (signalOffsets[errorCheckSignalIndex] + ((index + cnt) * static_cast<uint32> (sizeof(uint32))));
+                        errorMemIndex = (signalOffsets[errorCheckSignalIndex] + ((index + cnt) * static_cast<uint32>(sizeof(uint32))));
                         void *errorPtr = &memory[errorMemIndex];
                         //if timeout give it a chance
                         *reinterpret_cast<uint32*>(errorPtr) |= 1u;
@@ -828,11 +883,11 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
                         }
                         uint32 index1 = (previousBuf * (numberOfChannels));
                         uint32 index2 = (currentBuffer[timeStampSignalIndex] * (numberOfChannels));
-                        uint32 timeMemIndex1 = (signalOffsets[timeStampSignalIndex] + ((index1 + cnt) * static_cast<uint32> (sizeof(uint64))));
-                        uint32 timeMemIndex2 = (signalOffsets[timeStampSignalIndex] + ((index2 + cnt) * static_cast<uint32> (sizeof(uint64))));
+                        uint32 timeMemIndex1 = (signalOffsets[timeStampSignalIndex] + ((index1 + cnt) * static_cast<uint32>(sizeof(uint64))));
+                        uint32 timeMemIndex2 = (signalOffsets[timeStampSignalIndex] + ((index2 + cnt) * static_cast<uint32>(sizeof(uint64))));
                         void *timePtr2 = &memory[timeMemIndex2];
                         void *timePtr1 = &memory[timeMemIndex1];
-                        *reinterpret_cast<uint64*> (timePtr2) = *reinterpret_cast<uint64*> (timePtr1);
+                        *reinterpret_cast<uint64*>(timePtr2) = *reinterpret_cast<uint64*>(timePtr1);
                     }
                 }
                 //refresh in any case... otherwise it will block the sync
@@ -842,19 +897,20 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
 
                     if (errorCheckSignalIndex != 0xFFFFFFFFu) {
                         uint32 index1 = (currentBuffer[errorCheckSignalIndex] * (numberOfChannels));
-                        errorMemIndex = (signalOffsets[errorCheckSignalIndex] + ((index1 + cnt) * static_cast<uint32> (sizeof(uint32))));
+                        errorMemIndex = (signalOffsets[errorCheckSignalIndex] + ((index1 + cnt) * static_cast<uint32>(sizeof(uint32))));
 
                         //overlap error
                         (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
                         if (isRefreshed[index] == 1u) {
                             void *errorPtr = &memory[errorMemIndex];
-                            *reinterpret_cast<uint32*> (errorPtr) |= 2u;
+                            *reinterpret_cast<uint32*>(errorPtr) |= 2u;
                         }
                         mutex.FastUnLock();
                     }
                     (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
                     isRefreshed[index] = 1u;
                     mutex.FastUnLock();
+                    (void) rootEventSem.Post();
                     currentBuffer[i]++;
                     if (currentBuffer[i] >= numberOfBuffers) {
                         currentBuffer[i] = 0u;
@@ -868,6 +924,7 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
             (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
             isRefreshed[index] = 1u;
             mutex.FastUnLock();
+            (void) rootEventSem.Post();
             currentBuffer[timeStampSignalIndex]++;
             if (currentBuffer[timeStampSignalIndex] >= numberOfBuffers) {
                 currentBuffer[timeStampSignalIndex] = 0u;
@@ -878,6 +935,7 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
             (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
             isRefreshed[index] = 1u;
             mutex.FastUnLock();
+            (void) rootEventSem.Post();
 
             currentBuffer[errorCheckSignalIndex]++;
             if (currentBuffer[errorCheckSignalIndex] >= numberOfBuffers) {
@@ -885,9 +943,9 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
             }
             index = (currentBuffer[errorCheckSignalIndex] * (numberOfChannels));
             for (uint32 i = 0u; i < numberOfChannels; i++) {
-                errorMemIndex = (signalOffsets[errorCheckSignalIndex] + ((index + i) * static_cast<uint32> (sizeof(uint32))));
+                errorMemIndex = (signalOffsets[errorCheckSignalIndex] + ((index + i) * static_cast<uint32>(sizeof(uint32))));
                 void *errorPtr = &memory[errorMemIndex];
-                *reinterpret_cast<uint32*> (errorPtr) = 0u;
+                *reinterpret_cast<uint32*>(errorPtr) = 0u;
             }
         }
     }

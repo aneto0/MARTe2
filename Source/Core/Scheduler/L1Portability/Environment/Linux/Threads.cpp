@@ -161,8 +161,9 @@ void SetPriority(const ThreadIdentifier &threadId,
                 policy = SCHED_FIFO;//Only put FIFO (more aggressive) for the RealTimePriorityClass
                 break;
             }
-            uint32 priorityLevelToAssign = 28u * priorityClassNumber;
-            priorityLevelToAssign += (static_cast<uint32>(prioLevel));
+            uint32 priorityLevelToAssign = 25u * priorityClassNumber;
+            float32 priorityLevelF=(static_cast<float32>(prioLevel)*24.F)/15.F;
+            priorityLevelToAssign += static_cast<uint32>(prioLevel);
             //Bound the priority to its maximum
             uint32 maxPriority = static_cast<uint32>(sched_get_priority_max(policy));
             if (priorityLevelToAssign > maxPriority) {

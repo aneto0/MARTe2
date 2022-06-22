@@ -55,9 +55,19 @@ TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_Cp
     ASSERT_TRUE(test.TestInitialise_CpuMask());
 }
 
-TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_PriorityLevel) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_PriorityLevel_Idle) {
     CircularBufferThreadInputDataSourceTest test;
-    ASSERT_TRUE(test.TestInitialise_PriorityLevel());
+    ASSERT_TRUE(test.TestInitialise_PriorityLevel_Idle());
+}
+
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_PriorityLevel_Unknown) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestInitialise_PriorityLevel_Unknown());
+}
+
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_PriorityLevel_RealTime) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestInitialise_PriorityLevel_RealTime());
 }
 
 TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_StackSize) {
