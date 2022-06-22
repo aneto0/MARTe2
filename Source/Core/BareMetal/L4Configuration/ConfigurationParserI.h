@@ -166,12 +166,20 @@ protected:
 private:
 
     /**
-     * @brief TODO
+     * @brief Expands all the variables available for this evaluator.
+     * @details Collects all the variables and looks for them in the parsed database.
+     * When found their memory and type will be assigned from the database so that they can be used by the evaluator.
+     * @param[in] evaluator the evaluator.
+     * @return true if all the variables can be found in the parsed database.
      */
     bool BrowseExpressionVariables(RuntimeEvaluator *evaluator);
 
     /**
-     * @brief TODO
+     * @brief Parses and executes a given expression. If successful the database node originally containing the expression will be patched with the output of the expression result.
+     * @param[in] nodePath path in the parsed database of the node containing the expression.
+     * @param[in] nodeName name of the node in the parsed database node containing the expression.
+     * @param[in] outputTypeName variable type to be used as the output of the expression execution.
+     * @return true if the path can be sucessfully parsed and executed.
      */
     bool ExpandExpression(const char8 * const nodePath, const char8 * const nodeName, const char8 * const outputTypeName);
 
