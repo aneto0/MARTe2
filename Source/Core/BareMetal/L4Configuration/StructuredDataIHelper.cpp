@@ -66,7 +66,7 @@ bool StructuredDataIHelper::Write(const char8 * const name, const AnyType &value
     if (!hasErrors) {
         hasErrors = !sdi.Write(name, value);
     }
-    return hasErrors;
+    return !hasErrors;
 }
 
 bool StructuredDataIHelper::Copy(StructuredDataI &destination) {

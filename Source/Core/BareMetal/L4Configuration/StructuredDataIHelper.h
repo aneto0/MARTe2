@@ -109,9 +109,9 @@ public:
     bool ReadValidated(const char8 * const name, const AnyType &value, const char8 * const validationExpression);
 
     /**
-     * @brief Helper method for the reading of array.
+     * @brief Helper method for the reading of arrays.
      * @param[in] name see StructuredDataI::Read
-     * @param[in, out] arr the array to be read (the caller is responsible for freeing (with delete []) the memory!).
+     * @param[out] arr the array to be read (the caller is responsible for freeing (with delete []) the memory!).
      * @param[out] numberOfElements the number of elements of the array.
      * @return true if the array is successfully read. The caller will be responsible for freeing (with delete []) the allocated memory.
      */
@@ -119,21 +119,23 @@ public:
     inline bool ReadArray(const char8 * const name, T* &arr, uint32 &numberOfElements);
 
     /**
-     * @see StructuredDataI::Read
-     * @details TODO 
+     * @brief Helper method to read matrices.
+     * @param[in] name see StructuredDataI::Read
+     * @param[out] mat the matrix to be read (the caller is responsible for freeing (with delete[] for i=0:numberOfRows; delete[] mat, the allocated memory).
+     * @param[out] numberOfRows the number of matrix rows.
+     * @param[out] numberOfCols the number of matrix columns.
+     * @return true if the matrix is successfully read. The caller is responsible for freeing both the matrix rows (delete []) and the matrix itself (delete []).
      */
     template<typename T>
     inline bool ReadMatrix(const char8 * const name, T** &mat, uint32 &numberOfRows, uint32 &numberOfCols);
 
     /**
      * @see StructuredDataI::Write
-     * @details TODO 
      */
     virtual bool Write(const char8 * const name, const AnyType &value);
 
     /**
      * @see StructuredDataI::Copy
-     * @details TODO 
      */
     virtual bool Copy(StructuredDataI &destination);
 
@@ -282,7 +284,7 @@ bool StructuredDataIHelper::ReadMatrix(const char8 * const name, T** &mat, uint3
             mat[r] = new T[numberOfCols];
         }
         Matrix<T> matReader(mat, numberOfRows, numberOfCols);
-        hasErrors = !sdi.Read(name, mat);
+        hasErrors = !sdi.Read(name, matReader);
         if (hasErrors) { 
             REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to read matrix", name);
             for (uint32 r=0u; r<numberOfRows; r++) {
@@ -292,7 +294,7 @@ bool StructuredDataIHelper::ReadMatrix(const char8 * const name, T** &mat, uint3
             mat = NULL_PTR(T **);
         }
         else {
-            REPORT_ERROR_PROXY(ErrorManagement::Information, owner, "%s successfully read matrix %!", name, mat);
+            REPORT_ERROR_PROXY(ErrorManagement::Information, owner, "%s successfully read matrix %!", name, matReader);
         }
     }
     return !hasErrors;

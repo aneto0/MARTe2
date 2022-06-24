@@ -125,248 +125,95 @@ public:
      */
     bool TestReadArray_False();
 
-
-#if 0
     /**
-     * @brief Tests the CreateAbsolute function with a valid path
+     * @brief Tests the ReadMatrix method.
      */
-    bool TestCreateAbsolute_ValidPath();
+    bool TestReadMatrix();
 
     /**
-     * @brief Tests the CreateAbsolute function trying to create a node that already exists
+     * @brief Tests the ReadMatrix method without specifying an input parameter.
      */
-    bool TestCreateAbsolute_InvalidPath();
+    bool TestReadMatrix_False();
 
     /**
-     * @brief Tests the CreateRelative function with a valid path
+     * @brief Tests the ReadMatrix method with a wrong number of dimensions.
      */
-    bool TestCreateRelative_ValidPath();
+    bool TestReadMatrix_False_Dimensions();
 
     /**
-     * @brief Tests the CreateRelative function trying to create a node that already exists
+     * @brief Tests the Write method.
      */
-    bool TestCreateRelative_InvalidPath();
+    bool TestWrite();
 
     /**
-     * @brief Tests the MoveToRoot function.
-     */
-    bool TestMoveToRoot();
-
-    /**
-     * @brief Tests the MoveToRoot function.
-     */
-    bool TestMoveToAncestor_ValidNumberOfGenerations();
-
-    /**
-     * @brief Tests the MoveToRoot function.
-     */
-    bool TestMoveToAncestor_InvalidNumberOfGenerations();
-
-    /**
-     * @brief Tests the MoveAbsolute function with valid paths.
-     */
-    bool TestMoveAbsolute_ValidPaths();
-
-    /**
-     * @brief Tests the MoveAbsolute function with invalid paths.
-     */
-    bool TestMoveAbsolute_InvalidPaths();
-
-    /**
-     * @brief Tests the MoveRelative function with valid paths.
-     */
-    bool TestMoveRelative_ValidPaths();
-
-    /**
-     * @brief Tests the MoveRelative function with invalid paths.
-     */
-    bool TestMoveRelative_InvalidPaths();
-
-    /**
-     * @brief Tests the MoveRelative function.
-     */
-    bool TestDelete();
-
-    /**
-     * @brief Tests the Read function with a valid name
-     */
-    template<typename T>
-    bool TestRead_Valid(T value);
-
-    /**
-     * @brief Tests the Read passing a StructuredDataI.
-     */
-    bool TestRead_StructuredData();
-
-    /**
-     * @brief Tests the Read passing a structured object.
-     */
-    bool TestRead_Object();
-
-    /**
-     * @brief Tests the Read function with an invalid name.
-     */
-    bool TestRead_Invalid();
-
-    /**
-     * @brief Tests the AddToCurrentNode function.
-     */
-    bool TestAddToCurrentNode();
-
-    /**
-     * @brief Tests the AddToCurrentNode function with an invalid reference.
-     */
-    bool TestAddToCurrentNode_InvalidReference();
-
-    /**
-     * @brief Tests the Write function with a valid name
-     */
-    template<typename T>
-    bool TestWrite_Valid(T valie);
-
-    /**
-     * @brief Tests the Write function with a name that already exists
-     */
-    bool TestWrite_Overwrite();
-
-    /**
-     * @brief Tests the Write function with an invalid name
-     */
-    bool TestWrite_Invalid();
-
-    /**
-     * @brief Tests the Write on a StructuredDataI
-     */
-    bool TestWrite_StructuredData();
-
-    /**
-     * @brief Tests the Write on a structured object
-     */
-    bool TestWrite_Object();
-
-    /**
-     * @brief Tests the GetType function with a valid name
-     */
-    template<typename T>
-    bool TestGetType_Valid(T value);
-
-    /**
-     * @brief Tests the GetType function with an invalid name
-     */
-    bool TestGetType_Invalid();
-
-    /**
-     * @brief Tests the GetChildName function.
-     */
-    bool TestGetChildName();
-
-    /**
-     * @brief Tests the GetName function.
-     */
-    bool TestGetName();
-
-    /**
-     * @brief Tests the TestGetNumberOfChildren function.
-     */
-    bool TestGetNumberOfChildren();
-
-    /**
-     * @brief Tests the Copy function
+     * @brief Tests the Copy method.
      */
     bool TestCopy();
 
     /**
-     * @brief Tests the Lock function
+     * @brief Tests the GetType method.
      */
-    bool TestLock();
+    bool TestGetType();
 
     /**
-     * @brief Tests the Unlock function.
+     * @brief Tests the MoveToRoot method.
      */
-    bool TestUnlock();
+    bool TestMoveToRoot();
 
     /**
-     * @brief Tests the Initialise function
+     * @brief Tests the MoveToAncestor method.
      */
-    bool TestInitialise();
+    bool TestMoveToAncestor();
 
     /**
-     * @brief Tests the CleanUp function
+     * @brief Tests the MoveAbsolute method.
      */
-    bool TestCleanUp();
+    bool TestMoveAbsolute();
 
     /**
-     * @brief Tests the GetCurrentNode function
+     * @brief Tests the MoveRelative method.
      */
-    bool TestGetCurrentNode();
+    bool TestMoveRelative();
 
     /**
-     * @brief Tests the CopyConstructor
-     */
-    bool TestCopyConstructor();
-
-    /**
-     * @brief Tests the Operator =
-     */
-    bool TestCopyOperatorEqual();
-
-    /**
-     * @brief Tests the MoveToChild method
+     * @brief Tests the MoveToChild method.
      */
     bool TestMoveToChild();
 
     /**
-     * @brief Tests the SetCurrentNodeAsRootNode method
+     * @brief Tests the CreateAbsolute method.
      */
-    bool TestSetCurrentNodeAsRootNode();
+    bool TestCreateAbsolute();
 
     /**
-     * @brief Tests the Purge method
+     * @brief Tests the CreateRelative method.
      */
-    bool TestPurge();
+    bool TestCreateRelative();
 
     /**
-     * @brief Tests the copy equal operator forcing a condition that led to a bug in release 1.4.0
+     * @brief Tests the AddToCurrentNode method.
      */
-    bool TestCopyOperatorEqualBug();
-#endif
+    bool TestAddToCurrentNode();
+
+    /**
+     * @brief Tests the Delete method.
+     */
+    bool TestDelete();
+
+    /**
+     * @brief Tests the GetName method.
+     */
+    bool TestGetName();
+
+    /**
+     * @brief Tests the GetChildName method.
+     */
+    bool TestGetChildName();
+
+    /**
+     * @brief Tests the GetNumberOfChildren method.
+     */
+    bool TestGetNumberOfChildren();
 };
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-#if 0
-template<typename T>
-bool StructuredDataIHelperTest::TestWrite_Valid(T value) {
-    MARTe::ConfigurationDatabase cdb;
-    bool ok = cdb.CreateAbsolute("A.B.C");
-    ok &= cdb.Write("value", value);
-    T readValue;
-    ok &= cdb.Read("value", readValue);
-    ok &= (value == readValue);
-    return ok;
-}
-
-template<typename T>
-bool StructuredDataIHelperTest::TestRead_Valid(T value) {
-    MARTe::ConfigurationDatabase cdb;
-    bool ok = cdb.CreateAbsolute("A.B.C");
-    ok &= cdb.Write("value", value);
-    T readValue;
-    ok &= cdb.Read("value", readValue);
-    ok &= (value == readValue);
-    return ok;
-}
-
-template<typename T>
-bool StructuredDataIHelperTest::TestGetType_Valid(T value) {
-    MARTe::ConfigurationDatabase cdb;
-    bool ok = cdb.CreateAbsolute("A.B.C");
-    ok &= cdb.Write("value", value);
-    MARTe::AnyType inValue(value);
-    MARTe::AnyType readValue = cdb.GetType("value");
-    ok &= (inValue.GetTypeDescriptor() == readValue.GetTypeDescriptor());
-    return ok;
-}
-#endif
 #endif /* STRUCTURUREDDATAIHELPERTEST_H_ */
 

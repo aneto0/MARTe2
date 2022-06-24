@@ -123,298 +123,24 @@ TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadArray_False) {
     ASSERT_TRUE(sdiTest.TestReadArray_False());
 }
 
-
-
-
-
-#if 0
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCreateAbsolute_ValidPath) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadMatrix) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestCreateAbsolute_ValidPath());
+    ASSERT_TRUE(sdiTest.TestReadMatrix());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCreateAbsolute_InvalidPath) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadMatrix_False) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestCreateAbsolute_InvalidPath());
+    ASSERT_TRUE(sdiTest.TestReadMatrix_False());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCreateRelative_ValidPath) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestReadMatrix_False_Dimensions) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestCreateRelative_ValidPath());
+    ASSERT_TRUE(sdiTest.TestReadMatrix_False_Dimensions());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCreateRelative_InvalidPath) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestCreateRelative_InvalidPath());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveToRoot) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestMoveToRoot());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveToAncestor_ValidNumberOfGenerations) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestMoveToAncestor_ValidNumberOfGenerations());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveToAncestor_InvalidNumberOfGenerations) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestMoveToAncestor_InvalidNumberOfGenerations());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveAbsolute_ValidPaths) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestMoveAbsolute_ValidPaths());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveAbsolute_InvalidPaths) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestMoveAbsolute_InvalidPaths());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveRelative_ValidPaths) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestMoveRelative_ValidPaths());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveRelative_InvalidPaths) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestMoveRelative_InvalidPaths());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestDelete) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestDelete());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_UInt8) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::uint8(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_Int8) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::int8(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_UInt16) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::uint16(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_Int16) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::int16(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_UInt32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::uint32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_Bool) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(bool(true)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_Int32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::int32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_UInt64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::uint64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_Int64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::int64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_Float32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::float32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Valid_Float64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Valid(MARTe::float64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Invalid) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Invalid());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_StructuredData) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_StructuredData());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestRead_Object) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestRead_Object());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestAddToCurrentNode) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestAddToCurrentNode());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestAddToCurrentNode_InvalidReference) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestAddToCurrentNode_InvalidReference());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_UInt8) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::uint8(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_Int8) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::int8(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_UInt16) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::uint16(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_Int16) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::int16(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_UInt32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::uint32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_Bool) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(bool(true)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_Int32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::int32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_UInt64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::uint64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_Int64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::int64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_Float32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::float32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Valid_Float64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Valid(MARTe::float64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Overwrite) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Overwrite());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Invalid) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Invalid());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_StructuredData) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_StructuredData());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestWrite_Object) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestWrite_Object());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Invalid) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Invalid());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_UInt8) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::uint8(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_Int8) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::int8(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_UInt16) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::uint16(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_Int16) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::int16(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_UInt32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::uint32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_Bool) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(bool(true)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_Int32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::int32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_UInt64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::uint64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_Int64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::int64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_Float32) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::float32(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType_Valid_Float64) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetType_Valid(MARTe::float64(7)));
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetChildName) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetChildName());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetName) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetName());
-}
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetNumberOfChildren) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetNumberOfChildren());
+    ASSERT_TRUE(sdiTest.TestWrite());
 }
 
 TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCopy) {
@@ -422,39 +148,29 @@ TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCopy) {
     ASSERT_TRUE(sdiTest.TestCopy());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestLock) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetType) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestLock());
+    ASSERT_TRUE(sdiTest.TestGetType());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestUnlock) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveToRoot) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestUnlock());
+    ASSERT_TRUE(sdiTest.TestMoveToRoot());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestInitialise) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveToAncestor) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestInitialise());
+    ASSERT_TRUE(sdiTest.TestMoveToAncestor());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCleanUp) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveAbsolute) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestCleanUp());
+    ASSERT_TRUE(sdiTest.TestMoveAbsolute());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetCurrentNode) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveRelative) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestGetCurrentNode());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCopyConstructor) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestCopyConstructor());
-}
-
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCopyOperatorEqual) {
-    StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestCopyOperatorEqual());
+    ASSERT_TRUE(sdiTest.TestMoveRelative());
 }
 
 TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveToChild) {
@@ -462,19 +178,38 @@ TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestMoveToChild) {
     ASSERT_TRUE(sdiTest.TestMoveToChild());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestSetCurrentNodeAsRootNode) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCreateAbsolute) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestSetCurrentNodeAsRootNode());
+    ASSERT_TRUE(sdiTest.TestCreateAbsolute());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestPurge) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCreateRelative) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestPurge());
+    ASSERT_TRUE(sdiTest.TestCreateRelative());
 }
 
-TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestCopyOperatorEqualBug) {
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestAddToCurrentNode) {
     StructuredDataIHelperTest sdiTest;
-    ASSERT_TRUE(sdiTest.TestCopyOperatorEqualBug());
+    ASSERT_TRUE(sdiTest.TestAddToCurrentNode());
 }
-#endif
+
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestDelete) {
+    StructuredDataIHelperTest sdiTest;
+    ASSERT_TRUE(sdiTest.TestDelete());
+}
+
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetName) {
+    StructuredDataIHelperTest sdiTest;
+    ASSERT_TRUE(sdiTest.TestGetName());
+}
+
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetChildName) {
+    StructuredDataIHelperTest sdiTest;
+    ASSERT_TRUE(sdiTest.TestGetChildName());
+}
+
+TEST(BareMetal_L4Configuration_StructuredDataIHelperGTest,TestGetNumberOfChildren) {
+    StructuredDataIHelperTest sdiTest;
+    ASSERT_TRUE(sdiTest.TestGetNumberOfChildren());
+}
 
