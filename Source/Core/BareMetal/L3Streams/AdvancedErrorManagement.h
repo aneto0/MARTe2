@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-/*lint -estring(1795, "*REPORT_ERROR_MACRO_CHOOSER*") -estring(1795, "*REPORT_ERROR_STATIC_MACRO_CHOOSER*") False positives. The macros are used as described below*/
+/*lint -estring(1795, "*REPORT_ERROR_MACRO_CHOOSER*") -estring(1795, "*REPORT_ERROR_STATIC_MACRO_CHOOSER*") -estring(1795, "*REPORT_ERROR_PROXY_MACRO_CHOOSER*") False positives. The macros are used as described below*/
 namespace MARTe {
 /**
  * Maximum size for error messages.

@@ -134,7 +134,7 @@ private:
     /**
      * The array of functions needed by the parser.
      */
-    void (StandardParser::*Action[10])(void);
+    void (StandardParser::*Action[11])(void);
 
 };
 

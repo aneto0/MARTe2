@@ -58,7 +58,7 @@ void StructuredDataIHelper::ResetErrors() {
     hasErrors = false;
 }
 
-bool StructuredDataIHelper::HasErrors() {
+bool StructuredDataIHelper::HasErrors() const {
     return hasErrors;
 }
 
@@ -91,7 +91,7 @@ bool StructuredDataIHelper::Read(const char8 * const name, const AnyType &value)
     return Read(name, value, voidAnyType);
 }
 
-bool StructuredDataIHelper::Read(const char8 * const name, const AnyType &value, const AnyType defaultValue) {
+bool StructuredDataIHelper::Read(const char8 * const name, const AnyType &value, const AnyType &defaultValue) {
     if (!hasErrors) {
         hasErrors = !sdi.Read(name, value);
         if (hasErrors) {
@@ -115,11 +115,11 @@ bool StructuredDataIHelper::Read(const char8 * const name, const AnyType &value,
     return !hasErrors;
 }
 
-bool StructuredDataIHelper::ReadEnum(const char8 * const name, const AnyType &value, const AnyType options, const AnyType optionValues) {
+bool StructuredDataIHelper::ReadEnum(const char8 * const name, const AnyType &value, const AnyType &options, const AnyType &optionValues) {
     return ReadEnum(name, value, options, optionValues, voidAnyType);
 }
 
-bool StructuredDataIHelper::ReadEnum(const char8 * const name, const AnyType &value, const AnyType options, const AnyType optionValues, const AnyType defaultValue) {
+bool StructuredDataIHelper::ReadEnum(const char8 * const name, const AnyType &value, const AnyType &options, const AnyType &optionValues, const AnyType &defaultValue) {
     uint32 numberOfOptions = 0u;
     if (!hasErrors) {
         numberOfOptions = options.GetNumberOfElements(0u);
@@ -159,7 +159,7 @@ bool StructuredDataIHelper::ReadEnum(const char8 * const name, const AnyType &va
         Vector<StreamString> optionValuesV(numberOfOptions);
         hasErrors = !TypeConvert(optionsV, options);
         if (!hasErrors) {
-            hasErrors = !TypeConvert(optionValuesV, options);
+            hasErrors = !TypeConvert(optionValuesV, optionValues);
             if (hasErrors) {
                 REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to convert option values: %!", name, optionValues);
             }
@@ -170,7 +170,7 @@ bool StructuredDataIHelper::ReadEnum(const char8 * const name, const AnyType &va
         bool found = false;
         uint32 foundIdx = 0u;
         if (!hasErrors) {
-            for (uint32 i=0; (i<numberOfOptions) && (!found); i++) {
+            for (uint32 i=0u; (i<numberOfOptions) && (!found); i++) {
                 found = (optionsV[i] == foundOption);
                 if (found) {
                     foundIdx = i;
@@ -184,7 +184,7 @@ bool StructuredDataIHelper::ReadEnum(const char8 * const name, const AnyType &va
             }
         } 
         if (!hasErrors) {
-            hasErrors = !TypeConvert(value, foundIdx);
+            hasErrors = !TypeConvert(value, optionValuesV[foundIdx]);
             if (hasErrors) {
                 REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to convert from %! to %!", value, foundIdx);
             }
@@ -205,7 +205,7 @@ bool StructuredDataIHelper::ReadValidated(const char8 * const name, const AnyTyp
         hasErrors = !Read(name, value);
     }
     if (!hasErrors) {
-        hasErrors = !validationExpressionStr.Seek(0u);
+        hasErrors = !validationExpressionStr.Seek(0LLU);
     }
     MathExpressionParser mathParser(validationExpressionStr);
     if (!hasErrors) {
@@ -229,10 +229,10 @@ bool StructuredDataIHelper::ReadValidated(const char8 * const name, const AnyTyp
     if (!hasErrors) {
         hasErrors = !evaluator->SetInputVariableType(name, value.GetTypeDescriptor());
         if (hasErrors) {
-           REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to add input variable to expression: %s", name, validationExpression);
-       }
+            REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to add input variable to expression: %s", name, validationExpression);
+        }
     }
-    uint8 result;
+    uint8 result = 0u;
     if (!hasErrors) {
         hasErrors = !evaluator->SetOutputVariableMemory("RES", &result);
     }
@@ -242,15 +242,15 @@ bool StructuredDataIHelper::ReadValidated(const char8 * const name, const AnyTyp
     if (!hasErrors) {
         hasErrors = !evaluator->Compile();
         if (hasErrors) {
-           REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to compile expression: %s", name, validationExpression);
-       }
+            REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to compile expression: %s", name, validationExpression);
+        }
 
     }
     if (!hasErrors) {
         hasErrors = !evaluator->Execute();
         if (hasErrors) {
-           REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to execute expression: %s", name, validationExpression);
-       }
+            REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s failed to execute expression: %s", name, validationExpression);
+        }
     }
     if (!hasErrors) {
         hasErrors = (result != 1u);

@@ -113,6 +113,7 @@ void ConfigurationParserI::GetTypeCast() {
     typeName = GetCurrentTokenData(currentToken);
 }
 
+/*lint -e{613} database cannot be NULL as it is set by reference in the constructor.*/
 void ConfigurationParserI::GetExprCast() {
     if (outputSupportsMathExpr) {
         //Get the math expression output type
@@ -308,7 +309,8 @@ void ConfigurationParserI::End() {
     }
 }
 
-bool ConfigurationParserI::ExpandExpression(const char8 * const nodePath, const char8 * const nodeName, const char8 * const outputTypeName) {
+/*lint -e{613} evaluator == NULL => !ok.*/
+bool ConfigurationParserI::ExpandExpression(const char8 * const nodePath, const char8 * const nodeNameIn, const char8 * const outputTypeName) {
     bool ok = true;
     if (StringHelper::Length(nodePath) > 0u) {
         ok = database->MoveAbsolute(nodePath);
@@ -319,13 +321,13 @@ bool ConfigurationParserI::ExpandExpression(const char8 * const nodePath, const 
     StreamString nodeExpr;
     if (ok) {
         //Read the math expression (which is going to be expanded and patched with the final value).
-        ok = database->Read(nodeName, nodeExpr);
+        ok = database->Read(nodeNameIn, nodeExpr);
     }
     StreamString validationExpressionStr = "RES = ";
     if (ok) {
         validationExpressionStr += nodeExpr.Buffer();
         validationExpressionStr += ";";
-        ok = validationExpressionStr.Seek(0u);
+        ok = validationExpressionStr.Seek(0LLU);
     }
     MathExpressionParser mathParser(validationExpressionStr);
     if (ok) {
@@ -370,6 +372,7 @@ bool ConfigurationParserI::ExpandExpression(const char8 * const nodePath, const 
         uint32 byteSize = outVarType.numberOfBits;
         byteSize /= 8u;
         memResult = new uint8[byteSize];
+        /*lint -e{429} -e{593} memResult is freed by the caller.*/
         ok = evaluator->SetOutputVariableMemory("RES", memResult);
     }
     if (ok) {
@@ -399,7 +402,7 @@ bool ConfigurationParserI::ExpandExpression(const char8 * const nodePath, const 
     if (ok) {
         //Write back the result
         AnyType outAnyType(outVarType, 0u, static_cast<void *>(&memResult[0u]));
-        ok = database->Write(nodeName, outAnyType);
+        ok = database->Write(nodeNameIn, outAnyType);
     }
     if (memResult != NULL_PTR(uint8 *)) {
         delete []memResult;
@@ -408,9 +411,11 @@ bool ConfigurationParserI::ExpandExpression(const char8 * const nodePath, const 
         delete evaluator;
     }
     return ok;
+/*lint -e{429} -e{593} memResult is freed by the caller.*/
 }
 
-bool ConfigurationParserI::BrowseExpressionVariables(RuntimeEvaluator *evaluator) {
+/*lint -e{613} -e{429} BrowseExpressionVariables only called if evaluator != NULL. Evaluator is freed by the caller.*/
+bool ConfigurationParserI::BrowseExpressionVariables(RuntimeEvaluator * const evaluator) {
     bool ok = true;
     uint32 index = 0u;
     VariableInformation *variableInformation;
@@ -477,6 +482,7 @@ bool ConfigurationParserI::BrowseExpressionVariables(RuntimeEvaluator *evaluator
         index++;
     }
     return ok;
+/*lint -e{429} Evaluator is freed by the caller.*/
 }
 
 }

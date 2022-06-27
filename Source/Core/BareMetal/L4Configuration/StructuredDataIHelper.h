@@ -69,7 +69,7 @@ public:
     /**
      * @brief Returns true if any error was triggered while calling any of the helper methods below.
      */
-    bool HasErrors();
+    bool HasErrors() const;
 
     /**
      * @see StructuredDataI::Read
@@ -80,12 +80,13 @@ public:
      * @see StructuredDataI::Read
      * @details Calls the proxied Read method and uses the defaultValue if the parameter does not exist.
      */
-    bool Read(const char8 * const name, const AnyType &value, const AnyType defaultValue);
+    /*lint -e{1411} same method name as in the StructuredDataI for the sake of code readability.*/
+    bool Read(const char8 * const name, const AnyType &value, const AnyType &defaultValue);
 
     /**
-     * @brief See ReadEnum - noting that it will return if a parameter with this name is not found.
+     * @brief See ReadEnum - noting that it will return false if a parameter with this name is not found.
      */
-    bool ReadEnum(const char8 * const name, const AnyType &value, const AnyType options, const AnyType optionValues);
+    bool ReadEnum(const char8 * const name, const AnyType &value, const AnyType &options, const AnyType &optionValues);
 
     /**
      * @brief Reads as enum. 
@@ -97,7 +98,7 @@ public:
      * @param[in] defaultValue the value to set if no matching string is found.
      * @return true if no parameter with name is found or if it is found and the value successfully read. It will return false if the parameter is successfully read but the option is not found in the input list.
      */
-    bool ReadEnum(const char8 * const name, const AnyType &value, const AnyType options, const AnyType optionValues, const AnyType defaultValue);
+    bool ReadEnum(const char8 * const name, const AnyType &value, const AnyType &options, const AnyType &optionValues, const AnyType &defaultValue);
 
     /**
      * @brief Reads and validates againt the validationExpression (e.g. "((MyParam > (uint32)2) && (MyParam < (uint32)5))", where MyParam is the name of the variable to be read).
@@ -214,6 +215,7 @@ private:
     /**
      * The backend StructuredDataI.
      */
+    /*lint -e{1725} initialised in the constructor.*/
     StructuredDataI &sdi;
 
     /**

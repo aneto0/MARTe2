@@ -151,14 +151,14 @@ bool StructuredDataIHelperTest::TestReadEnum() {
     uint32 enumValue = 0;
     if (ok) {
         const char8 * options[] = {"Blue", "Black", "Orange"};
-        uint32 optionValues[] = {0, 1, 2};
+        uint32 optionValues[] = {0, 1, 5};
         ok = sdi.ReadEnum("MyEnum", enumValue, options, optionValues);
     }
     if (ok) {
         ok = !sdi.HasErrors();
     }
     if (ok) {
-        ok = (enumValue == 2);
+        ok = (enumValue == 5);
     }
     return ok;
 }

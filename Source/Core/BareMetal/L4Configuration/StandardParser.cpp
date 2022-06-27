@@ -52,14 +52,14 @@ static uint32 Production[] = {0u
 ,2u,21u,31u,3u,22u,12u,22u,2u,22u,32u
 ,0u};
 
-static uint32 Production_row[] = {0
-,1,5u,9u,16u,27u,39u,45u,48u,51u,54u,58u,64u,70u,76u,79u,82u
+static uint32 Production_row[] = {0u
+,1u,5u,9u,16u,27u,39u,45u,48u,51u,54u,58u,64u,70u,76u,79u,82u
 ,86u,88u,92u,95u,99u,102u,106u
 ,0u};
 
 static uint32 ParseArray[] = {
-0,0u,7u,1u,18u,10u,14u,25u,16u,7u,19u,18u,10u,15u,20u,21u,17u,22u,2u
-,24u,11u,12u,13u,23,0u,0u,0u,0u
+0u,0u,7u,1u,18u,10u,14u,25u,16u,7u,19u,18u,10u,15u,20u,21u,17u,22u,2u
+,24u,11u,12u,13u,23u,0u,0u,0u,0u
 };
 
 static uint32 Parse_row[] = {0u
@@ -67,7 +67,7 @@ static uint32 Parse_row[] = {0u
 ,0u};
 
 static uint32 Conflict[] = {
-0,0u,8u,26u,29u,0u,3u,9u,27u,8u,0u,28u,0u,3u,30u,4u,5u,0u,0u
+0u,0u,8u,26u,29u,0u,3u,9u,27u,8u,0u,28u,0u,3u,30u,4u,5u,0u,0u
 ,3u,0u,3u,3u,6u,0u,0u,0u,0u,3u,3u
 };
 

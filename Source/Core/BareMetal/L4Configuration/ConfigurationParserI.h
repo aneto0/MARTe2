@@ -172,16 +172,16 @@ private:
      * @param[in] evaluator the evaluator.
      * @return true if all the variables can be found in the parsed database.
      */
-    bool BrowseExpressionVariables(RuntimeEvaluator *evaluator);
+    bool BrowseExpressionVariables(RuntimeEvaluator * evaluator);
 
     /**
      * @brief Parses and executes a given expression. If successful the database node originally containing the expression will be patched with the output of the expression result.
      * @param[in] nodePath path in the parsed database of the node containing the expression.
-     * @param[in] nodeName name of the node in the parsed database node containing the expression.
+     * @param[in] nodeNameIn name of the node in the parsed database node containing the expression.
      * @param[in] outputTypeName variable type to be used as the output of the expression execution.
      * @return true if the path can be sucessfully parsed and executed.
      */
-    bool ExpandExpression(const char8 * const nodePath, const char8 * const nodeName, const char8 * const outputTypeName);
+    bool ExpandExpression(const char8 * const nodePath, const char8 * const nodeNameIn, const char8 * const outputTypeName);
 
     /**
      * The type name.

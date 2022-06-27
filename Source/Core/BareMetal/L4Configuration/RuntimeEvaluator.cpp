@@ -468,6 +468,7 @@ bool RuntimeEvaluator::SetInputVariableMemory(const uint32 &varIndexIn, void* co
     
 }
 
+/*lint -e{429} -e{593} externalLocationIn is to be freed by the caller*/
 bool RuntimeEvaluator::SetOutputVariableMemory(const StreamString &varNameIn, void* const externalLocationIn) {
     
     bool isFound = false;
@@ -485,6 +486,7 @@ bool RuntimeEvaluator::SetOutputVariableMemory(const StreamString &varNameIn, vo
     
     return isFound;
     
+/*lint -e{429} -e{593} externalLocationIn is to be freed by the caller*/
 }
 
 bool RuntimeEvaluator::SetOutputVariableMemory(const uint32 &varIndexIn, void* const externalLocationIn) {
