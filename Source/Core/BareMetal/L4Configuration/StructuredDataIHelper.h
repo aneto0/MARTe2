@@ -44,7 +44,14 @@
 namespace MARTe {
 
 /**
- * @brief Proxy StructuredDataI implementation .... TODO 
+ * @brief Proxy StructuredDataI implementation that facilitates the reading and validation of parameters.
+ * @details The StructuredDataIHelper allows to read arrays and matrices without having to query 
+ * for their size (see ReadArray and ReadMatrix); to read enum-like parameters (see ReadEnum); to 
+ * assign default parameters and to perform data validation against simple mathematical expressions (see ReadValidated).
+ *
+ * The StructuredDataIHelper is also stateful (see HasErrors), meaning that as soon as any operation fails, all the subsequent 
+ * operations will be ignored and an errors returned. The error state can be reset by calling ResetErrors.
+ *
  */
 class DLL_API StructuredDataIHelper : public StructuredDataI {
 

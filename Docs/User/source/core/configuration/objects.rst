@@ -86,7 +86,70 @@ For matrices a similar strategy applies:
       Matrix<float32> modelMatrix(numberOfRows, numberOfCols);
       ok = data.Read("Model", modelMatrix);
       ...
-   
+
+Reading values with the StructuredDataIHelper
+---------------------------------------------
+
+As of v1.7.0 of MARTe2, the :vcisdoxygencl:`StructuredDataIHelper` facilitates the reading and validation of configuration values. In particular, it allows to:
+
+- Read arrays and matrices without having to query for their size:
+
+.. code-block:: c++
+
+    virtual bool Initialise(MARTe::StructuredDataI &data) {
+        bool ok = Object::Initialise(data);
+        StructuredDataIHelper helper(data, this);
+        ...
+        MARTe::int32 *referencesArray;
+        if (ok) {
+            uint32 nOfReferences = 0u;
+            ok = helper.ReadArray("References", referencesArray, nOfReferences);
+        }
+        ...
+        MARTe::float32 **model;
+        if (ok) {
+            uint32 modelCols = 0u;
+            ok = helper.ReadMatrix("Model", model, modelRows, modelCols);
+        }
+        ...
+
+- Automatically assign default values for parameters that are not defined:
+
+.. code-block:: c++
+
+    virtual bool Initialise(MARTe::StructuredDataI &data) {
+        bool ok = Object::Initialise(data);
+        StructuredDataIHelper helper(data, this);
+        ...
+        //Assign default of 1.7 to gain2
+        ok = helper.Read("Gain2", gain2, 1.7);
+        ...
+
+- Read "enum-like" types:
+
+.. code-block:: c++
+
+    virtual bool Initialise(MARTe::StructuredDataI &data) {
+        bool ok = Object::Initialise(data);
+        StructuredDataIHelper helper(data, this);
+        ...
+        const char8 * controllerTypesStr[] = {"C1", "C2", "C3"};
+        uint32 controllerTypes[] = {1, 2, 3};
+        ok = helper.ReadEnum("ControllerType", controllerType, controllerTypesStr, controllerTypes);
+        ...
+
+- Validate parameters against simple mathematical expressions:
+
+.. code-block:: c++
+
+    virtual bool Initialise(MARTe::StructuredDataI &data) {
+        bool ok = Object::Initialise(data);
+        StructuredDataIHelper helper(data, this);
+        ...
+ 
+        if (ok) {
+            ok = helper.ReadValidated("Gain3", gain3, "(Gain3 > (float32)(-3.0)) && (Gain3 <= (float32)(0.0))");
+        }
 
 Navigating the database
 -----------------------
@@ -118,5 +181,13 @@ This is a similar example, highlighting structured configurations.
    :language: c++
    :caption: Object configuration example (ConfigurationExample2)
    :linenos:
-   
+
+The following example shows how the reading of parameters can be simplified with the StructuredDataIHelper. 
+
+.. literalinclude:: /_static/examples/Core/ConfigurationExample8.cpp
+   :language: c++   
+   :caption: Object configuration example using the StructuredDataIHelper (ConfigurationExample8)
+   :linenos:
+
 Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.
+

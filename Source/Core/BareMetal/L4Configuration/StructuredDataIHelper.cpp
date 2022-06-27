@@ -258,7 +258,7 @@ bool StructuredDataIHelper::ReadValidated(const char8 * const name, const AnyTyp
             REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s with value %! failed to meet validation critera: %s", name, value, validationExpression);
         }
         else {
-            REPORT_ERROR_PROXY(ErrorManagement::ParametersError, owner, "%s with value %! meets validation critera: %s", name, value, validationExpression);
+            REPORT_ERROR_PROXY(ErrorManagement::Information, owner, "%s with value %! meets validation critera: %s", name, value, validationExpression);
         }
     }
     if (evaluator != NULL_PTR(RuntimeEvaluator *)) {

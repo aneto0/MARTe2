@@ -95,7 +95,7 @@ If a ``C struct`` has been :doc:`registered </core/objects/introspection>` in th
 
 To read/write a registered structure an AnyType which describes the registered type must be created:
 
-.. code-block:: C++
+.. code-block:: c++
    
    struct AStruct {
       float32 f1;
@@ -126,7 +126,7 @@ Reading data-driven C structures
 
 The :vcisdoxygencl:`IntrospectionStructure` class can also be used to dynamically create and register structures using a standard configuration file.
 
-.. code-block:: C++
+.. code-block:: c++
    
    +Types = {
        Class = ReferenceContainer
@@ -189,6 +189,33 @@ This strategy can be used to write modular configuration settings (see example b
 
     include Makefile.inc
 
+Postprocessing
+--------------
+
+As of v1.7.0, the :vcisdoxygencl:`StandardParser` also allows to post-process and assign simple mathematical expressions to nodes in the tree.
+The syntax is `NODE=(OUTPUT_VAR_TYPE|EXPRESSION)`, where `OUTPUT_VAR_TYPE` is the output variable type (e.g. `uint32`) and `EXPRESSION` is the mathematical expression to be executed. 
+
+The variables in the expression can reference to other nodes in the configuration tree, noting that the expressions are executed in order (top to bottom) and that the names in the node path cannot include the `+` sign.
+
+.. code-block:: c++
+
+    int a =3;
+    Parameters = {
+        T1_FREQUENCY = (uint32)10000
+        T2_FREQUENCY = (uint32)1
+        SAMPLES = (uint32|"Parameters.T1_FREQUENCY / Parameters.T2_FREQUENCY")
+    }
+    +TestApp = {
+        Class = RealTimeApplication
+        +Functions = {
+            Class = ReferenceContainer
+            +GAMTimer = {
+                Class = IOGAM
+                InputSignals = {
+                    Time = {
+                        Frequency = (uint32|"(uint32)2 * Parameters.T1_FREQUENCY")
+                        ...
+
 
 Examples
 --------
@@ -232,11 +259,17 @@ Instructions on how to compile and execute the example can be found :doc:`here <
 Example on how to preprocess complex configuration files:
 
 .. literalinclude:: /_static/examples/Configurations/RTApp-6.cfg
-   :language: c++ 
-   :caption: Example of a configuration file that includes other configuration files.
-   :linenos:  
+    :language: c++ 
+    :caption: Example of a configuration file that includes other configuration files.
+    :linenos:  
 
 .. literalinclude:: /_static/examples/Configurations/Makefile.inc
-   :language: makefile
-   :linenos:  
- 
+    :language: makefile
+    :linenos:  
+
+Example with post-processing of variables:
+
+.. literalinclude:: /_static/examples/Configurations/RTApp-8.cfg
+    :caption: Example of a configuration file with variable post-processing.
+    :linenos:  
+
