@@ -36,6 +36,7 @@
 #include "ConfigurationDatabase.h"
 #include "LexicalAnalyzer.h"
 #include "ParserI.h"
+#include "RuntimeEvaluator.h"
 #include "StructuredDataI.h"
 #include "StreamString.h"
 #include "Token.h"
@@ -132,6 +133,11 @@ protected:
     void GetTypeCast();
 
     /**
+     * @brief Handles a math expression cast.
+     */
+    void GetExprCast();
+
+    /**
      * @brief Creates a new node in the StructuredData.
      */
     void CreateNode();
@@ -173,6 +179,24 @@ protected:
     void EndVectorB();
 
 private:
+
+    /**
+     * @brief Expands all the variables available for this evaluator.
+     * @details Collects all the variables and looks for them in the parsed database.
+     * When found their memory and type will be assigned from the database so that they can be used by the evaluator.
+     * @param[in] evaluator the evaluator.
+     * @return true if all the variables can be found in the parsed database.
+     */
+    bool BrowseExpressionVariables(RuntimeEvaluator * evaluator);
+
+    /**
+     * @brief Parses and executes a given expression. If successful the database node originally containing the expression will be patched with the output of the expression result.
+     * @param[in] nodePath path in the parsed database of the node containing the expression.
+     * @param[in] nodeNameIn name of the node in the parsed database node containing the expression.
+     * @param[in] outputTypeName variable type to be used as the output of the expression execution.
+     * @return true if the path can be sucessfully parsed and executed.
+     */
+    bool ExpandExpression(const char8 * const nodePath, const char8 * const nodeNameIn, const char8 * const outputTypeName);
 
     /**
      * The type name.
@@ -223,6 +247,21 @@ private:
      * The current structured index.
      */
     ConfigurationDatabase vectorStructureIdx;
+
+    /*
+     * True if a math expression has been found.
+     */
+    bool handleMathExpr;
+
+    /**
+     * True if the output StructuredDataI is a ConfigurationDatabase
+     */
+    bool outputSupportsMathExpr;
+
+    /**
+     * Stores the math expressions to be processed at the end.
+     */
+    ConfigurationDatabase mathExpressionsCDB;
 
 };
 

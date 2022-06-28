@@ -39,6 +39,7 @@ OBJSX=	AnyObject.x \
 		RuntimeEvaluatorFunction.x \
 		StringToFloat.x \
 		StringToInteger.x \
+		StructuredDataIHelper.x \
 		TypeConversion.x \
 		TokenInfo.x \
 		Token.x \

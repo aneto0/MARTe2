@@ -36,6 +36,7 @@ OBJSX=	AnyObjectTest.x \
 	RuntimeEvaluatorTest.x \
 	RuntimeEvaluatorFunctionTest.x \
 	StandardParserTest.x \
+	StructuredDataIHelperTest.x \
 	TypeConversionTest.x \
 	TokenInfoTest.x \
 	TokenTest.x \

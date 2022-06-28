@@ -53,6 +53,8 @@ static MARTe::Bootstrap bootstrap;
  */
 void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
     using namespace MARTe;
+    static FastPollingMutexSem fmux;
+    (void) fmux.FastLock();
     static const uint32 MAX_ERROR_CODE_STR_SIZE = 16u;
     static char8 errCodeBuffer[MAX_ERROR_CODE_STR_SIZE + 1u];
     (void) MemoryOperationsHelper::Set(&errCodeBuffer[0u], '\0', MAX_ERROR_CODE_STR_SIZE);
@@ -68,6 +70,7 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
     (void) errStr.Printf("[%s - %s:%d]: %s", errCodeBuffer, errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     errBuffer[MAX_ERROR_MESSAGE_SIZE] = '\0';
     bootstrap.Printf(errBuffer);
+    (void) fmux.FastUnLock();
 }
 
 /*---------------------------------------------------------------------------*/

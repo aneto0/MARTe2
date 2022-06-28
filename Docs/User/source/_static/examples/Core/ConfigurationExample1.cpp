@@ -54,178 +54,178 @@ namespace MARTe2Tutorial {
  */
 class ControllerEx1: public MARTe::Object {
 public:
-	CLASS_REGISTER_DECLARATION()
+    CLASS_REGISTER_DECLARATION()
 
-	/**
-	 * @brief NOOP.
-	 */
-	ControllerEx1 () {
-		gain1 = 0u;
-		gain2 = 0.f;
-		mode = "";
-		referencesArray = NULL;
-		modesArray = NULL;
-	}
+    /**
+     * @brief NOOP.
+     */
+    ControllerEx1 () {
+        gain1 = 0u;
+        gain2 = 0.f;
+        mode = "";
+        referencesArray = NULL;
+        modesArray = NULL;
+    }
 
-	virtual ~ControllerEx1 () {
-		using namespace MARTe;
-		if (referencesArray != NULL) {
-			delete [] referencesArray;
-		}
-		if (modesArray != NULL) {
-			delete [] modesArray;
-		}
-		if (GetName() != NULL) {
-			REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references pointing at %s [%s]. "
-					"The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
-		}
-	}
+    virtual ~ControllerEx1 () {
+        using namespace MARTe;
+        if (referencesArray != NULL) {
+            delete [] referencesArray;
+        }
+        if (modesArray != NULL) {
+            delete [] modesArray;
+        }
+        if (GetName() != NULL) {
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references pointing at %s [%s]. "
+                    "The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+        }
+    }
 
-	/**
-	 * Read all the properties
-	 */
-	virtual bool Initialise(MARTe::StructuredDataI &data) {
-		using namespace MARTe;
-		bool ok = Object::Initialise(data);
-		if (ok) {
-			ok = data.Read("Gain1", gain1);
-			if (ok) {
-				REPORT_ERROR(ErrorManagement::Information, "gain1 set to %d", gain1);
-			}
-			else {
-				REPORT_ERROR(ErrorManagement::ParametersError, "The Gain1 property shall be set");
-			}
-		}
-		if (ok) {
-			ok = data.Read("Gain2", gain2);
-			if (ok) {
-				REPORT_ERROR(ErrorManagement::Information, "gain2 set to %f", gain2);
-			}
-			else {
-				REPORT_ERROR(ErrorManagement::ParametersError, "The Gain2 property shall be set");
-			}
-		}
+    /**
+     * Read all the properties
+     */
+    virtual bool Initialise(MARTe::StructuredDataI &data) {
+        using namespace MARTe;
+        bool ok = Object::Initialise(data);
+        if (ok) {
+            ok = data.Read("Gain1", gain1);
+            if (ok) {
+                REPORT_ERROR(ErrorManagement::Information, "gain1 set to %d", gain1);
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::ParametersError, "The Gain1 property shall be set");
+            }
+        }
+        if (ok) {
+            ok = data.Read("Gain2", gain2);
+            if (ok) {
+                REPORT_ERROR(ErrorManagement::Information, "gain2 set to %f", gain2);
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::ParametersError, "The Gain2 property shall be set");
+            }
+        }
 
-		if (ok) {
-			mode = "";
-			ok = data.Read("Mode", mode);
-			if (ok) {
-				REPORT_ERROR(ErrorManagement::Information, "mode set to %s", mode.Buffer());
-			}
-			else {
-				REPORT_ERROR(ErrorManagement::ParametersError, "The Mode property shall be set");
-			}
-		}
+        if (ok) {
+            mode = "";
+            ok = data.Read("Mode", mode);
+            if (ok) {
+                REPORT_ERROR(ErrorManagement::Information, "mode set to %s", mode.Buffer());
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::ParametersError, "The Mode property shall be set");
+            }
+        }
 
-		if (ok) {
-			AnyType arrayDescription = data.GetType("References");
-			ok = arrayDescription.GetDataPointer() != NULL_PTR(void *);
-			uint32 numberOfElements = 0u;
-			if (ok) {
-				numberOfElements = arrayDescription.GetNumberOfElements(0u);
-				ok = (numberOfElements > 0u);
-				if (!ok) {
-					REPORT_ERROR(ErrorManagement::ParametersError, "No elements defined in the array");
-				}
-			}
-			if (ok) {
-				//Reconfiguration...
-				if (referencesArray != NULL) {
-					delete [] referencesArray;
-				}
-				referencesArray = new int32[numberOfElements];
-				Vector<int32> readVector(referencesArray, numberOfElements);
-				ok = data.Read("References", readVector);
-				if (ok) {
-					REPORT_ERROR(ErrorManagement::Information, "referencesArray set to %d", readVector);
-				}
-				else {
-					REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the References");
-				}
-			}
-		}
+        if (ok) {
+            AnyType arrayDescription = data.GetType("References");
+            ok = arrayDescription.GetDataPointer() != NULL_PTR(void *);
+            uint32 numberOfElements = 0u;
+            if (ok) {
+                numberOfElements = arrayDescription.GetNumberOfElements(0u);
+                ok = (numberOfElements > 0u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "No elements defined in the array");
+                }
+            }
+            if (ok) {
+                //Reconfiguration...
+                if (referencesArray != NULL) {
+                    delete [] referencesArray;
+                }
+                referencesArray = new int32[numberOfElements];
+                Vector<int32> readVector(referencesArray, numberOfElements);
+                ok = data.Read("References", readVector);
+                if (ok) {
+                    REPORT_ERROR(ErrorManagement::Information, "referencesArray set to %d", readVector);
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the References");
+                }
+            }
+        }
 
-		if (ok) {
-			AnyType arrayDescription = data.GetType("Modes");
-			ok = arrayDescription.GetDataPointer() != NULL_PTR(void *);
-			uint32 numberOfElements = 0u;
-			if (ok) {
-				numberOfElements = arrayDescription.GetNumberOfElements(0u);
-				ok = (numberOfElements > 0u);
-				if (!ok) {
-					REPORT_ERROR(ErrorManagement::ParametersError, "No elements defined in the array");
-				}
-			}
-			if (ok) {
-				//Reconfiguration...
-				if (modesArray != NULL) {
-					delete [] modesArray;
-				}
-				modesArray = new StreamString[numberOfElements];
-				Vector<StreamString> readVector(modesArray, numberOfElements);
-				ok = data.Read("Modes", readVector);
-				if (ok) {
-					uint32 i;
-					for (i=0u; i<numberOfElements; i++) {
-						REPORT_ERROR(ErrorManagement::Information, "modesArray[%d] set to %s", i,readVector[i].Buffer());
-					}
-				}
-				else {
-					REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Modes");
-				}
-			}
-		}
+        if (ok) {
+            AnyType arrayDescription = data.GetType("Modes");
+            ok = arrayDescription.GetDataPointer() != NULL_PTR(void *);
+            uint32 numberOfElements = 0u;
+            if (ok) {
+                numberOfElements = arrayDescription.GetNumberOfElements(0u);
+                ok = (numberOfElements > 0u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "No elements defined in the array");
+                }
+            }
+            if (ok) {
+                //Reconfiguration...
+                if (modesArray != NULL) {
+                    delete [] modesArray;
+                }
+                modesArray = new StreamString[numberOfElements];
+                Vector<StreamString> readVector(modesArray, numberOfElements);
+                ok = data.Read("Modes", readVector);
+                if (ok) {
+                    uint32 i;
+                    for (i=0u; i<numberOfElements; i++) {
+                        REPORT_ERROR(ErrorManagement::Information, "modesArray[%d] set to %s", i,readVector[i].Buffer());
+                    }
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Modes");
+                }
+            }
+        }
 
-		if (ok) {
-			AnyType arrayDescription = data.GetType("Model");
-			ok = arrayDescription.GetDataPointer() != NULL_PTR(void *);
-			uint32 numberOfDimensions = 0u;
-			if (ok) {
-				numberOfDimensions = arrayDescription.GetNumberOfDimensions();
-				ok = (numberOfDimensions == 2u);
-				if (!ok) {
-					REPORT_ERROR(ErrorManagement::ParametersError, "Model is not a Matrix");
-				}
-			}
-			uint32 numberOfRows = 0u;
-			uint32 numberOfCols = 0u;
-			if (ok) {
-				numberOfRows = arrayDescription.GetNumberOfElements(1u);
-				numberOfCols = arrayDescription.GetNumberOfElements(0u);
-				ok = (numberOfRows > 0u);
-				if (!ok) {
-					REPORT_ERROR(ErrorManagement::ParametersError, "No rows defined in the matrix");
-				}
-			}
-			if (ok) {
-				ok = (numberOfCols > 0u);
-				if (!ok) {
-					REPORT_ERROR(ErrorManagement::ParametersError, "No columns defined in the matrix");
-				}
-			}
-			if (ok) {
-				Matrix<float32> modelMatrix(numberOfRows, numberOfCols);
-				ok = data.Read("Model", modelMatrix);
-				if (ok) {
-					REPORT_ERROR(ErrorManagement::Information, "modelMatrix set to %f", modelMatrix);
-				}
-				else {
-					REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the References");
-				}
-			}
-		}
+        if (ok) {
+            AnyType arrayDescription = data.GetType("Model");
+            ok = arrayDescription.GetDataPointer() != NULL_PTR(void *);
+            uint32 numberOfDimensions = 0u;
+            if (ok) {
+                numberOfDimensions = arrayDescription.GetNumberOfDimensions();
+                ok = (numberOfDimensions == 2u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "Model is not a Matrix");
+                }
+            }
+            uint32 numberOfRows = 0u;
+            uint32 numberOfCols = 0u;
+            if (ok) {
+                numberOfRows = arrayDescription.GetNumberOfElements(1u);
+                numberOfCols = arrayDescription.GetNumberOfElements(0u);
+                ok = (numberOfRows > 0u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "No rows defined in the matrix");
+                }
+            }
+            if (ok) {
+                ok = (numberOfCols > 0u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "No columns defined in the matrix");
+                }
+            }
+            if (ok) {
+                Matrix<float32> modelMatrix(numberOfRows, numberOfCols);
+                ok = data.Read("Model", modelMatrix);
+                if (ok) {
+                    REPORT_ERROR(ErrorManagement::Information, "modelMatrix set to %f", modelMatrix);
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the References");
+                }
+            }
+        }
 
-		return ok;
-	}
+        return ok;
+    }
 
-	/**
-	 * A list of properties.
-	 */
-	MARTe::uint32 gain1;
-	MARTe::float32 gain2;
-	MARTe::StreamString mode;
-	MARTe::int32 *referencesArray;
-	MARTe::StreamString *modesArray;
+    /**
+     * A list of properties.
+     */
+    MARTe::uint32 gain1;
+    MARTe::float32 gain2;
+    MARTe::StreamString mode;
+    MARTe::int32 *referencesArray;
+    MARTe::StreamString *modesArray;
 };
 
 CLASS_REGISTER(ControllerEx1, "")
@@ -233,60 +233,60 @@ CLASS_REGISTER(ControllerEx1, "")
 }
 
 int main(int argc, char **argv) {
-	using namespace MARTe;
-	using namespace MARTe2Tutorial;
-	SetErrorProcessFunction(&ErrorProcessExampleFunction);
+    using namespace MARTe;
+    using namespace MARTe2Tutorial;
+    SetErrorProcessFunction(&ErrorProcessExampleFunction);
 
-	CCString className1 = "ControllerEx1";
+    CCString className1 = "ControllerEx1";
 
-	int32 int32Arr[] = { -1, 2, -3, 4, -5 };
-	const char8 *stringArr[] = { "A", "BB", "CCC", "DDDD", "EEEEE" };
-	float32 float32Mat[3][2] = { { -1.0, 2.3 }, { 4.7, -3.2 }, { -7.1, 5.6 } };
+    int32 int32Arr[] = { -1, 2, -3, 4, -5 };
+    const char8 *stringArr[] = { "A", "BB", "CCC", "DDDD", "EEEEE" };
+    float32 float32Mat[3][2] = { { -1.0, 2.3 }, { 4.7, -3.2 }, { -7.1, 5.6 } };
 
-	ReferenceT<ControllerEx1> ref1(className1,
-			GlobalObjectsDatabase::Instance()->GetStandardHeap());
-	//Automatically generate a new object instance based on the class name and on the correct Heap
-	//and with the template reference.
-	if (ref1.IsValid()) {
-		ref1->SetName("ControllerInstance1");
-		REPORT_ERROR_STATIC(ErrorManagement::Information,
-				"Successfully created an instance of %s", className1.GetList());
-		//Write a valid configuration.
-		{
-			ConfigurationDatabase cdb;
-			cdb.Write("Gain1", 2);
-			cdb.Write("Gain2", 1.5);
-			cdb.Write("Mode", "ASTRING");
-			cdb.Write("Modes", stringArr);
-			cdb.Write("References", int32Arr);
-			cdb.Write("Model", float32Mat);
+    ReferenceT<ControllerEx1> ref1(className1,
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    //Automatically generate a new object instance based on the class name and on the correct Heap
+    //and with the template reference.
+    if (ref1.IsValid()) {
+        ref1->SetName("ControllerInstance1");
+        REPORT_ERROR_STATIC(ErrorManagement::Information,
+                "Successfully created an instance of %s", className1.GetList());
+        //Write a valid configuration.
+        {
+            ConfigurationDatabase cdb;
+            cdb.Write("Gain1", 2);
+            cdb.Write("Gain2", 1.5);
+            cdb.Write("Mode", "ASTRING");
+            cdb.Write("Modes", stringArr);
+            cdb.Write("References", int32Arr);
+            cdb.Write("Model", float32Mat);
 
-			if (ref1->Initialise(cdb)) {
-				REPORT_ERROR_STATIC(ErrorManagement::Information,
-						"Successfully configured instance of %s",
-						ref1->GetName());
-			} else {
-				REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-						"Failed to configure instance of %s", ref1->GetName());
-			}
-		}
-		//Write an invalid configuration
-		{
-			ConfigurationDatabase cdb;
-			cdb.Write("Gain1", 2);
-			cdb.Write("Gain2", 1.5);
-			cdb.Write("Mode", "ASTRING");
-			cdb.Write("Modes", stringArr);
-			cdb.Write("References", int32Arr);
-			cdb.Write("Model", int32Arr);
-			if (!ref1->Initialise(cdb)) {
-				REPORT_ERROR_STATIC(ErrorManagement::Information,
-						"As expected failed to reconfigure instance of %s",
-						ref1->GetName());
-			}
-		}
-	}
+            if (ref1->Initialise(cdb)) {
+                REPORT_ERROR_STATIC(ErrorManagement::Information,
+                        "Successfully configured instance of %s",
+                        ref1->GetName());
+            } else {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                        "Failed to configure instance of %s", ref1->GetName());
+            }
+        }
+        //Write an invalid configuration
+        {
+            ConfigurationDatabase cdb;
+            cdb.Write("Gain1", 2);
+            cdb.Write("Gain2", 1.5);
+            cdb.Write("Mode", "ASTRING");
+            cdb.Write("Modes", stringArr);
+            cdb.Write("References", int32Arr);
+            cdb.Write("Model", int32Arr);
+            if (!ref1->Initialise(cdb)) {
+                REPORT_ERROR_STATIC(ErrorManagement::Information,
+                        "As expected failed to reconfigure instance of %s",
+                        ref1->GetName());
+            }
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
