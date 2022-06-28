@@ -1,7 +1,7 @@
 /**
  * @file ConfigurationExample8.cpp
  * @brief Source file for class ConfigurationExample8
- * @date 08/04/2018
+ * @date 27/06/2022
  * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -26,105 +26,230 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "ClassRegistryDatabase.h"
-#include "ClassRegistryItem.h"
 #include "ConfigurationDatabase.h"
 #include "ErrorLoggerExample.h"
-#include "ObjectRegistryDatabase.h"
+#include "Matrix.h"
+#include "Object.h"
 #include "Reference.h"
+#include "ReferenceT.h"
 #include "StreamString.h"
+#include "StructuredDataIHelper.h"
+#include "Vector.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe2Tutorial {
-    void PrintNumberOfInstances(const MARTe::char8 *className) {
-        using namespace MARTe;
-        ClassRegistryDatabase *crd = ClassRegistryDatabase::Instance();
-        const ClassRegistryItem *cri = crd->Find(className);
-        if (cri != NULL_PTR(const ClassRegistryItem *)) {
-            const ClassProperties *cp = cri->GetClassProperties();
-            if (cp != NULL_PTR(const ClassProperties *)) {
-                REPORT_ERROR_STATIC(ErrorManagement::Information, "[%s] - instances: %d", cp->GetName(), cri->GetNumberOfInstances());
-            }
-        }
-    }
 
-    void PrintNumberOfInstancesCDB(MARTe::uint32 callNumber) {
-        using namespace MARTe;
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "----------------------------------[%d]----------------------------------", callNumber);
-        //List all the classes and the related number of instances that are still alive
-        //PrintNumberOfInstances("ConfigurationDatabase"); 
-        PrintNumberOfInstances("ConfigurationDatabaseNode"); 
-        PrintNumberOfInstances("AnyObject"); 
-    }
-
-    void PrintCDB(MARTe::ConfigurationDatabase &cdb){
-        using namespace MARTe;
-        StreamString pp;
-        ConfigurationDatabase cdbp = cdb;
-        cdbp.MoveToRoot();
-        pp.Printf("%!", cdbp);
-        printf("\n=========================================================\n");
-        printf("%s", pp.Buffer());
-        printf("=========================================================\n");
-    }
-
-    void ConfigurationDatabaseFun1(MARTe::ConfigurationDatabase &cdb) {
-        using namespace MARTe;
-        ConfigurationDatabase cdb2 = cdb;
-        cdb2.MoveAbsolute("A.B");
-        cdb2.CreateAbsolute("C.D");
-        cdb2.Write("e", 4);
-        ConfigurationDatabase cdb3;
-        cdb3.CreateAbsolute("A.A");
-        cdb3.Write("o", 0);
-        cdb3 = cdb2;
-        cdb3.MoveAbsolute("C.D");
-        cdb3.Write("f", 5);
-    }
-
-    void ConfigurationDatabaseFun2(MARTe::ConfigurationDatabase &cdb) {
-        using namespace MARTe;
-        ConfigurationDatabase cdb2;
-        cdb2.CreateAbsolute("F.G");
-        cdb2.Write("h", 4);
-        cdb = cdb2;
-        PrintCDB(cdb);
-    }
-
-    void ConfigurationDatabaseRun() {
-        using namespace MARTe;
-        ConfigurationDatabase cdb;
-        cdb.CreateAbsolute("A.B");
-        cdb.Write("c", 1);
-        PrintNumberOfInstancesCDB(1);
-        ConfigurationDatabaseFun1(cdb);
-        PrintNumberOfInstancesCDB(2);
-        PrintCDB(cdb);
-        ConfigurationDatabaseFun2(cdb);
-        PrintCDB(cdb);
-        PrintNumberOfInstancesCDB(3);
-    }
-}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe2Tutorial {
+/**
+ * @brief A MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
+ */
+class ControllerEx1: public MARTe::Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief NOOP.
+     */
+    ControllerEx1 () {
+        gain1 = 0u;
+        gain2 = 0.f;
+        gain3 = -1.0f;
+        controllerType = 0u;
+        mode = "";
+        referencesArray = NULL;
+        modesArray = NULL;
+        model = NULL;
+        modelRows = 0u;
+    }
+
+    virtual ~ControllerEx1 () {
+        using namespace MARTe;
+        if (referencesArray != NULL) {
+            delete [] referencesArray;
+        }
+        if (modesArray != NULL) {
+            delete [] modesArray;
+        }
+        if (model != NULL) {
+            for (uint32 i=0; i<modelRows; i++) {
+                delete [] model[i];
+            }
+            delete [] model;
+        }
+
+        if (GetName() != NULL) {
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references pointing at %s [%s]. "
+                    "The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+        }
+    }
+
+    /**
+     * Read all the properties
+     */
+    virtual bool Initialise(MARTe::StructuredDataI &data) {
+        using namespace MARTe;
+        bool ok = Object::Initialise(data);
+        StructuredDataIHelper helper(data, this);
+        if (ok) {
+            ok = helper.Read("Gain1", gain1);
+        }
+        if (ok) {
+            //Read with default
+            ok = helper.Read("Gain2", gain2, 1.7);
+        }
+        if (ok) {
+            ok = helper.Read("Mode", mode);
+        }
+        if (ok) {
+            const char8 * controllerTypesStr[] = {"C1", "C2", "C3"};
+            uint32 controllerTypes[] = {1, 2, 3};
+            ok = helper.ReadEnum("ControllerType", controllerType, controllerTypesStr, controllerTypes);
+        }
+
+        if (ok) {
+            uint32 nOfReferences = 0u;
+            //Reconfiguration...
+            if (referencesArray != NULL) {
+                delete [] referencesArray;
+                referencesArray = NULL;
+            }
+            ok = helper.ReadArray("References", referencesArray, nOfReferences);
+        }
+
+        if (ok) {
+            uint32 nOfModes = 0u;
+            //Reconfiguration...
+            if (modesArray != NULL) {
+                delete [] modesArray;
+                modesArray = NULL;
+            }
+            ok = helper.ReadArray("Modes", modesArray, nOfModes);
+        }
+
+        if (ok) {
+            //Reconfiguration...
+            if (model != NULL) {
+                for (uint32 i=0; i<modelRows; i++) {
+                    delete [] model[i];
+                }
+                delete [] model;
+                model = NULL;
+            }
+
+            uint32 modelCols = 0u;
+            ok = helper.ReadMatrix("Model", model, modelRows, modelCols);
+        }
+
+        if (ok) {
+            ok = helper.ReadValidated("Gain3", gain3, "(Gain3 > (float32)(-3.0)) && (Gain3 <= (float32)(0.0))");
+        }
+
+        return ok;
+    }
+
+    /**
+     * A list of properties.
+     */
+    MARTe::uint32 gain1;
+    MARTe::uint32 modelRows;
+    MARTe::uint32 controllerType;
+    MARTe::float32 gain2;
+    MARTe::float32 gain3;
+    MARTe::StreamString mode;
+    MARTe::int32 *referencesArray;
+    MARTe::StreamString *modesArray;
+    MARTe::float32 **model;
+};
+
+CLASS_REGISTER(ControllerEx1, "")
+
+}
 
 int main(int argc, char **argv) {
     using namespace MARTe;
     using namespace MARTe2Tutorial;
     SetErrorProcessFunction(&ErrorProcessExampleFunction);
 
-    PrintNumberOfInstancesCDB(0);
-    ConfigurationDatabaseRun();
-    PrintNumberOfInstancesCDB(4);
+    CCString className1 = "ControllerEx1";
+
+    int32 int32Arr[] = { -1, 2, -3, 4, -5 };
+    const char8 *stringArr[] = { "A", "BB", "CCC", "DDDD", "EEEEE" };
+    float32 float32Mat[3][2] = { { -1.0, 2.3 }, { 4.7, -3.2 }, { -7.1, 5.6 } };
+
+    ReferenceT<ControllerEx1> ref1(className1,
+            GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    //Automatically generate a new object instance based on the class name and on the correct Heap
+    //and with the template reference.
+    if (ref1.IsValid()) {
+        ref1->SetName("ControllerInstance1");
+        REPORT_ERROR_STATIC(ErrorManagement::Information,
+                "Successfully created an instance of %s", className1.GetList());
+        //Write a valid configuration.
+        {
+            ConfigurationDatabase cdb;
+            cdb.Write("Gain1", 2);
+            cdb.Write("Gain3", -2.0);
+            cdb.Write("Mode", "ASTRING");
+            cdb.Write("ControllerType", "C3");
+            cdb.Write("Modes", stringArr);
+            cdb.Write("References", int32Arr);
+            cdb.Write("Model", float32Mat);
+
+            if (ref1->Initialise(cdb)) {
+                REPORT_ERROR_STATIC(ErrorManagement::Information,
+                        "Successfully configured instance of %s",
+                        ref1->GetName());
+            } else {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                        "Failed to configure instance of %s", ref1->GetName());
+            }
+        }
+        //Write an invalid configuration - missing compulsory parameter
+        {
+            ConfigurationDatabase cdb;
+            cdb.Write("Gain1", 2);
+            cdb.Write("Gain2", 1.5);
+            cdb.Write("Gain3", -2.0);
+            cdb.Write("ControllerType", "C3");
+            cdb.Write("Modes", stringArr);
+            cdb.Write("References", int32Arr);
+            cdb.Write("Model", float32Mat);
+            if (!ref1->Initialise(cdb)) {
+                REPORT_ERROR_STATIC(ErrorManagement::Information,
+                        "As expected failed to reconfigure instance of %s",
+                        ref1->GetName());
+            }
+        }
+        //Write a configuration without a parameter that is out of range
+        {
+            ConfigurationDatabase cdb;
+            cdb.Write("Gain1", 2);
+            cdb.Write("Gain2", 1.5);
+            cdb.Write("Gain3", 2.0);
+            cdb.Write("ControllerType", "C3");
+            cdb.Write("Mode", "ASTRING");
+            cdb.Write("Modes", stringArr);
+            cdb.Write("References", int32Arr);
+            cdb.Write("Model", float32Mat);
+            if (!ref1->Initialise(cdb)) {
+                REPORT_ERROR_STATIC(ErrorManagement::Information,
+                        "As expected failed to reconfigure instance of %s",
+                        ref1->GetName());
+            }
+        }
+
+    }
+
     return 0;
 }
 

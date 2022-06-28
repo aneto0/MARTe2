@@ -117,14 +117,20 @@ TEST(BareMetal_L2Objects_AnyTypeGTest, TestAnyType_UInt32) {
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_UInt32());
 }
 
+TEST(BareMetal_L2Objects_AnyTypeGTest, TestAnyType_Bool) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Bool());
+}
+
+
 TEST(BareMetal_L2Objects_AnyTypeGTest, TestAnyType_ConstInt32) {
     AnyTypeTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstInt32());
 }
 
-TEST(BareMetal_L2Objects_AnyTypeGTest, TestAnyType_ConstUInt32) {
+TEST(BareMetal_L2Objects_AnyTypeGTest, TestAnyType_ConstBool) {
     AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstUInt32());
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstBool());
 }
 
 TEST(BareMetal_L2Objects_AnyTypeGTest, TestAnyType_Int64) {

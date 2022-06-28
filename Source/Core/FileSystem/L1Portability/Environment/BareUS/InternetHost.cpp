@@ -193,7 +193,8 @@ InternetHost::InternetHost(const uint16 port,
 uint16 InternetHost::GetPort() const {
     uint16 port = 0u;
 #ifdef LWIP_ENABLED
-    port = htons(address.port);
+    //Ports are in host byte order using lwip raw api
+    port = address.port;
 #endif
     return port;
 }
@@ -220,7 +221,8 @@ uint32 InternetHost::GetAddressAsNumber() const {
 /** sets the port value  */
 void InternetHost::SetPort(const uint16 port) {
     #ifdef LWIP_ENABLED
-        address.port = htons(port);
+        //Ports are in host byte order using lwip raw api
+        address.port = port;
     #endif
 }
 
@@ -256,7 +258,7 @@ bool InternetHost::SetAddressByHostName(const char8 * hostName) {
 
 void InternetHost::SetAddressByNumber(const uint32 number) {
 #ifdef LWIP_ENABLED
-    address.addr.addr = htons(number);
+    address.addr.addr = number;
 #endif
 }
 

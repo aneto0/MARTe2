@@ -35,10 +35,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-static const TypeDescriptor typeDes[] = { CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
-        UnsignedInteger16Bit, UnsignedInteger32Bit, UnsignedInteger64Bit, Float32Bit, Float64Bit, Character8Bit, VoidType, InvalidType };
-static const char8* typeNames[] = { "string", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64", "char8", "void",
-        static_cast<const char8*>(NULL)};
+static const TypeDescriptor typeDes[] = { CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit, UnsignedInteger16Bit, UnsignedInteger32Bit, UnsignedInteger64Bit, BooleanType, Float32Bit, Float64Bit, Character8Bit, VoidType, InvalidType };
+static const char8* typeNames[] = { "string", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "bool", "float32", "float64", "char8", "void", static_cast<const char8*>(NULL)};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

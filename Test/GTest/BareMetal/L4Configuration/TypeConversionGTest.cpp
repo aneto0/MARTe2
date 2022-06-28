@@ -82,8 +82,6 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToInt8) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-
-
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToUInt8) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<const char8*,uint8> table[]={
@@ -207,6 +205,22 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToUInt32) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,bool> table[]={
+            {"true",true, true, true},
+            {"True",true, true, true},
+            {"1",true, true, true},
+            {"yes",true, true, true},
+            {"tru",false, true, true},
+            {"y",false, true, true},
+            {"11",false, true, true},
+            {0,0, 0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
 
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToInt64) {
@@ -526,6 +540,23 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<StreamString, bool> table[]={
+            {"true",true, true, true},
+            {"True",true, true, true},
+            {"1",true, true, true},
+            {"yes",true, true, true},
+            {"tru",false, true, true},
+            {"y",false, true, true},
+            {"11",false, true, true},
+            {0,0, 0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -704,9 +735,6 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt8ToInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-
-
-
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt8ToUInt32) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int8,uint32> table[]={
@@ -718,6 +746,20 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt8ToUInt32) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt8ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int8,bool> table[]={
+            {1,true, true, true},
+            {0,false, true, true},
+            {-1,false,true, true},
+            {127,false,true, true},
+            {-128, false, true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
 
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt8ToInt64) {
@@ -822,6 +864,18 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt8ToUInt32) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt8ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint8,bool> table[]={
+            {1,true, true, true},
+            {0,false, true, true},
+            {255,false,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
 
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt8ToInt64) {
@@ -932,6 +986,19 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt16ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt16ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int16,bool> table[]={
+            {1,true, true, true},
+            {0,false, true, true},
+            {32767,false,true, true},
+            {-1,false, true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt16ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1034,6 +1101,18 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt16ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt16ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint16,bool> table[]={
+            {1,true, true, true},
+            {0,false,true, true},
+            {65535,false,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt16ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1130,9 +1209,6 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-
-
-
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToUInt32) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int32,uint32> table[]={
@@ -1144,6 +1220,17 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int32,bool> table[]={
+            {1,true, true, true},
+            {0,false,true, true},
+            {2147483647,false,true, true},
+            {-1, false, true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1237,9 +1324,6 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-
-
-
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToUInt32) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint32,uint32> table[]={
@@ -1250,6 +1334,16 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint32,bool> table[]={
+            {1,true, true, true},
+            {0,false,true, true},
+            {4294967295,false,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1277,7 +1371,120 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToUInt64) {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToInt8) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,int8> table[]={
+            {true,1, true, true},
+            {false,0,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
 
+
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolUInt8) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,uint8> table[]={
+            {true,1, true, true},
+            {false,0,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToInt16) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,int16> table[]={
+            {true,1, true, true},
+            {false,0,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToUInt16) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,uint16> table[]={
+            {true,1, true, true},
+            {false,0,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToInt32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,int32> table[]={
+            {true,1, true, true},
+            {false,0,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToUInt32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,uint32> table[]={
+            {true,1, true, true},
+            {false,0,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,bool> table[]={
+            {true,true, true, true},
+            {false,false,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToInt64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,int64> table[]={
+            {true,1, true, true},
+            {false,0,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToUInt64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,uint64> table[]={
+            {true,1ul, true, true},
+            {false,0ul,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToFloat32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,float32> table[]={
+            {true,0.0, false, true},
+            {false,0.0,false, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToFloat64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,float64> table[]={
+            {true,0.0, false, true},
+            {false,0.0,false, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt64ToInt8) {
     TypeConversionTest myTypeConversionTest;
@@ -1351,9 +1558,6 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt64ToInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-
-
-
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt64ToUInt32) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int64,uint32> table[]={
@@ -1365,6 +1569,20 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt64ToUInt32) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt64ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int64,bool> table[]={
+            {1,true, true,true},
+            {0,false, true,true},
+            {4294967295,false,true, true},
+            {4294967296,false,true, true},
+            {-1, false, true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
 
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt64ToInt64) {
@@ -1458,9 +1676,6 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt64ToInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-
-
-
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt64ToUInt32) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,uint32> table[]={
@@ -1472,6 +1687,17 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt64ToUInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt64ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint64,bool> table[]={
+            {1,true, true, true},
+            {4294967295,false,true, true},
+            {4294967295,false,true, true},
+            {4294967296,false,true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt64ToInt64) {
     TypeConversionTest myTypeConversionTest;
@@ -1807,7 +2033,6 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat32ToInt32) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat32ToUInt32) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float32,uint32> table[]={
@@ -1822,6 +2047,16 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat32ToUInt32) {
             {-1E-9, 0, true, true},
             {-2.33,0,true,true},
             {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat32ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,bool> table[]={
+            {1.0,false,true,false},
+            {0.0,false,true,false},
+            {0,0,false, false}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
@@ -1984,6 +2219,17 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat64ToUInt32) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat64ToBool) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,bool> table[]={
+            {1.0,false, true, false},
+            {0.0,false, true, false},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
 
 /////////////////////////////////////////////////////////////////
 
@@ -2208,7 +2454,7 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt64ToSString) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
 
-TEST(BareMetal_L4Configuration_TypeConversionGTest,float32ToSString) {
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat32ToSString) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float32,StreamString> table[]={
             {123.5,"123.5000", true,true},
@@ -2252,6 +2498,17 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat64ToSString) {
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,StreamString> table[]={
+            {true,"true", true,true},
+            {false,"false", true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
 
 
 ///////////////////////////////////////////////////
@@ -2376,7 +2633,7 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt64ToCCString) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCCString(table));
 }
 
-TEST(BareMetal_L4Configuration_TypeConversionGTest,float32ToCCString) {
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat32ToCCString) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float32,const char8*> table[]={
             {123.5,"123.5000", true,true},
@@ -2421,6 +2678,15 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat64ToCCString) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCCString(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToCCString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,const char8*> table[]={
+            {true,"true",true,true},
+            {false, "false", true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCCString(table));
+}
 
 /////////////////////////////////////////////
 
@@ -2435,7 +2701,6 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToInt32Vector) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVector(table));
 }
 
-
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToUInt32Vector) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeVectorTableTest<int32,uint32,3> table[]={
@@ -2445,6 +2710,17 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToUInt32Vector) {
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVector(table));
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToBoolVector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<int32,bool,3> table[]={
+            {{-1,1,0},{false,true,false}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVector(table));
+}
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToInt32Vector) {
     TypeConversionTest myTypeConversionTest;
@@ -2522,6 +2798,17 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToUInt32Vector) {
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVector(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToBoolVector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<const char8 *,bool,8> table[]={
+            {{"true","1","yes","yEs","tru","y","11","TrUE"},{true,true,true,true,false,false,false,true}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVector(table));
+}
+
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToInt32Vector) {
     TypeConversionTest myTypeConversionTest;
@@ -2540,6 +2827,15 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToUInt32Vector) {
             {{0},{0},0}
     };
 
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVector(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToBoolVector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<StreamString,bool,8> table[]={
+            {{"true","1","yes","yEs","tru","y","11","TrUE"},{true,true,true,true,false,false,false,true}, true},
+            {{0},{0},0}
+    };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVector(table));
 }
 
@@ -2686,7 +2982,15 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToUInt32MatrixStatic
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToBoolMatrixStaticToStatic) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<int32,bool,2,2> table[]={
+            {{{1,0},{-1,1}},{{true,false},{false,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
 
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
@@ -2761,6 +3065,17 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToUInt32MatrixSta
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToBoolMatrixStaticToStatic) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<const char8 *,bool,2,2> table[]={
+            {{{"1","false"},{"true","YES"}},{{true,false},{true,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
+}
+
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
@@ -2783,8 +3098,15 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToUInt32MatrixStat
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToBoolMatrixStaticToStatic) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<StreamString,bool,2,2> table[]={
+            {{{"-1","TrUe"},{"ok","yes"}},{{false,true},{false,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
 
-
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToFloat32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
@@ -2873,7 +3195,15 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToUInt32MatrixStatic
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToBoolMatrixStaticToHeap) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<int32,bool,2,2> table[]={
+            {{{1,0},{1,-1}},{{true,false},{true,false}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
 
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
@@ -2948,6 +3278,16 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToUInt32MatrixSta
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToBoolMatrixStaticToHeap) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<const char8 *,bool,2,2> table[]={
+            {{{"-1","true"},{"yes","0"}},{{false,true},{true,false}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
+}
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
@@ -2970,8 +3310,15 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToUInt32MatrixStat
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToBoolMatrixStaticToHeap) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<StreamString,bool,2,2> table[]={
+            {{{"-1","false"},{"1","true"}},{{false,false},{true,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
 
-
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToFloat32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
@@ -3060,6 +3407,16 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToUInt32MatrixHeapTo
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToBoolMatrixHeapToStatic) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<int32,bool,2,2> table[]={
+            {{{2147483647,0},{1,1}},{{false,false},{true,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
+}
+
 
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToInt32MatrixHeapToStatic) {
@@ -3135,6 +3492,17 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToUInt32MatrixHea
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToBoolMatrixHeapToStatic) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<const char8 *,bool,2,2> table[]={
+            {{{"1","0"},{"true","true"}},{{true,false},{true,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
+}
+
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
@@ -3157,8 +3525,15 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToUInt32MatrixHeap
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToBoolMatrixHeapToStatic) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<StreamString,bool,2,2> table[]={
+            {{{"YeS","0"},{"true","yes"}},{{true,false},{true,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
 
-
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToFloat32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
@@ -3245,6 +3620,15 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToUInt32MatrixHeapTo
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestInt32ToBoolMatrixHeapToHeap) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<int32,bool,2,2> table[]={
+            {{{2147483647,0},{1,-1}},{{false,false},{true,false}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
+}
 
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestUInt32ToInt32MatrixHeapToHeap) {
@@ -3320,6 +3704,16 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToUInt32MatrixHea
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToBoolMatrixHeapToHeap) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<const char8 *,bool,2,2> table[]={
+            {{{"-1","0"},{"2147483647","true"}},{{false,false},{false,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
+}
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
@@ -3334,16 +3728,23 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToInt32MatrixHeapT
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToUInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
-    const TypeToTypeMatrixTableTest<StreamString,uint32,2,2> table[]={
-            {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
+    const TypeToTypeMatrixTableTest<StreamString,bool,2,2> table[]={
+            {{{"1","0"},{"true", "2147483647"}},{{true,false},{true,false}}, true},
             {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestSStringToBoolMatrixHeapToHeap) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<StreamString,bool,2,2> table[]={
+            {{{"-1","0"},{"true","true"}},{{false,false},{true,true}}, true},
+            {{{0,0}},{{0,0}},0}
+    };
 
-
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestCCStringToFloat32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
@@ -3571,6 +3972,16 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloat64ToCArray) {
             {1E-7,"100.000000000000E-9", true,true},
             {1E-9,"1.00000000000000E-9", true,true},
             {1E-25,"100.000000000000E-27", true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBoolToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<bool,const char8 *> table[]={
+            {false,"false",true,true},
+            {true,"true",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
@@ -4826,6 +5237,13 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestIntegerToCArrayScalar_Tru
 
     ASSERT_TRUE(myTypeConversionTest.TestIntegerToCArrayScalar_Trunc());
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestBooleanToCArrayScalar_Trunc) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestBooleanToCArrayScalar_Trunc());
+}
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestFloatToCArrayScalar_Trunc) {
     TypeConversionTest myTypeConversionTest;
