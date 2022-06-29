@@ -628,13 +628,13 @@ bool GAM::AddOutputBrokers(ReferenceContainer brokers) {
 bool GAM::SortBrokers() {
 
     bool ret = true;
+    int32 count = 0;
     for (uint32 i = 0u; (i < numberOfInputSignals) && ret; i++) {
         StreamString dataSourceName;
         ret = GetSignalDataSourceName(InputSignals, i, dataSourceName);
         if (ret) {
             int32 numberOfInputBrokers = static_cast<int32>(inputBrokers.Size());
-            int32 count = 0;
-            for (int32 n = 0; (n < numberOfInputBrokers) && ret; n++) {
+            for (int32 n = count; (n < numberOfInputBrokers) && ret; n++) {
                 ReferenceT<BrokerI> broker = inputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
                 if (dsName == dataSourceName) {
@@ -643,20 +643,19 @@ bool GAM::SortBrokers() {
                         if (ret) {
                             ret = inputBrokers.Insert(broker, count);
                         }
-                        count++;
                     }
+                    count++;
                 }
             }
         }
     }
-
+    count = 0;
     for (uint32 i = 0u; (i < numberOfOutputSignals) && ret; i++) {
         StreamString dataSourceName;
         ret = GetSignalDataSourceName(OutputSignals, i, dataSourceName);
         if (ret) {
             int32 numberOfOutputBrokers = static_cast<int32>(outputBrokers.Size());
-            int32 count = 0;
-            for (int32 n = 0; (n < numberOfOutputBrokers) && ret; n++) {
+            for (int32 n = count; (n < numberOfOutputBrokers) && ret; n++) {
                 ReferenceT<BrokerI> broker = outputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
                 if (dsName == dataSourceName) {
@@ -665,8 +664,8 @@ bool GAM::SortBrokers() {
                         if (ret) {
                             ret = outputBrokers.Insert(broker, count);
                         }
-                        count++;
                     }
+                    count++;
                 }
             }
         }
