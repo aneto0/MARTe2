@@ -123,8 +123,8 @@ ThreadIdentifier Id() {
 }
 
 /*
- * In linux the priority will vary between 0, i.e. priorityClass = Unknown
- * and priorityLevel = 0 and 99, i.e. priorityClass = RealTime
+ * In linux the priority will vary between 0 and 99, i.e. priorityClass = Unknown
+ * priorityLevel = 0 and priorityClass = RealTime
  * and priorityLevel = 15
  */
 void SetPriority(const ThreadIdentifier &threadId,
@@ -161,9 +161,12 @@ void SetPriority(const ThreadIdentifier &threadId,
                 policy = SCHED_FIFO;//Only put FIFO (more aggressive) for the RealTimePriorityClass
                 break;
             }
+            //Scale to range 0-99
             uint32 priorityLevelToAssign = 25u * priorityClassNumber;
-            float32 priorityLevelF=(static_cast<float32>(prioLevel)*24.F)/15.F;
-            priorityLevelToAssign += static_cast<uint32>(prioLevel);
+            float32 priorityLevelF = static_cast<float32>(prioLevel);
+            priorityLevelF *= 24.F;
+            priorityLevelF /= 15.F;
+            priorityLevelToAssign += static_cast<uint32>(priorityLevelF);
             //Bound the priority to its maximum
             uint32 maxPriority = static_cast<uint32>(sched_get_priority_max(policy));
             if (priorityLevelToAssign > maxPriority) {

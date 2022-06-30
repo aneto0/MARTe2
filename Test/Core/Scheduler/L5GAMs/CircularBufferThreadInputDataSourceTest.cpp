@@ -515,10 +515,10 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise() {
         ret = (dataSource.GetCpuMask() == 0xFFFFu);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityLevel() == 0u);
+        ret = (dataSource.GetPriorityLevel() == 15u);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityClass() == Threads::NormalPriorityClass);
+        ret = (dataSource.GetPriorityClass() == Threads::RealTimePriorityClass);
     }
     if (ret) {
         ret = (dataSource.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
@@ -596,10 +596,10 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_CpuMask() {
         ret = (dataSource.GetCpuMask() == 1);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityLevel() == 0u);
+        ret = (dataSource.GetPriorityLevel() == 15u);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityClass() == Threads::NormalPriorityClass);
+        ret = (dataSource.GetPriorityClass() == Threads::RealTimePriorityClass);
     }
     if (ret) {
         ret = (dataSource.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
@@ -926,10 +926,10 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_StackSize() {
         ret = (dataSource.GetCpuMask() == 0xFFFFu);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityLevel() == 0u);
+        ret = (dataSource.GetPriorityLevel() == 15u);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityClass() == Threads::NormalPriorityClass);
+        ret = (dataSource.GetPriorityClass() == Threads::RealTimePriorityClass);
     }
     if (ret) {
         ret = (dataSource.GetStackSize() == 300000);
@@ -1008,10 +1008,10 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_SleepTime() {
         ret = (dataSource.GetCpuMask() == 0xFFFFu);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityLevel() == 0u);
+        ret = (dataSource.GetPriorityLevel() == 15u);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityClass() == Threads::NormalPriorityClass);
+        ret = (dataSource.GetPriorityClass() == Threads::RealTimePriorityClass);
     }
     if (ret) {
         ret = (dataSource.GetStackSize() == 300000);
@@ -1093,10 +1093,10 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_SignalDefinitionInt
         ret = (dataSource.GetCpuMask() == 0xFFFFu);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityLevel() == 0u);
+        ret = (dataSource.GetPriorityLevel() == 15u);
     }
     if (ret) {
-        ret = (dataSource.GetPriorityClass() == Threads::NormalPriorityClass);
+        ret = (dataSource.GetPriorityClass() == Threads::RealTimePriorityClass);
     }
     if (ret) {
         ret = (dataSource.GetStackSize() == 300000);

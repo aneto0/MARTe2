@@ -72,7 +72,7 @@ namespace MARTe {
  *     NumberOfBuffers = N (the number of buffers)
  *     *SignalDefinitionInterleaved = 0 (the listed signals, excluding the InternalTimeStamp and the ErrorCheck, define a packet that is replicated N samples times).
  *     *CpuMask = 0x1 (the cpus where the internal thread is allowed to run: default is 0xFFFF)
- *     *ReceiverThreadPriority = 0-99 (the priority of the internal thread, default is 50)
+ *     *ReceiverThreadPriority = 0-99 (the priority of the internal thread, default is 99)
  *     *ReceiverThreadStackSize = N (the stack size of the internal thread, default is THREADS_DEFAULT_STACKSIZE)
  *     *SleepTime = 0 (the sleep time in mutex in seconds, default is 0.F)
  *     *SignalDefinitionInterleaved = 0/1 (if 0, default, it is assumed that the signal is not defined as interleaved)

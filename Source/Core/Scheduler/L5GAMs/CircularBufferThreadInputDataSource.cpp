@@ -162,7 +162,7 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
         }
         uint8 receiverThreadPriority;
         if (!data.Read("ReceiverThreadPriority", receiverThreadPriority)) {
-            receiverThreadPriority = 50u;
+            receiverThreadPriority = 99u;
             REPORT_ERROR_PARAMETERS(ErrorManagement::Warning,
                                     "CircularBufferThreadInputDataSource::Initialise ReceiverThreadPriority was not specified. Using default: %d",
                                     receiverThreadPriority);
@@ -182,8 +182,14 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
         executor.SetStackSize(receiverThreadStackSize);
 
         uint8 prioClass = (receiverThreadPriority / 25u);
-        float32 prioLevelT = (((static_cast<uint32>(receiverThreadPriority) % 25) * 15.F) / 24.F);
-        uint32 prioLevel = static_cast<uint8>(prioLevelT+0.5);
+        //Transform to the MARTe internal thread range.
+        uint32 receiverThreadPriorityT = receiverThreadPriority;
+        receiverThreadPriorityT = receiverThreadPriorityT % 25u;
+        float32 prioLevelT = static_cast<float32>(receiverThreadPriorityT);
+        prioLevelT *= 15.F; 
+        prioLevelT /= 24.F;
+        prioLevelT += 0.5F;
+        uint8 prioLevel = static_cast<uint8>(prioLevelT);
 
         Threads::PriorityClassType prioClassT = Threads::NormalPriorityClass;
         if (prioClass == 0u) {
@@ -197,6 +203,8 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
         }
         else if (prioClass == 3u) {
             prioClassT = Threads::RealTimePriorityClass;
+        }
+        else {//NOOP
         }
         executor.SetPriorityClass(prioClassT);
         executor.SetPriorityLevel(prioLevel);
@@ -287,7 +295,8 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
     bool ret = (nStepsForward < numberOfBuffers);
     TimeoutType timeoutT = TTInfiniteWait;
     if (sleepTime >= 0.F) {
-        timeoutT = static_cast<uint32>(sleepTime * 1e3);
+        sleepTime *= 1000.F;
+        timeoutT = static_cast<uint32>(sleepTime);
     }
     /*lint -e{9113} -e{9131} -e{9007} known side effects.*/
     if (ret && (stop == 0)) {
@@ -308,7 +317,7 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
                 lastReadBuffer[syncSignal] = 0u;
             }
             uint32 index = (lastReadBuffer[syncSignal] * numberOfSignals) + syncSignal;
-            rootEventSem.Reset();
+            (void) rootEventSem.Reset();
             (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
             bool isArrived = (isRefreshed[index] == 1u);
             mutex.FastUnLock();
