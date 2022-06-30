@@ -1592,8 +1592,8 @@ bool CircularBufferThreadInputDataSourceTest::TestGetInputBrokers() {
         ret = gam.IsValid();
     }
     if (ret) {
-        ReferenceT<MemoryMapMultiBufferInputBroker> broker;
-        ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker1;
+        ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker;
+        ReferenceT<MemoryMapMultiBufferInputBroker> broker1;
         ReferenceContainer brokers;
         ret = gam->GetInputBrokers(brokers);
         if (ret) {
@@ -2697,8 +2697,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute() {
         ret = gam.IsValid();
     }
     if (ret) {
-        ReferenceT<MemoryMapMultiBufferInputBroker> broker;
-        ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker1;
+        ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker;
+        ReferenceT<MemoryMapMultiBufferInputBroker> broker1;
         ReferenceContainer brokers;
         ret = gam->GetInputBrokers(brokers);
         if (ret) {
@@ -2711,8 +2711,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute() {
         }
         if (ret) {
             dataSource->ContinueRead();
-            ret = broker1->Execute();
             ret = broker->Execute();
+            ret = broker1->Execute();
         }
     }
     if (ret) {
@@ -2832,8 +2832,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_SameSignalDifferentMod
         ret = gam.IsValid();
     }
 
-    ReferenceT<MemoryMapMultiBufferInputBroker> broker;
-    ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker1;
+    ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker;
+    ReferenceT<MemoryMapMultiBufferInputBroker> broker1;
     ReferenceContainer brokers;
     if (ret) {
         ret = gam->GetInputBrokers(brokers);
@@ -2853,8 +2853,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_SameSignalDifferentMod
     for (uint32 n = 0u; (n < numberOfReads) && (ret); n++) {
         if (ret) {
             dataSource->ContinueRead();
-            ret = broker1->Execute();
             ret = broker->Execute();
+            ret = broker1->Execute();
         }
         if (ret) {
             //the first are separated by 10
@@ -3220,8 +3220,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_DriverRead(
         ret = gam.IsValid();
     }
 
-    ReferenceT<MemoryMapMultiBufferInputBroker> broker;
-    ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker1;
+    ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker;
+    ReferenceT<MemoryMapMultiBufferInputBroker> broker1;
     ReferenceContainer brokers;
     if (ret) {
         ret = gam->GetInputBrokers(brokers);
@@ -3249,8 +3249,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_DriverRead(
         }
         dataSource->ContinueRead();
         if (ret) {
-            ret = broker1->Execute();
-            ret &= broker->Execute();
+            ret = broker->Execute();
+            ret &= broker1->Execute();
         }
         if (ret) {
             uint32 nSamples = 10;
@@ -3354,8 +3354,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_Both() {
         ret = gam.IsValid();
     }
 
-    ReferenceT<MemoryMapMultiBufferInputBroker> broker;
-    ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker1;
+    ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker;
+    ReferenceT<MemoryMapMultiBufferInputBroker> broker1;
 
     ReferenceContainer brokers;
     if (ret) {
@@ -3384,7 +3384,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_Both() {
         }
         dataSource->ContinueRead();
         if (ret) {
-            ret = broker1->Execute();
+            ret = broker->Execute();
             //ret &= broker1->Execute();
         }
         if (ret) {
@@ -3785,8 +3785,8 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_TimeStamp() {
         ret = gam.IsValid();
     }
 
-    ReferenceT<MemoryMapMultiBufferInputBroker> broker;
-    ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker1;
+    ReferenceT<MemoryMapSynchronisedMultiBufferInputBroker> broker;
+    ReferenceT<MemoryMapMultiBufferInputBroker> broker1;
     ReferenceContainer brokers;
     if (ret) {
         ret = gam->GetInputBrokers(brokers);

@@ -434,4 +434,128 @@ bool StandardParserTest::TestStandardCast() {
     return var == 1;
 }
 
+bool StandardParserTest::TestGetExprCast() {
+    const char8 * const config = ""
+        "vars = {\n"
+        "  extra = {\n"
+        "    var1 = (uint32)3\n"
+        "  }\n"
+        "  var2 = (uint32|\"(uint32)2\")\n"
+        "}\n"
+        "var3 = (uint32|\"vars.extra.var1 * (uint32)3 * vars.var2\")\n";
+
+    StreamString configString = config;
+    configString.Seek(0);
+    StreamString errors;
+    ConfigurationDatabase database;
+
+    StandardParser myParser(configString, database, &errors);
+    if (!myParser.Parse()) {
+        return false;
+    }
+    database.MoveToRoot();
+    uint32 var1 = 0;
+    uint32 var2 = 0;
+    uint32 var3 = 0;
+    bool ok = database.MoveAbsolute("vars.extra");
+    ok &= database.Read("var1", var1);
+    ok &= database.MoveAbsolute("vars");
+    ok &= database.Read("var2", var2);
+    ok &= database.MoveToRoot();
+    ok &= database.Read("var3", var3);
+    ok &= (var1 == 3);
+    ok &= (var2 == 2);
+    ok &= (var3 == 18);
+    return ok;
+}
+
+bool StandardParserTest::TestGetExprCast_InvalidExpression() {
+    const char8 * const config = ""
+        "vars = {\n"
+        "  var1 = (uint32)3\n"
+        "  var2 = (uint32|\"(uint64)2\")\n"
+        "}\n"
+        "var3 = (uint32|\"vars.var1 * (uint32 3 * vars.var2\")\n";
+
+    StreamString configString = config;
+    configString.Seek(0);
+    StreamString errors;
+    ConfigurationDatabase database;
+
+    StandardParser myParser(configString, database, &errors);
+    bool ok = !myParser.Parse();
+    return ok;
+}
+
+bool StandardParserTest::TestGetExprCast_InvalidOutput() {
+    const char8 * const config = ""
+        "vars = {\n"
+        "  var1 = (uint32)3\n"
+        "  var2 = (uint32|\"(uint64)2\")\n"
+        "}\n"
+        "var3 = (wrong|\"vars.var1 * (uint32)3 * vars.var2\")\n";
+
+    StreamString configString = config;
+    configString.Seek(0);
+    StreamString errors;
+    ConfigurationDatabase database;
+
+    StandardParser myParser(configString, database, &errors);
+    bool ok = !myParser.Parse();
+    return ok;
+}
+
+bool StandardParserTest::TestGetExprCast_FailCompile() {
+    const char8 * const config = ""
+        "vars = {\n"
+        "  var1 = (uint32)3\n"
+        "  var2 = (uint32|\"(uint64)2\")\n"
+        "}\n"
+        "var3 = (float32|\"vars.var1 * (uint32)3 * vars.var2\")\n";
+
+    StreamString configString = config;
+    configString.Seek(0);
+    StreamString errors;
+    ConfigurationDatabase database;
+
+    StandardParser myParser(configString, database, &errors);
+    bool ok = !myParser.Parse();
+    return ok;
+}
+
+bool StandardParserTest::TestGetExprCast_FailVariableNotFound() {
+    const char8 * const config = ""
+        "vars = {\n"
+        "  var1 = (uint32)3\n"
+        "  var2 = (uint32|\"(uint64)2\")\n"
+        "}\n"
+        "var3 = (uint32|\"var4 + vars.var1 * (uint32)3 * vars.var2\")\n";
+
+    StreamString configString = config;
+    configString.Seek(0);
+    StreamString errors;
+    ConfigurationDatabase database;
+
+    StandardParser myParser(configString, database, &errors);
+    bool ok = !myParser.Parse();
+    return ok;
+}
+
+bool StandardParserTest::TestGetExprCast_FailVariablePathNotFound() {
+    const char8 * const config = ""
+        "vars = {\n"
+        "  var1 = (uint32)3\n"
+        "  var2 = (uint32|\"(uint64)2\")\n"
+        "}\n"
+        "var3 = (uint32|\"var.var1 * (uint32)3 * vars.var2\")\n";
+
+    StreamString configString = config;
+    configString.Seek(0);
+    StreamString errors;
+    ConfigurationDatabase database;
+
+    StandardParser myParser(configString, database, &errors);
+    bool ok = !myParser.Parse();
+    return ok;
+}
 
