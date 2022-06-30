@@ -185,14 +185,15 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
     }
     if (ret) {
         // TODO using better way to read/write BitSet
-        uint32 cpuConfig = 0u;
+        uint64 cpuConfig = 0ull;
         if (!data.Read("CPUs", cpuConfig)) {
             REPORT_ERROR(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName());
         }
         if (!data.Read("StackSize", stackSize)) {
             REPORT_ERROR(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", GetName());
         }
-        cpuMask = ProcessorType(cpuConfig);
+        BitSet cpuset(cpuConfig);
+        cpuMask = ProcessorType(cpuset);
     }
 
     return ret;
