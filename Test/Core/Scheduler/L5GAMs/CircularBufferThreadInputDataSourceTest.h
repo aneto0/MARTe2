@@ -81,7 +81,22 @@ public:
      * @brief Tests the CircularBufferThreadInputDataSource::Initialise method
      * specifying a PriorityLevel.
      */
-    bool TestInitialise_PriorityLevel();
+    bool TestInitialise_PriorityLevel_Idle();
+
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::Initialise method
+     * specifying a PriorityLevel.
+     */
+    bool TestInitialise_PriorityLevel_Unknown();
+
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::Initialise method
+     * specifying a PriorityLevel.
+     */
+    bool TestInitialise_PriorityLevel_RealTime();
+
 
     /**
      * @brief Tests the CircularBufferThreadInputDataSource::Initialise method

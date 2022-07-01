@@ -628,12 +628,13 @@ bool GAM::AddOutputBrokers(ReferenceContainer brokers) {
 bool GAM::SortBrokers() {
 
     bool ret = true;
+    bool done = false;
     int32 count = 0;
-    for (uint32 i = 0u; (i < numberOfInputSignals) && ret; i++) {
+    int32 numberOfInputBrokers = static_cast<int32>(inputBrokers.Size());
+    for (uint32 i = 0u; (i < numberOfInputSignals) && (!done); i++) {
         StreamString dataSourceName;
         ret = GetSignalDataSourceName(InputSignals, i, dataSourceName);
         if (ret) {
-            int32 numberOfInputBrokers = static_cast<int32>(inputBrokers.Size());
             for (int32 n = count; (n < numberOfInputBrokers) && ret; n++) {
                 ReferenceT<BrokerI> broker = inputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
@@ -648,13 +649,20 @@ bool GAM::SortBrokers() {
                 }
             }
         }
+        if (ret) {
+            done = (count == numberOfInputBrokers);
+        }
+        else {
+            done = true;
+        }
     }
+    done = !ret;
     count = 0;
-    for (uint32 i = 0u; (i < numberOfOutputSignals) && ret; i++) {
+    int32 numberOfOutputBrokers = static_cast<int32>(outputBrokers.Size());
+    for (uint32 i = 0u; (i < numberOfOutputSignals) && (!done); i++) {
         StreamString dataSourceName;
         ret = GetSignalDataSourceName(OutputSignals, i, dataSourceName);
         if (ret) {
-            int32 numberOfOutputBrokers = static_cast<int32>(outputBrokers.Size());
             for (int32 n = count; (n < numberOfOutputBrokers) && ret; n++) {
                 ReferenceT<BrokerI> broker = outputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
@@ -668,6 +676,12 @@ bool GAM::SortBrokers() {
                     count++;
                 }
             }
+        }
+        if (ret) {
+            done = (count == numberOfOutputBrokers);
+        }
+        else {
+            done = true;
         }
     }
     return ret;
