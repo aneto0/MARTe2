@@ -87,7 +87,7 @@ ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data, Stre
 }
 
 ErrorManagement::ErrorType RealTimeLoader::Reconfigure(StructuredDataI &configuration, StreamString &errStream) {
-    ErrorManagement::ErrorType ret = Loader::Reconfigure(configuration, errStream);
+    ErrorManagement::ErrorType ret = Loader::ReconfigureImpl(configuration, errStream, false);
     if(!firstLoad){
         if (ret.ErrorsCleared()) {
             ObjectRegistryDatabase *objDb = ObjectRegistryDatabase::Instance();
@@ -107,6 +107,9 @@ ErrorManagement::ErrorType RealTimeLoader::Reconfigure(StructuredDataI &configur
                     found++;
                 }
             }
+        }
+        if (ret.ErrorsCleared()) {
+            ret = SendConfigurationMessage(postConfigMsg);
         }
     }
     firstLoad = false;

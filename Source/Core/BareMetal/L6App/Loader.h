@@ -190,6 +190,12 @@ public:
 
 protected:
     /**
+     * Reconfigure implementation allowing to select if to send the post message.
+     */
+    ErrorManagement::ErrorType ReconfigureImpl(StructuredDataI &configuration, StreamString &errStream, bool sendPostMsg);
+
+
+    /**
      * @brief The loader parameters.
      */
     ConfigurationDatabase parsedConfiguration;
@@ -208,6 +214,11 @@ protected:
      * Helper function to send message.
      */
     ErrorManagement::ErrorType SendConfigurationMessage(ReferenceT<Message> msg);
+
+    /**
+     * The message to send after the configuration is applied.
+     */
+    ReferenceT<Message> postConfigMsg;
 
 private:
 
@@ -235,11 +246,6 @@ private:
      * The message to send if the last configuration was reloaded, as a consequence of an error.
      */
     ReferenceT<Message> reloadedConfigurationMsg;
-
-    /**
-     * The message to send after the configuration is applied.
-     */
-    ReferenceT<Message> postConfigMsg;
 
     /**
      * If true and the configuration fails, it will automatically reload the last good configuration.

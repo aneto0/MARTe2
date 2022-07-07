@@ -175,6 +175,10 @@ ErrorManagement::ErrorType Loader::Reconfigure(StreamI &configuration, StreamStr
 }
 
 ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, StreamString &errStream) {
+    return ReconfigureImpl(configuration, errStream, true);
+}
+
+ErrorManagement::ErrorType Loader::ReconfigureImpl(StructuredDataI &configuration, StreamString &errStream, bool sendPostMsg) {
     ErrorManagement::ErrorType ret;
     if (!firstLoading) {
         ret = SendConfigurationMessage(preConfigMsg);
@@ -241,7 +245,9 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
     }
     //Send the post after the keep alive objects are added again (and iff there were no errors)
     if (ret.ErrorsCleared()) {
-        ret = SendConfigurationMessage(postConfigMsg);
+        if (sendPostMsg) {
+            ret = SendConfigurationMessage(postConfigMsg);
+        }
     }
  
     firstLoading = false;
