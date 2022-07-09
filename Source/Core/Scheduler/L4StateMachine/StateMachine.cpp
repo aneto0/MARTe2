@@ -117,6 +117,9 @@ bool StateMachine::Initialise(StructuredDataI &data) {
             if (state.IsValid()) {
                 uint32 j;
                 bool found = false;
+                if(StreamString(state->GetName()) == firstState){
+                    currentState = state;
+                }
                 for (j = 0u; (j < state->Size()) && (ok); j++) {
                     ReferenceT<StateMachineEvent> event = state->Get(j);
                     if (event.IsValid()) {
@@ -156,7 +159,6 @@ bool StateMachine::Initialise(StructuredDataI &data) {
     }
     //Install the event listeners for the first state
     if (err.ErrorsCleared()) {
-        currentState = Find(firstState.Buffer());
         err.fatalError = !currentState.IsValid();
         if (!err.ErrorsCleared()) {
             REPORT_ERROR(ErrorManagement::FatalError, "No state at position zero was defined");
