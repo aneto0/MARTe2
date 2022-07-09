@@ -106,6 +106,8 @@ bool StateMachine::ExportData(StructuredDataI & data) {
 bool StateMachine::Initialise(StructuredDataI &data) {
     ErrorManagement::ErrorType err;
     err.parametersError = !ReferenceContainer::Initialise(data);
+    StreamString firstState;
+    data.Read("FirstState", firstState);
     bool ok = true;
     if (err.ErrorsCleared()) {
         //Loop on all the states
@@ -154,7 +156,7 @@ bool StateMachine::Initialise(StructuredDataI &data) {
     }
     //Install the event listeners for the first state
     if (err.ErrorsCleared()) {
-        currentState = Get(0u);
+        currentState = Find(firstState.Buffer());
         err.fatalError = !currentState.IsValid();
         if (!err.ErrorsCleared()) {
             REPORT_ERROR(ErrorManagement::FatalError, "No state at position zero was defined");

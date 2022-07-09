@@ -137,6 +137,19 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
     }
     if (ret.ErrorsCleared()) {
         ret.fatalError = !parsedConfiguration.MoveToRoot();
+        //We need items which exist outside the actual application to sometimes know the first state such as the statemachine
+        StreamString firstState;
+        data.Read("FirstState", firstState);
+        (void) firstState.Seek(0ull);
+        StreamString destination;
+        char8 term;
+        ret.fatalError = !firstState.GetToken(destination, ":", term);
+        for (uint32 i = 0; i < parsedConfiguration.GetNumberOfChildren(); i++){
+            parsedConfiguration.MoveToChild(i);
+            parsedConfiguration.Write("FirstState",destination.Buffer());
+            ret.fatalError = !parsedConfiguration.MoveToRoot();
+        }
+        ret.fatalError = !parsedConfiguration.MoveToRoot();
     }
     if (ret.ErrorsCleared()) {
         ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(parsedConfiguration);
