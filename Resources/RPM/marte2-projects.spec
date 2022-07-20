@@ -101,10 +101,6 @@ cd -
 #Copy the Source so to allow includes where all the path are relative to the original folder (e.g. Source/BareMetal/L0Types)
 find $src_dir -iname "*.h" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
 done
-
-#Provide MakeDefaults
-mkdir -p %{buildroot}/%{rpm_top_dir}/MakeDefaults
-cp -r MakeDefaults/* %{buildroot}/%{rpm_top_dir}/MakeDefaults
 %endif
 
 #List all the files to be added to the file-list section
@@ -122,7 +118,6 @@ do
 echo %{rpm_top_dir}/$src_dir >> $current_path/file-lists-devel
 done
 echo %{rpm_top_dir}/Include >> $current_path/file-lists-devel
-echo %{rpm_top_dir}/MakeDefaults >> $current_path/file-lists-devel
 cd -
 
 %files -f file-lists
