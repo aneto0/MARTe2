@@ -43,6 +43,9 @@ M2_RPM_CONFLICTS?=$(M2_RPM_ID_TEST)
 
 M2_RPM_SPEC_FILE_DIST?=marte2-repo.spec
 
+#Provide MakeDefaults as part of devel package
+M2_RPM_OTHER_FOLDERS?=MakeDefaults\ Resources/RPM
+
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 #Core version with no tests
