@@ -84,6 +84,12 @@ do
 test -e $other_folder && cp -RL --parents $other_folder %{buildroot}/%{rpm_top_dir}
 done
 
+#Try to copy other user defined devel folders (e.g. MakeDefaults, Resources, ...)
+for other_folder in %{rpm_other_devel_folders}
+do
+test -e $other_folder && cp -RL --parents $other_folder %{buildroot}/%{rpm_top_dir}
+done
+
 #Create the profile.d information
 mkdir -p %{buildroot}/etc/profile.d
 echo 'export %{rpm_name}_DIR=%{rpm_top_dir}' > %{buildroot}/etc/profile.d/%{rpm_id}.sh
@@ -111,6 +117,11 @@ for src_dir in %{rpm_src_dir}
 do
 expattern=$expattern\\\|$src_dir\/
 done
+#Exclude also the other devel folder from going to the core rpms
+for other_folder in %{rpm_other_devel_folders}
+do
+expattern=$expattern\\\|$other_folder\/
+done
 
 find . -type f -printf "\"/%%P\"\n" | grep -v $expattern > $current_path/file-lists
 for src_dir in %{rpm_src_dir}
@@ -119,6 +130,12 @@ echo %{rpm_top_dir}/$src_dir >> $current_path/file-lists-devel
 done
 echo %{rpm_top_dir}/Include >> $current_path/file-lists-devel
 cd -
+
+#Add the other devel folders to the file-lists-devel
+for other_folder in %{rpm_other_devel_folders}
+do
+echo %{rpm_top_dir}/$other_folder >> $current_path/file-lists-devel
+done
 
 %files -f file-lists
 
