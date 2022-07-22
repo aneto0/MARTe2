@@ -134,7 +134,7 @@ cd -
 #Add the other devel folders to the file-lists-devel
 for other_folder in %{rpm_other_devel_folders}
 do
-echo %{rpm_top_dir}/$other_folder >> $current_path/file-lists-devel
+test -e %{rpm_top_dir}/$other_folder && echo %{rpm_top_dir}/$other_folder >> $current_path/file-lists-devel
 done
 
 %files -f file-lists
