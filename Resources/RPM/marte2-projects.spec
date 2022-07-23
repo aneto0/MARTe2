@@ -130,12 +130,14 @@ echo %{rpm_top_dir}/$src_dir >> $current_path/file-lists-devel
 done
 echo %{rpm_top_dir}/Include >> $current_path/file-lists-devel
 
+%if %{?rpm_other_devel_folders:1}%{!?rpm_other_devel_folders:0}
 #Add the other devel folders to the file-lists-devel
 for other_folder in %{rpm_other_devel_folders}
 do
 #Test if the $other_folder variable is not empty (because the for is still executed if rpm_other_devel_folders is not defined
 test -n "$other_folder" && echo %{rpm_top_dir}/$other_folder >> $current_path/file-lists-devel
 done
+%endif
 
 cd -
 %files -f file-lists
