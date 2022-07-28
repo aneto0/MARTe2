@@ -69,7 +69,10 @@ M2_RPM_CUSTOM_DIST?=
 #Other project specific folders (e.g. Resources, Startup, Configurations, ...). This is a space separated string with NO quotes (i.e. the spaces have to be properly escaped). For example M2_RPM_OTHER_FOLDERS=Startup\ Configurations
 M2_RPM_OTHER_FOLDERS?=
 #Same as M2_RPM_OTHER_FOLDERS but to be included in the devel package
+M2_RPM_DEVEL_ID?=$(M2_RPM_ID)-devel
 M2_RPM_OTHER_DEVEL_FOLDERS?=
+M2_RPM_DEVEL_LIST?=
+M2_RPM_DEVEL_REQUIRES?=$(M2_RPM_ID)
 #Release version
 M2_RPM_RELEASEVER?=`cat /etc/redhat-release | tr -dc '0-9' | cut -c 1`
 
@@ -109,8 +112,17 @@ endif
 ifdef M2_RPM_OTHER_FOLDERS
 M2_RPM_DEFINES+=--define "rpm_other_folders $(M2_RPM_OTHER_FOLDERS)"
 endif
+ifdef M2_RPM_DEVEL_ID
+M2_RPM_DEFINES+=--define "rpm_devel_id $(M2_RPM_DEVEL_ID)"
+endif
 ifdef M2_RPM_OTHER_DEVEL_FOLDERS
 M2_RPM_DEFINES+=--define "rpm_other_devel_folders $(M2_RPM_OTHER_DEVEL_FOLDERS)"
+endif
+ifdef M2_RPM_DEVEL_LIST
+M2_RPM_DEFINES+=--define "rpm_devel_list $(M2_RPM_DEVEL_LIST)"
+endif
+ifdef M2_RPM_DEVEL_REQUIRES
+M2_RPM_DEFINES+=--define "rpm_devel_requires $(M2_RPM_DEVEL_REQUIRES)"
 endif
 ifdef M2_RPM_RELEASEVER
 M2_RPM_DEFINES+=--define "rpm_releasever $(M2_RPM_RELEASEVER)"

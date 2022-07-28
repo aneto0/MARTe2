@@ -25,16 +25,24 @@ Conflicts: %{rpm_conflicts}
 %description
 %{rpm_name} package
 
-%package -n %{rpm_id}-devel
+%if %{?rpm_devel_id:1}%{!?rpm_devel_id:0}
+%package -n %{rpm_devel_id}
 Summary:	%{rpm_name} devel package
 
-%description -n %{rpm_id}-devel
+%if %{?rpm_devel_requires:1}%{!?rpm_devel_requires:0}
+Requires: %{rpm_devel_requires}
+%endif
+
+%description -n %{rpm_devel_id}
 %{rpm_name} package - devel
+
+%endif
 
 %prep
 %setup -q
 
 %build
+%define debug_package %{nil}
 %if %{?rpm_project_build:1}%{!?rpm_project_build:0}
 . %{rpm_project_build}
 %else
@@ -55,13 +63,13 @@ mkdir -p %{buildroot}/%{rpm_top_dir}/Bin
 if [[ "%{rpm_bin_list}" != "none" ]]; then 
 for exec_file in %{rpm_bin_list}
 do
-find %{build_dir} -name $exec_file | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
+find %{build_dir} -iname "$exec_file" | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
 done
 fi
 %else
 #Look for all the .ex and install them in the Bin folder
-#do not consider only .ex
-find %{build_dir} -executable -type f | grep -v '\.so' | grep -v '\.a' | grep -v 'gtest-' | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
+#consider only .ex and .sh by default
+find %{build_dir} -executable -type f | grep '\.ex\|\.sh' | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
 %endif
 
 mkdir -p %{buildroot}/%{rpm_top_dir}/Lib
@@ -69,7 +77,7 @@ mkdir -p %{buildroot}/%{rpm_top_dir}/Lib
 if [[ "%{rpm_lib_list}" != "none" ]]; then 
 for lib_file in %{rpm_lib_list}
 do
-find %{build_dir} -name $lib_file | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
+find %{build_dir} -iname "$lib_file" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
 done
 fi
 %else
@@ -78,17 +86,21 @@ find %{build_dir} -iname "*.a" | xargs -I found_file cp found_file %{buildroot}/
 find %{build_dir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
 %endif 
 
+%if %{?rpm_other_folders:1}%{!?rpm_devel_folders:0}
 #Try to copy other user defined folders (e.g. Resources, Configurations, ...)
 for other_folder in %{rpm_other_folders}
 do
 test -e $other_folder && cp -RL --parents $other_folder %{buildroot}/%{rpm_top_dir}
 done
+%endif
 
+%if %{?rpm_other_devel_folders:1}%{!?rpm_other_devel_folders:0}
 #Try to copy other user defined devel folders (e.g. MakeDefaults, Resources, ...)
 for other_folder in %{rpm_other_devel_folders}
 do
 test -e $other_folder && cp -RL --parents $other_folder %{buildroot}/%{rpm_top_dir}
 done
+%endif
 
 #Create the profile.d information
 mkdir -p %{buildroot}/etc/profile.d
@@ -99,6 +111,16 @@ cp %{buildroot}/etc/profile.d/%{rpm_id}.sh %{buildroot}/etc/profile.d/%{rpm_id}.
 
 #Copy all .h files to an include folder
 mkdir -p %{buildroot}/%{rpm_top_dir}/Include
+
+%if %{?rpm_devel_list:1}%{!?rpm_devel_list:0}
+if [[ "%{rpm_devel_list}" != "none" ]]; then 
+for devel_file in %{rpm_devel_list}
+do
+find %{build_dir} -iname "$devel_file" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/
+find $src_dir -iname "$devel_file" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
+done
+fi
+%else
 for src_dir in %{rpm_src_dir}
 do
 cd $src_dir
@@ -107,6 +129,8 @@ cd -
 #Copy the Source so to allow includes where all the path are relative to the original folder (e.g. Source/BareMetal/L0Types)
 find $src_dir -iname "*.h" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
 done
+%endif
+
 %endif
 
 #List all the files to be added to the file-list section
@@ -142,7 +166,9 @@ done
 cd -
 %files -f file-lists
 
-%files -n %{rpm_id}-devel -f file-lists-devel
+%if %{?rpm_devel_id:1}%{!?rpm_devel_id:0}
+%files -n %{rpm_devel_id} -f file-lists-devel
+%endif
 
 %changelog
 
