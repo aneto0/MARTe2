@@ -38,6 +38,7 @@ M2_RPM_ID?=marte2-core
 M2_RPM_ID_FULL?=$(M2_RPM_ID)-full
 M2_RPM_ID_RELEASE?=marte2-release
 M2_RPM_BUILD_OPTIONS=gtest core
+M2_RPM_SRC_DIR=Source Lib
 #Do not allow installing both marte2-core and marte2-core-test in the same target
 M2_RPM_CONFLICTS?=$(M2_RPM_ID_FULL)
 
@@ -55,7 +56,7 @@ all: $(OBJS) $(BUILD_DIR)/$(M2_RPM_ID)-$(M2_RPM_VERSION).rpm
 
 #Include test artifacts
 full: 
-	make -f Makefile.$(TARGET) M2_RPM_ID=$(M2_RPM_ID_FULL) FOLDERSX='$(FOLDERSX) Test.x' M2_RPM_BUILD_OPTIONS=all M2_RPM_CONFLICTS=$(M2_RPM_ID) M2_RPM_SRC_DIR='Source Test'
+	make -f Makefile.$(TARGET) M2_RPM_ID=$(M2_RPM_ID_FULL) FOLDERSX='$(FOLDERSX) Test.x' M2_RPM_BUILD_OPTIONS=all M2_RPM_CONFLICTS=$(M2_RPM_ID) M2_RPM_SRC_DIR='$(M2_RPM_SRC_DIR) Test'
 
 test: 
 	make -f Makefile.$(TARGET) M2_RPM_NAME=MARTe2_Test M2_RPM_ID=marte2-core-test FOLDERSX='$(FOLDERSX) Test.x' M2_RPM_BUILD_OPTIONS=all M2_RPM_CONFLICTS=$(M2_RPM_ID) M2_RPM_DEVEL_ID= M2_RPM_BIN_LIST=MainGTest.ex M2_RPM_LIB_LIST=none M2_RPM_OTHER_DEVEL_FOLDERS="" M2_RPM_OTHER_FOLDERS="" M2_RPM_DEVEL_LIST=none M2_RPM_REQUIRES=marte2-core
