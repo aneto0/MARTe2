@@ -38,7 +38,7 @@ M2_RPM_ID?=marte2-core
 M2_RPM_ID_FULL?=$(M2_RPM_ID)-full
 M2_RPM_ID_RELEASE?=marte2-release
 M2_RPM_BUILD_OPTIONS=gtest core
-M2_RPM_SRC_DIR=Source Lib
+M2_RPM_SRC_DIR=Source Lib/gtest-1.7.0
 #Do not allow installing both marte2-core and marte2-core-test in the same target
 M2_RPM_CONFLICTS?=$(M2_RPM_ID_FULL)
 

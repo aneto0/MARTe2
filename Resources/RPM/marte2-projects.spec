@@ -81,8 +81,7 @@ find %{build_dir} -iname "$lib_file" | xargs -I found_file cp found_file %{build
 done
 fi
 %else
-#Look for all the .a and .so and install them in the Lib folder
-find %{build_dir} -iname "*.a" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
+#Look for all the .so and install them in the Lib folder
 find %{build_dir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
 %endif 
 
@@ -110,14 +109,17 @@ echo 'export PATH=$PATH:$%{rpm_name}_DIR/Bin' >> %{buildroot}/etc/profile.d/%{rp
 cp %{buildroot}/etc/profile.d/%{rpm_id}.sh %{buildroot}/etc/profile.d/%{rpm_id}.csh
 
 #Copy all .h files to an include folder
-mkdir -p %{buildroot}/%{rpm_top_dir}/Include
+mkdir -p %{buildroot}/%{rpm_top_dir}/Include/Lib
 
 %if %{?rpm_devel_list:1}%{!?rpm_devel_list:0}
 if [[ "%{rpm_devel_list}" != "none" ]]; then 
 for devel_file in %{rpm_devel_list}
 do
 find %{build_dir} -iname "$devel_file" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/
+for src_dir in %{rpm_src_dir}
+do
 find $src_dir -iname "$devel_file" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
+done
 done
 fi
 %else
@@ -129,6 +131,8 @@ cd -
 #Copy the Source so to allow includes where all the path are relative to the original folder (e.g. Source/BareMetal/L0Types)
 find $src_dir -iname "*.h" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
 done
+#Copy the static libraries too
+find %{build_dir} -iname "*.a" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/Lib/
 %endif
 
 %endif
