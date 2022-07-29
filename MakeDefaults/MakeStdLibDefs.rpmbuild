@@ -36,12 +36,14 @@ M2_RPM_SPEC_FILE?=marte2-projects.spec
 #Should be set by the source Makefile
 M2_RPM_VERSION?=0.0
 M2_RPM_SRC_DIR?=Source
+M2_RPM_LIB_DIR?=Build
+M2_RPM_BIN_DIR?=Build
 M2_RPM_BIN_LIST?=
 M2_RPM_LIB_LIST?=
 M2_RPM_BUILD_DIR?=$(PWD)/$(BUILD_DIR)/BUILD
 M2_RPM_LICENSE?=EUPL
 #The name of the project (e.g. MARTe2 or MARTe2_Components). Note that a variable name $(M2_RPM_NAME)_DIR will be created based on this name.
-M2_RPM_NAME?=UNKNOWN
+M2_RPM_NAME?=
 #The name of the rpm file that will be generated
 M2_RPM_ID?=unknown
 #Where the project files will be installed
@@ -75,17 +77,20 @@ M2_RPM_DEVEL_LIST?=
 M2_RPM_DEVEL_REQUIRES?=$(M2_RPM_ID)
 #Release version
 M2_RPM_RELEASEVER?=`cat /etc/redhat-release | tr -dc '0-9' | cut -c 1`
-
 M2_RPM_DEFINES=--define "rpm_id $(M2_RPM_ID)"
 M2_RPM_DEFINES+=--define "rpm_src_dir $(M2_RPM_SRC_DIR)"
+M2_RPM_DEFINES+=--define "rpm_lib_dir $(M2_RPM_LIB_DIR)"
+M2_RPM_DEFINES+=--define "rpm_bin_dir $(M2_RPM_BIN_DIR)"
 ifdef M2_RPM_BIN_LIST
 M2_RPM_DEFINES+=--define "rpm_bin_list $(M2_RPM_BIN_LIST)"
 endif
 ifdef M2_RPM_LIB_LIST
 M2_RPM_DEFINES+=--define "rpm_lib_list $(M2_RPM_LIB_LIST)"
 endif
-M2_RPM_DEFINES+=--define "rpm_version $(M2_RPM_VERSION)"
+ifdef M2_RPM_NAME
 M2_RPM_DEFINES+=--define "rpm_name $(M2_RPM_NAME)"
+endif
+M2_RPM_DEFINES+=--define "rpm_version $(M2_RPM_VERSION)"
 M2_RPM_DEFINES+=--define "rpm_license $(M2_RPM_LICENSE)"
 M2_RPM_DEFINES+=--define "rpm_arch $(M2_RPM_ARCH)"
 M2_RPM_DEFINES+=--define "rpm_requires $(M2_RPM_REQUIRES)"

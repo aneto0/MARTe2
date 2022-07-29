@@ -59,30 +59,48 @@ fi
 . %{rpm_project_install}
 %else
 mkdir -p %{buildroot}/%{rpm_top_dir}/Bin
+mkdir -p %{buildroot}/%{rpm_top_dir}/Lib
+mkdir -p %{buildroot}/%{rpm_top_dir}/Include/Lib
+
+cd %{build_dir}/%{rpm_id}-%{rpm_version}
+
 %if %{?rpm_bin_list:1}%{!?rpm_bin_list:0}
 if [[ "%{rpm_bin_list}" != "none" ]]; then 
 for exec_file in %{rpm_bin_list}
 do
-find %{build_dir} -iname "$exec_file" | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
+find . -name "$exec_file" | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
 done
 fi
 %else
 #Look for all the .ex and install them in the Bin folder
 #consider only .ex and .sh by default
-find %{build_dir} -executable -type f | grep '\.ex\|\.sh' | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
+for bin_dir in %{rpm_bin_dir}
+do
+find $bin_dir -executable -type f | grep '\.ex\|\.sh' | xargs -I found_file install -m 0755 found_file %{buildroot}/%{rpm_top_dir}/Bin/
+done
 %endif
 
-mkdir -p %{buildroot}/%{rpm_top_dir}/Lib
+
+
 %if %{?rpm_lib_list:1}%{!?rpm_lib_list:0}
 if [[ "%{rpm_lib_list}" != "none" ]]; then 
 for lib_file in %{rpm_lib_list}
 do
-find %{build_dir} -iname "$lib_file" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
+if [[ $lib_file == *.a ]]
+then
+find . -name "$lib_file" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/Lib/
+else
+find . -name "$lib_file" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
+fi
 done
 fi
 %else
 #Look for all the .so and install them in the Lib folder
-find %{build_dir} -iname "*.so" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
+for lib_dir in %{rpm_lib_dir}
+do
+find $lib_dir -name "*.so" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
+find $lib_dir -name "*.a" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/Lib/
+done
 %endif 
 
 %if %{?rpm_other_folders:1}%{!?rpm_devel_folders:0}
@@ -101,41 +119,39 @@ test -e $other_folder && cp -RL --parents $other_folder %{buildroot}/%{rpm_top_d
 done
 %endif
 
+%if %{?rpm_name:1}%{!?rpm_name:0}
 #Create the profile.d information
 mkdir -p %{buildroot}/etc/profile.d
 echo 'export %{rpm_name}_DIR=%{rpm_top_dir}' > %{buildroot}/etc/profile.d/%{rpm_id}.sh
 echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$%{rpm_name}_DIR/Lib' >> %{buildroot}/etc/profile.d/%{rpm_id}.sh
 echo 'export PATH=$PATH:$%{rpm_name}_DIR/Bin' >> %{buildroot}/etc/profile.d/%{rpm_id}.sh
 cp %{buildroot}/etc/profile.d/%{rpm_id}.sh %{buildroot}/etc/profile.d/%{rpm_id}.csh
+%endif
 
 #Copy all .h files to an include folder
-mkdir -p %{buildroot}/%{rpm_top_dir}/Include/Lib
-
 %if %{?rpm_devel_list:1}%{!?rpm_devel_list:0}
 if [[ "%{rpm_devel_list}" != "none" ]]; then 
 for devel_file in %{rpm_devel_list}
 do
-find %{build_dir} -iname "$devel_file" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/
+find . -name "$devel_file" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/
 for src_dir in %{rpm_src_dir}
 do
-find $src_dir -iname "$devel_file" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
+find $src_dir -name "$devel_file" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
 done
 done
 fi
 %else
 for src_dir in %{rpm_src_dir}
 do
-cd $src_dir
-find . -iname "*.h" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include
-cd -
+find $src_dir -name "*.h" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include
 #Copy the Source so to allow includes where all the path are relative to the original folder (e.g. Source/BareMetal/L0Types)
-find $src_dir -iname "*.h" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
+find $src_dir -name "*.h" | xargs -I found_file cp --parent found_file %{buildroot}/%{rpm_top_dir}
 done
-#Copy the static libraries too
-find %{build_dir} -iname "*.a" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/Lib/
 %endif
 
 %endif
+
+cd -
 
 #List all the files to be added to the file-list section
 current_path=`pwd`
@@ -179,7 +195,9 @@ cd -
 %post
 #Note that this source command would not work as the rpm is installed as part of a different session
 #source /etc/profile.d/%{rpm_id}.sh
+%if %{?rpm_name:1}%{!?rpm_name:0}
 echo 'To update the system environment variables please login again or execute "source /etc/profile.d/%{rpm_id}.sh"'
+%endif
 
 #Allow to run a project specific post install script
 %if %{?rpm_project_post:1}%{!?rpm_project_post:0}
