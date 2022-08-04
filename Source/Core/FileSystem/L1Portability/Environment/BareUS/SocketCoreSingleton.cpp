@@ -65,7 +65,6 @@ namespace MARTe {
 
         if(socketCoreRoot == NULL_PTR(SocketCore*)) {
             socketCoreRoot = newSocket;
-            /* printf("---------> Registered Head SocketCore @%p\r\n", newSocket); */
         } else {
             SocketCore* tmpSocketCore = socketCoreRoot;
 
@@ -76,13 +75,10 @@ namespace MARTe {
 
             tmpSocketCore->nextSocketCore = newSocket;
             newSocket->nextSocketCore = NULL_PTR(SocketCore*);
-            /* printf("---------> Registered Tail SocketCore @%p\r\n", newSocket); */
         }
         
         return retVal;
     }
-
-    uint64 printSkipCount;
 
     uint32 SocketCoreSingleton::CountReadyToRead() {
         uint32 readyCount = 0u;
