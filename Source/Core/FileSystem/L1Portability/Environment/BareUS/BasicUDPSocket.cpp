@@ -54,47 +54,29 @@
 
 #ifdef LWIP_ENABLED
 extern void NetworkInterfaceHook(void* netifParams);
+void EnqueueJoinRequest(udp_pcb *pcb, ip4_addr_t *ifaddr, ip4_addr_t *groupaddr);
 #endif
 
 namespace MARTe {
 
-static inline void EnableIRQ()
-{
-	asm volatile(
-		"msr	daifclr, #2"
-		:
-		:
-		: "memory");
-}
-static inline void DisableIRQ()
-{
-	asm volatile(
-		"msr	daifset, #2"
-		:
-		:
-		: "memory");
-}
-
 void UDPRegistrationCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
-    
-    //WARNING: This function runs inside an ISR context
-    
     SocketCore* tmpSocketCore = static_cast<SocketCore*>(arg);
-    
-    //Copy locally the relevant packet data
-    MemoryOperationsHelper::Copy((char8*)tmpSocketCore->packetBuffer, (char8*)p->payload, p->len);
+    uint64 nowTicks = HighResolutionTimer::Counter();
+
+    //Copy locally the relevant packet data. WARNING! Do NOT use direct memcpy instead of pbuf_copy_partial
+    tmpSocketCore->packetLen = pbuf_copy_partial(p, tmpSocketCore->packetBuffer, MAX_RX_PACKET_BUFFERSIZE, 0);
+
     tmpSocketCore->packetSourceIpAddress = *addr;
     tmpSocketCore->packetSourcePort = port;
 
     //Update control variables to emulate sequential read behaviour on socket
     tmpSocketCore->isWritten = true;
-    tmpSocketCore->packetLen = (uint32)p->len;
-    tmpSocketCore->lastPacketArrivalTimestamp = HighResolutionTimer::Counter();
+    tmpSocketCore->lastPacketArrivalTimestamp = nowTicks;
 
     //Update control variables to emulate read select behaviour on socket
-    if(tmpSocketCore->isReadSelected && !tmpSocketCore->isReadSelectRaised) {
-        tmpSocketCore->isReadSelectRaised = true;
-        tmpSocketCore->readSelectRaisedAt = tmpSocketCore->lastPacketArrivalTimestamp;
+    if(tmpSocketCore->isReadSelected && !tmpSocketCore->isReadReady) {
+        tmpSocketCore->isReadReady = true;
+        tmpSocketCore->readReadyAt = nowTicks;
     }
 
     //Free the lwIP buffer and return it to the pbuf pool
@@ -136,38 +118,48 @@ bool BasicUDPSocket::Read(char8* const output,
 
 bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
+    bool retVal = false;
 
-    err_t err;
-#ifdef LWIP_ENABLED
+#ifdef LWIP_ENABLED    
     ip_addr_t destIPAddress;
+
     destIPAddress = (destination.GetInternetHost())->addr;
     uint16 destPort = (destination.GetInternetHost())->port;
 
-    struct pbuf *packetBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_POOL);
-    MemoryOperationsHelper::Copy(packetBuffer->payload, input, size);
-    err = udp_sendto(connectionSocket.UDPHandle, packetBuffer, &destIPAddress, destPort);
-    pbuf_free(packetBuffer);
+    struct pbuf *tmpPacketBuffer = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
+    
+    //WARNING! Do not use memcpy to fill the packet payload
+    pbuf_take(tmpPacketBuffer, (void*)input, (uint16)size);
+    err_t err = udp_sendto(connectionSocket.UDPHandle, tmpPacketBuffer, &destIPAddress, destPort);
+    pbuf_free(tmpPacketBuffer);
 
-    NetworkInterfaceHook(NULL);
-
+    retVal = (err == ERR_OK);
 #endif
-    return (err == ERR_OK);
+
+    return retVal;
 }
 
 bool BasicUDPSocket::Join(const char8 *const group) const {
-    bool ok = false;
+    //TODO: Can the real value for the Join Request, be checked?
+    //WARNING: in Xilinx SDK 2018.1 this requires a patching in the xemacpsif porting, to always enable interface hash
+    //Otherwise, no more than 5 sockets can be joined
+    bool ok = true;
+    
     ip_addr_t multicastIp;
     
     multicastIp.addr = ipaddr_addr(group);
-
-    err_t iret = igmp_joingroup(IP_ADDR_ANY,(const struct ip4_addr *)(&multicastIp));
-
-    ok = (iret == ERR_OK);
-
-    if(ok) {
-        udp_set_multicast_netif_addr(connectionSocket.UDPHandle,(const struct ip4_addr *)(&multicastIp));
+    
+    //err_t iret = igmp_joingroup(IP_ADDR_ANY, (const struct ip4_addr *)(&multicastIp));
+    EnqueueJoinRequest(connectionSocket.UDPHandle, IP_ADDR_ANY, (const struct ip4_addr *)(&multicastIp));
+    NetworkInterfaceHook(NULL);
+    
+    //ok = (iret == ERR_OK);
+    
+    //if(ok) {
+        //udp_set_multicast_netif_addr(connectionSocket.UDPHandle,(const struct ip4_addr *)(&multicastIp));
+        //TODO: Evaluate right multicast ttl, if necessary
         //udp_set_multicast_ttl(connectionSocket.UDPHandle, 5);
-    }
+    //}
 
     return ok;
 }
@@ -175,21 +167,21 @@ bool BasicUDPSocket::Join(const char8 *const group) const {
 bool BasicUDPSocket::Open() {
 #ifdef LWIP_ENABLED
     connectionSocket.UDPHandle = udp_new();
-
+    //Here we have to register the receive callback
     udp_recv(connectionSocket.UDPHandle, UDPRegistrationCallback, static_cast<void*>(&connectionSocket));
-
     return (connectionSocket.UDPHandle != NULL);
+#else
+    return false;
 #endif
 }
 
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 bool BasicUDPSocket::Listen(const uint16 port) {
     bool retVal = false;
+    
     #ifdef LWIP_ENABLED
-    
-    err_t err = udp_bind(connectionSocket.UDPHandle, IP_ADDR_ANY, port);
-    
-    retVal = (err == ERR_OK);
+        err_t err = udp_bind(connectionSocket.UDPHandle, IP_ADDR_ANY, port);
+        retVal = (err == ERR_OK);
     #endif /* ! LWIP_ENABLED */
 
     return retVal;
@@ -208,15 +200,12 @@ bool BasicUDPSocket::Connect(const char8 * const address,
                 ret = false;
             }
         }
-        if (ret) {
-            NetworkInterfaceHook(NULL);
-        }
     }
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
 #endif
-
+    
     return ret;
 }
 
@@ -240,7 +229,7 @@ bool BasicUDPSocket::Read(char8 * const output,
     bool readRetry = true;
     bool canRead = false;
 
-    retVal = (size <= 9000);
+    retVal = (size <= MAX_RX_PACKET_BUFFERSIZE);
 
     if(!retVal) {
         REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Read currently does not support reading more than 9000 bytes per call");
@@ -253,13 +242,9 @@ bool BasicUDPSocket::Read(char8 * const output,
         }
     
         while(readRetry) {
-            DisableIRQ();
-
+            NetworkInterfaceHook(NULL);
+            
             canRead = connectionSocket.isWritten;
-
-            if(!canRead) {
-                EnableIRQ();
-            }
 
             readRetry = !canRead;
             if(timeout.IsFinite()) {
@@ -280,9 +265,9 @@ bool BasicUDPSocket::Read(char8 * const output,
                 }
 
                 connectionSocket.isWritten = false;
+                connectionSocket.isReadReady = false;
+                connectionSocket.isReadSelected = false;
             }
-
-            EnableIRQ();
         }
     }
 

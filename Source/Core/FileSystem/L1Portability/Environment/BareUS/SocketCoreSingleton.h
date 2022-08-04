@@ -51,6 +51,8 @@ namespace MARTe {
             static bool RegisterSocketCore(SocketCore* newSocket);
 
             static uint32 CountReadyToRead();
+
+            static void ClearNonReady();
     };
 }
 

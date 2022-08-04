@@ -21,6 +21,7 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
+#include "ErrorManagement.h"
 #include "HandleI.h"
 #include "SocketCore.h"
 #include "SocketCoreSingleton.h"
@@ -28,7 +29,6 @@
 namespace MARTe {
     
     #ifdef LWIP_ENABLED
-
     SocketCore* SocketCoreSingleton::socketCoreRoot;
 
     SocketCoreSingleton::SocketCoreSingleton() {
@@ -40,7 +40,9 @@ namespace MARTe {
     }
 
     SocketCore* SocketCoreSingleton::FindByHandleI(HandleI* handleToSearch) {
-        SocketCore* tmpSocketCore = socketCoreRoot;
+        SocketCore* tmpSocketCore = NULL;
+
+        tmpSocketCore = socketCoreRoot;
 
         bool found = false;
 
@@ -63,31 +65,33 @@ namespace MARTe {
 
         if(socketCoreRoot == NULL_PTR(SocketCore*)) {
             socketCoreRoot = newSocket;
+            /* printf("---------> Registered Head SocketCore @%p\r\n", newSocket); */
         } else {
             SocketCore* tmpSocketCore = socketCoreRoot;
 
             while(tmpSocketCore->nextSocketCore != NULL_PTR(SocketCore*)) {
                 /* Traverse only, until we find the last socket in the list */
+                tmpSocketCore = tmpSocketCore->nextSocketCore;
             }
 
             tmpSocketCore->nextSocketCore = newSocket;
             newSocket->nextSocketCore = NULL_PTR(SocketCore*);
+            /* printf("---------> Registered Tail SocketCore @%p\r\n", newSocket); */
         }
-
         
-
         return retVal;
     }
+
+    uint64 printSkipCount;
 
     uint32 SocketCoreSingleton::CountReadyToRead() {
         uint32 readyCount = 0u;
         SocketCore* tmpSocketCore = socketCoreRoot;
 
         bool canIterate = (tmpSocketCore != NULL_PTR(SocketCore*));
-        
+
         while(canIterate) {
-            if(tmpSocketCore->isReadSelected && tmpSocketCore->isReadSelectRaised) {
-                tmpSocketCore->isReadSelected = false;
+            if(tmpSocketCore->isReadSelected && tmpSocketCore->isReadReady) {
                 readyCount++;
             }
 
@@ -98,6 +102,21 @@ namespace MARTe {
         return readyCount;
     }
 
-    #endif /* LWIP_ENABLED */
+    void SocketCoreSingleton::ClearNonReady() {
+        SocketCore* tmpSocketCore = socketCoreRoot;
 
+        bool canIterate = (tmpSocketCore != NULL_PTR(SocketCore*));
+        
+        //Helps emulating the select behaviour. When it finishes, only the ready sockets are kept in the set
+        while(canIterate) {
+            if(tmpSocketCore->isReadSelected && !tmpSocketCore->isReadReady) {
+                tmpSocketCore->isReadSelected = false;
+            }
+
+            tmpSocketCore = tmpSocketCore->nextSocketCore;
+            canIterate = (tmpSocketCore != NULL_PTR(SocketCore*));
+        }
+    }
+
+    #endif /* LWIP_ENABLED */
 }

@@ -45,6 +45,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+void NetworkInterfaceHook(void*);
+
 namespace MARTe {
 
 /*lint -e{1401} .Justification: Removes the warning "not initialized by constructor [MISRA C++ Rule 8-5-1]". */
@@ -79,12 +81,16 @@ Select::~Select() {
 bool Select::AddReadHandle(const HandleI &handle) {
     bool retVal = false;
 
-    SocketCore* tmpSocketCore = (SocketCore*)handle.GetReadHandle();
+    SocketCore* tmpSocketCore = NULL_PTR(SocketCore*);
+
+    tmpSocketCore = (SocketCore*)handle.GetReadHandle();
     retVal = (tmpSocketCore != NULL_PTR(SocketCore*));
 
     if(retVal) {
         tmpSocketCore->isReadSelected = true;
-        tmpSocketCore->isReadSelectRaised = false;
+        tmpSocketCore->isReadReady = false;
+        tmpSocketCore->readReadyAt = 0u;
+        tmpSocketCore->isWritten = false;
     } else {
         REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Failure to add read handle in select");
     }
@@ -171,26 +177,20 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
 }
 
 bool Select::RemoveReadHandle(const HandleI &handle) {
-    bool retVal = true;
-    // int32 descriptor = handle.GetReadHandle();
-    // if (descriptor >= 0) {
-    //     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
-    //     /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
-    //     /*lint -e{9130} .Justification: Removes the warning "bitwise operator '<<' applied to signed underlying type [MISRA C++ Rule 5-0-21]". */
-    //     /*lint -e{703} .Justification: Removes the warning "Shift left of signed quantity (long)". */
-    //     if (FD_ISSET(descriptor, &readHandle)) {
-    //         /*lint -e{502} .Justification: Removes the warning "Expected unsigned type". */
-    //         FD_CLR(descriptor, &readHandle);
-    //     }
-    //     else {
-    //         REPORT_ERROR_STATIC_0(ErrorManagement::Information, "Select::RemoveReadHandle(). The descriptor is not in the readHandle.");
-    //         retVal = false;
-    //     }
-    // }
-    // else {
-    //     retVal = false;
-    //     REPORT_ERROR_STATIC_0(ErrorManagement::Information, "Select::RemoveReadHandle(). The descriptor is invalid.");
-    // }
+    bool retVal = false;
+    SocketCore* tmpSocketCore = NULL_PTR(SocketCore*);
+
+    tmpSocketCore = (SocketCore*)handle.GetReadHandle();
+    retVal = (tmpSocketCore != NULL_PTR(SocketCore*));
+
+    if(retVal) {
+        tmpSocketCore->isReadSelected = false;
+        tmpSocketCore->isReadReady = false;
+        tmpSocketCore->readReadyAt = 0u;
+    } else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Failure to remove read handle in select");
+    }
+
     return retVal;
 }
 
@@ -297,7 +297,7 @@ bool Select::IsSet(const HandleI &handle) const {
     retVal = (tmpSocketCore != NULL_PTR(SocketCore*));
 
     if(retVal) {
-        retVal = tmpSocketCore->isReadSelectRaised;
+        retVal = tmpSocketCore->isReadSelected;
     }
 
     return retVal;
@@ -309,19 +309,25 @@ int32 Select::WaitUntil(const TimeoutType &timeout) {
     uint64 currentTicks = 0u;
     uint64 endTicks;
 
+    currentTicks = HighResolutionTimer::Counter();
+
     if(timeout.IsFinite()) {
-        currentTicks = HighResolutionTimer::Counter();
+        endTicks = currentTicks + timeout.HighResolutionTimerTicks();
+    } else {
         //+1 is needed to do the loop infinitely when !IsFinite
-        endTicks = currentTicks + timeout.HighResolutionTimerTicks() + 1;
+        endTicks = currentTicks + 1;
     }
 
     while( (retSel == 0) && (currentTicks < endTicks) ) {
+        NetworkInterfaceHook(NULL);        
         retSel = SocketCoreSingleton::GetInstance().CountReadyToRead();
 
         if(timeout.IsFinite()) {
             currentTicks = HighResolutionTimer::Counter();
         }
     }
+
+    SocketCoreSingleton::GetInstance().ClearNonReady();
     
     return retSel;
 }
