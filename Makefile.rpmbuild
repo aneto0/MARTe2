@@ -54,7 +54,17 @@ all: $(OBJS) $(BUILD_DIR)/$(M2_RPM_ID)-$(M2_RPM_VERSION).rpm
 
 #Include test artifacts
 test: 
-	make -f Makefile.$(TARGET) M2_RPM_ID=$(M2_RPM_ID)-test FOLDERSX='$(FOLDERSX) Test.x' M2_RPM_BUILD_OPTIONS=all M2_RPM_SRC_DIR=Test M2_RPM_BIN_LIST=MainGTest.ex M2_RPM_LIB_LIST='*Test.a *Test.so' M2_RPM_OTHER_FOLDERS="" M2_RPM_OTHER_DEVEL_FOLDERS="" M2_RPM_REQUIRES=marte2-core 
+	make -f Makefile.$(TARGET) \
+		M2_RPM_ID=$(M2_RPM_ID)-test \
+		FOLDERSX='$(FOLDERSX) Test.x' \
+		M2_RPM_BUILD_OPTIONS=all \
+		M2_RPM_SRC_DIR=Test \
+		M2_RPM_BIN_LIST=MainGTest.ex \
+		M2_RPM_LIB_LIST='*Test.a *Test.so' \
+		M2_RPM_OTHER_FOLDERS="" \
+		M2_RPM_OTHER_DEVEL_FOLDERS="" \
+		M2_RPM_PROFILE_D="" \
+		M2_RPM_REQUIRES=marte2-core 
  
 #Yum distribution file
 dist:

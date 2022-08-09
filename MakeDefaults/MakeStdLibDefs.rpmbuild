@@ -44,10 +44,14 @@ M2_RPM_BUILD_DIR?=$(PWD)/$(BUILD_DIR)/BUILD
 M2_RPM_LICENSE?=EUPL
 #The name of the project (e.g. MARTe2 or MARTe2_Components). Note that a variable name $(M2_RPM_NAME)_DIR will be created based on this name.
 M2_RPM_NAME?=
+#Update the system profile.d information
+M2_RPM_PROFILE_D?=1
 #The name of the rpm file that will be generated
 M2_RPM_ID?=unknown
 #Where the project files will be installed
 M2_RPM_TOP_DIR?=\/opt\/$(M2_RPM_ID)
+#Sets the _topdir directive
+M2_RPM_TOPDIR_DIRECTIVE?=$(PWD)/$(BUILD_DIR)
 #The RPM architecture
 M2_RPM_ARCH?=x86_64
 #Standard spec file Requires
@@ -79,7 +83,9 @@ M2_RPM_DEVEL_REQUIRES?=$(M2_RPM_ID)
 M2_RPM_RELEASEVER?=`cat /etc/redhat-release | tr -dc '0-9' | cut -c 1`
 M2_RPM_DEFINES=--define "rpm_id $(M2_RPM_ID)"
 M2_RPM_DEFINES+=--define "rpm_src_dir $(M2_RPM_SRC_DIR)"
+ifdef M2_RPM_LIB_DIR
 M2_RPM_DEFINES+=--define "rpm_lib_dir $(M2_RPM_LIB_DIR)"
+endif
 M2_RPM_DEFINES+=--define "rpm_bin_dir $(M2_RPM_BIN_DIR)"
 ifdef M2_RPM_BIN_LIST
 M2_RPM_DEFINES+=--define "rpm_bin_list $(M2_RPM_BIN_LIST)"
@@ -133,7 +139,8 @@ ifdef M2_RPM_RELEASEVER
 M2_RPM_DEFINES+=--define "rpm_releasever $(M2_RPM_RELEASEVER)"
 endif
 M2_RPM_DEFINES+=--define "build_dir $(M2_RPM_BUILD_DIR)"
-M2_RPM_DEFINES+=--define "_topdir $(PWD)/$(BUILD_DIR)"
-
-
+M2_RPM_DEFINES+=--define "_topdir $(M2_RPM_TOPDIR_DIRECTIVE)"
+ifdef M2_RPM_PROFILE_D
+M2_RPM_DEFINES+=--define "rpm_profile_d 1"
+endif
 

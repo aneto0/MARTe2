@@ -80,8 +80,6 @@ find $bin_dir -executable -type f | grep '\.ex\|\.sh' | xargs -I found_file inst
 done
 %endif
 
-
-
 %if %{?rpm_lib_list:1}%{!?rpm_lib_list:0}
 if [[ "%{rpm_lib_list}" != "none" ]]; then 
 for lib_file in %{rpm_lib_list}
@@ -96,11 +94,13 @@ done
 fi
 %else
 #Look for all the .so and install them in the Lib folder
+%if %{?rpm_lib_dir:1}%{!?rpm_lib_dir:0}
 for lib_dir in %{rpm_lib_dir}
 do
 find $lib_dir -name "*.so" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Lib/
 find $lib_dir -name "*.a" | xargs -I found_file cp found_file %{buildroot}/%{rpm_top_dir}/Include/Lib/
 done
+%endif 
 %endif 
 
 %if %{?rpm_other_folders:1}%{!?rpm_devel_folders:0}
@@ -119,7 +119,7 @@ test -e $other_folder && cp -RL --parents $other_folder %{buildroot}/%{rpm_top_d
 done
 %endif
 
-%if %{?rpm_name:1}%{!?rpm_name:0}
+%if %{?rpm_profile_d:1}%{!?rpm_profile_d:0}
 #Create the profile.d information
 mkdir -p %{buildroot}/etc/profile.d
 echo 'export %{rpm_name}_DIR=%{rpm_top_dir}' > %{buildroot}/etc/profile.d/%{rpm_id}.sh
@@ -162,12 +162,14 @@ do
 expattern=$expattern\\\|$src_dir\/
 done
 #Exclude also the other devel folder from going to the core rpms
+%if %{?rpm_other_devel_folders:1}%{!?rpm_other_devel_folders:0}
 for other_folder in %{rpm_other_devel_folders}
 do
 expattern=$expattern\\\|$other_folder\/
 done
+%endif
 
-find . -type f -printf "\"/%%P\"\n" | grep -v $expattern > $current_path/file-lists
+find . -type f -printf "\"/%%P\"\n" | grep -v $expattern > $current_path/file-lists | echo ""
 for src_dir in %{rpm_src_dir}
 do
 echo %{rpm_top_dir}/$src_dir >> $current_path/file-lists-devel
@@ -195,7 +197,7 @@ cd -
 %post
 #Note that this source command would not work as the rpm is installed as part of a different session
 #source /etc/profile.d/%{rpm_id}.sh
-%if %{?rpm_name:1}%{!?rpm_name:0}
+%if %{?rpm_profile_d:1}%{!?rpm_profile_d:0}
 echo 'To update the system environment variables please login again or execute "source /etc/profile.d/%{rpm_id}.sh"'
 %endif
 
