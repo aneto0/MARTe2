@@ -65,6 +65,6 @@ LFLAGS = -Wl,--no-as-needed --coverage
 CFLAGS = -fPIC -Wall -fprofile-arcs -ftest-coverage 
 CPPFLAGS = -fPIC -frtti -fprofile-arcs -ftest-coverage 
 CFLAGSPEC= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
-LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl -lgcov
+LIBRARIES =  -lm -lpthread -lrt -lncurses -ldl -lgcov
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 
