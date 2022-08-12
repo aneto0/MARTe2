@@ -186,10 +186,17 @@ done
 %endif
 
 cd -
+
+#Allow to create rpms with dependencies only
+%if %{?rpm_with_files:1}%{!?rpm_with_files:0}
 %files -f file-lists
 
 %if %{?rpm_devel_id:1}%{!?rpm_devel_id:0}
 %files -n %{rpm_devel_id} -f file-lists-devel
+%endif
+
+%else
+%files
 %endif
 
 %changelog
