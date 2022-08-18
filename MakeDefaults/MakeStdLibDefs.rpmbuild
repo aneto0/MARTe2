@@ -36,16 +36,24 @@ M2_RPM_SPEC_FILE?=marte2-projects.spec
 #Should be set by the source Makefile
 M2_RPM_VERSION?=0.0
 M2_RPM_SRC_DIR?=Source
+M2_RPM_LIB_DIR?=Build
+M2_RPM_BIN_DIR?=Build
 M2_RPM_BIN_LIST?=
 M2_RPM_LIB_LIST?=
 M2_RPM_BUILD_DIR?=$(PWD)/$(BUILD_DIR)/BUILD
 M2_RPM_LICENSE?=EUPL
 #The name of the project (e.g. MARTe2 or MARTe2_Components). Note that a variable name $(M2_RPM_NAME)_DIR will be created based on this name.
-M2_RPM_NAME?=UNKNOWN
+M2_RPM_NAME?=
+#Update the system profile.d information
+M2_RPM_PROFILE_D?=1
+#Allow to create RPM with dependencies only (no files)
+M2_RPM_WITH_FILES?=1
 #The name of the rpm file that will be generated
 M2_RPM_ID?=unknown
 #Where the project files will be installed
 M2_RPM_TOP_DIR?=\/opt\/$(M2_RPM_ID)
+#Sets the _topdir directive
+M2_RPM_TOPDIR_DIRECTIVE?=$(PWD)/$(BUILD_DIR)
 #The RPM architecture
 M2_RPM_ARCH?=x86_64
 #Standard spec file Requires
@@ -69,20 +77,28 @@ M2_RPM_CUSTOM_DIST?=
 #Other project specific folders (e.g. Resources, Startup, Configurations, ...). This is a space separated string with NO quotes (i.e. the spaces have to be properly escaped). For example M2_RPM_OTHER_FOLDERS=Startup\ Configurations
 M2_RPM_OTHER_FOLDERS?=
 #Same as M2_RPM_OTHER_FOLDERS but to be included in the devel package
+M2_RPM_DEVEL_ID?=$(M2_RPM_ID)-devel
 M2_RPM_OTHER_DEVEL_FOLDERS?=
+M2_RPM_DEVEL_LIST?=
+M2_RPM_DEVEL_REQUIRES?=$(M2_RPM_ID)
 #Release version
 M2_RPM_RELEASEVER?=`cat /etc/redhat-release | tr -dc '0-9' | cut -c 1`
-
 M2_RPM_DEFINES=--define "rpm_id $(M2_RPM_ID)"
 M2_RPM_DEFINES+=--define "rpm_src_dir $(M2_RPM_SRC_DIR)"
+ifdef M2_RPM_LIB_DIR
+M2_RPM_DEFINES+=--define "rpm_lib_dir $(M2_RPM_LIB_DIR)"
+endif
+M2_RPM_DEFINES+=--define "rpm_bin_dir $(M2_RPM_BIN_DIR)"
 ifdef M2_RPM_BIN_LIST
 M2_RPM_DEFINES+=--define "rpm_bin_list $(M2_RPM_BIN_LIST)"
 endif
 ifdef M2_RPM_LIB_LIST
 M2_RPM_DEFINES+=--define "rpm_lib_list $(M2_RPM_LIB_LIST)"
 endif
-M2_RPM_DEFINES+=--define "rpm_version $(M2_RPM_VERSION)"
+ifdef M2_RPM_NAME
 M2_RPM_DEFINES+=--define "rpm_name $(M2_RPM_NAME)"
+endif
+M2_RPM_DEFINES+=--define "rpm_version $(M2_RPM_VERSION)"
 M2_RPM_DEFINES+=--define "rpm_license $(M2_RPM_LICENSE)"
 M2_RPM_DEFINES+=--define "rpm_arch $(M2_RPM_ARCH)"
 M2_RPM_DEFINES+=--define "rpm_requires $(M2_RPM_REQUIRES)"
@@ -109,14 +125,27 @@ endif
 ifdef M2_RPM_OTHER_FOLDERS
 M2_RPM_DEFINES+=--define "rpm_other_folders $(M2_RPM_OTHER_FOLDERS)"
 endif
+ifdef M2_RPM_DEVEL_ID
+M2_RPM_DEFINES+=--define "rpm_devel_id $(M2_RPM_DEVEL_ID)"
+endif
 ifdef M2_RPM_OTHER_DEVEL_FOLDERS
 M2_RPM_DEFINES+=--define "rpm_other_devel_folders $(M2_RPM_OTHER_DEVEL_FOLDERS)"
+endif
+ifdef M2_RPM_DEVEL_LIST
+M2_RPM_DEFINES+=--define "rpm_devel_list $(M2_RPM_DEVEL_LIST)"
+endif
+ifdef M2_RPM_DEVEL_REQUIRES
+M2_RPM_DEFINES+=--define "rpm_devel_requires $(M2_RPM_DEVEL_REQUIRES)"
 endif
 ifdef M2_RPM_RELEASEVER
 M2_RPM_DEFINES+=--define "rpm_releasever $(M2_RPM_RELEASEVER)"
 endif
 M2_RPM_DEFINES+=--define "build_dir $(M2_RPM_BUILD_DIR)"
-M2_RPM_DEFINES+=--define "_topdir $(PWD)/$(BUILD_DIR)"
-
-
+M2_RPM_DEFINES+=--define "_topdir $(M2_RPM_TOPDIR_DIRECTIVE)"
+ifdef M2_RPM_PROFILE_D
+M2_RPM_DEFINES+=--define "rpm_profile_d 1"
+endif
+ifdef M2_RPM_WITH_FILES
+M2_RPM_DEFINES+=--define "rpm_with_files $(M2_RPM_WITH_FILES)"
+endif
 
