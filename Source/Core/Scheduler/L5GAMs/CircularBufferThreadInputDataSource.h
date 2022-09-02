@@ -349,10 +349,6 @@ protected:
      */
     float32 sleepTime;
 
-    /**
-     * Event semaphore to wait on the arrive of the new packets
-     */
-    EventSem rootEventSem;
 
 private:
 
