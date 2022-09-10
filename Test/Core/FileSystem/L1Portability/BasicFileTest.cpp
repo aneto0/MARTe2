@@ -264,7 +264,7 @@ bool BasicFileTest::TestOpen_FLAG_CREAT_EXCLUSIVE() {
 
 bool BasicFileTest::TestOpen_twice() {
     retVal &= bf.Open("TestOpen_twice_Test.txt", BasicFile::FLAG_CREAT /*defaultRWFlags*/);
-    retVal &= !bf.Open("TestOpen_twice_Test.txt", BasicFile::FLAG_CREAT /*defaultRWFlags*/);
+    retVal &= bf.Open("TestOpen_twice_Test.txt", BasicFile::FLAG_CREAT /*defaultRWFlags*/);
     bf.Close();
     return retVal;
 }

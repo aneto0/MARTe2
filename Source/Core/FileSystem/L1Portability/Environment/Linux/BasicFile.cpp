@@ -285,8 +285,7 @@ bool BasicFile::Open(const char8 * const pathname,
         }
     }
     else {
-        retVal = false;
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicFile::Open(). File is already opened");
+        REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "BasicFile::Open(). File is already opened");
     }
     return retVal;
 }
