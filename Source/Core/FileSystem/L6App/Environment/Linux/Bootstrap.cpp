@@ -136,6 +136,14 @@ ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &lo
     return ret;
 }
 
+ErrorManagement::ErrorType Bootstrap::CloseConfigurationStream() {
+    bool err = inputConfigurationFile.Close();
+    REPORT_ERROR_STATIC(err ? ErrorManagement::Information : ErrorManagement::Warning,
+        "Bootstrap::CloseConfigurationStream - Close() returned %s.",
+        err ? "true" : "false");
+    return ErrorManagement::NoError;
+}
+
 ErrorManagement::ErrorType Bootstrap::Run() {
     ErrorManagement::ErrorType ret = inputConfigurationFile.Close();
     if (ret) {

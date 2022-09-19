@@ -80,6 +80,14 @@ public:
      * @return ErrorManagement::NoError if the stream is ready to be read. A specific ErrorType otherwise.
      */
     ErrorManagement::ErrorType GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream);
+    /**
+     * @brief Closes the ConfigurationStream.
+     * @details This method can be used for closing the configuration stream
+     * when the Run() method is not used. If no file is opened, a waring is
+     * issued on the logger, but the method always returns NoError.
+     * @return ErrorManagement::NoError.
+     */
+    ErrorManagement::ErrorType CloseConfigurationStream();
 
     /**
      * @brief Setup the execution specific environment and wait for (an environment specific) signal to terminate the program.
