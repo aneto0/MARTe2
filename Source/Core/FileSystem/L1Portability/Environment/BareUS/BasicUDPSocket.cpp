@@ -133,6 +133,8 @@ bool BasicUDPSocket::Write(const char8* const input,
     err_t err = udp_sendto(connectionSocket.UDPHandle, tmpPacketBuffer, &destIPAddress, destPort);
     pbuf_free(tmpPacketBuffer);
 
+    NetworkInterfaceHook(NULL);
+
     retVal = (err == ERR_OK);
 #endif
 
