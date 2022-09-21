@@ -43,41 +43,61 @@
 
 namespace MARTe {
 
-static uint32 Production[] = { 0u
+static uint32 Production[] = {0u
+,3u,10u,11u,23u,3u,11u,12u,19u,6u,12u,24u,1u,2u,13u,25u,10u,12u,24u,1u,2u,3u,26u,1u,4u,13u,25u
+,11u,12u,24u,1u,2u,3u,27u,1u,5u,14u,4u,25u,5u,12u,28u,1u,2u,17u
+,2u,13u,14u,2u,13u,15u,2u,13u,16u,3u,14u,29u,18u,5u,15u,6u,14u,20u,7u
+,5u,16u,6u,15u,21u,7u,5u,17u,6u,12u,22u,7u,2u,18u,1u,2u,18u,8u
+,3u,19u,12u,19u,1u,19u,3u,20u,14u,20u,2u,20u,30u,3u,21u,15u,21u
+,2u,21u,31u,3u,22u,12u,22u,2u,22u,32u
+,0u};
 
-, 3u, 9u, 10u, 22u, 3u, 10u, 11u, 18u, 6u, 11u, 23u, 1u, 2u, 12u, 24u, 10u, 11u, 23u, 1u, 2u, 3u, 25u, 1u, 4u, 12u, 24u, 5u, 11u, 26u, 1u, 2u, 16u, 2u, 12u, 13u, 2u, 12u, 14u, 2u, 12u, 15u, 3u, 13u, 27u,
-        17u, 5u, 14u, 5u, 13u, 19u, 6u, 5u, 15u, 5u, 14u, 20u, 6u, 5u, 16u, 5u, 11u, 21u, 6u, 2u, 17u, 1u, 2u, 17u, 7u, 3u, 18u, 11u, 18u, 1u, 18u, 3u, 19u, 13u, 19u, 2u, 19u, 28u, 3u, 20u, 14u, 20u, 2u,
-        20u, 29u, 3u, 21u, 11u, 21u, 2u, 21u, 30u
-        , 0u };
-
-static uint32 Production_row[] = { 0u
-
-, 1u, 5u, 9u, 16u, 27u, 33u, 36u, 39u, 42u, 46u, 52u, 58u, 64u, 67u, 70u, 74u, 76u, 80u, 83u, 87u, 90u, 94u, 0u };
+static uint32 Production_row[] = {0u
+,1u,5u,9u,16u,27u,39u,45u,48u,51u,54u,58u,64u,70u,76u,79u,82u
+,86u,88u,92u,95u,99u,102u,106u
+,0u};
 
 static uint32 ParseArray[] = {
+0u,0u,7u,1u,18u,10u,14u,25u,16u,7u,19u,18u,10u,15u,20u,21u,17u,22u,2u
+,24u,11u,12u,13u,23u,0u,0u,0u,0u
+};
 
-0u, 0u, 6u, 1u, 17u, 9u, 24u, 13u, 6u, 18u, 17u, 9u, 15u, 14u, 19u, 20u, 21u, 2u, 23u, 16u, 10u, 22u, 11u, 12u, 0u, 0u, 0u };
-
-static uint32 Parse_row[] = { 0u
-
-, 2u, 16u, 17u, 1u, 4u, 15u, 17u, 18u, 6u, 11u, 3u, 9u, 15u, 0u };
+static uint32 Parse_row[] = {0u
+,2u,17u,18u,1u,4u,14u,15u,16u,5u,7u,3u,8u,16u
+,0u};
 
 static uint32 Conflict[] = {
+0u,0u,8u,26u,29u,0u,3u,9u,27u,8u,0u,28u,0u,3u,30u,4u,5u,0u,0u
+,3u,0u,3u,3u,6u,0u,0u,0u,0u,3u,3u
+};
 
-0u, 0u, 7u, 25u, 0u, 3u, 8u, 4u, 7u, 26u, 27u, 3u, 3u, 5u, 3u, 0u, 3u, 3u, 3u };
+static uint32 Conflict_row[] = {0u
+,1u,1u,5u,3u,13u,11u,21u
+,0u};
 
-static uint32 Conflict_row[] = { 0u
+/*
+#define START_SYMBOL 10
+#define END_OF_SLK_INPUT_ 9
+#define START_STATE 0
+#define START_CONFLICT 24
+#define END_CONFLICT 31
+#define START_ACTION 23
+#define END_ACTION 33
+#define TOTAL_CONFLICTS 7
+*/
+static const uint32 Constants[] = { 10u, 9u, 0u, 24u, 31u, 23u, 33u, 7u };
 
-, 1u, 1u, 4u, 9u, 11u, 0u };
-
-
-static const uint32 Constants[] = { 9u, 8u, 0u, 23u, 28u, 22u, 31u, 5u };
-
-
-static const char8 * Terminal_name[] = { "0"
-
-, "STRING", "=", "(", ")", "{", "}", "NUMBER", "END_OF_SLK_INPUT" };
-
+static const char8 * Terminal_name[] ={"0"
+,"STRING"
+,"="
+,"("
+,")"
+,"|"
+,"{"
+,"}"
+,"NUMBER"
+,"END_OF_SLK_INPUT"
+};
 
 static const char8 *GetTerminalName(const uint32 symbol) {
     return Terminal_name[symbol];
@@ -93,11 +113,12 @@ StandardParser::StandardParser(StreamI &stream,
     Action[2] = &StandardParser::GetNodeName;
     Action[3] = &StandardParser::AddLeaf;
     Action[4] = &StandardParser::GetTypeCast;
-    Action[5] = &StandardParser::CreateNode;
-    Action[6] = &StandardParser::AddScalar;
-    Action[7] = &StandardParser::EndVector;
-    Action[8] = &StandardParser::EndMatrix;
-    Action[9] = &StandardParser::BlockEnd;
+    Action[5] = &StandardParser::GetExprCast;
+    Action[6] = &StandardParser::CreateNode;
+    Action[7] = &StandardParser::AddScalar;
+    Action[8] = &StandardParser::EndVector;
+    Action[9] = &StandardParser::EndMatrix;
+    Action[10] = &StandardParser::BlockEnd;
 }
 
 StandardParser::~StandardParser() {

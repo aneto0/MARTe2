@@ -120,6 +120,36 @@ public:
     bool TestStandardCast();
 
     /**
+     * @brief Test the parsing of math expressions.
+     */
+    bool TestGetExprCast();
+
+    /**
+     * @brief Test the parsing of math expressions with an invalid expression.
+     */
+    bool TestGetExprCast_InvalidExpression();
+
+    /**
+     * @brief Test the parsing of math expressions with an invalid output type.
+     */
+    bool TestGetExprCast_InvalidOutput();
+
+    /**
+     * @brief Test the parsing of math expressions forcing a compilation error.
+     */
+    bool TestGetExprCast_FailCompile();
+
+    /**
+     * @brief Test the parsing of math expressions with a variable that does not exist.
+     */
+    bool TestGetExprCast_FailVariableNotFound();
+
+    /**
+     * @brief Test the parsing of math expressions with a variable path that does not exist.
+     */
+    bool TestGetExprCast_FailVariablePathNotFound();
+
+    /**
      * @brief Tests the type cast parsing with scalar variables.
      */
     template<typename T>

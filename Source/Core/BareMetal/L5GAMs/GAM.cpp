@@ -628,13 +628,14 @@ bool GAM::AddOutputBrokers(ReferenceContainer brokers) {
 bool GAM::SortBrokers() {
 
     bool ret = true;
-    for (uint32 i = 0u; (i < numberOfInputSignals) && ret; i++) {
+    bool done = false;
+    int32 count = 0;
+    int32 numberOfInputBrokers = static_cast<int32>(inputBrokers.Size());
+    for (uint32 i = 0u; (i < numberOfInputSignals) && (!done); i++) {
         StreamString dataSourceName;
         ret = GetSignalDataSourceName(InputSignals, i, dataSourceName);
         if (ret) {
-            int32 numberOfInputBrokers = static_cast<int32>(inputBrokers.Size());
-            int32 count = 0;
-            for (int32 n = 0; (n < numberOfInputBrokers) && ret; n++) {
+            for (int32 n = count; (n < numberOfInputBrokers) && ret; n++) {
                 ReferenceT<BrokerI> broker = inputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
                 if (dsName == dataSourceName) {
@@ -643,20 +644,26 @@ bool GAM::SortBrokers() {
                         if (ret) {
                             ret = inputBrokers.Insert(broker, count);
                         }
-                        count++;
                     }
+                    count++;
                 }
             }
         }
+        if (ret) {
+            done = (count == numberOfInputBrokers);
+        }
+        else {
+            done = true;
+        }
     }
-
-    for (uint32 i = 0u; (i < numberOfOutputSignals) && ret; i++) {
+    done = !ret;
+    count = 0;
+    int32 numberOfOutputBrokers = static_cast<int32>(outputBrokers.Size());
+    for (uint32 i = 0u; (i < numberOfOutputSignals) && (!done); i++) {
         StreamString dataSourceName;
         ret = GetSignalDataSourceName(OutputSignals, i, dataSourceName);
         if (ret) {
-            int32 numberOfOutputBrokers = static_cast<int32>(outputBrokers.Size());
-            int32 count = 0;
-            for (int32 n = 0; (n < numberOfOutputBrokers) && ret; n++) {
+            for (int32 n = count; (n < numberOfOutputBrokers) && ret; n++) {
                 ReferenceT<BrokerI> broker = outputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
                 if (dsName == dataSourceName) {
@@ -665,10 +672,16 @@ bool GAM::SortBrokers() {
                         if (ret) {
                             ret = outputBrokers.Insert(broker, count);
                         }
-                        count++;
                     }
+                    count++;
                 }
             }
+        }
+        if (ret) {
+            done = (count == numberOfOutputBrokers);
+        }
+        else {
+            done = true;
         }
     }
     return ret;

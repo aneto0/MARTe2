@@ -111,6 +111,11 @@ Each StateMachineEvent contains the ``NextState`` (where to go), the ``NextState
          }
          ...
 
+.. note::
+   
+   The StateMachine is not compatible with the usage of the GAMBareScheduler for more than two states. The first state being the state started in and then the second being the next state. This is because the StartNextExecution function
+   of the GAMBareScheduler is a non-returning infinite while loop and stalls the StateMachine at the state transition point while executing the second state.
+
 The ``Timeout`` parameter sets the maximum amount of time allowed for the state transition (including waiting for all the requested replies to arrive). An infinite timeout is defined with a value of ``0``.
 
 .. note::

@@ -277,6 +277,22 @@ bool AnyTypeTest::TestAnyType_UInt32() {
     return retVal;
 }
 
+bool AnyTypeTest::TestAnyType_Bool() {
+    bool a = true;
+    AnyType anytype(a);
+
+    retVal = (anytype.GetDataPointer() == &a);
+    retVal &= (anytype.GetBitAddress() == 0);
+    td = anytype.GetTypeDescriptor();
+    retVal &= (td.isStructuredData == false);
+    retVal &= (td.isConstant == false);
+    retVal &= (td.type == BT_Boolean);
+    retVal &= (td.numberOfBits == (sizeof(bool) * 8u));
+
+    return retVal;
+}
+
+
 bool AnyTypeTest::TestAnyType_ConstInt32() {
     const int32 a = 1;
     AnyType anytype(a);
@@ -306,6 +322,23 @@ bool AnyTypeTest::TestAnyType_ConstUInt32() {
 
     return retVal;
 }
+
+bool AnyTypeTest::TestAnyType_ConstBool() {
+    const bool a = false;
+    AnyType anytype(a);
+
+    retVal = (anytype.GetDataPointer() == &a);
+    retVal &= (anytype.GetBitAddress() == 0);
+    td = anytype.GetTypeDescriptor();
+    retVal &= (td.isStructuredData == false);
+    retVal &= (td.isConstant == true);
+    retVal &= (td.type == BT_Boolean);
+    retVal &= (td.numberOfBits == (sizeof(bool) * 8u));
+
+    return retVal;
+}
+
+
 
 bool AnyTypeTest::TestAnyType_Int64() {
     int64 a = 1;

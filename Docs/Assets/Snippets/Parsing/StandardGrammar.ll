@@ -6,9 +6,10 @@ cdbFile:
         expressions { expressions }
 
 expressions:
-        __GetNodeName  STRING   = variables	                            __AddLeaf
-        __GetNodeName  STRING   = ( __GetTypeCast STRING ) variables    __AddLeaf
-        __CreateNode   STRING   = block            	                    
+        __GetNodeName  STRING = variables	                       __AddLeaf
+        __GetNodeName  STRING = ( __GetTypeCast STRING ) variables __AddLeaf
+        __GetNodeName  STRING = ( __GetExprCast STRING | scalar )  __AddLeaf
+        __CreateNode   STRING = block            	                    
         
 
 variables:

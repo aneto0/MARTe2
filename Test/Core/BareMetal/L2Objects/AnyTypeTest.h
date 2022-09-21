@@ -128,6 +128,11 @@ public:
     bool TestAnyType_UInt32();
 
     /**
+     * @brief Test AnyType constructor using bool.
+     */
+    bool TestAnyType_Bool();
+
+    /**
      * @brief Test AnyType constructor using const int32.
      */
     bool TestAnyType_ConstInt32();
@@ -136,6 +141,12 @@ public:
      * @brief Test AnyType constructor using const uint32.
      */
     bool TestAnyType_ConstUInt32();
+
+    /**
+     * @brief Test AnyType constructor using const bool.
+     */
+    bool TestAnyType_ConstBool();
+
 
     /**
      * @brief Test AnyType constructor using int64.

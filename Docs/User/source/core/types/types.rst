@@ -26,11 +26,12 @@ uint8    8 bit unsigned integer.
 uint16   16 bit unsigned integer.
 uint32   32 bit unsigned integer.
 uint64   64 bit unsigned integer.
-uint8    8 bit signed integer.
-uint16   16 bit signed integer.
-uint32   32 bit signed integer.
-uint64   64 bit signed integer.
+int8     8 bit signed integer.
+int16    16 bit signed integer.
+int32    32 bit signed integer.
+int64    64 bit signed integer.
 char8    8 character.
+bool     Boolean (size depends on the architecture).
 float32  IEEE 754 single precision float.
 float64  IEEE 754 double precision float.
 uintp    Sufficiently large to hold a pointer address in the target architecture.

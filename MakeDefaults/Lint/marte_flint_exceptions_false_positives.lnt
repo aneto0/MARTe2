@@ -77,6 +77,7 @@
   -estring(123, "*REPORT_ERROR_STATIC_0*" )
   -estring(123, "*REPORT_ERROR_PARAMETERS*" )
   -estring(123, "*REPORT_ERROR_STATIC_PARAMETERS*" )
+  -estring(123, "*REPORT_ERROR_PROXY_PARAMETERS*" )
   
  /*
   * False positives related to sched.h

@@ -57,33 +57,8 @@ namespace MARTe {
  * found on the input stream of characters.
  *
  * All the instances of the parser use the lexical elements defined
- * in MARTe::StandardGrammar and apply the parsing rules of the following
- * grammar:
- *
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.py
- * EXPRESSION:
- *   STRING __GetNodeName   = VARIABLE __AddLeaf
- *   STRING __GetNodeName   = ( STRING __GetTypeCast ) VARIABLE __AddLeaf
- *   STRING __CreateNode    = \\{ { EXPRESSION }+ \\} __EndBlock
- *
- * VARIABLE:
- *   SCALAR
- *   VECTOR
- *   MATRIX
- *
- * SCALAR:
- *   TOKEN __AddScalar
- *
- * VECTOR:
- *   { SCALAR }+ __EndVector
- *
- * MATRIX:
- *   { VECTOR }+ __EndMatrix
- *
- * TOKEN:
- *   STRING
- *   NUMBER
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * in MARTe::StandardGrammar and apply the parsing rules of the 
+ * grammar defined in Docs/Assets/Snippets/Parsing/StandardGrammar.ll
  *
  * Note: This grammar is written in the SLK language and refers to functions
  * declared in MARTe::ParserI.
@@ -159,7 +134,7 @@ private:
     /**
      * The array of functions needed by the parser.
      */
-    void (StandardParser::*Action[10])(void);
+    void (StandardParser::*Action[11])(void);
 
 };
 

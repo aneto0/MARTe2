@@ -134,7 +134,7 @@ struct GrammarInfo {
 /**
  * The lexical elements for MARTe configuration streams encoded in standard MARTe configuration language.
  */
-static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", "", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
+static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", "", '=', '{', '}', '{', '}', '{', '}', '(', ')', '|' };
 
 
 /**

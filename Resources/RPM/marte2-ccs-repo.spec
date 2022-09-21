@@ -28,6 +28,7 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-MARTe2
 #Get current CODAC version
 CODAC_MAJOR=`codac-version | awk '{print substr ($0, 0, 1)}'`
 CODAC_MINOR=`codac-version | awk '{print substr ($0, 3, 1)}'`
-CODAC_CCS="ccs$CODAC_MAJOR$CODAC_MINOR"
+CODAC_MINOR_MINOR=`codac-version | awk '{print substr ($0, 5, 1)}'`
+CODAC_CCS="ccs$CODAC_MAJOR$CODAC_MINOR$CODAC_MINOR_MINOR"
 sed -i "s/CCS_VERSION/$CODAC_CCS/g" /etc/yum.repos.d/marte2-ccs.repo
 

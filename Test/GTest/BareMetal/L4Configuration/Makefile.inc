@@ -33,6 +33,7 @@ OBJSX=  AnyObjectGTest.x \
 		RuntimeEvaluatorGTest.x \
 		RuntimeEvaluatorFunctionGTest.x \
 		StandardParserGTest.x \
+		StructuredDataIHelperGTest.x \
 		TokenGTest.x \
 		TokenInfoGTest.x \
 		TypeConversionGTest.x\

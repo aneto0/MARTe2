@@ -187,6 +187,30 @@ static bool IntegerToType(const AnyType &destination, const AnyType &source) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
             }
         }
+        //lint -e{9007} no read side-effects on the type comparisons below*/
+        else if (destinationDescriptor.type == BT_Boolean) {
+            bool* destinationBool = reinterpret_cast<bool*>(destinationPointer);
+            if ((sourceDescriptor == UnsignedInteger8Bit) || (sourceDescriptor == SignedInteger8Bit)) {
+                uint8* sourceInput = reinterpret_cast<uint8 *>(sourcePointer);
+                *destinationBool = (*sourceInput == 1u);
+            }
+            else if ((sourceDescriptor == UnsignedInteger16Bit) || (sourceDescriptor == SignedInteger16Bit)) {
+                uint16* sourceInput = reinterpret_cast<uint16 *>(sourcePointer);
+                *destinationBool = (*sourceInput == 1u);
+            }
+            else if ((sourceDescriptor == UnsignedInteger32Bit) || (sourceDescriptor == SignedInteger32Bit)) {
+                uint32* sourceInput = reinterpret_cast<uint32 *>(sourcePointer);
+                *destinationBool = (*sourceInput == 1u);
+            }
+            else if ((sourceDescriptor == UnsignedInteger64Bit) || (sourceDescriptor == SignedInteger64Bit)) {
+                uint64* sourceInput = reinterpret_cast<uint64 *>(sourcePointer);
+                *destinationBool = (*sourceInput == 1u);
+            }
+            else {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Unsupported bit size conversion from integer to boolean");
+            }
+            ret = true;
+        }
         else if (destinationDescriptor.type == SignedInteger) {
 
             uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
@@ -275,7 +299,7 @@ static bool FloatToType(const AnyType &destination, const AnyType &source) {
                 ret = (reinterpret_cast<StreamString*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
             }
         }
-        if (destinationDescriptor.type == CArray) {
+        else if (destinationDescriptor.type == CArray) {
             StreamString tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
@@ -294,22 +318,22 @@ static bool FloatToType(const AnyType &destination, const AnyType &source) {
                 }
             }
         }
-        if (destinationDescriptor.type == BT_CCString) {
+        else if (destinationDescriptor.type == BT_CCString) {
             StreamString tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
             }
         }
-        if (destinationDescriptor.type == SignedInteger) {
+        else if (destinationDescriptor.type == SignedInteger) {
             ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits), reinterpret_cast<uint8*>(destinationPointer),
                                         destination.GetBitSize(), true);
         }
-        if (destinationDescriptor.type == UnsignedInteger) {
+        else if (destinationDescriptor.type == UnsignedInteger) {
             ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits), reinterpret_cast<uint8*>(destinationPointer),
                                         destination.GetBitSize(), false);
         }
-        if (destinationDescriptor.type == Float) {
+        else if (destinationDescriptor.type == Float) {
             if (destination.GetBitSize() == 32u) {
                 if (source.GetBitSize() == 64u) {
                     ret = FloatToFloat(*(reinterpret_cast<float64*>(sourcePointer)), *(reinterpret_cast<float32*>(destinationPointer)));
@@ -321,9 +345,100 @@ static bool FloatToType(const AnyType &destination, const AnyType &source) {
                 }
             }
         }
+        else if (destinationDescriptor.type == BT_Boolean) {
+            *(reinterpret_cast<bool*>(destinationPointer)) = false;
+            ret = false;
+        }
+        else {
+            //NOOP
+        }
     }
     return ret;
 }
+/**
+ * @brief Performs the conversion from boolean to any type.
+ * @param[out] destination is the any type in output.
+ * @param[in] source is the any type representing a boolean.
+ * @return true if the conversion succeeds, false otherwise.
+ * @pre
+ *   source.GetTypeDescriptor() == BT_Boolean;
+ */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+static bool BooleanToType(const AnyType &destination, const AnyType &source) {
+
+    void* destinationPointer = destination.GetDataPointer();
+    const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
+    void* sourcePointer = source.GetDataPointer();
+    const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
+
+    bool ret = false;
+    if (sourceDescriptor.type == BT_Boolean) {
+        bool sourceVal = *static_cast<bool *>(sourcePointer);
+        if (destinationDescriptor.type == SString) {
+            StreamString tempString;
+            if (sourceVal) {
+                tempString = "true";
+            }
+            else {
+                tempString = "false";
+            }
+            uint32 stringLength = static_cast<uint32>(tempString.Size());
+            ret = (reinterpret_cast<StreamString*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
+        }
+        if (destinationDescriptor.type == CArray) {
+            StreamString tempString;
+            if (sourceVal) {
+                tempString = "true";
+            }
+            else {
+                tempString = "false";
+            }
+            uint32 stringLength = static_cast<uint32>(tempString.Size());
+            uint32 arraySize = (destination.GetByteSize() * destination.GetNumberOfElements(0u));
+            if (stringLength >= arraySize) {
+                REPORT_ERROR_STATIC(ErrorManagement::Warning, "BooleanToType: The input is too long for the output buffer.");
+                ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
+                if (arraySize > 1u) {
+                    uint32 lastCharIndex = arraySize - 1u;
+                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
+                }
+            }
+            else {
+                ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
+            }
+        }
+        if (destinationDescriptor.type == BT_CCString) {
+            StreamString tempString;
+            if (sourceVal) {
+                tempString = "true";
+            }
+            else {
+                tempString = "false";
+            }
+            ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
+        }
+        if (destinationDescriptor.type == SignedInteger) {
+            uint32 byteSize = destination.GetBitSize();
+            byteSize /= 8u;
+            ret = MemoryOperationsHelper::Set(destinationPointer, '\0', byteSize);
+            uint8 *destAsUInt8 = reinterpret_cast<uint8 *>(destinationPointer);
+            *destAsUInt8 = (sourceVal ? 1u : 0u);
+        }
+        if (destinationDescriptor.type == UnsignedInteger) {
+            uint32 byteSize = destination.GetBitSize();
+            byteSize /= 8u;
+            ret = MemoryOperationsHelper::Set(destinationPointer, '\0', byteSize);
+            int8 *destAsInt8 = reinterpret_cast<int8 *>(destinationPointer);
+            *destAsInt8 = (sourceVal ? 1 : 0);
+        }
+        if (destinationDescriptor.type == Float) {
+            ret = false;
+            REPORT_ERROR_STATIC(ErrorManagement::Warning, "BooleanToType: float to boolean conversion not support.");
+        }
+    }
+    return ret;
+}
+
 /**
  * @brief Performs the conversion from string types (CCString, StreamString, CArray) to any type.
  * @param[out] destination is the any type in output.
@@ -384,6 +499,23 @@ static bool StringToType(const AnyType &destination, const AnyType &source) {
         }
         else if (destinationDescriptor.type == UnsignedInteger) {
             ret = StringToIntegerGeneric(token, reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), false);
+        }
+        else if (destinationDescriptor.type == BT_Boolean) {
+            bool boolValue = false;
+            const char8 *trueValues[] = {"true", "1", "yes", NULL_PTR(const char8 *)};
+            const uint32 lenTrueValues[] = {4u, 1u, 3u, 0u};
+            uint32 c = 0u;
+            while((trueValues[c] != NULL_PTR(const char8 *)) && (!boolValue)) {
+                uint32 lenToken = StringHelper::Length(token);
+                boolValue = (lenToken == lenTrueValues[c]);
+                if (boolValue) {
+                    boolValue = (StringHelper::CompareNoCaseSensN(token, trueValues[c], lenTrueValues[c]) == 0);
+                }
+                c++;
+            }
+            bool *destinationPointerBool = reinterpret_cast<bool *>(destinationPointer);
+            *destinationPointerBool = boolValue;
+            ret = true;
         }
         else if (destinationDescriptor.type == Float) {
             ret = StringToFloatGeneric(token, (reinterpret_cast<float32*>(destinationPointer)), destination.GetBitSize());
@@ -903,6 +1035,9 @@ static bool ScalarBasicTypeConvert(const AnyType &destination, const AnyType &so
 
             if ((isSourceSignedInteger) || (isSourceUnsignedInteger) || (isSourcePointer)) {
                 ret = IntegerToType(destination, source);
+            }
+            else if (sourceDescriptor.type == BT_Boolean) {
+                ret = BooleanToType(destination, source);
             }
             else if (sourceDescriptor.type == Float) {
                 ret = FloatToType(destination, source);

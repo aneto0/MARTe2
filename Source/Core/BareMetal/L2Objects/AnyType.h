@@ -419,6 +419,28 @@ public:
     inline AnyType(const float64 &i);
 
     /**
+     * @brief Constructor from bool.
+     * @param[in] i is the bool.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetNumberOfElements(0:2) == 0
+     */
+    inline AnyType(bool &i);
+
+    /**
+     * @brief Constructor from constant bool.
+     * @param[in] i is the constant bool.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetNumberOfElements(0:2) == 0
+     */
+    inline AnyType(const bool &i);
+
+    /**
      * @brief Constructor from void pointer.
      * @param[in] p is the void pointer input.
      * @post
@@ -1076,6 +1098,24 @@ AnyType::AnyType(const float64 &i) {
 }
 
 /*---------------------------------------------------------------------------*/
+
+AnyType::AnyType(bool &i) {
+    Init();
+    dataPointer = static_cast<void*>(&i);
+    bitAddress = 0u;
+    dataDescriptor = BooleanType;
+}
+
+AnyType::AnyType(const bool &i) {
+    Init();
+    dataPointer = static_cast<void*>(const_cast<bool *>(&i));
+    bitAddress = 0u;
+    dataDescriptor = BooleanType;
+    dataDescriptor.isConstant = true;
+}
+
+/*---------------------------------------------------------------------------*/
+
 
 AnyType::AnyType(volatile void *const p) {
     Init();
