@@ -178,7 +178,7 @@ ErrorManagement::ErrorType Loader::Reconfigure(StructuredDataI &configuration, S
     return ReconfigureImpl(configuration, errStream, true);
 }
 
-ErrorManagement::ErrorType Loader::ReconfigureImpl(StructuredDataI &configuration, StreamString &errStream, bool sendPostMsg) {
+ErrorManagement::ErrorType Loader::ReconfigureImpl(StructuredDataI &configuration, StreamString &errStream, const bool sendPostMsg) {
     ErrorManagement::ErrorType ret;
     if (!firstLoading) {
         ret = SendConfigurationMessage(preConfigMsg);

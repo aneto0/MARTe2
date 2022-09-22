@@ -92,7 +92,6 @@ ErrorManagement::ErrorType RealTimeLoader::Reconfigure(StructuredDataI &configur
         if (ret.ErrorsCleared()) {
             ObjectRegistryDatabase *objDb = ObjectRegistryDatabase::Instance();
             uint32 nOfObjs = objDb->Size();
-            uint32 found = 0u;
             //start all the rtapp
             for (uint32 n = 0u; (ret) && (n < nOfObjs); n++) {
                 ReferenceT<RealTimeApplication> rtApp = objDb->Get(n);
@@ -104,7 +103,6 @@ ErrorManagement::ErrorType RealTimeLoader::Reconfigure(StructuredDataI &configur
                             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to Configure RealTimeApplication");
                         }
                     }
-                    found++;
                 }
             }
         }
