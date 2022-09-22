@@ -208,6 +208,11 @@ TEST(BareMetal_L5GAMs_GAMGTest,TestSortBrokers) {
     ASSERT_TRUE(test.TestSortBrokers());
 }
 
+TEST(BareMetal_L5GAMs_GAMGTest,TestSortBrokers_MultipleBrokersInDs) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestSortBrokers_MultipleBrokersInDs());
+}
+
 TEST(BareMetal_L5GAMs_GAMGTest,TestGetInputBrokers) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetInputBrokers());

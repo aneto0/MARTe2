@@ -27,7 +27,7 @@
 TARGET=rpmbuild
 ROOT_DIR=.
 
-FOLDERSX=Source.x MakeDefaults.x Docs.x Makefile.x86-linux.x Makefile.inc.x Resources.x
+FOLDERSX=Source.x MakeDefaults.x Docs.x Makefile.x86-linux.x Makefile.inc.x Resources.x Lib.x
 
 MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
 
@@ -35,13 +35,16 @@ MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
 M2_RPM_VERSION?=$(shell git tag | sort -V | tail -1 | cut -c2-)
 M2_RPM_NAME?=MARTe2
 M2_RPM_ID?=marte2-core
-M2_RPM_ID_TEST?=$(M2_RPM_ID)-test
 M2_RPM_ID_RELEASE?=marte2-release
-M2_RPM_BUILD_OPTIONS=core
-#Do not allow installing both marte2-core and marte2-core-test in the same target
-M2_RPM_CONFLICTS?=$(M2_RPM_ID_TEST)
+M2_RPM_BUILD_OPTIONS=gtest core
+M2_RPM_SRC_DIR=Source Lib/gtest-1.7.0
+M2_RPM_LIB_DIR=Build Lib/gtest-1.7.0
 
 M2_RPM_SPEC_FILE_DIST?=marte2-repo.spec
+
+M2_RPM_OTHER_FOLDERS?=Resources/HTTP
+#Provide MakeDefaults as part of devel package
+M2_RPM_OTHER_DEVEL_FOLDERS=MakeDefaults\ Resources/RPM Resources/QA
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
@@ -51,8 +54,18 @@ all: $(OBJS) $(BUILD_DIR)/$(M2_RPM_ID)-$(M2_RPM_VERSION).rpm
 
 #Include test artifacts
 test: 
-	make -f Makefile.$(TARGET) M2_RPM_ID=$(M2_RPM_ID_TEST) FOLDERSX='$(FOLDERSX) Test.x Lib.x' M2_RPM_BUILD_OPTIONS=all M2_RPM_CONFLICTS=$(M2_RPM_ID)
-
+	make -f Makefile.$(TARGET) \
+		M2_RPM_ID=$(M2_RPM_ID)-test \
+		FOLDERSX='$(FOLDERSX) Test.x' \
+		M2_RPM_BUILD_OPTIONS=all \
+		M2_RPM_SRC_DIR=Test \
+		M2_RPM_BIN_LIST=MainGTest.ex \
+		M2_RPM_LIB_LIST='*Test.a *Test.so' \
+		M2_RPM_OTHER_FOLDERS="" \
+		M2_RPM_OTHER_DEVEL_FOLDERS="" \
+		M2_RPM_PROFILE_D="" \
+		M2_RPM_REQUIRES=marte2-core 
+ 
 #Yum distribution file
 dist:
 	make -f Makefile.$(TARGET) M2_RPM_ID=$(M2_RPM_ID_RELEASE) FOLDERSX='Resources.x' M2_RPM_SPEC_FILE=$(M2_RPM_SPEC_FILE_DIST)

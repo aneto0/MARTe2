@@ -36,6 +36,10 @@
 #include "IntrospectionT.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
+
+#include "MemoryMapSynchronisedInputBroker.h"
+#include "MemoryMapSynchronisedOutputBroker.h"
+
 #include "RealTimeApplication.h"
 #include "ObjectRegistryDatabase.h"
 /*---------------------------------------------------------------------------*/
@@ -178,6 +182,123 @@ bool DataSourceIGAMTest1::Synchronise() {
     return false;
 }
 CLASS_REGISTER(DataSourceIGAMTest1, "1.0");
+
+class DataSourceIGAMTest2: public DataSourceI {
+public:CLASS_REGISTER_DECLARATION()
+
+    DataSourceIGAMTest2();
+
+    virtual ~DataSourceIGAMTest2();
+
+    virtual bool AllocateMemory();
+
+    virtual uint32 GetNumberOfMemoryBuffers();
+
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+                                       const uint32 bufferIdx,
+                                       void *&signalAddress);
+
+    virtual const char8* GetBrokerName(StructuredDataI &data,
+                                       const SignalDirection direction);
+
+    virtual bool PrepareNextState(const char8 *const currentStateName,
+                                  const char8 *const nextStateName);
+
+    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers,
+                                 const char8 *const functionName,
+                                 void *const gamMemPtr);
+
+    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                  const char8 *const functionName,
+                                  void *const gamMemPtr);
+
+    virtual bool Synchronise();
+
+};
+
+DataSourceIGAMTest2::DataSourceIGAMTest2() :
+        DataSourceI() {
+
+}
+
+DataSourceIGAMTest2::~DataSourceIGAMTest2() {
+
+}
+
+bool DataSourceIGAMTest2::AllocateMemory() {
+    return true;
+}
+
+uint32 DataSourceIGAMTest2::GetNumberOfMemoryBuffers() {
+    return 0u;
+}
+
+bool DataSourceIGAMTest2::GetSignalMemoryBuffer(const uint32 signalIdx,
+                                                const uint32 bufferIdx,
+                                                void *&signalAddress) {
+    return true;
+}
+
+const char8* DataSourceIGAMTest2::GetBrokerName(StructuredDataI &data,
+                                                const SignalDirection direction) {
+    if (direction == InputSignals) {
+        return "MemoryMapInputBroker";
+    }
+    else {
+        return "MemoryMapOutputBroker";
+    }
+}
+
+bool DataSourceIGAMTest2::PrepareNextState(const char8 *const currentStateName,
+                                           const char8 *const nextStateName) {
+    return true;
+}
+
+bool DataSourceIGAMTest2::GetInputBrokers(ReferenceContainer &inputBrokers,
+                                          const char8 *const functionName,
+                                          void *const gamMemPtr) {
+    ReferenceT < MemoryMapSynchronisedInputBroker > broker1("MemoryMapSynchronisedInputBroker");
+    bool ret = broker1.IsValid();
+    if (ret) {
+        broker1->Init(InputSignals, *this, functionName, gamMemPtr, false);
+        ret = inputBrokers.Insert(broker1);
+    }
+    if (ret) {
+        ReferenceT < MemoryMapInputBroker > broker2("MemoryMapInputBroker");
+        ret = broker2.IsValid();
+        if (ret) {
+            broker2->Init(InputSignals, *this, functionName, gamMemPtr, false);
+            ret = inputBrokers.Insert(broker2);
+        }
+    }
+    return ret;
+}
+
+bool DataSourceIGAMTest2::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                           const char8 *const functionName,
+                                           void *const gamMemPtr) {
+    ReferenceT < MemoryMapOutputBroker > broker1("MemoryMapOutputBroker");
+    bool ret = broker1.IsValid();
+    if (ret) {
+        broker1->Init(OutputSignals, *this, functionName, gamMemPtr, false);
+        ret = outputBrokers.Insert(broker1);
+    }
+    if (ret) {
+        ReferenceT < MemoryMapSynchronisedOutputBroker > broker2("MemoryMapSynchronisedOutputBroker");
+        ret = broker2.IsValid();
+        if (ret) {
+            broker2->Init(OutputSignals, *this, functionName, gamMemPtr, false);
+            ret = outputBrokers.Insert(broker2);
+        }
+    }
+
+    return ret;
+}
+
+bool DataSourceIGAMTest2::Synchronise() {
+    return false;
+}
+CLASS_REGISTER(DataSourceIGAMTest2, "1.0");
 
 /**
  * @brief Exposes the protected methods of GAM for testing
@@ -962,7 +1083,7 @@ bool GAMTest::TestConstructor() {
 bool GAMTest::TestInitialise() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig1);
     if (ret) {
-        ReferenceT<GAM> gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ReferenceT < GAM > gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
         ret = gam.IsValid();
     }
     return ret;
@@ -970,7 +1091,7 @@ bool GAMTest::TestInitialise() {
 
 bool GAMTest::TestAddSignals() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig1);
-    ReferenceT<GAM> gam;
+    ReferenceT < GAM > gam;
     if (ret) {
         gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
         ret = gam.IsValid();
@@ -1091,7 +1212,7 @@ bool GAMTest::TestAddSignals() {
 
 bool GAMTest::TestSetConfiguredDatabase() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig1);
-    ReferenceT<GAM> gam;
+    ReferenceT < GAM > gam;
     if (ret) {
         gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
         ret = gam.IsValid();
@@ -1108,7 +1229,7 @@ bool GAMTest::TestGetNumberOfInputSignals() {
 
     uint32 n;
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1131,7 +1252,7 @@ bool GAMTest::TestGetNumberOfOutputSignals() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1159,7 +1280,7 @@ bool GAMTest::TestGetSignalName() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1198,7 +1319,7 @@ bool GAMTest::TestGetSignalName() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1219,7 +1340,7 @@ bool GAMTest::TestGetSignalName() {
 bool GAMTest::TestGetSignalIndex() {
     bool ret = TestGetSignalName();
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1255,7 +1376,7 @@ bool GAMTest::TestGetSignalDataSourceName() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1294,7 +1415,7 @@ bool GAMTest::TestGetSignalDataSourceName() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1330,7 +1451,7 @@ bool GAMTest::TestGetSignalType() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1365,7 +1486,7 @@ bool GAMTest::TestGetSignalType() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1399,7 +1520,7 @@ bool GAMTest::TestGetSignalNumberOfDimensions() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1438,7 +1559,7 @@ bool GAMTest::TestGetSignalNumberOfDimensions() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1471,7 +1592,7 @@ bool GAMTest::TestGetSignalNumberOfElements() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1510,7 +1631,7 @@ bool GAMTest::TestGetSignalNumberOfElements() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1543,7 +1664,7 @@ bool GAMTest::TestGetSignalByteSize() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1582,7 +1703,7 @@ bool GAMTest::TestGetSignalByteSize() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1602,7 +1723,7 @@ bool GAMTest::TestGetSignalByteSize() {
 bool GAMTest::TestGetSignalDefaultValue() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig2);
 
-    ReferenceT<GAM> gam;
+    ReferenceT < GAM > gam;
     if (ret) {
         StreamString gamFullName;
         gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1673,7 +1794,7 @@ bool GAMTest::TestGetSignalNumberOfByteOffsets() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1712,7 +1833,7 @@ bool GAMTest::TestGetSignalNumberOfByteOffsets() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1756,7 +1877,7 @@ bool GAMTest::TestGetSignalByteOffsetInfo() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1813,7 +1934,7 @@ bool GAMTest::TestGetSignalByteOffsetInfo() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1853,7 +1974,7 @@ bool GAMTest::TestGetSignalNumberOfRanges() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1892,7 +2013,7 @@ bool GAMTest::TestGetSignalNumberOfRanges() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -1936,7 +2057,7 @@ bool GAMTest::TestGetSignalRangesInfo() {
     uint32 n;
 
     for (n = 0u; (n < numberOfGAMs) && (ret); n++) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gamFullName.Printf("Application1.Functions.%s", gamNames[n]);
@@ -1993,7 +2114,7 @@ bool GAMTest::TestGetSignalRangesInfo() {
         }
     }
     if (ret) {
-        ReferenceT<GAM> gam;
+        ReferenceT < GAM > gam;
         if (ret) {
             StreamString gamFullName;
             gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2020,8 +2141,8 @@ bool GAMTest::TestGetSignalRangesInfo() {
 bool GAMTest::TestGetSignalNumberOfSamples() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig3);
 
-    ReferenceT<GAM> gamA;
-    ReferenceT<GAM> gamB;
+    ReferenceT < GAM > gamA;
+    ReferenceT < GAM > gamB;
     if (ret) {
         StreamString gamFullName;
         gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2078,8 +2199,8 @@ bool GAMTest::TestGetSignalNumberOfSamples() {
 bool GAMTest::TestGetSignalFrequency_Input() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig3);
 
-    ReferenceT<GAM> gamA;
-    ReferenceT<GAM> gamB;
+    ReferenceT < GAM > gamA;
+    ReferenceT < GAM > gamB;
     if (ret) {
         StreamString gamFullName;
         gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2136,8 +2257,8 @@ bool GAMTest::TestGetSignalFrequency_Input() {
 bool GAMTest::TestGetSignalFrequency_Output() {
     bool ret = InitialiseGAMEnviroment(gamTestConfig4);
 
-    ReferenceT<GAM> gamA;
-    ReferenceT<GAM> gamB;
+    ReferenceT < GAM > gamA;
+    ReferenceT < GAM > gamB;
     if (ret) {
         StreamString gamFullName;
         gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2194,7 +2315,7 @@ bool GAMTest::TestGetSignalFrequency_Output() {
 bool GAMTest::TestAllocateInputSignalsMemory() {
     //Tested implicitly
     bool ret = InitialiseGAMEnviroment(gamTestConfig1);
-    ReferenceT<GAM> gamB;
+    ReferenceT < GAM > gamB;
     if (ret) {
         StreamString gamFullName;
         gamB = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMB");
@@ -2210,7 +2331,7 @@ bool GAMTest::TestAllocateInputSignalsMemory() {
 bool GAMTest::TestAllocateOutputSignalsMemory() {
     //Tested implicitly
     bool ret = InitialiseGAMEnviroment(gamTestConfig1);
-    ReferenceT<GAM> gamA;
+    ReferenceT < GAM > gamA;
     if (ret) {
         StreamString gamFullName;
         gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
@@ -2503,13 +2624,13 @@ bool GAMTest::TestSortBrokers() {
             ReferenceContainer inputBrokers;
             ret = testGAM->GetInputBrokers(inputBrokers);
             if (ret) {
-                ReferenceT<BrokerI> element = inputBrokers.Get(0);
+                ReferenceT < BrokerI > element = inputBrokers.Get(0);
                 ret = element.IsValid();
                 if (ret) {
                     StreamString dsName = element->GetOwnerDataSourceName();
                     ret = dsName == "DDB2";
                 }
-                if(ret){
+                if (ret) {
                     element = inputBrokers.Get(1);
                     ret = element.IsValid();
                     if (ret) {
@@ -2518,10 +2639,10 @@ bool GAMTest::TestSortBrokers() {
                     }
                 }
             }
-            if(ret){
+            if (ret) {
                 ReferenceContainer outputBrokers;
                 ret = testGAM->GetOutputBrokers(outputBrokers);
-                ReferenceT<BrokerI> element = outputBrokers.Get(0);
+                ReferenceT < BrokerI > element = outputBrokers.Get(0);
                 ret = element.IsValid();
                 if (ret) {
                     StreamString dsName = element->GetOwnerDataSourceName();
@@ -2537,13 +2658,13 @@ bool GAMTest::TestSortBrokers() {
             ReferenceContainer outputBrokers;
             ret = testGAM->GetOutputBrokers(outputBrokers);
             if (ret) {
-                ReferenceT<BrokerI> element = outputBrokers.Get(0);
+                ReferenceT < BrokerI > element = outputBrokers.Get(0);
                 ret = element.IsValid();
                 if (ret) {
                     StreamString dsName = element->GetOwnerDataSourceName();
                     ret = dsName == "DDB2";
                 }
-                if(ret){
+                if (ret) {
                     element = outputBrokers.Get(1);
                     ret = element.IsValid();
                     if (ret) {
@@ -2552,14 +2673,179 @@ bool GAMTest::TestSortBrokers() {
                     }
                 }
             }
-            if(ret){
+            if (ret) {
                 ReferenceContainer inputBrokers;
                 ret = testGAM->GetInputBrokers(inputBrokers);
-                ReferenceT<BrokerI> element = inputBrokers.Get(0);
+                ReferenceT < BrokerI > element = inputBrokers.Get(0);
                 ret = element.IsValid();
                 if (ret) {
                     StreamString dsName = element->GetOwnerDataSourceName();
                     ret = dsName == "DDB1";
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+bool GAMTest::TestSortBrokers_MultipleBrokersInDs() {
+
+    static const char8 *const config_SortBrokers_MultipleBrokersIn = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAMTestGAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                  DataSource = DS2"
+            "                  Type = uint32"
+            "               }"
+            "               Signal2 = {"
+            "                  DataSource = DS1"
+            "                  Type = uint32"
+            "               }"
+            "               Signal3 = {"
+            "                  DataSource = DS2"
+            "                  Type = uint32"
+            "               }"
+            "               Signal4 = {"
+            "                  DataSource = DS1"
+            "                  Type = uint32"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               SignalA = {"
+            "                  DataSource = DS1"
+            "                  Type = uint32"
+            "               }"
+            "               SignalB = {"
+            "                  DataSource = DS2"
+            "                  Type = uint32"
+            "               }"
+            "               SignalC = {"
+            "                  DataSource = DS2"
+            "                  Type = uint32"
+            "               }"
+            "               SignalD = {"
+            "                  DataSource = DS1"
+            "                  Type = uint32"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +DS1 = {"
+            "            Class = DataSourceIGAMTest2"
+            "        }"
+            "        +DS2 = {"
+            "            Class = DataSourceIGAMTest2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = GAMTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseGAMEnviroment(config_SortBrokers_MultipleBrokersIn);
+    if (ret) {
+        ReferenceT<GAMTestGAM1> testGAM = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = testGAM.IsValid();
+        if (ret) {
+            ReferenceContainer inputBrokers;
+            ret = testGAM->GetInputBrokers(inputBrokers);
+            if (ret) {
+                ret = inputBrokers.Size() == 4;
+                if (ret) {
+                    ReferenceT < MemoryMapSynchronisedInputBroker > element = inputBrokers.Get(0);
+                    ret = element.IsValid();
+                    if (ret) {
+                        StreamString dsName = element->GetOwnerDataSourceName();
+                        ret = dsName == "DS2";
+                    }
+                    if (ret) {
+                        ReferenceT < MemoryMapInputBroker > element1 = inputBrokers.Get(1);
+                        ret = element1.IsValid();
+                        if (ret) {
+                            StreamString dsName = element1->GetOwnerDataSourceName();
+                            ret = dsName == "DS2";
+                        }
+                    }
+                    if (ret) {
+                        ReferenceT < MemoryMapSynchronisedInputBroker > element2 = inputBrokers.Get(2);
+                        ret = element2.IsValid();
+                        if (ret) {
+                            StreamString dsName = element2->GetOwnerDataSourceName();
+                            ret = dsName == "DS1";
+                        }
+                    }
+                    if (ret) {
+                        ReferenceT < MemoryMapInputBroker > element3 = inputBrokers.Get(3);
+                        ret = element3.IsValid();
+                        if (ret) {
+                            StreamString dsName = element3->GetOwnerDataSourceName();
+                            ret = dsName == "DS1";
+                        }
+                    }
+                }
+            }
+            if (ret) {
+                ReferenceContainer outputBrokers;
+                ret = testGAM->GetOutputBrokers(outputBrokers);
+                if (ret) {
+                    ret = outputBrokers.Size() == 4;
+                    if (ret) {
+
+                        ReferenceT < MemoryMapOutputBroker > element = outputBrokers.Get(0);
+                        ret = element.IsValid();
+                        if (ret) {
+                            StreamString dsName = element->GetOwnerDataSourceName();
+                            ret = dsName == "DS1";
+                        }
+                        if (ret) {
+                            ReferenceT < MemoryMapSynchronisedOutputBroker > element1 = outputBrokers.Get(1);
+                            ret = element1.IsValid();
+                            if (ret) {
+                                StreamString dsName = element1->GetOwnerDataSourceName();
+                                ret = dsName == "DS1";
+                            }
+                        }
+                        if (ret) {
+                            ReferenceT < MemoryMapOutputBroker > element2 = outputBrokers.Get(2);
+                            ret = element2.IsValid();
+                            if (ret) {
+                                StreamString dsName = element2->GetOwnerDataSourceName();
+                                ret = dsName == "DS2";
+                            }
+                        }
+                        if (ret) {
+                            ReferenceT < MemoryMapSynchronisedOutputBroker > element3 = outputBrokers.Get(3);
+                            ret = element3.IsValid();
+                            if (ret) {
+                                StreamString dsName = element3->GetOwnerDataSourceName();
+                                ret = dsName == "DS2";
+                            }
+                        }
+                    }
                 }
             }
         }

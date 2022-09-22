@@ -177,7 +177,7 @@ public:
 
     /**
      * @brief Test Open() with the defaultRWFlags twice
-     * @return true if the first Open() is true and the second false.
+     * @return true if the first Open() is true and the second is also true.
      */
     bool TestOpen_twice();
 

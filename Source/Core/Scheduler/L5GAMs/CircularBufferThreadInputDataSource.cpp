@@ -77,8 +77,6 @@ CircularBufferThreadInputDataSource::CircularBufferThreadInputDataSource() :
     getFirst = false;
     stop = 0;
     sleepTime = 0.F;
-    (void) rootEventSem.Create();
-    (void) rootEventSem.Reset();
 
 }
 
@@ -175,7 +173,7 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
                                     receiverThreadStackSize);
         }
         if (!data.Read("SleepTime", sleepTime)) {
-            sleepTime = 0.F;
+            sleepTime = 1e-6F;
         }
         receiverThreadPriority %= 100u;
         executor.SetCPUMask(static_cast<uint32>(cpuMask));
@@ -293,11 +291,6 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
         }
     }
     bool ret = (nStepsForward < numberOfBuffers);
-    TimeoutType timeoutT = TTInfiniteWait;
-    if (sleepTime >= 0.F) {
-        sleepTime *= 1000.F;
-        timeoutT = static_cast<uint32>(sleepTime);
-    }
     /*lint -e{9113} -e{9131} -e{9007} known side effects.*/
     if (ret && (stop == 0)) {
         uint32 stepsBack = nStepsForward % triggerAfterNSamples;
@@ -317,17 +310,17 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
                 lastReadBuffer[syncSignal] = 0u;
             }
             uint32 index = (lastReadBuffer[syncSignal] * numberOfSignals) + syncSignal;
-            (void) rootEventSem.Reset();
             (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
             bool isArrived = (isRefreshed[index] == 1u);
             mutex.FastUnLock();
             /*lint -e{9131} -e{9007} known dependences and side effects.*/
             while ((!isArrived) && (stop == 0)) {
-                (void) rootEventSem.Wait(timeoutT);
-                (void) rootEventSem.Reset();
                 (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
                 isArrived = (isRefreshed[index] == 1u);
                 mutex.FastUnLock();
+                if (!isArrived) {
+                    Sleep::Sec(sleepTime);
+                }
             }
             numberOfSamplesSinceLastTrigger--;
         }
@@ -919,7 +912,6 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
                     (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
                     isRefreshed[index] = 1u;
                     mutex.FastUnLock();
-                    (void) rootEventSem.Post();
                     currentBuffer[i]++;
                     if (currentBuffer[i] >= numberOfBuffers) {
                         currentBuffer[i] = 0u;
@@ -933,7 +925,6 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
             (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
             isRefreshed[index] = 1u;
             mutex.FastUnLock();
-            (void) rootEventSem.Post();
             currentBuffer[timeStampSignalIndex]++;
             if (currentBuffer[timeStampSignalIndex] >= numberOfBuffers) {
                 currentBuffer[timeStampSignalIndex] = 0u;
@@ -944,7 +935,6 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
             (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
             isRefreshed[index] = 1u;
             mutex.FastUnLock();
-            (void) rootEventSem.Post();
 
             currentBuffer[errorCheckSignalIndex]++;
             if (currentBuffer[errorCheckSignalIndex] >= numberOfBuffers) {
