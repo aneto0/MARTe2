@@ -184,9 +184,16 @@ public:
     virtual ErrorManagement::ErrorType Stop();
 
     /**
-     * Load post-init parameters.
+     * @brief Load post-init parameters.
+     * @return ErrorManagement::NoError if the LoaderPostInit parameters are successfully loaded.
      */
     virtual ErrorManagement::ErrorType PostInit();
+
+    /**
+     * @brief Called by Reconfigure upon a successful (re)loading of the ObjectRegistryDatabase.
+     * @return ErrorManagement::NoError if the post reconfiguration is sucessfully executed.
+     */
+    virtual ErrorManagement::ErrorType PostReconfigure();
 
 protected:
     /**

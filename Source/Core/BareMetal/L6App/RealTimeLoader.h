@@ -72,7 +72,11 @@ public:
      */
     virtual ErrorManagement::ErrorType Configure(StructuredDataI &data, StreamI &configuration);
 
-    virtual ErrorManagement::ErrorType Reconfigure(StructuredDataI &configuration, StreamString &errStream);
+    /**
+     * @brief Configures all the RealTimeApplication instances.
+     * @return ErrorManagement::NoError if at least one RealTimeApplication is found and all RealTimeApplication instances configuration is sucessfully executed.
+     */
+    virtual ErrorManagement::ErrorType PostReconfigure();
 
     /**
      * @brief Start the RealTimeApplication.
@@ -98,11 +102,6 @@ private:
      * @brief The RealTimeApplication.
      */
     ReferenceContainer rtApps;
-
-    /**
-     * @brief firstLoading flag
-     */
-    bool firstLoad;
 };
 
 }

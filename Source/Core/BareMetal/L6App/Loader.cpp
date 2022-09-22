@@ -208,15 +208,29 @@ ErrorManagement::ErrorType Loader::ReconfigureImpl(StructuredDataI &configuratio
     }
     
     bool sendFailedConfigMsg = !reloadLast;
-    if (ret.ErrorsCleared()) {
-        parsedConfiguration.Purge();
-        ret.fatalError = !configuration.Copy(parsedConfiguration);
+    bool applicationReloaded = false;
+    if (firstLoading) {
+        if (ret.ErrorsCleared()) {
+            parsedConfiguration.Purge();
+            ret.fatalError = !configuration.Copy(parsedConfiguration);
+        }
     }
-    if (!firstLoading) {
+    else {
+        if (ret.ErrorsCleared()) {
+            ret = PostReconfigure();
+        }
+        if (ret.ErrorsCleared()) {//If !firstLoading only overwrite the last configuration here.
+            parsedConfiguration.Purge();
+            ret.fatalError = !configuration.Copy(parsedConfiguration);
+        }
         if (!ret.ErrorsCleared()) { //Error occurred
             if (reloadLast) {//Attempt to reload the last configuration?
                 REPORT_ERROR_STATIC(ErrorManagement::Information, "Reloading last valid configuration");
                 ErrorManagement::ErrorType retReload = ReloadLastValidConfiguration();
+                if (retReload.ErrorsCleared()) {
+                    retReload = PostReconfigure();
+                }
+                applicationReloaded = retReload.ErrorsCleared();
                 if (!retReload.ErrorsCleared()) {
                     sendFailedConfigMsg = true;
                 }
@@ -244,9 +258,14 @@ ErrorManagement::ErrorType Loader::ReconfigureImpl(StructuredDataI &configuratio
         }
     }
     //Send the post after the keep alive objects are added again (and iff there were no errors)
-    if (ret.ErrorsCleared()) {
+    if (ret.ErrorsCleared() || applicationReloaded) {
         if (sendPostMsg) {
             ret = SendConfigurationMessage(postConfigMsg);
+        }
+        if (ret.ErrorsCleared()) {
+            if (applicationReloaded) {
+                ret.recoverableError = true;
+            }
         }
     }
  
@@ -422,6 +441,11 @@ ErrorManagement::ErrorType Loader::Start() {
 }
 
 ErrorManagement::ErrorType Loader::Stop() {
+    return ErrorManagement::NoError;
+}
+
+ErrorManagement::ErrorType Loader::PostReconfigure() {
+    //NOOP
     return ErrorManagement::NoError;
 }
 

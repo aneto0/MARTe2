@@ -47,7 +47,6 @@ namespace MARTe {
 
 RealTimeLoader::RealTimeLoader() :
         Loader() {
-            firstLoad = true; 
 }
 
 RealTimeLoader::~RealTimeLoader() {
@@ -56,14 +55,26 @@ RealTimeLoader::~RealTimeLoader() {
 
 ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data, StreamI &configuration) {
     ErrorManagement::ErrorType ret = Loader::Configure(data, configuration);
+    if (ret.ErrorsCleared()) {
+        ret = PostReconfigure();
+    }
+    if (ret.ErrorsCleared()) {
+        (void) (data.Read("FirstState", firstState));
+    }
 
+    return ret;
+}
+
+ErrorManagement::ErrorType RealTimeLoader::PostReconfigure() {
+    ErrorManagement::ErrorType ret;
     ObjectRegistryDatabase *objDb = ObjectRegistryDatabase::Instance();
     uint32 nOfObjs = objDb->Size();
-    uint32 found = 0u;
-    //start all the rtapp
+    bool found = false;
+    //start all the RT Applications
     for (uint32 n = 0u; (ret) && (n < nOfObjs); n++) {
         ReferenceT<RealTimeApplication> rtApp = objDb->Get(n);
         if (rtApp.IsValid()) {
+            found = true;
             ret.initialisationError = !rtApps.Insert(rtApp);
             if (ret.ErrorsCleared()) {
                 ret.initialisationError = !rtApp->ConfigureApplication();
@@ -71,46 +82,12 @@ ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data, Stre
                     REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to Configure RealTimeApplication");
                 }
             }
-            found++;
         }
     }
-    if (found > 0u) {
-        if (data.Read("FirstState", firstState)) {
-        }
-    }
-    else {
+    if (!found) {
+        ret.parametersError = true;
         REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Could not find a RealTimeApplication");
-        ret = ErrorManagement::ParametersError;
     }
-
-    return ret;
-}
-
-ErrorManagement::ErrorType RealTimeLoader::Reconfigure(StructuredDataI &configuration, StreamString &errStream) {
-    ErrorManagement::ErrorType ret = Loader::ReconfigureImpl(configuration, errStream, false);
-    if(!firstLoad){
-        if (ret.ErrorsCleared()) {
-            ObjectRegistryDatabase *objDb = ObjectRegistryDatabase::Instance();
-            uint32 nOfObjs = objDb->Size();
-            //start all the rtapp
-            for (uint32 n = 0u; (ret) && (n < nOfObjs); n++) {
-                ReferenceT<RealTimeApplication> rtApp = objDb->Get(n);
-                if (rtApp.IsValid()) {
-                    ret.initialisationError = !rtApps.Insert(rtApp);
-                    if (ret.ErrorsCleared()) {
-                        ret.initialisationError = !rtApp->ConfigureApplication();
-                        if (!ret) {
-                            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to Configure RealTimeApplication");
-                        }
-                    }
-                }
-            }
-        }
-        if (ret.ErrorsCleared()) {
-            ret = SendConfigurationMessage(postConfigMsg);
-        }
-    }
-    firstLoad = false;
     return ret;
 }
 
