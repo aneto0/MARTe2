@@ -134,6 +134,27 @@ public:
      * @brief Prints the } character.
      */
     virtual bool PrintEnd();
+
+    /**
+     * @brief Prints "blockName" : [ 
+     */
+    virtual bool PrintOpenArrayOfBlocks(const char8 * const blockName);
+
+    /**
+     * @brief Prints the ] character
+     */
+    virtual bool PrintCloseArrayOfBlocks(const char8 * const blockName);
+
+    /**
+     * @brief NOOP
+     */
+    virtual bool PrintOpenInsideArrayOfBlocks(const char8 * const blockName);
+
+    /**
+     * @brief NOOP
+     */
+    virtual bool PrintCloseInsideOfArrayOfBlocks(const char8 * const blockName);
+
 };
 
 }

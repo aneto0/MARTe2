@@ -90,6 +90,11 @@ public:
     bool TestCanonical_Error();
 
     /**
+     * @brief Tests the read of a Json with an array of nodes.
+     */
+    bool TestArrayOfNodes();
+
+    /**
      * @brief Tests if the Parse function returns false in case of errors in the input stream.
      */
     bool TestParseErrors(const char8 *configStringIn);

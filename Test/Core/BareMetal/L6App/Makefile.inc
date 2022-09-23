@@ -24,8 +24,7 @@
 #
 #############################################################
 
-
-OBJSX= LoaderTest.x RealTimeLoaderTest.x
+OBJSX= ConfigurationLoaderHashCRCTest.x LoaderTest.x RealTimeLoaderTest.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

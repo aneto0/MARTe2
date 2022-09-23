@@ -1,8 +1,8 @@
 /**
- * @file PrinterITest.h
- * @brief Header file for class PrinterITest
- * @date 18/09/2018
- * @author Giuseppe Ferro
+ * @file ConfigurationLoaderHashCRCTest.h
+ * @brief Header file for class ConfigurationLoaderHashCRCTest
+ * @date 16/02/2022
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class PrinterITest
+ * @details This header file contains the declaration of the class ConfigurationLoaderHashCRCTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef PRINTERITEST_H_
-#define PRINTERITEST_H_
+#ifndef L6APP_CONFIGURATIONLOADERHASHCRCTEST_H_
+#define L6APP_CONFIGURATIONLOADERHASHCRCTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,63 +31,45 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "PrinterI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-using namespace MARTe;
-
 /**
- * @brief Test the PrinterI methods
+ * @brief Tests the Loader public methods.
  */
-class PrinterITest {
+class ConfigurationLoaderHashCRCTest {
+
 public:
 
     /**
-     * @brief Constructor
-     */
-    PrinterITest();
-
-    /**
-     * @brief Destructor
-     */
-    virtual ~PrinterITest();
-
-    /**
-     * @brief Tests the default constructor
+     * @brief Tests the constructor.
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests the full constructor
+     * @brief Tests the Initialise method.
      */
-    bool TestFullConstructor();
+    bool TestInitialise();
 
     /**
-     * @brief Tests the SetStream method
+     * @brief Tests that the Initialise method fails with no key.
      */
-    bool TestSetStream();
+    bool TestInitialise_NoKey();
 
     /**
-     * @brief Tests the PrintBegin method
+     * @brief Tests the GetSeed method.
      */
-    bool TestPrintBegin();
+    bool TestGetSeed();
 
     /**
-     * @brief Tests the PrintEnd method
+     * @brief Tests the ComputeHash method.
      */
-    bool TestPrintEnd();
-
-    /**
-     * @brief Test the StructuredDataI method.
-     */
-    bool TestPrintStructuredDataI();
+    bool TestComputeHash();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PRINTERITEST_H_ */
-
+#endif /* L6APP_CONFIGURATIONLOADERHASHCRCTEST_H_ */

@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ConfigurationDatabase.h"
 #include "JsonPrinterTest.h"
 #include "StreamString.h"
 /*---------------------------------------------------------------------------*/
@@ -191,3 +192,52 @@ bool JsonPrinterTest::TestPrintEnd() {
 
     return ret && (stream == "}");
 }
+
+bool JsonPrinterTest::TestPrintStructuredDataI() {
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("A");
+    cdb.CreateRelative("B");
+    cdb.Write("UI32", 5);
+    cdb.CreateAbsolute("B[0]");
+    cdb.CreateRelative("B[0]");
+    cdb.Write("UI32", 3);
+    cdb.Write("STR", "A");
+    cdb.MoveToAncestor(1u);
+    cdb.CreateRelative("B[1]");
+    cdb.Write("UI32", 4);
+    cdb.Write("STR", "B");
+    cdb.CreateAbsolute("B[1]");
+    cdb.CreateRelative("C[0]");
+    cdb.Write("UI32", 4);
+    cdb.Write("STR", "B");
+    cdb.CreateRelative("D");
+    cdb.Write("UI32", 4);
+    cdb.Write("STR", "B");
+    cdb.CreateAbsolute("B[2]");
+    cdb.CreateRelative("C[0]");
+    cdb.Write("UI32", 5);
+    cdb.Write("STR", "C");
+    cdb.CreateRelative("F");
+    cdb.Write("UI32", 1);
+    cdb.Write("STR", "A");
+
+
+    cdb.MoveToRoot();
+    StreamString stream;
+    JsonPrinter test(stream);
+    bool ok = test.PrintStructuredDataI(cdb, false);
+    if (ok) {
+        const char8 * const expected = "{\"A\": {\"B\": {\"UI32\": 5}},\"B[0]\": {\"B[0]\": {\"UI32\": 3,\"STR\": \"A\"},\"B[1]\": {\"UI32\": 4,\"STR\": \"B\"}},\"B[1]\": {\"C[0]\": {\"UI32\": 4,\"STR\": \"B\",\"D\": {\"UI32\": 4,\"STR\": \"B\"}}},\"B[2]\": {\"C[0]\": {\"UI32\": 5,\"STR\": \"C\",\"F\": {\"UI32\": 1,\"STR\": \"A\"}}}}";
+        ok = (stream == expected);
+    }
+    stream = "";
+    if (ok) {
+        ok = test.PrintStructuredDataI(cdb, true);
+    }
+    if (ok) {
+        const char8 * const expected = "{\"A\": {\"B\": {\"UI32\": 5}},\"B\" : [{\"B\" : [{\"UI32\": 3,\"STR\": \"A\"},{\"UI32\": 4,\"STR\": \"B\"}]},{\"C\" : [{\"UI32\": 4,\"STR\": \"B\",\"D\": {\"UI32\": 4,\"STR\": \"B\"}}]},{\"C\" : [{\"UI32\": 5,\"STR\": \"C\",\"F\": {\"UI32\": 1,\"STR\": \"A\"}}]}]}";
+        ok = (stream == expected);
+    }
+    return ok;
+}
+
