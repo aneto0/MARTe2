@@ -48,7 +48,7 @@ namespace MARTe {
 /**
  * @brief Starts a generic MARTe application from a given configuration stream.
  * @details The Loader parses (see Initialise) a given configuration stream and sends (see Start) a Message to a provided destination.
- * A second initialisation stage is available, so that further parameters can be read once the configuration input is parsed for the first time. The parameters are expected to be found at the root level of the ObjectRegistryDatabase, following structure below. Note thatiIf a ConfigurationHashI object is set, it will be used to verify that the configuration matches with the one
+ * A second initialisation stage is available, so that further parameters can be read once the configuration input is parsed for the first time. The parameters are expected to be found at the root level of the ObjectRegistryDatabase, following structure below. Note that if a ConfigurationHashI object is set, it will be used to verify that the configuration matches with the one
  *  offered by the caller. The hash shall be computed using the GetSeed as the algorithm seed. Three messages may be also be set as described in the example below.
  * <pre>
  *  //The names of the nodes shall not be modified.
