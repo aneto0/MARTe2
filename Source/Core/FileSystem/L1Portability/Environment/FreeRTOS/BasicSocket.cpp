@@ -197,4 +197,10 @@ bool BasicSocket::IsBlocking() const {
     return isBlocking;
 }
 
+bool BasicSocket::SetReuseAddr(bool reuse) {
+    //Not implemented.
+    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::SetReuseAddr() not implemented");
+    return false;
+}
+
 }

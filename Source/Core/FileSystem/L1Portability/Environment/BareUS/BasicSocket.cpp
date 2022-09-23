@@ -180,4 +180,10 @@ bool BasicSocket::IsBlocking() const {
     return true;
 }
 
+bool BasicSocket::SetReuseAddr(bool reuse) {
+    //Not implemented.
+    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::SetReuseAddr() not implemented");
+    return false;
+}
+
 }

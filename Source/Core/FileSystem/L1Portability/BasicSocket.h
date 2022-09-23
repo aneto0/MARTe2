@@ -130,6 +130,12 @@ namespace MARTe {
          */
         virtual Handle GetWriteHandle() const;
 
+        /**
+         * @brief Allows to bind to a port in use by another socket.
+         * @param[in] reuse true (false) allows (disallows) to bind to a port in use by another socket.
+         */
+        bool SetReuseAddr(bool reuse);
+
     protected:
 
         /**
