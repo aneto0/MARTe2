@@ -30,12 +30,11 @@ The core library API can be found `here <https://vcis-jenkins.f4e.europa.eu/job/
    configuration/configuration
    logging/logging
    messages/messages
-   statemachine/statemachine   
-   gams/rtapp
    scheduling/services
    scheduling/threads
-   http/http
    runtimeevaluator/runtimeevaluator
+   statemachine/statemachine   
    app/app
+   http/http
    examples
    

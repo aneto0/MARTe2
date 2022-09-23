@@ -366,7 +366,7 @@ static const MARTe::char8 * const config4 = "$RTApp = {"
 /*---------------------------------------------------------------------------*/
 bool RealTimeLoaderTest::TestConstructor() {
     using namespace MARTe;
-    RealTimeLoader l;
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
     return true;
 }
 
@@ -375,8 +375,8 @@ bool RealTimeLoaderTest::TestConfigure() {
     StreamString config = config1;
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    RealTimeLoader l;
-    bool ok = l.Configure(params, config);
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
@@ -386,8 +386,8 @@ bool RealTimeLoaderTest::TestConfigure_False_FailedConfiguration() {
     StreamString config = config2;
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    RealTimeLoader l;
-    bool ok = !l.Configure(params, config);
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = !l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
@@ -398,8 +398,8 @@ bool RealTimeLoaderTest::TestConfigure_False_FailedRealTimeApplicationConfigurat
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("FirstState", "State1");
-    RealTimeLoader l;
-    bool ok = !l.Configure(params, config);
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = !l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
@@ -517,8 +517,8 @@ bool RealTimeLoaderTest::TestConfigure_MoreApplications() {
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("FirstState", "State1:State2");
-    RealTimeLoader l;
-    bool ok = l.Configure(params, config);
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = l->Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 
@@ -530,10 +530,10 @@ bool RealTimeLoaderTest::TestStart_FirstState() {
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("FirstState", "State1");
-    RealTimeLoader l;
-    bool ok = l.Configure(params, config);
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = l->Configure(params, config);
     if (ok) {
-        ok = l.Start();
+        ok = l->Start();
     }
     ReferenceT<RealTimeLoaderTestScheduler> scheduler;
     if (ok) {
@@ -544,7 +544,7 @@ bool RealTimeLoaderTest::TestStart_FirstState() {
         }
     }
     if (ok) {
-        ok = l.Stop();
+        ok = l->Stop();
         if (ok) {
             ok = scheduler->stopCalled;
         }
@@ -561,10 +561,10 @@ bool RealTimeLoaderTest::TestStart_Message() {
     params.Write("Parser", "cdb");
     params.Write("MessageDestination", "B");
     params.Write("MessageFunction", "Callback");
-    RealTimeLoader l;
-    bool ok = l.Configure(params, config);
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = l->Configure(params, config);
     if (ok) {
-        ok = l.Start();
+        ok = l->Start();
     }
     ReferenceT<RealTimeLoaderTestMessageObject1> obj;
     if (ok) {
@@ -585,10 +585,10 @@ bool RealTimeLoaderTest::TestStart_False_FailedRealTimeApplicationStartNextState
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("FirstState", "State1");
-    RealTimeLoader l;
-    bool ok = l.Configure(params, config);
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = l->Configure(params, config);
     if (ok) {
-        ok = !l.Start();
+        ok = !l->Start();
     }
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
@@ -600,10 +600,10 @@ bool RealTimeLoaderTest::TestStart_False_FailedRealTimeApplicationPrepareNextSta
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("FirstState", "State2");
-    RealTimeLoader l;
-    bool ok = l.Configure(params, config);
+    ReferenceT<RealTimeLoader> l = Reference("RealTimeLoader", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = l->Configure(params, config);
     if (ok) {
-        ok = !l.Start();
+        ok = !l->Start();
     }
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;

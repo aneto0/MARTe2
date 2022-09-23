@@ -161,7 +161,7 @@ private:
     /**
      * The array of functions needed by the parser.
      */
-    void (JsonParser::*Action[10])(void);
+    void (JsonParser::*Action[13])(void);
 
 };
 

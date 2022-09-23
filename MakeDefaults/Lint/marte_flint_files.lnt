@@ -37,6 +37,7 @@ CircularStaticList.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
 ConfigurationDatabaseNode.cpp
+ConfigurationLoaderHashCRC.cpp
 ConfigurationParserI.cpp
 ConsoleLogger.cpp
 CountingSem.cpp

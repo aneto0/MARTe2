@@ -588,11 +588,18 @@ bool RealTimeApplication::CheckMultipleProducersWrites() const{
     return checkMultipleProducersWrites;
 }
 
+ErrorManagement::ErrorType RealTimeApplication::ConfigureRealTimeApplication() {
+    ErrorManagement::ErrorType err;
+    err.fatalError = !ConfigureApplication();
+    return err;
+}
+
 
 CLASS_REGISTER(RealTimeApplication, "1.0")
 
 CLASS_METHOD_REGISTER(RealTimeApplication, PrepareNextState)
 CLASS_METHOD_REGISTER(RealTimeApplication, StartNextStateExecution)
 CLASS_METHOD_REGISTER(RealTimeApplication, StopCurrentStateExecution)
+CLASS_METHOD_REGISTER(RealTimeApplication, ConfigureRealTimeApplication)
 
 }

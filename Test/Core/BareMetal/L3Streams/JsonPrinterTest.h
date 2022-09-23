@@ -128,7 +128,10 @@ public:
      */
     bool TestPrintEnd();
 
-
+    /**
+     * @brief Test the StructuredDataI method.
+     */
+    bool TestPrintStructuredDataI();
 
 };
 

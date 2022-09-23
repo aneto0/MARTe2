@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ConfigurationDatabase.h"
 #include "PrinterITest.h"
 #include "StreamString.h"
 /*---------------------------------------------------------------------------*/
@@ -187,3 +188,15 @@ bool PrinterITest::TestPrintEnd() {
     PrinterITestClass test(stream1);
     return test.PrintEnd();
 }
+
+bool PrinterITest::TestPrintStructuredDataI() {
+    StreamString stream1;
+    PrinterITestClass test(stream1);
+    ConfigurationDatabase cdb;
+    bool ok = test.PrintStructuredDataI(cdb, false);
+    if (ok) {
+        ok = test.PrintStructuredDataI(cdb, true);
+    }
+    return ok;
+}
+

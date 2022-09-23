@@ -1,8 +1,8 @@
 /**
- * @file PrinterIGTest.cpp
- * @brief Source file for class PrinterIGTest
- * @date 18/09/2018
- * @author Giuseppe Ferro
+ * @file ConfigurationLoaderHashCRCGTest.cpp
+ * @brief Source file for class ConfigurationLoaderHashCRCGTest
+ * @date 16/02/2022
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,61 +17,49 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class PrinterIGTest (public, protected, and private). Be aware that some 
+ * the class ConfigurationLoaderHashCRCGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-
-/*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
-/*---------------------------------------------------------------------------*/
-
-#include "MARTe2UTest.h"
-#include "PrinterITest.h"
+#include "ConfigurationLoaderHashCRCTest.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-TEST(BareMetal_L3Streams_PrinterIGTest, TestConstructor) {
-    PrinterITest myPrinterITest;
-    ASSERT_TRUE(myPrinterITest.TestConstructor());
+TEST(BareMetal_L6App_ConfigurationLoaderHashCRCGTest,TestConstructor) {
+    ConfigurationLoaderHashCRCTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(BareMetal_L3Streams_PrinterIGTest, TestFullConstructor) {
-    PrinterITest myPrinterITest;
-    ASSERT_TRUE(myPrinterITest.TestFullConstructor());
+TEST(BareMetal_L6App_ConfigurationLoaderHashCRCGTest,TestGetSeed) {
+    ConfigurationLoaderHashCRCTest test;
+    ASSERT_TRUE(test.TestGetSeed());
 }
 
-TEST(BareMetal_L3Streams_PrinterIGTest, TestSetStream) {
-    PrinterITest myPrinterITest;
-    ASSERT_TRUE(myPrinterITest.TestSetStream());
+TEST(BareMetal_L6App_ConfigurationLoaderHashCRCGTest,TestComputeHash) {
+    ConfigurationLoaderHashCRCTest test;
+    ASSERT_TRUE(test.TestComputeHash());
 }
 
-TEST(BareMetal_L3Streams_PrinterIGTest, TestPrintBegin) {
-    PrinterITest myPrinterITest;
-    ASSERT_TRUE(myPrinterITest.TestPrintBegin());
+TEST(BareMetal_L6App_ConfigurationLoaderHashCRCGTest,TestInitialise) {
+    ConfigurationLoaderHashCRCTest test;
+    ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(BareMetal_L3Streams_PrinterIGTest, TestPrintEnd) {
-    PrinterITest myPrinterITest;
-    ASSERT_TRUE(myPrinterITest.TestPrintEnd());
-}
-
-TEST(BareMetal_L3Streams_PrinterIGTest, TestPrintStructuredDataI) {
-    PrinterITest myPrinterITest;
-    ASSERT_TRUE(myPrinterITest.TestPrintStructuredDataI());
+TEST(BareMetal_L6App_ConfigurationLoaderHashCRCGTest,TestInitialise_NoKey) {
+    ConfigurationLoaderHashCRCTest test;
+    ASSERT_TRUE(test.TestInitialise_NoKey());
 }
 
