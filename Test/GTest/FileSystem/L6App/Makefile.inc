@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=  BootstrapGTest.x
+OBJSX=  BootstrapGTest.x ConfigurationLoaderTCPGTest.x
 		
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
