@@ -125,11 +125,13 @@ CircularBufferThreadInputDataSource::~CircularBufferThreadInputDataSource() {
 
 void CircularBufferThreadInputDataSource::Purge(ReferenceContainer &purgeList) {
 
-    REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::Purge");
+    REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::Purge - Start.");
 
     uint8 numberOfAttempts = 2u;
     ErrorManagement::ErrorType err;
     if (executor.GetStatus() != EmbeddedThreadI::OffState) {
+        // DEBUG
+        REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::Purge - Going to stop.");
         for (uint32 i = 0u; i < numberOfAttempts; i++) {
             err = (!executor.Stop());
             bool ret = err.ErrorsCleared();
@@ -141,7 +143,13 @@ void CircularBufferThreadInputDataSource::Purge(ReferenceContainer &purgeList) {
             }
         }
     }
+
+    // DEBUG
+    REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::Purge - Purging list.");
     ReferenceContainer::Purge(purgeList);
+    
+    // DEBUG
+    REPORT_ERROR(ErrorManagement::Information, "CircularBufferThreadInputDataSource::Purge - Done.");
 }
 
 bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
