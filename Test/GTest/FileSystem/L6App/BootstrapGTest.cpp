@@ -68,6 +68,16 @@ TEST(FileSystem_L6App_BootstrapGTest, TestGetConfigurationStream_False) {
     ASSERT_TRUE(test.TestGetConfigurationStream_False());
 }
 
+TEST(FileSystem_L6App_BootstrapGTest, TestCloseConfigurationStream) {
+    BootstrapTest test;
+    ASSERT_TRUE(test.TestCloseConfigurationStream());
+}
+
+TEST(FileSystem_L6App_BootstrapGTest, TestCloseConfigurationStream_False) {
+    BootstrapTest test;
+    ASSERT_TRUE(test.TestCloseConfigurationStream_False());
+}
+
 TEST(FileSystem_L6App_BootstrapGTest, TestPrintf) {
     BootstrapTest test;
     ASSERT_TRUE(test.TestPrintf());

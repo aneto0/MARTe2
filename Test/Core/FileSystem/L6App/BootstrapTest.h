@@ -73,6 +73,16 @@ public:
     bool TestGetConfigurationStream_False();
 
     /**
+     * @brief Tests the CloseConfigurationStream method.
+     */
+    bool TestCloseConfigurationStream();
+
+    /**
+     * @brief Tests the CloseConfigurationStream method with a wrong file.
+     */
+    bool TestCloseConfigurationStream_False();
+
+    /**
      * @brief The Run is not tested as this would block the tests.
      */
     //bool TestRun();
