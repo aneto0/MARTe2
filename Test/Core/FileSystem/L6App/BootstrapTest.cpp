@@ -179,7 +179,7 @@ bool BootstrapTest::TestGetConfigurationStream_False() {
     const char8 *argv[] = { "Test", "-l", "LOADER", "-f", filename};
 
     Bootstrap bp;
-    //bp.CloseConfigurationStream(); TODO uncomment when featured is merged into develop
+    bp.CloseConfigurationStream(); 
     ConfigurationDatabase loaderParameters;
     bool ok = bp.ReadParameters(argc, const_cast<char8 **>(argv), loaderParameters);
     if (ok) {
