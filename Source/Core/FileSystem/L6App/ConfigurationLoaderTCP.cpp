@@ -48,26 +48,26 @@ namespace MARTe {
 ConfigurationLoaderTCP::ConfigurationLoaderTCP() :
         RealTimeLoader(), EmbeddedServiceMethodBinderI(), tcpClientService(*this) {
     waitForConnection = true;
-    mux.Create();
-    timeout = 10;
-
+    (void) mux.Create();
+    timeout = 10u;
 }
 
+/*lint -e{1551} the service and the semaphore must be closed in destructor*/
 ConfigurationLoaderTCP::~ConfigurationLoaderTCP() {
     if (tcpClientService.Stop() != ErrorManagement::NoError) {
         if (tcpClientService.Stop() != ErrorManagement::NoError) {
             REPORT_ERROR(ErrorManagement::Warning, "Could not Stop the tcpThreadService");
         }
     }
-    mux.UnLock();
-    mux.Close();
+    (void) mux.UnLock();
+    (void) mux.Close();
     if (!socket.Close()) {
         REPORT_ERROR(ErrorManagement::Warning, "Could not Close the socket");
     }
 }
 
 ErrorManagement::ErrorType ConfigurationLoaderTCP::PostInit() {
-    uint32 port;
+    uint16 port = 0u;
     bool ok = RealTimeLoader::PostInit();
     if (ok) {
         ok = postInitParameters.IsValid();
@@ -110,30 +110,36 @@ ErrorManagement::ErrorType ConfigurationLoaderTCP::Execute(ExecutionInfo & info)
     ErrorManagement::ErrorType err;
 
     if (info.GetStageSpecific() == ExecutionInfo::WaitRequestStageSpecific) {
-        mux.Lock();
-        if (waitForConnection) {
-            waitForConnection = false;
-            mux.UnLock();
-            BasicTCPSocket *client = socket.WaitConnection(timeout);
-            if (client != NULL_PTR(BasicTCPSocket *)) {
-                REPORT_ERROR(ErrorManagement::Information, "Connection accepted!");
-                mux.Lock();
-                waitForConnection = true;
-                info.SetThreadSpecificContext(reinterpret_cast<void *>(client));
-                err = ErrorManagement::NoError;
-                mux.UnLock();
+        if(mux.Lock() == ErrorManagement::NoError) {
+            if (waitForConnection) {
+                waitForConnection = false;
+                (void) mux.UnLock();
+                BasicTCPSocket *client = socket.WaitConnection(timeout);
+                if (client != NULL_PTR(BasicTCPSocket *)) {
+                    REPORT_ERROR(ErrorManagement::Information, "Connection accepted!");
+                    if (mux.Lock() == ErrorManagement::NoError) {
+                        waitForConnection = true;
+                        info.SetThreadSpecificContext(reinterpret_cast<void *>(client));
+                        err = ErrorManagement::NoError;
+                    }
+                    (void) mux.UnLock();
+                }
+                else {
+                    if (mux.Lock() == ErrorManagement::NoError) {
+                        waitForConnection = true;
+                        err = ErrorManagement::Timeout;
+                    }
+                    (void) mux.UnLock();
+                }
             }
             else {
-                mux.Lock();
-                waitForConnection = true;
+                (void) mux.UnLock();
+                Sleep::MSec(timeout);
                 err = ErrorManagement::Timeout;
-                mux.UnLock();
             }
         }
         else {
-            mux.UnLock();
-            Sleep::MSec(timeout);
-            err = ErrorManagement::Timeout;
+            (void) mux.UnLock();
         }
     }
     if (info.GetStageSpecific() == ExecutionInfo::ServiceRequestStageSpecific) {
@@ -151,7 +157,7 @@ ErrorManagement::ErrorType ConfigurationLoaderTCP::Execute(ExecutionInfo & info)
                     buffer[readBytes] = '\0'; //Note that +1u was allocated
                 }
                 if (moreToRead) {
-                    newCfg.Printf("%s", buffer);
+                    (void) newCfg.Printf("%s", buffer);
                     moreToRead = (readBytes == BUFFER_SIZE);
                 }
             }

@@ -146,7 +146,7 @@ private:
     /**
      * The timeout in ms
      */
-    int32 timeout;
+    uint32 timeout;
 };
 }
 
