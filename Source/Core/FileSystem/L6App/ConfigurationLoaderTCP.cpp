@@ -181,7 +181,7 @@ ErrorManagement::ErrorType ConfigurationLoaderTCP::Execute(ExecutionInfo & info)
             }
             delete client;
         }
-        return ErrorManagement::Completed;
+        err = ErrorManagement::Completed;
     }
     return err;
 }
