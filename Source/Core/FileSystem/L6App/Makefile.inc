@@ -33,10 +33,12 @@ MARTe2_PORTABLE_SPB_DIR=$(MARTe2_PORTABLE_ENV_DIR)/FileSystem/L6App
 endif
 SPB=$(MARTe2_PORTABLE_SPB_DIR)/Environment/$(ENVIRONMENT).x
 
-OBJSX=
+OBJSX = ConfigurationLoaderTCP.x
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
+INCLUDES+=-I../L1Portability
+INCLUDES+=-I../L3Streams
 INCLUDES+=-I../../BareMetal/L0Types
 INCLUDES+=-I../../BareMetal/L1Portability
 INCLUDES+=-I../../BareMetal/L2Objects
@@ -46,6 +48,8 @@ INCLUDES+=-I../../BareMetal/L4Logger
 INCLUDES+=-I../../BareMetal/L4Messages
 INCLUDES+=-I../../BareMetal/L5GAMs
 INCLUDES+=-I../../BareMetal/L6App
+INCLUDES+=-I../../Scheduler/L1Portability
+INCLUDES+=-I../../Scheduler/L3Services
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L6App$(LIBEXT)
 

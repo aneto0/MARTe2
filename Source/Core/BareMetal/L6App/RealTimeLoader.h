@@ -73,6 +73,12 @@ public:
     virtual ErrorManagement::ErrorType Configure(StructuredDataI &data, StreamI &configuration);
 
     /**
+     * @brief Configures all the RealTimeApplication instances.
+     * @return ErrorManagement::NoError if at least one RealTimeApplication is found and all RealTimeApplication instances configuration is sucessfully executed.
+     */
+    virtual ErrorManagement::ErrorType PostReconfigure();
+
+    /**
      * @brief Start the RealTimeApplication.
      * @details If FirstState was set, calls RealTimeApplication::StartNextStateExecution with this state. Otherwise Loader::Start is called.
      * @return ErrorManagement::NoError if the FirstState was set and RealTimeApplication::StartNextStateExecution or if FirstState was not set and Loader::Start succeeds. An error is returned otherwise.

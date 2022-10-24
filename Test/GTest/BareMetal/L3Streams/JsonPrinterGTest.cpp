@@ -111,3 +111,8 @@ TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintEnd) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintEnd());
 }
+
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintStructuredDataI) {
+    JsonPrinterTest streamtest;
+    ASSERT_TRUE(streamtest.TestPrintStructuredDataI());
+}

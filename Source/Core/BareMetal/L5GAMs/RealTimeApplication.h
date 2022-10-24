@@ -179,6 +179,13 @@ public:
     bool ConfigureApplication();
 
     /**
+     * @brief Calls ConfigureApplication. 
+     * @details Backward compatible registered function for ConfigureApplication.
+     * @return see ConfigureApplication
+     */
+    ErrorManagement::ErrorType ConfigureRealTimeApplication();
+
+    /**
      * @brief Configures a RealTimeApplication starting from an existing database.
      * @details This function expects that \a functionsDatabaseIn and the \a dataDatabaseIn were
      * already processed (possibly in another application) by a RealTimeApplicationConfigurationBuilder.

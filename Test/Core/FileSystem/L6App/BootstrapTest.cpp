@@ -179,13 +179,87 @@ bool BootstrapTest::TestGetConfigurationStream_False() {
     const char8 *argv[] = { "Test", "-l", "LOADER", "-f", filename};
 
     Bootstrap bp;
+    bp.CloseConfigurationStream(); 
     ConfigurationDatabase loaderParameters;
     bool ok = bp.ReadParameters(argc, const_cast<char8 **>(argv), loaderParameters);
     if (ok) {
         StreamI *stream = NULL;
-        ok = !bp.GetConfigurationStream(loaderParameters, stream);
         if (ok) {
-            ok = (stream == NULL);
+            ErrorManagement::ErrorType err = bp.CloseConfigurationStream();
+            ok = (err == ErrorManagement::NoError);
+        }
+        if (ok) {
+            ok = !bp.GetConfigurationStream(loaderParameters, stream);
+            if (ok) {
+                ok = (stream == NULL);
+            }
+        }
+    }
+
+    Directory d(filename);
+    d.Delete();
+    return ok;
+}
+
+bool BootstrapTest::TestCloseConfigurationStream() {
+    using namespace MARTe;
+    uint32 argc = 5;
+    const char8 * const filename = "TestFile";
+    const char8 *argv[] = { "Test", "-l", "LOADER", "-f", filename};
+    BasicFile bf;
+    bool ok = bf.Open(filename, BasicFile::ACCESS_MODE_W | BasicFile::FLAG_CREAT);
+    if (ok) {
+        uint32 size = 3u;
+        bf.Write("A=1", size);
+        bf.Close();
+    }
+
+    Bootstrap bp;
+    ConfigurationDatabase loaderParameters;
+    if (ok) {
+        ok = bp.ReadParameters(argc, const_cast<char8 **>(argv), loaderParameters);
+    }
+    if (ok) {
+        StreamI *stream = NULL;
+        ok = bp.GetConfigurationStream(loaderParameters, stream);
+        if (ok) {
+            ok = (stream != NULL);
+        }
+    }
+    if (ok) {
+        ErrorManagement::ErrorType err = bp.CloseConfigurationStream();
+        ok = (err == ErrorManagement::NoError);
+    }
+
+    Directory d(filename);
+    d.Delete();
+    return ok;
+}
+
+bool BootstrapTest::TestCloseConfigurationStream_False() {
+    using namespace MARTe;
+    uint32 argc = 5;
+    const char8 * const filename = "TestFileBad";
+    const char8 *argv[] = { "Test", "-l", "LOADER", "-f", filename};
+
+    Bootstrap bp;
+    ConfigurationDatabase loaderParameters;
+    bool ok = bp.ReadParameters(argc, const_cast<char8 **>(argv), loaderParameters);
+    if (ok) {
+        StreamI *stream = NULL;
+        if (ok) {
+            ErrorManagement::ErrorType err = bp.CloseConfigurationStream();
+            ok = (err == ErrorManagement::NoError);
+        }
+        if (ok) {
+            ok = !bp.GetConfigurationStream(loaderParameters, stream);
+            if (ok) {
+                ok = (stream == NULL);
+            }
+        }
+        if (ok) {
+            ErrorManagement::ErrorType err = bp.CloseConfigurationStream();
+            ok = (err == ErrorManagement::NoError);
         }
     }
 

@@ -37,7 +37,8 @@ OBJSX=  BasicFile.x \
 		DirectoryScanner.x \
 		InternetHost.x \
 		InternetService.x \
-		Select.x 
+		Select.x \
+		SocketCoreSingleton.x
 		
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 

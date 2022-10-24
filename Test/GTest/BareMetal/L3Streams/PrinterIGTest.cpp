@@ -70,3 +70,8 @@ TEST(BareMetal_L3Streams_PrinterIGTest, TestPrintEnd) {
     ASSERT_TRUE(myPrinterITest.TestPrintEnd());
 }
 
+TEST(BareMetal_L3Streams_PrinterIGTest, TestPrintStructuredDataI) {
+    PrinterITest myPrinterITest;
+    ASSERT_TRUE(myPrinterITest.TestPrintStructuredDataI());
+}
+

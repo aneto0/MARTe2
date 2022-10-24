@@ -34,6 +34,9 @@
 /*---------------------------------------------------------------------------*/
 #include "BasicSocket.h"
 #include "ErrorManagement.h"
+#include "SocketCore.h"
+#include "SocketCoreSingleton.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,9 +52,29 @@ BasicSocket::BasicSocket() :
         HandleI() {
 
     #ifdef LWIP_ENABLED
+
     connectionSocket.UDPHandle = NULL;
     connectionSocket.TCPHandle = NULL;
     connectionSocket.socketKind = SocketCoreKindUndefined;
+    
+    //Pre-allocating for the maximum possible packet size (Jumbo frame)
+    connectionSocket.packetBuffer = (char8*)malloc(MAX_RX_PACKET_BUFFERSIZE);
+
+    connectionSocket.packetLen = 0u;
+
+    connectionSocket.isWritten = false;
+    connectionSocket.isReadSelected = false;
+    connectionSocket.isReadReady = false;
+    connectionSocket.readReadyAt = 0u;
+
+    connectionSocket.nextSocketCore = NULL_PTR(SocketCore*);
+    
+    //connectionSocket.lastArrivals = (uint64*)malloc(sizeof(uint64) * LASTARRIVALSCOUNT);
+    //connectionSocket.lastArrivals = new uint64[LASTARRIVALSCOUNT];
+    //connectionSocket.lastArrivalsIndex = 0u;
+
+    SocketCoreSingleton::GetInstance().RegisterSocketCore(&connectionSocket);
+
     #endif
 }
 
@@ -84,6 +107,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
 bool BasicSocket::Close() {
     int32 ret = -1;
 #ifdef LWIP_ENABLED
+
     //TODO: TCP side must be implemented
     if(IsValid()) {
         if(connectionSocket.socketKind == SocketCoreKindTCP) {
@@ -105,6 +129,7 @@ bool BasicSocket::Close() {
             REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::Close() A wrong socket kind was specified");
         }
     }
+
 #endif
     return (ret >= 0);
 }
@@ -132,17 +157,33 @@ bool BasicSocket::IsValid() const {
 }
 
 Handle BasicSocket::GetReadHandle() const {
-    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::GetReadHandle() Cannot get handle in lwIP raw mode");
-    return 0;
+    #ifdef LWIP_ENABLED
+        //TODO: Fix this. It can only be done because I already know Handle == void*
+        Handle tmpHandle = (Handle)&connectionSocket;
+        return tmpHandle;
+    #else
+        return 0;
+    #endif
 }
 
 Handle BasicSocket::GetWriteHandle() const {
-    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::GetReadHandle() Cannot get handle in lwIP raw mode");
-    return 0;
+    #ifdef LWIP_ENABLED
+        //TODO: Fix this. It can only be done because I already know Handle == void*
+        Handle tmpHandle = (Handle)&connectionSocket;
+        return tmpHandle;
+    #else
+        return 0;
+    #endif
 }
 
 bool BasicSocket::IsBlocking() const {
     return true;
+}
+
+bool BasicSocket::SetReuseAddr(bool reuse) {
+    //Not implemented.
+    REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "BasicSocket::SetReuseAddr() not implemented");
+    return false;
 }
 
 }

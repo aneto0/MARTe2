@@ -27,6 +27,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#ifdef LWIP_ENABLED
+#include "lwip/udp.h"
+#include "lwip/tcp.h"
+#include "lwip/pbuf.h"
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -37,8 +42,9 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 #ifdef LWIP_ENABLED
-#include "lwip/udp.h"
-#include "lwip/tcp.h"
+
+//Use 9000 to support Jumbo Frame
+#define MAX_RX_PACKET_BUFFERSIZE 9000
 
 /**
  * When lwIP operates in raw mode, two different handles are needed, based on the underlying socket kind
@@ -52,6 +58,8 @@ typedef enum _e_socketcore_kind {
 
 class SocketCore {
     public:
+
+       
         /**
          * @brief The UDP handle (PCB)
          */
@@ -66,9 +74,73 @@ class SocketCore {
          * @brief Indicates the underlying socket type
          */
         SocketCoreKind socketKind;
+
+        /**
+         * @brief Latest packet from the lwIP stack
+         * 
+         */
+        char8* packetBuffer;
+
+        /**
+         * @brief Latest packet length from the lwIP stack
+         * 
+         */
+        uint32 packetLen;
+
+        /**
+         * @brief Latest packet source IP Address
+         */
+        ip_addr_t packetSourceIpAddress;
+
+        /**
+         * @brief Latest packet source port
+         */
+        uint16 packetSourcePort;
+
+        /**
+         * @brief Contains the HRT Counter marked on packet arrival
+         * 
+         */
+        uint64 lastPacketArrivalTimestamp;
+
+        /**
+         * @brief Indicates whether the socket has been written (packet received) from the last time it was consumed (read or selected)
+         * 
+         */
+        bool isWritten;
+
+        /**
+         * @brief Indicates whether the socket has been prepared for the read select operation
+         * 
+         */
+        bool isReadSelected;
+
+        /**
+         * @brief Indicates whether the socket read select signal has been raised
+         */
+        bool isReadReady;
+
+        /**
+         * @brief Timestamp on which the select was raised (oldest)
+         * 
+         */
+        uint64 readReadyAt;
+
+        /**
+         * @brief The handle of the socket
+         * 
+         */
+        HandleI *handle;
+
+        /**
+         * @brief Simply linked list of currently active (created) sockets
+         * 
+         */
+        SocketCore* nextSocketCore;
+    
 };
 
-#endif
+#endif /* LWIP_ENABLED */
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

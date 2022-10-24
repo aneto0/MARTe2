@@ -35,6 +35,7 @@
 #include "StandardParser.h"
 
 extern void MARTe2HardwareInitialise();
+extern void HardwarePrintf(const char8 * const msg);
 
 namespace MARTe {
 
@@ -42,7 +43,7 @@ namespace MARTe {
 
     void BareUSErrorProcessFunction(const ErrorManagement::ErrorInformation &errorInfo,
                                     const char8 * const errorDescription) {
-        printf(errorDescription);
+        HardwarePrintf(errorDescription);
     }
 
     Bootstrap::Bootstrap() {

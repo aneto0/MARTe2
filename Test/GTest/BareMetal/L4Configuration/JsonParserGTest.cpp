@@ -82,6 +82,11 @@ TEST(BareMetal_L4Configuration_JsonParserGTest,TestCanonical_Error) {
     ASSERT_TRUE(parserTest.TestCanonical_Error());
 }
 
+TEST(BareMetal_L4Configuration_JsonParserGTest,TestArrayOfNodes) {
+    JsonParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestArrayOfNodes());
+}
+
 /*
 TEST(BareMetal_L4Configuration_JsonParserGTest,TestTypeCast_Scalar_int8) {
     JsonParserTest parserTest;

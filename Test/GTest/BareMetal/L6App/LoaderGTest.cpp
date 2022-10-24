@@ -132,3 +132,85 @@ TEST(BareMetal_L6App_LoaderGTest,TestConfigure_SchedulerGranularity) {
     LoaderTest test;
     ASSERT_TRUE(test.TestConfigure_SchedulerGranularity());
 }
+
+TEST(BareMetal_L6App_LoaderGTest,TestReconfigure) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestReconfigure());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestReconfigure_StructuredDataI) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestReconfigure_StructuredDataI());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestReconfigure_Hash) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestReconfigure_Hash());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestGetLastValidConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestGetLastValidConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestGetLastValidConfiguration_AfterFailure) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestGetLastValidConfiguration_AfterFailure());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestReloadLastValidConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestReloadLastValidConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_ReloadLast_true) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit_ReloadLast_true());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_ReloadLast_false) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit_ReloadLast_false());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_ReloadLast_invalid) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit_ReloadLast_invalid());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestLoaderPostInit_KeepAlive) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestLoaderPostInit_KeepAlive());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestMessage_PreConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestMessage_PreConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestMessage_PostConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestMessage_PostConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestMessage_FailedConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestMessage_FailedConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestMessage_ReloadedConfiguration) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestMessage_ReloadedConfiguration());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestGetSeed) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestGetSeed());
+}
+
+

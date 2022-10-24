@@ -265,6 +265,13 @@ void ConfigurationParserI::EndVector() {
     }
 }
 
+void ConfigurationParserI::EndVectorB() {
+    const char8 * const thisNodeName = vectorStructureIdx.GetName();
+    if (vectorStructureIdx.MoveToAncestor(1u)) {
+        (void) vectorStructureIdx.Delete(thisNodeName);
+    }
+}
+
 void ConfigurationParserI::EndMatrix() {
     numberOfDimensions = 2u;
 }
@@ -485,4 +492,38 @@ bool ConfigurationParserI::BrowseExpressionVariables(RuntimeEvaluator * const ev
 /*lint -e{429} Evaluator is freed by the caller.*/
 }
 
+void ConfigurationParserI::CreateNodeV() {
+    StreamString vecNodeName = GetCurrentTokenData(currentToken);
+    if (!vectorStructureIdx.CreateRelative(vecNodeName.Buffer())) {
+        PrintErrorOnStream("Failed StructuredDataI::CreateNodeV() CreateRelative [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        isError = true;
+    }
+    if (!vectorStructureIdx.Write("Idx", 0)) {
+        PrintErrorOnStream("Failed StructuredDataI::CreateNodeV() Write Idx 0 [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        isError = true;
+    }
 }
+
+void ConfigurationParserI::CreateNodeVE() {
+    StreamString vecNodeName;
+    uint32 idx = 0u;
+    if (!vectorStructureIdx.Read("Idx", idx)) {
+        PrintErrorOnStream("Failed StructuredDataI::CreateNodeVE() Read Idx [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        isError = true;
+    }
+    if(!vecNodeName.Printf("%s[%d]", vectorStructureIdx.GetName(), idx)) {
+        PrintErrorOnStream("Failed StructuredDataI::CreateNodeVE() Printf nodeName [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        isError = true;
+    }
+    if(!database->CreateRelative(vecNodeName.Buffer())) {
+        PrintErrorOnStream("Failed StructuredDataI::CreateNodeVE() CreateRelative [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        isError = true;
+    }
+    idx++;
+    if (!vectorStructureIdx.Write("Idx", idx)) {
+        PrintErrorOnStream("Failed StructuredDataI::CreateNodeVE() Write Idx [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        isError = true;
+    }
+}
+}
+

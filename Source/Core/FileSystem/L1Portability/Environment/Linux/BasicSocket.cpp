@@ -132,4 +132,14 @@ bool BasicSocket::IsBlocking() const {
     return isBlocking;
 }
 
+bool BasicSocket::SetReuseAddr(const bool reuse) {
+    int32 reuseInt32 = (reuse ? 1 : 0);
+    bool ok = (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &reuseInt32, static_cast<uint32>(sizeof(int32))) >= 0);
+    if (!ok) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::SetReuseAddr failed.");
+    }
+    return ok;
+/*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
+}
+
 }

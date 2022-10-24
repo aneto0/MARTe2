@@ -163,6 +163,21 @@ protected:
      */
     void BlockEnd();
 
+    /**
+     * @brief Creates a new vector of nodes in the StructuredData.
+     */
+    void CreateNodeV();
+
+    /**
+     * @brief Creates a new element in a vector of nodes in the StructuredData.
+     */
+    void CreateNodeVE();
+
+    /**
+     * @brief Ends a vector of blocks.
+     */
+    void EndVectorB();
+
 private:
 
     /**
@@ -229,6 +244,11 @@ private:
     uint8 numberOfDimensions;
 
     /**
+     * The current structured index.
+     */
+    ConfigurationDatabase vectorStructureIdx;
+
+    /*
      * True if a math expression has been found.
      */
     bool handleMathExpr;
