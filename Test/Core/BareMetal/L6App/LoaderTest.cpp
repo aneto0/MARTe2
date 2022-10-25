@@ -81,7 +81,6 @@ bool LoaderTest::TestConfigure() {
     bool ok = l->Configure(params, config);
     ok = (ProcessorType::GetDefaultCPUs() == 0x1u);
     ObjectRegistryDatabase::Instance()->Purge();
-    printf("ObjectRegistryDatabase::Instance()->Size() = %d\n", ObjectRegistryDatabase::Instance()->Size());
     return ok;
 }
 
