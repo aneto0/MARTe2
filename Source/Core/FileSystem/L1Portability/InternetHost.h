@@ -149,6 +149,11 @@ namespace MARTe {
         void SetMulticastGroup(const char8 * const addr);
 
         /**
+         * @brief TODO
+         */
+        void SetMulticastInterfaceAddress(const char8 * const addr);
+
+        /**
          * @brief Returns the Multicast address on a StreamString object
          */
         StreamString GetMulticastGroup() const;

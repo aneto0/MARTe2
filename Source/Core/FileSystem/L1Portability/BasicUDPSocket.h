@@ -111,6 +111,11 @@ public:
     bool Join(const char8 * const group) const;
 
     /**
+     * @brief TODO
+     */
+    bool Join(const char8 * const group, const char8 * const multicastInterfaceAddress) const;
+
+    /**
      * @brief Sets the writing destination address.
      * @param[in] address the destination IP address.
      * @param[in] port the destination port.

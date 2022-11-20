@@ -155,15 +155,23 @@ bool BasicUDPSocket::Listen(const uint16 port) {
 }
 
 bool BasicUDPSocket::Join(const char8 *const group) const {
+    return Join(group, NULL_PTR(const char8 *));
+}
+
+bool BasicUDPSocket::Join(const char8 *const group, const char8 * const multicastInterfaceAddress) const {
     int32 opt = 1;
     /* Allow multiple sockets to use the same addr and port number */
     bool ok = setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &opt, static_cast<socklen_t>(sizeof(opt))) >= 0;
     if (ok) {
         InternetHost host;
+        if (multicastInterfaceAddress != NULL_PTR(const char8 * const)) {
+            host.SetMulticastInterfaceAddress(multicastInterfaceAddress);
+        }
         host.SetMulticastGroup(group);
         ok = setsockopt(connectionSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, host.GetInternetMulticastHost(), static_cast<socklen_t>(host.MulticastSize())) >= 0;
     }
     return ok;
+
 }
 
 bool BasicUDPSocket::Connect(const char8 *const address,
