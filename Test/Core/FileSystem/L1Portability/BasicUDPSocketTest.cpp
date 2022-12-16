@@ -58,6 +58,7 @@ BasicUDPSocketTest::BasicUDPSocketTest() {
     isTimeout = false;
     isValidServer = true;
     isValidClient = true;
+    joinSetAddr = false;
 
 }
 
@@ -358,7 +359,14 @@ void StartServer_Join(BasicUDPSocketTest &param) {
         serverSocket.Close();
     }
 
-    if(!serverSocket.Join(param.server.GetAddress().Buffer())) {
+    bool joinOK = false;
+    if (param.joinSetAddr) {
+        joinOK = serverSocket.Join(param.server.GetAddress().Buffer(), "0.0.0.0");
+    }
+    else {
+        joinOK = serverSocket.Join(param.server.GetAddress().Buffer());
+    }
+    if(!joinOK) {
         param.retVal = false;
         param.sem.FastLock();
         param.exitCondition = 1;
@@ -550,6 +558,11 @@ bool BasicUDPSocketTest::TestListen(const ConnectListenUDPTestTable* table) {
 }
 
 bool BasicUDPSocketTest::TestJoin(const ConnectListenUDPTestTable* table) {
+    return JoinConnectTest(*this, table, true);
+}
+
+bool BasicUDPSocketTest::TestJoinMulticastAddress(const ConnectListenUDPTestTable* table) {
+    joinSetAddr = true;
     return JoinConnectTest(*this, table, true);
 }
 

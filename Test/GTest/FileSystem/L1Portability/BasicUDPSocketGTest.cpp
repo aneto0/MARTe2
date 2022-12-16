@@ -153,6 +153,32 @@ TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestJoin) {
     ASSERT_TRUE(basicUDPSocketTest.TestJoin(table));
 }
 
+TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestJoinMulticastAddress) {
+    BasicUDPSocketTest basicUDPSocketTest;
+
+    #ifndef MARTe2_REDUCED_TESTS
+    const ConnectListenUDPTestTable table[]={
+            {4444,2,true, true},
+            {4444,32,true, true},
+            {4444,64,true, true},
+            {4444,128,true, true},
+            {4444,32,false, false},
+            {0,0,0}
+    };
+    #else
+    const ConnectListenUDPTestTable table[]={
+            {4444,1,true, true},
+            {4444,2,true, true},
+            {4444,4,true, true},
+            {4444,6,true, true},
+            {4444,2,false, false},
+            {0,0,0}
+    };
+    #endif
+
+    ASSERT_TRUE(basicUDPSocketTest.TestJoinMulticastAddress(table));
+}
+
 
 TEST(FileSystem_L1Portability_BasicUDPSocketGTest,TestConnect) {
     BasicUDPSocketTest basicUDPSocketTest;
