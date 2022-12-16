@@ -267,9 +267,13 @@ void InternetHost::SetMulticastInterfaceAddress(const char8 *const addr) {
     mreq.imr_interface.s_addr = inet_addr(const_cast<char8*>(addr));
 }
 
-
 StreamString InternetHost::GetMulticastGroup() const {
     StreamString dotName(inet_ntoa(mreq.imr_multiaddr));
+    return dotName;
+}
+
+StreamString InternetHost::GetMulticastInterfaceAddress() const {
+    StreamString dotName(inet_ntoa(mreq.imr_interface));
     return dotName;
 }
 

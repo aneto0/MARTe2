@@ -217,6 +217,16 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestGetMulticastGroup) {
     ASSERT_TRUE(internetHostTest.TestGetMulticastGroup());
 }
 
+TEST(FileSystem_L1Portability_InternetHostGTest,TestSetMulticastInterfaceAddress) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestSetMulticastInterfaceAddress());
+}
+
+TEST(FileSystem_L1Portability_InternetHostGTest,TestGetMulticastInterfaceAddress) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestGetMulticastInterfaceAddress());
+}
+
 TEST(FileSystem_L1Portability_InternetHostGTest,TestGetInternetHost) {
     InternetHostTest internetHostTest;
     const InternetHostTestTable table[]={

@@ -232,6 +232,17 @@ bool InternetHostTest::TestGetMulticastGroup() {
     return maddr == "234.0.0.1";
 }
 
+bool InternetHostTest::TestSetMulticastInterfaceAddress() {
+    InternetHost host;
+    host.SetMulticastInterfaceAddress("127.0.0.1");
+    StreamString haddr = host.GetMulticastInterfaceAddress();
+    return haddr == "127.0.0.1";
+}
+
+bool InternetHostTest::TestGetMulticastInterfaceAddress() {
+    return TestSetMulticastInterfaceAddress();
+}
+
 #define Windows 2
 #define Linux 1
 bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
