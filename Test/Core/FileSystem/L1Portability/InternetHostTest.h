@@ -134,9 +134,19 @@ public:
     bool TestSetMulticastGroup();
 
     /**
+     * @brief Tests if the function sets the correct IP Multicast interface address.
+     */
+    bool TestSetMulticastInterfaceAddress();
+
+    /**
      * @brief Tests if the function returns the correct IP Multicast group.
      */
     bool TestGetMulticastGroup();
+
+    /**
+     * @brief Tests if the function returns the correct IP Multicast interface address.
+     */
+    bool TestGetMulticastInterfaceAddress();
 
     /**
      * @brief Tests if the InternetAddressCore structure is returned correctly.

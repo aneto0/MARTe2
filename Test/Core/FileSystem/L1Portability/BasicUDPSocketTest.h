@@ -174,9 +174,15 @@ public:
     bool TestWrite(const ReadWriteUDPTestTable* table);
 
     /**
-     * @brief Tests if the Join function behaves correctly
+     * @brief Tests if the Join function behaves correctly.
      */
     bool TestJoin(const ConnectListenUDPTestTable* table);
+
+    /**
+     * @brief Tests if the Join function behaves correctly setting the multicast address.
+     */
+    bool TestJoinMulticastAddress(const ConnectListenUDPTestTable* table);
+
 
 public:
 
@@ -197,6 +203,7 @@ public:
     bool isTimeout;
     bool isValidServer;
     bool isValidClient;
+    bool joinSetAddr;
 
 };
 

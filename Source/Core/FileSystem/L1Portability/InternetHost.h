@@ -149,6 +149,17 @@ namespace MARTe {
         void SetMulticastGroup(const char8 * const addr);
 
         /**
+         * @brief The address of the interface to which to bind the multicast.
+         * @param[in] addr the network address of the interface where to bind the multicast.
+         */
+        void SetMulticastInterfaceAddress(const char8 * const addr);
+
+        /**
+         * @brief Returns the multicast address of the bounding interface.
+         */
+        StreamString GetMulticastInterfaceAddress() const;
+
+        /**
          * @brief Returns the Multicast address on a StreamString object
          */
         StreamString GetMulticastGroup() const;

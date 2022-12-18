@@ -105,10 +105,19 @@ public:
 
     /**
      * @brief Sets the multicast group where the socket will register itself.
+     * @details It will bind to the default IPv4 multicast address (see Join with multicastInterfaceAddress).
      * @param[in] group the multicast IP address.
-     * @return true if the socket is successfully registered to the multicast group..
+     * @return true if the socket is successfully registered to the multicast group.
      */
     bool Join(const char8 * const group) const;
+
+    /**
+     * @brief Sets the multicast group where the socket will register, allowing to specify the network interface binding address.
+     * @param[in] group the multicast IP address.
+     * @param[in] multicastInterfaceAddress the address of the interface to which to bind the multicast.
+     * @return true if the socket is successfully registered to the multicast group.
+     */
+    bool Join(const char8 * const group, const char8 * const multicastInterfaceAddress) const;
 
     /**
      * @brief Sets the writing destination address.
