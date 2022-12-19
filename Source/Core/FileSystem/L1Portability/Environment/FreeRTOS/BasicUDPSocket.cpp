@@ -260,7 +260,7 @@ bool BasicUDPSocket::CanSeek() const {
     return false;
 }
 
-bool Join(const char8 * const group, const char8 * const multicastInterfaceAddress) const {
+bool BasicUDPSocket::Join(const char8 * const group, const char8 * const multicastInterfaceAddress) const {
     bool ok = false;
 
     #ifndef LWIP_ENABLED
