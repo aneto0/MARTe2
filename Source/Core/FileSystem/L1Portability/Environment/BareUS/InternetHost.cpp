@@ -237,6 +237,17 @@ bool InternetHost::SetAddress(const char8 * const addr) {
     return ret;
 }
 
+void InternetHost::SetMulticastInterfaceAddress(const char8 * const addr) {
+    //TODO: Currently there is only one interface which can be entitled for multicast.
+}
+
+StreamString InternetHost::GetMulticastInterfaceAddress() const {
+    //TODO: Currently there is only one interface which can be entitled for multicast.
+    //The hardcoded value is the only one returned
+    StreamString mcastInterfaceAddress = "";
+    return mcastInterfaceAddress;
+}
+
 bool InternetHost::SetAddressByHostName(const char8 * hostName) {
     bool ret = false;
     //  hostName can be NULL meaning localhost

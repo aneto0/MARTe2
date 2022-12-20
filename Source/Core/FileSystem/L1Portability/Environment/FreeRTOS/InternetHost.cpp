@@ -173,6 +173,17 @@ const char8 *InternetHost::GetLocalAddress() {
     return LocalHostInfo::Instance().GetIpAddress();
 }
 
+void InternetHost::SetMulticastInterfaceAddress(const char8 * const addr) {
+    //TODO: Currently there is only one interface which can be entitled for multicast.
+}
+
+StreamString InternetHost::GetMulticastInterfaceAddress() const {
+    //TODO: Currently there is only one interface which can be entitled for multicast.
+    //The hardcoded value is the only one returned
+    StreamString mcastInterfaceAddress = "";
+    return mcastInterfaceAddress;
+}
+
 uint32 InternetHost::GetLocalAddressAsNumber() {
 
     uint32 ret = 0u;
