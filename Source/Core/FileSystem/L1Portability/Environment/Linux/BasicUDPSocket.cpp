@@ -171,7 +171,6 @@ bool BasicUDPSocket::Join(const char8 *const group, const char8 * const multicas
         ok = setsockopt(connectionSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, host.GetInternetMulticastHost(), static_cast<socklen_t>(host.MulticastSize())) >= 0;
     }
     return ok;
-
 }
 
 bool BasicUDPSocket::Connect(const char8 *const address,

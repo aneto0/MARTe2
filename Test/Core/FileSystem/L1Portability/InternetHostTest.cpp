@@ -31,6 +31,7 @@
 #include "StringHelper.h"
 #include "InternetHostTest.h"
 #include "stdio.h"
+#include "ifaddrs.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -153,6 +154,22 @@ bool InternetHostTest::TestGetLocalAddressAsNumber() {
     return (InternetHost::GetLocalAddressAsNumber() != 0u);
 }
 
+bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddress() {
+    InternetHost ih;
+    bool ok = (ih.ConvertInterfaceNameToInterfaceAddress("invalidInterfaceName") == 0);
+    if (ok) {
+        struct ifaddrs *addrs, *tmp;
+        getifaddrs(&addrs);
+        tmp = addrs;
+        if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET) {
+            in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddress(tmp->ifa_name);
+            ok = (aux != 0);
+        }
+        freeifaddrs(addrs);
+    }
+    return ok;
+}
+
 bool InternetHostTest::TestSetPort(uint16 port) {
     InternetHost addr;
 
@@ -237,6 +254,35 @@ bool InternetHostTest::TestSetMulticastInterfaceAddress() {
     host.SetMulticastInterfaceAddress("127.0.0.1");
     StreamString haddr = host.GetMulticastInterfaceAddress();
     return haddr == "127.0.0.1";
+}
+
+bool InternetHostTest::TestSetMulticastInterfaceAddressWithNumber() {
+    InternetHost ih;
+    bool ok = true;
+    struct ifaddrs *addrs, *tmp;
+    struct sockaddr_in *sa;
+    char8 * addr;
+    getifaddrs(&addrs);
+    tmp = addrs;
+    if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET) {
+        sa = (struct sockaddr_in*) tmp->ifa_addr;
+        addr = inet_ntoa(sa->sin_addr);
+        in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddress(tmp->ifa_name);
+        ok = (aux != 0);
+        if (ok) {
+            ih.SetMulticastInterfaceAddress(aux);
+            StreamString haddr = ih.GetMulticastInterfaceAddress();
+            char8 auxStr[INET_ADDRSTRLEN];
+
+            inet_ntop(AF_INET, sa, auxStr, INET_ADDRSTRLEN);//Convert tmp->ifa_addr in
+            ok = haddr == auxStr;
+            if(ok){
+                haddr == addr;
+            }
+        }
+    }
+    freeifaddrs(addrs);
+    return ok;
 }
 
 bool InternetHostTest::TestGetMulticastInterfaceAddress() {

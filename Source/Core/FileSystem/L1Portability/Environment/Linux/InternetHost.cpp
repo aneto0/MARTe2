@@ -182,6 +182,24 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
     return ret;
 }
 
+in_addr_t InternetHost::ConvertInterfaceNameToInterfaceAddress(StreamString interfaceName) {
+    int fd;
+    struct ifreq ifr;
+    in_addr_t retVal = 0;
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    //Type of address to retrieve - IPv4 IP address
+    ifr.ifr_addr.sa_family = AF_INET;
+    //Copy the interface name in the ifreq structure
+    strncpy(ifr.ifr_name, interfaceName.Buffer(), IFNAMSIZ - 1);
+    if (ioctl(fd, SIOCGIFADDR, &ifr) != -1) {
+        in_addr addr = ((struct sockaddr_in*) &ifr.ifr_addr)->sin_addr;
+        retVal = addr.s_addr;
+    }
+    close(fd);
+
+    return retVal;
+}
+
 InternetHost::InternetHost(const uint16 port,
                            const char8 *const addr) {
     mreq.imr_interface.s_addr = htonl(static_cast<in_addr_t>(0x00000000)); //INADDR_ANY
@@ -267,6 +285,10 @@ void InternetHost::SetMulticastInterfaceAddress(const char8 *const addr) {
     mreq.imr_interface.s_addr = inet_addr(const_cast<char8*>(addr));
 }
 
+void InternetHost::SetMulticastInterfaceAddress(in_addr_t addr) {
+    mreq.imr_interface.s_addr = addr;
+}
+
 StreamString InternetHost::GetMulticastGroup() const {
     StreamString dotName(inet_ntoa(mreq.imr_multiaddr));
     return dotName;
@@ -280,7 +302,7 @@ StreamString InternetHost::GetMulticastInterfaceAddress() const {
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: sockets will change this attribute then the full access to this
  * member is allowed.
  */
-InternetMulticastCore *InternetHost::GetInternetMulticastHost() {
+InternetMulticastCore* InternetHost::GetInternetMulticastHost() {
     return &mreq;
 }
 

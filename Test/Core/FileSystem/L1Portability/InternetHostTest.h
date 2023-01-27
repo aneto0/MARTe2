@@ -43,7 +43,7 @@ using namespace MARTe;
  * @brief A structure used for InternetAddress tests
  */
 struct InternetHostTestTable {
-    const char8* address;
+    const char8 *address;
     uint32 relatedNumber;
     uint16 port;
 
@@ -65,7 +65,7 @@ public:
      * @brief Tests if the full constructor set the attributes correctly
      */
     bool TestFullConstructor(uint16 port,
-                             const char8 * address,
+                             const char8 *address,
                              const char8 *expected);
 
     /**
@@ -104,6 +104,11 @@ public:
     bool TestGetLocalAddressAsNumber();
 
     /**
+     * @brief Test a valid and invalid interfaceName
+     */
+    bool TestConvertInterfaceNameToInterfaceAddress();
+
+    /**
      * @brief Tests if the port number is set correctly.
      */
     bool TestSetPort(uint16 port);
@@ -139,6 +144,11 @@ public:
     bool TestSetMulticastInterfaceAddress();
 
     /**
+     * @brief Tests if the function sets the correct IP Multicast interface address.
+     */
+    bool TestSetMulticastInterfaceAddressWithNumber();
+
+    /**
      * @brief Tests if the function returns the correct IP Multicast group.
      */
     bool TestGetMulticastGroup();
@@ -172,7 +182,6 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 #endif /* INTERNETHOSTTEST_H_ */
 
