@@ -260,28 +260,28 @@ bool InternetHostTest::TestSetMulticastInterfaceAddressWithNumber() {
     InternetHost ih;
     bool ok = true;
     struct ifaddrs *addrs, *tmp;
-    struct sockaddr_in *sa;
+    bool found = false;
     char8 * addr;
     getifaddrs(&addrs);
     tmp = addrs;
-    if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET) {
-        sa = (struct sockaddr_in*) tmp->ifa_addr;
-        addr = inet_ntoa(sa->sin_addr);
-        in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddress(tmp->ifa_name);
-        ok = (aux != 0);
-        if (ok) {
-            ih.SetMulticastInterfaceAddress(aux);
-            StreamString haddr = ih.GetMulticastInterfaceAddress();
-            char8 auxStr[INET_ADDRSTRLEN];
-
-            inet_ntop(AF_INET, sa, auxStr, INET_ADDRSTRLEN);//Convert tmp->ifa_addr in
-            ok = haddr == auxStr;
-            if(ok){
-                haddr == addr;
+    for (tmp = addrs; (tmp != NULL) && !found; tmp = tmp->ifa_next) { //addrs contains several time the same interfaces with different families. Loop until AF_INET is found (ipv4). In case does not exist the test succeeds
+        if (tmp->ifa_addr->sa_family == AF_INET) {
+            found = true;
+            in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddress(tmp->ifa_name);
+            ok = (aux != 0);
+            if (ok) {
+                ih.SetMulticastInterfaceAddress(aux);
+                StreamString haddr = ih.GetMulticastInterfaceAddress();
+                char8 auxStr[INET_ADDRSTRLEN] = { 0, };
+                inet_ntop(AF_INET, &((struct sockaddr_in*) (tmp->ifa_addr))->sin_addr, auxStr, INET_ADDRSTRLEN); //COnvert in_addr to string and save it in auxStr
+                ok = haddr == auxStr;
             }
         }
     }
     freeifaddrs(addrs);
+    if (!found) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "AF_INET family not found on this machine. Test not done");
+    }
     return ok;
 }
 
@@ -328,10 +328,10 @@ bool InternetHostTest::TestGetInternetMulticastHost() {
     InternetMulticastCore *copy = addr.GetInternetMulticastHost();
 
 #if ENVIRONMENT == Linux
-        StreamString dotName(inet_ntoa(copy->imr_multiaddr));
-        if (dotName != addr.GetMulticastGroup()) {
-            return false;
-        }
+    StreamString dotName(inet_ntoa(copy->imr_multiaddr));
+    if (dotName != addr.GetMulticastGroup()) {
+        return false;
+    }
 
 #endif
 

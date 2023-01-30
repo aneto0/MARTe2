@@ -183,16 +183,17 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
 }
 
 in_addr_t InternetHost::ConvertInterfaceNameToInterfaceAddress(StreamString interfaceName) {
-    int fd;
+    int32 fd;
     struct ifreq ifr;
-    in_addr_t retVal = 0;
+    in_addr_t retVal = 0u;
+    //lint -e{641} Converting enum '__socket_type' to 'int. Definition and function outside the MARTe library.
     fd = socket(AF_INET, SOCK_DGRAM, 0);
     //Type of address to retrieve - IPv4 IP address
-    ifr.ifr_addr.sa_family = AF_INET;
+    ifr.ifr_addr.sa_family = static_cast<uint16>(AF_INET);
     //Copy the interface name in the ifreq structure
-    strncpy(ifr.ifr_name, interfaceName.Buffer(), IFNAMSIZ - 1);
-    if (ioctl(fd, SIOCGIFADDR, &ifr) != -1) {
-        in_addr addr = ((struct sockaddr_in*) &ifr.ifr_addr)->sin_addr;
+    strncpy(static_cast<char8 *>(ifr.ifr_name), interfaceName.Buffer(), static_cast<size_t>(IFNAMSIZ - 1));
+    if (ioctl(fd, static_cast<uint64>(SIOCGIFADDR), &ifr) != -1) {
+        in_addr addr = (reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_addr))->sin_addr;
         retVal = addr.s_addr;
     }
     close(fd);
@@ -285,7 +286,7 @@ void InternetHost::SetMulticastInterfaceAddress(const char8 *const addr) {
     mreq.imr_interface.s_addr = inet_addr(const_cast<char8*>(addr));
 }
 
-void InternetHost::SetMulticastInterfaceAddress(in_addr_t addr) {
+void InternetHost::SetMulticastInterfaceAddress(const in_addr_t addr) {
     mreq.imr_interface.s_addr = addr;
 }
 
