@@ -114,7 +114,7 @@ namespace MARTe {
         /**
          * @brief Translate interfaceName to internet address (i.e "enp0s25" --> 192.168.129.44).
          * @param[in] interfaceName interface name to be converted to internet address.
-         * @return the internet address number corresponding to interfaceName. If interfaceName does not exist it returns 0
+         * @return the internet address number corresponding to interfaceName. If interfaceName does not exist it returns "0.0.0.0"
          */
         static StreamString ConvertInterfaceNameToInterfaceAddress(const char8* const interfaceName);
 

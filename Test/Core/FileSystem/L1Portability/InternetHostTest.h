@@ -105,6 +105,7 @@ public:
 
     /**
      * @brief Test a valid and invalid interfaceName
+     * @details if no interface is available the test return true
      */
     bool TestConvertInterfaceNameToInterfaceAddressNumber();
 

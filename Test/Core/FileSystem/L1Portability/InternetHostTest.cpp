@@ -157,6 +157,7 @@ bool InternetHostTest::TestGetLocalAddressAsNumber() {
 bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddressNumber() {
     InternetHost ih;
     bool ok = (ih.ConvertInterfaceNameToInterfaceAddressNumber("invalidInterfaceName") == 0);
+#if ENVIRONMENT==Linux && ARCHITECTURE==x86_gcc
     if (ok) {
         struct ifaddrs *addrs, *tmp;
         getifaddrs(&addrs);
@@ -167,12 +168,14 @@ bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddressNumber() {
         }
         freeifaddrs(addrs);
     }
+#endif
     return ok;
 }
 
 bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddress() {
     InternetHost ih;
     bool ok = (ih.ConvertInterfaceNameToInterfaceAddress("invalidInterfaceName") == "0.0.0.0");
+#if ENVIRONMENT==Linux && ARCHITECTURE==x86_gcc
     if (ok) {
         struct ifaddrs *addrs, *tmp;
         getifaddrs(&addrs);
@@ -183,6 +186,7 @@ bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddress() {
         }
         freeifaddrs(addrs);
     }
+#endif
     return ok;
 }
 
@@ -278,6 +282,7 @@ bool InternetHostTest::TestSetMulticastInterfaceAddressWithNumber() {
     struct ifaddrs *addrs, *tmp;
     bool found = false;
     char8 * addr;
+#if ENVIRONMENT==Linux && ARCHITECTURE==x86_gcc
     getifaddrs(&addrs);
     tmp = addrs;
     for (tmp = addrs; (tmp != NULL) && !found; tmp = tmp->ifa_next) { //addrs contains several time the same interfaces with different families. Loop until AF_INET is found (ipv4). In case does not exist the test succeeds
@@ -295,6 +300,7 @@ bool InternetHostTest::TestSetMulticastInterfaceAddressWithNumber() {
         }
     }
     freeifaddrs(addrs);
+#endif
     if (!found) {
         REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "AF_INET family not found on this machine. Test not done");
     }
@@ -305,8 +311,6 @@ bool InternetHostTest::TestGetMulticastInterfaceAddress() {
     return TestSetMulticastInterfaceAddress();
 }
 
-#define Windows 2
-#define Linux 1
 bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
 
     uint32 i = 0;
