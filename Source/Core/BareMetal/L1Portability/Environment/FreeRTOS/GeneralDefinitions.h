@@ -101,5 +101,7 @@ const MARTe::uint32 SCHED_GRANULARITY_US = portTICK_PERIOD_MS * 1000u;
 
 const MARTe::uint32 IOBUFFER_GRANULARITY = 16u;
 
+typedef MARTe::uint32 InternetAddress;
+
 #endif /* GENERALDEFINITIONS_ENV_H_ */
 
