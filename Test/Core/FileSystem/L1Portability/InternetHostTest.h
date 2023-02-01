@@ -106,6 +106,11 @@ public:
     /**
      * @brief Test a valid and invalid interfaceName
      */
+    bool TestConvertInterfaceNameToInterfaceAddressNumber();
+
+    /**
+     * @brief Test a valid and invalid interfaceName
+     */
     bool TestConvertInterfaceNameToInterfaceAddress();
 
     /**
@@ -144,7 +149,7 @@ public:
     bool TestSetMulticastInterfaceAddress();
 
     /**
-     * @brief Tests if the function sets the correct IP Multicast interface address.
+     * @brief Tests if the function sets the correct IP Multicast interface address using the number as input argument.
      */
     bool TestSetMulticastInterfaceAddressWithNumber();
 
@@ -177,6 +182,8 @@ public:
      * @brief Tests if the function returns sizeof(InternetMulticastCore).
      */
     bool TestMulticastSize();
+
+//    bool Prova();
 };
 
 /*---------------------------------------------------------------------------*/

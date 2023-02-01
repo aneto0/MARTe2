@@ -141,6 +141,11 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestGetLocalAddressAsNumber) {
     ASSERT_TRUE(internetHostTest.TestGetLocalAddressAsNumber());
 }
 
+TEST(FileSystem_L1Portability_InternetHostGTest,TestConvertInterfaceNameToInterfaceAddressNumber) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestConvertInterfaceNameToInterfaceAddressNumber());
+}
+
 TEST(FileSystem_L1Portability_InternetHostGTest,TestConvertInterfaceNameToInterfaceAddress) {
     InternetHostTest internetHostTest;
     ASSERT_TRUE(internetHostTest.TestConvertInterfaceNameToInterfaceAddress());
@@ -264,3 +269,8 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestGetLocalHostName) {
     ASSERT_TRUE(internetHostTest.TestGetLocalHostName());
 }
 
+
+//TEST(FileSystem_L1Portability_InternetServiceGTest,Prova) {
+//    InternetHostTest internetServiceTest;
+//    ASSERT_TRUE(internetServiceTest.Prova());
+//}

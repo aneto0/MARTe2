@@ -92,15 +92,19 @@ private:
     FastPollingMutexSem internalFastSem;
 
     /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
-    LocalHostInfo():localHostName(static_cast<const char8*>(NULL)),ipAddress(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
+    LocalHostInfo() :
+            localHostName(static_cast<const char8*>(NULL)),
+            ipAddress(static_cast<const char8*>(NULL)),
+            internetAddressInfoInitialised(false),
+            internalFastSem() {
         Init();
     }
 
     void Init() {
         if (!internetAddressInfoInitialised) {
 
-            if(internalFastSem.FastLock()!=ErrorManagement::NoError) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+            if (internalFastSem.FastLock() != ErrorManagement::NoError) {
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
             }
 
             localHostName = static_cast<const char8*>(NULL);
@@ -115,9 +119,9 @@ private:
             if (h != NULL) {
                 localHostName = strdup(h->h_name);
                 struct in_addr sin_addr;
-                char8* addr=h->h_addr_list[0];
-                if(addr!=static_cast<char8 *>(NULL)) {
-                    sin_addr.s_addr = *(reinterpret_cast<uint32 *> (addr));
+                char8* addr = h->h_addr_list[0];
+                if (addr != static_cast<char8 *>(NULL)) {
+                    sin_addr.s_addr = *(reinterpret_cast<uint32 *>(addr));
 
                     // Convert the ip number in a dot notation string
                     ipAddress = strdup(inet_ntoa(sin_addr));
@@ -125,11 +129,11 @@ private:
                     internalFastSem.FastUnLock();
                 }
                 else {
-                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "LocalHostInfo: Failed local address initialization");
                 }
             }
             else {
-                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "LocalHostInfo: Failed local address initialization");
             }
         }
         return;
@@ -154,11 +158,11 @@ StreamString InternetHost::GetHostName() const {
         hostName = h->h_name;
     }
     else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::OSError,"InternetHost: Failed gethostbyaddr()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "InternetHost: Failed gethostbyaddr()");
     }
     hostnameFastSem.FastUnLock();
 
-    return (hostName.Size() == 0u) ? (static_cast<const char8*>(NULL)):(hostName);
+    return (hostName.Size() == 0u) ? (static_cast<const char8*>(NULL)) : (hostName);
 }
 
 const char8* InternetHost::GetLocalHostName() {
@@ -177,21 +181,21 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
     if (name != NULL) {
         sscanf(name, "%u.%u.%u.%u", &comp[3], &comp[2], &comp[1], &comp[0]);
         uint32 addressN = (comp[3] + (256u * (comp[2] + (256u * (comp[1] + (256u * comp[0]))))));
-        ret= addressN;
+        ret = addressN;
     }
     return ret;
 }
 
-in_addr_t InternetHost::ConvertInterfaceNameToInterfaceAddress(StreamString interfaceName) {
+InternetAddress InternetHost::ConvertInterfaceNameToInterfaceAddressNumber(const char8* const interfaceName) {
     int32 fd;
     struct ifreq ifr;
-    in_addr_t retVal = 0u;
-    //lint -e{641} Converting enum '__socket_type' to 'int. Definition and function outside the MARTe library.
+    InternetAddress retVal = 0u;
+    //lint -e{641} Converting enum '__socket_type' to 'int. Definition and function outside the MARTe library. SOCK_DGRAM is a int type.
     fd = socket(AF_INET, SOCK_DGRAM, 0);
     //Type of address to retrieve - IPv4 IP address
     ifr.ifr_addr.sa_family = static_cast<uint16>(AF_INET);
     //Copy the interface name in the ifreq structure
-    strncpy(static_cast<char8 *>(ifr.ifr_name), interfaceName.Buffer(), static_cast<size_t>(IFNAMSIZ - 1));
+    strncpy(static_cast<char8 *>(ifr.ifr_name), interfaceName, static_cast<size_t>(IFNAMSIZ - 1));
     if (ioctl(fd, static_cast<uint64>(SIOCGIFADDR), &ifr) != -1) {
         in_addr addr = (reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_addr))->sin_addr;
         retVal = addr.s_addr;
@@ -201,10 +205,17 @@ in_addr_t InternetHost::ConvertInterfaceNameToInterfaceAddress(StreamString inte
     return retVal;
 }
 
-InternetHost::InternetHost(const uint16 port,
-                           const char8 *const addr) {
-    mreq.imr_interface.s_addr = htonl(static_cast<in_addr_t>(0x00000000)); //INADDR_ANY
+StreamString InternetHost::ConvertInterfaceNameToInterfaceAddress(const char8* const interfaceName) {
+    in_addr aux;
+    aux.s_addr = ConvertInterfaceNameToInterfaceAddressNumber(interfaceName);
+    StreamString dotName(inet_ntoa(aux));
+    return dotName;
+}
 
+InternetHost::InternetHost(const uint16 port,
+                           const char8 * const addr) {
+    mreq.imr_interface.s_addr = htonl(static_cast<in_addr_t>(0x00000000)); //INADDR_ANY
+    mreq.imr_multiaddr.s_addr = static_cast<uint32>(0);
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
@@ -231,7 +242,7 @@ void InternetHost::SetPort(const uint16 port) {
     address.sin_port = htons(port);
 }
 
-bool InternetHost::SetAddress(const char8 *const addr) {
+bool InternetHost::SetAddress(const char8 * const addr) {
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     address.sin_addr.s_addr = INADDR_ANY;
     bool ret = (addr != NULL);
@@ -261,10 +272,10 @@ bool InternetHost::SetAddressByHostName(const char8 *hostName) {
 
     if (h != NULL) {
         address.sin_addr.s_addr = *(reinterpret_cast<uint32 *>(h->h_addr_list[0]));
-        ret= true;
+        ret = true;
     }
     else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::OSError,"InternetHost: Failed gethostbyname()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "InternetHost: Failed gethostbyname()");
     }
     return ret;
 }
@@ -278,16 +289,16 @@ bool InternetHost::SetLocalAddress() {
     return SetAddressByHostName(static_cast<const char8*>(NULL));
 }
 
-void InternetHost::SetMulticastGroup(const char8 *const addr) {
+void InternetHost::SetMulticastGroup(const char8 * const addr) {
     mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));
 }
 
-void InternetHost::SetMulticastInterfaceAddress(const char8 *const addr) {
+void InternetHost::SetMulticastInterfaceAddress(const char8 * const addr) {
     mreq.imr_interface.s_addr = inet_addr(const_cast<char8*>(addr));
 }
 
-void InternetHost::SetMulticastInterfaceAddress(const in_addr_t addr) {
-    mreq.imr_interface.s_addr = addr;
+void InternetHost::SetMulticastInterfaceAddress(const InternetAddress interfaceAddr) {
+    mreq.imr_interface.s_addr = interfaceAddr;
 }
 
 StreamString InternetHost::GetMulticastGroup() const {

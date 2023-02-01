@@ -107,9 +107,16 @@ namespace MARTe {
         /**
          * @brief Translate interfaceName to internet address (i.e "enp0s25" --> 2676074688).
          * @param[in] interfaceName interface name to be converted to internet address.
-         * @return the internet address corresponding to interfaceName. If interfaceName does not exist it returns 0
+         * @return the internet address number corresponding to interfaceName. If interfaceName does not exist it returns 0
          */
-        static in_addr_t ConvertInterfaceNameToInterfaceAddress(StreamString interfaceName);
+        static InternetAddress ConvertInterfaceNameToInterfaceAddressNumber(const char8* const interfaceName);
+
+        /**
+         * @brief Translate interfaceName to internet address (i.e "enp0s25" --> 192.168.129.44).
+         * @param[in] interfaceName interface name to be converted to internet address.
+         * @return the internet address number corresponding to interfaceName. If interfaceName does not exist it returns 0
+         */
+        static StreamString ConvertInterfaceNameToInterfaceAddress(const char8* const interfaceName);
 
         /**
          * @brief Sets the port number.
@@ -163,9 +170,9 @@ namespace MARTe {
 
         /**
          * @brief The address of the interface to which to bind the multicast.
-         * @param[in] addr the network address of the interface where to bind the multicast.
+         * @param[in] interfaceAddr the interface address where to bind the multicast. addr = ConvertInterfaceNameToInterfaceAddress(interfaceName)
          */
-        void SetMulticastInterfaceAddress(in_addr_t addr);
+        void SetMulticastInterfaceAddress(const InternetAddress interfaceAddr);
 
         /**
          * @brief Returns the multicast address of the bounding interface.

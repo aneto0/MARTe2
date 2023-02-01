@@ -154,16 +154,32 @@ bool InternetHostTest::TestGetLocalAddressAsNumber() {
     return (InternetHost::GetLocalAddressAsNumber() != 0u);
 }
 
-bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddress() {
+bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddressNumber() {
     InternetHost ih;
-    bool ok = (ih.ConvertInterfaceNameToInterfaceAddress("invalidInterfaceName") == 0);
+    bool ok = (ih.ConvertInterfaceNameToInterfaceAddressNumber("invalidInterfaceName") == 0);
     if (ok) {
         struct ifaddrs *addrs, *tmp;
         getifaddrs(&addrs);
         tmp = addrs;
         if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET) {
-            in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddress(tmp->ifa_name);
+            in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddressNumber(tmp->ifa_name);
             ok = (aux != 0);
+        }
+        freeifaddrs(addrs);
+    }
+    return ok;
+}
+
+bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddress() {
+    InternetHost ih;
+    bool ok = (ih.ConvertInterfaceNameToInterfaceAddress("invalidInterfaceName") == "0.0.0.0");
+    if (ok) {
+        struct ifaddrs *addrs, *tmp;
+        getifaddrs(&addrs);
+        tmp = addrs;
+        if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET) {
+            StreamString aux(ih.ConvertInterfaceNameToInterfaceAddress(tmp->ifa_name));
+            ok = (aux != "0.0.0.0");
         }
         freeifaddrs(addrs);
     }
@@ -267,7 +283,7 @@ bool InternetHostTest::TestSetMulticastInterfaceAddressWithNumber() {
     for (tmp = addrs; (tmp != NULL) && !found; tmp = tmp->ifa_next) { //addrs contains several time the same interfaces with different families. Loop until AF_INET is found (ipv4). In case does not exist the test succeeds
         if (tmp->ifa_addr->sa_family == AF_INET) {
             found = true;
-            in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddress(tmp->ifa_name);
+            in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddressNumber(tmp->ifa_name);
             ok = (aux != 0);
             if (ok) {
                 ih.SetMulticastInterfaceAddress(aux);
@@ -349,4 +365,40 @@ bool InternetHostTest::TestMulticastSize() {
     InternetHost addr;
     return addr.MulticastSize() == sizeof(InternetMulticastCore);
 }
+
+//bool InternetHostTest::Prova() {
+//    InternetHost ih1;
+//    in_addr_t aux = ih1.ConvertInterfaceNameToInterfaceAddress("eno2");
+//    ih1.SetMulticastInterfaceAddress(aux);
+//    printf("#########################\n");
+//    printf("ih1.GetAddress() = %s\n", ih1.GetAddress().Buffer());
+//    printf("ih1.GetAddressAsNumber() = %u\n", ih1.GetAddressAsNumber());
+//    printf("ih1.GetHostName() = %s\n", ih1.GetHostName().Buffer());
+//    printf("ih1.GetLocalAddress() = %s\n", ih1.GetLocalAddress());
+//    printf("ih1.GetLocalHostName() = %s\n", ih1.GetLocalHostName());
+//    printf("ih1.GetMulticastGroup() = %s\n", ih1.GetMulticastGroup().Buffer());
+//    printf("ih1.GetMulticastInterfaceAddress() = %s\n", ih1.GetMulticastInterfaceAddress().Buffer());
+//    printf("ih1.GetPort() = %u\n", ih1.GetPort());
+//
+//    //ih1.SetMulticastInterfaceAddress("192.168.130.46");
+////    printf("ih1.GetMulticastGroup() = %s\n", ih1.GetMulticastGroup().Buffer());
+////    printf("ih1.GetMulticastInterfaceAddress() = %s\n", ih1.GetMulticastInterfaceAddress().Buffer());
+//
+//    printf("#########################\n");
+//    InternetHost ih2(44444, "192.168.130.46");
+//    printf("ih2.GetAddress() = %s\n", ih2.GetAddress().Buffer());
+//    printf("ih2.GetAddressAsNumber() = %u\n", ih2.GetAddressAsNumber());
+//    printf("ih2.GetHostName() = %s\n", ih2.GetHostName().Buffer());
+//    printf("ih2.GetLocalAddress() = %s\n", ih2.GetLocalAddress());
+//    printf("ih2.GetLocalHostName() = %s\n", ih2.GetLocalHostName());
+//    printf("ih2.GetMulticastGroup() = %s\n", ih2.GetMulticastGroup().Buffer());
+//    printf("ih2.GetMulticastInterfaceAddress() = %s\n", ih2.GetMulticastInterfaceAddress().Buffer());
+//    printf("ih2.GetPort() = %u\n", ih2.GetPort());
+//
+//    ih2.SetMulticastInterfaceAddress("192.168.130.46");
+//    printf("ih2.GetMulticastGroup() = %s\n", ih2.GetMulticastGroup().Buffer());
+//    printf("ih2.GetMulticastInterfaceAddress() = %s\n", ih2.GetMulticastInterfaceAddress().Buffer());
+//    return false;
+//
+//}
 
