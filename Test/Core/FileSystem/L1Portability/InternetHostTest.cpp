@@ -31,7 +31,17 @@
 #include "StringHelper.h"
 #include "InternetHostTest.h"
 #include "stdio.h"
+
+//WARNING: These defines are used to allow the "ENVIRONMENT ==" comparison without stringify-ing
+#define Linux 1
+#define BareUS 2
+#define FreeRTOS 3
+
+#if ENVIRONMENT==Linux //&& ARCHITECTURE==x86_gcc
 #include "ifaddrs.h"
+#else
+#pragma warning "Compiling with limited test support for interface name and index resolution"
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
