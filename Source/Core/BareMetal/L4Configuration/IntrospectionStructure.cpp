@@ -65,6 +65,8 @@ void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Upda
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+
 //lint -e{843} variable 'MARTe::IntrospectionStructure::allowDestructor' could be declared as const. Cannot be constant since shall be modifiable.
 bool IntrospectionStructure::allowDestructor = false;
 
@@ -348,9 +350,7 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in,
                 numberOfElements = 1u;
                 varArrayName = token;
                 (void) varArrayName.Seek(0LLU);
-                if (ok) {
-                    ok = in.MoveToAncestor(1u);
-                }
+                ok = in.MoveToAncestor(1u);
                 n++;
                 while (isArray && ok && (n < nChilds)) {
                     const uint32 nn = n;
@@ -364,9 +364,7 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in,
                     }
                     if (isArray) {
                         token = "";
-                        if (ok) {
-                            ok = nextVarArrayName.GetToken(token, "]", ignore);
-                        }
+                        ok = nextVarArrayName.GetToken(token, "]", ignore);
                         if (ok) {
                             ok = TypeConvert(numberOfElements, token.Buffer());
                             numberOfElements++;
@@ -422,9 +420,7 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in,
                 AnyType variableType = in.GetType(variableName);
                 const char8* const variableTypeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(variableType.GetTypeDescriptor());
                 uint8 nOfDimensions = variableType.GetNumberOfDimensions();
-                if (ok) {
-                    ok = typesCDB.CreateRelative(variableName);
-                }
+                ok = typesCDB.CreateRelative(variableName);
                 if (nOfDimensions == 0u) {
                     ok = typesCDB.Write("NumberOfElements", 1);
                 }
