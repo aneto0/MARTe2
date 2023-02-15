@@ -81,6 +81,11 @@ public:
 IntrospectionStructure    ();
 
     /**
+     * Allow to control the behaviour of the defualt destructor. default value false, but if desired the static variale can be set to 1.
+     */
+    static bool allowDestructor;
+
+    /**
      * @brief Destructor. NOOP.
      */
     virtual ~IntrospectionStructure();

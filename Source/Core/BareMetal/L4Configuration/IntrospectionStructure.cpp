@@ -40,7 +40,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::ClassRegistryItemConfigurationStructureLoader(StreamString typeNameIn, const uint32 totalSizeIn) :
+IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::ClassRegistryItemConfigurationStructureLoader(StreamString typeNameIn,
+                                                                                                                     const uint32 totalSizeIn) :
         ClassRegistryItem(cp) {
     typeName = typeNameIn.Buffer();
     totalSize = totalSizeIn;
@@ -51,7 +52,8 @@ IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::~ClassReg
 
 }
 
-void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Update(StreamString typeNameIn, const uint32 totalSizeIn) {
+void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Update(StreamString typeNameIn,
+                                                                                   const uint32 totalSizeIn) {
     typeName = typeNameIn.Buffer();
     totalSize = totalSizeIn;
     cp.Reset(typeName.Buffer(), typeName.Buffer(), "", totalSize);
@@ -63,6 +65,9 @@ void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Upda
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+//lint -e{843} variable 'MARTe::IntrospectionStructure::allowDestructor' could be declared as const. Cannot be constant since shall be modifiable.
+bool IntrospectionStructure::allowDestructor = false;
+
 IntrospectionStructure::IntrospectionStructure() :
         Object() {
     entries = NULL_PTR(IntrospectionEntry **);
@@ -75,23 +80,25 @@ IntrospectionStructure::IntrospectionStructure() :
 /*lint -e{1551} should not throw exception as the memory is checked. By the design memory if freed in the destructor.*/
 IntrospectionStructure::~IntrospectionStructure() {
     //The entries cannot be destroyed, as otherwise the IntrospectionEntry** would be removed for the database
-    /*if (entries != NULL_PTR(IntrospectionEntry **)) {
-        uint32 n;
-        for (n = 0u; n < (numberOfMembers + 1u); n++) {
-            delete entries[n];
+    if (allowDestructor) {
+        if (entries != NULL_PTR(IntrospectionEntry **)) {
+            uint32 n;
+            for (n = 0u; n < (numberOfMembers + 1u); n++) {
+                delete entries[n];
+            }
+            delete[] entries;
         }
-        delete[] entries;
-    }
-    if (memberInfo != NULL_PTR(MemberInfo **)) {
-        uint32 n;
-        for (n = 0u; n < (numberOfMembers); n++) {
-            delete memberInfo[n];
+        if (memberInfo != NULL_PTR(MemberInfo **)) {
+            uint32 n;
+            for (n = 0u; n < (numberOfMembers); n++) {
+                delete memberInfo[n];
+            }
+            delete[] memberInfo;
         }
-        delete[] memberInfo;
+        if (introMembers != NULL_PTR(Introspection *)) {
+            delete introMembers;
+        }
     }
-    if (introMembers != NULL_PTR(Introspection *)) {
-        delete[] introMembers;
-    }*/
 }
 
 bool IntrospectionStructure::Initialise(StructuredDataI &data) {
@@ -203,8 +210,8 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                     if (totalElements == 0u) {
                         totalElements = 1u;
                     }
-                    IntrospectionEntry *entry = new IntrospectionEntry(newMemberInfo[z]->memberName.Buffer(), newMemberInfo[z]->memberType.Buffer(), newMemberInfo[z]->memberModifier.Buffer(), "",
-                                                                       memberSize, totalSize);
+                    IntrospectionEntry *entry = new IntrospectionEntry(newMemberInfo[z]->memberName.Buffer(), newMemberInfo[z]->memberType.Buffer(),
+                                                                       newMemberInfo[z]->memberModifier.Buffer(), "", memberSize, totalSize);
                     entries[z] = entry;
                     /*lint -e{679} entries is a zero terminated array*/
                     entries[z + 1u] = NULL_PTR(IntrospectionEntry *);
@@ -250,7 +257,8 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                 REPORT_ERROR(ErrorManagement::ParametersError, "Updating type %s ", typeName.Buffer());
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Tried to update a type %s which is not a ClassRegistryItemConfigurationStructureLoader", typeName.Buffer());
+                REPORT_ERROR(ErrorManagement::FatalError, "Tried to update a type %s which is not a ClassRegistryItemConfigurationStructureLoader",
+                             typeName.Buffer());
             }
         }
         /*lint -e{429} criLoader pointer deleted by the IntrospectionStructure*/
@@ -259,7 +267,8 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
     return ok;
 }
 
-bool IntrospectionStructure::RegisterStructuredDataI(StructuredDataI &in, const char8 * const typeIdentifier) {
+bool IntrospectionStructure::RegisterStructuredDataI(StructuredDataI &in,
+                                                     const char8 * const typeIdentifier) {
     bool ok = true;
     static ReferenceT<ReferenceContainer> registeredStructuredTypes;
     if (!registeredStructuredTypes.IsValid()) {
@@ -297,7 +306,9 @@ bool IntrospectionStructure::RegisterStructuredDataI(StructuredDataI &in, const 
     return ok;
 }
 
-bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in, ConfigurationDatabase &typesCDB, const char8 * const typeIdentifier) {
+bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in,
+                                                         ConfigurationDatabase &typesCDB,
+                                                         const char8 * const typeIdentifier) {
     StreamString typeName;
     if (typeIdentifier != NULL_PTR(const char8 * const)) {
         (void) in.Read(typeIdentifier, typeName);
