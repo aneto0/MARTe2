@@ -84,6 +84,16 @@ public:
      * @brief Tests if the function returns correctly the class size.
      */
     bool TestGetClassSize();
+
+    /**
+     * @brief Tests the SetIntrospectionEntryMemory.
+     */
+    bool TestSetIntrospectionEntryMemory();
+
+    /**
+     * @brief Tests the GetIntrospectionEntryMemory.
+     */
+    bool TestGetIntrospectionEntryMemory();
 };
 
 /*---------------------------------------------------------------------------*/

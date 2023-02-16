@@ -312,6 +312,24 @@ bool IntrospectionTest::TestGetClassSize() {
     return classIntro->GetClassSize() == sizeof(TestIntrospectionStructure);
 }
 
+bool IntrospectionTest::TestSetIntrospectionEntryMemory() {
+    ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *item = instance->Find("TestIntrospectionStructure");
+    if (item == NULL) {
+        return false;
+    }
+
+    Introspection *classIntro = const_cast<Introspection *>(item->GetIntrospection());
+    uint32 t = 0u;
+    classIntro->SetIntrospectionEntryMemory(&t);
+
+    return classIntro->GetIntrospectionEntryMemory() == &t;
+}
+
+bool IntrospectionTest::TestGetIntrospectionEntryMemory() {
+    return TestSetIntrospectionEntryMemory();
+}
+
 bool IntrospectionTest::TestMacroToAddObjectClassRegistryDatabase() {
 
     ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();

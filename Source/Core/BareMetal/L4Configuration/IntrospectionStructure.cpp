@@ -67,7 +67,7 @@ void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Upda
 namespace MARTe {
 
 
-//lint -e{843} variable 'MARTe::IntrospectionStructure::allowDestructor' could be declared as const. Cannot be constant since shall be modifiable.
+//lint -esym(843, *IntrospectionStructure::allowDestructor*) variable 'MARTe::IntrospectionStructure::allowDestructor' could be declared as const. Cannot be constant since it shall be modifiable.
 bool IntrospectionStructure::allowDestructor = false;
 
 IntrospectionStructure::IntrospectionStructure() :
@@ -198,6 +198,7 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                             REPORT_ERROR(ErrorManagement::ParametersError, "Type %s is not known", typeNameStr.Buffer());
                         }
                     }
+                    //These really need to exist as they own the memory for the strings of the IntrospectionEntry
                     newMemberInfo[z] = new MemberInfo();
                     newMemberInfo[z]->memberName = memberName.Buffer();
                     newMemberInfo[z]->memberType = typeNameStr.Buffer();
@@ -212,8 +213,7 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                     if (totalElements == 0u) {
                         totalElements = 1u;
                     }
-                    IntrospectionEntry *entry = new IntrospectionEntry(newMemberInfo[z]->memberName.Buffer(), newMemberInfo[z]->memberType.Buffer(),
-                                                                       newMemberInfo[z]->memberModifier.Buffer(), "", memberSize, totalSize);
+                    IntrospectionEntry *entry = new IntrospectionEntry(newMemberInfo[z]->memberName.Buffer(), newMemberInfo[z]->memberType.Buffer(), newMemberInfo[z]->memberModifier.Buffer(), "", memberSize, totalSize);
                     entries[z] = entry;
                     /*lint -e{679} entries is a zero terminated array*/
                     entries[z + 1u] = NULL_PTR(IntrospectionEntry *);
@@ -239,6 +239,9 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
         StreamString typeName;
         (void) typeName.Printf("%s", GetName());
         introMembers = new Introspection(const_cast<const IntrospectionEntry **>(entries), totalSize);
+        if (memberInfo != NULL_PTR(MemberInfo **)) {
+            introMembers->SetIntrospectionEntryMemory(&memberInfo[0u]);
+        }
         const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(GetName());
         bool exists = (item != NULL_PTR(const ClassRegistryItem *));
         ClassRegistryItemConfigurationStructureLoader * criLoader = NULL_PTR(ClassRegistryItemConfigurationStructureLoader *);
@@ -254,6 +257,26 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
             ok = (criLoader != NULL_PTR(ClassRegistryItemConfigurationStructureLoader *));
             /*lint -e{613} crioLoader is != NULL*/
             if (ok) {
+                //Delete the old Introspection * and old IntrospectionStructure * members to avoid memory leaks
+                Introspection *oldIntrospection = const_cast<Introspection *>(criLoader->GetIntrospection());
+                if (oldIntrospection != NULL_PTR(const Introspection *)) {
+                    const IntrospectionEntry **oldFields = oldIntrospection->GetFields();
+                    if (oldFields != NULL_PTR(const IntrospectionEntry **)) {
+                        uint32 oldNumberOfEntries = oldIntrospection->GetNumberOfMembers();
+                        for (uint32 n = 0u; n < (oldNumberOfEntries + 1u); n++) {
+                            delete oldFields[n];
+                        }
+                        delete[] oldFields;
+                        MemberInfo **oldMemberInfo = static_cast<MemberInfo **>(oldIntrospection->GetIntrospectionEntryMemory());
+                        if (oldMemberInfo != NULL_PTR(MemberInfo **)) {
+                            for (uint32 n = 0u; n < (oldNumberOfEntries); n++) {
+                                delete oldMemberInfo[n];
+                            }
+                            delete[] oldMemberInfo;
+                        }
+                    }
+                    delete oldIntrospection;
+                }
                 criLoader->Update(typeName, totalSize);
                 criLoader->SetIntrospection(introMembers);
                 REPORT_ERROR(ErrorManagement::ParametersError, "Updating type %s ", typeName.Buffer());
