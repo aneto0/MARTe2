@@ -41,7 +41,10 @@ CORTEX_CORE_NUMBER?=0
 
 MARTe2_READPARAMETERS_LOADER?="RealTimeLoader"
 MARTe2_READPARAMETERS_FIRSTSTATE?="Idle"
-MARTe2_READPARAMETERS_PARSER?="cdb"
+
+#INFO: Enable this if you want to manually override the parser type (check below)
+#wARNING: This setting is automatically excluded by MARTe2_EXTERNAL_PARSER_OVERRIDE behavior
+#MARTe2_READPARAMETERS_PARSER?=\"cdb\"
 
 INCLUDES+=-I$(XILINX_BSP_BASE_DIR)/psu_cortexa53_$(CORTEX_CORE_NUMBER)/include
 INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src

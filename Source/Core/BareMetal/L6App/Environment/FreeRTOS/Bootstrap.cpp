@@ -47,6 +47,9 @@
 /*---------------------------------------------------------------------------*/
 extern void MARTe2HardwareInitialise();
 extern void HardwarePrintf(const char8 * const msg);
+#ifdef MARTe2_EXTERNAL_PARSER_OVERRIDE
+    extern char8* GetParserType();
+#endif
 
 extern "C" {
     TaskHandle_t marte2MainTask;
@@ -115,10 +118,15 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         #endif
     }
     if (ret) {
-        #ifdef MARTe2_READPARAMETERS_PARSER
-            ret.parametersError = !loaderParameters.Write("Parser", MARTe2_READPARAMETERS_PARSER);
+        #ifdef MARTe2_EXTERNAL_PARSER_OVERRIDE
+            char8* tempParser = GetParserType();
+            ret.parametersError = !loaderParameters.Write("Parser", tempParser);
         #else
-            ret.parametersError = !loaderParameters.Write("Parser", "cdb");
+            #ifdef MARTe2_READPARAMETERS_PARSER
+                ret.parametersError = !loaderParameters.Write("Parser", MARTe2_READPARAMETERS_PARSER);
+            #else
+                ret.parametersError = !loaderParameters.Write("Parser", "cdb");
+            #endif
         #endif
     }
     return ret;

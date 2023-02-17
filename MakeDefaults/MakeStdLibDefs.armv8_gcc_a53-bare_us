@@ -39,7 +39,10 @@ ENV_ARCH_CUSTOMIZATION=XILINX_ULTRASCALE
 
 MARTe2_READPARAMETERS_LOADER?=\"RealTimeLoader\"
 MARTe2_READPARAMETERS_FIRSTSTATE?=\"Idle\"
-MARTe2_READPARAMETERS_PARSER?=\"cdb\"
+
+#INFO: Enable this if you want to manually override the parser type
+#wARNING: This setting is automatically excluded by MARTe2_EXTERNAL_PARSER_OVERRIDE behavior
+#MARTe2_READPARAMETERS_PARSER?=\"cdb\"
 
 INCLUDES+=-I$(XILINX_BSP_BASE_DIR)/psu_cortexa53_0/include
 INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src
@@ -64,3 +67,7 @@ endif
 ifneq ($(MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION),)
     CFLAGS += -DMARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION=$MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION
 endif
+
+#INFO: Enable this if you want that the external parser type is returned by an external function
+#wARNING: This setting is automatically excludes the MARTe2_READPARAMETERS_PARSER behavior
+CFLAGS += -DMARTe2_EXTERNAL_PARSER_OVERRIDE
