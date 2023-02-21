@@ -78,3 +78,7 @@ endif
 ifdef MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION
     CFLAGS += -DMARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION=\"$(MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION)\"
 endif
+
+#INFO: Enable this if you want that the external parser type is returned by an external function
+#wARNING: This setting is automatically excludes the MARTe2_READPARAMETERS_PARSER behavior
+CFLAGS += -DMARTe2_EXTERNAL_PARSER_OVERRIDE
