@@ -37,7 +37,7 @@
 extern void MARTe2HardwareInitialise();
 extern void HardwarePrintf(const char8 * const msg);
 #ifdef MARTe2_EXTERNAL_PARSER_OVERRIDE
-    extern char8* GetParserType();
+    extern const char8* GetParserType();
 #endif
 
 namespace MARTe {
