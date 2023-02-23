@@ -61,6 +61,16 @@ OPTIM = -O2
 #-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
 CFLAGS = $(CPUSPECIFICFLAGS) -Wno-parentheses -fpermissive -nostdlib $(DEBUG) -D$(ENV_ARCH_CUSTOMIZATION) -DLWIP_ENABLED -DMARTe2_READPARAMETERS_LOADER=$(MARTe2_READPARAMETERS_LOADER) -DMARTe2_READPARAMETERS_FIRSTSTATE=$(MARTe2_READPARAMETERS_FIRSTSTATE) -DMARTe2_READPARAMETERS_PARSER=$(MARTe2_READPARAMETERS_PARSER)
 
+#INFO: Enable this option if you want to manually override MARTe2 Build Tokens
+#WARNING: When this is not enabled, MARTe2 uses internal defaults ('+')
+MARTe2_BUILDTOKENS_OVERRIDE?=\"+\"
+CFLAGS += -DMARTe2_BUILDTOKENS_OVERRIDE=$(MARTe2_BUILDTOKENS_OVERRIDE)
+
+#INFO: Enable this option if you want to manually override MARTe2 Domain Tokens
+#WARNING: When this is not enabled, MARTe2 uses internal defaults ('$')
+MARTe2_DOMAINTOKENS_OVERRIDE?=\"\$\"
+CFLAGS += -DMARTe2_DOMAINTOKENS_OVERRIDE=$(MARTe2_DOMAINTOKENS_OVERRIDE)
+
 ifneq ($MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION),)
     CFLAGS += -DMARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION=$MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION
 endif

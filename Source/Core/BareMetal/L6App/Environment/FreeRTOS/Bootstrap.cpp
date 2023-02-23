@@ -47,8 +47,17 @@
 /*---------------------------------------------------------------------------*/
 extern void MARTe2HardwareInitialise();
 extern void HardwarePrintf(const char8 * const msg);
+
 #ifdef MARTe2_EXTERNAL_PARSER_OVERRIDE
-    extern char8* GetParserType();
+    extern const char8* GetParserType();
+#endif
+
+#ifdef MARTe2_BUILDTOKENS_OVERRIDE
+    extern const char8* GetBuildTokens();
+#endif
+
+#ifdef MARTe2_DOMAINTOKENS_OVERRIDE
+    extern const char8* GetDomainTokens();
 #endif
 
 extern "C" {
@@ -129,6 +138,23 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
             #endif
         #endif
     }
+
+    #ifdef MARTe2_BUILDTOKENS_OVERRIDE
+    if (ret) {
+        const char8* buildTokens = GetBuildTokens();
+        char8 buildTokensArray[5] = { '+', '\0', '\0', '\0', '\0' };
+        ret.parametersError = !loaderParameters.Write("BuildTokens", buildTokensArray);
+    }
+    #endif
+
+    #ifdef MARTe2_DOMAINTOKENS_OVERRIDE
+    if (ret) {
+        const char8* domainTokens = GetDomainTokens();
+        char8 domainTokensArray[5] = { '$', '\0', '\0', '\0', '\0' };
+        ret.parametersError = !loaderParameters.Write("DomainTokens", domainTokensArray);
+    }
+    #endif
+
     return ret;
 }
 
