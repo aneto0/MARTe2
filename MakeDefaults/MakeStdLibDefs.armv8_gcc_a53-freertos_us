@@ -41,7 +41,11 @@ CORTEX_CORE_NUMBER?=0
 
 MARTe2_READPARAMETERS_LOADER?="RealTimeLoader"
 MARTe2_READPARAMETERS_FIRSTSTATE?="Idle"
-MARTe2_READPARAMETERS_PARSER?="cdb"
+
+#INFO: Enable this if you want to manually override the parser type
+#wARNING: When used alone, it is used to choose the parser to hardcode. When used in conjuction with MARTe2_EXTERNAL_PARSER_OVERRIDE
+#changes the default parser returned from the GetParserType() as a fallback value.
+MARTe2_READPARAMETERS_PARSER?=\"cdb\"
 
 INCLUDES+=-I$(XILINX_BSP_BASE_DIR)/psu_cortexa53_$(CORTEX_CORE_NUMBER)/include
 INCLUDES+=-I$(XILINX_HAL_BASE_DIR)/src
@@ -68,6 +72,16 @@ CFLAGS += -DMARTe2_READPARAMETERS_LOADER=\"$(MARTe2_READPARAMETERS_LOADER)\"
 CFLAGS += -DMARTe2_READPARAMETERS_FIRSTSTATE=\"$(MARTe2_READPARAMETERS_FIRSTSTATE)\"
 CFLAGS += -DMARTe2_READPARAMETERS_PARSER=\"$(MARTe2_READPARAMETERS_PARSER)\"
 
+#INFO: Enable this option if you want to manually override MARTe2 Build Tokens
+#WARNING: When this is not enabled, MARTe2 uses internal defaults ('+')
+MARTe2_BUILDTOKENS_OVERRIDE?=\"+\"
+CFLAGS += -DMARTe2_BUILDTOKENS_OVERRIDE=$(MARTe2_BUILDTOKENS_OVERRIDE)
+
+#INFO: Enable this option if you want to manually override MARTe2 Domain Tokens
+#WARNING: When this is not enabled, MARTe2 uses internal defaults ('$')
+MARTe2_DOMAINTOKENS_OVERRIDE?=\"\$\"
+CFLAGS += -DMARTe2_DOMAINTOKENS_OVERRIDE=$(MARTe2_DOMAINTOKENS_OVERRIDE)
+
 ifdef MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION
     CFLAGS += -DMARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION=\"$(MARTe2_READPARAMETERS_FIRSTMESSAGEDESTINATION)\"
 endif
@@ -75,3 +89,7 @@ endif
 ifdef MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION
     CFLAGS += -DMARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION=\"$(MARTe2_READPARAMETERS_FIRSTMESSAGEFUNCTION)\"
 endif
+
+#INFO: Enable this if you want that the external parser type is returned by an external function
+#wARNING: Refer to the MARTe2_READPARAMETERS_PARSER note for the correct usage of the flag
+CFLAGS += -DMARTe2_EXTERNAL_PARSER_OVERRIDE

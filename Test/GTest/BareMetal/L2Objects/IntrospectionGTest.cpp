@@ -78,4 +78,13 @@ TEST(BareMetal_L2Objects_IntrospectionGTest,TestMacroToAddObjectClassRegistryDat
     ASSERT_TRUE(IntrospectionTest.TestMacroToAddObjectClassRegistryDatabase());
 }
 
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestSetIntrospectionEntryMemory) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestSetIntrospectionEntryMemory());
+}
+
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestGetIntrospectionEntryMemory) {
+    IntrospectionTest IntrospectionTest;
+    ASSERT_TRUE(IntrospectionTest.TestGetIntrospectionEntryMemory());
+}
 

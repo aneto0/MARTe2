@@ -46,12 +46,14 @@ namespace MARTe {
 Introspection::Introspection() :
         fields() {
     classSize = 0u;
+    introMemLocation = NULL_PTR(void *);
 }
 
 Introspection::Introspection(const IntrospectionEntry ** const introspectionListIn,
                              const uint32 classSizeIn) :
         fields(introspectionListIn) {
     classSize = classSizeIn;
+    introMemLocation = NULL_PTR(void *);
 }
 
 const IntrospectionEntry Introspection::operator[](const uint32 index) const {
@@ -66,4 +68,15 @@ uint32 Introspection::GetClassSize() const {
     return classSize;
 }
 
+const IntrospectionEntry **Introspection::GetFields() {
+    return fields.GetList();
+}
+
+void *Introspection::GetIntrospectionEntryMemory() {
+    return introMemLocation;
+}
+
+void Introspection::SetIntrospectionEntryMemory(void * const mem) {
+    introMemLocation = mem;
+}
 }

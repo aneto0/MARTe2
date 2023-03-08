@@ -237,6 +237,17 @@ bool InternetHost::SetAddress(const char8 * const addr) {
     return ret;
 }
 
+void InternetHost::SetMulticastInterfaceAddress(const char8 * const addr) {
+    //TODO: Currently there is only one interface which can be entitled for multicast.
+}
+
+StreamString InternetHost::GetMulticastInterfaceAddress() const {
+    //TODO: Currently there is only one interface which can be entitled for multicast.
+    //The hardcoded value is the only one returned
+    StreamString mcastInterfaceAddress = "";
+    return mcastInterfaceAddress;
+}
+
 bool InternetHost::SetAddressByHostName(const char8 * hostName) {
     bool ret = false;
     //  hostName can be NULL meaning localhost
@@ -265,6 +276,10 @@ void InternetHost::SetAddressByNumber(const uint32 number) {
 /**  The address of the local host */
 bool InternetHost::SetLocalAddress() {
     return SetAddressByHostName(static_cast<const char8*>(NULL));
+}
+
+InternetAddress InternetHost::ConvertInterfaceNameToInterfaceAddressNumber(const char8* const interfaceName) {
+    return 0u;
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: sockets will change this attribute then the full access to this

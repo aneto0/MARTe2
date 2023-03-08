@@ -79,7 +79,10 @@ typedef uintptr_t osulong;
 
     //TODO Check this
     typedef void* Handle;
+
+    typedef uint32 InternetAddress;
 }
+
 
 
 #endif /* GENERALDEFINITIONSOS_H_ */

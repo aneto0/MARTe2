@@ -88,6 +88,24 @@ public:
      */
     uint32 GetClassSize() const;
 
+    /**
+     * @brief Gets the Introspection fields.
+     * @return the Introspection fields.
+     */
+    const IntrospectionEntry **GetFields();
+
+    /**
+     * @brief The IntrospectionEntry members include pointers to (string) memory allocated elsewhere.
+     * This helper method allows to store the location of such memory, so that it can be recovered later (e.g. to delete it).
+     * @param[in] mem pointer to the memory location where the IntrospectionEntry strings are stored.
+     */
+    void SetIntrospectionEntryMemory(void *mem);
+
+    /**
+     * @brief See SetIntrospectionEntryMemory.
+     * @return pointer to the memory location where the IntrospectionEntry strings are stored.
+     */
+    void *GetIntrospectionEntryMemory();
 private:
 
     /**
@@ -100,6 +118,11 @@ private:
      * The class size.
      */
     uint32 classSize;
+
+    /**
+     * IntrospectionEntry members memory.
+     */
+    void *introMemLocation;
 
 };
 
