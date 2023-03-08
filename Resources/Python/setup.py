@@ -9,7 +9,7 @@ setup(
     author_email='Andre.Neto@f4e.europa.eu',
     license='EUPL',
     packages=['MARTe'],
-    package_dir={'MARTe': 'MARTe'},
+    package_dir={'MARTe': 'Build/MARTe'},
     install_requires=[],
 
     classifiers=[
