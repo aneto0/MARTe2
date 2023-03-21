@@ -269,8 +269,9 @@ bool BasicUDPSocket::Read(char8 * const output,
         }
 
         if(canRead) {
-            retVal = (size <= connectionSocket.packetLen);
-    
+            /* TODO: Correct, this is wrong */
+            /* retVal = (size <= connectionSocket.packetLen); */
+            
             if(retVal) {
                 size = connectionSocket.packetLen;
                 if(connectionSocket.packetBuffer != output) {
@@ -281,6 +282,8 @@ bool BasicUDPSocket::Read(char8 * const output,
                 connectionSocket.isReadReady = false;
                 connectionSocket.isReadSelected = false;
             }
+        } else {
+            size = 0u;
         }
     }
 
