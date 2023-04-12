@@ -35,7 +35,7 @@ class StandardParser(object):
         field.addParseAction(tokenMap(str.rstrip), tokenMap(str.lstrip)) #Remove any spaces from the field
 
         string = QuotedString(quoteChar='"', multiline=True)
-        string_no_quotes = Word(printables, excludeChars='{}=/*')
+        string_no_quotes = Word(printables, excludeChars='{}=/*,')
 
         #The code below was givign issues when comparing hex numbers against unquoted strings.
         #number = pyparsing_common.number()
@@ -43,16 +43,18 @@ class StandardParser(object):
         #scalar_value = (number | hex_number | string)
         scalar_value = (string | string_no_quotes)
 
-        #The code below does not work with space delimited values.
-        #arr_list = Forward()
-        #arr_list <<= delimitedList(scalar_value, ',')
-        #arr_list.setParseAction(lambda t: ParseResults(t[:]))
-        arr_list = OneOrMore(scalar_value)
-
+        arr_list = delimitedList(scalar_value)
         arr_value = Group(LBRACE + arr_list + RBRACE)
-        mat_value = Group(LBRACE + OneOrMore(arr_value) + RBRACE)
-        cub_value = Group(LBRACE + OneOrMore(mat_value) + RBRACE)
-        variable_value = scalar_value | arr_value | mat_value | cub_value
+
+        arr_list_spaces = OneOrMore(scalar_value)
+        arr_value_spaces = Group(LBRACE + arr_list_spaces + RBRACE)
+
+        mat_value = Group(LBRACE + delimitedList(arr_value) + RBRACE)
+        mat_value_spaces = Group(LBRACE + OneOrMore(arr_value_spaces) + RBRACE)
+
+        cub_value = Group(LBRACE + delimitedList(mat_value) + RBRACE)
+        cub_value_spaces = Group(LBRACE + OneOrMore(mat_value_spaces) + RBRACE)
+        variable_value = scalar_value | arr_value | mat_value | cub_value | arr_value_spaces | mat_value_spaces | cub_value_spaces
 
         node = Forward()
 
