@@ -86,7 +86,31 @@ class TestStandardParser(unittest.TestCase):
         self.assertTrue(ret['A'][1] == 'B')
         self.assertTrue(ret['A'][2] == '3')
 
+        cfg = 'A = {"A", "B", 3,"4"}'
+        ret = self.parser.parse_string(cfg)
+        self.assertTrue(ret['A'][0] == 'A')
+        self.assertTrue(ret['A'][1] == 'B')
+        self.assertTrue(ret['A'][2] == '3')
+        self.assertTrue(ret['A'][3] == '4')
+    
+        """
         cfg = 'A = {{2} {3 -3} {"A" "B" 3} {0}}'
+        ret = self.parser.parse_string(cfg)
+        self.assertTrue(ret['A'][0][0] == '2')
+        self.assertTrue(ret['A'][1][0] == '3')
+        self.assertTrue(ret['A'][1][1] == '-3')
+        self.assertTrue(ret['A'][2][0] == 'A')
+        self.assertTrue(ret['A'][2][1] == 'B')
+        self.assertTrue(ret['A'][2][2] == '3')
+        self.assertTrue(ret['A'][3][0] == '0')
+        """
+
+        cfg = 'A = {3, -3}'
+        ret = self.parser.parse_string(cfg)
+        self.assertTrue(ret['A'][0] == '3')
+        self.assertTrue(ret['A'][1] == '-3')
+
+        cfg = 'A = {{2}, {3, -3}, {"A", "B", 3}, {0}}'
         ret = self.parser.parse_string(cfg)
         self.assertTrue(ret['A'][0][0] == '2')
         self.assertTrue(ret['A'][1][0] == '3')
@@ -106,6 +130,18 @@ class TestStandardParser(unittest.TestCase):
         self.assertTrue(ret['A'][1][1][0] == 'A')
         self.assertTrue(ret['A'][1][1][1] == 'B')
         self.assertTrue(ret['A'][1][2][0] == 'C')
+
+        cfg = 'A = {{{1, 2}, /*Ignore me*/ {3, 4}}, {{5}, {"A", "B"}, {"C"}}}//Ignore me!'
+        ret = self.parser.parse_string(cfg)
+        self.assertTrue(ret['A'][0][0][0] == '1')
+        self.assertTrue(ret['A'][0][0][1] == '2')
+        self.assertTrue(ret['A'][0][1][0] == '3')
+        self.assertTrue(ret['A'][0][1][1] == '4')
+        self.assertTrue(ret['A'][1][0][0] == '5')
+        self.assertTrue(ret['A'][1][1][0] == 'A')
+        self.assertTrue(ret['A'][1][1][1] == 'B')
+        self.assertTrue(ret['A'][1][2][0] == 'C')
+
 
     def test_cfg_file(self):
         ret = {}
