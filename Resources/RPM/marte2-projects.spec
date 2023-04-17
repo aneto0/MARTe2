@@ -201,6 +201,12 @@ cd -
 
 %changelog
 
+%pre
+#Allow to run a project specific post install script
+%if %{?rpm_project_pre:1}%{!?rpm_project_pre:0}
+. %{rpm_project_pre}
+%endif
+
 %post
 #Note that this source command would not work as the rpm is installed as part of a different session
 #source /etc/profile.d/%{rpm_id}.sh
@@ -212,4 +218,17 @@ echo 'To update the system environment variables please login again or execute "
 %if %{?rpm_project_post:1}%{!?rpm_project_post:0}
 . %{rpm_project_post}
 %endif
+
+%preun
+%if %{?rpm_project_preun:1}%{!?rpm_project_preun:0}
+. %{rpm_project_preun}
+%endif
+
+%postun
+%if %{?rpm_project_postun:1}%{!?rpm_project_postun:0}
+. %{rpm_project_postun}
+%endif
+
+
+
 

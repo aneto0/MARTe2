@@ -68,10 +68,16 @@ M2_RPM_BUILD_EXTRA_ARGS?='IGNORE=1'
 M2_RPM_RELEASE?=
 #Avoid e.g. that marte2-core and marte2-core-test coexist
 M2_RPM_CONFLICTS?=
+#Run user specific script in spec file after %prep
+M2_RPM_PROJECT_PRE?=
 #Run user specific script in spec file after %install
 M2_RPM_PROJECT_INSTALL?=
 #Run user specific script in spec file after %post
 M2_RPM_PROJECT_POST?=
+#Run user specific script in spec file after %preun
+M2_RPM_PROJECT_PREUN?=
+#Run user specific script in spec file after %postun
+M2_RPM_PROJECT_POSTUN?=
 #Custom distribution tag (e.g. ccs6.2)
 M2_RPM_CUSTOM_DIST?=
 #Other project specific folders (e.g. Resources, Startup, Configurations, ...). This is a space separated string with NO quotes (i.e. the spaces have to be properly escaped). For example M2_RPM_OTHER_FOLDERS=Startup\ Configurations
@@ -113,11 +119,20 @@ endif
 ifdef
 M2_RPM_DEFINES+=--define "rpm_conflicts $(M2_RPM_CONFLICTS)"
 endif
+ifdef M2_RPM_PROJECT_PRE
+M2_RPM_DEFINES+=--define "rpm_project_pre $(M2_RPM_PROJECT_PRE)"
+endif
 ifdef M2_RPM_PROJECT_INSTALL
 M2_RPM_DEFINES+=--define "rpm_project_install $(M2_RPM_PROJECT_INSTALL)"
 endif
 ifdef M2_RPM_PROJECT_POST
 M2_RPM_DEFINES+=--define "rpm_project_post $(M2_RPM_PROJECT_POST)"
+endif
+ifdef M2_RPM_PROJECT_PREUN
+M2_RPM_DEFINES+=--define "rpm_project_preun $(M2_RPM_PROJECT_PREUN)"
+endif
+ifdef M2_RPM_PROJECT_POSTUN
+M2_RPM_DEFINES+=--define "rpm_project_postun $(M2_RPM_PROJECT_POSTUN)"
 endif
 ifdef M2_RPM_CUSTOM_DIST
 M2_RPM_DEFINES+=--define "rpm_custom_dist $(M2_RPM_CUSTOM_DIST)"
