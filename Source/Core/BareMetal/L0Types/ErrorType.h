@@ -588,10 +588,6 @@ inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet) const {
 return ((format_as_integer & errorBitSet) == errorBitSet);
 }
 
-
-static ErrorType errorFilter(0xFFFFFFFFu);
-
-
 }
 
 }
