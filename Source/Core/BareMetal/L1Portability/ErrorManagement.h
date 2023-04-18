@@ -56,6 +56,12 @@ typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo,
  */
 extern DLL_API ErrorProcessFunctionType errorMessageProcessFunction;
 
+
+DLL_API void SetErrorFilter (const ErrorType &errorFilter);
+
+DLL_API ErrorType GetErrorFilter();
+
+
 /**
  * @brief A null ErrorProcessing function
  * @details This function is compatible with the function prototype defined

@@ -82,6 +82,17 @@ const struct {
         { "NotCompleted", NotCompleted },
         { static_cast<const char8 *>(NULL), NoError }, };
 
+
+void SetErrorFilter (const ErrorType &errorFilterIn){
+    errorFilter = errorFilterIn;
+}
+
+ErrorType GetErrorFilter(){
+    return errorFilter;
+}
+
+
+
 void ErrorCodeToStream(const ErrorType &errorCode,
                        StreamI &stream) {
     //Skip the NoError

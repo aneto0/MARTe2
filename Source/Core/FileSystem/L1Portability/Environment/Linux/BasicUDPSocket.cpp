@@ -32,6 +32,8 @@
 #include <netdb.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <errno.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -45,6 +47,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+#define sock_errno()  errno
 
 namespace MARTe {
 
@@ -99,7 +102,15 @@ bool BasicUDPSocket::Read(char8 * const output,
             size = static_cast<uint32>(ret);
         }
         else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
+            bool ewouldblock = (sock_errno() == EWOULDBLOCK);
+            bool eagain = (sock_errno() == EAGAIN);
+            bool blocking = IsBlocking();
+            if ((ewouldblock || eagain) && (blocking)) {
+                REPORT_ERROR_STATIC_0(ErrorManagement::Timeout, "BasicUDPSocket: Timeout expired in recv()");
+            }
+            else{
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
+            }
         }
     }
     else {
