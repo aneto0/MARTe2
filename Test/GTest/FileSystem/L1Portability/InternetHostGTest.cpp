@@ -126,25 +126,29 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestGetAddressAsNumber) {
 
 
 TEST(FileSystem_L1Portability_InternetHostGTest,TestGetLocalAddress) {
-
     InternetHostTest internetHostTest;
-
     ASSERT_TRUE(internetHostTest.TestGetLocalAddress());
 }
 
 
 TEST(FileSystem_L1Portability_InternetHostGTest,TestGetLocalIpNumber) {
-
     InternetHostTest internetHostTest;
-
     ASSERT_TRUE(internetHostTest.TestGetLocalAddress());
 }
 
 TEST(FileSystem_L1Portability_InternetHostGTest,TestGetLocalAddressAsNumber) {
-
     InternetHostTest internetHostTest;
-
     ASSERT_TRUE(internetHostTest.TestGetLocalAddressAsNumber());
+}
+
+TEST(FileSystem_L1Portability_InternetHostGTest,TestConvertInterfaceNameToInterfaceAddressNumber) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestConvertInterfaceNameToInterfaceAddressNumber());
+}
+
+TEST(FileSystem_L1Portability_InternetHostGTest,TestConvertInterfaceNameToInterfaceAddress) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestConvertInterfaceNameToInterfaceAddress());
 }
 
 TEST(FileSystem_L1Portability_InternetHostGTest,TestSetPort) {
@@ -222,6 +226,11 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestSetMulticastInterfaceAddress
     ASSERT_TRUE(internetHostTest.TestSetMulticastInterfaceAddress());
 }
 
+TEST(FileSystem_L1Portability_InternetHostGTest,TestSetMulticastInterfaceAddressWithNumber) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestSetMulticastInterfaceAddressWithNumber());
+}
+
 TEST(FileSystem_L1Portability_InternetHostGTest,TestGetMulticastInterfaceAddress) {
     InternetHostTest internetHostTest;
     ASSERT_TRUE(internetHostTest.TestGetMulticastInterfaceAddress());
@@ -260,3 +269,8 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestGetLocalHostName) {
     ASSERT_TRUE(internetHostTest.TestGetLocalHostName());
 }
 
+
+//TEST(FileSystem_L1Portability_InternetServiceGTest,Prova) {
+//    InternetHostTest internetServiceTest;
+//    ASSERT_TRUE(internetServiceTest.Prova());
+//}

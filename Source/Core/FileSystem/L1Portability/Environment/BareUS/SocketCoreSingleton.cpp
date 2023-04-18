@@ -65,6 +65,7 @@ namespace MARTe {
 
         if(socketCoreRoot == NULL_PTR(SocketCore*)) {
             socketCoreRoot = newSocket;
+            newSocket->nextSocketCore = NULL_PTR(SocketCore*);
         } else {
             SocketCore* tmpSocketCore = socketCoreRoot;
 

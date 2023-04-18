@@ -70,8 +70,8 @@ public:
     /**
      * @see StreamI::Read
      */
-    virtual bool Read(char8* const output,
-            uint32 &size);
+    virtual bool Read(char8 *const output,
+                      uint32 &size);
 
     /**
      * @brief Read without removing data from the socket pipe.
@@ -81,14 +81,14 @@ public:
      * @post
      *   size is the number of read bytes.
      */
-    virtual bool Peek(char8* const output,
-            uint32 &size);
+    virtual bool Peek(char8 *const output,
+                      uint32 &size);
 
     /**
      * @see StreamI::Write
      */
-    virtual bool Write(const char8* const input,
-            uint32 &size);
+    virtual bool Write(const char8 *const input,
+                       uint32 &size);
 
     /**
      * @brief Opens an UDP socket.
@@ -109,7 +109,7 @@ public:
      * @param[in] group the multicast IP address.
      * @return true if the socket is successfully registered to the multicast group.
      */
-    bool Join(const char8 * const group) const;
+    bool Join(const char8 *const group) const;
 
     /**
      * @brief Sets the multicast group where the socket will register, allowing to specify the network interface binding address.
@@ -117,7 +117,8 @@ public:
      * @param[in] multicastInterfaceAddress the address of the interface to which to bind the multicast.
      * @return true if the socket is successfully registered to the multicast group.
      */
-    bool Join(const char8 * const group, const char8 * const multicastInterfaceAddress) const;
+    bool Join(const char8 *const group,
+              const char8 *const multicastInterfaceAddress) const;
 
     /**
      * @brief Sets the writing destination address.
@@ -129,8 +130,8 @@ public:
      * @post
      *   GetDestination() == InternetHost(port, address)
      */
-    bool Connect(const char8 * const address,
-            const uint16 port);
+    bool Connect(const char8 *const address,
+                 const uint16 port);
 
     /**
      * @brief The UDP socket support writing.
@@ -153,16 +154,16 @@ public:
     /**
      * @see StreamI::Read
      */
-    virtual bool Read(char8 * const output,
-            uint32 & size,
-            const TimeoutType &timeout);
+    virtual bool Read(char8 *const output,
+                      uint32 &size,
+                      const TimeoutType &timeout);
 
     /**
      * @see StreamI::Write
      */
-    virtual bool Write(const char8 * const input,
-            uint32 & size,
-            const TimeoutType &timeout);
+    virtual bool Write(const char8 *const input,
+                       uint32 &size,
+                       const TimeoutType &timeout);
 
     /**
      * @brief Unsupported feature.

@@ -141,6 +141,17 @@ bool BasicUDPSocket::Write(const char8* const input,
     return retVal;
 }
 
+bool BasicUDPSocket::Join(const char8 * const group, const char8 * const multicastInterfaceAddress) const {
+    //TODO: actually there is only one network interface to manage, so the address is implicitly omitted here
+    //In the event of managing multiple interfaces, one should take into account the possibility to tell apart interfaces and select
+    bool ok = false;
+    #ifdef LWIP_ENABLED
+    ok = Join(group);
+    #endif /* LWIP_ENABLED */
+
+    return ok;
+}
+
 bool BasicUDPSocket::Join(const char8 *const group) const {
     //TODO: Can the real value for the Join Request, be checked?
     //WARNING: in Xilinx SDK 2018.1 this requires a patching in the xemacpsif porting, to always enable interface hash
@@ -258,8 +269,9 @@ bool BasicUDPSocket::Read(char8 * const output,
         }
 
         if(canRead) {
-            retVal = (size <= connectionSocket.packetLen);
-    
+            /* TODO: Correct, this is wrong */
+            /* retVal = (size <= connectionSocket.packetLen); */
+            
             if(retVal) {
                 size = connectionSocket.packetLen;
                 if(connectionSocket.packetBuffer != output) {
@@ -270,6 +282,8 @@ bool BasicUDPSocket::Read(char8 * const output,
                 connectionSocket.isReadReady = false;
                 connectionSocket.isReadSelected = false;
             }
+        } else {
+            size = 0u;
         }
     }
 
