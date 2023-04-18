@@ -80,8 +80,7 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
     }
     if (ret) {
         uint32 errFilter;
-        ret.parametersError = !argsConfiguration.Read("-e", errFilter);
-        if (ret) {
+        if (argsConfiguration.Read("-e", errFilter)) {
             ErrorManagement::SetErrorFilter(errFilter);
         }
     }
