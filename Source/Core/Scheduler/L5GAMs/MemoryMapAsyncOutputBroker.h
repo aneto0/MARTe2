@@ -173,6 +173,11 @@ private:
     ErrorManagement::ErrorType BufferLoop(ExecutionInfo & info);
 
     /**
+     * The binder for the SingleThreadService.
+     */
+    EmbeddedServiceMethodBinderT<MemoryMapAsyncOutputBroker> binder;
+    
+    /**
      * The SingleThreadService responsible for flushing the Buffer into the DataSourceI.
      */
     SingleThreadService service;
@@ -231,11 +236,6 @@ private:
      * Allows a clean exit of the BufferLoop thread
      */
     bool destroying;
-
-    /**
-     * The binder for the SingleThreadService.
-     */
-    EmbeddedServiceMethodBinderT<MemoryMapAsyncOutputBroker> binder;
 
     /**
      * If true buffer overruns will be ignored.
