@@ -76,10 +76,10 @@ GAMScheduler::~GAMScheduler() {
         delete multiThreadService[1];
     }
     if (rtThreadInfo[0] != NULL) {
-        delete rtThreadInfo[0];
+        delete[] rtThreadInfo[0];
     }
     if (rtThreadInfo[1] != NULL) {
-        delete rtThreadInfo[1];
+        delete[] rtThreadInfo[1];
     }
 }
 
