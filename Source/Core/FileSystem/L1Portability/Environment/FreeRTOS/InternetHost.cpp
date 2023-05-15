@@ -45,6 +45,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+extern bool GetMACAddressHook(const MARTe::char8 *const interfaceName, MARTe::uint8 *const mac);
+
 namespace MARTe {
 
 FastPollingMutexSem hostnameFastSem;
@@ -136,6 +138,14 @@ uint32 InternetHost::MulticastSize() const {
     //TODO: Implement MulticastSize for the lwIP raw scenario
         return 0u;
     #endif
+}
+
+bool InternetHost::GetMACAddress(
+    const char8 *const interfaceName,
+    uint8 *const mac) {
+
+    bool retVal = GetMACAddressHook(interfaceName, mac);
+    return retVal;
 }
 
 StreamString InternetHost::GetMulticastGroup() const {

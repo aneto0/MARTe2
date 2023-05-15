@@ -106,7 +106,13 @@ public:
     static uint32 GetLocalAddressAsNumber();
 
     /**
+     * @brief Gets the MAC address for the given network interface.
+     * @note On some particular implementations where no OS (i.e. BareMetal) or no MAC retrieval primitives (i.e. FreeRTOS), the function call may require the implementation of an
+     * extern hook to work.
      *
+     * @param[in] interfaceName name of the network interface as seen by the underlying OS.
+     * @param[out] mac MAC address of the given interface.
+     * @return true if the MAC address was correctly retrieved, false otherwise.
      */
     static bool GetMACAddress(const char8 *const interfaceName,
                               uint8 *const mac);
