@@ -265,7 +265,6 @@ bool BasicUDPSocket::Read(char8 * const output,
                 if(readRetry) {
                     currentTicks = HighResolutionTimer::Counter();
                     readRetry = (endTicks > currentTicks);
-                    usleep(10);
                 }
             }
         }
