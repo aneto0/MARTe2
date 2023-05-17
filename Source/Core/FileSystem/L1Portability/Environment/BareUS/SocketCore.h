@@ -44,7 +44,7 @@ namespace MARTe {
 #ifdef LWIP_ENABLED
 
 //Use 9000 to support Jumbo Frame
-#define MAX_RX_PACKET_BUFFERSIZE 9000
+#define MAX_RX_PACKET_BUFFERSIZE 1700
 
 /**
  * When lwIP operates in raw mode, two different handles are needed, based on the underlying socket kind

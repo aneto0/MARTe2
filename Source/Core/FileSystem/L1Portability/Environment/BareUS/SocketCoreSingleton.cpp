@@ -32,6 +32,7 @@ namespace MARTe {
     SocketCore* SocketCoreSingleton::socketCoreRoot;
 
     SocketCoreSingleton::SocketCoreSingleton() {
+        socketCoreRoot = NULL_PTR(SocketCore*);
     }
 
     SocketCoreSingleton& SocketCoreSingleton::GetInstance() {

@@ -35,6 +35,7 @@
 #include "lwip/sockets.h"
 #include "lwip/tcpip.h"
 #include "lwip/udp.h"
+#include "sleep.h"
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -61,7 +62,7 @@ namespace MARTe {
 
 void UDPRegistrationCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
     SocketCore* tmpSocketCore = static_cast<SocketCore*>(arg);
-    uint64 nowTicks = HighResolutionTimer::Counter();
+    //uint64 nowTicks = HighResolutionTimer::Counter();
 
     //Copy locally the relevant packet data. WARNING! Do NOT use direct memcpy instead of pbuf_copy_partial
     tmpSocketCore->packetLen = pbuf_copy_partial(p, tmpSocketCore->packetBuffer, MAX_RX_PACKET_BUFFERSIZE, 0);
@@ -71,12 +72,12 @@ void UDPRegistrationCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, con
 
     //Update control variables to emulate sequential read behaviour on socket
     tmpSocketCore->isWritten = true;
-    tmpSocketCore->lastPacketArrivalTimestamp = nowTicks;
+    //tmpSocketCore->lastPacketArrivalTimestamp = nowTicks;
 
     //Update control variables to emulate read select behaviour on socket
     if(tmpSocketCore->isReadSelected && !tmpSocketCore->isReadReady) {
         tmpSocketCore->isReadReady = true;
-        tmpSocketCore->readReadyAt = nowTicks;
+        //tmpSocketCore->readReadyAt = nowTicks;
     }
 
     //Free the lwIP buffer and return it to the pbuf pool
@@ -264,20 +265,21 @@ bool BasicUDPSocket::Read(char8 * const output,
                 if(readRetry) {
                     currentTicks = HighResolutionTimer::Counter();
                     readRetry = (endTicks > currentTicks);
+                    usleep(10);
                 }
             }
         }
 
         if(canRead) {
-            /* TODO: Correct, this is wrong */
-            /* retVal = (size <= connectionSocket.packetLen); */
+            //TODO: Check this
+            //retVal = (size <= connectionSocket.packetLen);
             
             if(retVal) {
                 size = connectionSocket.packetLen;
                 if(connectionSocket.packetBuffer != output) {
                     MemoryOperationsHelper::Copy(output, connectionSocket.packetBuffer, size);
                 }
-
+                
                 connectionSocket.isWritten = false;
                 connectionSocket.isReadReady = false;
                 connectionSocket.isReadSelected = false;
