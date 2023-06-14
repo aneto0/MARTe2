@@ -31,6 +31,8 @@
 #include "StringHelper.h"
 #include "InternetHostTest.h"
 #include "stdio.h"
+#include "MemoryOperationsHelper.h"
+#include "AdvancedErrorManagement.h"
 
 //WARNING: These defines are used to allow the "ENVIRONMENT ==" comparison without stringify-ing
 #define Linux 1
@@ -164,6 +166,42 @@ bool InternetHostTest::TestGetLocalAddressAsNumber() {
     return (InternetHost::GetLocalAddressAsNumber() != 0u);
 }
 
+bool InternetHostTest::TestGetMACAddress() {
+    InternetHost ih;
+    StreamString localHostName = "lo";
+    const char8 *const interfaceName = "invalidInterfaceName";
+    uint8 mac[8];
+    uint8 macRef[8];
+    MemoryOperationsHelper::Set(macRef, 0, 8);
+    bool ok = !ih.GetMACAddress(interfaceName, mac);
+#if ENVIRONMENT==Linux && ARCHITECTURE==x86_gcc
+    if (ok) {
+        struct ifaddrs *addrs, *tmp;
+        getifaddrs(&addrs);
+        for (tmp = addrs; (tmp != NULL) && ok; tmp = tmp->ifa_next) {
+            if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET) {
+                MemoryOperationsHelper::Set(mac, 0, 8);
+                ok = ih.GetMACAddress(tmp->ifa_name, mac);
+                if(ok){
+                    if(localHostName != tmp->ifa_name){
+                        StreamString auxStr = tmp->ifa_name;
+                        auxStr += " = ";
+                        for(uint32 i = 0; i < 6; i++){
+                            auxStr.Printf("%02x ", mac[i]);
+                        }
+                        REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "%s", auxStr.Buffer());
+                        ok = (MemoryOperationsHelper::Compare(mac, macRef, 8)!=0);
+
+                    }
+                }
+            }
+        }
+        freeifaddrs(addrs);
+    }
+#endif
+    return ok;
+}
+
 bool InternetHostTest::TestConvertInterfaceNameToInterfaceAddressNumber() {
     InternetHost ih;
     bool ok = (ih.ConvertInterfaceNameToInterfaceAddressNumber("invalidInterfaceName") == 0);
@@ -291,12 +329,11 @@ bool InternetHostTest::TestSetMulticastInterfaceAddressWithNumber() {
     bool ok = true;
     struct ifaddrs *addrs, *tmp;
     bool found = false;
-    char8 * addr;
+    char8 *addr;
 #if ENVIRONMENT==Linux && ARCHITECTURE==x86_gcc
     getifaddrs(&addrs);
-    tmp = addrs;
     for (tmp = addrs; (tmp != NULL) && !found; tmp = tmp->ifa_next) { //addrs contains several time the same interfaces with different families. Loop until AF_INET is found (ipv4). In case does not exist the test succeeds
-        if (tmp->ifa_addr->sa_family == AF_INET) {
+        if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_INET) {
             found = true;
             in_addr_t aux = ih.ConvertInterfaceNameToInterfaceAddressNumber(tmp->ifa_name);
             ok = (aux != 0);

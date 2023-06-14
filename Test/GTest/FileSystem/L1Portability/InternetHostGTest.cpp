@@ -141,6 +141,11 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestGetLocalAddressAsNumber) {
     ASSERT_TRUE(internetHostTest.TestGetLocalAddressAsNumber());
 }
 
+TEST(FileSystem_L1Portability_InternetHostGTest,TestGetMACAddress) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestGetMACAddress());
+}
+
 TEST(FileSystem_L1Portability_InternetHostGTest,TestConvertInterfaceNameToInterfaceAddressNumber) {
     InternetHostTest internetHostTest;
     ASSERT_TRUE(internetHostTest.TestConvertInterfaceNameToInterfaceAddressNumber());

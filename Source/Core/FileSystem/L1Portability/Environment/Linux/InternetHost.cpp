@@ -93,10 +93,10 @@ private:
 
     /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
     LocalHostInfo() :
-            localHostName(static_cast<const char8*>(NULL)),
-            ipAddress(static_cast<const char8*>(NULL)),
-            internetAddressInfoInitialised(false),
-            internalFastSem() {
+    localHostName(static_cast<const char8*>(NULL)),
+    ipAddress(static_cast<const char8*>(NULL)),
+    internetAddressInfoInitialised(false),
+    internalFastSem() {
         Init();
     }
 
@@ -112,7 +112,7 @@ private:
 
             char8 hostname[128];
             int32 ret = gethostname(&hostname[0], static_cast<size_t>(128u));
-            struct hostent *h = static_cast<struct hostent *>(NULL);
+            struct hostent *h = NULL_PTR(struct hostent *);
             if (ret == 0) {
                 h = gethostbyname(&hostname[0]);
             }
@@ -120,13 +120,22 @@ private:
                 localHostName = strdup(h->h_name);
                 struct in_addr sin_addr;
                 char8* addr = h->h_addr_list[0];
-                if (addr != static_cast<char8 *>(NULL)) {
-                    sin_addr.s_addr = *(reinterpret_cast<uint32 *>(addr));
+                if (addr != NULL_PTR(char8*)) {
+                    int32 allowedAddresslength = static_cast<int32>(sizeof(int32));
+                    if(h->h_length != allowedAddresslength) {
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "LocalHostInfo: Address area not expected. Allowed address length 4");
+                    }
+                    else {
+                        //lint -e{826} Suspicious pointer-to-pointer conversion (area too small). if check the aread of the address
+                        //lint -e{927} allowedAddresslength
+                        uint32 * auxInt32Pointer = reinterpret_cast<uint32 *>(addr);
+                        sin_addr.s_addr = *auxInt32Pointer;
 
-                    // Convert the ip number in a dot notation string
-                    ipAddress = strdup(inet_ntoa(sin_addr));
-                    internetAddressInfoInitialised = true;
-                    internalFastSem.FastUnLock();
+                        // Convert the ip number in a dot notation string
+                        ipAddress = strdup(inet_ntoa(sin_addr));
+                        internetAddressInfoInitialised = true;
+                        internalFastSem.FastUnLock();
+                    }
                 }
                 else {
                     REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "LocalHostInfo: Failed local address initialization");
@@ -185,27 +194,56 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
     }
     return ret;
 }
+bool InternetHost::GetMACAddress(const char8 *const interfaceName,
+                                 uint8 *const mac) {
 
-InternetAddress InternetHost::ConvertInterfaceNameToInterfaceAddressNumber(const char8* const interfaceName) {
+    struct ifreq s;
+    bool ret = MemoryOperationsHelper::Set(reinterpret_cast<void*>(&s), static_cast<char8>(0), static_cast<uint32>(sizeof(s)));
+    //lint -e{641} Converting enum '__socket_type' to 'int. Definition and function outside the MARTe library. SOCK_DGRAM is a int type.
+    int32 fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    //strcpy(s.ifr_name, interfaceName);
+    if (ret) {
+        ret = MemoryOperationsHelper::Copy(reinterpret_cast<void*>(s.ifr_name), interfaceName, static_cast<uint32>(IFNAMSIZ - 1));
+    }
+    if (ret) {
+        ret = 0 == ioctl(fd, static_cast<uint64>(SIOCGIFHWADDR), &s);
+    }
+    if (ret) {
+        int32 i;
+        for (i = 0; i < 6; ++i) {
+            uint8 auxChar = static_cast<uint8>(s.ifr_addr.sa_data[i]);
+            mac[i] = auxChar;
+        }
+    }
+    return ret;
+}
+
+InternetAddress InternetHost::ConvertInterfaceNameToInterfaceAddressNumber(const char8 *const interfaceName) {
     int32 fd;
     struct ifreq ifr;
+    bool ret = MemoryOperationsHelper::Set(&ifr, static_cast<char8>(0), static_cast<uint32>(sizeof(ifr)));
     InternetAddress retVal = 0u;
     //lint -e{641} Converting enum '__socket_type' to 'int. Definition and function outside the MARTe library. SOCK_DGRAM is a int type.
     fd = socket(AF_INET, SOCK_DGRAM, 0);
     //Type of address to retrieve - IPv4 IP address
     ifr.ifr_addr.sa_family = static_cast<uint16>(AF_INET);
     //Copy the interface name in the ifreq structure
-    strncpy(static_cast<char8 *>(ifr.ifr_name), interfaceName, static_cast<size_t>(IFNAMSIZ - 1));
-    if (ioctl(fd, static_cast<uint64>(SIOCGIFADDR), &ifr) != -1) {
-        in_addr addr = (reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_addr))->sin_addr;
-        retVal = addr.s_addr;
+    if (ret) {
+        ret = MemoryOperationsHelper::Copy(reinterpret_cast<void*>(ifr.ifr_name), interfaceName, static_cast<uint32>(IFNAMSIZ - 1));
+    }
+    if (ret) {
+        if (ioctl(fd, static_cast<uint64>(SIOCGIFADDR), &ifr) != -1) {
+            //lint -e{740} Unusual pointer cast (incompatible indirect types) [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]
+            in_addr addr = (reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_addr))->sin_addr;
+            retVal = addr.s_addr;
+        }
     }
     close(fd);
 
     return retVal;
 }
 
-StreamString InternetHost::ConvertInterfaceNameToInterfaceAddress(const char8* const interfaceName) {
+StreamString InternetHost::ConvertInterfaceNameToInterfaceAddress(const char8 *const interfaceName) {
     in_addr aux;
     aux.s_addr = ConvertInterfaceNameToInterfaceAddressNumber(interfaceName);
     StreamString dotName(inet_ntoa(aux));
@@ -213,7 +251,7 @@ StreamString InternetHost::ConvertInterfaceNameToInterfaceAddress(const char8* c
 }
 
 InternetHost::InternetHost(const uint16 port,
-                           const char8 * const addr) {
+                           const char8 *const addr) {
     mreq.imr_interface.s_addr = htonl(static_cast<in_addr_t>(0x00000000)); //INADDR_ANY
     mreq.imr_multiaddr.s_addr = static_cast<uint32>(0);
     address.sin_family = static_cast<uint16>(AF_INET);
@@ -242,7 +280,7 @@ void InternetHost::SetPort(const uint16 port) {
     address.sin_port = htons(port);
 }
 
-bool InternetHost::SetAddress(const char8 * const addr) {
+bool InternetHost::SetAddress(const char8 *const addr) {
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     address.sin_addr.s_addr = INADDR_ANY;
     bool ret = (addr != NULL);
@@ -271,8 +309,14 @@ bool InternetHost::SetAddressByHostName(const char8 *hostName) {
     struct hostent *h = gethostbyname(hostName);
 
     if (h != NULL) {
-        address.sin_addr.s_addr = *(reinterpret_cast<uint32 *>(h->h_addr_list[0]));
-        ret = true;
+        if(h->h_length == 4){
+            //lint -e{826} Suspicious pointer-to-pointer conversion (area too small). If ensure same size.
+            //lint -e{927} cast from pointer to pointer [MISRA C++ Rule 5-2-7]. Size are guaranteed.
+            address.sin_addr.s_addr = *(reinterpret_cast<uint32 *>(h->h_addr_list[0]));
+            ret = true;
+        }else{
+            ret = false;
+        }
     }
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "InternetHost: Failed gethostbyname()");
@@ -289,11 +333,11 @@ bool InternetHost::SetLocalAddress() {
     return SetAddressByHostName(static_cast<const char8*>(NULL));
 }
 
-void InternetHost::SetMulticastGroup(const char8 * const addr) {
+void InternetHost::SetMulticastGroup(const char8 *const addr) {
     mreq.imr_multiaddr.s_addr = inet_addr(const_cast<char8*>(addr));
 }
 
-void InternetHost::SetMulticastInterfaceAddress(const char8 * const addr) {
+void InternetHost::SetMulticastInterfaceAddress(const char8 *const addr) {
     mreq.imr_interface.s_addr = inet_addr(const_cast<char8*>(addr));
 }
 
