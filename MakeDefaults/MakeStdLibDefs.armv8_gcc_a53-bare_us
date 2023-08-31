@@ -82,3 +82,6 @@ endif
 #INFO: Enable this if you want that the external parser type is returned by an external function
 #wARNING: Refer to the MARTe2_READPARAMETERS_PARSER note for the correct usage of the flag
 CFLAGS += -DMARTe2_EXTERNAL_PARSER_OVERRIDE
+
+#INFO: Use this to enable the support to ARM NEON
+CFLAGS += -DUSE_ARM_NEON
