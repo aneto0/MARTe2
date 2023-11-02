@@ -51,10 +51,13 @@ MemoryMapOutputBroker::~MemoryMapOutputBroker() {
 
 bool MemoryMapOutputBroker::Execute() {
     uint32 n;
+    /*lint -e{613} null pointer checked before.*/
+    uint32 i = dataSource->GetCurrentStateBuffer();
     bool ret = true;
     for (n = 0u; (n < numberOfCopies) && (ret); n++) {
         if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
-            ret = MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
+            uint32 dataSourceIndex = ((i * numberOfCopies) + n);
+            ret = MemoryOperationsHelper::Copy(copyTable[dataSourceIndex].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
         }
     }
     return ret;
