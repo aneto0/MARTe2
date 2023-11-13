@@ -2926,8 +2926,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                                 if (!dataSourcesDatabase.Read("QualifiedName", signalName)) {
                                     signalName = "UnknownSignal";
                                 }
-                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(),
-                                                    signalName.Buffer(), dataSource->GetName());
+                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(), dataSource->GetName());
                             }
                         }
                     }
