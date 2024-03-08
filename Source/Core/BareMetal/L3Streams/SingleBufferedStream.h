@@ -52,7 +52,7 @@ namespace MARTe {
  * It supplements a low-level OperatingSystemStream (which implements the
  * low-level calls such as Read, Write, Seek, ...) with a buffering scheme.
  */
-class DLL_API SingleBufferedStream: public BufferedStreamI, public OperatingSystemCallbacksI {
+class SingleBufferedStream: public BufferedStreamI, public OperatingSystemCallbacksI {
 
 public:
     /**

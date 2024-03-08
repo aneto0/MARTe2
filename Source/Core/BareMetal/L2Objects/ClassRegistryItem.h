@@ -64,7 +64,7 @@ namespace MARTe {
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
-class DLL_API ClassRegistryItem: public LinkedListable {
+class ClassRegistryItem: public LinkedListable {
 public:
 
     /**

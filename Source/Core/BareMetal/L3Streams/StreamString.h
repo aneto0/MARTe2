@@ -51,7 +51,7 @@ namespace MARTe {
  * @brief A basic implementation of a stream which allows reading and writing
  * to an underlying unbounded string, which can grow dynamically.
  */
-class DLL_API StreamString: public BufferedStreamI {
+class StreamString: public BufferedStreamI {
 
 public:
 

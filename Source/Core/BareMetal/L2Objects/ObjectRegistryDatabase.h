@@ -44,7 +44,7 @@ namespace MARTe {
 /**
  * @brief Singleton database of References to MARTe Objects.
  */
-class DLL_API ObjectRegistryDatabase: public ReferenceContainer, public GlobalObjectI {
+class ObjectRegistryDatabase: public ReferenceContainer, public GlobalObjectI {
 
 public:
 

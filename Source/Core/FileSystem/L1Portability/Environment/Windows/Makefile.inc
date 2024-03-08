@@ -30,6 +30,7 @@ MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX= BasicFile.x \
     BasicSocket.x \
+    BasicUART.x \
     BasicUDPSocket.x \
     BasiCTCPSocket.x \
     InternetHost.x \
@@ -46,6 +47,7 @@ INCLUDES+=-I../../../../BareMetal/L0Types/
 INCLUDES+=-I../../../../BareMetal/L1Portability
 INCLUDES+=-I../../../../BareMetal/L2Objects
 INCLUDES+=-I../../../../BareMetal/L3Streams
+INCLUDES+=-I../../../../BareMetal/L1Portability/Environment/Generic
 
 all: $(OBJS) $(CPPS) \
      $(BUILD_DIR)/L1Portability$(LIBEXT) \

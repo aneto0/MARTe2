@@ -76,7 +76,7 @@ namespace MARTe {
  *     }
  * }
  */
-class DLL_API GAM: public ReferenceContainer, public ExecutableI {
+class GAM: public ReferenceContainer, public ExecutableI {
 public:
 
     /**

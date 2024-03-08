@@ -53,7 +53,7 @@ namespace MARTe {
      * The global objects (which inherit from GlobalObjectI) are created in the StandardHeap and
      * registered by the caller in the GlobalObjectsDatabase.
      */
-    class DLL_API GlobalObjectsDatabase {
+    class GlobalObjectsDatabase {
 
     public:
 

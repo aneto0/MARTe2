@@ -67,7 +67,7 @@ class RealTimeApplication;
  *   +|, i.e NAME|NAME = VALUE, the NAME may exist. If it exists the | rules apply.
  * </pre>
  */
-class DLL_API RealTimeApplicationConfigurationBuilder : public Object {
+class RealTimeApplicationConfigurationBuilder : public Object {
 public:
     /**Ignore doxygen false positive*/
     /*lint -save -e19 false positive*/

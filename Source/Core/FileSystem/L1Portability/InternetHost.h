@@ -45,7 +45,7 @@ namespace MARTe {
  * @brief Class which describes the configuration of an internet host, like
  * its IPv4 address, port and host name.
  */
-class DLL_API InternetHost {
+class InternetHost {
 
 public:
 

@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief ReferenceContainerFilter for reference searching with templates.
  */
 template<typename T>
-class DLL_API ReferenceContainerFilterReferencesTemplate: public ReferenceContainerFilter {
+class ReferenceContainerFilterReferencesTemplate: public ReferenceContainerFilter {
 public:
 
     /**

@@ -102,7 +102,7 @@ namespace MARTe {
  * </pre>
  */
 /*lint -e{9109} RealTimeApplication is forward declared in RealTimeApplicationConfigurationBuilder.*/
-class DLL_API RealTimeApplication: public ReferenceContainer, public MessageI {
+class RealTimeApplication: public ReferenceContainer, public MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 

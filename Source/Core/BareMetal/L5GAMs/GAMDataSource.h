@@ -58,7 +58,7 @@ namespace MARTe {
  *    ResetUnusedVariablesAtStateChange = 1 //Optional. If 1 the GAMDataSource will reset the value of any input to its default value if the producer was not executed in the current state. 
  * }
  */
-class DLL_API GAMDataSource: public DataSourceI {
+class GAMDataSource: public DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
 

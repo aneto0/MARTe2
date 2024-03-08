@@ -53,7 +53,7 @@ namespace MARTe {
  *
  * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
  */
-class DLL_API ConfigurationDatabase: public StructuredDataI, public Object {
+class ConfigurationDatabase: public StructuredDataI, public Object {
 
 public:
     CLASS_REGISTER_DECLARATION()
@@ -212,6 +212,11 @@ ConfigurationDatabase    ();
      */
     void SetCurrentNodeAsRootNode();
 
+    /**
+     * @brief Automatic cast to AnyType.
+    */
+    operator AnyType();
+
 private:
 
     /**
@@ -238,7 +243,14 @@ private:
 
 };
 
+inline ConfigurationDatabase::operator AnyType() {
+    AnyType anyTypeConversion(StructuredDataInterfaceType, 0u, this);
+    return anyTypeConversion;
 }
+
+}
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

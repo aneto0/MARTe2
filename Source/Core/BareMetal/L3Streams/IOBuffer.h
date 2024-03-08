@@ -59,7 +59,7 @@ namespace MARTe {
  * the implementation of NoMoreSpaceToWrite and NoMoreDataToRead depends on
  * the specific derived class implementation)
  */
-class DLL_API IOBuffer {
+class IOBuffer {
 
 public:
 

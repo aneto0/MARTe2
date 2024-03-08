@@ -49,7 +49,7 @@ namespace MARTe {
  * @warning the Reset function shall be called before the first Execute and the DataSourceI shall have its first data points (x0, y0)
  * loaded into its memory (i.e. all the pointers returned by DataSourceI::GetSignalMemoryBuffer shall have valid values).
  */
-class DLL_API MemoryMapInterpolatedInputBroker: public MemoryMapBroker {
+class MemoryMapInterpolatedInputBroker: public MemoryMapBroker {
 public:CLASS_REGISTER_DECLARATION()
     /**
      * @brief Default constructor. NOOP.

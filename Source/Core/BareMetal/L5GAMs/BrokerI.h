@@ -45,7 +45,7 @@ namespace MARTe {
  * @details A class that implements this interface is capable of copying signals from a GAM to/from
  *  DataSourceI.
  */
-class DLL_API BrokerI: public Object, public ExecutableI {
+class BrokerI: public Object, public ExecutableI {
 
 public:
 

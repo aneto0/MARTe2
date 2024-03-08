@@ -117,7 +117,7 @@ struct ScheduledState {
  *
  * and it has to be contained in the [RealTimeApplication] declaration.
  */
-class DLL_API GAMSchedulerI: public ReferenceContainer, public StatefulI {
+class GAMSchedulerI: public ReferenceContainer, public StatefulI {
 
 public:
 

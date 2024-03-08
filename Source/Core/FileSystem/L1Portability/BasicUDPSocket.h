@@ -54,7 +54,7 @@ namespace MARTe {
  * the order and reliability of the data packets are not guaranteed, hence no
  * buffering of the data packets is expected to happen.
  */
-class DLL_API BasicUDPSocket: public BasicSocket {
+class BasicUDPSocket: public BasicSocket {
 public:
 
     /**

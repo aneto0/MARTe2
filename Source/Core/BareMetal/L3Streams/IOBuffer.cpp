@@ -36,6 +36,7 @@
 #include "Introspection.h"
 #include "IOBuffer.h"
 #include "StreamI.h"
+#include "StreamString.h"
 #include "StringHelper.h"
 #include "StructuredDataI.h"
 
@@ -1345,7 +1346,18 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                             REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "IOBuffer: Type mismatch: a stream will be printed");
                         }
                     }
-                    StreamI * stream = static_cast<StreamI *>(dataPointer);
+                    //TODO AVON&ANDRE NEW
+                    StreamI* stream = NULL_PTR(StreamI*);
+                    if(isSString) {
+                        StreamString* tmpSS = static_cast<StreamString*>(dataPointer);
+                        stream = dynamic_cast<StreamI*>(tmpSS);
+                        
+                    } else {
+                        stream = static_cast<StreamI *>(dataPointer);    
+                    }
+                    //TODO AVON ORIGINAL
+                    //StreamI * stream = static_cast<StreamI *>(dataPointer);
+
                     bool addQuotesOnString = fd.fullNotation;
                     ret = PrintStream(iobuff, *stream, fd, addQuotesOnString);
                 }
@@ -1461,7 +1473,7 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff, const AnyType & parIn, const 
         ret = iobuff.PutC(' ');
     }
     for (uint32 i = 0u; (i < numberOfRows) && (ret); i++) {
-
+        printf("--------------------> %d<-------------------\r\n", i);
         if (ret) {
             char8* vectorPointer = NULL_PTR(char8*);
             if (isStaticDeclared) {

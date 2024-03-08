@@ -76,7 +76,7 @@ namespace MARTe {
  * and justified because in the TypeDescriptor attribute the flag "isConstant"
  * will be set to true.
  */
-class DLL_API AnyType {
+class AnyType {
 
 public:
 
@@ -917,6 +917,7 @@ AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
 
 bool AnyType::IsVoid() const {
     return (dataDescriptor == VoidType);
+
 }
 
 /*---------------------------------------------------------------------------*/

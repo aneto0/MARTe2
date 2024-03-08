@@ -28,6 +28,10 @@
 #include <winsock.h>
 #include <windows.h>
 #include <stdio.h>
+#include <Windows.h>
+#include <Iphlpapi.h>
+#include <Assert.h>
+#pragma comment(lib, "iphlpapi.lib")
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -47,7 +51,7 @@ namespace MARTe {
 
 FastPollingMutexSem hostnameFastSem;
 
-class DLL_API LocalHostInfo {
+class LocalHostInfo {
 public:
 
     static LocalHostInfo *Instance() {
@@ -94,13 +98,13 @@ private:
         // Initialize Winsock
         iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
         if (iResult != 0) {
-            REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed WSAStartup");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,"LocalHostInfo: Failed WSAStartup");
         }
 
         if (!internetAddressInfoInitialised) {
 
             if(internalFastSem.FastLock()!=ErrorManagement::NoError) {
-                REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
             }
 
             localHostName = static_cast<const char8*>(NULL);
@@ -125,11 +129,11 @@ private:
                     internalFastSem.FastUnLock();
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
             }
         }
         return;
@@ -139,7 +143,7 @@ private:
 StreamString InternetHost::GetHostName() const {
 
     if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
-        REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
     }
 
     StreamString hostName = GetAddress();
@@ -150,7 +154,7 @@ StreamString InternetHost::GetHostName() const {
         hostName = h->h_name;
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError,"InternetHost: Failed gethostbyaddr()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError,"InternetHost: Failed gethostbyaddr()");
     }
     hostnameFastSem.FastUnLock();
 
@@ -176,19 +180,140 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
     }
     return ret;
 }
+bool InternetHost::GetMACAddress(const char8 *const interfaceName,
+                                 uint8 *const mac) {
+
+
+  bool ret=true;
+  PIP_ADAPTER_INFO AdapterInfo;
+  DWORD dwBufLen = sizeof(IP_ADAPTER_INFO);
+  char *mac_addr = (char*)malloc(18);
+
+  AdapterInfo = (IP_ADAPTER_INFO *) malloc(sizeof(IP_ADAPTER_INFO));
+  if (AdapterInfo == NULL) {
+    printf("Error allocating memory needed to call GetAdaptersinfo\n");
+    free(mac_addr);
+    ret=false; // it is safe to call free(NULL)
+  }
+
+  if(ret){
+  // Make an initial call to GetAdaptersInfo to get the necessary size into the dwBufLen variable
+  if (GetAdaptersInfo(AdapterInfo, &dwBufLen) == ERROR_BUFFER_OVERFLOW) {
+    free(AdapterInfo);
+    AdapterInfo = (IP_ADAPTER_INFO *) malloc(dwBufLen);
+    if (AdapterInfo == NULL) {
+      printf("Error allocating memory needed to call GetAdaptersinfo\n");
+      free(mac_addr);
+       ret=false;
+    }
+  }
+  }
+
+  if(ret){
+  if (GetAdaptersInfo(AdapterInfo, &dwBufLen) == NO_ERROR) {
+    // Contains pointer to current adapter info
+    PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo;
+    ret=false;
+    do {
+      // technically should look at pAdapterInfo->AddressLength
+      //   and not assume it is 6.
+      sprintf(mac_addr, "%02X:%02X:%02X:%02X:%02X:%02X",
+        pAdapterInfo->Address[0], pAdapterInfo->Address[1],
+        pAdapterInfo->Address[2], pAdapterInfo->Address[3],
+        pAdapterInfo->Address[4], pAdapterInfo->Address[5]);
+        printf("Address: %s, mac: %s\n", pAdapterInfo->IpAddressList.IpAddress.String, mac_addr);
+        if(interfaceName==pAdapterInfo->AdapterName){
+            int32 i;
+            for (i = 0; i < 6; ++i) {
+                uint8 auxChar = static_cast<uint8>(pAdapterInfo->Address[i]);
+                mac[i] = auxChar;
+            }
+            ret=true;
+            break;
+        }
+
+      pAdapterInfo = pAdapterInfo->Next;        
+    } while(pAdapterInfo);                        
+  }
+  }
+  if(ret){
+     free(AdapterInfo);
+     free(mac_addr);
+  }
+
+    return ret;
+}
+
+/*
+
+WORD wVersionRequested;
+      WSADATA wsaData;
+      char name[255];
+      CString ip;
+      PHOSTENT hostinfo;
+      wVersionRequested = MAKEWORD( 2, 0 );
+
+      if ( WSAStartup( wVersionRequested, &wsaData ) == 0 )
+      {
+
+            if( gethostname ( name, sizeof(name)) == 0)
+            {
+                  if((hostinfo = gethostbyname(name)) != NULL)
+                  {
+                        ip = inet_ntoa (*(struct in_addr *)*hostinfo->h_addr_list);
+                  }
+            }
+
+            WSACleanup( );
+      } 
+*/
+
+
+InternetAddress InternetHost::ConvertInterfaceNameToInterfaceAddressNumber(const char8 *const interfaceName) {
+    InternetAddress retVal = 0u;
+  /*  int32 fd;
+    struct ifreq ifr;
+    bool ret = MemoryOperationsHelper::Set(&ifr, static_cast<char8>(0), static_cast<uint32>(sizeof(ifr)));
+    InternetAddress retVal = 0u;
+    //lint -e{641} Converting enum '__socket_type' to 'int. Definition and function outside the MARTe library. SOCK_DGRAM is a int type.
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    //Type of address to retrieve - IPv4 IP address
+    ifr.ifr_addr.sa_family = static_cast<uint16>(AF_INET);
+    //Copy the interface name in the ifreq structure
+    if (ret) {
+        ret = MemoryOperationsHelper::Copy(reinterpret_cast<void*>(ifr.ifr_name), interfaceName, static_cast<uint32>(IFNAMSIZ - 1));
+    }
+    if (ret) {
+        if (ioctl(fd, static_cast<uint64>(SIOCGIFADDR), &ifr) != -1) {
+            //lint -e{740} Unusual pointer cast (incompatible indirect types) [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]
+            in_addr addr = (reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_addr))->sin_addr;
+            retVal = addr.s_addr;
+        }
+    }
+    close(fd);
+*/
+    return retVal;
+}
+
+StreamString InternetHost::ConvertInterfaceNameToInterfaceAddress(const char8 *const interfaceName) {
+    in_addr aux;
+    aux.s_addr = ConvertInterfaceNameToInterfaceAddressNumber(interfaceName);
+    StreamString dotName(inet_ntoa(aux));
+    return dotName;
+}
 
 InternetHost::InternetHost(const uint16 port,
                            const char8 * const addr) {
     WSADATA wsaData;
     int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "LocalHostInfo: Failed WSAStartup");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "LocalHostInfo: Failed WSAStartup");
     }
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
 
     if (!SetAddress(addr)) {
-        REPORT_ERROR(ErrorManagement::OSError, "InternetHost: Failed SetAddress");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "InternetHost: Failed SetAddress");
     }
 }
 
@@ -218,7 +343,7 @@ bool InternetHost::SetAddress(const char8 * const addr) {
             address.sin_addr.S_un.S_addr = iaddr;
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "InternetHost: Failed inet_addr(), address=0xFFFFFFFF");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "InternetHost: Failed inet_addr(), address=0xFFFFFFFF");
             ret = false;
         }
     }
@@ -239,9 +364,21 @@ bool InternetHost::SetAddressByHostName(const char8 * hostName) {
         ret= true;
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError,"InternetHost: Failed gethostbyname()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError,"InternetHost: Failed gethostbyname()");
     }
     return ret;
+}
+
+void InternetHost::SetMulticastGroup(const char8 *const addr) {
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "SetMulticastGroup not implemented");
+}
+
+void InternetHost::SetMulticastInterfaceAddress(const char8 *const addr) {
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "SetMulticastInterfaceAddress not implemented");
+}
+
+void InternetHost::SetMulticastInterfaceAddress(const InternetAddress interfaceAddr) {
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "SetMulticastInterfaceAddress not implemented");
 }
 
 void InternetHost::SetAddressByNumber(const uint32 number) {
@@ -258,6 +395,26 @@ InternetHostCore *InternetHost::GetInternetHost() {
 
 uint32 InternetHost::Size() const {
     return static_cast<uint32>(sizeof(address));
+}
+
+StreamString InternetHost::GetMulticastGroup() const {
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "GetMulticastGroup not implemented");
+    return "";
+}
+
+StreamString InternetHost::GetMulticastInterfaceAddress() const {
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "GetMulticastInterfaceAddress not implemented");
+    return "";
+}
+
+InternetMulticastCore* InternetHost::GetInternetMulticastHost() {
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "GetInternetMulticastHost not implemented");
+    return NULL_PTR(InternetMulticastCore*);
+}
+
+uint32 InternetHost::MulticastSize() const {
+    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Multicast size not implemented");
+    return 0u;
 }
 
 }

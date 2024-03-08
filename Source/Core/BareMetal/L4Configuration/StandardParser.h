@@ -63,7 +63,7 @@ namespace MARTe {
  * Note: This grammar is written in the SLK language and refers to functions
  * declared in MARTe::ParserI.
  */
-class DLL_API StandardParser: public ConfigurationParserI {
+class StandardParser: public ConfigurationParserI {
 
 public:
 

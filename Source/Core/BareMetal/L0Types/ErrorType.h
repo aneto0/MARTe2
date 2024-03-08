@@ -318,7 +318,7 @@ GENERATE_ERROR_CONSTANTS(OutOfRange)
 /**
  * @brief Provides an alternative to bool as return type from functions, allowing to add extra information.
  */
-class DLL_API ErrorType {
+class ErrorType {
 public:
     /**
      * @brief Constructor.

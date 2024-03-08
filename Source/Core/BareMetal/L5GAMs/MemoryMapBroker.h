@@ -71,7 +71,7 @@ struct MemoryMapBrokerCopyTableEntry {
  * memory address of the signal retrieved using the GetSignalMemoryBuffer function. The information of each element to
  *  be copied is stored in a MemoryMapBrokerCopyTableEntry.
  */
-class DLL_API MemoryMapBroker: public BrokerI {
+class MemoryMapBroker: public BrokerI {
 
 public:
 

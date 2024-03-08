@@ -54,7 +54,7 @@ namespace MARTe {
  * @invariant 2) not CanWrite() => Buffer() != BufferReference() && BufferReference() == NULL
  * @invariant 3) (Buffer() != NULL && Size() > 0) || (Buffer() == NULL && Size() == 0)
  */
-class DLL_API CharBuffer {
+class CharBuffer {
 
 public:
 

@@ -24,7 +24,7 @@
 #
 #############################################################
 OBJSX=
-SPB    = BareMetal.x Scheduler.x FileSystem.x
+SPB    = BareMetal.x FileSystem.x Scheduler.x
 PACKAGE=
 MARTe2_MAKEDEFAULT_DIR?=../../MakeDefaults
 
@@ -52,8 +52,9 @@ INCLUDES += -IScheduler/L4StateMachine
 INCLUDES += -IScheduler/L5GAMs
 
 all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTe2$(DLLEXT) \
 		$(BUILD_DIR)/MARTe2$(LIBEXT)
-	echo  $(OBJS)
+
+#$(BUILD_DIR)/MARTe2$(DLLEXT)
+#echo  $(OBJS)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

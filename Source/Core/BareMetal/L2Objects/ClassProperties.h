@@ -47,7 +47,7 @@ namespace MARTe {
  *
  * This information is automatically computed by the framework at initialisation time (see ClassRegistryDatabase).
  */
-class DLL_API ClassProperties {
+class ClassProperties {
 public:
 
     /**

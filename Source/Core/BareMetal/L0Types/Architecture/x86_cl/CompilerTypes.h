@@ -25,13 +25,14 @@
 #define COMPILERTYPESA_H_
 
 #include <windows.h>
+#include <stdint.h>
 
 namespace MARTe {
 
 /** 64 Bit unsigned integer. */
-typedef unsigned _int64 uint64;
+typedef unsigned long long uint64;
 /** 64 Bit signed integer. */
-typedef _int64 int64;
+typedef long long int64;
 
 /** 32 Bit unsigned integer. */
 typedef unsigned int uint32;
@@ -55,16 +56,19 @@ typedef double float64;
 /** 8 Bit character */
 typedef char char8;
 
+typedef intptr_t  uintp;
 /** Sufficiently large to hold a pointer address in the target architecture*/
-#ifdef __LP64__
-typedef DWORD32 uintp;
-#elif defined __ILP64__
-typedef DWORD32 uintp;
-#elif defined __LLP64__
-typedef DWORD64 uintp;
-#else
-typedef DWORD32 uintp;
-#endif
+// #ifdef __LP64__
+// typedef DWORD32 uintp;
+// #elif defined __ILP64__
+// typedef DWORD32 uintp;
+// #elif defined __LLP64__
+// typedef DWORD64 uintp;
+// #else
+// typedef DWORD32 uintp;
+// #endif
+
+//typedef  uintptr_t uintp;
 
 /** A tool to find indexes of structures fields. */
 #define indexof(type,field) ((intptr)&(((type *)0)->field))

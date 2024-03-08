@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapI.h"
-#include "StandardHeap_Generic.h"
+#include "../Generic/StandardHeap_Generic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

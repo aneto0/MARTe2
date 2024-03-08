@@ -54,8 +54,6 @@ int32 Sleep::GetDateSeconds() {
     return (int32) time((time_t *) NULL);
 }
 
-
-
 void Sleep::OsUsleep(const uint32 usecTime) {
     if (usecTime > 0u) {
         ::Sleep((unsigned long) (usecTime/1000));

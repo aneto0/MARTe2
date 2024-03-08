@@ -52,7 +52,7 @@ namespace MARTe {
  *  until all the output brokers for this GAM_NAME have been executed. The GAM_NAME_ExecTime holds the time elapsed
  *  from the beginning of the cycle until this GAM_NAME has finished its execution.
  */
-class DLL_API TimingDataSource: public GAMDataSource {
+class TimingDataSource: public GAMDataSource {
 public:
     CLASS_REGISTER_DECLARATION()
 

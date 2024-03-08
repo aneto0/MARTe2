@@ -50,7 +50,7 @@ namespace MARTe {
  * @brief Buffered stream (double buffer version).
  * @details This class offers a buffering mechanism for character streams.
  */
-class DLL_API DoubleBufferedStream: public BufferedStreamI, public OperatingSystemCallbacksI {
+class DoubleBufferedStream: public BufferedStreamI, public OperatingSystemCallbacksI {
 
 public:
     /**

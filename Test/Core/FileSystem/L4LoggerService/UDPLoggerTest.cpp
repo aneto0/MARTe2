@@ -48,7 +48,7 @@ static void UDPLoggerTestServerThread(void *params) {
     udpLoggerTestServerOK &= server.Listen(thisHost.GetPort());
     uint32 msecTimeout = 5000u;
     uint32 udpServerReadSize = 8000u;
-    char8 *udpServerBufferRead[udpServerReadSize];
+    char8 *udpServerBufferRead[8000u];
     if (udpLoggerTestServerOK) {
         udpLoggerTestServerSetup = true;
         udpLoggerTestServerOK = server.Read((char8 *) udpServerBufferRead, udpServerReadSize, msecTimeout);

@@ -64,7 +64,7 @@ namespace MARTe {
          * @brief Returns the number of available CPU cores.
          * @returns the number of available CPU cores.
          */
-        DLL_API uint32 Available();
+        uint32 Available();
     }
 
 }

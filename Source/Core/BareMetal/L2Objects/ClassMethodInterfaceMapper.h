@@ -54,7 +54,7 @@ namespace MARTe {
  *  allowing to distinguish, for any of the parameters, between input (copy or constant reference) and output parameters.
  */
 /*lint -e{9109} forward declaration of ClassMethodInterfaceMapper required in the ClassRegistryItem*/
-class DLL_API ClassMethodInterfaceMapper: public LinkedListable {
+class ClassMethodInterfaceMapper: public LinkedListable {
 
 public:
 

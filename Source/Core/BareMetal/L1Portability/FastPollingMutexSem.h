@@ -52,7 +52,7 @@ namespace MARTe {
  * @details This semaphore is not recursive i.e is the same thread locks two times sequentially causes a deadlock.
  * Moreover a thread can unlock the semaphore locked by another thread.
  */
-class DLL_API FastPollingMutexSem {
+class FastPollingMutexSem {
 
 public:
 

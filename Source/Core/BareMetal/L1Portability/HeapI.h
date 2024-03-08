@@ -47,7 +47,7 @@ namespace MARTe {
  * This class provides the interface method definitions allowing different ways to
  * manage the heap memory.
  */
-class DLL_API HeapI {
+class HeapI {
 public:
 
     /**

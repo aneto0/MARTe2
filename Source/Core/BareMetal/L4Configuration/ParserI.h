@@ -72,7 +72,7 @@ namespace MARTe {
  * stream of characters, whenever the user calls the method Parse().
  *
  */
-class DLL_API ParserI {
+class ParserI {
 
 public:
 

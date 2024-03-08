@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Class which represents the action to be executed after an exception
  * has arisen.
  */
-class DLL_API ExceptionHandler {
+class ExceptionHandler {
 
 public:
 

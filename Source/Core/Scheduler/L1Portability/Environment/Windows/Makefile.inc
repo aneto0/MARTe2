@@ -40,6 +40,7 @@ include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES+=-I../../
 INCLUDES+=-I../../../../BareMetal/L0Types/
 INCLUDES+=-I../../../../BareMetal/L1Portability
+INCLUDES+=-I../../../../Scheduler/L1Portability/Environment/Generic
 
 all: $(OBJS)    $(CPPS) \
                 $(BUILD_DIR)/L1Portability$(LIBEXT) \

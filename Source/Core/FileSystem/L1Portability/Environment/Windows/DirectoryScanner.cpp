@@ -55,7 +55,7 @@ DirectoryScanner::~DirectoryScanner() {
     size = 0u;
     if (basePath != NULL) {
         if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
         }
         basePath = static_cast<char8 *>(NULL);
     }
@@ -66,7 +66,7 @@ void DirectoryScanner::CleanUp() {
     size = 0u;
     if (basePath != NULL) {
         if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
         }
         basePath = static_cast<char8 *>(NULL);
     }
@@ -142,7 +142,7 @@ bool DirectoryScanner::Scan(const char8 * const path,
         WIN32_FIND_DATA lpFindFileData;
         HANDLE h = FindFirstFile(searchMask, &lpFindFileData);
         if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in initialization");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed FindFirstFile() in initialization");
             FindClose(h);
             ret = false;
         }

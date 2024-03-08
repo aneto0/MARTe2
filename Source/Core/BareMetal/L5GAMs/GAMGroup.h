@@ -57,7 +57,7 @@ namespace MARTe {
  *
  * and it has to be contained in the [RealTimeApplication].+Functions.[?ReferenceContainer?] declaration.
  */
-class DLL_API GAMGroup: public ReferenceContainer , public StatefulI {
+class GAMGroup: public ReferenceContainer , public StatefulI {
 public:
 
     /**

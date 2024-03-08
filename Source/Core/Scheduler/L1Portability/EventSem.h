@@ -63,7 +63,7 @@ namespace MARTe {
  * by the Post method. Threads are blocked in the barrier by calling one of the Wait methods.
  * Once the barrier is raised all the threads are allowed to concurrently proceed.
  */
-class DLL_API EventSem {
+class EventSem {
 
 public:
 

@@ -43,7 +43,7 @@ namespace MARTe {
 /**
  * @brief Describes one member of a class or structure
  */
-class DLL_API IntrospectionEntry {
+class IntrospectionEntry {
 
 public:
 

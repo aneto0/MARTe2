@@ -54,7 +54,6 @@ char8 ReferenceContainer::domainTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS]
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
 ReferenceContainer::ReferenceContainer() :
         Object() {
     mux.Create();

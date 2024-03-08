@@ -120,7 +120,7 @@ namespace MARTe {
  * and removing at the same time)
  *
  */
-class DLL_API StaticListHolder {
+class StaticListHolder {
 
 public:
 

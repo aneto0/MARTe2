@@ -90,7 +90,7 @@ namespace MARTe {
  * Note: This grammar is written in the SLK language and refers to functions
  * declared in MARTe::ParserI.
  */
-class DLL_API JsonParser: public ConfigurationParserI {
+class JsonParser: public ConfigurationParserI {
 
 public:
 

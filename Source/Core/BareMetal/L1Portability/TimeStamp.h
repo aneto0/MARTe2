@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief A class which describes a time stamp information.
  */
-class DLL_API TimeStamp {
+class TimeStamp {
 
 public:
 

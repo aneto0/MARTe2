@@ -81,7 +81,7 @@ namespace MARTe {
  * @post
  *   destination holds the converted type of source
  */
-DLL_API bool TypeConvert(const AnyType &destination,
+bool TypeConvert(const AnyType &destination,
                          const AnyType &source);
 
 }

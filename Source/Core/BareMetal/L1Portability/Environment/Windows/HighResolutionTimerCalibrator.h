@@ -44,7 +44,7 @@ namespace MARTe{
 /**
  * @brief A class to get the period and the frequency of the clock.
  */
-class DLL_API HighResolutionTimerCalibrator {
+class HighResolutionTimerCalibrator {
 
 public:
 

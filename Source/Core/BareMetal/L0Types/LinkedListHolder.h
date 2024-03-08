@@ -59,7 +59,7 @@ namespace MARTe {
  * concept of a first element of the list. In this way it is always possible
  * to link to a well defined item (e.g. to perform a search on the full list).
  */
-class DLL_API LinkedListHolder {
+class LinkedListHolder {
 
 public:
 

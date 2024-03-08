@@ -214,7 +214,7 @@ bool ConfigurationLoaderTCPTest::TestExecute() {
         ret = tcpSocket.Write(config.Buffer(), wsize);
     }
     uint32 size = 64;
-    char8 buff[size];
+    char8 buff[64];
     if (ret) {
         ret = tcpSocket.Read(&buff[0], size);
     }
@@ -366,7 +366,7 @@ bool ConfigurationLoaderTCPTest::TestExecuteErr() {
         ret = tcpSocket.Write(configErr.Buffer(), wsize);
     }
     uint32 size = 64;
-    char8 buff[size];
+    char8 buff[64];
     if (ret) {
         ret = tcpSocket.Read(&buff[0], size);
     }

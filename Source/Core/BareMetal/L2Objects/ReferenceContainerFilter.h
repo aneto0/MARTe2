@@ -92,7 +92,7 @@ const uint32 REMOVE = 0x8u;
  * Every time the Test function is to return it should call
  * IncrementFound so that the number of occurrences found is correctly tracked.
  */
-class DLL_API ReferenceContainerFilter {
+class ReferenceContainerFilter {
 public:
 
     /**

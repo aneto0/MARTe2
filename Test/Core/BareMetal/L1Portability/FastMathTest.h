@@ -205,6 +205,7 @@ template<typename T> bool FastMathTest::TestCompleteMultiply(const T testX1, con
     actualHigh = expectedHigh + 1;
 
     actualRes = FastMath::CompleteMultiply(testX1, testX2, actualHigh);
+    
     return ((actualRes == expectedRes) && (actualHigh == expectedHigh));
 }
 

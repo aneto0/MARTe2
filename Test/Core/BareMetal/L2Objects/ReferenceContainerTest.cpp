@@ -872,7 +872,9 @@ bool ReferenceContainerTest::TestExportData() {
     if (!container.ExportData(out)) {
         // return false;
     }
+
     StreamString output;
+    
     output.Printf("%!", out);
 
     const char8 *test = ""

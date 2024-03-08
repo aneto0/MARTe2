@@ -57,7 +57,7 @@ namespace MARTe {
 /**
  * @brief Mutual exclusion semaphore.
  */
-class DLL_API MutexSem {
+class MutexSem {
 
 public:
 

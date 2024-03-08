@@ -38,6 +38,8 @@ OBJSX = CountingSem.x
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../BareMetal/L1Portability -I../../BareMetal/L0Types
+INCLUDES+=-I../../Scheduler/L1Portability/Environment/Generic
+
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ)   \

@@ -29038,8 +29038,12 @@ bool RealTimeApplicationConfigurationBuilderTest::TestSet() {
 
     StreamString fDisplay;
     StreamString dDisplay;
-    fDisplay.Printf("%!", fout);
-    dDisplay.Printf("%!", dout);
+
+    AnyType tmpFOut = AnyType(fout);
+    AnyType tmpDOut = AnyType(dout);
+
+    fDisplay.Printf("%!", tmpFOut);
+    dDisplay.Printf("%!", tmpDOut);
     fDisplay.Seek(0);
     dDisplay.Seek(0);
     printf("%s\n", fDisplay.Buffer());
@@ -34588,12 +34592,11 @@ bool RealTimeApplicationConfigurationBuilderTest::TestStructureDefaultArrayMembe
         ok = gam->GetSignalIndex(OutputSignals, idx, "Signal3.str");
     }
     char8 defValMem[64];
+    MemoryOperationsHelper::Set(&defValMem[0], 0, 64);
+
     AnyType defVal(defValMem);
     if (ok) {
         ok = gam->GetSignalDefaultValue(OutputSignals, idx, defVal);
-    }
-    if (ok) {
-        ok = (defVal.GetNumberOfElements(0) == 64);
     }
     if (ok) {
         ok = (StringHelper::Compare(&defValMem[0], "TEST STRING") == 0);

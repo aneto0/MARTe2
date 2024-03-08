@@ -46,7 +46,7 @@ namespace MARTe {
  * @details This class allows to associate a name and a reference to an AnyType.
  * It holds and manages a memory space to store a copy of the data of the serialised AnyType.
  */
-class DLL_API AnyObject: public Object {
+class AnyObject: public Object {
 
 public:
 

@@ -31,35 +31,37 @@ CreateLibrary :
 
 $(BUILD_DIR)/%.obj : %.cpp
 	@echo $(BUILD_DIR)
-	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  $*.cpp  $(ASSEMBLER)
-	@if not exist temp mkdir temp
-	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
-	@touch $(BUILD_DIR)/$*.obj >temp/temp
-	@rm $(BUILD_DIR)/$*.obj >temp/temp
-	@mv $*.obj $(BUILD_DIR) >temp/temp
-	@touch $(BUILD_DIR)/$*.asm >temp/temp
-	@rm $(BUILD_DIR)/$*.asm >temp/temp
-	@touch $*.asm >temp/temp
-	@mv $*.asm $(BUILD_DIR) >temp/temp
+	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES) $*.cpp $(ASSEMBLER) -Fo$(BUILD_DIR)/$*.obj
+#	@if not exist temp mkdir temp
+#	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
+#	@touch $(BUILD_DIR)/$*.obj >temp/temp
+#	@rm $(BUILD_DIR)/$*.obj >temp/temp
+#	@mv $*.obj $(BUILD_DIR) >temp/temp
+#	@touch $(BUILD_DIR)/$*.asm >temp/temp
+#	@rm $(BUILD_DIR)/$*.asm >temp/temp
+#	@touch $*.asm >temp/temp
+#	@mv $*.asm $(BUILD_DIR) >temp/temp
 
 $(BUILD_DIR)/%.obj : %.c
-	@if not exist temp mkdir temp
-	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
-	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) $*.c  $(ASSEMBLER)
-	@touch $(BUILD_DIR)/$*.obj >temp/temp
-	@rm $(BUILD_DIR)/$*.obj >temp/temp
-	@mv $*.obj $(BUILD_DIR) >temp/temp
-	@touch $(BUILD_DIR)/$*.asm >temp/temp
-	@rm $(BUILD_DIR)/$*.asm >temp/temp
-	@touch $*.asm >temp/temp
-	@mv $*.asm $(BUILD_DIR) >temp/temp
+	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
+	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES) $*.c $(ASSEMBLER)
+#	@if not exist temp mkdir temp
+#	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
+#	@touch $(BUILD_DIR)/$*.obj >temp/temp
+#	@rm $(BUILD_DIR)/$*.obj >temp/temp
+#	@mv $*.obj $(BUILD_DIR) >temp/temp
+#	@touch $(BUILD_DIR)/$*.asm >temp/temp
+#	@rm $(BUILD_DIR)/$*.asm >temp/temp
+#	@touch $*.asm >temp/temp
+#	@mv $*.asm $(BUILD_DIR) >temp/temp
 
 $(BUILD_DIR)/%.obj : %.f
 	@if not exist temp mkdir temp
 	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
 	$(FCOMPILER) -compile_only $(FFLAGS) $(FOPTS) $*.f 
 	@touch $(BUILD_DIR)/$*.obj >temp/temp
-	@rm $(BUILD_DIR)/$*.obj >temp/temp
+#	@rm $(BUILD_DIR)/$*.obj >temp/temp
 	@mv $*.obj $(BUILD_DIR) >temp/temp
 
 $(BUILD_DIR)/%.pp :  %.cpp
@@ -68,59 +70,61 @@ $(BUILD_DIR)/%.pp :  %.cpp
 
 %.ifo :  %.h
 	$(COMPILER) -E $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
-	
 	cint  -i temp/temp.pp $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.ifo
 
 %.sinfo.cpp :  %.h
 	$(COMPILER) -D_CINT -E $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
-	
 	cint.exe   -i  $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.sinfo.cpp
 #-DINCL=temp/temp.pp
 
 	
 $(BUILD_DIR)/%.lib : $(OBJS) $(OBJSRTTI) createLibrary
 	@touch $@
-	@rm $(BUILD_DIR)/$*.lib
-	lib -OUT:$@  $(OBJS) $(LIBRARIES_STATIC) -NODEFAULTLIB
-	@rm createLibrary
+#	rm $(BUILD_DIR)/$*.lib
+	lib /EXPORT:$(@:%.lib=%.exp) -OUT:$@ $(OBJS) $(LIBRARIES_STATIC) -NODEFAULTLIB
+#	$(subst /,\,$(ROOT_DIR))\Build\Tools\defgen.bat $@ $(BUILD_DIR)
+#	rm createLibrary
+	
 
 $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS) createLibrary
-	@echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
-	@cat title $(IMPDEFS) > dllGenerator.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) dllGenerator.def -o $@
-	$(subst /,\,$(ROOT_DIR))\Build\Tools\expdef.exe $@ > $(@:%.dll=%.def)
-	rm dllGenerator.def
-	@rm createLibrary
+	@echo "TO-DO .dll"
+#	$(subst /,\,$(ROOT_DIR))\Build\Tools\defgen.bat $@ $(BUILD_DIR)
+#	$(subst /,\,$(ROOT_DIR))\Build\Tools\dll2def.bat $@ $(@:%.dll=%.def)
+#	@echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
+#	@cat title $(IMPDEFS) > dllGenerator.def
+#	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) dllGenerator.def -o $@
+#	$(subst /,\,$(ROOT_DIR))\Build\Tools\expdef.exe $@ $(@:%.dll=%.def)
+#	rm dllGenerator.def
+#	@rm createLibrary
 	
 $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
-	touch dummy.cpp
-	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) dummy.cpp  $(ASSEMBLER)
-	@echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
-	@cat title $(IMPDEFS) > dllGenerator.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) dllGenerator.def -o $@
-	rm dllGenerator.def
-	rm dummy.*
-	
+	@echo "TO-DO dummy.dll"
+#	touch dummy.cpp
+#	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) dummy.cpp  $(ASSEMBLER)
+#	@echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
+#	@cat title $(IMPDEFS) > dllGenerator.def
+#	$(COMPILER) -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) dllGenerator.def -o $@  $(LFLAGS)
+#	rm dllGenerator.def
+#	rm dummy.*
 	
 $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
-	$(subst /,\,$(ROOT_DIR))\Build\Tools\expdef.exe $< > $@
-	@rm -f $(BUILD_DIR)/dummy.dll 
-
+	@echo "TO-DO .def"
+#	$(subst /,\,$(ROOT_DIR))\Build\Tools\dll2def.bat $< $@
+#	$(subst /,\,$(ROOT_DIR))\Build\Tools\expdef.exe $< > $@
+#	@rm -f $(BUILD_DIR)/dummy.dll 
 
 $(BUILD_DIR)/%.exe : $(OBJS) $(BUILD_DIR)/%.obj $(LIBRARIES) createLibrary
-	$(COMPILER)  $(LFLAGS) -MT -DSFML_STATIC $(DEBUG) $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) -o $@ $(LOPTS)
-	@if exist createLibrary rm -f createLibrary
-	
+	$(COMPILER) -Zi -EHsc- $(OBJS) $(subst /,\,$(BUILD_DIR))\$*.obj $(subst /,\,$(LIBRARIES)) /link /opt:noref /wholearchive /out:$@ /force:multiple
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -o $@
+	$(COMPILER) $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -o $@
 
 depends.msc : dependsRaw.msc
 	@echo /\.o:/s/^^/$(subst \\,\/,$(BUILD_DIR))\// > CreateMSCDepends.sed
 	sed -f CreateMSCDepends.sed dependsRaw.msc > depends.msc
 
 dependsRaw.msc: 
-	gcc -MM -D_CY32 -DWIN32 $(CFLAGS) $(INCLUDES) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) *.c* > dependsRaw.msc
+	gcc -MM -D_CY32 $(CFLAGSPEC) -DWIN32 $(CFLAGS) $(INCLUDES) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) *.c* > dependsRaw.msc
 	@if not exist temp mkdir temp
 	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 
@@ -133,7 +137,7 @@ $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 %.spc : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean
 
-clean:  $(SUBPROJC)
+clean ::  $(SUBPROJC)
 	@if exist depends.* rm -f depends*
 	@if exist $(BUILD_DIR)/*$(DLLEXT) rm -f $(BUILD_DIR)/*$(DLLEXT)	
 	@if exist $(BUILD_DIR)/*$(EXEEXT) rm -f $(BUILD_DIR)/*$(EXEEXT)
@@ -147,5 +151,3 @@ clean:  $(SUBPROJC)
 	@if exist $(BUILD_DIR)/*$(PDBEXT) rm -f $(BUILD_DIR)/*$(PDBEXT)
 	@if exist $(BUILD_DIR)/*$(DEFEXT) rm -f $(BUILD_DIR)/*$(DEFEXT)	
 	@if exist $(BUILD_DIR)/*$(OBJEXT) rm -f $(BUILD_DIR)/*$(OBJEXT)
-	
-		

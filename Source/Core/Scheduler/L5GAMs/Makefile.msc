@@ -27,14 +27,14 @@ TARGET=msc
 
 include Makefile.inc
 
-LIBRARIES += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L0Types\L0TypesB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L1Portability\L1PortabilityB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L2Objects\L2ObjectsB$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\L1Portability\L1PortabilityS$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\L1Portability\Windows\L1Portability$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\L3Services\L3ServicesS$(LIBEXT)
 
 
-
-IMPDEFS += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability.def
+#IMPDEFS += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability.def
 
 
 

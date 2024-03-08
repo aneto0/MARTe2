@@ -46,7 +46,7 @@ namespace MARTe {
  * @tparam T is the class described by this Introspection.
  */
 template<class T>
-class DLL_API IntrospectionT: public Introspection {
+class IntrospectionT: public Introspection {
 public:
 
     /**

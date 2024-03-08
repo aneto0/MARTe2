@@ -41,7 +41,7 @@
 
 namespace MARTe {
 
-struct DLL_API BasicFileProperties {
+struct BasicFileProperties {
     /**
      * The Windows handle set when opening the file
      */

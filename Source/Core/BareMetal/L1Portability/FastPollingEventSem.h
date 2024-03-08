@@ -48,7 +48,7 @@ namespace MARTe {
  * @details The FastPollingEventSem offers the possibility to block any number of threads in
  * a spin-lock based barrier (i.e  without depending to the operating system scheduler).
  */
-class DLL_API FastPollingEventSem {
+class FastPollingEventSem {
 public:
 
     /**

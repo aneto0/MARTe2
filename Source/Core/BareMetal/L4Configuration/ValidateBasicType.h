@@ -56,7 +56,7 @@ namespace MARTe {
  *
  * @return true if \a value respects the constraints specified by the \a attributes, false otherwise.
  */
-DLL_API bool ValidateBasicType(const AnyType &value,
+bool ValidateBasicType(const AnyType &value,
                        const char8* const attributes);
 
 }

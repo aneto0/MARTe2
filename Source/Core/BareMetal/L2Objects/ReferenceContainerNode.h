@@ -44,7 +44,7 @@ namespace MARTe {
 /**
  * @brief Wraps a Reference around a LinkedListable so that it can be added to a container.
  */
-class DLL_API ReferenceContainerNode: public LinkedListable {
+class ReferenceContainerNode: public LinkedListable {
 public:
 
     /**

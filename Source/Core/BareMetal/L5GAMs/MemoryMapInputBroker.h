@@ -42,7 +42,7 @@ namespace MARTe {
  * @details This class copies all the signals declared on a MemoryMapBroker
  * from the DataSourceI memory to the GAM memory.
  */
-class DLL_API MemoryMapInputBroker: public MemoryMapBroker {
+class MemoryMapInputBroker: public MemoryMapBroker {
 public:
     CLASS_REGISTER_DECLARATION()
     /**

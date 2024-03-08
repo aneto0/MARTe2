@@ -54,7 +54,7 @@ namespace MARTe {
  * ClassRegistryItem and automatically added to a ClassRegistryDatabase. This
  * database can then be used to retrieve information about the registered classes.
  */
-class DLL_API ClassRegistryDatabase: public GlobalObjectI {
+class ClassRegistryDatabase: public GlobalObjectI {
 
 public:
 

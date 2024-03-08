@@ -45,7 +45,7 @@ namespace MARTe {
  * @brief Groups the information about each member of a class or a structure.
  */
 /*lint -e{9109} forward declaration of this class is required in other modules*/
-class DLL_API Introspection {
+class Introspection {
 
 public:
 

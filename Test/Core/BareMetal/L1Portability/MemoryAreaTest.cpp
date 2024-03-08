@@ -130,36 +130,66 @@ bool MemoryAreaTest::TestGetPointer() {
 
 bool MemoryAreaTest::TestInitMemory() {
     MemoryArea mem;
-    uint32 *test = new uint32;
+    //uint32 *test = new uint32;
+    uint32 *test = (uint32*)HeapManager::Malloc(sizeof(uint32));
     *test = 1;
-    if (!mem.InitMemory(test, sizeof(uint32))) {
-        return false;
-    }
 
+    bool retVal = mem.InitMemory(test, sizeof(uint32));
     uint32 offset = 0u;
-    *test = 2;
-    if (!mem.Add(test, sizeof(uint32), offset)) {
-        return false;
+
+    if (!retVal) {
+        printf("\r\nFailure in InitMemory()\r\n");
     }
 
-    if (offset != sizeof(uint32)) {
-        return false;
+    if(retVal) {  
+        *test = 2;
+        retVal = mem.Add(test, sizeof(uint32), offset);
+
+        if (!retVal) {
+            printf("\r\nFailure in Add()\r\n");
+        }
     }
 
-    if (mem.GetMemorySize() != 2 * sizeof(uint32)) {
-        return false;
+    if(retVal) {
+        retVal = (offset == sizeof(uint32));
+        if(!retVal) {
+            printf("\r\nFailure, current offset %d differs from expected %zd\r\n", offset, sizeof(uint32));
+        }
     }
-    *test = 3;
 
-    if (*(uint32*) mem.GetMemoryStart() != 3) {
-        return false;
+    if(retVal) {
+        uint32 tmpMemSize = mem.GetMemorySize();
+        retVal = (tmpMemSize == (2 * sizeof(uint32)));
+        if(!retVal) {
+            printf("\r\nFailure, current memory size %lld differs from expected %d\r\n", tmpMemSize, (2 * sizeof(uint32)));
+        }
     }
-    return ((uint32*) mem.GetMemoryStart())[1] == 2;
+
+    // This test cannot be done, it implicitly assumes that the internal realloc does not move the given pointer.
+    // This does not happen, for example, on Windows. Doc explicitly states "possibly changed" for the pointer returned by the realloc.
+    // if(retVal) {
+    //     *test = 3;
+    //     uint32* tmpMemStart = (uint32*)mem.GetMemoryStart();
+    //     retVal = (tmpMemStart[0] == 3);
+    //     if(!retVal) {
+    //         printf("\r\nFailure, expected 3, found %d\r\n", tmpMemStart[0]);
+    //     }
+    // }
+
+    if(retVal) {
+        uint32* tmpMemStartB = (uint32*)mem.GetMemoryStart();
+        retVal = (tmpMemStartB[1] == 2);
+        if(!retVal) {
+            printf("\r\nFailure, expected 2, found %d\r\n", tmpMemStartB[1]);
+        }
+    }    
+
+    return retVal;
 }
 
 bool MemoryAreaTest::TestInitMemoryFalse_AlreadyInit() {
     MemoryArea mem;
-    uint32 *test = new uint32;
+    uint32 *test = (uint32*)HeapManager::Malloc(sizeof(uint32));
     *test = 1;
 
     uint32 offset = 0u;

@@ -1372,9 +1372,14 @@ bool IOBufferTest::TestPrintFormatted_Stream() {
         stream.Write(toWrite, writeSize);
         stream.FlushAndResync();
         stream.Seek(0);
+        //TODO AVON
+        //ORIGINAL AnyType toPrint = stream;
+        
+        TypeDescriptor dataDescriptor(false, Stream, 0u);
+        AnyType toPrint[1];
+        toPrint[0] = AnyType(dataDescriptor, 0u, &stream);
 
-        AnyType toPrint = stream;
-        ioBuffer.PrintFormatted(printfStreamTable[i][0], &toPrint);
+        ioBuffer.PrintFormatted(printfStreamTable[i][0], toPrint);
         if (StringHelper::Compare(ioBuffer.Buffer(), printfStreamTable[i][2]) != 0) {
             printf("|%s| |%s|", ioBuffer.Buffer(), printfStreamTable[i][2]);
             return false;
@@ -1399,9 +1404,13 @@ bool IOBufferTest::TestPrintFormatted_TooBigStream() {
     stream.SetBufferSize(32);
 
     stream.SetFakeSize(10001);
+    //TODO AVON
+    //AnyType toPrint = stream;
+    TypeDescriptor dataDescriptor(false, Stream, 0u);
+    AnyType toPrint[1];
+    toPrint[0] = AnyType(dataDescriptor, 0u, &stream);
 
-    AnyType toPrint = stream;
-    ioBuffer.PrintFormatted("%s", &toPrint);
+    ioBuffer.PrintFormatted("%s", toPrint);
 
     return StringHelper::Compare(ioBuffer.Buffer(), "!! too big > 10000 characters!!") == 0;
 }
@@ -1417,8 +1426,13 @@ bool IOBufferTest::TestPrintFormatted_Stream_NotSeekable() {
     DummySingleBufferedStream stream(false);
     stream.SetBufferSize(32);
 
-    AnyType toPrint = stream;
-    ioBuffer.PrintFormatted("%s", &toPrint);
+    //TODO AVON
+    //AnyType toPrint = stream;
+    TypeDescriptor dataDescriptor(false, Stream, 0u);
+    AnyType toPrint[1];
+    toPrint[0] = AnyType(dataDescriptor, 0u, &stream);
+
+    ioBuffer.PrintFormatted("%s", toPrint);
 
     return StringHelper::Compare(ioBuffer.Buffer(), "!!stream !seek!!") == 0;
 }

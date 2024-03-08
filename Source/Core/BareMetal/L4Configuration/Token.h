@@ -43,7 +43,7 @@ namespace MARTe {
  * @brief A class that describes a lexical token by identifier and description,
  * storing also its associated data and line number.
  */
-class DLL_API Token {
+class Token {
 
 public:
     /**

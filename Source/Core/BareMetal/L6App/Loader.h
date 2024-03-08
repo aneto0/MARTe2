@@ -92,7 +92,7 @@ namespace MARTe {
  *    }
  *  }
  */
-class DLL_API Loader: public Object {
+class Loader: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     /**

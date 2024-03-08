@@ -85,7 +85,7 @@ namespace MARTe {
  * - The error messages printed on the \a err stream are in the format
  * "error description [line number]".
  */
-class DLL_API ConfigurationParserI : public ParserI {
+class ConfigurationParserI : public ParserI {
 
 public:
 

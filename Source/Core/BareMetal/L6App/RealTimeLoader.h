@@ -48,7 +48,7 @@ namespace MARTe {
  * @details The Loader parses (see Initialise) a given configuration stream and configures the RealTimeApplication.
  * The Start method allows to trigger the Start of the application, either by specifying the first state or by sending a message to given destination (see Loader::Start).
  */
-class DLL_API RealTimeLoader: public Loader {
+class RealTimeLoader: public Loader {
 public:
     CLASS_REGISTER_DECLARATION()
 

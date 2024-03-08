@@ -44,7 +44,7 @@ namespace MARTe {
      * @brief Class which allows to query the system for "well-known" services
      * by name/protocol or by port/protocol.
      */
-    class DLL_API InternetService {
+    class InternetService {
 
     public:
 

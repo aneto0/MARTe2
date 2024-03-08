@@ -45,7 +45,7 @@ namespace MARTe {
  * @brief Adds message to a queue.
  * @details Messages consumed by this filter are added to a queue. The queue is consumed by calling the GetMessage method.
  */
-class DLL_API QueueingMessageFilter: public MessageFilter, public Object {
+class QueueingMessageFilter: public MessageFilter, public Object {
 public:
 
     /**

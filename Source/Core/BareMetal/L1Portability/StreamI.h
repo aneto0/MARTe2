@@ -83,7 +83,7 @@ namespace MARTe {
  * write, which increments position and/or size, will saturate them at the
  * maximum value on these cases.
  */
-class DLL_API StreamI {
+class StreamI {
 
 public:
 
