@@ -46,7 +46,7 @@ namespace MARTe {
  * @brief A basic implementation of a stream which allows reading and writing
  * to an underlying bounded and preallocated memory location.
  */
-class StreamMemoryReference: public BufferedStreamI {
+class DLL_API StreamMemoryReference: public BufferedStreamI {
 
 public:
 

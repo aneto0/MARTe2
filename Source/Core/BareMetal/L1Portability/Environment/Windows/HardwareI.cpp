@@ -21,10 +21,12 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include "../../HardwareI.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -39,6 +41,9 @@
 namespace MARTe {
     namespace HardwareI {
         void InitEnvironment() {
+        }
+
+        void InitArchitecture() {
         }
     }
 

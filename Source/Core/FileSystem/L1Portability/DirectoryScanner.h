@@ -47,7 +47,7 @@ namespace MARTe {
  * class, because the class inherits from LinkedListHolder and is itself a
  * list.
  */
-class DirectoryScanner: public LinkedListHolder {
+class DLL_API DirectoryScanner: public LinkedListHolder {
 
 public:
 

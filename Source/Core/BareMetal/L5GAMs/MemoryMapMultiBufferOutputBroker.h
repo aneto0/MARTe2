@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Output implementation of the MemoryMapMultiBufferBroker.
  * @details The function DataSourceI::PrepareOffsets is called before calling MemoryMapMultiBufferBroker::CopyOutputs.
  */
-class MemoryMapMultiBufferOutputBroker: public MemoryMapMultiBufferBroker {
+class DLL_API MemoryMapMultiBufferOutputBroker: public MemoryMapMultiBufferBroker {
 public:
     CLASS_REGISTER_DECLARATION()
 

@@ -48,7 +48,7 @@ namespace MARTe {
  * based on the BinaryTree and allows to directly navigate to the parent Container.
  *
  */
-class ConfigurationDatabaseNode: public Object {
+class DLL_API ConfigurationDatabaseNode: public Object {
 
 public:
     CLASS_REGISTER_DECLARATION()

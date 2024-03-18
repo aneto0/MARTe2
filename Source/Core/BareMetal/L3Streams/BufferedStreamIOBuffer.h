@@ -53,7 +53,7 @@ namespace MARTe {
  *
  * @remark Since this buffers has to read and write on the associated stream, the constructor needs a pointer to such stream.
  */
-class BufferedStreamIOBuffer: public IOBuffer {
+class DLL_API BufferedStreamIOBuffer: public IOBuffer {
 
 public:
 

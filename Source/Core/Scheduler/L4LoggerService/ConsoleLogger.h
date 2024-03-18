@@ -48,7 +48,7 @@ namespace MARTe {
  *     PrintKeys = 1 //Optional. As described in LoggerConsumerI::LoadPrintPreferences
  * }
  */
-class ConsoleLogger: public Object, public LoggerConsumerI {
+class DLL_API ConsoleLogger: public Object, public LoggerConsumerI {
 public:
     CLASS_REGISTER_DECLARATION()
 

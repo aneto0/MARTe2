@@ -143,7 +143,7 @@ namespace MARTe{
  * 
  */
 
-class MathExpressionParser : public ParserI {
+class DLL_API MathExpressionParser : public ParserI {
 
 public:
 

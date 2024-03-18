@@ -66,7 +66,7 @@ namespace MARTe {
  * invalid object builder (useful for setting a default builder).
  */
 /*lint -e{9109} forward declaration of this class is required in other modules*/
-class ObjectBuilder {
+class DLL_API ObjectBuilder {
 public:
 
     /**

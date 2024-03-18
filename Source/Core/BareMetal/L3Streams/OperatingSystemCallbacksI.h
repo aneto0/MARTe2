@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Low level unbuffered stream
  */
-class  OperatingSystemCallbacksI {
+class DLL_API OperatingSystemCallbacksI {
 
     friend class BufferedStreamIOBuffer;
 

@@ -104,7 +104,7 @@ namespace MARTe {
  * write, which increments position and/or size, will not change this value.
  */
 
-class BufferedStreamI: public virtual StreamI {
+class DLL_API BufferedStreamI: public virtual StreamI {
 
 public:
 
@@ -124,7 +124,7 @@ public:
      * @brief Casts the stream to AnyType.
      * @return an AnyType representation of the stream.
      */
-    //TODO AVON RESTORE THIS
+    //TODO AVON CHECK WITH ANDRE
     //inline operator AnyType();
 
     /**
@@ -404,7 +404,7 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+//TODO AVON CHECK WITH ANDRE!
 // BufferedStreamI::operator AnyType() {
 //     void *dataPointer = static_cast<void *>(this);
 //     TypeDescriptor dataDescriptor(false, Stream, 0u);

@@ -73,7 +73,7 @@ namespace MARTe {
      *
      *     fsutil behavior set disablelastaccess 0
      */
-    class Directory: public LinkedListable {
+    class DLL_API Directory: public LinkedListable {
 
     public:
         /**

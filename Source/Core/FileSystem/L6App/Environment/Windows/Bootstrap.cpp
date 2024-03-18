@@ -138,7 +138,6 @@ ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &lo
     }
     if (ret) {
         configurationStream = dynamic_cast<StreamI*>(&inputConfigurationFile);
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "--------------------------------------------- GETCFG HERE");
     }
     return ret;
 }

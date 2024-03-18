@@ -46,7 +46,7 @@ namespace MARTe {
  * @details CPUs are set by a mask of bits (64 bits max => 64 processors max).
  * System dependent calls to get the used cpus could be found in ProcessorType.h
  */
-class ProcessorType {
+class DLL_API ProcessorType {
 public:
 
     /**

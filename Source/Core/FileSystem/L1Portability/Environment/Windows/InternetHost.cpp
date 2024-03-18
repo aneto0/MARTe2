@@ -51,7 +51,7 @@ namespace MARTe {
 
 FastPollingMutexSem hostnameFastSem;
 
-class LocalHostInfo {
+class DLL_API LocalHostInfo {
 public:
 
     static LocalHostInfo *Instance() {

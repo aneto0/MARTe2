@@ -53,7 +53,7 @@ namespace MARTe {
  *    MaxCycles = 0 //Optional, if not 0 the scheduler will stop executing after MaxCycles have been executed.
  * }
  */
-class GAMBareScheduler: public GAMSchedulerI {
+class DLL_API GAMBareScheduler: public GAMSchedulerI {
 
 public:
     CLASS_REGISTER_DECLARATION()

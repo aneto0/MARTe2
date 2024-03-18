@@ -48,7 +48,7 @@ namespace MARTe {
  * @brief Implementation of a message that can be sent to or received from MARTe::Object instances.
  * @details The Message is a ReferenceContainer, so it can contain a generic pay-load.
  */
-class Message: public ReferenceContainer {
+class DLL_API Message: public ReferenceContainer {
 
 public:
 

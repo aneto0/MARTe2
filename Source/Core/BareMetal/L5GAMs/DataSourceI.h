@@ -71,7 +71,7 @@ enum SignalDirection {
  * }
  * </pre>
  */
-class DataSourceI: public ReferenceContainer, public StatefulI {
+class DLL_API DataSourceI: public ReferenceContainer, public StatefulI {
 
 public:
     /**

@@ -28,3 +28,4 @@ TARGET=msc
 
 include Makefile.inc
 
+LFLAGS+=/force:unresolved

@@ -60,7 +60,7 @@ namespace MARTe {
  * node, from which the user can access the next one. So, all the operations
  * like adding, inserting, peeking, etc, are relative to this implicit node.
  */
-class LinkedListable {
+class DLL_API LinkedListable {
 
 public:
 

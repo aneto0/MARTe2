@@ -65,7 +65,7 @@ namespace MARTe {
  *
  *   @see the Initialise method for the available configuration options.
  */
-class HttpClient: public Object {
+class DLL_API HttpClient: public Object {
 public:
 
     /**

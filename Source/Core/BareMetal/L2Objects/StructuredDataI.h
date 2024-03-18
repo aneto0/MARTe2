@@ -73,7 +73,7 @@ namespace MARTe {
  * Create operation was performed).
  */
 /*lint -e{9109} forward declaration of this class is required in other modules*/
-class StructuredDataI {
+class DLL_API StructuredDataI {
 public:
 
     /**

@@ -54,7 +54,7 @@ namespace MARTe {
      * function starts to monitor them returning when an even occurs.
      * The IsSet() function can be used to know which events were triggered.
      */
-    class Select {
+    class DLL_API Select {
 
     public:
 

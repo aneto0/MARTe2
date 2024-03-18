@@ -56,7 +56,7 @@ namespace MARTe {
  * The Reference might also own no object, in which case the function IsValid will return false.
  */
 /*lint -e{9109} [MISRA C++ Rule 3-2-3] Justification: forward declaration of Reference in Object and StructureDataI required.*/
-class Reference {
+class DLL_API Reference {
 public:
 
     /**

@@ -52,6 +52,8 @@ const uint32 NUMBER_OF_GLOBAL_OBJECTS = 64u;
 /** Threads database memory granularity */
 #define THREADS_DATABASE_GRANULARITY 64
 
+#define SCHED_GRANULARITY_US 10000u
+
 /** Defines the maximum number of elements in the memory database */
 #define MAX_NO_OF_MEMORY_MONITORS 64u
 
@@ -68,7 +70,8 @@ typedef size_t osulong;
 /**
  * Know shared library extensions
  */
-static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
+//TODO AVON
+static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".dll", 0 };
 
 struct MutexSemProperties;
 #define MutexSemHandle MutexSemProperties*
@@ -82,7 +85,7 @@ struct BasicConsoleProperties;
 typedef HANDLE Handle;
 static const char8 DIRECTORY_SEPARATOR = '\\';
 
-const uint32 SCHED_GRANULARITY_US = 10000u;
+//const uint32 SCHED_GRANULARITY_US = 10000u;
 typedef uint32 InternetAddress;
 
 }

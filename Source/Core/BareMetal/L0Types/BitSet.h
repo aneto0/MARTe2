@@ -44,7 +44,7 @@ namespace MARTe {
  *  @brief A variable size bit set compatible with standard bitwise operations.
  *  @details Using this type allows to create bitmask of albitrary size.
  */
-class BitSet {
+class DLL_API BitSet {
 public:
 
     /**

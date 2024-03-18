@@ -50,7 +50,7 @@ namespace MARTe {
  * </pre>
  *
  */
-class ConfigurationLoaderHashCRC : public Object, public ConfigurationLoaderHashI {
+class DLL_API ConfigurationLoaderHashCRC : public Object, public ConfigurationLoaderHashI {
 public:
     CLASS_REGISTER_DECLARATION()
     /**

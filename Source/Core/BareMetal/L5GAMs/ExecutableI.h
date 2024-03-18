@@ -42,7 +42,7 @@ namespace MARTe{
  * @brief Classes that implement this interface are schedulable and can be
  *  executed by a GAMSchedulerI.
  */
-class ExecutableI {
+class DLL_API ExecutableI {
 
 public:
     /**

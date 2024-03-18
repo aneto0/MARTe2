@@ -41,7 +41,7 @@ namespace MARTe {
  * @brief Allows to register a user specific callback method to be executed in the context of an EmbeddedServiceI.
  */
 template<typename className>
-class EmbeddedServiceMethodBinderT: public EmbeddedServiceMethodBinderI {
+class DLL_API EmbeddedServiceMethodBinderT: public EmbeddedServiceMethodBinderI {
 
 public:
 
@@ -92,7 +92,7 @@ private:
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 template<typename className>
-EmbeddedServiceMethodBinderT<className>::EmbeddedServiceMethodBinderT(className &obj,
+DLL_API EmbeddedServiceMethodBinderT<className>::EmbeddedServiceMethodBinderT(className &obj,
                                                                       const EmbeddedServiceMethodBinderT<className>::MethodPointer fun) :
         EmbeddedServiceMethodBinderI(),
         object(obj),
@@ -100,11 +100,11 @@ EmbeddedServiceMethodBinderT<className>::EmbeddedServiceMethodBinderT(className 
 }
 
 template<typename className>
-EmbeddedServiceMethodBinderT<className>::~EmbeddedServiceMethodBinderT() {
+DLL_API EmbeddedServiceMethodBinderT<className>::~EmbeddedServiceMethodBinderT() {
 }
 
 template<typename className>
-ErrorManagement::ErrorType EmbeddedServiceMethodBinderT<className>::Execute(ExecutionInfo &info) {
+DLL_API ErrorManagement::ErrorType EmbeddedServiceMethodBinderT<className>::Execute(ExecutionInfo &info) {
     return (object.*function)(info);
 }
 }

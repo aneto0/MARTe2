@@ -58,7 +58,7 @@ namespace MARTe {
  * }
  * </pre>
  */
-class MemoryDataSourceI: public DataSourceI {
+class DLL_API MemoryDataSourceI: public DataSourceI {
 public:
     /**
      * @brief Constructor. NOOP.

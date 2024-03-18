@@ -20,7 +20,7 @@ namespace MARTe {
  * Structure containing the variables/parameters for the Basic UART under
  * Windows, including those for the select() method.
  */
-struct BasicUARTProperties {
+struct DLL_API BasicUARTProperties {
 
     /**
      * The file descriptor associated with the Open operation.

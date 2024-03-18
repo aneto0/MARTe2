@@ -43,7 +43,7 @@ namespace MARTe{
  * memory dynamically in the heap memory area using the standard C functions
  * (malloc, realloc, free, ...).
  */
-class StandardHeap: public HeapI {
+class DLL_API StandardHeap: public HeapI {
 
     /**
      * @brief The minor address returned by a Malloc function.

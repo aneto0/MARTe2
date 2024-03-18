@@ -53,7 +53,7 @@ namespace MARTe {
  * operations will be ignored and an errors returned. The error state can be reset by calling ResetErrors.
  *
  */
-class StructuredDataIHelper : public StructuredDataI {
+class DLL_API StructuredDataIHelper : public StructuredDataI {
 
 public:
     /**

@@ -75,7 +75,7 @@ private:
  * a public attribute named classProperties of type ClassProperties.
  */
 template<typename T>
-class ClassRegistryItemT<T, false> : public ClassRegistryItem {
+class DLL_API ClassRegistryItemT<T, false> : public ClassRegistryItem {
 
 public:
     /**

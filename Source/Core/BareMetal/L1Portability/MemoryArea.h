@@ -42,7 +42,7 @@ namespace MARTe {
  * @brief Memory allocated area that behaves similarly to a StaticList with variable elements size.
  * @details The MemoryArea class facilitates the automatic management (allocation and freeing) of chunks of memory.
  */
-class MemoryArea {
+class DLL_API MemoryArea {
 
 public:
     /**

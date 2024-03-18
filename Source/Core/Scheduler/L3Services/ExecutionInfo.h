@@ -47,7 +47,7 @@ namespace MARTe {
  * @details In addition to stage, it provides a specific stage which is fully custom to the class that inherits
  * from EmbeddedServiceI and that receives an ExecutionInfo as part of its callback method.
  */
-class ExecutionInfo {
+class DLL_API ExecutionInfo {
 
 public:
     //Note that the list of stages is not an enum as it is used in a BitRange below as a uint8

@@ -44,7 +44,7 @@ namespace MARTe {
 /**
  * @brief MARTe Sleep functions.
  */
-class Sleep{
+class DLL_API Sleep {
 public:
     /**
      * @brief Retrieve the time as seconds from the start of time.
@@ -119,7 +119,6 @@ private:
      */
     static uint32 schedulerGranularity;
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

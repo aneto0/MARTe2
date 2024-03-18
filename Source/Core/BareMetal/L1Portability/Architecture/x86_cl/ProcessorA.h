@@ -51,7 +51,7 @@ namespace Processor{
 /**
  * Buffer used to store the processor identifier
  */
-extern char8 processorVendorId[13];
+DLL_API extern char8 processorVendorId[13];
 
 /**
  * @brief Implementation of the cpuid function for x86 and cl
@@ -76,7 +76,7 @@ inline void CPUID(uint32 code,
     D = cpuInfo[3];
 }
 
-uint32 Family() {
+DLL_API uint32 Family() {
     uint32 eax = 0;
     uint32 ebx = 0;
     uint32 ecx = 0;
@@ -89,7 +89,7 @@ uint32 Family() {
     return family;
 }
 
-uint32 Model() {
+DLL_API uint32 Model() {
     uint32 eax = 0;
     uint32 ebx = 0;
     uint32 ecx = 0;
@@ -104,7 +104,7 @@ uint32 Model() {
     return model;
 }
 
-const char8 *VendorId() {
+DLL_API const char8 *VendorId() {
 
     uint32 eax = 0;
     CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);

@@ -190,7 +190,7 @@ const DesiredGrammar PrintInXMLGrammar = 2u;
  * | :----: | :----:     | :----:  | :----:      | :----:        | :----:         | :----:       | :----:       | :----:        | :----:    |
  * |  8     | 8          | 1       | 1           | 3             | 2              | 1            | 1            | 3             | 4         |
  */
-class FormatDescriptor {
+class DLL_API FormatDescriptor {
 public:
 
     /**

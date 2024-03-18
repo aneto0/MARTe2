@@ -37,7 +37,7 @@ include Makefile.inc
 #IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS.def
 #IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF.def
 
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\MARTe2.lib
+LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\dll\MARTe2.lib
 
 
 

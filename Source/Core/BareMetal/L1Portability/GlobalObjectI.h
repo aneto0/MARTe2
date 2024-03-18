@@ -45,7 +45,7 @@ namespace MARTe {
  * implement this interface and register in the GlobalObjectsDatabase by calling
  * the GlobalObjectsDatabase->Add method.
  */
-class GlobalObjectI {
+class DLL_API GlobalObjectI {
 
 public:
 

@@ -42,7 +42,7 @@ namespace MARTe {
 /**
  * @brief A class that describes a lexical token by identifier and description.
  */
-class TokenInfo {
+class DLL_API TokenInfo {
 
 public:
 

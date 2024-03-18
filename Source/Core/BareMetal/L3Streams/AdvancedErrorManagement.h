@@ -61,7 +61,7 @@ do {                                                                        \
 /**
  * @brief The REPORT_ERROR_STATIC_MACRO_CHOOSER will call this function for any call to REPORT_ERROR_STATIC that has more than two parameters (the first two being the log code and the message)
  */
-#define REPORT_ERROR_STATIC_PARAMETERS(code, message,...)                              \
+#define REPORT_ERROR_STATIC_PARAMETERS(code,message,...)                              \
 /*lint -save -e717 Let lint know that we know that we are doing while(0)*/             \
 do {                                                                                   \
     MARTe::char8 buffer[MARTe::MAX_ERROR_MESSAGE_SIZE+1u];                             \

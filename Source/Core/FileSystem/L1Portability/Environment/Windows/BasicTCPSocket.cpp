@@ -54,6 +54,9 @@ BasicTCPSocket::BasicTCPSocket() :
     WSADATA wsaData;
     // Initialize Winsock
     int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if(iResult != 0) {
+        printf("WSAStartup() failed %d\r\n", iResult);
+    }
 }
 
 BasicTCPSocket::~BasicTCPSocket() {

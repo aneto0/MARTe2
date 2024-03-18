@@ -44,7 +44,7 @@ namespace MARTe {
 /**
  * @brief ReferenceContainerFilter for reference searching.
  */
-class ReferenceContainerFilterReferences: public ReferenceContainerFilter {
+class DLL_API ReferenceContainerFilterReferences: public ReferenceContainerFilter {
 public:
 
     /**

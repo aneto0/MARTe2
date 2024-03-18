@@ -53,7 +53,7 @@ namespace MARTe {
  *
  * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
  */
-class ConfigurationDatabase: public StructuredDataI, public Object {
+class DLL_API ConfigurationDatabase: public StructuredDataI, public Object {
 
 public:
     CLASS_REGISTER_DECLARATION()

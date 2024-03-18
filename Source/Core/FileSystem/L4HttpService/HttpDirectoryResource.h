@@ -50,7 +50,7 @@ namespace MARTe {
  * }
  * </pre>
  */
-class HttpDirectoryResource: public Object, public HttpDataExportI {
+class DLL_API HttpDirectoryResource: public Object, public HttpDataExportI {
 public:
     CLASS_REGISTER_DECLARATION()
 

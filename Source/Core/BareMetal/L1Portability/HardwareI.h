@@ -48,12 +48,12 @@ namespace MARTe {
         /**
          * @brief Allows to initialise the Architecture before any MARTe function is called.
          */
-        void InitArchitecture();
+        DLL_API void InitArchitecture();
 
         /**
          * @brief Allows to initialise the Environment before any MARTe function is called.
          */
-        void InitEnvironment();
+        DLL_API void InitEnvironment();
     }
 
 }

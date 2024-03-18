@@ -43,8 +43,7 @@
 
 namespace MARTe {
     namespace HardwareI {
-        inline void InitArchitecture() {
-        }
+
     }
 }
 #endif /* HARDWAREIA_H_ */

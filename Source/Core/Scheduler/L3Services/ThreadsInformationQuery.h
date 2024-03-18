@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Lists all the known threading information.
  */
-class ThreadsInformationQuery: public Object {
+class DLL_API ThreadsInformationQuery: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     /**

@@ -58,7 +58,7 @@ const uint32 REFERENCE_CONTAINER_NUMBER_OF_TOKENS = 5u;
  */
 /*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
 /*lint -e{763} forward declaration in ReferenceContainerFilter.h is required to define the class*/
-class ReferenceContainer: public Object {
+class DLL_API ReferenceContainer: public Object {
 public:
 
     CLASS_REGISTER_DECLARATION()

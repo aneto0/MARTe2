@@ -53,7 +53,7 @@ namespace MARTe {
  *     StackSize = 32768 //Stack size for the thread. Optional parameter.
  * }\n
  */
-class RealTimeThread: public ReferenceContainer {
+class DLL_API RealTimeThread: public ReferenceContainer {
 
 public:
     CLASS_REGISTER_DECLARATION()

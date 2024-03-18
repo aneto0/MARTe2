@@ -51,7 +51,7 @@ namespace MARTe {
  * Object and MessageI.
  * Incoming messages are handled by the installed message filters (InstallMessageFilter).
  */
-class MessageI {
+class DLL_API MessageI {
 public:
 
     /**

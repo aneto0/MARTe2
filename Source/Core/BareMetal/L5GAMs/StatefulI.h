@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief Classes that implement this interface will be warned every time there is a state change.
  */
-class StatefulI {
+class DLL_API StatefulI {
 public:
 
     /**

@@ -45,7 +45,7 @@ namespace MARTe {
 /**
  * @brief Buffered implementation of the BasicUDPSocket.
  */
-class UDPSocket: public BufferedStreamGenerator<DoubleBufferedStream, BasicUDPSocket>{
+class DLL_API UDPSocket: public BufferedStreamGenerator<DoubleBufferedStream, BasicUDPSocket>{
 
 public:
     /**

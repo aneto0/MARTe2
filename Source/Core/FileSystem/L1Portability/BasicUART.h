@@ -53,7 +53,7 @@ namespace MARTe {
  *     - one stop bit;
  *     - noncanonical input processing mode.
  */
-class BasicUART {
+class DLL_API BasicUART {
 public:
 
     /**

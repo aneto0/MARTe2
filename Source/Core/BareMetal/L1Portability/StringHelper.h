@@ -51,7 +51,7 @@ namespace StringHelper {
  * TODO all const char8 * ---> CCString
  * TODO all char8 * CString
  */
-char8 *StringDup(const char8 * const s);
+DLL_API char8 *StringDup(const char8 * const s);
 
 /**
  * @brief Concatenates two strings. "destination" + "source"
@@ -61,7 +61,7 @@ char8 *StringDup(const char8 * const s);
  * @warning !! The destination string memory allocation MUST be able to hold both strings!!
  * @warning No reallocation will be performed here!!
  */
-bool Concatenate(char8* const destination,
+DLL_API bool Concatenate(char8* const destination,
                          const char8* const source);
 
 /**
@@ -74,7 +74,7 @@ bool Concatenate(char8* const destination,
  * @warning !! The destination string memory allocation MUST be able to hold the extra amount of characters
  * @warning No reallocation will be performed here!!
  */
-bool ConcatenateN(char8 *destination,
+DLL_API bool ConcatenateN(char8 *destination,
                           const char8 *source,
                           uint32 size);
 
@@ -84,7 +84,7 @@ bool ConcatenateN(char8 *destination,
  * @param[in] c is the character to find in string.
  * @return a pointer to the first occurrence of c in the string, NULL if c is not found.
  */
-const char8 *SearchChar(const char8* const string,
+DLL_API const char8 *SearchChar(const char8* const string,
                                 char8 c);
 
 /**
@@ -93,7 +93,7 @@ const char8 *SearchChar(const char8* const string,
  * @param[in] string2 the second string.
  * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
  */
-int32 Compare(const char8* const string1,
+DLL_API int32 Compare(const char8* const string1,
                       const char8* const string2);
 
 /**
@@ -104,7 +104,7 @@ int32 Compare(const char8* const string1,
  * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
  * @pre size <= largest length of the string1 or string2.
  */
-int32 CompareN(const char8* const string1,
+DLL_API int32 CompareN(const char8* const string1,
                        const char8* const string2,
                        const uint32 size);
 
@@ -116,7 +116,7 @@ int32 CompareN(const char8* const string1,
  * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
  * @pre size <= largest length of the string1 or string2.
  */
-int32 CompareNoCaseSensN(const char8* const string1,
+DLL_API int32 CompareNoCaseSensN(const char8* const string1,
                                  const char8* const string2,
                                  const uint32 size);
 
@@ -125,14 +125,14 @@ int32 CompareNoCaseSensN(const char8* const string1,
  * @param[in,out] string the string to be converted.
  * @return true if everything went fine.
  */
-bool ToUpper(char8* const string);
+DLL_API bool ToUpper(char8* const string);
 
 /**
  * @brief Converts all uppercase characters in a string to lowercase.
  * @param[in,out] string the string to be converted.
  * @return true if everything went fine.
  */
-bool ToLower(char8* const string);
+DLL_API bool ToLower(char8* const string);
 
 /**
  * @brief Copies the source into the destination.
@@ -142,7 +142,7 @@ bool ToLower(char8* const string);
  * @warning !! The destination string memory allocation MUST be able to hold the size of source
  * @warning No reallocation will be performed here!!
  */
-bool Copy(char8* const destination,
+DLL_API bool Copy(char8* const destination,
                   const char8* const source);
 
 /**
@@ -155,7 +155,7 @@ bool Copy(char8* const destination,
  * @warning !! The destination string memory allocation MUST be able to hold the size of source
  * @warning No reallocation will be performed here!!
  */
-bool CopyN(char8 *destination,
+DLL_API bool CopyN(char8 *destination,
                    const char8 *source,
                    uint32 size);
 
@@ -167,7 +167,7 @@ bool CopyN(char8 *destination,
  * If the stcppring1 or string2 is NULL returns -1.
  * If the string2 is not found in the string1 returns the length of the string1 (the last Index + 1).
  */
-int32 SearchIndex(const char8* const string1,
+DLL_API int32 SearchIndex(const char8* const string1,
                           const char8* const string2);
 
 /**
@@ -175,7 +175,7 @@ int32 SearchIndex(const char8* const string1,
  * @param[in] string the source string.
  * @return the length of the string.
  */
-uint32 Length(const char8* const string);
+DLL_API uint32 Length(const char8* const string);
 
 /**
  * @brief Returns the pointer of the first character in string1 matched with one of chars in string2.
@@ -183,7 +183,7 @@ uint32 Length(const char8* const string);
  * @param[in] string2 contains the characters which must be searched in string1.
  * @return a pointer to the first occurrence of the first character from string2 contained in string1.
  */
-const char8 *SearchChars(const char8* const string1,
+DLL_API const char8 *SearchChars(const char8* const string1,
                                  const char8* const string2);
 
 /**
@@ -192,7 +192,7 @@ const char8 *SearchChars(const char8* const string1,
  * @param[in] c the character to search.
  * @return a pointer to the last occurrence of c in string.
  */
-const char8 *SearchLastChar(const char8* const string,
+DLL_API const char8 *SearchLastChar(const char8* const string,
                                     const char8 c);
 
 /**
@@ -201,7 +201,7 @@ const char8 *SearchLastChar(const char8* const string,
  * @param[in] substring the string which must be searched in string.
  * @return a pointer to the first occurrence of substring in string.
  */
-const char8 *SearchString(const char8* const string,
+DLL_API const char8 *SearchString(const char8* const string,
                                   const char8* const substring);
 
 /**
@@ -213,7 +213,7 @@ const char8 *SearchString(const char8* const string,
  * the end of the string if terminator is not found. It returns NULL if at least one of the
  * arguments is NULL.
  */
-const char8* TokenizeByChars(const char8* const string,
+DLL_API const char8* TokenizeByChars(const char8* const string,
                                      const char8* const delimiter,
                                      char8* const result);
 
@@ -224,7 +224,7 @@ const char8* TokenizeByChars(const char8* const string,
  * @param[out] result is the next position for a successive operation (NULL if terminator is not found).
  * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
  */
-const char8* TokenizeByString(const char8* const string,
+DLL_API const char8* TokenizeByString(const char8* const string,
                                       const char8* const terminator,
                                       char8* const result);
 
@@ -236,7 +236,7 @@ const char8* TokenizeByString(const char8* const string,
  * @param[out] result is the substring.
  * @return true if indexes are valid and the strings are not NULL.
  */
-bool Substr(const uint32 begin,
+DLL_API bool Substr(const uint32 begin,
                     const uint32 end,
                     const char8* const string,
                     char8* const result);
@@ -248,7 +248,7 @@ bool Substr(const uint32 begin,
  * @param[in] c the char to fill the string.
  * @return true if the string is not null and the size > 0 and the operation succeeds.
  */
-bool SetChar(char8* const string,
+DLL_API bool SetChar(char8* const string,
                      const uint32 size,
                      const char8 c);
 
@@ -261,7 +261,7 @@ bool SetChar(char8* const string,
  * the end of the string if terminator is not found. It returns NULL if at least one of the
  * arguments is NULL.
  */
-const char8* TokenizeByChars(const char8* const string,
+DLL_API const char8* TokenizeByChars(const char8* const string,
                                      const char8* const delimiter,
                                      char8* const result);
 
@@ -272,7 +272,7 @@ const char8* TokenizeByChars(const char8* const string,
  * @param[out] result is the next position for a successive operation (NULL if terminator is not found).
  * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
  */
-const char8* TokenizeByString(const char8* const string,
+DLL_API const char8* TokenizeByString(const char8* const string,
                                       const char8* const terminator,
                                       char8* const result);
 
@@ -284,7 +284,7 @@ const char8* TokenizeByString(const char8* const string,
  * @param[out] result is the substring.
  * @return true if indexes are valid and the strings are not NULL.
  */
-bool Substr(const uint32 begin,
+DLL_API bool Substr(const uint32 begin,
                     const uint32 end,
                     const char8* const string,
                     char8* const result);
@@ -298,7 +298,7 @@ bool Substr(const uint32 begin,
  * @warning !! The destination string memory allocation MUST be able to hold the size of string1+string2
  * @warning No reallocation will be performed here!!
  */
-bool Concatenate(const char8* const string1,
+DLL_API bool Concatenate(const char8* const string1,
                          const char8* const string2,
                          char8* const result);
 
@@ -313,7 +313,7 @@ bool Concatenate(const char8* const string1,
  * @warning !! The destination string memory allocation MUST be able to hold the size of string1+string2
  * @warning No reallocation will be performed here!!
  */
-bool ConcatenateN(const char8* const string1,
+DLL_API bool ConcatenateN(const char8* const string1,
                           const char8* const string2,
                           char8* const result,
                           const uint32 size);

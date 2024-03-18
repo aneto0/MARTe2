@@ -51,7 +51,7 @@ namespace MARTe {
  * the Execute method is expected to be called with the correct stage information. Note that the
  * Execute method is not virtual for performance reasons.
  */
-class EmbeddedThreadI: public Object {
+class DLL_API EmbeddedThreadI: public Object {
 public:
     /**
      * @brief Constructor. Forces the setting of the method binder.

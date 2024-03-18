@@ -46,7 +46,7 @@ namespace MARTe {
  * library by its filename (see the Open method). After that binding, any of
  * the functions can be called through the Function method or the [] operator.
  */
-class LoadableLibrary {
+class DLL_API LoadableLibrary {
 
 public:
 

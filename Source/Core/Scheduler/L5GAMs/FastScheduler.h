@@ -82,7 +82,7 @@ namespace MARTe {
  *
  * The mapping between Tx and RTTy is computed in the configuration stage.
  */
-class FastScheduler: public GAMSchedulerI {
+class DLL_API FastScheduler: public GAMSchedulerI {
 
 public:
     CLASS_REGISTER_DECLARATION()

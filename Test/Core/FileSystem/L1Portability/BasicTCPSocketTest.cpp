@@ -185,6 +185,8 @@ static void ClientJob_Listen(BasicTCPSocketTest &param) {
     }
     else {
         if (!param.isValidClient) {
+            //TODO AVON
+            printf("\r\n--------------------------IS NOT VALID CLIENT\r\n");
             clientSocket.Close();
         }
 
@@ -193,6 +195,7 @@ static void ClientJob_Listen(BasicTCPSocketTest &param) {
             param.retVal = false;
             //printf("\nConnect fail");
             param.sem.FastUnLock();
+            printf("\r\n--------------------------NOT CONNECTED\r\n");
         }
     }
 

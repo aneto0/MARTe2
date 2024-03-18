@@ -48,7 +48,7 @@ namespace MARTe {
  * + Binding the socket to a local port and begin listening from it.
  * + Allowing reading/writing using a generic stream interface approach.
  */
-class BasicTCPSocket: public BasicSocket {
+class DLL_API BasicTCPSocket: public BasicSocket {
 public:
 
     /**

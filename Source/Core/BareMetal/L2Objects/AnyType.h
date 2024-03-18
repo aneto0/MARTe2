@@ -76,7 +76,7 @@ namespace MARTe {
  * and justified because in the TypeDescriptor attribute the flag "isConstant"
  * will be set to true.
  */
-class AnyType {
+class DLL_API AnyType {
 
 public:
 

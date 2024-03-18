@@ -62,7 +62,7 @@ namespace MARTe {
  * }
  * </pre>
  */
-class HttpMessageInterface: public ReferenceContainer, public HttpDataExportI, public MessageI {
+class DLL_API HttpMessageInterface: public ReferenceContainer, public HttpDataExportI, public MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 

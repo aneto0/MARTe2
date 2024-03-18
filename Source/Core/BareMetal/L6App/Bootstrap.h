@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Bootstraps the main arguments and provides the (environment specific) execution context (see Run).
  * @details The implementation of the class is operating system specific.
  */
-class Bootstrap {
+class DLL_API Bootstrap {
 public:
     /**
      * @brief Constructor. NOOP.

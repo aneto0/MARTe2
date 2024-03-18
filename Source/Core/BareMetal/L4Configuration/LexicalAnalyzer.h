@@ -71,7 +71,7 @@ namespace MARTe {
  */
 /*lint -e1712 . Justification: This class must be as per the only defined
  * constructor. No need for a default constructor.*/
-class LexicalAnalyzer {
+class DLL_API LexicalAnalyzer {
 
 public:
 

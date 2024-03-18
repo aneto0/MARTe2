@@ -42,7 +42,7 @@ namespace MARTe {
  * @brief Abstract class to facilitate the implementation of configuration hash mechanism.
  * See the Loader class description for a usage example.
  */
-class ConfigurationLoaderHashI {
+class DLL_API ConfigurationLoaderHashI {
 public:
     /**
      * @brief Destructor. NOOP.

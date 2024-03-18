@@ -52,7 +52,7 @@ namespace MemoryOperationsHelper {
  * @return true if source, destination and destination after copy are not NULL.
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-bool Copy(void * const destination, const void * const source, uint32 size);
+DLL_API bool Copy(void * const destination, const void * const source, uint32 size);
 
 /**
  * @brief Compares the first specified bytes of two blocks of memories.
@@ -62,7 +62,7 @@ bool Copy(void * const destination, const void * const source, uint32 size);
  * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2).
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-int32 Compare(const void * const mem1, const void * const mem2, uint32 size);
+DLL_API int32 Compare(const void * const mem1, const void * const mem2, uint32 size);
 
 /**
  * @brief Searches a character in the specified memory block.
@@ -72,7 +72,7 @@ int32 Compare(const void * const mem1, const void * const mem2, uint32 size);
  * @return the pointer to the first occurrence of c in the memory. NULL if c is absent.
  * @pre the size parameter must be minor than the memory block size.
  */
-const void *Search(const void * const mem, const char8 c, const uint32 size);
+DLL_API const void *Search(const void * const mem, const char8 c, const uint32 size);
 
 /**
  * @brief Copies a block of memory into another allowing overlapping.
@@ -82,7 +82,7 @@ const void *Search(const void * const mem, const char8 c, const uint32 size);
  * @return true if source, destination, and destination after the copy are not NULL.
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-bool Move(void * const destination, const void * const source, const uint32 size);
+DLL_API bool Move(void * const destination, const void * const source, const uint32 size);
 
 /**
  * @brief Sets a defined number bytes of the specified memory area equal to a specified character.
@@ -92,7 +92,7 @@ bool Move(void * const destination, const void * const source, const uint32 size
  * @return true if the memory could be set to desired value.
  * @pre the size parameter must be minor than the memory block size.
  */
-bool Set(void * const mem, const char8 c, const uint32 size);
+DLL_API bool Set(void * const mem, const char8 c, const uint32 size);
 
 /**
  * @brief Converts the memory from an interleaved to flat representation for a specified number of samples.

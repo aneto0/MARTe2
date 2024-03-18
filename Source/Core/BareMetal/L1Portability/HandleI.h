@@ -48,7 +48,7 @@ namespace MARTe {
  * then is is expected that both methods (read and write handles) will return
  * the same handle.
  */
-class HandleI {
+class DLL_API HandleI {
 public:
 
     /**

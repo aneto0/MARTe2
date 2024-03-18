@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef INTERNETSERVICECORE_H_
-		#define 		INTERNETSERVICECORE_H_
+#ifndef INTERNETSERVICECORE_H_
+#define INTERNETSERVICECORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

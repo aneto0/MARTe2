@@ -93,7 +93,7 @@ namespace MARTe {
  *     }
  * }
  */
-class StateMachine: public ReferenceContainer, public QueuedMessageI {
+class DLL_API StateMachine: public ReferenceContainer, public QueuedMessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 

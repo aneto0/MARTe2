@@ -48,7 +48,7 @@ namespace MARTe {
  * allocated sequentially in memory (see Add). When all elements have been added the AnyType can be created and assigned to the
  * previously allocated memory by calling Create with the correct dimensions.
  */
-class AnyTypeCreator {
+class DLL_API AnyTypeCreator {
 
 public:
 

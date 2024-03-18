@@ -104,7 +104,7 @@ namespace MARTe {
  * }
  * </pre>
  */
-class CircularBufferThreadInputDataSource: public MemoryDataSourceI, public EmbeddedServiceMethodBinderI {
+class DLL_API CircularBufferThreadInputDataSource: public MemoryDataSourceI, public EmbeddedServiceMethodBinderI {
 public:
 
     /**
