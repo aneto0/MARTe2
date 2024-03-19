@@ -27,7 +27,6 @@ TARGET=msc
 
 include Makefile.inc
 
-#LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
 
 
 
