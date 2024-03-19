@@ -27,7 +27,6 @@ TARGET=msc
 
 include Makefile.inc
 
-#IMPDEFS += $(BUILD_DIR)/$(ENVIRONMENT)/L0TypesB.lib
 
 
 

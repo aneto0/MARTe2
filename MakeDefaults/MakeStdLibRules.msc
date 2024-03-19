@@ -35,36 +35,17 @@ $(BUILD_DIR)/%.obj : %.cpp
 	@echo "Building .objs"
 	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES) $*.cpp $(ASSEMBLER) -Fo$(BUILD_DIR)/$*.obj
-#	@if not exist temp mkdir temp
-#	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
-#	@touch $(BUILD_DIR)/$*.obj >temp/temp
-#	@rm $(BUILD_DIR)/$*.obj >temp/temp
-#	@mv $*.obj $(BUILD_DIR) >temp/temp
-#	@touch $(BUILD_DIR)/$*.asm >temp/temp
-#	@rm $(BUILD_DIR)/$*.asm >temp/temp
-#	@touch $*.asm >temp/temp
-#	@mv $*.asm $(BUILD_DIR) >temp/temp
 
 $(BUILD_DIR)/%.obj : %.c
 	@echo "Building .objs"
 	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	$(COMPILER) -c /LD $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES) $*.c $(ASSEMBLER)  -Fo$(BUILD_DIR)/$*.obj
-#	@if not exist temp mkdir temp
-#	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
-#	@touch $(BUILD_DIR)/$*.obj >temp/temp
-#	@rm $(BUILD_DIR)/$*.obj >temp/temp
-#	@mv $*.obj $(BUILD_DIR) >temp/temp
-#	@touch $(BUILD_DIR)/$*.asm >temp/temp
-#	@rm $(BUILD_DIR)/$*.asm >temp/temp
-#	@touch $*.asm >temp/temp
-#	@mv $*.asm $(BUILD_DIR) >temp/temp
 
 $(BUILD_DIR)/%.obj : %.f
 	@if not exist temp mkdir temp
 	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR) >temp/temp
 	$(FCOMPILER) -compile_only $(FFLAGS) $(FOPTS) $*.f 
 	@touch $(BUILD_DIR)/$*.obj >temp/temp
-#	@rm $(BUILD_DIR)/$*.obj >temp/temp
 	@mv $*.obj $(BUILD_DIR) >temp/temp
 
 $(BUILD_DIR)/%.pp :  %.cpp
@@ -84,26 +65,9 @@ $(BUILD_DIR)/%.pp :  %.cpp
 $(BUILD_DIR)/%.lib : $(OBJS)
 	@echo "Building static .lib"
 	lib $(OBJS) $(LIBRARIES_STATIC) /out:$@
-#	@touch $@
-#	@touch  $(@:%.lib=%.cpp)
-#	$(COMPILER) /EHsc /LD $(@:%.lib=%.cpp) $(OBJS) /link $(LIBRARIES) $(LFLAGS)
-#	cp *.dll $(BUILD_DIR)
-#	cp *.exp $(BUILD_DIR)
-#	cp *.lib $(BUILD_DIR)
-#	cp *.obj $(BUILD_DIR)
-#	del *.dll *.exp *.lib *.obj
-#	rm $(@:%.lib=%.cpp)
-#	rm $(BUILD_DIR)/$*.lib
-#	lib /EXPORT:$(@:%.lib=%.exp) -OUT:$@ $(OBJS) $(LIBRARIES_STATIC) -NODEFAULTLIB
-#	$(subst /,\,$(ROOT_DIR))\Build\Tools\defgen.bat $@ $(BUILD_DIR)
-#	rm createLibrary
-	
 
-$(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS) createLibrary
+$(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	@echo "Building dynamic link library .dll"
-#	@touch $(@:%.dll=%.cpp)
-#	$(COMPILER) /EHsc /LD $(@:%.dll=%.cpp) $(OBJS) /link $(LIBRARIES) $(LIBRARIES_STATIC) $(LFLAGS)
-#	rm $(@:%.dll=%.cpp)
 	if not exist $(BUILD_DIR)\dll mkdir $(BUILD_DIR)\dll
 	if not exist .\tmpcl mkdir .\tmpcl
 	@touch .\tmpcl\$(notdir $(@:%.dll=%.cpp))
@@ -112,30 +76,12 @@ $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS) createLibrary
 	mv *.lib $(BUILD_DIR)\dll
 	mv *.exp $(BUILD_DIR)\dll
 	rmdir /q /s .\tmpcl
-#	$(subst /,\,$(ROOT_DIR))\Build\Tools\defgen.bat $@ $(BUILD_DIR)
-#	$(subst /,\,$(ROOT_DIR))\Build\Tools\dll2def.bat $@ $(@:%.dll=%.def)
-#	@echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
-#	@cat title $(IMPDEFS) > dllGenerator.def
-#	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) dllGenerator.def -o $@
-#	$(subst /,\,$(ROOT_DIR))\Build\Tools\expdef.exe $@ $(@:%.dll=%.def)
-#	rm dllGenerator.def
-#	@rm createLibrary
-	
+
 $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
-	@echo "TO-DO dummy.dll"
-#	touch dummy.cpp
-#	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) dummy.cpp  $(ASSEMBLER)
-#	@echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
-#	@cat title $(IMPDEFS) > dllGenerator.def
-#	$(COMPILER) -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) dllGenerator.def -o $@  $(LFLAGS)
-#	rm dllGenerator.def
-#	rm dummy.*
-	
+	@echo "UNUSED dummy.dll"
+
 $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
 	@echo "UNUSED .def"
-#	$(subst /,\,$(ROOT_DIR))\Build\Tools\dll2def.bat $< $@
-#	$(subst /,\,$(ROOT_DIR))\Build\Tools\expdef.exe $< > $@
-#	@rm -f $(BUILD_DIR)/dummy.dll 
 
 $(BUILD_DIR)/%.exe : $(OBJS) $(BUILD_DIR)/%.obj $(LIBRARIES) createLibrary
 	$(COMPILER) -Zi -EHsc- $(OBJS) $(subst /,\,$(BUILD_DIR))\$*.obj $(subst /,\,$(LIBRARIES)) /link /opt:noref /wholearchive /out:$@ /force:multiple
@@ -144,13 +90,10 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 	$(COMPILER) $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -o $@
 
 depends.msc : dependsRaw.msc
-	@echo /\.o:/s/^^/$(subst \\,\/,$(BUILD_DIR))\// > CreateMSCDepends.sed
-	sed -f CreateMSCDepends.sed dependsRaw.msc > depends.msc
+	@echo "UNUSED depends.msc"
 
 dependsRaw.msc: 
-	gcc -MM -D_CY32 $(CFLAGSPEC) -DWIN32 $(CFLAGS) $(INCLUDES) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) *.c* > dependsRaw.msc
-	@if not exist temp mkdir temp
-	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	@echo "UNUSED dependsRaw.msc"
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -o $@
