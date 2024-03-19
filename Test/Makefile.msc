@@ -20,19 +20,20 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.gcc 3 2015-01-15 16:26:07Z aneto $
 #
 #############################################################
 TARGET=msc
 
 include Makefile.inc
 
-LIBRARIES0   = kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
-LIBRARIES   += $(LIBRARIES0) $(BLCOMPONENTS)
+#LIBRARIES0   = kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
+#LIBRARIES_STATIC += $(LIBRARIES0) $(BLCOMPONENTS) 
 
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\L1Portability\L1PortabilityS$(LIBEXT)
+#LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\MARTe2$(LIBEXT)
 
+#LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
+#LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT)
+#LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
 
-
-
+@LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\L1Portability\Windows\L1Portability$(LIBEXT)

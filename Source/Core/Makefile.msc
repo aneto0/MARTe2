@@ -33,10 +33,6 @@ LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEX
 LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT)
 LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
 
-#IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB.def
-#IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS.def
-#IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF.def
-
 
 
 
