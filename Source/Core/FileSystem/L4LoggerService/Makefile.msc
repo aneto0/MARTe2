@@ -28,27 +28,6 @@ TARGET=msc
 
 include Makefile.inc
 
-LFLAGS += /link /force:unresolved
-
-LIBRARIES0   = kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
-LIBRARIES += $(LIBRARIES0)
-
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L0Types\L0TypesB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L1Portability\L1PortabilityB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L2Objects\L2ObjectsB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L3Streams\L3StreamsB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4Configuration\L4ConfigurationB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4HttpService\L4HttpServiceB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4Logger\L4LoggerB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L4Messages\L4MessagesB$(LIBEXT)
-
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/Windows/L1Portability$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/L1PortabilityF$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\L3Streams\L3StreamsF$(LIBEXT)
-
-
-IMPDEFS += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/L1PortabilityB.def
-##IMPDEFS += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/L1PortabilityB.def
 
 
 
