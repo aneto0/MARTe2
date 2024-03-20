@@ -20,7 +20,7 @@
  * the class IntrospectionTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -43,23 +43,23 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+//TODO AVON
+// struct TestIntrospectionNestedStructure {
+//     uint32 nestedMember1;
+// };
 
-struct TestIntrospectionNestedStructure {
-    uint32 nestedMember1;
-};
-
-struct TestIntrospectionStructure {
-    uint32 member1;
-    float32 *member2;
-    float64 member3[32];
-    const char8 * const member4;
-    TestIntrospectionNestedStructure member5;
-};
+// struct TestIntrospectionStructure {
+//     uint32 member1;
+//     float32 *member2;
+//     float64 member3[32];
+//     const char8 * const member4;
+//     TestIntrospectionNestedStructure member5;
+// };
 
 /**
  * @brief Helper class to support the testing of references.
  */
-class DummyObject: public Object {
+class __declspec(dllexport) DummyObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 

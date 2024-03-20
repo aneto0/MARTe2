@@ -20,7 +20,7 @@
  * the class AnyTypeTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -38,9 +38,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-struct TestATStructure {
-    uint32 member1;
-};
+//TODO AVON
+// struct TestATStructure {
+//     uint32 member1;
+// };
 
 DECLARE_CLASS_MEMBER(TestATStructure, member1, uint32, "", "");
 

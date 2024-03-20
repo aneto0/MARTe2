@@ -294,7 +294,7 @@ public:
  * @brief Helper class to support the testing of Object's features for
  * extracting its own data and metadata as a StructuredDataI object.
  */
-class IntrospectableIntegerObject: public Object {
+class DLL_API IntrospectableIntegerObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 

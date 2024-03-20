@@ -41,7 +41,7 @@ using namespace MARTe;
 /**
  * @brief Utility for tests which uses Introspection
  */
-struct TestIntrospectionNestedStructureFrom {
+struct DLL_API TestIntrospectionNestedStructureFrom {
     uint32 *nestedMember1_from;
     uint32 nestedMember2_from;
 };
@@ -49,7 +49,7 @@ struct TestIntrospectionNestedStructureFrom {
 /**
  * @brief Utility for tests which uses Introspection
  */
-struct TestIntrospectionNestedStructureTo {
+struct DLL_API TestIntrospectionNestedStructureTo {
     uint32 *nestedMember1_to;
     char8* nestedMember2_to;
 };
@@ -57,7 +57,7 @@ struct TestIntrospectionNestedStructureTo {
 /**
  * @brief Utility for tests which uses Introspection
  */
-struct TestIntrospectionObjectFrom {
+struct DLL_API TestIntrospectionObjectFrom {
     uint32 member1_from;
     float32 *member2_from;
     float64 member3_from[32];
@@ -68,7 +68,7 @@ struct TestIntrospectionObjectFrom {
 /**
  * @brief Utility for tests which uses Introspection
  */
-struct TestIntrospectionObjectTo {
+struct DLL_API TestIntrospectionObjectTo {
     char8 member1_to[32];
     uint64 member2_to;
     float32 member3_to[32];
@@ -79,7 +79,7 @@ struct TestIntrospectionObjectTo {
 /**
  * @brief Utility for tests which uses Introspection
  */
-struct TestIntrospectionObjectNoCompatibility {
+struct DLL_API TestIntrospectionObjectNoCompatibility {
     char8 member1_to[32];
     uint64 member2_to;
     float32 member3_to[32];
@@ -91,7 +91,7 @@ struct TestIntrospectionObjectNoCompatibility {
 /**
  * @brief Utility for tests which uses Introspection
  */
-class TestNoIntrospectionObject: public Object {
+class DLL_API TestNoIntrospectionObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     uint32 member1_from;

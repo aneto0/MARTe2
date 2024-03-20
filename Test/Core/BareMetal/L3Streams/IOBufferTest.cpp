@@ -20,7 +20,7 @@
  * the class IOBufferTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -37,19 +37,19 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+//TODO AVON
+// struct TestIOBufferIntrospectionNestedStructure {
+//     uint32 nestedMember1;
+//     const char8 *nestedMember2;
+// };
 
-struct TestIOBufferIntrospectionNestedStructure {
-    uint32 nestedMember1;
-    const char8 *nestedMember2;
-};
-
-struct TestIOBufferIntrospectionStructure {
-    uint32 member1;
-    float32 *member2;
-    float64 member3[32];
-    const char8 * member4[2][2];
-    TestIOBufferIntrospectionNestedStructure member5;
-};
+// struct TestIOBufferIntrospectionStructure {
+//     uint32 member1;
+//     float32 *member2;
+//     float64 member3[32];
+//     const char8 * member4[2][2];
+//     TestIOBufferIntrospectionNestedStructure member5;
+// };
 
 DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionNestedStructure, nestedMember1, uint32, "", "");
 DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionNestedStructure, nestedMember2, string, "", "");

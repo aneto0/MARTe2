@@ -32,8 +32,8 @@ include Makefile.inc
 
 LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\MARTe2$(LIBEXT)
 
-#LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
-#LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT)
-#LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
+LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
+LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT)
+LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
 
 #LIBRARIES_STATIC += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\L1Portability\Windows\L1Portability$(LIBEXT)
