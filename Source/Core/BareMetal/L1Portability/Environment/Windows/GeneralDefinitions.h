@@ -70,7 +70,6 @@ typedef size_t osulong;
 /**
  * Know shared library extensions
  */
-//TODO AVON
 static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".dll", 0 };
 
 struct MutexSemProperties;

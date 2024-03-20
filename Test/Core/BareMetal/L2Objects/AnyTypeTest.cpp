@@ -38,10 +38,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-//TODO AVON
-// struct TestATStructure {
-//     uint32 member1;
-// };
 
 DECLARE_CLASS_MEMBER(TestATStructure, member1, uint32, "", "");
 
