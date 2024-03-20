@@ -97,32 +97,6 @@
 
 namespace MARTe {
 
-/**
- * @brief Definition of a type large enough to store a pointer.
- */
-// #ifdef __LP64__
-//     typedef unsigned long intptr;
-// #elif defined __ILP64__
-//     typedef unsigned long intptr;
-// #elif defined __LLP64__
-//     typedef unsigned long long intptr;
-// #else
-//     typedef unsigned long intptr;
-// #endif
-
-typedef uintptr_t intptr;
-
-/**
-* @brief Polymorphic macro for defining the actual direction of the
-* symbols when using Windows DLLs (import or export)
-*/
-#if !defined (DLL_API)
-#define DLL_API __declspec(dllimport)
-#else
-#undef DLL_API
-#define DLL_API __declspec(dllexport)
-#endif
-
 }
 
 #endif /* COMPILERTYPES */

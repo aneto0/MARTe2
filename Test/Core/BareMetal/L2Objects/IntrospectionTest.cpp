@@ -43,23 +43,11 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-//TODO AVON
-// struct TestIntrospectionNestedStructure {
-//     uint32 nestedMember1;
-// };
-
-// struct TestIntrospectionStructure {
-//     uint32 member1;
-//     float32 *member2;
-//     float64 member3[32];
-//     const char8 * const member4;
-//     TestIntrospectionNestedStructure member5;
-// };
 
 /**
  * @brief Helper class to support the testing of references.
  */
-class __declspec(dllexport) DummyObject: public Object {
+class DLL_API_EXPLICIT_EXPORT DummyObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 

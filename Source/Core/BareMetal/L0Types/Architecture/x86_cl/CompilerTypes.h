@@ -56,27 +56,26 @@ typedef double float64;
 /** 8 Bit character */
 typedef char char8;
 
-typedef intptr_t  uintp;
 /** Sufficiently large to hold a pointer address in the target architecture*/
-// #ifdef __LP64__
-// typedef DWORD32 uintp;
-// #elif defined __ILP64__
-// typedef DWORD32 uintp;
-// #elif defined __LLP64__
-// typedef DWORD64 uintp;
-// #else
-// typedef DWORD32 uintp;
-// #endif
-
-//typedef  uintptr_t uintp;
+typedef intptr_t  uintp;
 
 /** A tool to find indexes of structures fields. */
 #define indexof(type,field) ((intptr)&(((type *)0)->field))
 /** A tool to find the size of structures fields. */
 #define msizeof(type,field) sizeof(((type *)0)->field)
 
-#define dll_import __declspec(dllimport)
-#define dll_export __declspec(dllexport)
+/**
+* @brief Polymorphic macro for defining the actual direction of the
+* symbols when using Windows DLLs (import or export)
+*/
+#if !defined (DLL_API)
+#define DLL_API __declspec(dllimport)
+#else
+#undef DLL_API
+#define DLL_API __declspec(dllexport)
+#endif
+
+#define DLL_API_EXPLICIT_EXPORT __declspec(dllexport)
 
 }
 

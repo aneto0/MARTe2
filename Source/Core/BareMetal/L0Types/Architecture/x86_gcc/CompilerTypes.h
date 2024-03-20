@@ -73,8 +73,8 @@ typedef uint32      uintp;
 
 #define HANDLE void *
 
-#define dll_import
-#define dll_export
+#define DLL_API
+#define DLL_API_EXPLICIT_EXPORT
 
 }
 

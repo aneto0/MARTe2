@@ -137,32 +137,18 @@ bool MemoryAreaTest::TestInitMemory() {
     bool retVal = mem.InitMemory(test, sizeof(uint32));
     uint32 offset = 0u;
 
-    if (!retVal) {
-        printf("\r\nFailure in InitMemory()\r\n");
-    }
-
     if(retVal) {  
         *test = 2;
         retVal = mem.Add(test, sizeof(uint32), offset);
-
-        if (!retVal) {
-            printf("\r\nFailure in Add()\r\n");
-        }
     }
 
     if(retVal) {
         retVal = (offset == sizeof(uint32));
-        if(!retVal) {
-            printf("\r\nFailure, current offset %d differs from expected %zd\r\n", offset, sizeof(uint32));
-        }
     }
 
     if(retVal) {
         uint32 tmpMemSize = mem.GetMemorySize();
         retVal = (tmpMemSize == (2 * sizeof(uint32)));
-        if(!retVal) {
-            printf("\r\nFailure, current memory size %lld differs from expected %d\r\n", tmpMemSize, (2 * sizeof(uint32)));
-        }
     }
 
     // This test cannot be done, it implicitly assumes that the internal realloc does not move the given pointer.
@@ -179,9 +165,6 @@ bool MemoryAreaTest::TestInitMemory() {
     if(retVal) {
         uint32* tmpMemStartB = (uint32*)mem.GetMemoryStart();
         retVal = (tmpMemStartB[1] == 2);
-        if(!retVal) {
-            printf("\r\nFailure, expected 2, found %d\r\n", tmpMemStartB[1]);
-        }
     }    
 
     return retVal;
