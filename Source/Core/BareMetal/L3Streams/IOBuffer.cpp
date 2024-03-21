@@ -1346,7 +1346,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                             REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "IOBuffer: Type mismatch: a stream will be printed");
                         }
                     }
-                    //TODO AVON&ANDRE NEW
+
                     StreamI* stream = NULL_PTR(StreamI*);
                     if(isSString) {
                         StreamString* tmpSS = static_cast<StreamString*>(dataPointer);
@@ -1355,8 +1355,6 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                     } else {
                         stream = static_cast<StreamI *>(dataPointer);    
                     }
-                    //TODO AVON ORIGINAL
-                    //StreamI * stream = static_cast<StreamI *>(dataPointer);
 
                     bool addQuotesOnString = fd.fullNotation;
                     ret = PrintStream(iobuff, *stream, fd, addQuotesOnString);

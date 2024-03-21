@@ -1359,8 +1359,6 @@ bool IOBufferTest::TestPrintFormatted_Stream() {
         stream.Write(toWrite, writeSize);
         stream.FlushAndResync();
         stream.Seek(0);
-        //TODO AVON
-        //ORIGINAL AnyType toPrint = stream;
         
         TypeDescriptor dataDescriptor(false, Stream, 0u);
         AnyType toPrint[1];
@@ -1391,8 +1389,7 @@ bool IOBufferTest::TestPrintFormatted_TooBigStream() {
     stream.SetBufferSize(32);
 
     stream.SetFakeSize(10001);
-    //TODO AVON
-    //AnyType toPrint = stream;
+
     TypeDescriptor dataDescriptor(false, Stream, 0u);
     AnyType toPrint[1];
     toPrint[0] = AnyType(dataDescriptor, 0u, &stream);
@@ -1413,8 +1410,6 @@ bool IOBufferTest::TestPrintFormatted_Stream_NotSeekable() {
     DummySingleBufferedStream stream(false);
     stream.SetBufferSize(32);
 
-    //TODO AVON
-    //AnyType toPrint = stream;
     TypeDescriptor dataDescriptor(false, Stream, 0u);
     AnyType toPrint[1];
     toPrint[0] = AnyType(dataDescriptor, 0u, &stream);

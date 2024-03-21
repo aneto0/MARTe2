@@ -124,7 +124,7 @@ public:
      * @brief Casts the stream to AnyType.
      * @return an AnyType representation of the stream.
      */
-    //TODO AVON CHECK WITH ANDRE
+    //This implementation is commented out as interfering with MSVC Win64 porting
     //inline operator AnyType();
 
     /**
@@ -404,7 +404,7 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-//TODO AVON CHECK WITH ANDRE!
+//TThis implementation is commented out as interfering with MSVC Win64 porting.
 // BufferedStreamI::operator AnyType() {
 //     void *dataPointer = static_cast<void *>(this);
 //     TypeDescriptor dataDescriptor(false, Stream, 0u);

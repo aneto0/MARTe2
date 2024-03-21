@@ -47,12 +47,12 @@ bool BufferedStreamITest::TestDefaultConstructor() {
 bool BufferedStreamITest::TestAnyType() {
     DummySingleBufferedStream myStream;
     //TODO AVON
-    return true;
-    // AnyType anyStream = myStream;
-    // bool ok = anyStream.GetDataPointer() == &myStream;
-    // ok = !anyStream.GetTypeDescriptor().isConstant;
-    // ok = (anyStream.GetTypeDescriptor().numberOfBits == 0u);
-    // return ok;
+
+    AnyType anyStream = myStream;
+    bool ok = anyStream.GetDataPointer() == &myStream;
+    ok = !anyStream.GetTypeDescriptor().isConstant;
+    ok = (anyStream.GetTypeDescriptor().numberOfBits == 0u);
+    return ok;
 }
 
 bool BufferedStreamITest::TestGetToken(uint32 bufferSize,

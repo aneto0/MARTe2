@@ -45,10 +45,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-//TODO AVON
-// struct GAMTestStruct2 {
-//     uint32 Par1;
-// };
 
 DECLARE_CLASS_MEMBER(GAMTestStruct2, Par1, uint32, "", "");
 static const IntrospectionEntry *GAMTestStruct2Entries[] = { &GAMTestStruct2_Par1_introspectionEntry, 0 };

@@ -185,17 +185,13 @@ static void ClientJob_Listen(BasicTCPSocketTest &param) {
     }
     else {
         if (!param.isValidClient) {
-            //TODO AVON
-            printf("\r\n--------------------------IS NOT VALID CLIENT\r\n");
             clientSocket.Close();
         }
 
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort(), param.timeout)) {
             param.sem.FastLock();
             param.retVal = false;
-            //printf("\nConnect fail");
             param.sem.FastUnLock();
-            printf("\r\n--------------------------NOT CONNECTED\r\n");
         }
     }
 
