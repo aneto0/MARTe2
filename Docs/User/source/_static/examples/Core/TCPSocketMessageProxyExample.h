@@ -37,6 +37,7 @@
 #include "ReferenceContainer.h"
 #include "MultiClientService.h"
 #include "MutexSem.h"
+#include "Sleep.h"
 #include "TCPSocket.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

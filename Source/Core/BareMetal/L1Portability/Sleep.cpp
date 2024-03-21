@@ -38,7 +38,7 @@ namespace MARTe{
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-uint32 Sleep::schedulerGranularity = SCHED_GRANULARITY_US;
+DLL_API_EXPLICIT_EXPORT uint32 Sleep::schedulerGranularity = SCHED_GRANULARITY_US;
 
 uint32 Sleep::GetSchedulerGranularity() {
     return Sleep::schedulerGranularity;

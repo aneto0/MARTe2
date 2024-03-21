@@ -42,7 +42,7 @@ namespace MARTe {
 /**
  * @brief Fowler/Noll/Vo (FNV) hash function
  */
-class Fnv1aHashFunction: public HashFunction {
+class DLL_API Fnv1aHashFunction: public HashFunction {
 public:
 
     /**

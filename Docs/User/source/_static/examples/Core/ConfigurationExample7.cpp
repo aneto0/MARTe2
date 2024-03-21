@@ -53,6 +53,7 @@ namespace MARTe2Tutorial {
 /**
  * Configuration structures
  */
+#ifdef __GNUC__
 struct __attribute__((__packed__)) GainFromIntroStructure {
     MARTe::float32 gain1;
     MARTe::float32 gain2;
@@ -62,6 +63,21 @@ struct __attribute__((__packed__)) GainsFromIntroStructure {
     struct GainFromIntroStructure lowGains[2];
     struct GainFromIntroStructure highGains;
 };
+#endif
+
+#ifdef _MSC_VER
+#pragma pack(push,1)
+struct GainFromIntroStructure {
+    MARTe::float32 gain1;
+    MARTe::float32 gain2;
+    MARTe::float32 gain3[6];
+};
+struct GainsFromIntroStructure {
+    struct GainFromIntroStructure lowGains[2];
+    struct GainFromIntroStructure highGains;
+};
+#pragma pack(pop)
+#endif
 
 /**
  * @brief A MARTe::Object class that will read directly read its configuration from a structure.
@@ -320,4 +336,3 @@ int main(int argc, char **argv) {
     }
     return 0;
 }
-

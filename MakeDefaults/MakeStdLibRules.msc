@@ -77,6 +77,17 @@ $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	mv *.exp $(BUILD_DIR)\dll
 	rmdir /q /s .\tmpcl
 
+$(BUILD_DIR)/%.gam : $(OBJS) $(LIBRARIES) $(IMPDEFS)
+	@echo "Building dynamic link library .dll"
+	if not exist $(BUILD_DIR)\dll mkdir $(BUILD_DIR)\dll
+	if not exist .\tmpcl mkdir .\tmpcl
+	@touch .\tmpcl\$(notdir $(@:%.gam=%.cpp))
+	$(COMPILER) /EHsc /LD .\tmpcl\$(notdir $(@:%.gam=%.cpp)) $(OBJS) /link $(LIBRARIES) $(LIBRARIES_STATIC) $(LFLAGS) /wholearchive /force:multiple
+	mv *.dll $(BUILD_DIR)\dll
+	mv *.lib $(BUILD_DIR)\dll
+	mv *.exp $(BUILD_DIR)\dll
+	rmdir /q /s .\tmpcl
+
 $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	@echo "UNUSED dummy.dll"
 
@@ -84,7 +95,7 @@ $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
 	@echo "UNUSED .def"
 
 $(BUILD_DIR)/%.exe : $(OBJS) $(BUILD_DIR)/%.obj $(LIBRARIES) createLibrary
-	$(COMPILER) -Zi -EHsc- $(OBJS) $(subst /,\,$(BUILD_DIR))\$*.obj $(subst /,\,$(LIBRARIES)) /link /opt:noref /wholearchive /out:$@ /force:multiple
+	$(COMPILER) /Zi /EHsc $(OBJS) $(subst /,\,$(BUILD_DIR))\$*.obj $(subst /,\,$(LIBRARIES)) /link /opt:noref $(LFLAGS) /wholearchive /out:$@ /force:multiple
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 	$(COMPILER) $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -o $@
