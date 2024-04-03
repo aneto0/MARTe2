@@ -1357,7 +1357,9 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                     }
 
                     bool addQuotesOnString = fd.fullNotation;
-                    ret = PrintStream(iobuff, *stream, fd, addQuotesOnString);
+                    if (stream != NULL_PTR(StreamI*)) {
+                        ret = PrintStream(iobuff, *stream, fd, addQuotesOnString);
+                    }
                 }
             }
 
@@ -1471,7 +1473,6 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff, const AnyType & parIn, const 
         ret = iobuff.PutC(' ');
     }
     for (uint32 i = 0u; (i < numberOfRows) && (ret); i++) {
-        printf("--------------------> %d<-------------------\r\n", i);
         if (ret) {
             char8* vectorPointer = NULL_PTR(char8*);
             if (isStaticDeclared) {

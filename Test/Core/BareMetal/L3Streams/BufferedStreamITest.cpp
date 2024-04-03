@@ -44,9 +44,9 @@ bool BufferedStreamITest::TestDefaultConstructor() {
     return (myStream.GetTimeout() == TTInfiniteWait);
 }
 
-bool BufferedStreamITest::TestAnyType() {
+//AnyType operator removed from BufferedStreamI. See comments on source file.
+//bool BufferedStreamITest::TestAnyType() {
     //Warning! This test has to be checked
-    return false;
     // DummySingleBufferedStream myStream;
     
     // AnyType anyStream = myStream;
@@ -54,7 +54,7 @@ bool BufferedStreamITest::TestAnyType() {
     // ok = !anyStream.GetTypeDescriptor().isConstant;
     // ok = (anyStream.GetTypeDescriptor().numberOfBits == 0u);
     // return ok;
-}
+//}
 
 bool BufferedStreamITest::TestGetToken(uint32 bufferSize,
                                        const TokenTestTableRow *table) {

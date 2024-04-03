@@ -49,10 +49,11 @@ TEST(BareMetal_L3Streams_BufferedStreamIGTest,TestDefaultConstructor) {
     ASSERT_TRUE(streamtest.TestDefaultConstructor());
 }
 
-TEST(BareMetal_L3Streams_BufferedStreamIGTest,TestAnyType) {
-    BufferedStreamITest streamtest;
-    ASSERT_TRUE(streamtest.TestAnyType());
-}
+//AnyType operator no longer available in BufferedStreamI. See comments in source file.
+//TEST(BareMetal_L3Streams_BufferedStreamIGTest,TestAnyType) {
+//    BufferedStreamITest streamtest;
+//    ASSERT_TRUE(streamtest.TestAnyType());
+//}
 
 TEST(BareMetal_L3Streams_BufferedStreamIGTest,TestGetToken_TableTerminators_BufferSize_1) {
     BufferedStreamITest streamtest;
