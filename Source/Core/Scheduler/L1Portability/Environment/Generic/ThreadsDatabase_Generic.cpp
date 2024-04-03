@@ -2,7 +2,7 @@
  * @file ThreadsDatabase_Generic.cpp
  * @brief Source file for module ThreadsDatabase
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
