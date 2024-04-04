@@ -96,6 +96,19 @@ public:
     bool TestGetIntrospectionEntryMemory();
 };
 
+struct DLL_API TestIntrospectionNestedStructure {
+    uint32 nestedMember1;
+};
+
+struct DLL_API TestIntrospectionStructure {
+    uint32 member1;
+    float32 *member2;
+    float64 member3[32];
+    const char8 * const member4;
+    TestIntrospectionNestedStructure member5;
+};
+
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

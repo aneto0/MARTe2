@@ -28,13 +28,6 @@ TARGET=msc
 
 include Makefile.inc
 
-LIBRARIES0 = kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
-
-LIBRARIES += $(LIBRARIES0) $(BLCOMPONENTS)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\L1Portability\L1PortabilityF$(LIBEXT)
-
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\L1Portability\L1PortabilityF.def
 
 
 

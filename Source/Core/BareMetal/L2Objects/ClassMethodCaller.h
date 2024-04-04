@@ -51,7 +51,7 @@ namespace MARTe {
  * @details The actual implementations of this class are in ClassMethodCallerT.
  */
 /*lint -e{9109} forward declaration required to be able to Call the Object *.*/
-class ClassMethodCaller {
+class DLL_API ClassMethodCaller {
 public:
 
     /**

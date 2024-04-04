@@ -212,6 +212,11 @@ ConfigurationDatabase    ();
      */
     void SetCurrentNodeAsRootNode();
 
+    /**
+     * @brief Automatic cast to AnyType.
+    */
+    operator AnyType();
+
 private:
 
     /**
@@ -238,7 +243,14 @@ private:
 
 };
 
+inline ConfigurationDatabase::operator AnyType() {
+    AnyType anyTypeConversion(StructuredDataInterfaceType, 0u, this);
+    return anyTypeConversion;
 }
+
+}
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

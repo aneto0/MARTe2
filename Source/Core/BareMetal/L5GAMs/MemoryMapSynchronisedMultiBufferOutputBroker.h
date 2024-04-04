@@ -46,7 +46,7 @@ namespace MARTe {
  * Note that the DataSource::PrepareOffsets is not called.
  *
  */
-class MemoryMapSynchronisedMultiBufferOutputBroker: public MemoryMapMultiBufferBroker {
+class DLL_API MemoryMapSynchronisedMultiBufferOutputBroker: public MemoryMapMultiBufferBroker {
 public:
     CLASS_REGISTER_DECLARATION()
 

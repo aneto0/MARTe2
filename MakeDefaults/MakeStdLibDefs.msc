@@ -24,7 +24,7 @@
 #############################################################
 
 BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(subst /,\,$(PACKAGE))\$(lastword $(subst /,\\ ,$(CURDIR)))
-
+MARTe2_TEST_ENVIRONMENT?=Portable
 ENVIRONMENT=Windows
 ARCHITECTURE=x86_cl
 EXEEXT=.exe
@@ -40,17 +40,23 @@ ILKEXT=.ilk
 PDBEXT=.pdb
 DEFEXT=.def
 
-OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.obj) 
-OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.obj) 
-OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.obj) 
+#OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.obj) 
+#OBJS2=  $(OBJSX2:%.x2=$(BUILD_DIR)/%.obj) 
+#OBJS3=  $(OBJSX3:%.x3=$(BUILD_DIR)/%.obj) 
+
+OBJS0=$(OBJSX:%.x=$(BUILD_DIR)/%.obj) 
+OBJS1?=$(OBJS0:%.x1=$(BUILD_DIR)/%.obj) 
+OBJS2?=$(OBJS1:%.x2=$(BUILD_DIR)/%.obj) 
+OBJS3?=$(OBJS2:%.x3=$(BUILD_DIR)/%.obj) 
+OBJS=$(OBJS3)
 
 PP=   $(PPX:%.x=msc\%.pp) 
 
 #OBJS += $(OBJSXRTTI:%.x=msc\%.rtti.obj) 
 
 OBJS_=  $(OBJSX:%.x=msc/%.obj) 
-OBJS2_= $(OBJSX2:%.x=msc/%.obj) 
-OBJS3_= $(OBJSX3:%.x=msc/%.obj) 
+OBJS2_= $(OBJSX2:%.x2=msc/%.obj) 
+OBJS3_= $(OBJSX3:%.x3=msc/%.obj) 
 
 SUBPROJ = $(SPB:%.x=%.spb)
 SUBPROJ2 = $(SPB2:%.x=%.spb)
@@ -58,16 +64,18 @@ SUBPROJC = $(SPB:%.x=%.spc)
 SUBPROJC += $(SPB2:%.x=%.spc)
 
 MAKE     =   make
-COMPILER =   cl 
+COMPILER =   cl
+LINKER = link
 FCOMPILER =  f77
-DEBUG    =   -Zi
-OPTIM    =   -W1 -O2 -Ob2
-CFLAGSPEC=   -MD -GR -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
-#ASSEMBLER=   -Fa
+DEBUG    =   -Z7
+OPTIM    =   -W1 -Od
+#OPTIM    =   -W1 -O2 -Ob2
+CFLAGSPEC=   -MT -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
+#ASSEMBLER=   -Fa$(BUILD_DIR)/$*.asm
 ASSEMBLER=   
-LFLAGS   =   
-LOPTS    =  
-CFLAGS   =    
+LFLAGS   = 
+LOPTS    =
+CFLAGS   =
 FFLAGS   =   
 FOPTS    =   -optimize:4
 

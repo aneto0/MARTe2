@@ -43,7 +43,7 @@ namespace MARTe {
  * @brief Structure which describes a page of memory.
  * @details Each page of memory contains a copy of all the signals, at a given time instant, assigned to this Broker.
  */
-struct MemoryMapAsyncOutputBrokerBufferEntry {
+struct DLL_API MemoryMapAsyncOutputBrokerBufferEntry {
     /**
      * Buffer index
      */
@@ -68,7 +68,7 @@ struct MemoryMapAsyncOutputBrokerBufferEntry {
  *
  * The DataSource shall call the UnlinkDataSource in the DataSourceI::Purge.
  */
-class MemoryMapAsyncOutputBroker: public MemoryMapBroker {
+class DLL_API MemoryMapAsyncOutputBroker: public MemoryMapBroker {
 public:
     CLASS_REGISTER_DECLARATION()
     /**

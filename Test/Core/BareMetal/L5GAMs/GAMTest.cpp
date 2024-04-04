@@ -20,7 +20,7 @@
  * the class GAMTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -45,9 +45,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-struct GAMTestStruct2 {
-    uint32 Par1;
-};
 
 DECLARE_CLASS_MEMBER(GAMTestStruct2, Par1, uint32, "", "");
 static const IntrospectionEntry *GAMTestStruct2Entries[] = { &GAMTestStruct2_Par1_introspectionEntry, 0 };

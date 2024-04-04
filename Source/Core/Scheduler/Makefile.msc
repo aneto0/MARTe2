@@ -33,7 +33,6 @@ LIBRARIES   += $(LIBRARIES0) $(BLCOMPONENTS)
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\L1Portability\L1PortabilityS$(LIBEXT)
 
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\L1Portability\L1PortabilityS.def
 
 
 

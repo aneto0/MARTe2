@@ -68,7 +68,7 @@ namespace MARTe {
  * }
  * </pre>
  */
-class HttpObjectBrowser: public ReferenceContainer, public HttpDataExportI {
+class DLL_API HttpObjectBrowser: public ReferenceContainer, public HttpDataExportI {
 public:
     CLASS_REGISTER_DECLARATION()
 

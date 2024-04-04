@@ -48,9 +48,9 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests the operator AnyType.
+     * @brief Tests the operator AnyType. AnyType operator no longer present in BufferedStreamI. See comments in source file.
      */
-    bool TestAnyType();
+    //bool TestAnyType();
 
     /**
      * @brief Tests the GetToken function. The possible tables to be used are defined in StreamTestHelper.

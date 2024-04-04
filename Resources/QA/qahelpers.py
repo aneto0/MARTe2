@@ -431,73 +431,76 @@ class HeadersHelper(QAHelper):
         includes = []
         endOfHeaderCommentReached = False
         with open(f) as lines:
-            for line in lines:
-                line = line.rstrip()
-                if ('* @file ' in line):
-                    atFileFilename = line.split('@file ')
-                    if (len(atFileFilename) > 1):
-                        atFileFilename = atFileFilename[1]
-                    else:
-                        atFileFilename = ''
-                    self.logger.debug('Going to check if detected filename {0} is in the actual filename {1}'.format(atFileFilename, f))
-                    atFileOK = (atFileFilename in f)
-                    if (not(atFileOK)):
-                        self.logger.critical('@file incorrect format detected: {0}'.format(line))
-                elif ('* @brief ' in line):
-                    if (not endOfHeaderCommentReached):
-                        possibleBriefs = []
-                        expectedBrief = 'file for class {0}'.format(className)
-                        if (isHeaderFile):
-                            expectedBrief = 'Header ' + expectedBrief
-                            possibleBriefs.append(expectedBrief)
+            try:
+                for line in lines:
+                    line = line.rstrip()
+                    if ('* @file ' in line):
+                        atFileFilename = line.split('@file ')
+                        if (len(atFileFilename) > 1):
+                            atFileFilename = atFileFilename[1]
                         else:
-                            possibleBriefs.append('Class ' + expectedBrief)
-                            possibleBriefs.append('Source ' + expectedBrief)
-                        for expectedBrief in possibleBriefs:
-                            self.logger.debug('Expected brief: {0}'.format(expectedBrief))
-                            atBriefOK = (expectedBrief in line)
-                            if (not(atBriefOK)):
-                                self.logger.debug('Unexpected brief found: {0}'.format(line))
+                            atFileFilename = ''
+                        self.logger.debug('Going to check if detected filename {0} is in the actual filename {1}'.format(atFileFilename, f))
+                        atFileOK = (atFileFilename in f)
+                        if (not(atFileOK)):
+                            self.logger.critical('@file incorrect format detected: {0}'.format(line))
+                    elif ('* @brief ' in line):
+                        if (not endOfHeaderCommentReached):
+                            possibleBriefs = []
+                            expectedBrief = 'file for class {0}'.format(className)
+                            if (isHeaderFile):
+                                expectedBrief = 'Header ' + expectedBrief
+                                possibleBriefs.append(expectedBrief)
                             else:
-                                break
-                elif ('* @author ' in line):
-                    author = line.split('@author ')[1]
-                    #Remove accents
-                    author = unidecode.unidecode(author)
-                    self.logger.debug('Author {0} found'.format(author))
-                    with open(self.authors) as authors:
-                        for existingAuthor in authors:
-                            existingAuthor = existingAuthor.rstrip()
-                            existingAuthor = unidecode.unidecode(existingAuthor)
-                            atAuthorOK = (author == existingAuthor)
-                            if (atAuthorOK):
-                                break
-                    if (not(atAuthorOK)):
-                        self.logger.critical('Author {0} was not found in the AUTHORS ({1}) list'.format(author, self.authors))
-                elif ('* @copyright ' in line):
-                    atCopyrightOK = True
-                elif ('* @date ' in line):
-                    dateStr = line.split('@date ')[1]
-                    try:
-                        datetime.datetime.strptime(dateStr, '%d/%m/%Y')
-                        atDateOK = True
-                    except Exception as e:
-                        self.logger.critical('Invalid date found: {0}'.format(e))
-                        atDateOK = False
-                elif ('#include' in line):
-                    includes.append(line)
-                elif ('*/' in line):
-                    endOfHeaderCommentReached = True
-                    includesSort = includes[:]
-                    includesSort.sort()
-                    if (includesOK):
-                        includesOK = (includes == includesSort)
-                        if (not includesOK):
-                            self.logger.critical('Includes not sorted {0} != {1}'.format(includes, includesSort))
-                    #Sort include by blocks /**/
-                    includes = []
-            
-        allOK = atFileOK and atBriefOK and atDateOK and atAuthorOK and atCopyrightOK and includesOK
+                                possibleBriefs.append('Class ' + expectedBrief)
+                                possibleBriefs.append('Source ' + expectedBrief)
+                            for expectedBrief in possibleBriefs:
+                                self.logger.debug('Expected brief: {0}'.format(expectedBrief))
+                                atBriefOK = (expectedBrief in line)
+                                if (not(atBriefOK)):
+                                    self.logger.debug('Unexpected brief found: {0}'.format(line))
+                                else:
+                                    break
+                    elif ('* @author ' in line):
+                        author = line.split('@author ')[1]
+                        #Remove accents
+                        author = unidecode.unidecode(author)
+                        self.logger.debug('Author {0} found'.format(author))
+                        with open(self.authors) as authors:
+                            for existingAuthor in authors:
+                                existingAuthor = existingAuthor.rstrip()
+                                existingAuthor = unidecode.unidecode(existingAuthor)
+                                atAuthorOK = (author == existingAuthor)
+                                if (atAuthorOK):
+                                    break
+                        if (not(atAuthorOK)):
+                            self.logger.critical('Author {0} was not found in the AUTHORS ({1}) list'.format(author, self.authors))
+                    elif ('* @copyright ' in line):
+                        atCopyrightOK = True
+                    elif ('* @date ' in line):
+                        dateStr = line.split('@date ')[1]
+                        try:
+                            datetime.datetime.strptime(dateStr, '%d/%m/%Y')
+                            atDateOK = True
+                        except Exception as e:
+                            self.logger.critical('Invalid date found: {0}'.format(e))
+                            atDateOK = False
+                    elif ('#include' in line):
+                        includes.append(line)
+                    elif ('*/' in line):
+                        endOfHeaderCommentReached = True
+                        includesSort = includes[:]
+                        includesSort.sort()
+                        if (includesOK):
+                            includesOK = (includes == includesSort)
+                            if (not includesOK):
+                                self.logger.critical('Includes not sorted {0} != {1}'.format(includes, includesSort))
+                        #Sort include by blocks /**/
+                        includes = []
+                allOK = atFileOK and atBriefOK and atDateOK and atAuthorOK and atCopyrightOK and includesOK
+            except Exception as e:            
+                allOK = False
+                self.logger.critical('File {0} may be corrupted or have corrupted characters: {1}'.format(f, e))
         status = {'allok': allOK, '@file': atFileOK, '@brief': atBriefOK, '@date': atDateOK, '@author': atAuthorOK, '@copyright': atCopyrightOK, '#includes sorted': includesOK}
         return status
 

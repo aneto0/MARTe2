@@ -53,7 +53,7 @@ namespace MARTe {
  * @brief A descriptor used to keep the status during the
  * StreamStructuredData operations.
  */
-class StreamStructuredDataNodeDes: public ReferenceContainer {
+class DLL_API StreamStructuredDataNodeDes: public ReferenceContainer {
 public:
 
     /**

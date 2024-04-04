@@ -42,7 +42,7 @@ namespace MARTe {
  * @brief Interface for hash function objects.
  * @details Implementors of this interface know how to compute an hash from a string ID.
  */
-class HashFunction {
+class DLL_API HashFunction {
 public:
 
     /**

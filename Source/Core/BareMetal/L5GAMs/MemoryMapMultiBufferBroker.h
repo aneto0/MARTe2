@@ -58,7 +58,7 @@ namespace MARTe {
  * The reason why the offset needs to be computed for every signal is that there might be DataSourceI implementations where a given signal is ready
  *  before others and thus can be copied in advanced.
  */
-class MemoryMapMultiBufferBroker: public MemoryMapBroker {
+class DLL_API MemoryMapMultiBufferBroker: public MemoryMapBroker {
 public:
 
     /**

@@ -43,7 +43,7 @@ namespace MARTe {
  * @details Most of the classes are expected to expose their internal data using the ExportData method.
  * This interface is expected to be used only in cases where the knowledge of the HTTP interface is absolutely required.
  */
-class HttpDataExportI {
+class DLL_API HttpDataExportI {
 public:
     /**
      * @brief Constructor. NOOP.

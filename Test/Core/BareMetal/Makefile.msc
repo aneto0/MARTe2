@@ -27,8 +27,6 @@ TARGET=msc
 
 include Makefile.inc
 
-LIBRARIES0   = kernel32.lib wsock32.lib largeint.lib user32.lib advapi32.lib ws2_32.lib
-LIBRARIES   += $(LIBRARIES0) $(BLCOMPONENTS)
 
 
 

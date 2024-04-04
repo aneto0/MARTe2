@@ -10,7 +10,7 @@ setup(
     license='EUPL',
     packages=['MARTe'],
     package_dir={'MARTe': 'Build/MARTe'},
-    install_requires=[],
+    install_requires=['pyparsing'],
 
     classifiers=[
         'Development Status :: 4 - Beta',

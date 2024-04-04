@@ -148,6 +148,13 @@ class TestStandardParser(unittest.TestCase):
         with open('test_file.cfg') as f:
             ret = self.parser.parse_file(f)
         self.assertTrue('PlasmaCurrentsS1_ReadTime;\n' in ret['$PlasmaCurrent2kHz']['+Functions']['+ElapsedTimes']['Expression'])
+	
+    def test_expressions(self):
+        cfg= 'NumberOfElements = (uint32|"(uint32)128+1*(uint32)30*(uint32)8/Parameters.UDPPacketJunks")'
+
+        ret = self.parser.parse_string(cfg)
+        print(ret)
+        self.assertTrue(ret['NumberOfElements'] == '(uint32|"(uint32)128+1*(uint32)30*(uint32)8/Parameters.UDPPacketJunks")')
 
 if __name__ == "__main__":
     unittest.main()

@@ -45,7 +45,7 @@ namespace MARTe {
  * This method will be continuously called (see Start) with the stage encoded in the Information parameter.
  * Notice that the user-callback should not block and should return ErrorManagement::Timeout while waiting for a connection to be established.
  */
-class MultiClientService: public MultiThreadService {
+class DLL_API MultiClientService: public MultiThreadService {
 
 public:
 

@@ -543,6 +543,9 @@ bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<con
     char8 bufferInfo[32];
     AnyType at(bufferInfo);
     ioBuffer.PrintFormatted("%?", &at);
+    //Using MSVC this test will fail due to ambiguous constructor for AnyType
+    //The gcc correct templated char8[] which results in Char Array type decays to simple char8* resulting in Char String type
+    //This behaviour is known as SFINAE (Substitution Failure Is Not An Error)
     return StringHelper::Compare(ioBuffer.Buffer(), "Char Array") == 0;
 }
 
@@ -571,6 +574,20 @@ bool IOBufferTest::TestPrintCArrayMatrix(const TestPrintFormattedTableMatrix<con
 
     return true;
 }
+
+struct DLL_API TestIOBufferIntrospectionNestedStructure {
+    uint32 nestedMember1;
+    const char8 *nestedMember2;
+};
+
+struct DLL_API TestIOBufferIntrospectionStructure {
+    uint32 member1;
+    float32 *member2;
+    float64 member3[32];
+    const char8 * member4[2][2];
+    TestIOBufferIntrospectionNestedStructure member5;
+};
+
 
 #endif /* IOBUFFERTEST_H_ */
 

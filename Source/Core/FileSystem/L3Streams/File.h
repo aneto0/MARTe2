@@ -44,7 +44,7 @@ namespace MARTe {
 /**
  * @brief Buffered implementation of the BasicFile.
  */
-class File: public BufferedStreamGenerator<SingleBufferedStream, BasicFile> {
+class DLL_API File: public BufferedStreamGenerator<SingleBufferedStream, BasicFile> {
 
 public:
     /**

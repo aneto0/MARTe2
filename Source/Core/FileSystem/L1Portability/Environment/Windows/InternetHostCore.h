@@ -21,14 +21,13 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef INTERNETHOSTCORE_H_
-		#define 		INTERNETHOSTCORE_H_
+#ifndef INTERNETHOSTCORE_H_
+#define INTERNETHOSTCORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <windows.h>
-#include <winsock.h>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -40,7 +39,7 @@
 
 namespace MARTe{
 
-typedef sockaddr_in InternetHostCore;
+typedef SOCKADDR_IN InternetHostCore;
 
 }
 

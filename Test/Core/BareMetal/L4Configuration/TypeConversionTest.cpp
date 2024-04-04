@@ -625,6 +625,7 @@ bool TypeConversionTest::TestStructuredDataToObject_SourceIntrospectionArray() {
             "   }"
             "}";
 
+#ifdef __GNUC__
     struct __attribute__((__packed__)) TypeConversionTestEx0 {
         char8 field1[64];
     };
@@ -639,6 +640,27 @@ bool TypeConversionTest::TestStructuredDataToObject_SourceIntrospectionArray() {
         uint8 field4A;
         uint16 field5A;
     };
+#endif
+
+#ifdef _MSC_VER
+    __pragma( pack(push, 1) )
+    struct TypeConversionTestEx0 {
+        char8 field1[64];
+    };
+    struct TypeConversionTestEx1 {
+        uint32 field1;
+        TypeConversionTestEx0 field2[2][3];
+    };
+    struct TypeConversionTestEx2 {
+        TypeConversionTestEx1 field1A[3][1][2];
+        float32 field2A[3];
+        float64 field3A;
+        uint8 field4A;
+        uint16 field5A;
+    };
+    __pragma( pack(pop))
+#endif
+
     ConfigurationDatabase cdb;
     StreamString configStr = config;
     configStr.Seek(0);
@@ -823,6 +845,7 @@ bool TypeConversionTest::TestStructuredDataToObject_ErrorNoDestIntrospection() {
 
     TypeDescriptor destinationDes(false, ClassRegistryDatabase::Instance()->Find("TestNoIntrospectionObject")->GetClassProperties()->GetUniqueIdentifier());
     AnyType destination(destinationDes, 0u, &testDestination);
+
     return (!TypeConvert(destination, cdb));
 }
 
@@ -887,6 +910,7 @@ bool TypeConversionTest::TestObjectToStructuredData() {
     AnyType source(sourceDes, 0u, &testSource);
 
     ConfigurationDatabase cdb;
+
     if (!TypeConvert(cdb, source)) {
         printf("\nError in type convert\n");
     }
@@ -993,6 +1017,7 @@ bool TypeConversionTest::TestObjectArrayToStructuredData() {
             "   }"
             "}";
 
+#ifdef __GNUC__
     struct __attribute__((__packed__)) TypeConversionTestEx0 {
         char8 field1[64];
     };
@@ -1007,6 +1032,26 @@ bool TypeConversionTest::TestObjectArrayToStructuredData() {
         uint8 field4A;
         uint16 field5A;
     };
+#endif
+
+#ifdef _MSC_VER
+    __pragma( pack(push, 1) )
+    struct TypeConversionTestEx0 {
+        char8 field1[64];
+    };
+    struct TypeConversionTestEx1 {
+        uint32 field1;
+        TypeConversionTestEx0 field2[2][3];
+    };
+    struct TypeConversionTestEx2 {
+        TypeConversionTestEx1 field1A[3][1][2];
+        float32 field2A[3];
+        float64 field3A;
+        uint8 field4A;
+        uint16 field5A;
+    };
+    __pragma( pack(pop))
+#endif
     ConfigurationDatabase cdb;
     StreamString configStr = config;
     configStr.Seek(0);
@@ -1046,6 +1091,7 @@ bool TypeConversionTest::TestObjectArrayToStructuredData() {
     sourceStruct.field5A = 105;
 
     ConfigurationDatabase destination;
+    
     ok = TypeConvert(destination, source);
 
     for (uint32 i=0; i<3; i++) {
@@ -1122,7 +1168,6 @@ bool TypeConversionTest::TestStructuredDataToStructuredData() {
 
     ConfigurationDatabase destinationCDB;
     //need to be inside
-
     TypeConvert(destinationCDB, sourceCDB);
     //destinationCDB.MoveToRoot();
 

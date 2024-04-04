@@ -124,7 +124,8 @@ public:
      * @brief Casts the stream to AnyType.
      * @return an AnyType representation of the stream.
      */
-    inline operator AnyType();
+    //This implementation is commented out as interfering with MSVC Win64 porting
+    //inline operator AnyType();
 
     /**
      * @brief Reads a token from the stream into a character buffer.
@@ -403,13 +404,13 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+//TThis implementation is commented out as interfering with MSVC Win64 porting.
+// BufferedStreamI::operator AnyType() {
+//     void *dataPointer = static_cast<void *>(this);
+//     TypeDescriptor dataDescriptor(false, Stream, 0u);
 
-BufferedStreamI::operator AnyType() {
-    void *dataPointer = static_cast<void *>(this);
-    TypeDescriptor dataDescriptor(false, Stream, 0u);
-
-    return AnyType(dataDescriptor, 0u, dataPointer);
-}
+//     return AnyType(dataDescriptor, 0u, dataPointer);
+// }
 
 bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1) {
     AnyType pars[2] = { par1, voidAnyType };

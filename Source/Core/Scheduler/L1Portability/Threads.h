@@ -45,7 +45,7 @@ namespace MARTe {
 /**
  * Forward declaration of a thread information database.
  */
-class ThreadInformation;
+class DLL_API ThreadInformation;
 }
 
 /*---------------------------------------------------------------------------*/

@@ -53,7 +53,7 @@ namespace MARTe{
  *   0\n
  *   \n
  */
-class HttpChunkedStream: public TCPSocket{
+class DLL_API HttpChunkedStream: public TCPSocket{
 
 public:
     /**

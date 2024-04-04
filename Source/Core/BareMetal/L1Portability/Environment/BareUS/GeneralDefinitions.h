@@ -2,7 +2,7 @@
  * @file GeneralDefinitions.h
  * @brief Header file for class GeneralDefinitions
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -75,7 +75,7 @@ typedef uintptr_t osulong;
     #define BasicConsoleHandle ConsoleHandle*
 
     static const char8 DIRECTORY_SEPARATOR = '/';
-    const uint32 SCHED_GRANULARITY_US = 10000;
+    static const uint32 SCHED_GRANULARITY_US = 10000;
 
     //TODO Check this
     typedef void* Handle;

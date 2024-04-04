@@ -34,10 +34,10 @@ include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 ifeq ($(MARTe2_TEST_ENVIRONMENT), GTest)
 INCLUDES += -I$(ROOT_DIR)/Lib/gtest-1.7.0/include
 OBJSX += MARTe2UTest.x
-LIBRARIES += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
+LIBRARIES+=../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a
 else
-LIBRARIES += ../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTest$(OBJEXT)
-LIBRARIES += ../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTestImpl$(OBJEXT)
+LIBRARIES+=../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTest$(OBJEXT)
+LIBRARIES+=../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTestImpl$(OBJEXT)
 endif
 
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
@@ -55,8 +55,7 @@ all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/MainGTest$(EXEEXT)
 	echo  $(OBJS)
 
-
-include depends.$(TARGET)
+#include depends.$(TARGET)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

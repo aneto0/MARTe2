@@ -45,7 +45,7 @@ namespace MARTe {
  * @brief Implementation of the HTTP protocol.
  * @details This implementation allows to send and receive HTTP messages.
  */
-class HttpProtocol : public ConfigurationDatabase {
+class DLL_API HttpProtocol : public ConfigurationDatabase {
 public:
 
     /**

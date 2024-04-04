@@ -26,6 +26,7 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include "xparameters.h"
+#include "xpseudo_asm_gcc.h"
 #include "xtime_l.h"
 
 /*---------------------------------------------------------------------------*/
@@ -91,6 +92,7 @@ namespace MARTe {
 
         uint64 HighResolutionTimerCalibrator::GetTicks() {
             XTime tempTime = 0ULL;
+            isb();
             XTime_GetTime(&tempTime);
 
             return static_cast<uint64>(tempTime);

@@ -70,7 +70,7 @@ static const uint32 DEFAULT_NUMBER_OF_LOG_PAGES = 128u;
  * the logs to a FastResourceContainer queue. These are expected to be consumed by
  * users of this class.
  */
-class Logger {
+class DLL_API Logger {
 public:
 
     /**

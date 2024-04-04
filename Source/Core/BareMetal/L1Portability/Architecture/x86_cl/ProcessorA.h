@@ -2,7 +2,7 @@
  * @file ProcessorA.h
  * @brief Header file for module ProcessorA
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -76,7 +76,7 @@ inline void CPUID(uint32 code,
     D = cpuInfo[3];
 }
 
-uint32 Family() {
+DLL_API uint32 Family() {
     uint32 eax = 0;
     uint32 ebx = 0;
     uint32 ecx = 0;
@@ -89,7 +89,7 @@ uint32 Family() {
     return family;
 }
 
-uint32 Model() {
+DLL_API uint32 Model() {
     uint32 eax = 0;
     uint32 ebx = 0;
     uint32 ecx = 0;
@@ -104,7 +104,7 @@ uint32 Model() {
     return model;
 }
 
-const char8 *VendorId() {
+DLL_API const char8 *VendorId() {
 
     uint32 eax = 0;
     CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);

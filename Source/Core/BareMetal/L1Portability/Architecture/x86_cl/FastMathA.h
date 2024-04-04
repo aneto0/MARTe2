@@ -28,6 +28,7 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <__msvc_int128.hpp>
 #include <math.h>
 
 /*---------------------------------------------------------------------------*/
@@ -41,6 +42,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+using int128 = std::_Signed128;
+using uint128 = std::_Unsigned128;
 
 namespace MARTe {
 
@@ -58,9 +62,62 @@ inline int32 FloatToInt(const float input) {
     return input > 0 ? floor(input) : -floor(-input);
 }
 
+template<typename T1,typename T2> T1 UMulT (T1 x1,T1 x2,T1 &high){
+	const uint8 nBits = sizeof(T1)*8;
+	const T2 mask = static_cast<T2>(~((T1)0));
+	T2 ret = (T2)x1 * (T2)x2;
+	high = (T1)(ret >> nBits);
+	return (T1)(ret & mask);
 }
+
+
+inline uint8  CompleteMultiply(uint8  x1,uint8  x2,uint8  &high){
+	return UMulT<uint8,uint16>(x1,x2,high);
+}
+
+inline uint16  CompleteMultiply(uint16 x1,uint16 x2,uint16 &high){
+	return UMulT<uint16,uint32>(x1,x2,high);
+}
+
+inline uint32  CompleteMultiply(uint32 x1,uint32 x2,uint32 &high){
+	return UMulT<uint32,uint64>(x1,x2,high);
+}
+
+inline uint64   CompleteMultiply(uint64 x1,uint64 x2,uint64 &high){
+#ifdef _WIN64
+	return UMulT<uint64,uint128>(x1,x2,high);
+#else
+#pragma	message "128 bits not supported in target platform" 
+	high = 0;
+	return x1 * x2;
+#endif
+}
+
+
+inline int8  CompleteMultiply(int8  x1,int8  x2,int8  &high){
+	return UMulT<int8,int16>(x1,x2,high);
+}
+
+inline int16 CompleteMultiply(int16 x1,int16 x2,int16 &high){
+	return UMulT<int16,int32>(x1,x2,high);
+}
+
+inline int32 CompleteMultiply(int32 x1,int32 x2,int32 &high){
+	return UMulT<int32,int64>(x1,x2,high);
+}
+
+inline int64 CompleteMultiply(int64 x1,int64 x2,int64 &high){
+#ifdef _WIN64
+	return UMulT<int64,int128>(x1,x2,high);
+#else
+	#pragma	message "128 bits not supported in target platform"
+	high = 0;
+	return x1 * x2;
+#endif
 
 }
 
+}
+
+}
 #endif /* FASTMATHA_H_ */
-

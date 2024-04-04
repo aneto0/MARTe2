@@ -150,21 +150,23 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOutputStru
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithConstInputStreamI(const MARTe::StreamI &data) {
-    const MARTe::StreamString &ss = reinterpret_cast<const MARTe::StreamString &>(data);
+    const MARTe::StreamString &ss = dynamic_cast<const MARTe::StreamString &>(data);
     bool result = (ss == "MethodWithConstInputStreamI");
     lastMethodExecuted = "MethodWithConstInputStreamI(StreamI)";
     return result;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOutputStreamI(MARTe::StreamI &data) {
-    MARTe::StreamString &ss = reinterpret_cast<MARTe::StreamString &>(data);
+    //MARTe::StreamString &ss = reinterpret_cast<MARTe::StreamString &>(data);
+    MARTe::StreamString &ss = dynamic_cast<MARTe::StreamString &>(data);
     ss = "MethodWithOutputStreamI";
     lastMethodExecuted = "MethodWithOutputStreamI(StreamI&)";
     return true;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithInputOutputStreamI(MARTe::StreamI &data) {
-    MARTe::StreamString &ss = reinterpret_cast<MARTe::StreamString &>(data);
+    //MARTe::StreamString &ss = reinterpret_cast<MARTe::StreamString &>(data);
+    MARTe::StreamString &ss = dynamic_cast<MARTe::StreamString &>(data);
     bool result = (ss == "MethodWithInputOutputStreamI");
     lastMethodExecuted = "MethodWithInputOutputStreamI(StreamI&)";
     ss = "ReturnFromMethodWithInputOutputStreamII";

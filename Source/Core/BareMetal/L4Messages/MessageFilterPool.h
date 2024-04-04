@@ -49,7 +49,7 @@ namespace MARTe {
  *  the message will not be tested on any subsequent filters.
  *  Filters can be added to the container using the ReferenceContainer::Insert methods.
  */
-class MessageFilterPool: public ReferenceContainer {
+class DLL_API MessageFilterPool: public ReferenceContainer {
 
 public:
     CLASS_REGISTER_DECLARATION()

@@ -47,7 +47,7 @@ Directory::Directory(const char8 * const path) :
         fname = StringHelper::StringDup(path);
         HANDLE h = FindFirstFile(fname, &directoryHandle);
         if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed INVALID_HANDLE_VALUE");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed INVALID_HANDLE_VALUE");
         }
         FindClose(h);
     }
@@ -72,7 +72,7 @@ Directory::Directory(const char8 * const path) :
 Directory::~Directory() {
     if (fname != NULL) {
         if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
         }
     }
 }
@@ -99,7 +99,7 @@ bool Directory::SetByName(const char8 * const path) {
     if (ret) {
         HANDLE h = FindFirstFile(fnameTemp, &directoryHandle);
         if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: SetByName Failed INVALID_HANDLE_VALUE");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetByName Failed INVALID_HANDLE_VALUE");
             ret = false;
         }
         FindClose(h);
@@ -125,7 +125,7 @@ bool Directory::IsFile() const {
 uint64 Directory::GetSize() {
     HANDLE h = FindFirstFile(fname, &directoryHandle);
     if (h == INVALID_HANDLE_VALUE) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: GetSize Failed INVALID_HANDLE_VALUE");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: GetSize Failed INVALID_HANDLE_VALUE");
     }
     FindClose(h);
 
@@ -139,7 +139,7 @@ TimeStamp Directory::GetLastWriteTime() {
     SYSTEMTIME systemTime;
     HANDLE h = FindFirstFile(fname, &directoryHandle);
     if (h == INVALID_HANDLE_VALUE) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: GetLastWriteTime Failed INVALID_HANDLE_VALUE");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: GetLastWriteTime Failed INVALID_HANDLE_VALUE");
     }
     FindClose(h);
     bool ret = FileTimeToSystemTime(&directoryHandle.ftLastWriteTime, &systemTime);
@@ -153,7 +153,7 @@ TimeStamp Directory::GetLastWriteTime() {
         timeStamp.SetYear(static_cast<uint32>(systemTime.wYear));
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: localtime()");
     }
     return timeStamp;
 }
@@ -163,7 +163,7 @@ TimeStamp Directory::GetLastAccessTime() {
     SYSTEMTIME systemTime;
     HANDLE h = FindFirstFile(fname, &directoryHandle);
     if (h == INVALID_HANDLE_VALUE) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: GetLastAccessTime Failed INVALID_HANDLE_VALUE");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: GetLastAccessTime Failed INVALID_HANDLE_VALUE");
     }
     FindClose(h);
     bool ret = FileTimeToSystemTime(&directoryHandle.ftLastAccessTime, &systemTime);
@@ -177,7 +177,7 @@ TimeStamp Directory::GetLastAccessTime() {
         timeStamp.SetYear(static_cast<uint32>(systemTime.wYear));
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: FileTimeToSystemTime()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: FileTimeToSystemTime()");
     }
     return timeStamp;
 }
@@ -203,7 +203,7 @@ bool Directory::Create(const bool isFile) {
     if(ret) {
         HANDLE h = FindFirstFile(fname, &directoryHandle);
         if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in Create");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed FindFirstFile() in Create");
             ret = false;
         }
         FindClose(h);
@@ -225,7 +225,7 @@ bool Directory::Delete() {
     if (del) {
         HANDLE h = FindFirstFile(fname, &directoryHandle);
         if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in Delete");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed FindFirstFile() in Delete");
             del = false;
         }
         else {
@@ -246,7 +246,7 @@ bool Directory::Delete() {
     }
     if(del) {
         if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
         }
     }
     return del;

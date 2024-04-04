@@ -20,7 +20,7 @@
  * the class UDPLoggerTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -48,7 +48,7 @@ static void UDPLoggerTestServerThread(void *params) {
     udpLoggerTestServerOK &= server.Listen(thisHost.GetPort());
     uint32 msecTimeout = 5000u;
     uint32 udpServerReadSize = 8000u;
-    char8 *udpServerBufferRead[udpServerReadSize];
+    char8 *udpServerBufferRead[8000u];
     if (udpLoggerTestServerOK) {
         udpLoggerTestServerSetup = true;
         udpLoggerTestServerOK = server.Read((char8 *) udpServerBufferRead, udpServerReadSize, msecTimeout);

@@ -64,7 +64,7 @@ namespace MARTe {
  * }
  * </pre>
  */
-class LoggerService: public ReferenceContainer, public EmbeddedServiceMethodBinderI {
+class DLL_API LoggerService: public ReferenceContainer, public EmbeddedServiceMethodBinderI {
 public:
     CLASS_REGISTER_DECLARATION()
     /**

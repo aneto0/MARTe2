@@ -83,7 +83,7 @@ namespace MARTe{
  * }
  * </pre>
  */
-class HttpService: public MultiClientService, public MessageI {
+class DLL_API HttpService: public MultiClientService, public MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 

@@ -2,7 +2,7 @@
  * @file EventSemTest.h
  * @brief Header file for class EventSemTest
  * @date 26/07/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

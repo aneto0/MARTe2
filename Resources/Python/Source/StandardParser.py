@@ -30,12 +30,12 @@ class StandardParser(object):
     All values are converted to string to avoid issues with unquoted strings vs hexadecimal and other special numbers."""
 
     def __init__(self):
-        LBRACE, RBRACE, EQUAL = map(Suppress, '{}=')
+        LBRACE, RBRACE, EQUAL, LPARA, RPARA, PIPE = map(Suppress, '{}=()|')
         field = Word(printables, excludeChars='={}')
         field.addParseAction(tokenMap(str.rstrip), tokenMap(str.lstrip)) #Remove any spaces from the field
 
         string = QuotedString(quoteChar='"', multiline=True)
-        string_no_quotes = Word(printables, excludeChars='{}=/*,')
+        string_no_quotes = Word(printables, excludeChars='{}=,')
 
         #The code below was givign issues when comparing hex numbers against unquoted strings.
         #number = pyparsing_common.number()
@@ -45,6 +45,7 @@ class StandardParser(object):
 
         arr_list = delimitedList(scalar_value)
         arr_value = Group(LBRACE + arr_list + RBRACE)
+        ex_value = Group(LPARA + Word(printables) + PIPE + string + RPARA )
 
         arr_list_spaces = OneOrMore(scalar_value)
         arr_value_spaces = Group(LBRACE + arr_list_spaces + RBRACE)
@@ -54,7 +55,7 @@ class StandardParser(object):
 
         cub_value = Group(LBRACE + delimitedList(mat_value) + RBRACE)
         cub_value_spaces = Group(LBRACE + OneOrMore(mat_value_spaces) + RBRACE)
-        variable_value = scalar_value | arr_value | mat_value | cub_value | arr_value_spaces | mat_value_spaces | cub_value_spaces
+        variable_value = scalar_value | arr_value | mat_value | cub_value | arr_value_spaces | mat_value_spaces | cub_value_spaces | ex_value
 
         node = Forward()
 

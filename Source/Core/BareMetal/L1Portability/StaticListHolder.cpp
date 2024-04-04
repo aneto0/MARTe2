@@ -45,6 +45,7 @@
 
 namespace MARTe {
 
+/*lint -e{9117} -e{9113} -e{766} maxListCapacity_ needs to be initialised before the constructor*/
 StaticListHolder::StaticListHolder(const uint32 listElementSize,
                                    const uint32 listAllocationGranularity) :
         //Initializes the element size
@@ -55,8 +56,8 @@ StaticListHolder::StaticListHolder(const uint32 listElementSize,
 
         //Calculates and initializes the maximum capacity
         maxListCapacity_(
-                ((MAX_UINT32 / (listAllocationGranularity_ * listElementSize_)) * (listAllocationGranularity_ * listElementSize_))
-                        / listElementSize_),
+               ((MAX_STATICLISTHOLDER_BYTESIZE / (listAllocationGranularity_ * listElementSize_)) * (listAllocationGranularity_ * listElementSize_))
+                       / listElementSize_),
 
         //Initializes the pointer to the first byte of the array of elements
         allocatedMemory_(NULL_PTR(uint8 *)),

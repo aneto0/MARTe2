@@ -45,7 +45,7 @@ namespace MARTe {
  *  StateMachineEvent instance) the StateMachine will change to the state given by GetNextState()
  *  and all the Message instances that belong to this container will be triggered.
  */
-class StateMachineEvent: public ReferenceContainer, public MessageFilter {
+class DLL_API StateMachineEvent: public ReferenceContainer, public MessageFilter {
 public:
     CLASS_REGISTER_DECLARATION()
 

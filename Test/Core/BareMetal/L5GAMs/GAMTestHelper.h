@@ -190,7 +190,7 @@ static StreamString config1 = ""
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
-class GAM1: public GAM, public StatefulI {
+class DLL_API GAM1: public GAM, public StatefulI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -215,7 +215,7 @@ GAM1    ();
 
 };
 
-class GAMGroup1: public GAMGroup {
+class DLL_API GAMGroup1: public GAMGroup {
 public:
     CLASS_REGISTER_DECLARATION()
 virtual bool PrepareNextState(const char8 * currentStateName,
@@ -226,59 +226,61 @@ protected:
 
 };
 
-struct TestStructB {
+struct DLL_API TestStructB {
     int32 b1;
     int32 b2;
 };
 
-struct TestStructA {
+struct DLL_API TestStructA {
     TestStructB a1;
     float32 a2;
 };
 
-struct TestStructC {
+struct DLL_API TestStructC {
     TestStructB c1;
     float32 c2[3];
     int32 c3[2][4];
 };
 
-struct TestStructD {
+struct DLL_API TestStructD {
     TestStructB c1;
     float32 c2[3];
     int32 c3[2][4];
 };
 
-
-
-struct TestStructBB {
+struct DLL_API TestStructBB {
     int8 b1;
     int64 b2;
 };
 
-struct TestStructCC {
+struct DLL_API TestStructCC {
     TestStructBB c1;
     float32 c2[3];
     int32 c3[2][4];
 };
 
 
-struct TestStructE {
+struct DLL_API TestStructE {
     TestStructC e1[2][1][2];
     int32 e2;
 };
 
-struct TestStructF {
+struct DLL_API TestStructF {
     TestStructE f1[2];
     int32 f2;
 };
 
-struct TestStructG {
+struct DLL_API TestStructG {
     TestStructF g1[2][2];
     int32 g2;
 };
 
-struct TestStructH {
+struct DLL_API TestStructH {
     char8 str[64];
+};
+
+struct DLL_API GAMTestStruct2 {
+    uint32 Par1;
 };
 
 ///////////////////////////////////////////

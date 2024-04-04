@@ -45,7 +45,7 @@
 
 namespace MARTe{
 
-DLL_API extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
+  __declspec(dllimport) extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 
 namespace HighResolutionTimer {

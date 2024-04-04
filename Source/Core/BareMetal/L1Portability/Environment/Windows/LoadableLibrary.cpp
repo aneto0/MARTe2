@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "LoadableLibrary.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -64,10 +65,35 @@ bool LoadableLibrary::Open(char8 const * const dllName) {
     if (m != 0) {
         Close();
     }
-
-    SetModule(LoadLibrary(dllName));
+    m = LoadLibrary(dllName);
+    if (m == NULL) {
+        LPVOID lpMsgBuf;
+        DWORD errorCode = GetLastError();
+        
+        FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL,
+            errorCode,
+            0,
+            (LPSTR)&lpMsgBuf,
+            0,
+            NULL
+        );
+        const char8 *err1 = dllName;
+        const char8 *space = ":";
+        char8 *err2 =  (char8*)lpMsgBuf;
+        uint32 errLen = (StringHelper::Length(err1) + StringHelper::Length(err2) + 2u);
+        char8* err_= new char8[errLen];
+        (void) StringHelper::Concatenate(err1, space, &err_[0]);
+        (void) StringHelper::Concatenate(err_, err2, &err_[0]);
+        REPORT_ERROR_STATIC_0(ErrorManagement::Warning, &err_[0]);
+        printf("Error Code (%d)\n",errorCode);
+        delete [] err_;
+        LocalFree(lpMsgBuf);
+        return false;
+    }   
+    SetModule(m);
     return GetModule() != NULL;
-
 }
 
 void *LoadableLibrary::Function(char8 const * const name) {

@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief D. J. Bernstein hash function
  */
-class DjbHashFunction: public HashFunction {
+class DLL_API DjbHashFunction: public HashFunction {
 public:
 
     /**

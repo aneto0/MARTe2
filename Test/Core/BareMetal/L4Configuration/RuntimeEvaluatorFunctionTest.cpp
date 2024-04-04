@@ -254,14 +254,15 @@ bool RuntimeEvaluatorFunctionTest::FindTypesInCdb(CCString &foundName, Vector<Ty
 void RuntimeEvaluatorFunctionTest::AddExpectedFunction1In(StreamString inputTypeName) {
 
     StreamString inputs[] = {inputTypeName};
-    StreamString outputs[] = {};
+    //MSVC Doesn't allow zero length array declarations
+    StreamString outputs[] = { "dummy" };
     AddExpectedFunction(1, inputs, 0, outputs);
 
 }
 
 void RuntimeEvaluatorFunctionTest::AddExpectedFunction1Out(StreamString outputTypeName) {
-
-    StreamString inputs[] = {};
+    //MSVC Doesn't allow zero length array declarations
+    StreamString inputs[] = { "dummy" };
     StreamString outputs[] = {outputTypeName};
     AddExpectedFunction(0, inputs, 1, outputs);
 

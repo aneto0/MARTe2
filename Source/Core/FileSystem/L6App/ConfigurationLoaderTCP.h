@@ -93,7 +93,7 @@ namespace MARTe {
  *  }
  * </pre>
  */
-class ConfigurationLoaderTCP : public RealTimeLoader, public EmbeddedServiceMethodBinderI {
+class DLL_API ConfigurationLoaderTCP : public RealTimeLoader, public EmbeddedServiceMethodBinderI {
 public:
     CLASS_REGISTER_DECLARATION()
     /**

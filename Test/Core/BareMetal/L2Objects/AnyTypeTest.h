@@ -471,5 +471,10 @@ bool AnyTypeTest::TestAnyType_ConstFractionalInteger() {
     return retVal;
 }
 
+DLL_API struct TestATStructure {
+    uint32 member1;
+};
+
+
 #endif /* TEST_CORE_L0TYPEDEV_ANYTYPETEST_H_ */
 

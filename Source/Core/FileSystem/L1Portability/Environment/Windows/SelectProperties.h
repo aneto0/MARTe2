@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef SELECTPROPERTIES_H_
-		#define 		SELECTPROPERTIES_H_
+#ifndef SELECTPROPERTIES_H_
+#define 		SELECTPROPERTIES_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

@@ -191,7 +191,6 @@ static void ClientJob_Listen(BasicTCPSocketTest &param) {
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort(), param.timeout)) {
             param.sem.FastLock();
             param.retVal = false;
-            //printf("\nConnect fail");
             param.sem.FastUnLock();
         }
     }

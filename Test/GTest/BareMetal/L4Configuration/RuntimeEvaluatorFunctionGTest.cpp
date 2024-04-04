@@ -2195,7 +2195,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNegExecution_Up
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger64Bit));
-    ASSERT_TRUE(test.TestIntFunctionExecution<int64>(context, -4294967295));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int64>(context, -4294967295LL));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionGTest,TestNegExecution_FailedUnderflow) {

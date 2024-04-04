@@ -46,7 +46,7 @@ namespace MARTe{
  * @brief The XML language printer.
  * @see PrinterI
  */
-class XMLPrinter: public PrinterI {
+class DLL_API XMLPrinter: public PrinterI {
 public:
     /**
      * @brief Default constructor

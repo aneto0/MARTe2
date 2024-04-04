@@ -52,7 +52,7 @@ namespace MARTe {
  * }
  * </pre>
  */
-class UDPLogger: public Object, public LoggerConsumerI {
+class DLL_API UDPLogger: public Object, public LoggerConsumerI {
 public:
     CLASS_REGISTER_DECLARATION()
 

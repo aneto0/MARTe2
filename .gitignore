@@ -15,6 +15,15 @@ dependsRaw.*
 *.gcno
 *.o
 *.a
+*.bak
+*.idb
+*.pdb
+*.obj
+*.def
+*.exp
+*.lib
+*.sed
+createLibrary
 GTestDirectoryTest/*
 __pycache__
 

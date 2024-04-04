@@ -48,7 +48,7 @@ namespace MARTe{
  * `WaitForAll` must be called at least N times, where N is the number of 
  * actors defined in the `Create` method.
  */
-class CountingSem: public EventSem {
+class DLL_API CountingSem: public EventSem {
 public:
     /**
      * @brief Initialize parent class and private fields.

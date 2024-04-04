@@ -38,7 +38,7 @@
 
 using namespace MARTe;
 
-class NestedObjectHelper3: public Object {
+class DLL_API NestedObjectHelper3: public Object {
 public:
 
     CLASS_REGISTER_DECLARATION()
@@ -50,7 +50,7 @@ public:
     int32 x;
 };
 
-class TestObjectHelper3: public Object {
+class DLL_API TestObjectHelper3: public Object {
 
 public:
     CLASS_REGISTER_DECLARATION()

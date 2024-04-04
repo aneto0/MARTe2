@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Classes that inherit from this interface (and are inserted into a LoggerService instance)
  *  will have the function ConsumeLogMessage called every time a log message is received.
  */
-class LoggerConsumerI {
+class DLL_API LoggerConsumerI {
 public:
     /**
      * @brief Constructor. NOOP.

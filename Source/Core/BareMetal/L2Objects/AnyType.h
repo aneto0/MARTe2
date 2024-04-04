@@ -917,6 +917,7 @@ AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
 
 bool AnyType::IsVoid() const {
     return (dataDescriptor == VoidType);
+
 }
 
 /*---------------------------------------------------------------------------*/

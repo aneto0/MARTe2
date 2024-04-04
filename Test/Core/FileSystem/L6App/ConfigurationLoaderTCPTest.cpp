@@ -20,7 +20,7 @@
  * the class ConfigurationLoaderTCPTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -214,7 +214,7 @@ bool ConfigurationLoaderTCPTest::TestExecute() {
         ret = tcpSocket.Write(config.Buffer(), wsize);
     }
     uint32 size = 64;
-    char8 buff[size];
+    char8 buff[64];
     if (ret) {
         ret = tcpSocket.Read(&buff[0], size);
     }
@@ -366,7 +366,7 @@ bool ConfigurationLoaderTCPTest::TestExecuteErr() {
         ret = tcpSocket.Write(configErr.Buffer(), wsize);
     }
     uint32 size = 64;
-    char8 buff[size];
+    char8 buff[64];
     if (ret) {
         ret = tcpSocket.Read(&buff[0], size);
     }

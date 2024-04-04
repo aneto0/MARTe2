@@ -30,14 +30,15 @@ MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicConsole.x \
 		ErrorManagement_Gen.x \
+		HardwareI.x \
 		HighResolutionTimerCalibrator.x \
 		LoadableLibrary.x  \
 		MemoryCheck_Gen.x \
 		MemoryOperationsHelper_CLIB_Gen.x \
 		Sleep.x \
 		StandardHeap_Gen.x \
-		StringHelperExtras_Gen.x \
 		StringHelper_CLIB_Gen.x \
+		StringHelperExtras_Gen.x \
 		TimeStamp.x        
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
