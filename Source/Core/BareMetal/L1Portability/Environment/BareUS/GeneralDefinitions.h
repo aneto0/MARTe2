@@ -24,6 +24,8 @@
 #ifndef GENERALDEFINITIONS_ENV_H_
 #define GENERALDEFINITIONS_ENV_H_
 
+#include <limits.h>
+
 #ifndef NULL
 #define NULL 0
 #endif
@@ -50,6 +52,8 @@ const uint32 N_CHARS_NEWLINE = 1u;
 
 /** Maximum number of global databases */
 const uint32 NUMBER_OF_GLOBAL_OBJECTS = 64u;
+
+#define MAX_STATICLISTHOLDER_BYTESIZE UINT_MAX
 
 /** This is just to avoid an exception to Rule 3-9-2 of MISRA, given that many Linux operating system calls require a long as an input
  * and the framework does not define such type*/

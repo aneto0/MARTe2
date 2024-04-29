@@ -29,6 +29,7 @@
 /*---------------------------------------------------------------------------*/
 #include "CompilerTypes.h"
 #include "FreeRTOS.h"
+#include "limits.h"
 #include "task.h"
 
 #ifndef NULL
@@ -95,6 +96,9 @@ inline void operator delete(void *ptr) {
     vPortFree(ptr);
 }
 */
+
+#define MAX_STATICLISTHOLDER_BYTESIZE UINT_MAX
+
 static const MARTe::char8 DIRECTORY_SEPARATOR = '/';
 
 const MARTe::uint32 SCHED_GRANULARITY_US = portTICK_PERIOD_MS * 1000u;
