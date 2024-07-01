@@ -43,7 +43,7 @@ namespace MARTe {
         }
 
         const char8* GetPlatformSpecificString() {
-            return "LINUX";
+            return "x86-linux";
         }
     }
 

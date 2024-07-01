@@ -53,15 +53,19 @@ namespace MARTe {
         if (consumers != NULL_PTR(LoggerConsumerI **)) {
             delete[] consumers;
         }
+        nOfConsumers = 0u;
     }
 
     bool PlainLoggerService::Initialise(StructuredDataI &data) {
         bool ok = ReferenceContainer::Initialise(data);
         if (ok) {
-            nOfConsumers = Size();
-            ok = (nOfConsumers > 0u);
+            uint32 tmpSize = Size();
+            ok = (tmpSize > 0u);
             if (!ok) {
                 REPORT_ERROR(ErrorManagement::Warning, "At least one LoggerConsumerI must be added to the container");
+                nOfConsumers = 0u;
+            } else {
+                nOfConsumers = tmpSize;
             }
         }
         if (ok) {
@@ -82,21 +86,27 @@ namespace MARTe {
 
         if(ok) {
             PlainLoggerBinderSingleton& pLoggerSingleton = PlainLoggerBinderSingleton::Instance();
-            pLoggerSingleton.RegisterPlainLoggerService(this);
+            ok = pLoggerSingleton.RegisterPlainLoggerService(this);
+            if(!ok) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Cannot register PlainLoggerService to the binder instance");
+            }
         }
 
         return ok;
     }
 
     void PlainLoggerService::Log(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription) {
-        LoggerPage tempPage;
-        tempPage.errorInfo = errorInfo;
-        tempPage.index = 0u;
+        if(nOfConsumers > 0) {
+            LoggerPage tempPage;
 
-        StringHelper::CopyN(&tempPage.errorStrBuffer[0], errorDescription, MAX_ERROR_MESSAGE_SIZE);
+            tempPage.errorInfo = errorInfo;
+            tempPage.index = 0u;
 
-        for (uint32 i = 0u; (i < nOfConsumers); i++) {
-            consumers[i]->ConsumeLogMessage(&tempPage);
+            StringHelper::CopyN(&tempPage.errorStrBuffer[0], errorDescription, MAX_ERROR_MESSAGE_SIZE);
+
+            for (uint32 i = 0u; (i < nOfConsumers); i++) {
+                consumers[i]->ConsumeLogMessage(&tempPage);
+            }
         }
     }
 
@@ -113,17 +123,21 @@ namespace MARTe {
     }
 
     PlainLoggerBinderSingleton::PlainLoggerBinderSingleton() {
+        mux.FastLock();
         registeredLoggerArrayIndex = 0u;
         
         for(uint32 i = 0; i < PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS; i++) {
             registeredPlainLoggers[i] = NULL_PTR(PlainLoggerService*);
         }
+        mux.FastUnLock();
         SetErrorProcessFunction(&PlainLoggerErrorProcessFunction);
     }
 
     bool PlainLoggerBinderSingleton::RegisterPlainLoggerService(PlainLoggerService *plainLoggerService) {
         bool ok = (registeredLoggerArrayIndex < PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS);
-        
+        if(!ok) {
+            REPORT_ERROR_STATIC(MARTe::ErrorManagement::FatalError, "Bind request of PlainLoggerService exceeds maximum (%u) number of bindable items", registeredLoggerArrayIndex);
+        }
         if(ok) {
             mux.FastLock();
             registeredPlainLoggers[registeredLoggerArrayIndex] = plainLoggerService;
@@ -136,10 +150,11 @@ namespace MARTe {
 
     void PlainLoggerBinderSingleton::UnRegisterPlainLoggerService(PlainLoggerService *plainLoggerService) {
         mux.FastLock();
-        for(uint32 i = 0; i < registeredLoggerArrayIndex; i++) {
+        bool found = false;
+        for(uint32 i = 0; (i < registeredLoggerArrayIndex) && !(found); i++) {
             if(registeredPlainLoggers[i] == plainLoggerService) {
                 registeredPlainLoggers[i] = NULL_PTR(PlainLoggerService*);
-                break;
+                found = true;
             }
         }
         mux.FastUnLock();
@@ -160,6 +175,7 @@ namespace MARTe {
         for(uint32 i = 0; i < PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS; i++) {
             registeredPlainLoggers[i] = NULL_PTR(PlainLoggerService*);
         }
+        registeredLoggerArrayIndex = 0u;
         mux.FastUnLock();
     }
 
