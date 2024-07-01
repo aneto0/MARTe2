@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=	ConsoleLogger.x LoggerConsumerI.x LoggerService.x
+OBJSX=	ConsoleLogger.x LoggerConsumerI.x LoggerService.x PlainLoggerService.x
         
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

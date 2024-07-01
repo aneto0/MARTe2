@@ -97,6 +97,12 @@ struct ErrorInformation {
     const char8 * functionName;
 
     /**
+     * A string which is taken directly from an external hook to 
+     * retrieve platform specific data (e.g. the platform core identifier or the build type)
+    */
+    const char8 * platformSpecificString;
+
+    /**
      * thread ID of the threads who generate the error.
      */
 //    ThreadIdentifier threadId;
