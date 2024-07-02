@@ -43,9 +43,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-    
-    extern ErrorManagement::ErrorProcessFunctionType ErrorManagement::errorMessageProcessFunction;
-    
+       
     PlainLoggerService::PlainLoggerService() :
             ReferenceContainer() {
         consumers = NULL_PTR(LoggerConsumerI **);
