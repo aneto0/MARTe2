@@ -41,8 +41,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-    
+
     PlainLoggerService::PlainLoggerService() :
             ReferenceContainer() {
         consumers = NULL_PTR(LoggerConsumerI **);
@@ -126,7 +127,7 @@ namespace MARTe {
         mux.FastLock();
         plainLoggersList.Clean();
         mux.FastUnLock();
-
+        //previousErrorMessageFunction = errorMessageProcessFunction;
         SetErrorProcessFunction(&PlainLoggerErrorProcessFunction);
     }
 

@@ -31,9 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "EmbeddedServiceMethodBinderI.h"
+#include "ErrorManagement.h"
 #include "FastPollingMutexSem.h"
-#include "Logger.h"
 #include "LoggerConsumerI.h"
 #include "ReferenceContainer.h"
 #include "StaticList.h"
@@ -169,6 +168,9 @@ class PlainLoggerBinderSingleton {
         void PropagateLog(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription);
 
     private:
+
+        ErrorManagement::ErrorProcessFunctionType previousErrorMessageFunction;
+
         /**
          * @brief Mux guarding the registered loggers array operations.
         */
