@@ -43,7 +43,9 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+    
+    extern ErrorManagement::ErrorProcessFunctionType ErrorManagement::errorMessageProcessFunction;
+    
     PlainLoggerService::PlainLoggerService() :
             ReferenceContainer() {
         consumers = NULL_PTR(LoggerConsumerI **);
@@ -135,8 +137,8 @@ namespace MARTe {
             plainLoggersList.Clean();
             mux.FastUnLock();
         }
-        //previousErrorMessageFunction = errorMessageProcessFunction;
-        SetErrorProcessFunction(&PlainLoggerErrorProcessFunction);
+        originalErrorMessageFunction = ErrorManagement::errorMessageProcessFunction;
+        
     }
 
     /*lint -e{818} Inner call does not accept const for the parameter */
@@ -153,6 +155,12 @@ namespace MARTe {
 
             if(goodNOfLoggers) {
                 addSuccessful = plainLoggersList.Add(plainLoggerService);
+                if(addSuccessful) {
+                    if(plainLoggersList.GetSize() == 1u) {
+                        //When the first element is inserted into the plain loggers list, the local function is registered
+                        SetErrorProcessFunction(&PlainLoggerErrorProcessFunction);
+                    }
+                } 
             }
             mux.FastUnLock();
 
@@ -185,6 +193,13 @@ namespace MARTe {
                 (void)plainLoggersList.Remove(positionToRemove);
             }
             mux.FastUnLock();
+
+            if(found) {
+                if(plainLoggersList.GetSize() == 0u) {
+                    //Conversely, when the last element of the plain loggers is removed, the previous message function is reinstated.
+                    SetErrorProcessFunction(originalErrorMessageFunction);
+                }
+            }
         }
     }
 
