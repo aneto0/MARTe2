@@ -129,6 +129,7 @@ class DLL_API PlainLoggerService: public ReferenceContainer {
  * Intercepts the SetErrorProcessFunction and propagates it to the registered PlainLoggerService instances, up to a 
  * maximum PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS number of instances.
 */
+/*lint -e{756} The singleton is referenced into the PlainLoggerService class */
 class PlainLoggerBinderSingleton {
     
     public:
