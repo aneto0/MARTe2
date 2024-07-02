@@ -181,7 +181,7 @@ namespace MARTe {
             }
 
             if(found) {
-                plainLoggersList.Remove(positionToRemove);
+                (void)plainLoggersList.Remove(positionToRemove);
             }
             mux.FastUnLock();
         }
