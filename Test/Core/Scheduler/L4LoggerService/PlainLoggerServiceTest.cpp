@@ -146,7 +146,6 @@ static bool InitialiseTestEnvironment(const MARTe::char8 *const config) {
     if (ok) {
         god->Purge();
         ok = god->Initialise(cdb);
-        printf("I AM HERE %d\r\n", ok);
     }
 
     return ok;
@@ -206,19 +205,16 @@ bool PlainLoggerServiceTest::TestExecute() {
     ObjectRegistryDatabase *god;
     ReferenceT<PlainLoggerService> plainLoggerService;
     ReferenceT<PlainLoggerConsumerITest> consumer;
-    printf("HERE-------------------------------A %d\r\n", ok);
 
     if(ok) {
         god = ObjectRegistryDatabase::Instance();
         plainLoggerService = god->Find("LoggerService");
         ok = plainLoggerService.IsValid();
-        printf("HEREA %d\r\n", ok);
     }
 
     if(ok) {
         consumer = god->Find("LoggerService.LoggerConsumerTest");
         ok = consumer.IsValid();
-        printf("HEREB %d\r\n", ok);
     }
     if(ok) {
         REPORT_ERROR_STATIC(ErrorManagement::Debug, "PlainLoggerConsumerITest test");
@@ -227,65 +223,3 @@ bool PlainLoggerServiceTest::TestExecute() {
  
     return ok;   
 }
-
-// bool PlainLoggerServiceTest::TestInitialise() {
-//     using namespace MARTe;
-//     PlainLoggerService test;
-//     ConfigurationDatabase cdb;
-//     ReferenceT<PlainLoggerConsumerITest> consumer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-//     bool ok = test.Insert(consumer);
-//     ok &= test.Initialise(cdb);
-//     return ok;
-// }
-
-// bool PlainLoggerServiceTest::TestInitialise_Defaults() {
-//     using namespace MARTe;
-//     PlainLoggerService test;
-//     ConfigurationDatabase cdb;
-//     ReferenceT<PlainLoggerConsumerITest> consumer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-//     bool ok = test.Insert(consumer);
-//     ok &= test.Initialise(cdb);
-//     ok &= (test.Size() == 1u);
-//     return ok;
-// }
-
-// bool PlainLoggerServiceTest::TestInitialise_False_NoConsumers() {
-//     using namespace MARTe;
-//     PlainLoggerService test;
-//     ConfigurationDatabase cdb;
-//     return !test.Initialise(cdb);
-// }
-
-// bool PlainLoggerServiceTest::TestInitialise_False_NotLoggerConsumerI() {
-//     using namespace MARTe;
-//     PlainLoggerService test;
-//     ConfigurationDatabase cdb;
-//     ReferenceT<ReferenceContainer> rc(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-//     test.Insert(rc);
-//     return !test.Initialise(cdb);
-// }
-
-// bool PlainLoggerServiceTest::TestExecute() {
-//     using namespace MARTe;
-//     PlainLoggerService test;
-//     ConfigurationDatabase cdb;
-//     ReferenceT<PlainLoggerConsumerITest> consumer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-//     bool ok = test.Insert(consumer);
-//     ok &= test.Initialise(cdb);
-//     Logger *logger = Logger::Instance();
-//     LoggerPage *entry = logger->GetLogEntry();
-//     //Empty all the entries
-//     while (entry != NULL) {
-//         logger->ReturnPage(entry);
-//         entry = logger->GetLogEntry();
-//     }
-//     if (ok) {
-//         REPORT_ERROR_STATIC(ErrorManagement::Debug, "PlainLoggerConsumerITest test");
-//     }
-//     if (ok) {
-//         ok = consumer->ok;
-//     }
-
-//     return ok;
-// }
-

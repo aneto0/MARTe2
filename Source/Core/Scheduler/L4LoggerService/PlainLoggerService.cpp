@@ -131,6 +131,9 @@ namespace MARTe {
     }
 
     bool PlainLoggerBinderSingleton::RegisterPlainLoggerService(PlainLoggerService *plainLoggerService) {
+        //Actually there is a reason for putting the REPORT_ERROR outside of the
+        //critical section. If you don't do that, you'll get stuck as the logger will cause
+        //a print which itself is protected in another critical section with the same mux
         mux.FastLock();
         bool goodNOfLoggers = (plainLoggersList.GetSize() < PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS);
         bool addSuccessful = false;
