@@ -197,12 +197,13 @@ namespace MARTe {
     }
 
     PlainLoggerBinderSingleton::~PlainLoggerBinderSingleton() {
-        /*lint -e{1551} Although true, neither the FastLock(), the Clean() or the FastUnlock() should throw an exception in the current scenario */
+        /*lint -save -e1551, Although true, neither the FastLock(), the Clean() or the FastUnlock() should throw an exception in the current scenario */
         ErrorManagement::ErrorType err = mux.FastLock();
         if(err == ErrorManagement::NoError) {
             plainLoggersList.Clean();
             mux.FastUnLock();
         }
+        /*lint -restore */
     }
 
     CLASS_REGISTER(PlainLoggerService, "1.0")
