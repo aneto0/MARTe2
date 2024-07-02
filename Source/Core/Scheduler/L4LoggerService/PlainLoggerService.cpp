@@ -107,7 +107,7 @@ namespace MARTe {
 
             if(ok) {
                 for (uint32 i = 0u; (i < nOfConsumers); i++) {
-                    /*lint -e{613} consumers is allocated before entering the for loop */
+                    /*lint -e{613} Consumers is allocated before entering the for loop */
                     consumers[i]->ConsumeLogMessage(&tempPage);
                 }
             } else {
@@ -135,8 +135,8 @@ namespace MARTe {
             plainLoggersList.Clean();
             mux.FastUnLock();
         }
+        /*lint -e{1938} Access to the global variable is currently the only way of modifying the global error function handler */
         originalErrorMessageFunction = ErrorManagement::errorMessageProcessFunction;
-        
     }
 
     /*lint -e{818} Inner call does not accept const for the parameter */
