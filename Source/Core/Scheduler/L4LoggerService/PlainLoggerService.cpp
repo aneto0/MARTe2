@@ -139,8 +139,7 @@ namespace MARTe {
         SetErrorProcessFunction(&PlainLoggerErrorProcessFunction);
     }
 
-    /*lint -e{952} The plainLoggerService argument is used into a subsequent non-const call */
-    bool PlainLoggerBinderSingleton::RegisterPlainLoggerService(PlainLoggerService *plainLoggerService) {
+    bool PlainLoggerBinderSingleton::RegisterPlainLoggerService(PlainLoggerService * const plainLoggerService) {
         //Actually there is a reason for putting the REPORT_ERROR outside of the
         //critical section. If you don't do that, you'll get stuck as the logger will cause
         //a print which itself is protected in another critical section with the same mux
@@ -168,8 +167,8 @@ namespace MARTe {
         return (goodNOfLoggers && addSuccessful);
     }
 
-    /*lint -e{952} The plainLoggerService argument is used into a subsequent non-const call */
-    void PlainLoggerBinderSingleton::UnRegisterPlainLoggerService(PlainLoggerService *plainLoggerService) {
+
+    void PlainLoggerBinderSingleton::UnRegisterPlainLoggerService(PlainLoggerService * const plainLoggerService) {
         bool found = false;
         uint32 positionToRemove = 0u;
         ErrorManagement::ErrorType err = mux.FastLock();
