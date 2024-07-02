@@ -171,8 +171,6 @@ class PlainLoggerBinderSingleton {
 
     private:
 
-        ErrorManagement::ErrorProcessFunctionType previousErrorMessageFunction;
-
         /**
          * @brief Mux guarding the registered loggers array operations.
         */
