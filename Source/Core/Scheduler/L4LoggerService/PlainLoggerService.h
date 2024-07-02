@@ -152,7 +152,7 @@ class PlainLoggerBinderSingleton {
          * @param[in] plainLoggerService pointer to the instance being registered
          * @return true if the maximum number of registrable PlainLoggerServices has not reached, false otherwise
         */
-        bool RegisterPlainLoggerService(PlainLoggerService *plainLoggerService);
+        bool RegisterPlainLoggerService(PlainLoggerService * const plainLoggerService);
 
         /**
          * @brief Unregister a PlainLoggerService from the singleton array. Used during the purging process, to help
@@ -160,7 +160,7 @@ class PlainLoggerBinderSingleton {
          * avoid conditions where the logger is still produced while the PlainLoggerService is being purged.
         */
         /*lint -e{952} The plainLoggerService argument is used into a subsequent non-const call */
-        void UnRegisterPlainLoggerService(PlainLoggerService *plainLoggerService);
+        void UnRegisterPlainLoggerService(PlainLoggerService * const plainLoggerService);
 
         /**
          * @brief Propagates the SetErrorProcessFunction to all the registered PlainLoggerService instances

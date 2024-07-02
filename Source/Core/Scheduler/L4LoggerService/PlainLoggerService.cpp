@@ -167,7 +167,6 @@ namespace MARTe {
         return (goodNOfLoggers && addSuccessful);
     }
 
-
     void PlainLoggerBinderSingleton::UnRegisterPlainLoggerService(PlainLoggerService * const plainLoggerService) {
         bool found = false;
         uint32 positionToRemove = 0u;
