@@ -143,20 +143,24 @@ namespace MARTe {
         //Actually there is a reason for putting the REPORT_ERROR outside of the
         //critical section. If you don't do that, you'll get stuck as the logger will cause
         //a print which itself is protected in another critical section with the same mux
-        mux.FastLock();
-        bool goodNOfLoggers = (plainLoggersList.GetSize() < PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS);
+        bool goodNOfLoggers = false;
         bool addSuccessful = false;
+        ErrorManagement::ErrorType err = mux.FastLock();
+        if(err == ErrorManagement::NoError) {
+            goodNOfLoggers = (plainLoggersList.GetSize() < PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS);
+            addSuccessful = false;
 
-        if(goodNOfLoggers) {
-            addSuccessful = plainLoggersList.Add(plainLoggerService);
-        }
-        mux.FastUnLock();
+            if(goodNOfLoggers) {
+                addSuccessful = plainLoggersList.Add(plainLoggerService);
+            }
+            mux.FastUnLock();
 
-        if(!goodNOfLoggers) {
-            REPORT_ERROR_STATIC(MARTe::ErrorManagement::FatalError, "Bind request of PlainLoggerService exceeds maximum (%u) number of bindable items", PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS);
-        } else {
-            if(!addSuccessful) {
-                REPORT_ERROR_STATIC(MARTe::ErrorManagement::FatalError, "Cannot add PlainLoggerService to the binder list");
+            if(!goodNOfLoggers) {
+                REPORT_ERROR_STATIC(MARTe::ErrorManagement::FatalError, "Bind request of PlainLoggerService exceeds maximum (%u) number of bindable items", PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS);
+            } else {
+                if(!addSuccessful) {
+                    REPORT_ERROR_STATIC(MARTe::ErrorManagement::FatalError, "Cannot add PlainLoggerService to the binder list");
+                }
             }
         }
 
@@ -166,32 +170,38 @@ namespace MARTe {
     void PlainLoggerBinderSingleton::UnRegisterPlainLoggerService(PlainLoggerService *plainLoggerService) {
         bool found = false;
         uint32 positionToRemove = 0u;
-        mux.FastLock();
-        for(uint32 i = 0; (i < plainLoggersList.GetSize()) && !(found); i++) {
-            if(plainLoggersList[i] == plainLoggerService) {
-                found = true;
-                positionToRemove = i;
+        ErrorManagement::ErrorType err = mux.FastLock();
+        if(err == ErrorManagement::NoError) {
+            for(uint32 i = 0u; (i < plainLoggersList.GetSize()) && !(found); i++) {
+                if(plainLoggersList[i] == plainLoggerService) {
+                    found = true;
+                    positionToRemove = i;
+                }
             }
-        }
 
-        if(found) {
-            plainLoggersList.Remove(positionToRemove);
+            if(found) {
+                plainLoggersList.Remove(positionToRemove);
+            }
+            mux.FastUnLock();
         }
-        mux.FastUnLock();
     }
 
     void PlainLoggerBinderSingleton::PropagateLog(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription) {
-        mux.FastLock();
-        for(uint32 i = 0; (i < plainLoggersList.GetSize()); i++) {
-            plainLoggersList[i]->Log(errorInfo, errorDescription);
+        ErrorManagement::ErrorType err = mux.FastLock();
+        if(err == ErrorManagement::NoError) {
+            for(uint32 i = 0; (i < plainLoggersList.GetSize()); i++) {
+                plainLoggersList[i]->Log(errorInfo, errorDescription);
+            }
+            mux.FastUnLock();
         }
-        mux.FastUnLock();
     }
 
     PlainLoggerBinderSingleton::~PlainLoggerBinderSingleton() {
-        mux.FastLock();
-        plainLoggersList.Clean();
-        mux.FastUnLock();
+        ErrorManagement::ErrorType err = mux.FastLock();
+        if(err == ErrorManagement::NoError) {
+            plainLoggersList.Clean();
+            mux.FastUnLock();
+        }
     }
 
     CLASS_REGISTER(PlainLoggerService, "1.0")
