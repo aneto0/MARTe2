@@ -37,13 +37,14 @@
 #include "ReferenceContainer.h"
 #include "StaticList.h"
 
-#define PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS 4
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+const uint32 PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS = 4u;
 
 /**
  * Forward declaration of the PlainLoggerBinderSingleton class.
@@ -102,7 +103,7 @@ class DLL_API PlainLoggerService: public ReferenceContainer {
          * @param[in] errorDescription Message string associated to the error or message being logged.
          * 
         */
-        void Log(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription);
+        void Log(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription) const;
 
 
         /**
@@ -184,17 +185,20 @@ class PlainLoggerBinderSingleton {
         /**
          * @brief Default constructor. Private for singleton class definition.
         */
+        /*lint -e{1704} Default constructor is private per singleton pattern implementation. */
         PlainLoggerBinderSingleton();
 
 
         /**
          * @brief Copy constructor. Private for singleton class definition.
         */
+        /*lint -e{1704} Copy constructor is private per singleton pattern implementation. */
         PlainLoggerBinderSingleton(PlainLoggerBinderSingleton const&);
 
         /**
          * @brief Assignment operator. Private for singleton class definition.
         */
+        /*lint -e{1722} Assignment operator does not return anything and is private per singleton pattern implementation. */
         void operator=(PlainLoggerBinderSingleton const&);
 };
 

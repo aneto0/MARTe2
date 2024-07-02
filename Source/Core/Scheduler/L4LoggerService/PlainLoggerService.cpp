@@ -96,18 +96,24 @@ namespace MARTe {
         return ok;
     }
 
-    void PlainLoggerService::Log(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription) {
-        if(nOfConsumers > 0) {
+    void PlainLoggerService::Log(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription) const {
+        if(nOfConsumers > 0u) {
             LoggerPage tempPage;
 
             tempPage.errorInfo = errorInfo;
             tempPage.index = 0u;
 
-            StringHelper::CopyN(&tempPage.errorStrBuffer[0], errorDescription, MAX_ERROR_MESSAGE_SIZE);
+            bool ok = StringHelper::CopyN(&tempPage.errorStrBuffer[0], errorDescription, MAX_ERROR_MESSAGE_SIZE);
 
-            for (uint32 i = 0u; (i < nOfConsumers); i++) {
-                consumers[i]->ConsumeLogMessage(&tempPage);
+            if(ok) {
+                for (uint32 i = 0u; (i < nOfConsumers); i++) {
+                    /*lint -e{613} consumers is allocated before entering the for loop */
+                    consumers[i]->ConsumeLogMessage(&tempPage);
+                }
+            } else {
+                REPORT_ERROR(ErrorManagement::FatalError, "CopyN() function failure during message logging");
             }
+
         }
     }
 
@@ -124,9 +130,11 @@ namespace MARTe {
     }
 
     PlainLoggerBinderSingleton::PlainLoggerBinderSingleton() {
-        mux.FastLock();
-        plainLoggersList.Clean();
-        mux.FastUnLock();
+        ErrorManagement::ErrorType err = mux.FastLock();
+        if(err == ErrorManagement::NoError) {
+            plainLoggersList.Clean();
+            mux.FastUnLock();
+        }
         //previousErrorMessageFunction = errorMessageProcessFunction;
         SetErrorProcessFunction(&PlainLoggerErrorProcessFunction);
     }
