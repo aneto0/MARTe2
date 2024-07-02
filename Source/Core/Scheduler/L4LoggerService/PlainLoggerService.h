@@ -124,7 +124,6 @@ class DLL_API PlainLoggerService: public ReferenceContainer {
         uint32 nOfConsumers;
 };
 
-
 /**
  * @brief Helper singleton class to allow binding the SetErrorProcessFunction with the instance of the PlainLoggerService.
  * Intercepts the SetErrorProcessFunction and propagates it to the registered PlainLoggerService instances, up to a 

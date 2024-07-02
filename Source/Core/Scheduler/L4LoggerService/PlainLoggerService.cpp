@@ -139,6 +139,7 @@ namespace MARTe {
         SetErrorProcessFunction(&PlainLoggerErrorProcessFunction);
     }
 
+    /*lint -e{818} Inner call does not accept const for the parameter */
     bool PlainLoggerBinderSingleton::RegisterPlainLoggerService(PlainLoggerService * const plainLoggerService) {
         //Actually there is a reason for putting the REPORT_ERROR outside of the
         //critical section. If you don't do that, you'll get stuck as the logger will cause
@@ -167,6 +168,7 @@ namespace MARTe {
         return (goodNOfLoggers && addSuccessful);
     }
 
+    /*lint -e{818} Inner call does not accept const for the parameter */
     void PlainLoggerBinderSingleton::UnRegisterPlainLoggerService(PlainLoggerService * const plainLoggerService) {
         bool found = false;
         uint32 positionToRemove = 0u;
