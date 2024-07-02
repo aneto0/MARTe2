@@ -36,6 +36,7 @@
 #include "Logger.h"
 #include "LoggerConsumerI.h"
 #include "ReferenceContainer.h"
+#include "StaticList.h"
 
 #define PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS 4
 
@@ -174,15 +175,9 @@ class PlainLoggerBinderSingleton {
         FastPollingMutexSem mux;
 
         /**
-         * @brief Index to the first empty position in the registered loggers array.
+         * @brief Static list of PlainLoggerService instances that are registered to this binder facility
         */
-        uint32 registeredLoggerArrayIndex;
-
-        /**
-         * @brief Array of PlainLoggerService that are registered into the binder facility.
-        */
-        PlainLoggerService* registeredPlainLoggers[PLAINLOGGER_MAX_NO_OF_REGISTRABLE_LOGGERS];
-
+        StaticList<PlainLoggerService*> plainLoggersList;
 
         /**
          * @brief Default constructor. Private for singleton class definition.

@@ -67,12 +67,6 @@ CLASS_REGISTER(PlainLoggerConsumerITest, "1.0")
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-    // ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-
-    // if (ok) {
-    //     god->Purge();
-    //     ok = god->Initialise(cdb);
-    // }
 static const MARTe::char8 *const loggerTestConfig1 = ""
     "+LoggerService = {"
     "    Class = PlainLoggerService"
@@ -147,21 +141,15 @@ static bool InitialiseTestEnvironment(const MARTe::char8 *const config) {
     StandardParser parser(configStream, cdb);
 
     bool ok = parser.Parse();
-
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
         god->Purge();
         ok = god->Initialise(cdb);
+        printf("I AM HERE %d\r\n", ok);
     }
 
     return ok;
-}
-
-static void CleanupTestEnvironment() {
-    using namespace MARTe;
-    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    god->Purge();
 }
 
 bool PlainLoggerServiceTest::TestConstructor() {
@@ -180,8 +168,6 @@ bool PlainLoggerServiceTest::TestConstructor() {
         ok = (tmpSize == 1u);
     }
  
-    CleanupTestEnvironment();
-
     return ok;    
 }
 
@@ -196,8 +182,6 @@ static bool ConfigFileBasedTest(const MARTe::char8 *const config) {
         ok = plainLoggerService.IsValid();
     }
  
-    CleanupTestEnvironment();
-
     return ok;     
 }
 
@@ -222,6 +206,7 @@ bool PlainLoggerServiceTest::TestExecute() {
     ObjectRegistryDatabase *god;
     ReferenceT<PlainLoggerService> plainLoggerService;
     ReferenceT<PlainLoggerConsumerITest> consumer;
+    printf("HERE-------------------------------A %d\r\n", ok);
 
     if(ok) {
         god = ObjectRegistryDatabase::Instance();
@@ -240,8 +225,6 @@ bool PlainLoggerServiceTest::TestExecute() {
         ok = consumer->ok;
     }
  
-    CleanupTestEnvironment();
-
     return ok;   
 }
 
