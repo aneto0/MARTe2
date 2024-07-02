@@ -172,7 +172,7 @@ namespace MARTe {
         uint32 positionToRemove = 0u;
         ErrorManagement::ErrorType err = mux.FastLock();
         if(err == ErrorManagement::NoError) {
-            for(uint32 i = 0u; (i < plainLoggersList.GetSize()) && !(found); i++) {
+            for(uint32 i = 0u; (i < plainLoggersList.GetSize()) && (!found); i++) {
                 if(plainLoggersList[i] == plainLoggerService) {
                     found = true;
                     positionToRemove = i;
@@ -189,7 +189,7 @@ namespace MARTe {
     void PlainLoggerBinderSingleton::PropagateLog(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription) {
         ErrorManagement::ErrorType err = mux.FastLock();
         if(err == ErrorManagement::NoError) {
-            for(uint32 i = 0; (i < plainLoggersList.GetSize()); i++) {
+            for(uint32 i = 0u; (i < plainLoggersList.GetSize()); i++) {
                 plainLoggersList[i]->Log(errorInfo, errorDescription);
             }
             mux.FastUnLock();
@@ -197,6 +197,7 @@ namespace MARTe {
     }
 
     PlainLoggerBinderSingleton::~PlainLoggerBinderSingleton() {
+        /*lint -e{1551} Although true, neither the FastLock(), the Clean() or the FastUnlock() should throw an exception in the current scenario */
         ErrorManagement::ErrorType err = mux.FastLock();
         if(err == ErrorManagement::NoError) {
             plainLoggersList.Clean();
