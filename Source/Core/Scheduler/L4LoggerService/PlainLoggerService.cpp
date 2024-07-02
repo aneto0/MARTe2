@@ -129,6 +129,7 @@ namespace MARTe {
         pLoggerSingleton.PropagateLog(errorInfo, errorDescription);
     }
 
+    /*lint -e{756} Singleton default constructor is referenced in the Instance factory method */
     PlainLoggerBinderSingleton::PlainLoggerBinderSingleton() {
         ErrorManagement::ErrorType err = mux.FastLock();
         if(err == ErrorManagement::NoError) {
