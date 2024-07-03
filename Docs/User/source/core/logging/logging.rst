@@ -95,6 +95,12 @@ The :vcisdoxygencl:`LoggerService` allows to register one or more :vcisdoxygencl
 
 The framework currently offers the following consumers: :vcisdoxygencl:`ConsoleLogger`, :vcisdoxygencl:`UDPLogger` and :vcisdoxygenmccl:`SysLogger` (from the :vcisgl:`MARTe2-components`).  
 
+.. _plainloggerservice:
+
+PlainLoggerService
+-------------------
+In scenarios where the advantages of :vcisdoxygencl:`LoggerService` cannot be used (e.g. BareMetal, single core/thread applications), the :vcisdoxygencl:`PlainLoggerService` is offered. Conversely to its multi-thread based counterpart, the :vcisdoxygencl:`PlainLoggerService` directly intercepts the callback function, handling all the logging function in the same thread execution unit. This approach gives a consistent logging facility also for scenarios where no threading is possible or available, like the BareMetal porting of MARTe2.
+
 Examples
 --------
 
