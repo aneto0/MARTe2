@@ -168,6 +168,7 @@ ObjectRegistryDatabaseMessageFilter.cpp
 ObjectRegistryDatabaseMessageI.cpp
 OperatingSystemCallbacksI.h
 ParserI.cpp
+PlainLoggerService.cpp
 Processor.cpp
 ProcessorType.cpp
 PrinterI.cpp

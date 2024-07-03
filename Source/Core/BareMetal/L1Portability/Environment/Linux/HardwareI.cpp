@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include "CompilerTypes.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -39,6 +40,10 @@
 namespace MARTe {
     namespace HardwareI {
         void InitEnvironment() {
+        }
+
+        const char8* GetPlatformSpecificString() {
+            return "x86-linux";
         }
     }
 

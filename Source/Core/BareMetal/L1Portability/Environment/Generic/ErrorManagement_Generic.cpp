@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorManagement.h"
+#include "HardwareI.h"
 #include "HighResolutionTimer.h"
 #include "ErrorInformation.h"
 #include "Sleep.h"
@@ -135,6 +136,7 @@ void ReportError(const ErrorType &code,
     errorInfo.functionName = functionName;
     errorInfo.hrtTime = HighResolutionTimer::Counter();
     errorInfo.timeSeconds = Sleep::GetDateSeconds();
+    errorInfo.platformSpecificString = HardwareI::GetPlatformSpecificString();
 #ifndef INTERRUPT_SUPPORTED
 //    errorInfo.threadId = Threads::Id();
 #endif
@@ -157,6 +159,7 @@ void ReportErrorFullContext(const ErrorType &code,
     errorInfo.hrtTime = HighResolutionTimer::Counter();
 //    errorInfo.threadId = Threads::Id();
     errorInfo.timeSeconds = Sleep::GetDateSeconds();
+    errorInfo.platformSpecificString = HardwareI::GetPlatformSpecificString();
     errorMessageProcessFunction(errorInfo, errorDescription);
 }
 

@@ -85,6 +85,7 @@ protected:
      * - R: the thread identifier
      * - m: the error message
      * - C: the class name.
+     * - P: platform specific string.
      *
      * An example could be Format="ItOoFm".
      *
@@ -98,6 +99,7 @@ protected:
      * - |F= : the file name
      * - |D= : the message
      * - |C= : the class name
+     * - |P= : platform specific string
      *
      * @return true if the Format exists and can be successfully parsed.
      */
@@ -165,9 +167,14 @@ protected:
         BitBoolean<uint16, 9u> className;
 
         /**
+         * Print the platform specific name?
+        */
+        BitBoolean<uint16, 10u> platformSpecificString;
+
+        /**
          * Unmapped area
          */
-        BitRange<uint16, 6u, 10u> unMapped;
+        BitRange<uint16, 5u, 11u> unMapped;
 
         /**
          * Output as uint16

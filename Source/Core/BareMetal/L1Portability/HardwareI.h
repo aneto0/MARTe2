@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "CompilerTypes.h"
 #include "GeneralDefinitions.h"
 #include INCLUDE_FILE_ARCHITECTURE(BareMetal,L1Portability,ARCHITECTURE,HardwareIA.h)
 
@@ -54,6 +54,11 @@ namespace MARTe {
          * @brief Allows to initialise the Environment before any MARTe function is called.
          */
         DLL_API void InitEnvironment();
+
+        /**
+         * @brief Retrieves a platform specific string to provide additional information (e.g. core identifier)
+        */
+        DLL_API const MARTe::char8 * GetPlatformSpecificString();
     }
 
 }

@@ -133,6 +133,15 @@ void LoggerConsumerI::PrintToStream(LoggerPage * const logPage, BufferedStreamI 
         //TODO
         (void) err.Printf("%s", key);
     }
+    if (formatPrefs.platformSpecificString.operator bool()) {
+        if(printKeys) {
+            key = "|P=";
+        }
+        else {
+            key = "|";
+        }
+        (void) err.Printf("%s%s", key, errorInfo.platformSpecificString);
+    }
     if (formatPrefs.functionName.operator bool()) {
         if (printKeys) {
             key = "|f=";
@@ -208,6 +217,9 @@ bool LoggerConsumerI::LoadPrintPreferences(StructuredDataI &data) {
                 break;
             case 'C':
                 formatPrefs.className = true;
+                break;
+            case 'P':
+                formatPrefs.platformSpecificString = true;
                 break;
             default:
                 REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Unsupported Format");
