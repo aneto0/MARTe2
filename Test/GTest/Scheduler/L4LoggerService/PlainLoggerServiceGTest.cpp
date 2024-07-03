@@ -44,15 +44,15 @@ TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestConstructor) {
     ASSERT_TRUE(target.TestConstructor());
 }
 
+TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestInitialise) {
+    PlainLoggerServiceTest target;
+    ASSERT_TRUE(target.TestConstructor());
+}
+
 TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestInitialise_False_NoConsumers) {
     PlainLoggerServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_NoConsumers());
 }
-
-// TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestInitialise) {
-//     PlainLoggerServiceTest target;
-//     ASSERT_TRUE(target.TestInitialise());
-// }
 
 TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestInitialise_False_NotLoggerConsumerI) {
     PlainLoggerServiceTest target;
@@ -64,7 +64,12 @@ TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestInitialise_False_TooM
     ASSERT_TRUE(target.TestInitialise_False_TooManyPlainLoggerServiceInstances());
 }
 
-TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestExecute) {
+TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestLog) {
     PlainLoggerServiceTest target;
-    ASSERT_TRUE(target.TestExecute());
+    ASSERT_TRUE(target.TestLog());
+}
+
+TEST(Scheduler_L4LoggerService_PlainLoggerServiceGTest,TestPurge) {
+    PlainLoggerServiceTest target;
+    ASSERT_TRUE(target.TestPurge());
 }

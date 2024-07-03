@@ -47,6 +47,11 @@ public:
     bool TestConstructor();
 
     /**
+     * @brief Tests the Initialise function. Does exactly the same as TestConstructor.
+     */
+    bool TestInitialise();
+
+    /**
      * @brief Tests the initialise method without adding any consumer.
      */
     bool TestInitialise_False_NoConsumers();
@@ -62,39 +67,14 @@ public:
     bool TestInitialise_False_TooManyPlainLoggerServiceInstances();
 
     /**
-     * @brief Tests the Execute method.
+     * @brief Tests the Log method indirectly, by building the whole chain around the Interface.
      */
-    bool TestExecute();
+    bool TestLog();
 
-    // /**
-    //  * @brief Tests the initialise method.
-    //  */
-    // bool TestInitialise();
-
-    // /**
-    //  * @brief Tests the initialise method with the default values.
-    //  */
-    // bool TestInitialise_Defaults();
-
-    // /**
-    //  * @brief Tests the initialise method with a zero number of logger pages.
-    //  */
-    // bool TestInitialise_False_NumberOfLoggerPages_Zero();
-
-
-
-
-
-    // /**
-    //  * @brief Tests the Execute method.
-    //  */
-    // bool TestExecute();
-
-    // /**
-    //  * @brief Tests the GetNumberOfLogPages method.
-    //  */
-    // bool TestGetNumberOfLogPages();
-
+    /**
+     * @brief Tests the Purge method indirectly, by building the whole chain around the Interface and purging.
+     */
+    bool TestPurge();
 };
 
 /*---------------------------------------------------------------------------*/

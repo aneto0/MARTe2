@@ -170,6 +170,10 @@ bool PlainLoggerServiceTest::TestConstructor() {
     return ok;    
 }
 
+bool PlainLoggerServiceTest::TestInitialise() {
+    return TestConstructor();
+}
+
 static bool ConfigFileBasedTest(const MARTe::char8 *const config) {
     using namespace MARTe;
     bool ok = InitialiseTestEnvironment(config);
@@ -199,7 +203,7 @@ bool PlainLoggerServiceTest::TestInitialise_False_TooManyPlainLoggerServiceInsta
     return !ConfigFileBasedTest(loggerTestConfig4);
 }
 
-bool PlainLoggerServiceTest::TestExecute() {
+bool PlainLoggerServiceTest::TestLog() {
     using namespace MARTe;
     bool ok = InitialiseTestEnvironment(loggerTestConfig1);
     ObjectRegistryDatabase *god;
@@ -222,4 +226,16 @@ bool PlainLoggerServiceTest::TestExecute() {
     }
  
     return ok;   
+}
+
+bool PlainLoggerServiceTest::TestPurge() {
+    using namespace MARTe;
+    bool ok = TestLog();
+
+    if(ok) {
+        ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+        god->Purge();
+    }
+
+    return ok;
 }

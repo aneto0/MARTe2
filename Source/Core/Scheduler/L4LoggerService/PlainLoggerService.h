@@ -170,6 +170,9 @@ class PlainLoggerBinderSingleton {
         void PropagateLog(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription);
 
     private:
+        /**
+         * @brief Keeps the error process callback before swapping it. Used to restore the callback upon termination.
+        */
         ErrorManagement::ErrorProcessFunctionType originalErrorMessageFunction;
 
         /**
@@ -187,7 +190,6 @@ class PlainLoggerBinderSingleton {
         */
         /*lint -e{1704} Default constructor is private per singleton pattern implementation. */
         PlainLoggerBinderSingleton();
-
 
         /**
          * @brief Copy constructor. Private for singleton class definition.
