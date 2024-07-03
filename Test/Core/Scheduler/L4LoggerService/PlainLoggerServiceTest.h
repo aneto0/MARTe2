@@ -62,7 +62,7 @@ public:
     bool TestInitialise_False_NotLoggerConsumerI();
 
     /**
-     * @brief Tests the initialise method assessing the failure if the more than the maximum number of Consumers is added
+     * @brief Tests the initialise method assessing the failure if the more than the maximum number of Consumers is added.
     */
     bool TestInitialise_False_TooManyPlainLoggerServiceInstances();
 
@@ -72,7 +72,7 @@ public:
     bool TestLog();
 
     /**
-     * @brief Tests the Purge method indirectly, by building the whole chain around the Interface and purging.
+     * @brief Tests the Purge method indirectly, by building the whole chain around the Interface and calling explicitly the Purge on GlobalObjectDatabase.
      */
     bool TestPurge();
 };
