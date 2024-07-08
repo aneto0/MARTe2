@@ -1,8 +1,9 @@
 /**
  * @file CompilerTypes.h
  * @brief Header file for CompilerTypes
- * @date 17/06/2015
+ * @date 05/07/2024
  * @author Giuseppe Ferro
+ * @author Xavier Ruche
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -73,8 +74,9 @@ typedef uint32      uintp;
 
 #define HANDLE void *
 
-#define dll_import
-#define dll_export
+#define DLL_API
+#define DLL_API_EXPLICIT_EXPORT
+
 
 }
 
