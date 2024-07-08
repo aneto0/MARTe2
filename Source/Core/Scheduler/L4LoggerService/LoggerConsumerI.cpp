@@ -83,7 +83,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage * const logPage, BufferedStreamI 
         }
         TimeStamp ts;
         if (ts.ConvertFromEpoch(static_cast<oslong>(errorInfo.timeSeconds))) {
-            (void) err.Printf("%s%d:%d:%d (%d)", key, ts.GetHour(), ts.GetMinutes(), ts.GetSeconds(), errorInfo.hrtTime);
+            (void) err.Printf("%s%02d:%02d:%02d (%d)", key, ts.GetHour(), ts.GetMinutes(), ts.GetSeconds(), errorInfo.hrtTime);
         }
     }
     if (formatPrefs.objectName.operator bool()) {
