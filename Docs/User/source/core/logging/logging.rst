@@ -101,6 +101,15 @@ PlainLoggerService
 -------------------
 In scenarios where the advantages of :vcisdoxygencl:`LoggerService` cannot be used (e.g. BareMetal, single core/thread applications), the :vcisdoxygencl:`PlainLoggerService` is offered. Conversely to its multi-thread based counterpart, the :vcisdoxygencl:`PlainLoggerService` directly intercepts the callback function, handling all the logging function in the same thread execution unit. This approach gives a consistent logging facility also for scenarios where no threading is possible or available, like the BareMetal porting of MARTe2.
 
+LogView utility
+---------------
+When using :vcisdoxygencl:`UDPLogger` consumer, a viewer counterpart may be needed. A companion tool: MARTe2-LogView offers a convenient way to render the message flow onto a webpage or curses terminal.
+
+MARTe2-LogView is a standalone Python3 toolset which can be found at <https://vcis-gitlab.f4e.europa.eu/common/marte2-logview> with a comprehensive quick-start guide and an in-depth manual.
+
+.. tip:: 
+   A configuration file example is provided (RTApp-11-Logger.cfg) to allow a quick bootstrap with all-default parameters.
+
 Examples
 --------
 
