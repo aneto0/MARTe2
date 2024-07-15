@@ -36,12 +36,21 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+#include "CompilerTypes.h"
+
 extern void init_platform();
+extern const MARTe::char8* get_platform_spec_string();
 
 namespace MARTe {
+
     namespace HardwareI {
+
         void InitEnvironment() {
             init_platform();
+        }
+        
+        const char8* GetPlatformSpecificString() {
+            return get_platform_spec_string();
         }
     }
 
