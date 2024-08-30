@@ -571,6 +571,17 @@ bool ReferenceContainerTest::TestInsertWithPath() {
     return (containerRoot->Find("MyObject") == ref);
 }
 
+bool ReferenceContainerTest::TestInsertWithLongNameBug() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    ReferenceT<AnyObject> obj("AnyObject", GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    StreamString objName = "ALongNameWithMoreThanNCh";
+    obj->SetName(objName.Buffer());
+    containerRoot->Insert(objName.Buffer(), obj);
+
+    return (containerRoot->Find(objName.Buffer()) == obj);
+}
+
+
 bool ReferenceContainerTest::TestInsertAtEnd() {
     ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
     containerRoot->Insert(leafB);

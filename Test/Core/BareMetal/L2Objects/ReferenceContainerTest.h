@@ -320,6 +320,9 @@ public:
      */
     bool TestInsertWithPath();
 
+
+    bool TestInsertWithLongNameBug();
+
     /**
      * @brief Tests the ReferenceContainer::Insert function.
      * @details Creates an empty container and Inserts the following nodes to the end of the container: leafB, containerC, containerD, leafH

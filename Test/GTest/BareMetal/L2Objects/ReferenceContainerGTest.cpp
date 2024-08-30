@@ -430,6 +430,11 @@ TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInsertWithPath) {
     ASSERT_TRUE(referenceContainerTest.TestInsertWithPath());
 }
 
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInsertWithLongNameBug) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInsertWithLongNameBug());
+}
+
 TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInsertAtEnd) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertAtEnd());

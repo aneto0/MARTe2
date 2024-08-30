@@ -158,8 +158,10 @@ bool ReferenceContainer::Insert(const char8 * const path, Reference ref) {
         else {
             bool created = false;
             ReferenceContainer* currentNode = this;
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            uint32 minTokenLength = static_cast<uint32>(sizeof(char8) * StringHelper::Length(path));
+            minTokenLength += 1u; //For the \0
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(minTokenLength));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(minTokenLength));
 
             const char8* toTokenize = path;
             const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
