@@ -2197,7 +2197,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyConsumersAndProducers() {
     bool ret = true;
     bool checkMultipleProducersWrites = true;
     if (initialiseAfterInitialisation) {
-        if (realTimeApplication != NULL_PTR(RealTimeApplication *)) {
+        if (realTimeApplication != NULL_PTR(RealTimeApplication*)) {
             checkMultipleProducersWrites = realTimeApplication->CheckMultipleProducersWrites();
         }
     }
@@ -2551,20 +2551,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
             signalNumberOfBytes = (numberOfElements * signalTypeDescriptor.numberOfBits) / 8u;
         }
     }
-
-    if (ret) {
-        uint32 elementOffset = 0u;
-
-        if (functionsDatabase.Read("MemberSize", elementOffset)) {
-            elementOffset = ((numberOfElements * (signalTypeDescriptor.numberOfBits)) / 8u) - elementOffset;
-            //allocate memory without considering ranges because it is considered as a struct
-            signalNumberOfBytes = (numberOfElements * signalTypeDescriptor.numberOfBits) / 8u;
-        }
-        else {
-            elementOffset = 0u;
-        }
-        signalNumberOfBytes += elementOffset;
-    }
     if (ret) {
         ret = functionsDatabase.Write("ByteSize", signalNumberOfBytes);
     }
@@ -2623,9 +2609,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
     }
 
     if (ret) {
-        if (!functionsDatabase.Read("MemberSize", byteSize)) {
-            ret = functionsDatabase.Read("ByteSize", byteSize);
-        }
+        ret = functionsDatabase.Read("ByteSize", byteSize);
     }
 
     if (ret) {
@@ -2926,7 +2910,8 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                                 if (!dataSourcesDatabase.Read("QualifiedName", signalName)) {
                                     signalName = "UnknownSignal";
                                 }
-                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(), dataSource->GetName());
+                                REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Unsupported broker for signal %s linked to %s", signalName.Buffer(),
+                                                    dataSource->GetName());
                             }
                         }
                     }
