@@ -56,9 +56,18 @@ typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo,
  */
 extern DLL_API ErrorProcessFunctionType errorMessageProcessFunction;
 
+/**
+ * @brief Set an filter that can be used by the error processing callback function to decide
+ *  if to print the error message.
+ * @param[in] errorFilterIn the error filter to set.
+ */
+DLL_API void SetErrorFilter (const ErrorType &errorFilterIn);
 
-DLL_API void SetErrorFilter (const ErrorType &errorFilter);
-
+/**
+ * @brief Gets the current filter that may be used by error processing callback function to decide
+ *  if to print the error message.
+ * @return the current filter setting.
+ */
 DLL_API ErrorType GetErrorFilter();
 
 
