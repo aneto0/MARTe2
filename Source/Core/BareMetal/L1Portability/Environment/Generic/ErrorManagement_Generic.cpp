@@ -48,6 +48,8 @@ namespace MARTe {
 
 namespace ErrorManagement {
 
+static ErrorType errorFilter(0xFFFFFFFFu);
+
 void NullErrorProcessFunction(const ErrorInformation &errorInfo,
                               const char8 * const errorDescription) {
 }
@@ -82,6 +84,17 @@ const struct {
         { "Completed", Completed },
         { "NotCompleted", NotCompleted },
         { static_cast<const char8 *>(NULL), NoError }, };
+
+
+void SetErrorFilter (const ErrorType &errorFilterIn){
+    errorFilter = errorFilterIn;
+}
+
+ErrorType GetErrorFilter(){
+    return errorFilter;
+}
+
+
 
 void ErrorCodeToStream(const ErrorType &errorCode,
                        StreamI &stream) {

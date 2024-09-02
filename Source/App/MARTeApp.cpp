@@ -53,24 +53,28 @@ static MARTe::Bootstrap bootstrap;
  */
 void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
     using namespace MARTe;
-    static FastPollingMutexSem fmux;
-    (void) fmux.FastLock();
-    static const uint32 MAX_ERROR_CODE_STR_SIZE = 16u;
-    static char8 errCodeBuffer[MAX_ERROR_CODE_STR_SIZE + 1u];
-    (void) MemoryOperationsHelper::Set(&errCodeBuffer[0u], '\0', MAX_ERROR_CODE_STR_SIZE);
-    static StreamMemoryReference errCodeStr(errCodeBuffer, MAX_ERROR_CODE_STR_SIZE);
-    (void) errCodeStr.Seek(0LLU);
-    ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errCodeStr);
-    errCodeBuffer[MAX_ERROR_CODE_STR_SIZE] = '\0';
+    MARTe::ErrorManagement::ErrorType errorFilter=MARTe::ErrorManagement::GetErrorFilter();
+    if (errorFilter.Contains(errorInfo.header.errorType)) {
+        static FastPollingMutexSem fmux;
+        (void) fmux.FastLock();
+        static const uint32 MAX_ERROR_CODE_STR_SIZE = 16u;
+        static char8 errCodeBuffer[MAX_ERROR_CODE_STR_SIZE + 1u];
+        (void) MemoryOperationsHelper::Set(&errCodeBuffer[0u], '\0', MAX_ERROR_CODE_STR_SIZE);
+        static StreamMemoryReference errCodeStr(errCodeBuffer, MAX_ERROR_CODE_STR_SIZE);
+        (void) errCodeStr.Seek(0LLU);
 
-    static char8 errBuffer[MAX_ERROR_MESSAGE_SIZE + 1u];
-    (void) MemoryOperationsHelper::Set(&errBuffer[0], '\0', MAX_ERROR_MESSAGE_SIZE);
-    static StreamMemoryReference errStr(&errBuffer[0], MAX_ERROR_MESSAGE_SIZE);
-    (void) errStr.Seek(0LLU);
-    (void) errStr.Printf("[%s - %s:%d]: %s", errCodeBuffer, errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    errBuffer[MAX_ERROR_MESSAGE_SIZE] = '\0';
-    bootstrap.Printf(errBuffer);
-    (void) fmux.FastUnLock();
+        ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errCodeStr);
+        errCodeBuffer[MAX_ERROR_CODE_STR_SIZE] = '\0';
+
+        static char8 errBuffer[MAX_ERROR_MESSAGE_SIZE + 1u];
+        (void) MemoryOperationsHelper::Set(&errBuffer[0], '\0', MAX_ERROR_MESSAGE_SIZE);
+        static StreamMemoryReference errStr(&errBuffer[0], MAX_ERROR_MESSAGE_SIZE);
+        (void) errStr.Seek(0LLU);
+        (void) errStr.Printf("[%s - %s:%d]: %s", errCodeBuffer, errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+        errBuffer[MAX_ERROR_MESSAGE_SIZE] = '\0';
+        bootstrap.Printf(errBuffer);
+        (void) fmux.FastUnLock();
+    }
 }
 
 /*---------------------------------------------------------------------------*/

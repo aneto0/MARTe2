@@ -79,6 +79,12 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         REPORT_ERROR_STATIC(ErrorManagement::Debug, "Arguments:\n%!", argsConfiguration);
     }
     if (ret) {
+        uint32 errFilter;
+        if (argsConfiguration.Read("-e", errFilter)) {
+            ErrorManagement::SetErrorFilter(errFilter);
+        }
+    }
+    if (ret) {
         StreamString loaderClass;
         ret.parametersError = !argsConfiguration.Read("-l", loaderClass);
         if (ret) {
