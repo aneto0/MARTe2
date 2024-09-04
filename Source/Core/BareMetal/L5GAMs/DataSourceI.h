@@ -635,11 +635,16 @@ public:
      */
     virtual bool TerminateOutputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples);
 
-
     /**
      * @see ReferenceContainer::Purge()
      */
     virtual void Purge(ReferenceContainer &purgeList);
+
+    /**
+     * @see ReferenceContainer::ExportData(*)
+     * @details Also exports the current value of all the input and output signals.
+     */
+    virtual bool ExportData(StructuredDataI & data);
 
 protected:
 

@@ -861,6 +861,41 @@ void DataSourceI::Purge(ReferenceContainer &purgeList){
     ReferenceContainer::Purge(purgeList);
 }
 
+bool DataSourceI::ExportData(StructuredDataI &data) {
+    bool ok = ReferenceContainer::ExportData(data);
+    if (numberOfSignals > 0u) {
+        ok = data.CreateRelative("Signals");
+        for (uint32 i = 0u; (i < numberOfSignals) && (ok); i++) {
+            StreamString signalName;
+            uint8 numberOfDimensions = 0u;
+            TypeDescriptor td = GetSignalType(i);
+            void* signalAddress = NULL_PTR(void*);
+            ok = GetSignalMemoryBuffer(i, 0u, signalAddress);
+            AnyType at(td, 0u, signalAddress);
+            ok = GetSignalName(i, signalName);
+            if (ok) {
+                ok = GetSignalNumberOfDimensions(i, numberOfDimensions);
+            }
+            if (ok) {
+                at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
+                uint32 numberOfElements = 0u;
+                if (ok) {
+                    ok = GetSignalNumberOfElements(i, numberOfElements);
+                }
+                if (ok) {
+                    at.SetNumberOfElements(0u, numberOfElements);
+                }
+                ok = data.Write(signalName.Buffer(), at);
+            }
+
+        }
+        if (ok) {
+            ok = data.MoveToAncestor(1u);
+        }
+    }
+    return ok;
+}
+
 uint32 DataSourceI::GetNumberOfStatefulMemoryBuffers() {
     return 1u;
 }
