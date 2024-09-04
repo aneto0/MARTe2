@@ -872,7 +872,9 @@ bool DataSourceI::ExportData(StructuredDataI &data) {
             void* signalAddress = NULL_PTR(void*);
             ok = GetSignalMemoryBuffer(i, 0u, signalAddress);
             AnyType at(td, 0u, signalAddress);
-            ok = GetSignalName(i, signalName);
+            if (ok) {
+                ok = GetSignalName(i, signalName);
+            }
             if (ok) {
                 ok = GetSignalNumberOfDimensions(i, numberOfDimensions);
             }
