@@ -844,7 +844,8 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Inv
     MathExpressionParserTest parserTest;
     
     const char8* expression     = "ret = 12A;";
-            
-    ASSERT_TRUE(parserTest.TestExpressionError(expression));
+
+    //No longer fails after 3767e8db0bed43480b27e477afd03daa67cd563e. Note that this was failing at the LexicalAnalyser level and should fail for this specific parser - if we believe that variables shall not start with a number (as in C).
+    ASSERT_TRUE(!parserTest.TestExpressionError(expression));
 }
 

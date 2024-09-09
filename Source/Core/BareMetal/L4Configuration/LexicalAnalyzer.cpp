@@ -393,7 +393,7 @@ LexicalAnalyzer::~LexicalAnalyzer() {
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void LexicalAnalyzer::AddToken(char8 *const tokenBuffer,
-                               const bool isString) {
+                               bool isString) {
 
     if (StringHelper::Length(tokenBuffer) > 0u) {
 
@@ -403,9 +403,10 @@ void LexicalAnalyzer::AddToken(char8 *const tokenBuffer,
             firstDigit = 1u;
         }
         int8 zero = static_cast<int8>('0');
-        bool isString2 = (((static_cast<int8>(tokenBuffer[firstDigit]) - zero) > 9) || ((static_cast<int8>(tokenBuffer[firstDigit]) - zero) < 0));
-
-        if ((!isString) && (!isString2)) {
+        if (!isString) {
+           isString = (((static_cast<int8>(tokenBuffer[firstDigit]) - zero) > 9) || ((static_cast<int8>(tokenBuffer[firstDigit]) - zero) < 0));
+        }
+        if (!isString) {
 
             // not an integer! Try a float (number)
             float64 possibleFloat = 0.0;
@@ -417,11 +418,11 @@ void LexicalAnalyzer::AddToken(char8 *const tokenBuffer,
                 }
             }
             else{
-                isString2 = true;
+                isString = true;
             }
         }
 
-        if ((isString) || (isString2)) {
+        if (isString) {
             // a string for sure!
             uint32 begin = 0u;
             uint32 end = StringHelper::Length(tokenBuffer) - 1u;

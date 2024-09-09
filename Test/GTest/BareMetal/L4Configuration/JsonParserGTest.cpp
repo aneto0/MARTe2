@@ -505,7 +505,8 @@ TEST(BareMetal_L4Configuration_JsonParserGTest,TestParseErrors_NotLValue_variabl
             "                        var:2\n"
             "                        1var:10\n"
             "                 }";
-    ASSERT_TRUE(parserTest.TestParseErrors(configString));
+    //Should not longer fail after 3767e8db0bed43480b27e477afd03daa67cd563e
+    ASSERT_TRUE(!parserTest.TestParseErrors(configString));
 }
 
 

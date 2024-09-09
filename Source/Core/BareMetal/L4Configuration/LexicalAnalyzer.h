@@ -144,7 +144,7 @@ private:
      * @param[in] tokenBuffer contains the token data.
      * @param[in] isString specifies if the token represents a string.
      */
-    void AddToken(char8 * const tokenBuffer, const bool isString);
+    void AddToken(char8 * const tokenBuffer, bool isString);
 
     /**
      * @brief Adds a terminal to the internal queue.
