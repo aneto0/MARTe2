@@ -182,7 +182,7 @@ void GAMScheduler::CustomPrepareNextState() {
                 multiThreadService[nextBuffer] = new (NULL) MultiThreadService(binder);
                 multiThreadService[nextBuffer]->SetNumberOfPoolThreads(numberOfThreads);
                 if (rtThreadInfo[nextBuffer] != NULL) {
-                    delete rtThreadInfo[nextBuffer];
+                    delete [] rtThreadInfo[nextBuffer];
                 }
                 err = multiThreadService[nextBuffer]->CreateThreads();
             }

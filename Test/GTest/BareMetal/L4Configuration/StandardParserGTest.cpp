@@ -492,10 +492,10 @@ TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_NotLValue_var
             "                    //this is ok\n"
             "                        var=2\n"
             "                    /*this should \n"
-            "                      fail */ \n"
+            "                      no longer fail (after 3767e8db0bed43480b27e477afd03daa67cd563e)*/ \n"
             "                        1var=10\n"
             "                 }";
-    ASSERT_TRUE(parserTest.TestParseErrors(configString));
+    ASSERT_TRUE(!parserTest.TestParseErrors(configString));
 }
 
 

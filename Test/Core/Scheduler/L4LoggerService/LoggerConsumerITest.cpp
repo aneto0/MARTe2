@@ -184,10 +184,10 @@ bool LoggerConsumerITest::TestPrintToStream() {
         ts.ConvertFromEpoch(static_cast<oslong>(page.errorInfo.timeSeconds));
         StreamString expectedPrint;
         if (sizeof(void *) == 8u) {
-            expectedPrint.Printf("|Debug|1000000000|%d:2:3 (1000000000)|Obj1|0x00000000AABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream", ts.GetHour());
+            expectedPrint.Printf("|Debug|1000000000|%02d:02:03 (1000000000)|Obj1|0x00000000AABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream", ts.GetHour());
         }
         else {
-            expectedPrint.Printf("|Debug|1000000000|%d:2:3 (1000000000)|Obj1|0xAABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream", ts.GetHour());
+            expectedPrint.Printf("|Debug|1000000000|%02d:02:03 (1000000000)|Obj1|0xAABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream", ts.GetHour());
         }
         ok = (err == expectedPrint);
     }
@@ -228,10 +228,10 @@ bool LoggerConsumerITest::TestPrintToStream_WithKeys() {
         ts.ConvertFromEpoch(static_cast<oslong>(page.errorInfo.timeSeconds));
         StreamString expectedPrint;
         if (sizeof(void *) == 8u) {
-            expectedPrint.Printf("|E=Debug|TM=1000000000|TM=%d:2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream", ts.GetHour());
+            expectedPrint.Printf("|E=Debug|TM=1000000000|TM=%02d:02:03 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream", ts.GetHour());
         }
         else {
-            expectedPrint.Printf("|E=Debug|TM=1000000000|TM=%d:2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream", ts.GetHour());
+            expectedPrint.Printf("|E=Debug|TM=1000000000|TM=%02d:02:03 (1000000000)|o=Obj1|O=0xAABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream", ts.GetHour());
         }
         ok = (err == expectedPrint);
     }
