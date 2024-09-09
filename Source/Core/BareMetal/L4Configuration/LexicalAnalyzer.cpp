@@ -78,7 +78,7 @@ static void ReadCommentOneLine(StreamI &stream) {
  */
 static void ReadCommentMultipleLines(StreamI &stream,
                                      uint32 &lineNumber,
-                                     const char8 * const multipleLineEnd) {
+                                     const char8 *const multipleLineEnd) {
 
     char8 c = ' ';
     uint32 size = StringHelper::Length(multipleLineEnd);
@@ -131,13 +131,13 @@ static void ReadCommentMultipleLines(StreamI &stream,
  * @return false if EOF, true otherwise.
  */
 static bool SkipComment(StreamI &stream,
-                        char8 * const buffer,
+                        char8 *const buffer,
                         uint32 &bufferSize,
                         uint32 &lineNumber,
-                        const char8 * const separators,
-                        const char8 * const oneLineBegin,
-                        const char8 * const multipleLineBegin,
-                        const char8 * const multipleLineEnd,
+                        const char8 *const separators,
+                        const char8 *const oneLineBegin,
+                        const char8 *const multipleLineBegin,
+                        const char8 *const multipleLineEnd,
                         char8 &separator,
                         const bool isNewToken) {
 
@@ -303,7 +303,7 @@ static bool EscapeChar(char8 &c) {
 /*---------------------------------------------------------------------------*/
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-Token * LexicalAnalyzer::GetToken() {
+Token* LexicalAnalyzer::GetToken() {
     // delete the previous token
     if (token != NULL) {
         delete token;
@@ -316,7 +316,7 @@ Token * LexicalAnalyzer::GetToken() {
 }
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-Token *LexicalAnalyzer::PeekToken(const uint32 position) {
+Token* LexicalAnalyzer::PeekToken(const uint32 position) {
 
     TokenizeInput(position);
     Token *peekToken = static_cast<Token*>(NULL);
@@ -328,12 +328,12 @@ Token *LexicalAnalyzer::PeekToken(const uint32 position) {
 }
 
 LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
-                                 const char8 * const terminalsIn,
-                                 const char8 * const separatorsIn,
-                                 const char8 * const oneLineCommentBeginIn,
-                                 const char8 * const multipleLineCommentBeginIn,
-                                 const char8 * const multipleLineCommentEndIn) {
-    token = static_cast<Token *>(NULL);
+                                 const char8 *const terminalsIn,
+                                 const char8 *const separatorsIn,
+                                 const char8 *const oneLineCommentBeginIn,
+                                 const char8 *const multipleLineCommentBeginIn,
+                                 const char8 *const multipleLineCommentEndIn) {
+    token = static_cast<Token*>(NULL);
     inputStream = &stream;
     lineNumber = 1u;
     terminals = terminalsIn;
@@ -350,13 +350,13 @@ LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
 }
 
 LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
-                                 const char8 * const terminalsIn,
-                                 const char8 * const separatorsIn,
-                                 const char8 * const oneLineCommentBeginIn,
-                                 const char8 * const multipleLineCommentBeginIn,
-                                 const char8 * const multipleLineCommentEndIn,
-                                 const char8 * const keywordsIn) {
-    token = static_cast<Token *>(NULL);
+                                 const char8 *const terminalsIn,
+                                 const char8 *const separatorsIn,
+                                 const char8 *const oneLineCommentBeginIn,
+                                 const char8 *const multipleLineCommentBeginIn,
+                                 const char8 *const multipleLineCommentEndIn,
+                                 const char8 *const keywordsIn) {
+    token = static_cast<Token*>(NULL);
     inputStream = &stream;
     lineNumber = 1u;
     terminals = terminalsIn;
@@ -375,7 +375,7 @@ LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
 /*lint -e{1551} Justification: Memory has to be freed in the destructor.
  * No exceptions should be thrown given that the memory is managed exclusively managed by this class.". */
 LexicalAnalyzer::~LexicalAnalyzer() {
-    uint32 queueSize=tokenQueue.GetSize();
+    uint32 queueSize = tokenQueue.GetSize();
     for (uint32 i = 0u; i < queueSize; i++) {
         Token *toDelete;
         if (tokenQueue.Extract((queueSize - i) - 1u, toDelete)) {
@@ -392,9 +392,8 @@ LexicalAnalyzer::~LexicalAnalyzer() {
 }
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
+void LexicalAnalyzer::AddToken(char8 *const tokenBuffer,
                                const bool isString) {
-
 
     if (StringHelper::Length(tokenBuffer) > 0u) {
 
@@ -406,10 +405,24 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
         int8 zero = static_cast<int8>('0');
         bool isString2 = (((static_cast<int8>(tokenBuffer[firstDigit]) - zero) > 9) || ((static_cast<int8>(tokenBuffer[firstDigit]) - zero) < 0));
 
-        bool converted = false;
+        if ((!isString) && (!isString2)) {
 
-        // a string for sure!
+            // not an integer! Try a float (number)
+            float64 possibleFloat = 0.0;
+            if (TypeConvert(possibleFloat, tokenBuffer)) {
+                /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
+                Token *toAdd = new Token(tokenInfo[NUMBER_TOKEN], &tokenBuffer[0], lineNumber);
+                if (!tokenQueue.Add(toAdd)) {
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
+                }
+            }
+            else{
+                isString2 = true;
+            }
+        }
+
         if ((isString) || (isString2)) {
+            // a string for sure!
             uint32 begin = 0u;
             uint32 end = StringHelper::Length(tokenBuffer) - 1u;
             if (tokenBuffer[begin] == '"') {
@@ -425,29 +438,6 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
             if (!tokenQueue.Add(toAdd)) {
                 REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
             }
-            converted = true;
-        }
-
-        if (!converted) {
-            // not an integer! Try a float (number)
-            float64 possibleFloat = 0.0;
-            if (TypeConvert(possibleFloat, tokenBuffer)) {
-                /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
-                Token *toAdd = new Token(tokenInfo[NUMBER_TOKEN], &tokenBuffer[0], lineNumber);
-                if (!tokenQueue.Add(toAdd)) {
-                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
-                }
-                converted = true;
-            }
-        }
-
-        // error!
-        if (!converted) {
-            /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
-            Token *toAdd = new Token(tokenInfo[ERROR_TOKEN], "", lineNumber);
-            if (!tokenQueue.Add(toAdd)) {
-                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
-            }
         }
     }
 
@@ -456,7 +446,7 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void LexicalAnalyzer::AddTerminal(const char8 terminal) {
 
-    char8 terminalBuffer[2] = {terminal, '\0'};
+    char8 terminalBuffer[2] = { terminal, '\0' };
     /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
     Token *toAdd = new Token(tokenInfo[TERMINAL_TOKEN], &terminalBuffer[0], lineNumber);
     if (!tokenQueue.Add(toAdd)) {
@@ -465,7 +455,7 @@ void LexicalAnalyzer::AddTerminal(const char8 terminal) {
 }
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-void LexicalAnalyzer::AddTerminal(const char8* const terminalBuffer) {
+void LexicalAnalyzer::AddTerminal(const char8 *const terminalBuffer) {
 
     /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
     Token *toAdd = new Token(tokenInfo[TERMINAL_TOKEN], terminalBuffer, lineNumber);
@@ -513,10 +503,10 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         bool escape = false;
         // it begins with "?
         bool isString1 = false;
-        
+
         // Lexer starts building the next token and will stop when a single-character terminal is found
         while (ok) {
-            
+
             //std::cout << tokenString.Buffer() << "\n";
             if ((StringHelper::SearchChar(separatorsUsed.Buffer(), c) != NULL) && (!escape)) {
                 // this means that a string is found! Read everything until another " is found
@@ -599,65 +589,65 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                 }
             }
         }
-        
+
         // The lexer stopped because it found a sigle-character terminal
-        
+
         // So now we have a trail of characters (tokenSring) ended by a terminal (trail + terminal)
         StreamString multiCharToken = tokenString.Buffer();
         multiCharToken += terminal;
-        
+
         // If the trail of characters + terminal is a keyword
-        if ( (tokenString.Size() != 0u) && (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL) ) {
+        if ((tokenString.Size() != 0u) && (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL) ) {
             AddTerminal(multiCharToken.Buffer());
             tokenString="";
         }
-        
+
         // If trail + terminal is not a keyword, we handle them separately
         else {
-            
+
             // Trail:
-                // if trail alone is a keyword
-                if ( (StringHelper::SearchString(keywords.Buffer(), tokenString.Buffer()) != NULL) && (StringHelper::Compare("", tokenString.Buffer()) != 0)) {
-                    AddTerminal(tokenString.BufferReference());
-                }
-                // if trail alone is not a keyword
-                else {
-                    AddToken(tokenString.BufferReference(), isString1);
-                }
-            
+            // if trail alone is a keyword
+            if ( (StringHelper::SearchString(keywords.Buffer(), tokenString.Buffer()) != NULL) && (StringHelper::Compare("", tokenString.Buffer()) != 0)) {
+                AddTerminal(tokenString.BufferReference());
+            }
+            // if trail alone is not a keyword
+            else {
+                AddToken(tokenString.BufferReference(), isString1);
+            }
+
             // Terminal:
-                if (terminal != '\0') {
-                    
-                    // terminal may be followed by another terminal and their combination may be a keyword, so:
-                    char8 nextChar = '\0';
-                    uint32 charSize = 1u;
-                    
-                    uint64  pos = inputStream->Position();
-                    bool readOk = inputStream->Read(&nextChar, charSize);
-                    if (!readOk) {
-                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed Read() while looking ahead in input stream.");
-                    }
-                    
-                    multiCharToken = "";
-                    multiCharToken += terminal;
-                    if (nextChar != ' ') {              // since space is used as separator in MathGrammar.keywords
-                        multiCharToken += nextChar;
-                    }
-                    
-                    if ( (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL) && (StringHelper::Compare("", multiCharToken.Buffer()) != 0) ) {
-                        AddTerminal(multiCharToken.Buffer());
-                    }
-                    // if the terminal is alone, just add it (and reset the stream pointer)
-                    else {
-                        AddTerminal(terminal);
-                        bool seekOk = inputStream->Seek(pos);
-                        if (!seekOk) {
-                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed Seek() while restoring pointer to current position.");
-                        }
+            if (terminal != '\0') {
+
+                // terminal may be followed by another terminal and their combination may be a keyword, so:
+                char8 nextChar = '\0';
+                uint32 charSize = 1u;
+
+                uint64 pos = inputStream->Position();
+                bool readOk = inputStream->Read(&nextChar, charSize);
+                if (!readOk) {
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed Read() while looking ahead in input stream.");
+                }
+
+                multiCharToken = "";
+                multiCharToken += terminal;
+                if (nextChar != ' ') {              // since space is used as separator in MathGrammar.keywords
+                    multiCharToken += nextChar;
+                }
+
+                if ( (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL) && (StringHelper::Compare("", multiCharToken.Buffer()) != 0) ) {
+                    AddTerminal(multiCharToken.Buffer());
+                }
+                // if the terminal is alone, just add it (and reset the stream pointer)
+                else {
+                    AddTerminal(terminal);
+                    bool seekOk = inputStream->Seek(pos);
+                    if (!seekOk) {
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed Seek() while restoring pointer to current position.");
                     }
                 }
+            }
         }
-        
+
         if (isEOF) {
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             Token *toAdd = new Token(tokenInfo[EOF_TOKEN], "", lineNumber);

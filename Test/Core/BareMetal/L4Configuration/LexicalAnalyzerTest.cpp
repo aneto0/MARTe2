@@ -252,7 +252,11 @@ bool LexicalAnalyzerTest::TestGetToken() {
     // get 123a
     tok = la.GetToken();
 
-    if (tok->GetId() != ERROR_TOKEN) {
+    if (tok->GetId() != STRING_TOKEN) {
+        return false;
+    }
+
+    if (StringHelper::Compare((const char8*) (tok->GetData()), "123a1")) {
         return false;
     }
 
