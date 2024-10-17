@@ -29,9 +29,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BasicConsole.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+extern void HardwarePrintf(const char8 * const msg);
+
 namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
@@ -39,7 +42,7 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 /**
- * TODO. NOT COMPLETE
+ * TODO At current stage it only supports 
  */
 
 BasicConsole::BasicConsole() :
@@ -57,13 +60,14 @@ bool BasicConsole::SetColour(const MARTe::Colours &foregroundColour, const MARTe
     return false;
 }
 bool BasicConsole::Write(const MARTe::char8 * const buffer, MARTe::uint32 & size, const MARTe::TimeoutType &timeout) {
-    return false;
+    HardwarePrintf(buffer);
+    return true;
 }
 bool BasicConsole::Open(const MARTe::FlagsType &mode) {
-    return false;
+    return true;
 }
 bool BasicConsole::Clear() {
-    return false;
+    return true;
 }
 
 Handle BasicConsole::GetReadHandle() const {
@@ -76,7 +80,7 @@ FlagsType BasicConsole::GetOpeningMode() const {
     return FlagsType(0);
 }
 bool BasicConsole::Close() {
-    return false;
+    return true;
 }
 bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns, const uint32 &numberOfRows) {
     return false;
@@ -124,7 +128,7 @@ bool BasicConsole::TimeoutSupported() const {
     return false;
 }
 bool BasicConsole::CanWrite() const {
-    return false;
+    return true;
 }
 bool BasicConsole::CanRead() const {
     return false;

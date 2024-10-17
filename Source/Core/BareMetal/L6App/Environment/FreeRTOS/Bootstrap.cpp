@@ -24,7 +24,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
 #include "FreeRTOS.h"
 #include "semphr.h"
 #include "task.h"
@@ -67,14 +66,13 @@ extern "C" {
     */
     void PreLoader(void (*_loader)(void*)) {      
         //The preloader suspends itself until the hw initialisation ends
-    	printf("Waiting resume signal from initialisation\r\n");
+    	HardwarePrintf("Waiting resume signal from initialisation\r\n");
         vTaskSuspend(NULL);  
-        printf("Resume signal received\r\n");
+        HardwarePrintf("Resume signal received\r\n");
         int (*loader) (MARTe::int32 argc, MARTe::char8** argv) = (int (*) (MARTe::int32 argc, MARTe::char8** argv))_loader;
-        printf("Starting PreLoader\r\n");
+        HardwarePrintf("Starting PreLoader\r\n");
         loader(0, NULL);
-
-        printf("PreLoader terminated\r\n");
+        HardwarePrintf("PreLoader terminated\r\n");
 
         vTaskDelete(NULL);
     }
@@ -167,12 +165,13 @@ void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8*
 
     //TODO CHECK Priority and stack size as parameter
     /* Create the task, storing the handle. */
+    /* The task is created with the maximum priority in order to avoid a bug which seems to prevent MARTe2 booting while other task interfere*/
     xReturned = xTaskCreate(
                     PreLoader,                          /* Function that implements the task. */
                     "Main",                             /* Text name for the task. */
                     4 * THREADS_DEFAULT_STACKSIZE,      /* Stack size in words, not bytes. */
                     (void*)loader,                      /* Parameter passed into the task. */
-                    tskIDLE_PRIORITY,                   /* Priority at which the task is created. */
+                    (configMAX_PRIORITIES - 1),         /* Priority at which the task is created. */
                     &marte2MainTask);                   /* Used to pass out the created task's handle. */
 
     vTaskStartScheduler(); //Start FreeRTOS Scheduler
