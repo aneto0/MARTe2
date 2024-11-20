@@ -124,7 +124,7 @@ public:
      * @param[in] information (see EmbeddedThread)
      * @return ErrorManagement::NoError if every ExecutableI did not return any error.
      */
-    ErrorManagement::ErrorType Execute(ExecutionInfo &information);
+    virtual ErrorManagement::ErrorType Execute(ExecutionInfo &information);
 
     /**
      * @brief Stops the active MultiThreadService running services and calls ReferenceContainer::Purge
