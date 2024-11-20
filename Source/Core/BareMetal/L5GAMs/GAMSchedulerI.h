@@ -161,7 +161,7 @@ public:
      * @param[in] executables the list of ExecutablesIs to be executed
      * @param[in] numberOfExecutables how many ExecutableIs have to be executed.
      */
-    bool ExecuteSingleCycle(ExecutableI * const * const executables, const uint32 numberOfExecutables) const;
+    virtual bool ExecuteSingleCycle(ExecutableI * const * const executables, const uint32 numberOfExecutables) const;
 
     /**
      * @brief Gets the number of ExecutableI components for this \a threadName in this \a stateName.
