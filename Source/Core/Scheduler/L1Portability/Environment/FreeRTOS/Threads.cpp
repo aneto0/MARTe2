@@ -146,47 +146,23 @@ ThreadIdentifier Id() {
 void SetPriority(const ThreadIdentifier &threadId,
                  const PriorityClassType &priorityClass,
                  const uint8 &priorityLevel) {
-    uint8 prioLevel = priorityLevel;
+
     uint8 maxPrio = 15u;
+    uint8 prioLevel = priorityLevel;
+
     if (prioLevel > maxPrio) {
         prioLevel = maxPrio;
     }
 
-    uint32 priorityClassNumber = 0u;
-    switch (priorityClass) {
-    case UnknownPriorityClass:
-        priorityClassNumber = 0u;
-        break;
-    case IdlePriorityClass:
-        priorityClassNumber = 1u;
-        break;
-    case NormalPriorityClass:
-        priorityClassNumber = 2u;
-        break;
-    case RealTimePriorityClass:
-        priorityClassNumber = 3u;
-        break;
-    }
-    uint32 chunk = 25u;
-    uint32 priorityLevelToAssign = chunk * priorityClassNumber;
-    priorityLevelToAssign += ((static_cast<uint32>(prioLevel)) * chunk) / maxPrio;
-
-    UBaseType_t priorityToSet = (priorityLevelToAssign * (configMAX_PRIORITIES)) / 100;
+    UBaseType_t priorityToAssign = (prioLevel * (configMAX_PRIORITIES - 1)) / 15;
 
 
-    //TODO: REMOVE FROM HERE -- FOR TESTING PURPOSES ONLY --
-    // if(priorityClass == RealTimePriorityClass) {
-    //     UBaseType_t pts = 4;
-    //     vTaskPrioritySet(threadId, pts);
-    //     REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "!!!!! WARNING !!!!! Forcing priority manually in code! !!!! REMOVE !!!!");
-    // }
-
-    //vTaskPrioritySet(threadId, priorityToSet);
+    vTaskPrioritySet(threadId, priorityToAssign);
 
 #if USE_THREADS_DATABASE
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    threadInfo->SetPriorityLevel(prioLevel);
-    threadInfo->SetPriorityClass(priorityClass);
+    // ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+    // threadInfo->SetPriorityLevel(prioLevel);
+    // threadInfo->SetPriorityClass(priorityClass);
 #endif
 }
 
@@ -254,6 +230,8 @@ typedef struct {
 }ThreadCallbackParameters;
 
 void ThreadCallback(void* args) {
+    vPortTaskUsesFPU();
+    
     ThreadCallbackParameters *tempArgs = static_cast<ThreadCallbackParameters*>(args);
     tempArgs->function(tempArgs->parameters);
     
@@ -335,7 +313,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             (name==NULL)?("Unknown"):(name), 
             (stacksize < configMINIMAL_STACK_SIZE)?(configMINIMAL_STACK_SIZE):(stacksize), 
             static_cast<void *>(tParams), 
-            (tskIDLE_PRIORITY + 1) /*| portPRIVILEGE_BIT*/, 
+            tskIDLE_PRIORITY /*| portPRIVILEGE_BIT*/, 
             &threadId);
 
         bool ok = (ret == pdPASS);

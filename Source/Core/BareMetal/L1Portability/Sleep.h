@@ -163,12 +163,14 @@ void Sleep::SemiBusy(const float32 totalSleepSec,
 void Sleep::MicroSeconds(uint32 totalUsecTime,
                          uint32 nonBusyUsecTime) {
     
-    uint64 startCounter = HighResolutionTimer::Counter();
-    uint64 deltaTicks = static_cast<uint64>(totalUsecTime * static_cast<float64>(HighResolutionTimer::Frequency()) / 1e6);
+    if (totalUsecTime == nonBusyUsecTime) {
+        OsUsleep(nonBusyUsecTime);
+    } else {    
+        uint64 startCounter = HighResolutionTimer::Counter();
+        uint64 deltaTicks = static_cast<uint64>(totalUsecTime * static_cast<float64>(HighResolutionTimer::Frequency()) / 1e6);
 
-    OsUsleep(nonBusyUsecTime);
-    //Never try to busy sleep if not requested by the caller. This is to avoid issues with times that might be on the past
-    if (totalUsecTime != nonBusyUsecTime) {
+        OsUsleep(nonBusyUsecTime);
+        //Never try to busy sleep if not requested by the caller. This is to avoid issues with times that might be on the past
         while ((HighResolutionTimer::Counter() - startCounter) < deltaTicks) {
         }
     }

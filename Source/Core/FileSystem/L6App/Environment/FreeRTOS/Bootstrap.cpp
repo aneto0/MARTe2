@@ -69,7 +69,7 @@ ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &lo
 }
 
 ErrorManagement::ErrorType Bootstrap::Run() {
-    
+    vTaskPrioritySet(NULL, tskIDLE_PRIORITY);
     while (keepRunning) {
         vTaskDelay(pdMS_TO_TICKS(10000));
     }
