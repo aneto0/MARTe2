@@ -267,7 +267,7 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
             criLoader = new ClassRegistryItemConfigurationStructureLoader(typeName, totalSize);
             criLoader->SetIntrospection(introMembers);
             ClassRegistryDatabase::Instance()->Add(criLoader);
-            REPORT_ERROR(ErrorManagement::ParametersError, "Registering type %s ", typeName.Buffer());
+            REPORT_ERROR(ErrorManagement::Information, "Registering type %s ", typeName.Buffer());
         }
         else {
             criLoader = dynamic_cast<ClassRegistryItemConfigurationStructureLoader *>(const_cast<ClassRegistryItem *>(item));
@@ -302,7 +302,7 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                 }
                 criLoader->Update(typeName, totalSize);
                 criLoader->SetIntrospection(introMembers);
-                REPORT_ERROR(ErrorManagement::ParametersError, "Updating type %s ", typeName.Buffer());
+                REPORT_ERROR(ErrorManagement::Information, "Updating type %s ", typeName.Buffer());
             }
             else {
                 REPORT_ERROR(ErrorManagement::FatalError, "Tried to update a type %s which is not a ClassRegistryItemConfigurationStructureLoader",
