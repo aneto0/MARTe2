@@ -94,6 +94,11 @@ bool GAMDataSource::Initialise(StructuredDataI &data) {
         allowNoProducers = (allowNoProducersUInt32 == 1u);
     }
     if (ret) {
+        uint32 allowMultipleSamplesUInt32 = 0u;
+        (void) (data.Read("AllowMultipleSamples", allowMultipleSamplesUInt32));
+        allowMultipleSamples = (allowMultipleSamplesUInt32 == 1u);
+    }
+    if (ret) {
         uint32 resetUnusedVariablesAtStateChangeUInt32 = 1u;
         (void) (data.Read("ResetUnusedVariablesAtStateChange", resetUnusedVariablesAtStateChangeUInt32));
         resetUnusedVariablesAtStateChange = (resetUnusedVariablesAtStateChangeUInt32 == 1u);
@@ -181,12 +186,14 @@ const char8* GAMDataSource::GetBrokerName(StructuredDataI &data,
         samples = 1u;
     }
 
-    if ((freq < 0.) && (samples == 1u)) {
-        if (direction == InputSignals) {
-            brokerName = "MemoryMapInputBroker";
-        }
-        else {
-            brokerName = "MemoryMapOutputBroker";
+    if (freq < 0.) {
+        if ( (samples == 1u) || ((samples >= 1u) && allowMultipleSamples) ) {
+            if (direction == InputSignals) {
+                brokerName = "MemoryMapInputBroker";
+            }
+            else {
+                brokerName = "MemoryMapOutputBroker";
+            }
         }
     }
     return brokerName;
