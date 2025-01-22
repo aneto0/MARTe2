@@ -51,8 +51,7 @@ static void PrintErrorOnStream(const char8 *const format,
                     "PrintErrorOnStream: Failed Printf() on parseError stream");
         }
     }
-
-    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "at line: %d", lineNumber);
+    REPORT_ERROR_STATIC(ErrorManagement::FatalError,  format, lineNumber);
 }
 
 static uint32 GetCurrentTokenLineNumber(const Token *const token) {
@@ -193,7 +192,7 @@ bool ParserI::Parse() {
                     } else {
                         (token == 0u) ? (isEOF = true) : (isError = true);
                         if (isError) {
-                            PrintErrorOnStream("Syntax error 1. Invalid token on line [%d].",
+                            PrintErrorOnStream("Syntax error (type 1). Invalid token at line [%d].",
                                     GetCurrentTokenLineNumber(currentToken),
                                     errorStream);
                         }
@@ -202,7 +201,7 @@ bool ParserI::Parse() {
                 } else {
                     (token == 0u) ? (isEOF = true) : (isError = true);
                     if (isError) {
-                        PrintErrorOnStream("Syntax error 2. Invalid token on line [%d].",
+                        PrintErrorOnStream("Syntax error (type 2). Invalid token at line [%d].",
                                 GetCurrentTokenLineNumber(currentToken),
                                 errorStream);
                     }
@@ -216,7 +215,7 @@ bool ParserI::Parse() {
                     } else {
                         isError = true;
                         PrintErrorOnStream(
-                                "Syntax error 3. Invalid expression on line [%d].",
+                                "Syntax error (type 3). Invalid expression at line [%d].",
                                 GetCurrentTokenLineNumber(currentToken), errorStream);
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
@@ -235,7 +234,7 @@ bool ParserI::Parse() {
 
         if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
             PrintErrorOnStream(
-                    "\nEOF found with tokens on internal parser stack! [%d]",
+                    "EOF found with tokens on internal parser stack! Line [%d]",
                     GetCurrentTokenLineNumber(currentToken), errorStream);
             isError = true;
         }
