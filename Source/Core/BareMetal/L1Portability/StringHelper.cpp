@@ -53,11 +53,11 @@ char8 *StringDup(const char8 * const s) {
         void *copy = HeapManager::Duplicate(static_cast<const void *>(s));
         duplicate = static_cast<char8 *>(copy);
         if (duplicate == NULL) {
-            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: string duplication failed");
+            REPORT_ERROR_STATIC_0(ErrorManagement::Exception, "Error: string duplication failed");
         }
     }
     else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Error: invalid input arguments");
     }
 
     return duplicate;
@@ -93,7 +93,7 @@ bool ToUpper(char8* const string) {
         
     }
     else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper::ToUpper: Invalid input argument.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "StringHelper::ToUpper: Invalid input argument.");
     }
     
     return ret;
@@ -130,7 +130,7 @@ bool ToLower(char8* const string) {
         
     }
     else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper::ToLower: Invalid input argument.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "StringHelper::ToLower: Invalid input argument.");
     }
     
     return ret;
