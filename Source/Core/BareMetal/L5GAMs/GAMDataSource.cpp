@@ -56,6 +56,7 @@ GAMDataSource::GAMDataSource() :
     signalOffsets = NULL_PTR(uint32*);
     memoryHeap = NULL_PTR(HeapI*);
     allowNoProducers = false;
+    allowMultipleSamples = false;
     resetUnusedVariablesAtStateChange = true;
     forceResetUnusedVariablesAtStateChange = true;
 }
