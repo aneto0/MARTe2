@@ -62,7 +62,10 @@ SingleThreadService::~SingleThreadService() {
 }
 
 ErrorManagement::ErrorType SingleThreadService::Start() {
-    embeddedThread.SetName(GetName());
+    CCString name = GetName();
+    if (name) {
+        embeddedThread.SetName(name);
+    }
     return embeddedThread.Start();
 }
 
