@@ -67,5 +67,15 @@ class StandardPrinter(object):
         return ret
 
     def _print_scalar(self, k, v):
-        return f'{k} = \"{v}\"'
+        is_expr = isinstance(v, str)
+        if is_expr:
+            v_s = v.strip()
+            is_expr = (len(v_s) > 0)
+        if is_expr:
+            is_expr = (v_s[0] == '(')
+        if is_expr:
+            ret = f'{k} = {v}'
+        else:
+            ret = f'{k} = \"{v}\"'
+        return ret
 

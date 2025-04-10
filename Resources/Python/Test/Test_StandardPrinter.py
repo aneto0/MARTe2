@@ -88,6 +88,7 @@ class TestStandardPrinter(unittest.TestCase):
             f.write(o_str)
         ret = self.parser.parse_string(o_str)
         self.assertTrue('PlasmaCurrentsS1_ReadTime;\n' in ret['$PlasmaCurrent2kHz']['+Functions']['+ElapsedTimes']['Expression'])
+        self.assertTrue('FRAME_SIZE_BYTES' in ret['Parameters'])
 
 if __name__ == "__main__":
     unittest.main()
