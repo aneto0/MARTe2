@@ -197,6 +197,11 @@ private:
     ErrorManagement::ErrorType BufferLoop(ExecutionInfo & info);
 
     /**
+     * The binder for the SingleThreadService.
+     */
+    EmbeddedServiceMethodBinderT<MemoryMapAsyncTriggerOutputBroker> binder;
+
+    /**
      * The SingleThreadService responsible for flushing the Buffer into the DataSourceI.
      */
     SingleThreadService service;
@@ -281,11 +286,6 @@ private:
      * True if the BufferLoop is executing (needed for the FlushAllTrigger)
      */
     bool bufferLoopExecuting;
-
-    /**
-     * The binder for the SingleThreadService.
-     */
-    EmbeddedServiceMethodBinderT<MemoryMapAsyncTriggerOutputBroker> binder;
 
     /**
      * Do not store pre-trigger of empty buffers that were never acquired

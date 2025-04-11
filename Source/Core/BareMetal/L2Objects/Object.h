@@ -124,8 +124,10 @@ public:
      *  the references from the application.
      * @param[in] purgeList a container with all the elements to be purged.
      */
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Woverloaded-virtual"
     virtual void Purge(ReferenceContainer &purgeList);
-
+    #pragma GCC diagnostic pop
     /**
      * @brief Extracts the data of the object and puts it into an object which
      * implements the StructuredDataI interface.
