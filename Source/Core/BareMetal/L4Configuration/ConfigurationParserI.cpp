@@ -92,7 +92,9 @@ ConfigurationParserI::ConfigurationParserI(StreamI &stream,
                                BufferedStreamI * const err,
                                const GrammarInfo &grammarIn)
         : ParserI(stream, err, grammarIn)
-        , memory(1u) { numberOfColumns = 0u;
+        , memory(1u) {
+    typeName = defaultTypeName;
+    numberOfColumns = 0u;
     firstNumberOfColumns = 0u;
     numberOfRows = 0u;
     database = &databaseIn;

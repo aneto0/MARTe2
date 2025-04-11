@@ -65,7 +65,7 @@ typedef uintptr_t osulong;
     /**
      * Know shared library extensions
      */
-    static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", static_cast<char8 *>(NULL) };
+    static const char8 * const operatingSystemDLLExtensions[] = {".so", ".gam", ".drv", static_cast<char8 *>(NULL) };
 
     struct MutexSemProperties;
     #define MutexSemHandle MutexSemProperties*

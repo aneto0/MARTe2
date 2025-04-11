@@ -70,7 +70,7 @@ typedef size_t osulong;
 /**
  * Know shared library extensions
  */
-static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".dll", 0 };
+static const char8 * const operatingSystemDLLExtensions[] = {".dll", ".gam", ".drv", 0 };
 
 struct MutexSemProperties;
 #define MutexSemHandle MutexSemProperties*

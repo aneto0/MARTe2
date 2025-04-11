@@ -56,6 +56,7 @@ GAMDataSource::GAMDataSource() :
     signalOffsets = NULL_PTR(uint32*);
     memoryHeap = NULL_PTR(HeapI*);
     allowNoProducers = false;
+    allowMultipleSamples = false;
     resetUnusedVariablesAtStateChange = true;
     forceResetUnusedVariablesAtStateChange = true;
 }
@@ -92,6 +93,11 @@ bool GAMDataSource::Initialise(StructuredDataI &data) {
         uint32 allowNoProducersUInt32 = 0u;
         (void) (data.Read("AllowNoProducers", allowNoProducersUInt32));
         allowNoProducers = (allowNoProducersUInt32 == 1u);
+    }
+    if (ret) {
+        uint32 allowMultipleSamplesUInt32 = 0u;
+        (void) (data.Read("AllowMultipleSamples", allowMultipleSamplesUInt32));
+        allowMultipleSamples = (allowMultipleSamplesUInt32 == 1u);
     }
     if (ret) {
         uint32 resetUnusedVariablesAtStateChangeUInt32 = 1u;
@@ -181,12 +187,14 @@ const char8* GAMDataSource::GetBrokerName(StructuredDataI &data,
         samples = 1u;
     }
 
-    if ((freq < 0.) && (samples == 1u)) {
-        if (direction == InputSignals) {
-            brokerName = "MemoryMapInputBroker";
-        }
-        else {
-            brokerName = "MemoryMapOutputBroker";
+    if (freq < 0.) {
+        if ( (samples == 1u) || ((samples >= 1u) && allowMultipleSamples) ) {
+            if (direction == InputSignals) {
+                brokerName = "MemoryMapInputBroker";
+            }
+            else {
+                brokerName = "MemoryMapOutputBroker";
+            }
         }
     }
     return brokerName;

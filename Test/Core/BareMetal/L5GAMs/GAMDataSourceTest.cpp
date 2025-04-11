@@ -1672,6 +1672,120 @@ static const char8 * const config15 = ""
         "    }"
         "}";
 
+// Multiple samples signals
+static const char8 * const config16 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = GAMDataSourceTestGAM1"
+        "            OutputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfSamples = 2"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMB = {"
+        "            Class = GAMDataSourceTestGAM1"
+        "            InputSignals = {"
+        "               Signal0 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfSamples = 2"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMC = {"
+        "            Class = GAMDataSourceTestGAM1"
+        "            OutputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfElements = 10"
+        "                   NumberOfDimensions = 1"
+        "                   NumberOfSamples = 2"
+        "               }"
+        "               Signal2 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfSamples = 2"
+        "               }"
+        "               Signal3 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfElements = 10"
+        "                   NumberOfDimensions = 2"
+        "                   NumberOfSamples = 2"
+        "               }"
+        "            }"
+        "        }"
+        "        +GAMD = {"
+        "            Class = GAMDataSourceTestGAM1"
+        "            InputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfElements = 10"
+        "                   NumberOfDimensions = 1"
+        "                   NumberOfSamples = 2"
+        "               }"
+        "               Signal2 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfSamples = 2"
+        "               }"
+        "               Signal3 = {"
+        "                   DataSource = DDB1"
+        "                   Type = uint32"
+        "                   NumberOfElements = 10"
+        "                   NumberOfDimensions = 2"
+        "                   NumberOfSamples = 2"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "            AllowMultipleSamples = 1"
+        "        }"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMB GAMA}"
+        "                }"
+        "            }"
+        "        }"
+        "        +State2 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMB GAMA GAMD GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        TimingDataSource = Timings"
+        "        Class = GAMDataSourceTestScheduler1"
+        "    }"
+        "}";
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -2114,6 +2228,30 @@ bool GAMDataSourceTest::TestGetBrokerName() {
         cdb.Write("Frequency", 1.0f);
         ret = (gamDataSource->GetBrokerName(cdb, OutputSignals) == NULL_PTR(char8 *));
     }
+
+    // multiple samples
+    if (ret) {
+        ret = InitialiseGAMDataSourceEnviroment(config16);
+        if (ret) {
+            gamDataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.DDB1");
+            ret = gamDataSource.IsValid();
+        }
+        if (ret) {
+            ConfigurationDatabase cdb;
+            cdb.Write("Samples", 2u);
+            cdb.Write("Frequency", -1.0f);
+            StreamString brokerName = gamDataSource->GetBrokerName(cdb, InputSignals);
+            ret = (brokerName == "MemoryMapInputBroker");
+        }
+        if (ret) {
+            ConfigurationDatabase cdb;
+            cdb.Write("Samples", 2u);
+            cdb.Write("Frequency", -1.0f);
+            StreamString brokerName = gamDataSource->GetBrokerName(cdb, OutputSignals);
+            ret = (brokerName == "MemoryMapOutputBroker");
+        }
+    }
+
     return ret;
 }
 
