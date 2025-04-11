@@ -149,8 +149,10 @@ public:
      * @param[in] pointer source object to assign.
      * @return a reference to the underlying object.
      */
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Woverloaded-virtual"
     virtual Reference& operator=(Object * const pointer);
-
+    #pragma GCC diagnostic pop
     /**
      * @brief Provides access to the underlying object linked by this Reference.
      * @return a pointer to the underlying object linked by this Reference.

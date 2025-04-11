@@ -41,8 +41,7 @@
 namespace MARTe {
 MemoryMapAsyncOutputBroker::MemoryMapAsyncOutputBroker() :
         MemoryMapBroker(),
-        service(binder),
-        binder(*this, &MemoryMapAsyncOutputBroker::BufferLoop) {
+        binder(*this, &MemoryMapAsyncOutputBroker::BufferLoop), service(binder) {
     bufferMemoryMap = NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry*);
     numberOfBuffers = 0u;
     writeIdx = 0u;
