@@ -149,10 +149,18 @@ public:
      * @param[in] pointer source object to assign.
      * @return a reference to the underlying object.
      */
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Woverloaded-virtual"
+    #if defined(__GNUC__) && !defined(__clang__)
+        #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Woverloaded-virtual"
+        #endif
+    #endif
     virtual Reference& operator=(Object * const pointer);
-    #pragma GCC diagnostic pop
+    #if defined(__GNUC__) && !defined(__clang__)
+        #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+            #pragma GCC diagnostic pop
+        #endif
+    #endif
     /**
      * @brief Provides access to the underlying object linked by this Reference.
      * @return a pointer to the underlying object linked by this Reference.

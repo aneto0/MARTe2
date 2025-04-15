@@ -124,10 +124,18 @@ public:
      *  the references from the application.
      * @param[in] purgeList a container with all the elements to be purged.
      */
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Woverloaded-virtual"
+    #if defined(__GNUC__) && !defined(__clang__)
+        #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Woverloaded-virtual"
+        #endif
+    #endif
     virtual void Purge(ReferenceContainer &purgeList);
-    #pragma GCC diagnostic pop
+    #if defined(__GNUC__) && !defined(__clang__)
+        #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+            #pragma GCC diagnostic pop
+        #endif
+    #endif
     /**
      * @brief Extracts the data of the object and puts it into an object which
      * implements the StructuredDataI interface.
