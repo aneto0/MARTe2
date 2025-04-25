@@ -3346,7 +3346,11 @@ bool RealTimeApplicationConfigurationBuilder::CacheSignalIntrospections(const ch
                 uint32 totalElements = 1u;
                 if (ret) {
                     uint8 j;
-                    for (j = 0u; j <= entry.GetNumberOfDimensions(); j++) {
+                    uint32 nDims = entry.GetNumberOfDimensions();
+                    if (nDims == 0u) {
+                        nDims = 1u;
+                    }
+                    for (j = 0u; j < nDims; j++) {
                         totalElements *= entry.GetNumberOfElements(j);
                     }
 
