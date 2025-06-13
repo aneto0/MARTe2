@@ -172,7 +172,7 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
 
     // prepare clean FormatDescriptor
     // copy to this only if parsing successful
-    FormatDescriptor temporaryFormat;
+    //FormatDescriptor temporaryFormat;
 
     bool ret = false;
     // check pointer
@@ -181,29 +181,29 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
         // expect at least a character
         if (string[0] != '\0') {
             //parse options
-            while (ParseCharacter(string[0], temporaryFormat, &flagsLookup[0])) {
+            while (ParseCharacter(string[0], *this, &flagsLookup[0])) {
                 string++;
             }
 
             // get any integer number from string if any
-            temporaryFormat.size = GetIntegerNumber(string);
+            this->size = GetIntegerNumber(string);
             // after a dot look for the precision field
             if (string[0] == '.') {
                 string++;
 
                 if (GetDigit(string[0]) < 0) {
                     //If the precision field is empty return -1 to use default precision.
-                    temporaryFormat.precision = defaultPrecision;
+                    this->precision = defaultPrecision;
                 }
                 else {
                     // get any integer number from string if any
-                    temporaryFormat.precision = GetIntegerNumber(string);
+                    this->precision = GetIntegerNumber(string);
                 }
             }
 
             // the next must be the code!
-            if (ParseCharacter(string[0], temporaryFormat, &typesLookup[0])) {
-                *this = temporaryFormat;
+            if (ParseCharacter(string[0], *this, &typesLookup[0])) {
+                //*this = temporaryFormat;
                 string++;
                 ret = true;
             }

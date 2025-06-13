@@ -14,7 +14,7 @@
 Overview
 ========
 
-The MARTe software framework is a C++ modular and multi-platform framework for the development of real-time control system :doc:`applications </core/gams/rtapp>`. 
+The MARTe software framework is a C++ modular and multi-platform framework for the development of real-time control system :doc:`applications </core/app/gams/rtapp>`. 
 
 The previous version of the framework (aka `MARTe1 <https://github.com/aneto0/MARTe1>`_) was deployed in many fusion real-time control systems, particularly in the `JET tokamak <https://www.euro-fusion.org/devices/jet/>`_. 
 

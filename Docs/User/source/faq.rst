@@ -17,7 +17,7 @@ FAQ
 Where do I start from?
 ----------------------
 
-If you wish to understand how to build a MARTe real-time application, you should start from the concepts explained :doc:`here </core/gams/rtapp>` (top-down approach).
+If you wish to understand how to build a MARTe real-time application, you should start from the concepts explained :doc:`here </core/app/gams/rtapp>` (top-down approach).
 
 If you would like to understand the foundations of the library, the best place to start is from the :doc:`code structure </core/structure/code>` and to follow the help (bottom-up approach).
 

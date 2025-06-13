@@ -38,7 +38,7 @@ L1Portability                                                    Code that is ei
 :doc:`L4Configuration </core/configuration/configuration>`       Infrastructure which allows to build fully data-driven applications.
 :doc:`L4Logger </core/logging/logging>`                          Definition of the logging system.
 :doc:`L4Messages </core/messages/messages>`                      Dynamic exchange of messages between MARTe components.
-:doc:`L5GAMs </core/gams/rtapp>`                                 MARTe real-time application components.
+:doc:`L5GAMs </core/app/gams/rtapp>`                             MARTe real-time application components.
 :doc:`L4LoggerService </core/logging/logging>`                   Logging components that use the file system (e.g. UDP logger).
 :doc:`L6App </core/app/app>`                                     Application kick-start (bare metal).
 ================================================================ ============
@@ -67,7 +67,7 @@ L1Portability                                                    Scheduler code 
 :doc:`L4LoggerService </core/logging/logging>`                   Logging components that use the scheduler (logging queues on independent threads, ...).
 :doc:`L4Messages </core/messages/messages>`                      Support to message queues.
 :doc:`L4StateMachine </core/statemachine/statemachine>`          The MARTe state-machine.
-:doc:`L5GAMs </core/gams/rtapp>`                                 MARTe real-time application components that require a scheduler.
+:doc:`L5GAMs </core/app/gams/rtapp>`                             MARTe real-time application components that require a scheduler.
 ================================================================ ============
 
 Portability

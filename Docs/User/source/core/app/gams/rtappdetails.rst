@@ -14,7 +14,7 @@
 RealTimeApplication
 ===================
 
-A MARTe :vcisdoxygencl:`RealTimeApplication` is assembled by connecting together :doc:`GAMs </core/gams/gam>` and :doc:`DataSources </core/gams/datasource>`.
+A MARTe :vcisdoxygencl:`RealTimeApplication` is assembled by connecting together :doc:`GAMs </core/app/gams/gam>` and :doc:`DataSources </core/app/gams/datasource>`.
 
 GAMs are grouped in real-time threads which are executed in the context of specific states. A :vcisdoxygencl:`RealTimeApplication` shall be in one (and only one) given state at any given time.
 
@@ -63,7 +63,7 @@ GAMs are listed inside a node named ``Functions`` of type ``ReferenceContainer``
       ...
    }
 
-GAMs can also be grouped inside reference containers (in order to improve the readability of a configuration stream) and inside :doc:`GAMGroups </core/gams/gam>`.
+GAMs can also be grouped inside reference containers (in order to improve the readability of a configuration stream) and inside :doc:`GAMGroups </core/app/gams/gam>`.
 
 .. code-block:: bash
 
@@ -158,7 +158,7 @@ DataSources are grouped inside a node named ``Data`` of type ``ReferenceContaine
    
 A component of class type ``TimingDataSource`` shall exist.
 
-The property ``DefaultDataSource`` shall define what is the DataSource to be used when the :doc:`GAM </core/gams/gam>` signals do not specify the ``DataSource`` property.
+The property ``DefaultDataSource`` shall define what is the DataSource to be used when the :doc:`GAM </core/app/gams/gam>` signals do not specify the ``DataSource`` property.
 
 TimingDataSource
 ~~~~~~~~~~~~~~~~

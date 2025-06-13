@@ -264,7 +264,6 @@ HeapI *FindHeap(const void * const address) {
 
         HeapDatabase::Instance()->UnLock();
     }
-
     /* assign to heap the found heap or the default one */
     if ((foundHeap == NULL_PTR(HeapI *))) {
 
