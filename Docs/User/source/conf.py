@@ -40,9 +40,10 @@ release = u'v1.0.0'
 # ones.
 extensions = [
     'sphinx.ext.todo',
-    #'sphinx.ext.githubpages',
-    'sphinx.ext.extlinks'
+    'sphinx.ext.extlinks',
+    'sphinxcontrib.jquery'
     #'rst2pdf.pdfbuilder',
+    #'sphinx.ext.githubpages',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -89,9 +90,6 @@ html_context = {
       '_static/theme_overrides.css',  # override wide tables in RTD theme
    ],
 }
-html_js_files = [
-    'https://code.jquery.com/jquery-3.6.0.min.js',
-]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
