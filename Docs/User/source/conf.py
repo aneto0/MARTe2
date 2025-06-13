@@ -63,7 +63,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -83,13 +83,13 @@ pygments_style = 'default'
 #html_theme = 'alabaster'
 import sphinx_rtd_theme
 html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # Hack to wide the table with sphinx_rtd_theme
-html_context = {
-   'css_files': [
-      '_static/theme_overrides.css',  # override wide tables in RTD theme
-   ],
-}
+# Removed as it was breaking the theme on newer versions. Tables seem to be fine now.
+#html_context = {
+#   'css_files': [
+#      '_static/theme_overrides.css',  # override wide tables in RTD theme
+#   ],
+#}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
