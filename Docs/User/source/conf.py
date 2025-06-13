@@ -89,6 +89,9 @@ html_context = {
       '_static/theme_overrides.css',  # override wide tables in RTD theme
    ],
 }
+html_js_files = [
+    'https://code.jquery.com/jquery-3.6.0.min.js',
+]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
