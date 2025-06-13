@@ -16,7 +16,7 @@ Deploying in Linux
 
 The MARTe real-time performance is as good as the operating system real-time performance.
 
-In Linux, the best strategy is to isolate the CPUs from the Linux scheduler (using the ``isolcpus`` parameter) and to assign the :doc:`MARTe real-time threads </core/gams/rtapp>` to these CPUs.  
+In Linux, the best strategy is to isolate the CPUs from the Linux scheduler (using the ``isolcpus`` parameter) and to assign the :doc:`MARTe real-time threads </core/app/gams/rtapp>` to these CPUs.  
 
 Best practices from existent projects
 -------------------------------------

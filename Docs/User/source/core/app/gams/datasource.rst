@@ -52,11 +52,11 @@ At this stage any of the signal related methods, described in the :vcisdoxygencl
       ok = GetFunctionNumberOfSignals(InputSignals, 0u, nOfFunctionSignals);
       ...
 
-As in the case of the :doc:`GAMs </core/gams/gam>`, the DataSources can be conceptually divided in two sets: one where the signals (number, type and dimensions) are fixed by design (e.g. :vcisdoxygenmccl:`LinuxTimer`); and another where the behaviour of the hardware is adapted to the signal characteristics of a given real-time application (e.g. :vcisdoxygenmccl:`FileReader`). 
+As in the case of the :doc:`GAMs </core/app/gams/gam>`, the DataSources can be conceptually divided in two sets: one where the signals (number, type and dimensions) are fixed by design (e.g. :vcisdoxygenmccl:`LinuxTimer`); and another where the behaviour of the hardware is adapted to the signal characteristics of a given real-time application (e.g. :vcisdoxygenmccl:`FileReader`). 
 
 In the configuration stream the signals shall be placed inside a node named ``Signals``. 
 
-The DataSourceI can also use :doc:`registered structured types </core/objects/introspection>` as input/output signals (the strategy is identical to the one described for the :doc:`GAMs </core/gams/gam>`). 
+The DataSourceI can also use :doc:`registered structured types </core/objects/introspection>` as input/output signals (the strategy is identical to the one described for the :doc:`GAMs </core/app/gams/gam>`). 
 
 Signal properties
 ~~~~~~~~~~~~~~~~~

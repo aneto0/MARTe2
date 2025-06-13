@@ -16,7 +16,7 @@ Introspection
 
 The MARTe2 :vcisdoxygencl:`Introspection` and :vcisdoxygencl:`IntrospectionT` allow to register in the :vcisdoxygencl:`ClassRegistryDatabase` members of a class or a ``C struct``. 
 
-This allows to develop components that query and adapt in runtime to the properties of a given class or structure. Examples are the  :doc:`configuration of Objects </core/configuration/objects>` using structures and the interchange of real-time data between :doc:`GAMs </core/gams/gam>`.   
+This allows to develop components that query and adapt in runtime to the properties of a given class or structure. Examples are the  :doc:`configuration of Objects </core/configuration/objects>` using structures and the interchange of real-time data between :doc:`GAMs </core/app/gams/gam>`.   
 
 Class/struct register
 ---------------------

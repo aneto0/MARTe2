@@ -200,17 +200,17 @@ epub_exclude_files = ['search.html']
 todo_include_todos = True
 
 # External links
-extlinks = {'vciscorebml0': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L0Types/%s.h', ''),
-			'vciscorebml1': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L1Portability/%s.h', ''),
-			'vciscorebml3': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L3Streams/%s.h', ''),
-			'vciscorebml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L4Configuration/%s.h', ''),
-			'vciscorescsml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/Scheduler/L4StateMachine/%s.h', ''),
-			'vcisdoxygencl': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/classMARTe_1_1%s.html', ''),
-			'vcisdoxygenns': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/namespaceMARTe_1_1%s.html', ''),
-			'vcisdoxygenstem': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/structMARTe_1_1ErrorManagement_1_1%s.html', ''),
-			'vcisdoxygenclem': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/classMARTe_1_1ErrorManagement_1_1%s.html', ''),
-			'vcisdoxygenmccl': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-Components-docs-master/doxygen/classMARTe_1_1%s.html', ''),
-			'vcisgl': ('https://vcis-gitlab.f4e.europa.eu/aneto/%s', ''),
-			'vcisgldocqa': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Docs/Documents/QA/%s', ''),
-			'vcisjsdocs': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/JavaScriptDocs/%s.html', '')
+extlinks = {'vciscorebml0': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L0Types/%s.h', '%s'),
+			'vciscorebml1': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L1Portability/%s.h', '%s'),
+			'vciscorebml3': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L3Streams/%s.h', '%s'),
+			'vciscorebml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L4Configuration/%s.h', '%s'),
+			'vciscorescsml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/Scheduler/L4StateMachine/%s.h', '%s'),
+			'vcisdoxygencl': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/classMARTe_1_1%s.html', '%s'),
+			'vcisdoxygenns': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/namespaceMARTe_1_1%s.html', '%s'),
+			'vcisdoxygenstem': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/structMARTe_1_1ErrorManagement_1_1%s.html', '%s'),
+			'vcisdoxygenclem': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/classMARTe_1_1ErrorManagement_1_1%s.html', '%s'),
+			'vcisdoxygenmccl': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-Components-docs-master/doxygen/classMARTe_1_1%s.html', '%s'),
+			'vcisgl': ('https://vcis-gitlab.f4e.europa.eu/aneto/%s', '%s'),
+			'vcisgldocqa': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Docs/Documents/QA/%s', '%s'),
+			'vcisjsdocs': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/JavaScriptDocs/%s.html', '%s')
 			}
