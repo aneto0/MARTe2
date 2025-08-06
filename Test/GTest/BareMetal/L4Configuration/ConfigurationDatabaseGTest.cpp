@@ -392,3 +392,8 @@ TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCopyOperatorEqualB
     ASSERT_TRUE(cdbTest.TestCopyOperatorEqualBug());
 }
 
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestExportData) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestExportData());
+}
+
