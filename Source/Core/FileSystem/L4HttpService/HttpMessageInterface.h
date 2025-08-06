@@ -61,6 +61,23 @@ namespace MARTe {
  *     ...
  * }
  * </pre>
+ *
+ * @details The user might decide to make some message configurable. The parameters with a value starting with $ are interpreted
+ * as configurable by the HTTP client and therefore the values received are overwritten before the message is sent.
+ * In the example the SignalValue is configurable with an initial value of 10. If no value received by the client then 10 is sent,
+ * otherwise the value received is sent and this replaces the initial one.
+ * <pre>
+ * +Message1 = {
+ *     Class = Message
+ *     Destination = Test.Functions.Constant
+ *     Function = SetOutput
+ *     +Parameters = {
+ *         Class = ConfigurationDatabase
+ *         SignalName = Constant
+ *         SignalValue = $10
+ *     }
+ * }
+ * </pre>
  */
 class DLL_API HttpMessageInterface: public ReferenceContainer, public HttpDataExportI, public MessageI {
 public:

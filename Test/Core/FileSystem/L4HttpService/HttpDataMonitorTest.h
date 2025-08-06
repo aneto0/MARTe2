@@ -1,8 +1,8 @@
 /**
- * @file HttpMessageInterfaceTest.h
- * @brief Header file for class HttpMessageInterfaceTest
- * @date 18/03/2019
- * @author Andre Neto
+ * @file HttpDataMonitorTest.h
+ * @brief Header file for class HttpDataMonitorTest
+ * @date 05/08/2025
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HttpMessageInterfaceTest
+ * @details This header file contains the declaration of the class HttpDataMonitorTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPMESSAGEINTERFACETEST_H_
-#define TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPMESSAGEINTERFACETEST_H_
+#ifndef TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPDATAMONITORTEST_H_
+#define TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPDATAMONITORTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,59 +32,78 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "HttpDataMonitor.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Tests the HttpMessageInterface public methods.
+ * @brief Tests the HttpDataMonitor public methods.
  */
-class HttpMessageInterfaceTest {
+class HttpDataMonitorTest {
+//TODO Add the macro DLL_API to the class declaration (i.e. class DLL_API HttpDataMonitorTest)
 public:
+
     /**
-     * @brief Tests the Initialise method.
+     * @brief Constructor
+     */
+    HttpDataMonitorTest();
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~HttpDataMonitorTest();
+
+    /**
+     * @brief Test the HttpDataMonitor constructor
+     */
+    bool TestConstructor();
+
+    /**
+     * @brief Test the HttpDataMonitor destructor
+     */
+    bool TestDestructor();
+
+    /**
+     * @brief Test the Initialise method
      */
     bool TestInitialise();
 
     /**
-     * @brief Tests that the Initialise method fails if there are childs which are not messages.
+     * @brief Test if the Initialise method returns false if no Signals declared
      */
-    bool TestInitialise_False_Not_Only_Messages();
+    bool TestInitialise_False_NoSignals();
 
     /**
-     * @brief Tests the GetAsStructuredData.
+     * @brief Test if the Initialise method returns false if no Components declared
+     */
+    bool TestInitialise_False_NoComponents();
+
+    /**
+     * @brief Test if the Initialise method returns false if Signals and Components have different number of elements
+     */
+    bool TestInitialise_False_SignalsComponentsMismatch();
+
+    /**
+     * @brief Test the GetAsStructuredData method
      */
     bool TestGetAsStructuredData();
 
     /**
-     * @brief Tests the GetAsText.
+     * @brief Test the GetAsStructuredData method when Signals points to a node
+     */
+    bool TestGetAsStructuredData_Dir();
+
+    /**
+     * @brief Test if the GetAsStructuredData method returns empty plots when the component is invalid
+     */
+    bool TestGetAsStructuredData_False_InvalidComponent();
+
+    /**
+     * @brief Test the GetAsText method
      */
     bool TestGetAsText();
-
-    /**
-     * @brief Tests the GetAsStructuredData with a Message that does not exist.
-     */
-    bool TestGetAsStructuredData_Message_Does_Not_Exist();
-
-    /**
-     * @brief Tests the GetAsStructuredData with a Message that contains configurable payload.
-     */
-    bool TestGetAsStructuredData_Message_Parameter();
-
-    /**
-     * @brief Tests the GetAsText with a Message that does not exist.
-     */
-    bool TestGetAsText_Message_Does_Not_Exist();
-
-    /**
-     * @brief Tests the GetAsStructuredData with a Message that cannot be sent.
-     */
-    bool TestGetAsStructuredData_Message_Cannot_Be_Sent();
-
-    /**
-     * @brief Tests the GetAsText with a Message that cannot be sent.
-     */
-    bool TestGetAsText_Message_Cannot_Be_Sent();
 
 };
 
@@ -92,4 +111,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPMESSAGEINTERFACETEST_H_ */
+#endif /* TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPDATAMONITORTEST_H_ */
+

@@ -1,8 +1,8 @@
 /**
- * @file HttpMessageInterfaceGTestGTest.cpp
- * @brief Source file for class HttpMessageInterfaceGTest
- * @date 18/03/2019
- * @author Andre Neto
+ * @file HttpDataMonitorGTestGTest.cpp
+ * @brief Source file for class HttpDataMonitorGTest
+ * @date 05/08/2025
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class HttpMessageInterfaceGTest (public, protected, and private). Be aware that some
+ * the class HttpDataMonitorGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,13 +28,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "HttpMessageInterfaceTest.h"
+#include "HttpDataMonitorTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,47 +42,53 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestInitialise) {
-    HttpMessageInterfaceTest test;
+
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestConstructor) {
+    HttpDataMonitorTest test;
+    ASSERT_TRUE(test.TestConstructor());
+}
+
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestDestructor) {
+    HttpDataMonitorTest test;
+    ASSERT_TRUE(test.TestDestructor());
+}
+
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestInitialise) {
+    HttpDataMonitorTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestInitialise_False_Not_Only_Messages) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestInitialise_False_Not_Only_Messages());
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestInitialise_False_NoSignals) {
+    HttpDataMonitorTest test;
+    ASSERT_TRUE(test.TestInitialise_False_NoSignals());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData) {
-    HttpMessageInterfaceTest test;
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestInitialise_False_NoComponents) {
+    HttpDataMonitorTest test;
+    ASSERT_TRUE(test.TestInitialise_False_NoComponents());
+}
+
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestInitialise_False_SignalsComponentsMismatch) {
+    HttpDataMonitorTest test;
+    ASSERT_TRUE(test.TestInitialise_False_SignalsComponentsMismatch());
+}
+
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestGetAsStructuredData) {
+    HttpDataMonitorTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText) {
-    HttpMessageInterfaceTest test;
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestGetAsStructuredData_Dir) {
+    HttpDataMonitorTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_Dir());
+}
+
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestGetAsStructuredData_False_InvalidComponent) {
+    HttpDataMonitorTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_False_InvalidComponent());
+}
+
+TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestGetAsText) {
+    HttpDataMonitorTest test;
     ASSERT_TRUE(test.TestGetAsText());
-}
-
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData_Message_Cannot_Be_Sent) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Message_Cannot_Be_Sent());
-}
-
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_Message_Cannot_Be_Sent) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsText_Message_Cannot_Be_Sent());
-}
-
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData_Message_Does_Not_Exist) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Message_Does_Not_Exist());
-}
-
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData_Message_Parameter) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Message_Parameter());
-}
-
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_Message_Does_Not_Exist) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsText_Message_Does_Not_Exist());
 }

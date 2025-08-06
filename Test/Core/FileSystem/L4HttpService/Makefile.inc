@@ -31,7 +31,8 @@ OBJSX=	HttpChunkedStreamTest.x \
     HttpMessageInterfaceTest.x \
     HttpObjectBrowserTest.x \
     HttpProtocolTest.x \
-    HttpServiceTest.x
+    HttpServiceTest.x \
+    HttpDataMonitorTest.x
 
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..

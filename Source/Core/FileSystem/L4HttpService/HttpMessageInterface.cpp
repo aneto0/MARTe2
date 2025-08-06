@@ -45,7 +45,9 @@
 namespace MARTe {
 
 HttpMessageInterface::HttpMessageInterface() :
-        ReferenceContainer(), HttpDataExportI(), MessageI() {
+        ReferenceContainer(),
+        HttpDataExportI(),
+        MessageI() {
 }
 
 HttpMessageInterface::~HttpMessageInterface() {
@@ -68,13 +70,14 @@ bool HttpMessageInterface::Initialise(StructuredDataI &data) {
 }
 
 /*lint -e{613} sdata cannot be NULL as otherwise ok would be false*/
-bool HttpMessageInterface::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
+bool HttpMessageInterface::GetAsStructuredData(StreamStructuredDataI &data,
+                                               HttpProtocol &protocol) {
     bool ok = HttpDataExportI::GetAsStructuredData(data, protocol);
     StreamStructuredData<JsonPrinter> *sdata;
     if (ok) {
-        sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
+        sdata = dynamic_cast<StreamStructuredData<JsonPrinter>*>(&data);
         /*lint -e{665} StreamStructuredData<JsonPrinter> is only used to define the pointer type of the NULL_PTR*/
-        ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *));
+        ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter>*));
     }
     if (ok) {
         //lint -e{644} sdata initialised otherwise ok would be false*/
@@ -97,7 +100,8 @@ bool HttpMessageInterface::GetAsStructuredData(StreamStructuredDataI &data, Http
     return ok;
 }
 
-bool HttpMessageInterface::GetAsText(StreamI &stream, HttpProtocol &protocol) {
+bool HttpMessageInterface::GetAsText(StreamI &stream,
+                                     HttpProtocol &protocol) {
     bool ok = HttpDataExportI::GetAsText(stream, protocol);
     if (ok) {
         ok = SendMessageFromHttp(protocol);
@@ -110,18 +114,72 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
     StreamString msgName;
     if (protocol.GetInputCommand("msg", msgName)) {
         ReferenceT<Message> msg = Find(msgName.Buffer());
+
         if (msg.IsValid()) {
-            msg->SetAsReply(false);
-            ErrorManagement::ErrorType err;
-            if (msg->ExpectsReply()) {
-                err = MessageI::SendMessageAndWaitReply(msg, this);
+            ReferenceT<ConfigurationDatabase> parameters = msg->Get(0u);
+            if (parameters.IsValid()) {
+                if (protocol.MoveAbsolute("InputCommands")) {
+                    for (uint32 i = 0u; (i < protocol.GetNumberOfChildren()) && ok; i++) {
+                        StreamString childName = protocol.GetChildName(i);
+                        if (childName != "msg") {
+                            if (parameters->Delete(childName.Buffer())) {
+                                ok = parameters->Write(childName.Buffer(), protocol.GetType(childName.Buffer()));
+                            }
+                        }
+                    }
+                    for (uint32 i = 0u; (i < parameters->GetNumberOfChildren()) && ok; i++) {
+                        StreamString paramVal;
+                        StreamString paramName = parameters->GetChildName(i);
+                        if (parameters->Read(paramName.Buffer(), paramVal)) {
+                            if (paramVal[0] == '$') {
+                                const char8 *paramValP = &(paramVal.Buffer()[1u]);
+                                if (parameters->Delete(paramName.Buffer())) {
+                                    ok = parameters->Write(paramName.Buffer(), paramValP);
+                                }
+                                if (ok) {
+                                    //do not overwrite... ignore return
+                                    (void) protocol.Write(paramName.Buffer(), paramValP);
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            else {
-                err = MessageI::SendMessage(msg, this);
-            }
-            if (err != ErrorManagement::NoError) {
-                ok = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "Could not send message %s", msgName.Buffer());
+
+            if (ok) {
+                msg->SetAsReply(false);
+                ErrorManagement::ErrorType err;
+                if (msg->ExpectsReply()) {
+                    err = MessageI::SendMessageAndWaitReply(msg, this);
+                }
+                else {
+                    err = MessageI::SendMessage(msg, this);
+                }
+
+                //restore
+                if (parameters.IsValid()) {
+                    if (protocol.MoveAbsolute("InputCommands")) {
+                        for (uint32 i = 0u; (i < protocol.GetNumberOfChildren()) && ok; i++) {
+                            StreamString childName = protocol.GetChildName(i);
+                            if (childName != "msg") {
+                                StreamString patchedVal = "$";
+                                StreamString val;
+                                if (protocol.Read(childName.Buffer(), val)) {
+                                    patchedVal += val;
+                                    if (parameters->Delete(childName.Buffer())) {
+                                        ok = parameters->Write(childName.Buffer(), patchedVal.Buffer());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (ok) {
+                    if (err != ErrorManagement::NoError) {
+                        ok = false;
+                        REPORT_ERROR(ErrorManagement::FatalError, "Could not send message %s", msgName.Buffer());
+                    }
+                }
             }
         }
         else {

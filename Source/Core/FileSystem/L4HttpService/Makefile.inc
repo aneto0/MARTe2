@@ -31,7 +31,8 @@ OBJSX=	HttpClient.x\
     HttpObjectBrowser.x \
     HttpService.x\
     HttpProtocol.x\
-    HttpChunkedStream.x
+    HttpChunkedStream.x \
+    HttpDataMonitor.x
         
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..
