@@ -83,7 +83,7 @@ class HttpDataMonitor extends MARTeObject {
      * @param {obj} jsonData the data as received by the server and which should contain a list of objects.
      */
     displayData(jsonData) {
-        console.log("%j", jsonData);
+        //console.log("%j", jsonData);
         var plots = jsonData["Plots"];
         var cnt = 0;
         for (var plotName in plots) {
@@ -120,23 +120,64 @@ class HttpDataMonitor extends MARTeObject {
             }
             var data = []
             for (var signal in signals) {
-                if (this.buffer[signal] === undefined) {
-                    this.buffer[signal] = []
+                if (Array.isArray(signals[signal])) {
+                    for (var n = 0; n < signals[signal].length; n++) {
+                        var signalx = signal + "[" + String(n) + "]";
+                        if (this.buffer[signalx] === undefined) {
+                            this.buffer[signalx] = [];
+                        }
+                    }
+                }
+                else {
+                    if (this.buffer[signal] === undefined) {
+                        this.buffer[signal] = [];
+                    }
                 }
                 if (diffPoints > 0) {
-                    this.buffer[signal].splice(0, diffPoints + 1);
+                    if (Array.isArray(signals[signal])) {
+                        for (var n = 0; n < signals[signal].length; n++) {
+                            var signalx = signal + "[" + String(n) + "]";
+                            this.buffer[signalx].splice(0, diffPoints + 1);
+                        }
+                    }
+                    else {
+                        this.buffer[signal].splice(0, diffPoints + 1);
+                    }
                 }
                 else if (diffPoints == 0) {
-                    this.buffer[signal].shift();
+                    if (Array.isArray(signals[signal])) {
+                        for (var n = 0; n < signals[signal].length; n++) {
+                            var signalx = signal + "[" + String(n) + "]";
+                            this.buffer[signalx].shift();
+                        }
+                    }
+                    else {
+                        this.buffer[signal].shift();
+                    }
                 }
-                this.buffer[signal].push(signals[signal]);
-                data.push({
-                    x: this.timestamp[plotName],
-                    y: this.buffer[signal],
-                    type: 'scatter',
-                    name: signal,
-                    mode: 'lines+markers'
-                });
+                if (Array.isArray(signals[signal])) {
+                    for (var n = 0; n < signals[signal].length; n++) {
+                        var signalx = signal + "[" + String(n) + "]";
+                        this.buffer[signalx].push(signals[signal][n]);
+                        data.push({
+                            x: this.timestamp[plotName],
+                            y: this.buffer[signalx],
+                            type: 'scatter',
+                            name: signalx,
+                            mode: 'lines+markers'
+                        });
+                    }
+                }
+                else {
+                    this.buffer[signal].push(signals[signal]);
+                    data.push({
+                        x: this.timestamp[plotName],
+                        y: this.buffer[signal],
+                        type: 'scatter',
+                        name: signal,
+                        mode: 'lines+markers'
+                    });
+                }
             }
             var layout = {
                 title: { text: plotName },

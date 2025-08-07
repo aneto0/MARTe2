@@ -34,6 +34,8 @@
 #include "Message.h"
 #include "ReplyMessageCatcherMessageFilter.h"
 #include "StreamStructuredData.h"
+#include "StandardParser.h"
+#include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -122,8 +124,17 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
                     for (uint32 i = 0u; (i < protocol.GetNumberOfChildren()) && ok; i++) {
                         StreamString childName = protocol.GetChildName(i);
                         if (childName != "msg") {
-                            if (parameters->Delete(childName.Buffer())) {
-                                ok = parameters->Write(childName.Buffer(), protocol.GetType(childName.Buffer()));
+                            StreamString toBeParsed = childName.Buffer();
+                            toBeParsed += "=";
+                            protocol.Read(childName.Buffer(), toBeParsed);
+                            ConfigurationDatabase paramCdb;
+                            toBeParsed.Seek(0ull);
+                            StandardParser parser(toBeParsed, paramCdb);
+                            ok = parser.Parse();
+                            if (ok) {
+                                if (parameters->Delete(childName.Buffer())) {
+                                    ok = parameters->Write(childName.Buffer(), paramCdb.GetType(childName.Buffer()));
+                                }
                             }
                         }
                     }
@@ -133,12 +144,22 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
                         if (parameters->Read(paramName.Buffer(), paramVal)) {
                             if (paramVal[0] == '$') {
                                 const char8 *paramValP = &(paramVal.Buffer()[1u]);
-                                if (parameters->Delete(paramName.Buffer())) {
-                                    ok = parameters->Write(paramName.Buffer(), paramValP);
-                                }
+
+                                StreamString toBeParsed = paramName.Buffer();
+                                toBeParsed += "=";
+                                toBeParsed += paramValP;
+                                ConfigurationDatabase paramCdb;
+                                toBeParsed.Seek(0ull);
+                                StandardParser parser(toBeParsed, paramCdb);
+                                ok = parser.Parse();
                                 if (ok) {
-                                    //do not overwrite... ignore return
-                                    (void) protocol.Write(paramName.Buffer(), paramValP);
+                                    if (parameters->Delete(paramName.Buffer())) {
+                                        ok = parameters->Write(paramName.Buffer(), paramCdb.GetType(paramName.Buffer()));
+                                    }
+                                    if (ok) {
+                                        //do not overwrite... ignore return
+                                        (void) protocol.Write(paramName.Buffer(), paramValP);
+                                    }
                                 }
                             }
                         }
