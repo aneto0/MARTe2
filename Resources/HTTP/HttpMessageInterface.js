@@ -34,48 +34,22 @@ class HttpMessageInterface extends MARTeObject {
         this.target = target;
         this.map = []
     }
-    
+
 
     displayMsgRow(table, jsonData, idxN) {
-        var idx = ""+idxN
-        var tr0 = document.createElement("tr");
-        var td0 = document.createElement("td");
-        var td01 = document.createElement("td");
-        var td02 = document.createElement("td");
-        td0.appendChild(document.createTextNode("               "));
-        td01.appendChild(document.createTextNode("==== Message ===="));
-        td02.appendChild(document.createTextNode("               "));
-        tr0.appendChild(td0);
-        tr0.appendChild(td01);
-        tr0.appendChild(td02);
-        table.appendChild(tr0);
-
-        var tr1 = document.createElement("tr");
-
-        var td1 = document.createElement("td");
-        td1.appendChild(document.createTextNode(idx));
+        var idx = "" + idxN
 
         var msgBtnTxt = document.createTextNode(jsonData["Name"]);
         var msgBtn = document.createElement("button");
         msgBtn.appendChild(msgBtnTxt);
-        var td2 = document.createElement("td");
+        var td2 = document.getElementById("button_" + idx)
         td2.appendChild(msgBtn);
 
-        var td3 = document.createElement("td");
-        var lastMessageTxt = document.createTextNode("No message sent ever");
-        td3.appendChild(lastMessageTxt);        
-                
-        td1.style.border = "1px solid #000"
-        tr1.appendChild(td1);
-        tr1.appendChild(td2);
-        tr1.appendChild(td3);
-        table.appendChild(tr1);
-
         var paramInfo = jsonData["0"];
-        var xInputsTxt=[];
-        var xParams=[];
-        if (!(paramInfo === undefined)){
-            for(var param in paramInfo){
+        var xInputsTxt = [];
+        var xParams = [];
+        if (!(paramInfo === undefined)) {
+            for (var param in paramInfo) {
                 var tr2 = document.createElement("tr");
                 var paramName = document.createTextNode(param);
                 var tdx1 = document.createElement("td");
@@ -84,7 +58,7 @@ class HttpMessageInterface extends MARTeObject {
                 tdx1.style.border = "1px solid #000"
 
                 var tdx2 = document.createElement("td");
-                if(paramInfo[param][0]=='$'){
+                if (paramInfo[param][0] == '$') {
                     var inputTxt = document.createElement("input");
                     inputTxt.setAttribute('type', 'text');
                     inputTxt.setAttribute('value', paramInfo[param].substring(1));
@@ -92,18 +66,30 @@ class HttpMessageInterface extends MARTeObject {
                     xParams.push(param);
                     xInputsTxt.push(inputTxt);
                 }
-                else{
+                else {
                     var paramVal = document.createTextNode(paramInfo[param]);
                     tdx2.appendChild(paramVal);
                 }
                 tr2.appendChild(tdx1);
                 tr2.appendChild(tdx2);
-                table.appendChild(tr2);
+                
+                var next_idx=""+(idxN+1);
+                var next_row=document.getElementById("first_" + next_idx);
+                if(next_row===undefined){
+                    table.appendChild(tr2);
+                }
+                else{
+                    table.insertBefore(tr2, next_row);
+                }
             }
         }
         
+        var td3 = document.getElementById("feedback_" + idx);
+        var lastMessageTxt = document.createTextNode("No message sent ever");
+        td3.appendChild(lastMessageTxt);
+
         msgBtn.addEventListener("click",
-            function(ev, msgBtnTxt, lastMessageTxt, lastMessageTd) {            
+            function(ev, msgBtnTxt, lastMessageTxt, lastMessageTd) {
                 lastMessageTxt.nodeValue = "Sending message";
                 lastMessageTd.style.color = "orange";
                 var fullURL = MARTeLoader.instance().getDataUrl(this.getPath());
@@ -113,8 +99,8 @@ class HttpMessageInterface extends MARTeObject {
                 else {
                     fullURL += ("?msg=" + msgBtnTxt);
                 }
-                for(var x=0; x<xParams.length; x++){
-                    fullURL += ("&"+xParams[x]+"=" + xInputsTxt[x].value);
+                for (var x = 0; x < xParams.length; x++) {
+                    fullURL += ("&" + xParams[x] + "=" + xInputsTxt[x].value);
                 }
                 var xhttp = new XMLHttpRequest();
                 var that = this;
@@ -142,11 +128,11 @@ class HttpMessageInterface extends MARTeObject {
                             console.log(e);
                         }
                     }
-                };  
+                };
                 xhttp.open("GET", fullURL, true);
                 xhttp.send();
             }.bind(this, null, jsonData["Name"], lastMessageTxt, td3),
-        false);        
+            false);
     }
 
 
@@ -165,15 +151,62 @@ class HttpMessageInterface extends MARTeObject {
             done = (msgInfo === undefined);
             if (!done) {
                 this.map.push(msgInfo["Name"]);
-                if (msgInfo.hasOwnProperty("IsContainer")){
-                    if (msgInfo["IsContainer"]==1){
+                if (msgInfo.hasOwnProperty("IsContainer")) {
+                    if (msgInfo["IsContainer"] == 1) {
+                        var tr0 = document.createElement("tr");
+                        tr0.setAttribute("id", "first_" + idx);
+
+                        var td0 = document.createElement("td");
+                        var td01 = document.createElement("td");
+                        var td02 = document.createElement("td");
+                        td0.appendChild(document.createTextNode("               "));
+                        td01.appendChild(document.createTextNode("==== Message ===="));
+                        td02.appendChild(document.createTextNode("               "));
+                        tr0.appendChild(td0);
+                        tr0.appendChild(td01);
+                        tr0.appendChild(td02);
+                        table.appendChild(tr0);
+
+                        var tr1 = document.createElement("tr");
+
+                        var td1 = document.createElement("td");
+                        td1.appendChild(document.createTextNode(idx));
+
+                        var td2 = document.createElement("td");
+                        td2.setAttribute("id", "button_" + idx);
+
+
+                        var td3 = document.createElement("td");
+                        td3.setAttribute("id", "feedback_" + idx);
+
+                        td1.style.border = "1px solid #000"
+                        tr1.appendChild(td1);
+                        tr1.appendChild(td2);
+                        tr1.appendChild(td3);
+                        table.appendChild(tr1);
+                    }
+                }
+            }
+            i++;
+        }
+
+        i = 0;
+        done = false;
+        while (!done) {
+            var idx = "" + i;
+            var msgInfo = jsonData[idx];
+            done = (msgInfo === undefined);
+            if (!done) {
+                this.map.push(msgInfo["Name"]);
+                if (msgInfo.hasOwnProperty("IsContainer")) {
+                    if (msgInfo["IsContainer"] == 1) {
                         var xhttp = new XMLHttpRequest();
                         var that = this;
                         xhttp.onreadystatechange = function() {
                             if (this.readyState == 4 && this.status == 200) {
                                 var msgData = JSON.parse(this.responseText);
-                                for(var n=0; n<that.map.length; n++){
-                                    if(msgData["Name"]===that.map[n]){
+                                for (var n = 0; n < that.map.length; n++) {
+                                    if (msgData["Name"] === that.map[n]) {
                                         that.displayMsgRow(table, msgData, n);
                                         break;
                                     }
@@ -191,7 +224,7 @@ class HttpMessageInterface extends MARTeObject {
                         var objpath = fullpath + msgInfo["Name"];
                         var fullURL = MARTeLoader.instance().getDataUrl(objpath);
                         xhttp.open("GET", fullURL, true);
-                        xhttp.send();                    
+                        xhttp.send();
                     }
                 }
             }
