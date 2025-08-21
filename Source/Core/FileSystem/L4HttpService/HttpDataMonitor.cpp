@@ -136,49 +136,29 @@ bool HttpDataMonitor::Initialise(StructuredDataI &data) {
             if (data.MoveRelative(childName)) {
                 plotName[n] = childName;
                 {
-                    AnyType signalList = data.GetType("Signals");
-                    ret = !signalList.IsVoid();
-                    if (ret) {
-                        numberOfSignals[n] = signalList.GetNumberOfElements(0u);
-                        signalName[n] = new StreamString[numberOfSignals[n]];
-                        Vector<StreamString> signalNameVec(signalName[n], numberOfSignals[n]);
-                        ret = data.Read("Signals", signalNameVec);
-                        if (!ret) {
-                            REPORT_ERROR(ErrorManagement::FatalError, "Failed to read Signals");
-                        }
-                    }
-                    else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Signals not defined");
-                    }
-                    if (ret) {
-                        componentPath[n] = new StreamString[numberOfSignals[n]];
-                        component[n] = new Reference[numberOfSignals[n]];
-                        Vector<StreamString> componentPathVec(componentPath[n], numberOfSignals[n]);
-                        ret = data.Read("Components", componentPathVec);
-                        if (!ret) {
-                            REPORT_ERROR(ErrorManagement::FatalError, "Failed to read Components");
-                        }
-                    }
-                    if (ret) {
-                        fullSignalName[n] = new StreamString[numberOfSignals[n]];
-                        for (uint32 m = 0u; m < numberOfSignals[n]; m++) {
-                            fullSignalName[n][m] = "";
-                            for (uint32 x = 0u; x < componentPath[n][m].Size(); x++) {
-                                if (componentPath[n][m][x] == '.') {
-                                    fullSignalName[n][m] += "@";
-                                }
-                                else {
-                                    fullSignalName[n][m] += componentPath[n][m][x];
+                    numberOfSignals[n] = data.GetNumberOfChildren();
+                    signalName[n] = new StreamString[numberOfSignals[n]];
+                    componentPath[n] = new StreamString[numberOfSignals[n]];
+                    component[n] = new Reference[numberOfSignals[n]];
+                    fullSignalName[n] = new StreamString[numberOfSignals[n]];
+                    for (uint32 j = 0u; (j < data.GetNumberOfChildren()) && ret; j++) {
+                        fullSignalName[n][j] = data.GetChildName(j);
+                        ret = data.MoveRelative(fullSignalName[n][j].Buffer());
+                        if (ret) {
+                            ret = data.Read("Signal", signalName[n][j]);
+                            if (ret) {
+                                ret = data.Read("Component", componentPath[n][j]);
+                                if (!ret) {
+                                    REPORT_ERROR(ErrorManagement::FatalError, "Failed to read Signal %d in Plot %d", j, n);
                                 }
                             }
-                            for (uint32 x = 0u; x < signalName[n][m].Size(); x++) {
-                                if (signalName[n][m][x] == '.') {
-                                    fullSignalName[n][m] += "@";
-                                }
-                                else {
-                                    fullSignalName[n][m] += signalName[n][m][x];
-                                }
+                            else{
+                                REPORT_ERROR(ErrorManagement::FatalError, "Failed to read Signal %d in Plot %d", j, n);
                             }
+                            data.MoveToAncestor(1u);
+                        }
+                        else {
+                            REPORT_ERROR(ErrorManagement::FatalError, "All plot children must be nodes");
                         }
                     }
                 }

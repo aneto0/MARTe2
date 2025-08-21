@@ -81,11 +81,6 @@ public:
     bool TestInitialise_False_NoComponents();
 
     /**
-     * @brief Test if the Initialise method returns false if Signals and Components have different number of elements
-     */
-    bool TestInitialise_False_SignalsComponentsMismatch();
-
-    /**
      * @brief Test the GetAsStructuredData method
      */
     bool TestGetAsStructuredData();

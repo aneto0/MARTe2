@@ -68,11 +68,6 @@ TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestInitialise_False_NoCompo
     ASSERT_TRUE(test.TestInitialise_False_NoComponents());
 }
 
-TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestInitialise_False_SignalsComponentsMismatch) {
-    HttpDataMonitorTest test;
-    ASSERT_TRUE(test.TestInitialise_False_SignalsComponentsMismatch());
-}
-
 TEST(FileSystem_L4HttpService_HttpDataMonitorGTest, TestGetAsStructuredData) {
     HttpDataMonitorTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData());

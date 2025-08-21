@@ -94,16 +94,26 @@ bool HttpDataMonitorTest::TestInitialise() {
 
     StreamString cfg = ""
             "Plot1 = {\n"
-            "    Components = {\"Test.Functions.GAM1\"}\n"
-            "    Signals = {\"OutputSignals.Counter\"}\n"
+            "    Test@Functions@GAM1@OutputSignals@Counter = {\n"
+            "        Signal = OutputSignals.Counter\n"
+            "        Component = Test.Functions.GAM1\n"
+            "    }\n"
             "}\n"
             "Plot2 = {\n"
-            "    Components = {\"Test.Functions.Constant\"}\n"
-            "    Signals = {\"OutputSignals\"}\n"
+            "    Test@Functions@Constant@OutputSignals = {\n"
+            "        Signal = OutputSignals\n"
+            "        Component = Test.Functions.Constant\n"
+            "    }\n"
             "}\n"
             "Plot3 = {\n"
-            "    Components = {\"Test.Data.DDB1\", \"Test.Data.DDB1\"}\n"
-            "    Signals = {\"Signals.Value0\", \"Signals.Value1\"}\n"
+            "    Test@Data@DDB1@Signals@Value0 = {"
+            "        Signal = Signals.Value0\n"
+            "        Component = Test.Data.DDB1\n"
+            "    }"
+            "    Test@Data@DDB1@Signals@Value1 = {"
+            "        Signal = Signals.Value1\n"
+            "        Component = Test.Data.DDB1\n"
+            "    }"
             "}";
     ConfigurationDatabase data;
 
@@ -121,7 +131,9 @@ bool HttpDataMonitorTest::TestInitialise() {
 bool HttpDataMonitorTest::TestInitialise_False_NoSignals() {
     StreamString cfg = ""
             "Plot1 = {\n"
-            "    Components = {\"Test.Functions.GAM1\"}\n"
+            "    Signal1 = {\n"
+            "        Component = \"Test.Functions.GAM1\"\n"
+            "    }\n"
             "}";
     ConfigurationDatabase data;
 
@@ -139,7 +151,9 @@ bool HttpDataMonitorTest::TestInitialise_False_NoSignals() {
 bool HttpDataMonitorTest::TestInitialise_False_NoComponents() {
     StreamString cfg = ""
             "Plot1 = {\n"
-            "    Signals = {\"OutputSignals.Counter\"}\n"
+            "    Signal1 = {\n"
+            "        Signal = \"OutputSignals.Counter\"\n"
+            "    }\n"
             "}";
     ConfigurationDatabase data;
 
@@ -155,25 +169,6 @@ bool HttpDataMonitorTest::TestInitialise_False_NoComponents() {
     return ret;
 }
 
-bool HttpDataMonitorTest::TestInitialise_False_SignalsComponentsMismatch() {
-    StreamString cfg = ""
-            "Plot1 = {\n"
-            "    Signals = {\"OutputSignals.Counter\"}\n"
-            "    Components = {\"Test.Functions.GAM1\", \"Test.Functions.GAM2\"}\n"
-
-            "}";
-    ConfigurationDatabase data;
-
-    cfg.Seek(0ull);
-    StandardParser parser(cfg, data);
-    bool ret = parser.Parse();
-    if (ret) {
-        data.MoveToRoot();
-        HttpDataMonitor test;
-        ret = !test.Initialise(data);
-    }
-    return ret;
-}
 
 bool HttpDataMonitorTest::TestGetAsStructuredData() {
     StreamString cfg = ""
@@ -195,10 +190,12 @@ bool HttpDataMonitorTest::TestGetAsStructuredData() {
             "    Class = HttpObjectBrowser\n"
             "    Root = \".\""
             "    +HttpMonitor = {\n"
-            "        Class = HttpDataMonitor"
+            "        Class = HttpDataMonitor\n"
             "        Plot1 = {\n"
-            "            Components = {\"TestObject\"}\n"
-            "            Signals = {\"Signals.Signal1\"}\n"
+            "            TestObjectSignals@Signal1 = {\n"
+            "                Component = \"TestObject\"\n"
+            "                Signal = \"Signals.Signal1\"\n"
+            "            }\n"
             "        }\n"
             "    }"
             "}\n";
@@ -266,10 +263,12 @@ bool HttpDataMonitorTest::TestGetAsStructuredData_Dir(){
             "    +HttpMonitor = {\n"
             "        Class = HttpDataMonitor"
             "        Plot1 = {\n"
-            "            Components = {\"TestObject\"}\n"
-            "            Signals = {\"Signals\"}\n"
+            "            TestObjectSignals = {\n"
+            "                Component = \"TestObject\"\n"
+            "                Signal = \"Signals\"\n"
+            "            }\n"
             "        }\n"
-            "    }"
+            "    }\n"
             "}\n";
 
     ConfigurationDatabase data;
@@ -336,10 +335,12 @@ bool HttpDataMonitorTest::TestGetAsStructuredData_False_InvalidComponent() {
             "    +HttpMonitor = {\n"
             "        Class = HttpDataMonitor"
             "        Plot1 = {\n"
-            "            Components = {\"TestObjectInvalid\"}\n"
-            "            Signals = {\"Signals.Signal1\"}\n"
+            "            TestObjectInvalid@Signals@Signal1 = {\n"
+            "                Component = \"TestObjectInvalid\"\n"
+            "                Signal = \"Signals.Signal1\"\n"
+            "            }\n"
             "        }\n"
-            "    }"
+            "    }\n"
             "}\n";
 
     ConfigurationDatabase data;
@@ -397,10 +398,12 @@ bool HttpDataMonitorTest::TestGetAsText() {
             "    +HttpMonitor = {\n"
             "        Class = HttpDataMonitor"
             "        Plot1 = {\n"
-            "            Components = {\"TestObject\"}\n"
-            "            Signals = {\"Signals.Signal1\"}\n"
+            "            TestObject@Signals@Signal1 = {\n"
+            "                Component = \"TestObject\"\n"
+            "                Signal = \"Signals.Signal1\"\n"
+            "            }\n"
             "        }\n"
-            "    }"
+            "    }\n"
             "}\n";
 
     ConfigurationDatabase data;
