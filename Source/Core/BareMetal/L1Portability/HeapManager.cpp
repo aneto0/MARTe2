@@ -149,16 +149,20 @@ HeapDatabase *HeapDatabase::Instance() {
 /*---------------------------------------------------------------------------*/
 
 HeapI *HeapDatabase::GetHeap(const int32 index) const {
+#ifdef MULTIHEAP_SUPPORT
     HeapI *returnValue = NULL_PTR(HeapI *);
     if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
         returnValue = heaps[index];
     }
-
     return returnValue;
+#else
+    return GlobalObjectsDatabase::Instance()->GetStandardHeap();
+#endif
 }
 
 bool HeapDatabase::SetHeap(const int32 index,
                            HeapI * const heap) {
+#ifdef MULTIHEAP_SUPPORT
     bool ok = false;
     if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
 
@@ -169,10 +173,14 @@ bool HeapDatabase::SetHeap(const int32 index,
 
     }
     return ok;
+#else
+    return true;
+#endif
 }
 
 bool HeapDatabase::UnsetHeap(const int32 index,
                              const HeapI * const heap) {
+#ifdef MULTIHEAP_SUPPORT
     bool ok = false;
     if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
         if (heaps[index] == heap) {
@@ -182,6 +190,9 @@ bool HeapDatabase::UnsetHeap(const int32 index,
     }
 
     return ok;
+#else
+    return true;
+#endif
 }
 
 HeapDatabase::HeapDatabase() {
@@ -207,7 +218,7 @@ const char8 * const HeapDatabase::GetClassName() const {
 }
 
 HeapI *FindHeap(const void * const address) {
-
+#ifdef MULTIHEAP_SUPPORT
     /*
      address range of currently found heap
      */
@@ -278,10 +289,13 @@ HeapI *FindHeap(const void * const address) {
     }
 
     return foundHeap;
+#else
+    return GlobalObjectsDatabase::Instance()->GetStandardHeap();
+#endif
 }
 
 HeapI *FindHeap(const char8 * const name) {
-
+#ifdef MULTIHEAP_SUPPORT
     bool ok = (name != NULL);
 
     /*
@@ -324,6 +338,9 @@ HeapI *FindHeap(const char8 * const name) {
     }
 
     return foundHeap;
+#else
+    return GlobalObjectsDatabase::Instance()->GetStandardHeap();
+#endif
 }
 
 bool Free(void *&data) {
@@ -390,6 +407,7 @@ void *Realloc(void *&data,
 void *Duplicate(const void * const data,
                 const uint32 size,
                 const char8 * const heapName) {
+#ifdef MULTIHEAP_SUPPORT
     void *newAddress = NULL_PTR(void *);
 
     HeapI *chosenHeap = NULL_PTR(HeapI *);
@@ -414,11 +432,13 @@ void *Duplicate(const void * const data,
         newAddress = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Duplicate(data, size);
     }
     return newAddress;
-
+#else
+    return GlobalObjectsDatabase::Instance()->GetStandardHeap()->Duplicate(data, size);
+#endif
 }
 
 bool AddHeap(HeapI * const newHeap) {
-
+#ifdef MULTIHEAP_SUPPORT
     bool ok = true;
 
     /* check value of heap not to be NULL */
@@ -469,10 +489,13 @@ bool AddHeap(HeapI * const newHeap) {
         HeapDatabase::Instance()->UnLock();
     }
     return ok;
+#else
+    return true;
+#endif
 }
 
 bool RemoveHeap(const HeapI * const heap) {
-
+#ifdef MULTIHEAP_SUPPORT
     bool found = false;
 
     /* controls access to database */
@@ -488,6 +511,9 @@ bool RemoveHeap(const HeapI * const heap) {
     }
 
     return found;
+#else
+    return true;
+#endif
 }
 
 }

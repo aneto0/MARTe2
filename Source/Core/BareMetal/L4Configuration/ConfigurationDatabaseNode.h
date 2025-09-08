@@ -71,9 +71,10 @@ ConfigurationDatabaseNode    ();
     /**
      * @brief Inserts a reference to this node.
      * @param[in] ref the reference to be added.
+     * @param[in] failIfExists if true and the reference already exists, do not update its value and return an error.
      * @return true if the reference is successfully added.
      */
-    bool Insert(Reference ref);
+    bool Insert(Reference ref, bool failIfExists);
 
     /**
      * @brief Gets the number of references held by this node.
