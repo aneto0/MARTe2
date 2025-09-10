@@ -69,4 +69,28 @@ uint32 Fnv1aHashFunction::Compute(const char8 * const in, const uint32 size) {
     }
     return hash;
 }
+
+uint64 Fnv1aHashFunction::Compute64(const char8 * const in, const uint32 size) {
+
+    uint8 *input = reinterpret_cast<uint8*>(const_cast<char8 *>(in));
+    uint64 hash = 0xcbf29ce484222325ULL; //prime 14695981039346656037
+    if (input != NULL) {
+        if (size == 0u) {
+            while ((*input)!=0u) {
+                hash ^= (*input);
+                input = &input[1];
+                hash *= 0x00000100000001B3ULL; //prime 1099511628211
+            }
+        }
+        else {
+            uint32 i;
+            for (i = 0u; i < size; i++) {
+                hash ^= (*input);
+                input = &input[1];
+                hash *= 0x00000100000001B3ULL; //prime 1099511628211
+            }
+        }
+    }
+    return hash;
+}
 }

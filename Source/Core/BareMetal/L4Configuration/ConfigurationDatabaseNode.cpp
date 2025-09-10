@@ -49,7 +49,6 @@ ConfigurationDatabaseNode::ConfigurationDatabaseNode() :
     numberOfNodes = 0u;
     maxSize = 0u;
     container = NULL_PTR(Reference *);
-    muxTimeout = TTInfiniteWait;
 }
 
 /*lint -e{1579} .Justification: The destructor calls an external function. */
@@ -81,15 +80,15 @@ void ConfigurationDatabaseNode::Purge() {
 
 bool ConfigurationDatabaseNode::Insert(Reference ref, const bool failIfExists) {
     uint32 index = containerSize;
-    uint32 bindex = 0u;
     bool ok = true;
-    bool alreadyExists = !binTree.Insert(ref->GetName(), index, bindex);
+    bool alreadyExists = !binTree.Insert(ref->GetName(), index);
     if(alreadyExists) {
         if(failIfExists) {
             ok = false;
         }
         else {
-            index = binTree[bindex];
+        //    index = binTree[ref->GetName()];
+            //printf("->%s -- %d\n", ref->GetName(), index);
             container[index] = ref;
         }
     }
@@ -146,10 +145,9 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
     char8 term;
 
     if (toTokenize.GetToken(token, ".", term)) {
-        uint32 bindex;
+        uint32 index;
         //binary search
-        if (binTree.Search(token.Buffer(), bindex)) {
-            uint32 index = binTree[bindex];
+        if (binTree.Search(token.Buffer(), index)) {
             if (index < containerSize) {
                 if (term == '.') {
                     ReferenceT<ConfigurationDatabaseNode> containerI;
@@ -177,10 +175,9 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
 
 Reference ConfigurationDatabaseNode::FindLeaf(const char8 * const name) {
     Reference ret;
-    uint32 bindex;
+    uint32 index;
     //binary search
-    if (binTree.Search(name, bindex)) {
-        uint32 index = binTree[bindex];
+    if (binTree.Search(name, index)) {
         if (index < containerSize) {
             ret = container[index];
         }
@@ -193,10 +190,8 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
     uint32 index = 0u;
     //binary search
     if (ok) {
-        uint32 bindex;
-        ok = (binTree.Search(ref->GetName(), bindex));
+        ok = (binTree.Search(ref->GetName(), index));
         if (ok) {
-            index = binTree[bindex];
             ok = (index < containerSize);
         }
     }
@@ -237,8 +232,8 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
         for (i=0u; (i<containerSize) && (ok); i++) {
             /*lint -e{613} containerSize > 0 => container != NULL*/
             Reference eRef = container[i];
-            uint32 bindex = 0u;
-            ok = binTree.Insert(eRef->GetName(), static_cast<uint32>(i), bindex);
+            uint32 index = i;
+            ok = binTree.Insert(eRef->GetName(), index);
         }
     }
     if (ok) {
@@ -259,14 +254,6 @@ ReferenceT<ConfigurationDatabaseNode> ConfigurationDatabaseNode::GetParent() con
 
 void ConfigurationDatabaseNode::SetParent(ReferenceT<ConfigurationDatabaseNode> parentIn) {
     parent = parentIn;
-}
-
-bool ConfigurationDatabaseNode::Lock() {
-    return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
-}
-
-void ConfigurationDatabaseNode::UnLock() {
-    mux.FastUnLock();
 }
 
 uint32 ConfigurationDatabaseNode::GetNumberOfNodes() {

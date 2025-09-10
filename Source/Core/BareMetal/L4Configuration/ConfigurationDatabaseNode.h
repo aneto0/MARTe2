@@ -31,11 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BinaryTree.h"
 #include "Fnv1aHashFunction.h"
 #include "Object.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "UnorderedMap.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -131,17 +131,6 @@ ConfigurationDatabaseNode    ();
 private:
 
     /**
-     * @brief Locks the internal spin-lock mutex.
-     * @return true if the lock succeeds.
-     */
-    bool Lock();
-
-    /**
-     * @brief Unlocks the internal spin-lock mutex.
-     */
-    void UnLock();
-
-    /**
      * The container holding all the nodes directly underneath this node.
      */
     Reference *container;
@@ -167,20 +156,9 @@ private:
     uint32 maxSize;
 
     /**
-     * Protects multiple access to the internal resources
-     */
-    FastPollingMutexSem mux;
-
-    /**
-     * Timeout
-     */
-    TimeoutType muxTimeout;
-
-
-    /**
      * Binary tree containing the indexes of the elements in the container.
      */
-    BinaryTree<uint32, Fnv1aHashFunction> binTree;
+    UnorderedMap<uint32, Fnv1aHashFunction> binTree;
 
     /**
      * The parent node

@@ -114,11 +114,17 @@ bool ConfigurationDatabaseTest::TestCreateRelative_InvalidPath() {
 bool ConfigurationDatabaseTest::TestMoveToRoot() {
     ConfigurationDatabase cdb;
     bool ok = cdb.MoveToRoot();
+    printf("1. %d\n", ok);
     ok &= cdb.CreateAbsolute("A.B");
+    printf("2. %d\n", ok);
     ok &= cdb.MoveToRoot();
+    printf("3. %d\n", ok);
     ok &= cdb.MoveAbsolute("A.B");
+    printf("4. %d\n", ok);
     ok &= cdb.MoveToRoot();
+    printf("5. %d\n", ok);
     ok &= !cdb.CreateAbsolute("A.B");
+    printf("6. %d\n", ok);
     return ok;
 }
 

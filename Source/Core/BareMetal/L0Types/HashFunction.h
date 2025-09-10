@@ -62,6 +62,15 @@ public:
      * @return the generated key.
      */
     virtual uint32 Compute(const char8 * const in, const uint32 size = 0u) = 0;
+
+    /**
+     * @brief Computes the hash function generating a 64 bit from a string id.
+     * @param[in] in the input string
+     * @param[in] size the size of the input (if 0 is the string length)
+     * @return the generated key.
+     */
+    virtual uint64 Compute64(const char8 * const in, const uint32 size = 0u) = 0;
+
 };
 
 }

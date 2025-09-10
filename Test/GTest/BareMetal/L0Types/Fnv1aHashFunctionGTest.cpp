@@ -61,3 +61,18 @@ TEST(BareMetal_L0Types_Fnv1aHashFunctionGTest,TestComputeLessSize) {
     Fnv1aHashFunctionTest  test;
     ASSERT_TRUE(test.TestCompute("ciao", 3, 3783764352));
 }
+
+TEST(BareMetal_L0Types_Fnv1aHashFunctionGTest,TestCompute64) {
+    Fnv1aHashFunctionTest  test;
+    ASSERT_TRUE(test.TestCompute64("ciao", 0, 17983893182387880093LLU));
+}
+
+TEST(BareMetal_L0Types_Fnv1aHashFunctionGTest,TestCompute64Size) {
+    Fnv1aHashFunctionTest  test;
+    ASSERT_TRUE(test.TestCompute64("ciao", 4, 17983893182387880093LLU));
+}
+
+TEST(BareMetal_L0Types_Fnv1aHashFunctionGTest,TestCompute64LessSize) {
+    Fnv1aHashFunctionTest  test;
+    ASSERT_TRUE(test.TestCompute64("cia", 3, 17725572305619987456LLU));
+}

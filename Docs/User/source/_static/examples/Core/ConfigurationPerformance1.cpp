@@ -66,6 +66,9 @@ int main(int argc, char **argv) {
             cdb.Write("NumberOfDimensions", 1);
             cdb.Write("NumberOfDimensions1", 1);
             cdb.Write("NumberOfDimensions2", 1);
+            cdb.Write("NumberOfDimensions3", 1);
+            cdb.Write("NumberOfDimensions4", 1);
+            cdb.Write("NumberOfDimensions5", 1);
             cdb.Write("NumberOfElements", 1);
             StreamString qn;
             qn.Printf("aaa.bbb.cc.ddd.eee.{%d}.{%d}", b, i);
