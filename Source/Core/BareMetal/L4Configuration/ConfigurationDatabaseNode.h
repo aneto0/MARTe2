@@ -80,7 +80,7 @@ ConfigurationDatabaseNode    ();
      * @brief Gets the number of references held by this node.
      * @return the number of references held by this node.
      */
-    uint32 Size();
+    uint32 Size() const;
 
     /**
      * @brief Gets the reference in position \a idx.
@@ -126,7 +126,7 @@ ConfigurationDatabaseNode    ();
      * @brief Gets the number of nodes that are of type ConfigurationDatabaseNode.
      * @return the numbe of nodes that are of type ConfigurationDatabaseNode.
      */
-    uint32 GetNumberOfNodes();
+    uint32 GetNumberOfNodes() const;
 
 private:
 

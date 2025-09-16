@@ -87,8 +87,7 @@ bool ConfigurationDatabaseNode::Insert(Reference ref, const bool failIfExists) {
             ok = false;
         }
         else {
-        //    index = binTree[ref->GetName()];
-            //printf("->%s -- %d\n", ref->GetName(), index);
+            /*lint -e{613} the index is managed together with the instances so invalid accesses should be prevented by design.*/
             container[index] = ref;
         }
     }
@@ -103,7 +102,7 @@ bool ConfigurationDatabaseNode::Insert(Reference ref, const bool failIfExists) {
             Reference *oldContainer = container;
             container = new Reference[maxSize];
             uint32 n;
-            //oldContainer == NULL => containerSize == 0
+            /*lint -e{613} oldContainer cannot be NULL: oldContainer == NULL => containerSize == 0*/
             for (n=0u; n<containerSize; n++) {
                 container[n] = oldContainer[n];
                 oldContainer[n] = Reference();
@@ -112,6 +111,7 @@ bool ConfigurationDatabaseNode::Insert(Reference ref, const bool failIfExists) {
                 delete [] oldContainer;
             }
         }
+        /*lint -e{613} the index is managed together with the container so invalid accesses should be prevented by design.*/
         container[index] = ref;
         if (ok) {
             containerSize++;
@@ -124,16 +124,18 @@ bool ConfigurationDatabaseNode::Insert(Reference ref, const bool failIfExists) {
     return ok;
 }
 
-uint32 ConfigurationDatabaseNode::Size() {
+uint32 ConfigurationDatabaseNode::Size() const {
     return containerSize;
 }
 
 Reference ConfigurationDatabaseNode::Get(const uint32 idx) {
     Reference ref;
     if (idx < containerSize) {
+        /*lint -e{613} -e{661} containerSize is managed together with the container instance, thus if idx < containerSize, its access should be safe.*/
         ref = container[idx];
     }
     return ref;
+/*lint -e{1762} cannot return a const Reference*/
 }
 
 Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
@@ -147,6 +149,7 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
     if (toTokenize.GetToken(token, ".", term)) {
         uint32 index;
         //binary search
+        /*lint -e{613} -e{661} containerSize is managed together with the container instance, thus if idx < containerSize, its access should be safe.*/
         if (binTree.Search(token.Buffer(), index)) {
             if (index < containerSize) {
                 if (term == '.') {
@@ -178,6 +181,7 @@ Reference ConfigurationDatabaseNode::FindLeaf(const char8 * const name) {
     uint32 index;
     //binary search
     if (binTree.Search(name, index)) {
+        /*lint -e{613} -e{661} container size is always < containerSize*/
         if (index < containerSize) {
             ret = container[index];
         }
@@ -203,16 +207,16 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
                 maxSize = containerSize;
             }
         }
+        /*lint -e{613} oldContainer == NULL => containerSize == 0*/
         if (containerSize > 0u) {
             Reference *oldContainer = container;
             container = new Reference[maxSize];
             uint32 n;
-            //oldContainer == NULL => containerSize == 0
             for (n=0u; n<index; n++) {
                 container[n] = oldContainer[n];
             }
             for (n=index; n<containerSize; n++) {
-                /*lint -e{679} no truncation*/
+                /*lint -e{796} -e{679} no truncation. containerSize decremented above*/
                 container[n] = oldContainer[n + 1u];
             }
             if (oldContainer != NULL_PTR(Reference *)) {
@@ -232,8 +236,8 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
         for (i=0u; (i<containerSize) && (ok); i++) {
             /*lint -e{613} containerSize > 0 => container != NULL*/
             Reference eRef = container[i];
-            uint32 index = i;
-            ok = binTree.Insert(eRef->GetName(), index);
+            uint32 idxRef = i;
+            ok = binTree.Insert(eRef->GetName(), idxRef);
         }
     }
     if (ok) {
@@ -256,7 +260,7 @@ void ConfigurationDatabaseNode::SetParent(ReferenceT<ConfigurationDatabaseNode> 
     parent = parentIn;
 }
 
-uint32 ConfigurationDatabaseNode::GetNumberOfNodes() {
+uint32 ConfigurationDatabaseNode::GetNumberOfNodes() const {
     return numberOfNodes;
 }
 
