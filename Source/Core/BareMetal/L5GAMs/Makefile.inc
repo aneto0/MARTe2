@@ -44,8 +44,8 @@ OBJSX=BrokerI.x \
     MemoryMapSynchronisedMultiBufferInputBroker.x \
     MemoryMapSynchronisedMultiBufferOutputBroker.x \
     MemoryMapSynchronisedOutputBroker.x \
-    RealTimeApplication.x \
-    RealTimeApplicationConfigurationBuilder.x \
+    RealTimeApplication.x2 \
+    RealTimeApplicationConfigurationBuilder.x2 \
     RealTimeState.x \
     RealTimeThread.x \
     TimingDataSource.x
