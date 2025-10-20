@@ -212,6 +212,17 @@ public:
     bool GetSignalNumberOfElements(const uint32 signalIdx, uint32 &numberOfElements);
 
     /**
+     * @brief Gets the number of samples of the signal at position `signalIdx`.
+     * @details The default number of samples of a signals is 1.
+     * @param[in] signalIdx the index of the signal
+     * @param[out] numberOfSamples the number of samples.
+     * @return `true` is the signalIdx exists.
+     * @pre
+     *   `SetConfiguredDatabase() == true`
+     */
+    bool GetSignalNumberOfSamples(const uint32 signalIdx, uint32 &numberOfSamples);
+
+    /**
      * @brief Gets the number of bytes required to represent the signal at position \a signalIdx.
      * @param[in] signalIdx the index of the signal.
      * @param[out] byteSize the size in bytes.
