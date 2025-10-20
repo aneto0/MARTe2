@@ -153,6 +153,13 @@ bool GAMDataSource::AllocateMemory() {
     for (uint32 s = 0u; (s < nOfSignals) && (ret); s++) {
         uint32 thisSignalMemorySize;
         ret = GetSignalByteSize(s, thisSignalMemorySize);
+        uint32 nOfSamples = 1u;
+        if (ret && allowMultipleSamples) {
+            ret = GetSignalNumberOfSamples(s, nOfSamples);
+            if (ret) {
+                thisSignalMemorySize *= nOfSamples;
+            }
+        }
         if (ret) {
             if (signalOffsets != NULL_PTR(uint32*)) {
                 signalOffsets[s] = memorySize;

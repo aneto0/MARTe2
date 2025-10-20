@@ -176,7 +176,7 @@ bool DataSourceI::GetSignalNumberOfSamples(const uint32 signalIdx, uint32 &numbe
 
     uint32 nOfFunctions = GetNumberOfFunctions();
     bool signalFound = false;
-    bool ret = (nOfFunctions != 0u);
+    bool ret = true;
 
     for (uint32 functionIdx = 0u; (functionIdx < nOfFunctions) && ret && (!signalFound); functionIdx++) {
         uint32 nOfFunctionSignals = 0u;
@@ -199,8 +199,28 @@ bool DataSourceI::GetSignalNumberOfSamples(const uint32 signalIdx, uint32 &numbe
                 numberOfSamples = nSamples;
             }
         }
+        nOfFunctionSignals = 0u;
+        if (ret) {
+            ret = GetFunctionNumberOfSignals(InputSignals, functionIdx, nOfFunctionSignals);
+        }
+        for (uint32 functionSignalIdx = 0u; (functionSignalIdx < nOfFunctionSignals) && ret && (!signalFound); functionSignalIdx++) {
+            uint32 nSamples = 0u;
+            ret = GetFunctionSignalSamples(InputSignals, functionIdx, functionSignalIdx, nSamples);
+            StreamString signalName = "";
+            if (ret) {
+                ret = GetFunctionSignalName (InputSignals, functionIdx, functionSignalIdx, signalName);
+            }
+            uint32 currentSignalIdx = 0u;
+            if (ret) {
+                ret = GetSignalIndex (currentSignalIdx, signalName.Buffer());
+            }
+            if (currentSignalIdx == signalIdx) {
+                signalFound = true;
+                numberOfSamples = nSamples;
+            }
+        }
     }
-
+    ret = ret && signalFound;
     return ret;
 }
 
