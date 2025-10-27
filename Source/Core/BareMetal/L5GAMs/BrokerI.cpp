@@ -472,34 +472,85 @@ bool BrokerI::FillCopyTable(const SignalDirection direction,
 void BrokerI::SortByGAMAddress(basicCopyTable *const bcp,
                                const uint32 elements) const {
     basicCopyTable *sbcp = new basicCopyTable[elements];
-    void *candidate = bcp[0u].gamPointer;
-    uint32 candidateIdx = 0u;
-    void *min = NULL_PTR(void*);
-    void *maxAddress = NULL_PTR(void*);
-    //lint -e{613} Possible use of null pointer 'maxAddress'. Justification: only comparing addresses, there is no risk of accessing NULL pointers
-    for (uint32 bcpIdx = 0u; bcpIdx < elements; bcpIdx++) {
-        //lint -e{946} Relational or subtract operator applied to pointers [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17], [MISRA C++ Rule 5-0-18]. Justification: comparing address of the same object (GAM memory), therefore compliant by exception
-        if (bcp[bcpIdx].gamPointer > maxAddress) {
-            maxAddress = bcp[bcpIdx].gamPointer;
-        }
-    }
-    //lint -e{613} Possible use of null pointer 'maxAddress'. Justification: only comparing addresses, there is no risk of accessing NULL pointers
-    for (uint32 sbcpIdx = 0u; sbcpIdx < elements; sbcpIdx++) {
-        for (uint32 bcpIdx = 0u; bcpIdx < elements; bcpIdx++) {
-            //lint -e{946} Relational or subtract operator applied to pointers [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17], [MISRA C++ Rule 5-0-18]. Justification: comparing address of the same object (GAM memory), therefore compliant by exception
-            if ((bcp[bcpIdx].gamPointer <= candidate) && (bcp[bcpIdx].gamPointer > min)) {
-                candidate = bcp[bcpIdx].gamPointer;
-                candidateIdx = bcpIdx;
+
+//     void *candidate = bcp[0u].gamPointer;
+//     uint32 candidateIdx = 0u;
+//     void *min = NULL_PTR(void*);
+//     void *maxAddress = NULL_PTR(void*);
+//     //lint -e{613} Possible use of null pointer 'maxAddress'. Justification: only comparing addresses, there is no risk of accessing NULL pointers
+//     for (uint32 bcpIdx = 0u; bcpIdx < elements; bcpIdx++) {
+//         //lint -e{946} Relational or subtract operator applied to pointers [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17], [MISRA C++ Rule 5-0-18]. Justification: comparing address of the same object (GAM memory), therefore compliant by exception
+//         if (bcp[bcpIdx].gamPointer > maxAddress) {
+//             maxAddress = bcp[bcpIdx].gamPointer;
+//         }
+//     }
+//     //lint -e{613} Possible use of null pointer 'maxAddress'. Justification: only comparing addresses, there is no risk of accessing NULL pointers
+//     for (uint32 sbcpIdx = 0u; sbcpIdx < elements; sbcpIdx++) {
+//         for (uint32 bcpIdx = 0u; bcpIdx < elements; bcpIdx++) {
+//             //lint -e{946} Relational or subtract operator applied to pointers [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17], [MISRA C++ Rule 5-0-18]. Justification: comparing address of the same object (GAM memory), therefore compliant by exception
+//             if ((bcp[bcpIdx].gamPointer <= candidate) && (bcp[bcpIdx].gamPointer > min)) {
+//                 candidate = bcp[bcpIdx].gamPointer;
+//                 candidateIdx = bcpIdx;
+//             }
+//         }
+//         //lint -e{534} Ignoring return value of function. Justification: the return value has no impact on the behaviour of the function.
+//         MemoryOperationsHelper::Copy(&sbcp[sbcpIdx], &bcp[candidateIdx], static_cast<uint32>(sizeof(basicCopyTable)));
+//         min = candidate;
+//         candidate = maxAddress;
+//     }
+
+    // iterative merge sort of the copy-table
+    sbcp[0u] = bcp[0u];
+    for (uint32 currentSize = 1u; currentSize < elements; currentSize = 2*currentSize) {
+        for (uint32 leftStart = 0u; leftStart < (elements - 1u); leftStart += 2*currentSize) {
+            uint32 midPoint = (leftStart + currentSize   - 1u) < (elements - 1u) ? (leftStart +   currentSize - 1u) : (elements - 1u);
+            uint32 rightEnd = (leftStart + 2*currentSize - 1u) < (elements - 1u) ? (leftStart + 2*currentSize - 1u) : (elements - 1u);
+
+            uint32 n1 = midPoint - leftStart + 1u;
+            uint32 n2 = rightEnd - midPoint;
+
+            basicCopyTable* L = new basicCopyTable[n1];
+            basicCopyTable* R = new basicCopyTable[n2];
+
+            for (uint32 idx = 0u; idx < n1; idx++) {
+                L[idx] = bcp[leftStart + idx];
             }
+            for (uint32 idx = 0u; idx < n2; idx++) {
+                R[idx] = bcp[midPoint + 1u + idx];
+            }
+
+            uint32 i = 0u; uint32 j = 0u; uint32 k = leftStart;
+            while ( (i < n1) && (j < n2) ) {
+                if (L[i].gamPointer <= R[j].gamPointer) {
+                    sbcp[k] = L[i];
+                    i++;
+                } else {
+                    sbcp[k] = R[j];
+                    j++;
+                }
+                k++;
+            }
+            while (i < n1) {
+                sbcp[k] = L[i];
+                i++;
+                k++;
+            }
+            while (j < n2) {
+                sbcp[k] = R[j];
+                j++;
+                k++;
+            }
+
+            delete[] L;
+            delete[] R;
         }
-        //lint -e{534} Ignoring return value of function. Justification: the return value has no impact on the behaviour of the function.
-        MemoryOperationsHelper::Copy(&sbcp[sbcpIdx], &bcp[candidateIdx], static_cast<uint32>(sizeof(basicCopyTable)));
-        min = candidate;
-        candidate = maxAddress;
     }
+
+
     //lint -e{534} Ignoring return value. Justification: return value has no impact on the code. The function return void.
     //lint -e{593} Custodial pointer 'destination' possibly not freed or returned. Justification: it is removed in InitFunctionPointersOptim() when is no longer used.
     MemoryOperationsHelper::Copy(bcp, sbcp, static_cast<uint32>(sizeof(basicCopyTable)) * elements);
+
     if (sbcp != NULL_PTR(basicCopyTable*)) {
         delete[] sbcp;
     }
