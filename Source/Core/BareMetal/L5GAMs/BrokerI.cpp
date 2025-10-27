@@ -473,32 +473,6 @@ void BrokerI::SortByGAMAddress(basicCopyTable *const bcp,
                                const uint32 elements) const {
     basicCopyTable *sbcp = new basicCopyTable[elements];
 
-//     void *candidate = bcp[0u].gamPointer;
-//     uint32 candidateIdx = 0u;
-//     void *min = NULL_PTR(void*);
-//     void *maxAddress = NULL_PTR(void*);
-//     //lint -e{613} Possible use of null pointer 'maxAddress'. Justification: only comparing addresses, there is no risk of accessing NULL pointers
-//     for (uint32 bcpIdx = 0u; bcpIdx < elements; bcpIdx++) {
-//         //lint -e{946} Relational or subtract operator applied to pointers [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17], [MISRA C++ Rule 5-0-18]. Justification: comparing address of the same object (GAM memory), therefore compliant by exception
-//         if (bcp[bcpIdx].gamPointer > maxAddress) {
-//             maxAddress = bcp[bcpIdx].gamPointer;
-//         }
-//     }
-//     //lint -e{613} Possible use of null pointer 'maxAddress'. Justification: only comparing addresses, there is no risk of accessing NULL pointers
-//     for (uint32 sbcpIdx = 0u; sbcpIdx < elements; sbcpIdx++) {
-//         for (uint32 bcpIdx = 0u; bcpIdx < elements; bcpIdx++) {
-//             //lint -e{946} Relational or subtract operator applied to pointers [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17], [MISRA C++ Rule 5-0-18]. Justification: comparing address of the same object (GAM memory), therefore compliant by exception
-//             if ((bcp[bcpIdx].gamPointer <= candidate) && (bcp[bcpIdx].gamPointer > min)) {
-//                 candidate = bcp[bcpIdx].gamPointer;
-//                 candidateIdx = bcpIdx;
-//             }
-//         }
-//         //lint -e{534} Ignoring return value of function. Justification: the return value has no impact on the behaviour of the function.
-//         MemoryOperationsHelper::Copy(&sbcp[sbcpIdx], &bcp[candidateIdx], static_cast<uint32>(sizeof(basicCopyTable)));
-//         min = candidate;
-//         candidate = maxAddress;
-//     }
-
     // iterative merge sort of the copy-table
     sbcp[0u] = bcp[0u];
     for (uint32 currentSize = 1u; currentSize < elements; currentSize = 2*currentSize) {
@@ -545,7 +519,6 @@ void BrokerI::SortByGAMAddress(basicCopyTable *const bcp,
             delete[] R;
         }
     }
-
 
     //lint -e{534} Ignoring return value. Justification: return value has no impact on the code. The function return void.
     //lint -e{593} Custodial pointer 'destination' possibly not freed or returned. Justification: it is removed in InitFunctionPointersOptim() when is no longer used.
