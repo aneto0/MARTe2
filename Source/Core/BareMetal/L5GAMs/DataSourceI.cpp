@@ -228,7 +228,7 @@ bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32
     if (ret && signalFound) {
         ret = GetFunctionSignalSamples(direction, functionIdx, functionSignalIdx, numberOfSamples);
     }
-    return ret && signalFound;
+    return (ret && signalFound);
 }
 
 bool DataSourceI::GetSignalNumberOfSamples(const uint32 signalIdx, uint32 &numberOfSamples) {

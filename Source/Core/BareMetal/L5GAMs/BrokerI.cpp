@@ -474,17 +474,19 @@ void BrokerI::SortByGAMAddress(basicCopyTable *const bcp,
     basicCopyTable *sbcp = new basicCopyTable[elements];
 
     // iterative merge sort of the copy-table
+    basicCopyTable* L = NULL_PTR(basicCopyTable*);
+    basicCopyTable* R = NULL_PTR(basicCopyTable*);
     sbcp[0u] = bcp[0u];
     for (uint32 currentSize = 1u; currentSize < elements; currentSize = 2*currentSize) {
         for (uint32 leftStart = 0u; leftStart < (elements - 1u); leftStart += 2*currentSize) {
             uint32 midPoint = (leftStart + currentSize   - 1u) < (elements - 1u) ? (leftStart +   currentSize - 1u) : (elements - 1u);
             uint32 rightEnd = (leftStart + 2*currentSize - 1u) < (elements - 1u) ? (leftStart + 2*currentSize - 1u) : (elements - 1u);
 
-            uint32 n1 = midPoint - leftStart + 1u;
-            uint32 n2 = rightEnd - midPoint;
+            uint32 n1 = (midPoint - leftStart + 1u);
+            uint32 n2 = (rightEnd - midPoint);
 
-            basicCopyTable* L = new basicCopyTable[n1];
-            basicCopyTable* R = new basicCopyTable[n2];
+            L = new basicCopyTable[n1];
+            R = new basicCopyTable[n2];
 
             for (uint32 idx = 0u; idx < n1; idx++) {
                 L[idx] = bcp[leftStart + idx];
@@ -515,8 +517,12 @@ void BrokerI::SortByGAMAddress(basicCopyTable *const bcp,
                 k++;
             }
 
-            delete[] L;
-            delete[] R;
+            if (L != NULL_PTR(basicCopyTable*)) {
+                delete[] L;
+            }
+            if (R != NULL_PTR(basicCopyTable*)) {
+                delete[] R;
+            }
         }
     }
 
