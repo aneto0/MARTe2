@@ -172,6 +172,76 @@ bool DataSourceI::GetSignalNumberOfElements(const uint32 signalIdx, uint32 &numb
     return ret;
 }
 
+bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32 &numberOfSamples) {
+
+    uint32 nOfFunctions = GetNumberOfFunctions();
+    bool signalFound = false;
+    bool ret = true;
+    uint32 functionIdx = 0u;
+    uint32 functionSignalIdx = 0u;
+    SignalDirection direction = None;
+
+    for (functionIdx = 0u; (functionIdx < nOfFunctions) && ret && (!signalFound); functionIdx++) {
+        uint32 nOfFunctionSignals = 0u;
+        if (ret) {
+            ret = GetFunctionNumberOfSignals(OutputSignals, functionIdx, nOfFunctionSignals);
+        }
+        for (functionSignalIdx = 0u; (functionSignalIdx < nOfFunctionSignals) && ret && (!signalFound); functionSignalIdx++) {
+            StreamString currentSignalName = "";
+            StreamString currentSignalAlias = "";
+            ret = GetFunctionSignalName(OutputSignals, functionIdx, functionSignalIdx, currentSignalName);
+            if (GetFunctionSignalAlias(OutputSignals, functionIdx, functionSignalIdx, currentSignalAlias)) {}
+            if (ret) {
+                if ( (signalName == currentSignalName) || (signalName == currentSignalAlias) ) {
+                    signalFound = true;
+                    direction = OutputSignals;
+                    break;
+                }
+            }
+        }
+        if (!signalFound) {
+            nOfFunctionSignals = 0u;
+            functionSignalIdx = 0u;
+            if (ret) {
+                ret = GetFunctionNumberOfSignals(InputSignals, functionIdx, nOfFunctionSignals);
+            }
+            for (functionSignalIdx = 0u; (functionSignalIdx < nOfFunctionSignals) && ret && (!signalFound); functionSignalIdx++) {
+                StreamString currentSignalName = "";
+                StreamString currentSignalAlias = "";
+                ret = GetFunctionSignalName(InputSignals, functionIdx, functionSignalIdx, currentSignalName);
+                if (GetFunctionSignalAlias(InputSignals, functionIdx, functionSignalIdx, currentSignalAlias)) {}
+                if (ret) {
+                    if ( (signalName == currentSignalName) || (signalName == currentSignalAlias) ) {
+                        signalFound = true;
+                        direction = InputSignals;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (signalFound) {
+            break;
+        }
+    }
+
+    if (ret && signalFound) {
+        ret = GetFunctionSignalSamples(direction, functionIdx, functionSignalIdx, numberOfSamples);
+    }
+    return (ret && signalFound);
+}
+
+bool DataSourceI::GetSignalNumberOfSamples(const uint32 signalIdx, uint32 &numberOfSamples) {
+
+    StreamString signalName = "";
+    bool ret = GetSignalName(signalIdx, signalName);
+    if (ret) {
+        ret = GetSignalNumberOfSamples(signalName, numberOfSamples);
+    }
+
+    return ret;
+}
+
 bool DataSourceI::GetSignalByteSize(const uint32 signalIdx, uint32 &byteSize) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
