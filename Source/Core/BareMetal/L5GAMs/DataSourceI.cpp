@@ -177,7 +177,7 @@ bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32
     uint32 nOfFunctions = GetNumberOfFunctions();
     bool signalFound = false;
     bool ret = true;
-    uint32 functionIdx = 0u;
+    uint32 functionIdx;
     uint32 functionSignalIdx = 0u;
     SignalDirection direction = None;
 
@@ -192,6 +192,7 @@ bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32
             ret = GetFunctionSignalName(OutputSignals, functionIdx, functionSignalIdx, currentSignalName);
             if (GetFunctionSignalAlias(OutputSignals, functionIdx, functionSignalIdx, currentSignalAlias)) {}
             if (ret) {
+                //lint -e{9007} no side effects on signalName == currentSignalAlias
                 if ( (signalName == currentSignalName) || (signalName == currentSignalAlias) ) {
                     signalFound = true;
                     direction = OutputSignals;
@@ -201,7 +202,6 @@ bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32
         }
         if (!signalFound) {
             nOfFunctionSignals = 0u;
-            functionSignalIdx = 0u;
             if (ret) {
                 ret = GetFunctionNumberOfSignals(InputSignals, functionIdx, nOfFunctionSignals);
             }
@@ -211,6 +211,7 @@ bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32
                 ret = GetFunctionSignalName(InputSignals, functionIdx, functionSignalIdx, currentSignalName);
                 if (GetFunctionSignalAlias(InputSignals, functionIdx, functionSignalIdx, currentSignalAlias)) {}
                 if (ret) {
+                    //lint -e{9007} no side effects on signalName == currentSignalAlias
                     if ( (signalName == currentSignalName) || (signalName == currentSignalAlias) ) {
                         signalFound = true;
                         direction = InputSignals;
