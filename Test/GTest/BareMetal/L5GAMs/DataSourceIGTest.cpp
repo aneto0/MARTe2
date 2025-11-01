@@ -88,6 +88,11 @@ TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalNumberOfElements) {
     ASSERT_TRUE(test.TestGetSignalNumberOfElements());
 }
 
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalNumberOfSamples) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetSignalNumberOfSamples());
+}
+
 TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalByteSize) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalByteSize());

@@ -57,9 +57,12 @@ public:
     /**
      * @see HashFunction::Compute
      */
-    virtual uint32 Compute(const char8 * const in,
-                           const uint32 size);
+    virtual uint32 Compute(const char8 * const in, const uint32 size);
 
+    /**
+     * @see HashFunction::Compute64
+     */
+    virtual uint64 Compute64(const char8 * const in, const uint32 size);
 };
 
 }

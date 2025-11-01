@@ -59,4 +59,9 @@ bool DjbHashFunctionTest::TestCompute(const char8 *in, uint32 size, uint32 resul
     return (test.Compute(in, size)==result);
 }
 
+bool DjbHashFunctionTest::TestCompute64(const char8 *in, uint32 size, uint64 result) {
+    DjbHashFunction test;
+    return (test.Compute64(in, size)==result);
+}
+
 }

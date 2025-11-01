@@ -176,11 +176,15 @@ bool MemoryDataSourceITest::TestInitialise_NumberOfBuffers() {
 }
 
 bool MemoryDataSourceITest::TestInitialise_BadHeapName() {
+#ifdef MULTIHEAP_SUPPORT
     MemoryDataSourceIDataSourceTest test;
     ConfigurationDatabase cdb;
     cdb.Write("HeapName", "BAD");
     bool ok = !test.Initialise(cdb);
     return ok;
+#else
+    return true;
+#endif
 }
 
 bool MemoryDataSourceITest::TestGetNumberOfMemoryBuffers() {

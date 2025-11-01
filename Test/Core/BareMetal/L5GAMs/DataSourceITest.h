@@ -94,6 +94,11 @@ public:
     bool TestGetSignalNumberOfElements();
 
     /**
+     * @brief Tests the GetSignalNumberOfSamples method.
+     */
+    bool TestGetSignalNumberOfSamples();
+
+    /**
      * @brief Tests the GetSignalByteSize method.
      */
     bool TestGetSignalByteSize();

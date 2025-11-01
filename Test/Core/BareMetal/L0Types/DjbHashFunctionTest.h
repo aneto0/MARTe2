@@ -62,6 +62,12 @@ public:
      * @brief Tests the Compute method.
      */
     bool TestCompute(const char8 *in, uint32 size, uint32 result);
+
+    /**
+     * @brief Tests the Compute64 method.
+     */
+    bool TestCompute64(const char8 *in, uint32 size, uint64 result);
+
 };
 }
 

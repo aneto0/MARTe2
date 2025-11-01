@@ -59,5 +59,12 @@ bool Fnv1aHashFunctionTest::TestCompute(const char8 *in, uint32 size, uint32 res
     return (test.Compute(in, size)==result);
 }
 
+bool Fnv1aHashFunctionTest::TestCompute64(const char8 *in, uint32 size, uint64 result) {
+    Fnv1aHashFunction test;
+    uint64 res = test.Compute64(in, size);
+    return (test.Compute64(in, size)==result);
+}
+
+
 }
 
