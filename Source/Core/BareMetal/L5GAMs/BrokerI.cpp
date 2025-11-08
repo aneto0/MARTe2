@@ -242,6 +242,7 @@ bool BrokerI::InitFunctionPointers(const SignalDirection direction,
     return ret;
 }
 
+//lint -e{661} -e{662} Possible access of out-of-bounds pointer (1 beyond end of data) by operator '[' [MISRA C++ Rule 5-0-16]. Justification: i is at least 1. the index goes up to auxNumberOfCopies-1u and bcp has allocated memory for auxNumberOfCopies
 bool BrokerI::InitFunctionPointersOptim(const SignalDirection direction,
                                         DataSourceI &dataSource,
                                         const char8 *const functionName,
@@ -310,13 +311,10 @@ bool BrokerI::InitFunctionPointersOptim(const SignalDirection direction,
                     accumCopyByteSize = bcp[0].copySize;
                     uint32 auxIdx = 1u;
                     for (uint32 i = 1u; i < auxNumberOfCopies; i++) {
-                        //lint -e{661}  Possible access of out-of-bounds pointer (1 beyond end of data) by operator '[' [MISRA C++ Rule 5-0-16]. Justification: i is at least 1. the index goes up to auxNumberOfCopies-1u and bcp has allocated memory for auxNumberOfCopies
                         bool isGAMMemoryContinuous = &(reinterpret_cast<char8*>(bcp[i - 1u].gamPointer)[bcp[i - 1u].copySize])
                                 == reinterpret_cast<char8*>(bcp[i].gamPointer);
-                        //lint -e{661}  Possible access of out-of-bounds pointer (1 beyond end of data) by operator '[' [MISRA C++ Rule 5-0-16]. Justification: i is at least 1. the index goes up to auxNumberOfCopies-1u and bcp has allocated memory for auxNumberOfCopies
                         bool isDSMemoryContinuous = &(reinterpret_cast<char8*>(bcp[i - 1u].dataSourcePointer)[bcp[i - 1u].copySize])
                                 == reinterpret_cast<char8*>(bcp[i].dataSourcePointer);
-                        //lint -e{661}  Possible access of out-of-bounds pointer (1 beyond end of data) by operator '[' [MISRA C++ Rule 5-0-16]. Justification: i is at least 1. the index goes up to auxNumberOfCopies-1u and bcp has allocated memory for auxNumberOfCopies
                         if (!(isGAMMemoryContinuous && isDSMemoryContinuous)) {
                             copyTableInfo[auxIdx].functionSignalPointers = bcp[i].gamPointer;
                             copyTableInfo[auxIdx].copyOffset = bcp[i].signalDSByteOffsets;
@@ -325,7 +323,6 @@ bool BrokerI::InitFunctionPointersOptim(const SignalDirection direction,
                             accumCopyByteSize = 0u;
                             auxIdx++;
                         }
-                        //lint -e{661}  Possible access of out-of-bounds pointer (1 beyond end of data) by operator '[' [MISRA C++ Rule 5-0-16]. Justification: i is at least 1. the index goes up to auxNumberOfCopies-1u and bcp has allocated memory for auxNumberOfCopies
                         accumCopyByteSize += bcp[i].copySize;
                     }
                     copyTableInfo[numberOfCopies - 1u].copyByteSize = accumCopyByteSize;
@@ -469,37 +466,72 @@ bool BrokerI::FillCopyTable(const SignalDirection direction,
     //lint -e{429} Custodial pointer 'bcp' (line 382) has not been freed or returned. Justification: it is removed in InitFunctionPointersOptim() when is no longer used.
 }
 
+//lint -e{661} -e{662} Possible access of out-of-bounds pointer (1 beyond end of data) by operator '[' [MISRA C++ Rule 5-0-16]. Justification: i is at least 1. the index goes up to auxNumberOfCopies-1u and bcp has allocated memory for auxNumberOfCopies
 void BrokerI::SortByGAMAddress(basicCopyTable *const bcp,
                                const uint32 elements) const {
     basicCopyTable *sbcp = new basicCopyTable[elements];
-    void *candidate = bcp[0u].gamPointer;
-    uint32 candidateIdx = 0u;
-    void *min = NULL_PTR(void*);
-    void *maxAddress = NULL_PTR(void*);
-    //lint -e{613} Possible use of null pointer 'maxAddress'. Justification: only comparing addresses, there is no risk of accessing NULL pointers
-    for (uint32 bcpIdx = 0u; bcpIdx < elements; bcpIdx++) {
-        //lint -e{946} Relational or subtract operator applied to pointers [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17], [MISRA C++ Rule 5-0-18]. Justification: comparing address of the same object (GAM memory), therefore compliant by exception
-        if (bcp[bcpIdx].gamPointer > maxAddress) {
-            maxAddress = bcp[bcpIdx].gamPointer;
-        }
-    }
-    //lint -e{613} Possible use of null pointer 'maxAddress'. Justification: only comparing addresses, there is no risk of accessing NULL pointers
-    for (uint32 sbcpIdx = 0u; sbcpIdx < elements; sbcpIdx++) {
-        for (uint32 bcpIdx = 0u; bcpIdx < elements; bcpIdx++) {
-            //lint -e{946} Relational or subtract operator applied to pointers [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17], [MISRA C++ Rule 5-0-18]. Justification: comparing address of the same object (GAM memory), therefore compliant by exception
-            if ((bcp[bcpIdx].gamPointer <= candidate) && (bcp[bcpIdx].gamPointer > min)) {
-                candidate = bcp[bcpIdx].gamPointer;
-                candidateIdx = bcpIdx;
+
+    // iterative merge sort of the copy-table
+    basicCopyTable* L = NULL_PTR(basicCopyTable*);
+    basicCopyTable* R = NULL_PTR(basicCopyTable*);
+    sbcp[0u] = bcp[0u];
+    //lint -e{9113} -e{834} operator + - dependencies are acknowledged, but code readability is more important
+    for (uint32 currentSize = 1u; currentSize < elements; currentSize = 2u * currentSize) {
+        for (uint32 leftStart = 0u; leftStart < (elements - 1u); leftStart += 2u * currentSize) {
+            uint32 midPoint = (leftStart + currentSize   - 1u) < (elements - 1u) ? (leftStart +        currentSize - 1u) : (elements - 1u);
+            uint32 rightEnd = (leftStart + 2u *currentSize - 1u) < (elements - 1u) ? (leftStart + 2u * currentSize - 1u) : (elements - 1u);
+
+            uint32 n1 = (midPoint - leftStart + 1u);
+            uint32 n2 = (rightEnd - midPoint);
+
+            L = new basicCopyTable[n1];
+            R = new basicCopyTable[n2];
+
+            for (uint32 idx = 0u; idx < n1; idx++) {
+                //lint -e{679} no truncation
+                L[idx] = bcp[leftStart + idx];
+            }
+            for (uint32 idx = 0u; idx < n2; idx++) {
+                //lint -e{679} no truncation
+                R[idx] = bcp[midPoint + 1u + idx];
+            }
+
+            uint32 i = 0u; uint32 j = 0u; uint32 k = leftStart;
+            while ( (i < n1) && (j < n2) ) {
+                //lint -e{946} pointer arithmetic required for this implementation
+                if (L[i].gamPointer <= R[j].gamPointer) {
+                    sbcp[k] = L[i];
+                    i++;
+                } else {
+                    sbcp[k] = R[j];
+                    j++;
+                }
+                k++;
+            }
+            while (i < n1) {
+                sbcp[k] = L[i];
+                i++;
+                k++;
+            }
+            while (j < n2) {
+                sbcp[k] = R[j];
+                j++;
+                k++;
+            }
+
+            if (L != NULL_PTR(basicCopyTable*)) {
+                delete[] L;
+            }
+            if (R != NULL_PTR(basicCopyTable*)) {
+                delete[] R;
             }
         }
-        //lint -e{534} Ignoring return value of function. Justification: the return value has no impact on the behaviour of the function.
-        MemoryOperationsHelper::Copy(&sbcp[sbcpIdx], &bcp[candidateIdx], static_cast<uint32>(sizeof(basicCopyTable)));
-        min = candidate;
-        candidate = maxAddress;
     }
+
     //lint -e{534} Ignoring return value. Justification: return value has no impact on the code. The function return void.
     //lint -e{593} Custodial pointer 'destination' possibly not freed or returned. Justification: it is removed in InitFunctionPointersOptim() when is no longer used.
     MemoryOperationsHelper::Copy(bcp, sbcp, static_cast<uint32>(sizeof(basicCopyTable)) * elements);
+
     if (sbcp != NULL_PTR(basicCopyTable*)) {
         delete[] sbcp;
     }

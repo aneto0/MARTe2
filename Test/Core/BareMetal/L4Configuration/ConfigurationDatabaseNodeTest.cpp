@@ -50,7 +50,7 @@ bool ConfigurationDatabaseNodeTest::TestPurge() {
     ConfigurationDatabaseNode cdbn;
     ReferenceT<Object> ref(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ref->SetName("T");
-    bool ok = cdbn.Insert(ref);
+    bool ok = cdbn.Insert(ref, true);
     ok &= (cdbn.Size() == 1u);
     cdbn.Purge();
     ok &= (cdbn.Size() == 0u);
@@ -62,7 +62,7 @@ bool ConfigurationDatabaseNodeTest::TestPurge_ReferenceContainer() {
     ConfigurationDatabaseNode cdbn;
     ReferenceT<Object> ref(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ref->SetName("T");
-    bool ok = cdbn.Insert(ref);
+    bool ok = cdbn.Insert(ref, true);
     ok &= (cdbn.Size() == 1u);
     ReferenceContainer rc;
     cdbn.Purge();
@@ -81,7 +81,7 @@ bool ConfigurationDatabaseNodeTest::TestInsert() {
         StreamString nname;
         nname.Printf("%d", n);
         ref->SetName(nname.Buffer());
-        ok &= cdbn.Insert(ref);
+        ok &= cdbn.Insert(ref, true);
     }
     ok &= (cdbn.Size() == nnodes);
     return ok;
@@ -102,7 +102,7 @@ bool ConfigurationDatabaseNodeTest::TestGet() {
         StreamString nname;
         nname.Printf("%d", n);
         ref->SetName(nname.Buffer());
-        ok &= cdbn.Insert(ref);
+        ok &= cdbn.Insert(ref, true);
     }
     for (n = 0u; n < nnodes; n++) {
         ReferenceT<Object> ref = cdbn.Get(n);
@@ -123,9 +123,9 @@ bool ConfigurationDatabaseNodeTest::TestFind() {
     ReferenceT<ConfigurationDatabaseNode> grandChild(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     grandChild->SetName("C");
     grandChild->SetParent(child);
-    child->Insert(grandChild);
+    child->Insert(grandChild, true);
     child->SetParent(parent);
-    parent->Insert(child);
+    parent->Insert(child, true);
     Reference ref = parent->Find("B.C");
     bool ok = ref.IsValid();
     StreamString expectedName = "C";
@@ -146,7 +146,7 @@ bool ConfigurationDatabaseNodeTest::TestFindLeaf() {
         StreamString nname;
         nname.Printf("%d", n);
         ref->SetName(nname.Buffer());
-        ok &= cdbn.Insert(ref);
+        ok &= cdbn.Insert(ref, true);
     }
     for (n = 0u; n < nnodes; n++) {
         StreamString nname;
@@ -169,7 +169,7 @@ bool ConfigurationDatabaseNodeTest::TestDelete() {
         StreamString nname;
         nname.Printf("%d", n);
         ref->SetName(nname.Buffer());
-        ok &= cdbn.Insert(ref);
+        ok &= cdbn.Insert(ref, true);
     }
 
     cdbn.Delete(cdbn.Get(1));

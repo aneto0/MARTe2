@@ -44,6 +44,7 @@
 -#dENVIRONMENT=Linux
 -dMEMORY_STATISTICS
 -dProcessorTypeDefaultCPUs=1u
+-dMULTIHEAP_SUPPORT
 +cpp(.h)
 //+stack(&file=/tmp/stack.txt)
 /*

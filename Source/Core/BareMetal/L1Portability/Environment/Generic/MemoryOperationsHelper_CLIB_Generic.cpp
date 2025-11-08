@@ -55,6 +55,7 @@ bool Copy(void* const destination,
 
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
+        //lint -e{670} the BrokerI file was generating false positives during specific walks and I could not find in other way of disabling the warnings.
         ret = memcpy(destination, source, static_cast<osulong>(size)) != NULL;
         if (!ret) {
             REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memcpy()");
