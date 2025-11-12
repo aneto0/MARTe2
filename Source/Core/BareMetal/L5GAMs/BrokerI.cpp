@@ -483,47 +483,48 @@ void BrokerI::SortByGAMAddress(basicCopyTable *const bcp,
 
             uint32 n1 = (midPoint - leftStart + 1u);
             uint32 n2 = (rightEnd - midPoint);
+            if ((n1 > 0u) && (n2 > 0u)) {
+                L = new basicCopyTable[n1];
+                R = new basicCopyTable[n2];
 
-            L = new basicCopyTable[n1];
-            R = new basicCopyTable[n2];
+                for (uint32 idx = 0u; idx < n1; idx++) {
+                    //lint -e{679} no truncation
+                    L[idx] = bcp[leftStart + idx];
+                }
+                for (uint32 idx = 0u; idx < n2; idx++) {
+                    //lint -e{679} no truncation
+                    R[idx] = bcp[midPoint + 1u + idx];
+                }
 
-            for (uint32 idx = 0u; idx < n1; idx++) {
-                //lint -e{679} no truncation
-                L[idx] = bcp[leftStart + idx];
-            }
-            for (uint32 idx = 0u; idx < n2; idx++) {
-                //lint -e{679} no truncation
-                R[idx] = bcp[midPoint + 1u + idx];
-            }
-
-            uint32 i = 0u; uint32 j = 0u; uint32 k = leftStart;
-            while ( (i < n1) && (j < n2) ) {
-                //lint -e{946} pointer arithmetic required for this implementation
-                if (L[i].gamPointer <= R[j].gamPointer) {
+                uint32 i = 0u; uint32 j = 0u; uint32 k = leftStart;
+                while ( (i < n1) && (j < n2) ) {
+                    //lint -e{946} pointer arithmetic required for this implementation
+                    if (L[i].gamPointer <= R[j].gamPointer) {
+                        sbcp[k] = L[i];
+                        i++;
+                    } else {
+                        sbcp[k] = R[j];
+                        j++;
+                    }
+                    k++;
+                }
+                while (i < n1) {
                     sbcp[k] = L[i];
                     i++;
-                } else {
+                    k++;
+                }
+                while (j < n2) {
                     sbcp[k] = R[j];
                     j++;
+                    k++;
                 }
-                k++;
-            }
-            while (i < n1) {
-                sbcp[k] = L[i];
-                i++;
-                k++;
-            }
-            while (j < n2) {
-                sbcp[k] = R[j];
-                j++;
-                k++;
-            }
 
-            if (L != NULL_PTR(basicCopyTable*)) {
-                delete[] L;
-            }
-            if (R != NULL_PTR(basicCopyTable*)) {
-                delete[] R;
+                if (L != NULL_PTR(basicCopyTable*)) {
+                    delete[] L;
+                }
+                if (R != NULL_PTR(basicCopyTable*)) {
+                    delete[] R;
+                }
             }
         }
     }
