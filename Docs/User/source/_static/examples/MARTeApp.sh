@@ -97,6 +97,14 @@ then
     else
         strace -o/tmp/strace.err $MARTeAPP -l $LOADER -f $FILE -s $STATE
     fi
+elif [ "$DEBUG" = "valgrind" ]
+then
+    if [ -z ${STATE+x} ]; then
+        valgrind --leak-check=full --show-leak-kinds=all $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
+    else
+        valgrind --leak-check=full --show-leak-kinds=all $MARTeAPP -l $LOADER -f $FILE -s $STATE
+    fi
+
 else
     if [ -z ${STATE+x} ]; then
         $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
