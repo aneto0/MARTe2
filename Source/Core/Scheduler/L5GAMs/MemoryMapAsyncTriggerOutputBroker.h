@@ -70,7 +70,7 @@ struct DLL_API MemoryMapAsyncTriggerOutputBrokerBufferEntry {
  * after the trigger will also be flushed into the DataSourceI.
  *
  * The Triggering signal shall be the first signal of the DataSourceI (i.e. the signal with the name GetSignalName(0, name)) and shall have
- * type uint8. All the signals shall have one and only one sample. The DataSourceI shall return GetNumberOfMemoryBuffers() == 1.
+ * type uint8. The DataSourceI shall return GetNumberOfMemoryBuffers() == 1.
  *
  * Only one GAM is allowed to interact with this MemoryMapAsyncTriggerOutputBroker (an IOGAM can be used to collate all the signals).
  * 
