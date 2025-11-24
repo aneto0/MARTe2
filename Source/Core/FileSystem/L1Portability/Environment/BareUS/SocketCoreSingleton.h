@@ -53,6 +53,8 @@ namespace MARTe {
             static uint32 CountReadyToRead();
 
             static void ClearNonReady();
+
+            static void ClearAll();
     };
 }
 
