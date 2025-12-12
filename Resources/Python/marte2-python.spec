@@ -1,5 +1,5 @@
 Name:           marte2-python
-Version:        0.1.0
+Version:        %{rpm_version}
 Release:        1%{?dist}
 Summary:        MARTe2 Python package
 License:        EUPL
