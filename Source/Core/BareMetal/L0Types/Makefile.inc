@@ -33,7 +33,7 @@ MARTe2_LEVEL=L0Types
 OBJSX=  BitSet.x\
         HashFunction.x\
         DjbHashFunction.x\
-        Fnv1aHashFunction.x\
+        Fnv1aHashFunction.x2\
         LinkedListable.x \
         LinkedListHolder.x
         

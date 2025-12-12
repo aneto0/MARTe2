@@ -847,6 +847,46 @@ bool DataSourceITest::TestGetSignalNumberOfElements() {
     return ret;
 }
 
+bool DataSourceITest::TestGetSignalNumberOfSamples() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfSignals = dataSource->GetNumberOfSignals();
+    if (ret) {
+        ret = (numberOfSignals == 5u);
+    }
+
+    const char8 *signalNames[] = { "Signal1A", "Signal2", "Signal3", "Signal4A", "Signal5" };
+    uint32 signalSamples[] = { 1, 1, 1, 1, 3 };
+    StreamString name;
+    uint32 idx;
+    uint32 n;
+    uint32 samplesByString = 0u;
+    uint32 samplesByIndex  = 0u;
+    for (n = 0; (n < numberOfSignals) && (ret); n++) {
+        ret = dataSource->GetSignalIndex(idx, signalNames[n]);
+        if (ret) {
+            ret = dataSource->GetSignalNumberOfSamples(idx, samplesByIndex);
+            if (ret) {
+                ret = dataSource->GetSignalNumberOfSamples(signalNames[n], samplesByString);
+            }
+        }
+        if (ret) {
+            ret = (samplesByString == signalSamples[n]) && (samplesByIndex == signalSamples[n]);
+        }
+    }
+    if (ret) {
+        ret = !(dataSource->GetSignalNumberOfSamples("WrongSignalName", samplesByString));
+        if (ret) {
+            ret = !(dataSource->GetSignalNumberOfSamples(100000, samplesByIndex));
+        }
+    }
+    return ret;
+}
+
 bool DataSourceITest::TestGetSignalByteSize() {
     bool ret = InitialiseDataSourceIEnviroment(config1);
     ReferenceT<DataSourceITestHelper> dataSource;

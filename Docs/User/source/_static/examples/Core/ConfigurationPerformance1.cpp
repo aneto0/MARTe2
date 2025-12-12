@@ -1,8 +1,8 @@
 /**
- * @file DjbHashFunctionGTest.cpp
- * @brief Source file for class DjbHashFunctionGTest
- * @date 19/08/2019
- * @author Giuseppe Ferro
+ * @file ConfigurationExample8.cpp
+ * @brief Source file for class ConfigurationExample8
+ * @date 27/06/2022
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,21 +17,31 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class DjbHashFunctionGTest (public, protected, and private). Be aware that some 
+ * the class ConfigurationExample8 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
+#include "ClassRegistryDatabase.h"
+#include "ConfigurationDatabase.h"
+#include "ErrorLoggerExample.h"
+#include "Matrix.h"
+#include "Object.h"
+#include "Reference.h"
+#include "ReferenceT.h"
+#include "StreamString.h"
+#include "StructuredDataIHelper.h"
+#include "Vector.h"
 
-#include "MARTe2UTest.h"
-#include "DjbHashFunctionTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,40 +50,39 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestConstructor) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestConstructor());
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 0, 2090149025));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestComputeSize) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 4, 2090149025));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestComputeLessSize) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 3, 193488370));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute64("ciao", 0, 6385116321));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64Size) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute64("ciao", 4, 6385116321));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64LessSize) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute64("ciao", 3, 193488370));
+int main(int argc, char **argv) {
+    using namespace MARTe;
+    ConfigurationDatabase cdb;
+    uint64 now = HighResolutionTimer::Counter();
+    for(uint32 b=0; b<68; b++) {
+        StreamString n1;
+        n1.Printf("%d", b);
+        cdb.CreateAbsolute(n1.Buffer());
+        for(uint32 i=0; i<10024; i++) {
+            StreamString n2;
+            n2.Printf("%d", i);
+            cdb.CreateRelative(n2.Buffer());
+            cdb.Write("FullType", "uint32");
+            cdb.Write("NumberOfDimensions", 1);
+            cdb.Write("NumberOfDimensions1", 1);
+            cdb.Write("NumberOfDimensions2", 1);
+            cdb.Write("NumberOfDimensions3", 1);
+            cdb.Write("NumberOfDimensions4", 1);
+            cdb.Write("NumberOfDimensions5", 1);
+            cdb.Write("NumberOfElements", 1);
+            StreamString qn;
+            qn.Printf("aaa.bbb.cc.ddd.eee.{%d}.{%d}", b, i);
+            cdb.Write("QualifiedName", qn.Buffer());
+            cdb.Write("MemberSize", 4);
+            cdb.MoveToAncestor(1u);
+        }
+        cdb.MoveToAncestor(1u);
+        printf("Node [%d]\n", b);
+    }
+    uint64 end = HighResolutionTimer::Counter();
+    uint64 tdiff = end - now;
+    float64 ttime = tdiff * HighResolutionTimer::Period();
+    printf("Took [%e] seconds\n", ttime);
+    return 0;
 }
 

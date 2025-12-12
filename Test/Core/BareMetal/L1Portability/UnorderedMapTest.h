@@ -1,8 +1,8 @@
 /**
- * @file BinaryTreeTest.h
- * @brief Header file for class BinaryTreeTest
- * @date 19/08/2019
- * @author Giuseppe Ferro
+ * @file UnorderedMapTest.h
+ * @brief Header file for class UnorderedMapTest
+ * @date 10/09/2025
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BinaryTreeTest
+ * @details This header file contains the declaration of the class UnorderedMapTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_BAREMETAL_L1PORTABILITY_BINARYTREETEST_H_
-#define TEST_CORE_BAREMETAL_L1PORTABILITY_BINARYTREETEST_H_
+#ifndef TEST_CORE_BAREMETAL_L1PORTABILITY_UNORDERED_MAPTEST_H_
+#define TEST_CORE_BAREMETAL_L1PORTABILITY_UNORDERED_MAPTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BinaryTree.h"
+#include "UnorderedMap.h"
 #include "Fnv1aHashFunction.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,51 +40,51 @@
 namespace MARTe {
 
 /**
- * @brief Test the BinaryTree public methods.
+ * @brief Test the UnorderedMap public methods.
  */
 template<typename T, typename HashFunction>
-class BinaryTreeTest {
+class UnorderedMapTest {
 public:
-    BinaryTreeTest();
+    UnorderedMapTest();
 
-    virtual ~BinaryTreeTest();
+    virtual ~UnorderedMapTest();
 
     bool TestConstructor();
 
     /**
      * @brief Tests the Insert method.
      */
-    bool TestInsert(BinaryTree<T, HashFunction> &test, const char8 *id, T value);
+    bool TestInsert(UnorderedMap<T, HashFunction> &test, const char8 *id, T value);
 
     /**
      * @brief Tests the Remove method.
      */
-    bool TestRemove(BinaryTree<T, HashFunction> &test, const char8 *id);
+    bool TestRemove(UnorderedMap<T, HashFunction> &test, const char8 *id);
 
     /**
      * @brief Tests the Search method.
      */
-    bool TestSearch(BinaryTree<T, HashFunction> &test, const char8 *id, T result);
+    bool TestSearch(UnorderedMap<T, HashFunction> &test, const char8 *id, T result);
 
     /**
      * @brief Tests the GetValue method.
      */
-    bool TestGetValue(BinaryTree<T, HashFunction> &test, const char8 *id, T result);
+    bool TestGetValue(UnorderedMap<T, HashFunction> &test, const char8 *id, T result);
 
     /**
      * @brief Tests the [] operator.
      */
-    bool TestSquareOperator(BinaryTree<T, HashFunction> &test, const char8 *id, T result);
+    bool TestSquareOperator(UnorderedMap<T, HashFunction> &test, const char8 *id, T result);
 
     /**
      * @brief Tests the Reset method.
      */
-    bool TestReset(BinaryTree<T, HashFunction> &test);
+    bool TestReset(UnorderedMap<T, HashFunction> &test);
 
     /**
      * @brief Tests the [] method with a non-existent id.
      */
-    bool TestSquareOperatorNonExistendId(BinaryTree<T, HashFunction> &test);
+    bool TestSquareOperatorNonExistendId(UnorderedMap<T, HashFunction> &test);
 
 };
 
@@ -95,61 +95,59 @@ public:
 
 namespace MARTe {
 template<typename T, typename HashFunction>
-BinaryTreeTest<T, HashFunction>::BinaryTreeTest() {
+UnorderedMapTest<T, HashFunction>::UnorderedMapTest() {
 }
 template<typename T, typename HashFunction>
-BinaryTreeTest<T, HashFunction>::~BinaryTreeTest() {
+UnorderedMapTest<T, HashFunction>::~UnorderedMapTest() {
 }
 
 template<typename T, typename HashFunction>
-bool BinaryTreeTest<T, HashFunction>::TestConstructor() {
-    BinaryTree<T, Fnv1aHashFunction> test;
+bool UnorderedMapTest<T, HashFunction>::TestConstructor() {
+    UnorderedMap<T, Fnv1aHashFunction> test;
     return true;
 }
 
 template<typename T, typename HashFunction>
-bool BinaryTreeTest<T, HashFunction>::TestInsert(BinaryTree<T, HashFunction> &test, const char8 *id, T value) {
+bool UnorderedMapTest<T, HashFunction>::TestInsert(UnorderedMap<T, HashFunction> &test, const char8 *id, T value) {
     uint32 size = test.GetSize();
-    uint32 idx;
-    test.Insert(id, value, idx);
+    test.Insert(id, value);
     return test.GetSize() == (size + 1u);
 }
 template<typename T, typename HashFunction>
-bool BinaryTreeTest<T, HashFunction>::TestRemove(BinaryTree<T, HashFunction> &test, const char8 *id) {
+bool UnorderedMapTest<T, HashFunction>::TestRemove(UnorderedMap<T, HashFunction> &test, const char8 *id) {
     uint32 size = test.GetSize();
     test.Remove(id);
     return test.GetSize() == (size - 1u);
 }
 template<typename T, typename HashFunction>
-bool BinaryTreeTest<T, HashFunction>::TestSearch(BinaryTree<T, HashFunction> &test, const char8 *id, T result) {
-    uint32 index = 0u;
-    test.Search(id, index);
-    return test[index] == result;
+bool UnorderedMapTest<T, HashFunction>::TestSearch(UnorderedMap<T, HashFunction> &test, const char8 *id, T result) {
+    T val = 0u;
+    test.Search(id, val);
+    return val == result;
 }
 template<typename T, typename HashFunction>
-bool BinaryTreeTest<T, HashFunction>::TestGetValue(BinaryTree<T, HashFunction> &test, const char8 *id, T result) {
-
-    uint32 index = 0u;
-    test.Search(id, index);
-    return test[index] == result;
+bool UnorderedMapTest<T, HashFunction>::TestGetValue(UnorderedMap<T, HashFunction> &test, const char8 *id, T result) {
+    T val = 0u;
+    test.Search(id, val);
+    return val == result;
 }
 template<typename T, typename HashFunction>
-bool BinaryTreeTest<T, HashFunction>::TestSquareOperator(BinaryTree<T, HashFunction> &test, const char8 *id, T result) {
+bool UnorderedMapTest<T, HashFunction>::TestSquareOperator(UnorderedMap<T, HashFunction> &test, const char8 *id, T result) {
     return (test[id] == result);
 }
 
 template<typename T, typename HashFunction>
-bool BinaryTreeTest<T, HashFunction>::TestReset(BinaryTree<T, HashFunction> &test) {
+bool UnorderedMapTest<T, HashFunction>::TestReset(UnorderedMap<T, HashFunction> &test) {
     test.Reset();
     return (test.GetSize() == 0u);
 }
 
 template<typename T, typename HashFunction>
-bool BinaryTreeTest<T, HashFunction>::TestSquareOperatorNonExistendId(BinaryTree<T, HashFunction> &test) {
+bool UnorderedMapTest<T, HashFunction>::TestSquareOperatorNonExistendId(UnorderedMap<T, HashFunction> &test) {
     T t = test["NOTEXISTENT"];
     return (!t.IsValid());
 }
 }
 
-#endif /* TEST_CORE_BAREMETAL_L1PORTABILITY_BINARYTREETEST_H_ */
+#endif /* TEST_CORE_BAREMETAL_L1PORTABILITY_UNORDERED_MAPTEST_H_ */
 

@@ -54,7 +54,7 @@ uint32 DjbHashFunction::Compute(const char8 * const in, const uint32 size) {
         if(size == 0u) {
             while((*input)!=0u) {
                 hash *= 33u;
-                hash ^= (*input);
+                hash += (*input);
                 input = &input[1];
             }
         }
@@ -62,7 +62,30 @@ uint32 DjbHashFunction::Compute(const char8 * const in, const uint32 size) {
             uint32 i;
             for(i=0u; i<size; i++) {
                 hash *= 33u;
-                hash ^= (*input);
+                hash += (*input);
+                input = &input[1];
+            }
+        }
+    }
+    return hash;
+}
+
+uint64 DjbHashFunction::Compute64(const char8 * const in, const uint32 size) {
+    uint8 *input = reinterpret_cast<uint8*>(const_cast<char8 *>(in));
+    uint64 hash = 5381u;
+    if (input != NULL) {
+        if(size == 0u) {
+            while((*input)!=0u) {
+                hash *= 33u;
+                hash += (*input);
+                input = &input[1];
+            }
+        }
+        else {
+            uint32 i;
+            for(i=0u; i<size; i++) {
+                hash *= 33u;
+                hash += (*input);
                 input = &input[1];
             }
         }

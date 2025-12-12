@@ -1,8 +1,8 @@
 /**
- * @file DjbHashFunctionGTest.cpp
- * @brief Source file for class DjbHashFunctionGTest
- * @date 19/08/2019
- * @author Giuseppe Ferro
+ * @file UnorderedMapTest.cpp
+ * @brief Source file for class UnorderedMapTest
+ * @date 10/09/2025
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class DjbHashFunctionGTest (public, protected, and private). Be aware that some 
+ * the class UnorderedMapTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,13 +25,12 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "MARTe2UTest.h"
-#include "DjbHashFunctionTest.h"
+#include "UnorderedMapTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,41 +38,4 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-using namespace MARTe;
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestConstructor) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestConstructor());
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 0, 2090149025));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestComputeSize) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 4, 2090149025));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestComputeLessSize) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 3, 193488370));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute64("ciao", 0, 6385116321));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64Size) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute64("ciao", 4, 6385116321));
-}
-
-TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64LessSize) {
-    DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute64("ciao", 3, 193488370));
-}
 

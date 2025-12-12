@@ -49,7 +49,6 @@ ConfigurationDatabaseNode::ConfigurationDatabaseNode() :
     numberOfNodes = 0u;
     maxSize = 0u;
     container = NULL_PTR(Reference *);
-    muxTimeout = TTInfiniteWait;
 }
 
 /*lint -e{1579} .Justification: The destructor calls an external function. */
@@ -79,10 +78,20 @@ void ConfigurationDatabaseNode::Purge() {
     binTree.Reset();
 }
 
-bool ConfigurationDatabaseNode::Insert(Reference ref) {
-    bool ok = Lock();
-    if (ok) {
-        uint32 index = containerSize;
+bool ConfigurationDatabaseNode::Insert(Reference ref, const bool failIfExists) {
+    uint32 index = containerSize;
+    bool ok = true;
+    bool alreadyExists = !binTree.Insert(ref->GetName(), index);
+    if(alreadyExists) {
+        if(failIfExists) {
+            ok = false;
+        }
+        else {
+            /*lint -e{613} the index is managed together with the instances so invalid accesses should be prevented by design.*/
+            container[index] = ref;
+        }
+    }
+    else {
         if (index >= maxSize) {
             if (maxSize == 0u) {
                 maxSize = 1u;
@@ -93,7 +102,7 @@ bool ConfigurationDatabaseNode::Insert(Reference ref) {
             Reference *oldContainer = container;
             container = new Reference[maxSize];
             uint32 n;
-            //oldContainer == NULL => containerSize == 0
+            /*lint -e{613} oldContainer cannot be NULL: oldContainer == NULL => containerSize == 0*/
             for (n=0u; n<containerSize; n++) {
                 container[n] = oldContainer[n];
                 oldContainer[n] = Reference();
@@ -102,38 +111,31 @@ bool ConfigurationDatabaseNode::Insert(Reference ref) {
                 delete [] oldContainer;
             }
         }
+        /*lint -e{613} the index is managed together with the container so invalid accesses should be prevented by design.*/
         container[index] = ref;
-        ok = (binTree.Insert(ref->GetName(), index) != 0xFFFFFFFFu);
-    }
-    if (ok) {
-        containerSize++;
-        ReferenceT<ConfigurationDatabaseNode> node = ref;
-        if (node.IsValid()) {
-            numberOfNodes++;
+        if (ok) {
+            containerSize++;
+            ReferenceT<ConfigurationDatabaseNode> node = ref;
+            if (node.IsValid()) {
+                numberOfNodes++;
+            }
         }
     }
-    UnLock();
     return ok;
 }
 
-uint32 ConfigurationDatabaseNode::Size() {
-    uint32 ssize = 0u;
-    if (Lock()) {
-        ssize = containerSize;
-    }
-    UnLock();
-    return ssize;
+uint32 ConfigurationDatabaseNode::Size() const {
+    return containerSize;
 }
 
 Reference ConfigurationDatabaseNode::Get(const uint32 idx) {
     Reference ref;
-    if (Lock()) {
-        if (idx < containerSize) {
-            ref = container[idx];
-        }
+    if (idx < containerSize) {
+        /*lint -e{613} -e{661} containerSize is managed together with the container instance, thus if idx < containerSize, its access should be safe.*/
+        ref = container[idx];
     }
-    UnLock();
     return ref;
+/*lint -e{1762} cannot return a const Reference*/
 }
 
 Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
@@ -145,34 +147,30 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
     char8 term;
 
     if (toTokenize.GetToken(token, ".", term)) {
-        uint32 bindex;
+        uint32 index;
         //binary search
-        if (Lock()) {
-            if (binTree.Search(token.Buffer(), bindex)) {
-                uint32 index = binTree[bindex];
-                if (index < containerSize) {
-                    if (term == '.') {
-                        ReferenceT<ConfigurationDatabaseNode> containerI;
-                        containerI = container[index];
-                        UnLock();
-                        if (containerI.IsValid()) {
-                            StreamString next = &toTokenize.Buffer()[token.Size() + 1u];
-                            if (next.Size() > 0u) {
-                                //continue only for the path
-                                ret = containerI->Find(next.Buffer());
-                            }
-                            else {
-                                ret = containerI;
-                            }
+        /*lint -e{613} -e{661} containerSize is managed together with the container instance, thus if idx < containerSize, its access should be safe.*/
+        if (binTree.Search(token.Buffer(), index)) {
+            if (index < containerSize) {
+                if (term == '.') {
+                    ReferenceT<ConfigurationDatabaseNode> containerI;
+                    containerI = container[index];
+                    if (containerI.IsValid()) {
+                        StreamString next = &toTokenize.Buffer()[token.Size() + 1u];
+                        if (next.Size() > 0u) {
+                            //continue only for the path
+                            ret = containerI->Find(next.Buffer());
+                        }
+                        else {
+                            ret = containerI;
                         }
                     }
-                    else {
-                        ret = container[index];
-                    }
+                }
+                else {
+                    ret = container[index];
                 }
             }
         }
-        UnLock();
     }
 
     return ret;
@@ -180,84 +178,77 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
 
 Reference ConfigurationDatabaseNode::FindLeaf(const char8 * const name) {
     Reference ret;
-    uint32 bindex;
+    uint32 index;
     //binary search
-    if (Lock()) {
-        if (binTree.Search(name, bindex)) {
-            uint32 index = binTree[bindex];
-            if (index < containerSize) {
-                ret = container[index];
-            }
+    if (binTree.Search(name, index)) {
+        /*lint -e{613} -e{661} container size is always < containerSize*/
+        if (index < containerSize) {
+            ret = container[index];
         }
     }
-    UnLock();
     return ret;
 }
 
 bool ConfigurationDatabaseNode::Delete(Reference ref) {
-    bool ok = Lock();
+    bool ok = ref.IsValid();
+    uint32 index = 0u;
+    //binary search
     if (ok) {
-        ok = ref.IsValid();
-        uint32 index = 0u;
-        //binary search
+        ok = (binTree.Search(ref->GetName(), index));
         if (ok) {
-            uint32 bindex;
-            if (binTree.Search(ref->GetName(), bindex)) {
-                index = binTree[bindex];
-                ok = (index < containerSize);
-            }
-        }
-        if (ok) {
-            containerSize--;
-            if (containerSize < (maxSize / granularity)) {
-                maxSize /= granularity;
-                if (maxSize < containerSize) {
-                    maxSize = containerSize;
-                }
-            }
-            if (containerSize > 0u) {
-                Reference *oldContainer = container;
-                container = new Reference[maxSize];
-                uint32 n;
-                //oldContainer == NULL => containerSize == 0
-                for (n=0u; n<index; n++) {
-                    container[n] = oldContainer[n];
-                }
-                for (n=index; n<containerSize; n++) {
-                    /*lint -e{679} no truncation*/
-                    container[n] = oldContainer[n + 1u];
-                }
-                if (oldContainer != NULL_PTR(Reference *)) {
-                    delete [] oldContainer;
-                }
-            }
-            else {
-                delete [] container;
-                container = NULL_PTR(Reference *);
-                maxSize = 0u;
-            }
-        }
-        //Need to remap...
-        if (ok) {
-            binTree.Reset();
-            uint32 i;
-            for (i=0u; (i<containerSize) && (ok); i++) {
-                /*lint -e{613} containerSize > 0 => container != NULL*/
-                Reference eRef = container[i];
-                ok = (binTree.Insert(eRef->GetName(), static_cast<uint32>(i)) != 0xFFFFFFFFu);
-            }
-        }
-        if (ok) {
-            //Break the reference to the parent
-            ReferenceT<ConfigurationDatabaseNode> refCdbn = ref;
-            if (refCdbn.IsValid()) {
-                refCdbn->SetParent(Reference());
-                refCdbn->Purge();
-                numberOfNodes--;
-            }
+            ok = (index < containerSize);
         }
     }
-    UnLock();
+    if (ok) {
+        containerSize--;
+        if (containerSize < (maxSize / granularity)) {
+            maxSize /= granularity;
+            if (maxSize < containerSize) {
+                maxSize = containerSize;
+            }
+        }
+        /*lint -e{613} oldContainer == NULL => containerSize == 0*/
+        if (containerSize > 0u) {
+            Reference *oldContainer = container;
+            container = new Reference[maxSize];
+            uint32 n;
+            for (n=0u; n<index; n++) {
+                container[n] = oldContainer[n];
+            }
+            for (n=index; n<containerSize; n++) {
+                /*lint -e{796} -e{679} no truncation. containerSize decremented above*/
+                container[n] = oldContainer[n + 1u];
+            }
+            if (oldContainer != NULL_PTR(Reference *)) {
+                delete [] oldContainer;
+            }
+        }
+        else {
+            delete [] container;
+            container = NULL_PTR(Reference *);
+            maxSize = 0u;
+        }
+    }
+    //Need to remap...
+    if (ok) {
+        binTree.Reset();
+        uint32 i;
+        for (i=0u; (i<containerSize) && (ok); i++) {
+            /*lint -e{613} containerSize > 0 => container != NULL*/
+            Reference eRef = container[i];
+            uint32 idxRef = i;
+            ok = binTree.Insert(eRef->GetName(), idxRef);
+        }
+    }
+    if (ok) {
+        //Break the reference to the parent
+        ReferenceT<ConfigurationDatabaseNode> refCdbn = ref;
+        if (refCdbn.IsValid()) {
+            refCdbn->SetParent(Reference());
+            refCdbn->Purge();
+            numberOfNodes--;
+        }
+    }
     return ok;
 }
 
@@ -269,21 +260,8 @@ void ConfigurationDatabaseNode::SetParent(ReferenceT<ConfigurationDatabaseNode> 
     parent = parentIn;
 }
 
-bool ConfigurationDatabaseNode::Lock() {
-    return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
-}
-
-void ConfigurationDatabaseNode::UnLock() {
-    mux.FastUnLock();
-}
-
-uint32 ConfigurationDatabaseNode::GetNumberOfNodes() {
-    uint32 ssize = 0u;
-    if (Lock()) {
-        ssize = numberOfNodes;
-    }
-    UnLock();
-    return ssize;
+uint32 ConfigurationDatabaseNode::GetNumberOfNodes() const {
+    return numberOfNodes;
 }
 
 CLASS_REGISTER(ConfigurationDatabaseNode, "1.0")

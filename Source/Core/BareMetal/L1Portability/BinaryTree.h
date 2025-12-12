@@ -61,8 +61,11 @@ public:
      * @brief Inserts an element in the list
      * @param[in] id is the element identifier
      * @param [in] value is the element value
+     * @param [out] index the index at which the element was added
+     * @return true if the element was successfully added. 
+     * If the element already exists the index will be update with the element location.
      */
-    uint32 Insert(const char8 * const id, const T value);
+    bool Insert(const char8 * const id, const T value, uint32 &index);
 
     /**
      * @brief Removes an element from the list
@@ -141,9 +144,8 @@ BinaryTree<T, HashObject>::~BinaryTree() {
 }
 
 template<typename T, typename HashObject>
-uint32 BinaryTree<T, HashObject>::Insert(const char8 * const id, const T value) {
+bool BinaryTree<T, HashObject>::Insert(const char8 * const id, const T value, uint32 &index) {
     uint32 key = hashFun.Compute(id, 0u);
-    uint32 index = 0u;
     bool ret = !BinarySearch(key, index);
     if (ret) {
         ret = myKeyList.Insert(index, key);
@@ -152,8 +154,7 @@ uint32 BinaryTree<T, HashObject>::Insert(const char8 * const id, const T value) 
         ret = myList.Insert(index, value);
     }
 
-    return (ret) ? (index) : (0xFFFFFFFFu);
-
+    return ret;
 }
 
 template<typename T, typename HashObject>

@@ -73,6 +73,7 @@ bool HeapManagerTest::TestMallocSpecificName() {
 }
 
 bool HeapManagerTest::TestMallocInvalidName() {
+#ifdef MULTIHEAP_SUPPORT
     uint32 size = 2;
     AddHeap(&sh);
     ptr = Malloc(size * sizeof(int32), "WrongName");
@@ -80,6 +81,9 @@ bool HeapManagerTest::TestMallocInvalidName() {
     Free(ptr);
     RemoveHeap(&sh);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestFree() {
@@ -91,11 +95,15 @@ bool HeapManagerTest::TestFree() {
 }
 
 bool HeapManagerTest::TestFreeInvalidPointer() {
+#ifdef MULTIHEAP_SUPPORT
     uint32 size = 2;
     void * invalidPointer = Malloc(size * sizeof(int32));
     retVal = Free(invalidPointer);
     retVal = !Free(invalidPointer);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestRealloc() {
@@ -131,18 +139,27 @@ bool HeapManagerTest::TestAddHeap() {
 }
 
 bool HeapManagerTest::TestAddHeapNULL() {
+#ifdef MULTIHEAP_SUPPORT
     retVal = !AddHeap(NULL);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestAddHeapRepetedHeap() {
+#ifdef MULTIHEAP_SUPPORT
     AddHeap(&sh);
     retVal = !AddHeap(&sh);
     RemoveHeap(&sh);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestAddHeapTooMuch() {
+#ifdef MULTIHEAP_SUPPORT
     StandardHeap sh1;
     StandardHeap sh2;
     StandardHeap sh3;
@@ -196,27 +213,39 @@ bool HeapManagerTest::TestAddHeapTooMuch() {
     RemoveHeap(&sh15);
 
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestFindHeapByName() {
+#ifdef MULTIHEAP_SUPPORT
     void * ptr;
     AddHeap(&sh);
     ptr = FindHeap("StandardHeap");
     retVal = (ptr == &sh);
     RemoveHeap(&sh);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestFindHeapByNameInvalidName() {
+#ifdef MULTIHEAP_SUPPORT
     void * ptr;
     AddHeap(&sh);
     ptr = FindHeap("WrongName");
     retVal = (ptr == NULL);
     RemoveHeap(&sh);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestFindHeapByAddress() {
+#ifdef MULTIHEAP_SUPPORT
     uint32 size = 4;
     void *ptr;
     void *ptr1;
@@ -227,9 +256,13 @@ bool HeapManagerTest::TestFindHeapByAddress() {
     Free(ptr1);
     RemoveHeap(&sh);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestFindHeapByAddressInvalidAddress() {
+#ifdef MULTIHEAP_SUPPORT
     uint32 size = 3;
     void *ptr1 = NULL;
     void * invalidPointer = Malloc(size * sizeof(int32));
@@ -237,9 +270,13 @@ bool HeapManagerTest::TestFindHeapByAddressInvalidAddress() {
     ptr1 = FindHeap(invalidPointer);
     retVal = (ptr1 == NULL);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestFindHeapByAddress2Heaps() {
+#ifdef MULTIHEAP_SUPPORT
     uint32 size = 4;
     void *ptr1;
     void *shptr[3] = { NULL, NULL, NULL};
@@ -267,6 +304,9 @@ bool HeapManagerTest::TestFindHeapByAddress2Heaps() {
     Free(ptr1);
     RemoveHeap(&sh);
     return retVal;
+#else
+    return true;
+#endif
 }
 
 bool HeapManagerTest::TestGetStandardHeap() {

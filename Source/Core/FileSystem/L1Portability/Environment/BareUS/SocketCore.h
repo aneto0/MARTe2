@@ -137,6 +137,11 @@ class SocketCore {
          * 
          */
         SocketCore* nextSocketCore;
+
+        #ifdef UDP_CALLBACK_STATS_ENABLE
+            uint64 socketIdentifier;
+            uint64 packetCounter;
+        #endif
     
 };
 

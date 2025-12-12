@@ -1021,8 +1021,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                                         StreamString stateName = temp.GetChildName(st);
                                         states[st] = stateName;
                                     }
-                                    ret = ResolveConsumersAndProducers((directions[j] == InputSignals), states, functionId.Buffer(), functionName.Buffer(),
-                                                                       signalId.Buffer());
+                                    ret = ResolveConsumersAndProducers((directions[j] == InputSignals), states, functionId.Buffer(), functionName.Buffer(), signalId.Buffer());
                                 }
                             }
                         }
@@ -1033,8 +1032,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                             ret = ResolveFunctionsMemory(directions[j], functionDatabaseFunction, totalByteSize, allocatedByteSize, functionName.Buffer());
                         }
                         if (!ret) {
-                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to resolve for data source %s and function %s", dataSourceName.Buffer(),
-                                                functionName.Buffer());
+                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to resolve for data source %s and function %s", dataSourceName.Buffer(), functionName.Buffer());
                         }
                     }
                     if (ret) {
@@ -3432,7 +3430,6 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         StreamString cachedQualifiedName;
         StreamString cachedAliasName;
         StreamString cachedFullType;
-        StreamString cachedType;
         StreamString fullSignalName;
         StreamString fullAliasName;
         if (ret) {
@@ -3454,9 +3451,6 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         }
         if (ret) {
             ret = cachedIntrospections.Read("FullType", cachedFullType);
-        }
-        if (ret) {
-            ret = cachedIntrospections.Read("Type", cachedType);
         }
         //Finally got to the BasicType. Write all the properties
         if (ret) {

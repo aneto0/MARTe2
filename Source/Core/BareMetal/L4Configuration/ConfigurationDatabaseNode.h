@@ -31,11 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BinaryTree.h"
 #include "Fnv1aHashFunction.h"
 #include "Object.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "UnorderedMap.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -71,15 +71,16 @@ ConfigurationDatabaseNode    ();
     /**
      * @brief Inserts a reference to this node.
      * @param[in] ref the reference to be added.
+     * @param[in] failIfExists if true and the reference already exists, do not update its value and return an error.
      * @return true if the reference is successfully added.
      */
-    bool Insert(Reference ref);
+    bool Insert(Reference ref, bool failIfExists);
 
     /**
      * @brief Gets the number of references held by this node.
      * @return the number of references held by this node.
      */
-    uint32 Size();
+    uint32 Size() const;
 
     /**
      * @brief Gets the reference in position \a idx.
@@ -125,20 +126,9 @@ ConfigurationDatabaseNode    ();
      * @brief Gets the number of nodes that are of type ConfigurationDatabaseNode.
      * @return the numbe of nodes that are of type ConfigurationDatabaseNode.
      */
-    uint32 GetNumberOfNodes();
+    uint32 GetNumberOfNodes() const;
 
 private:
-
-    /**
-     * @brief Locks the internal spin-lock mutex.
-     * @return true if the lock succeeds.
-     */
-    bool Lock();
-
-    /**
-     * @brief Unlocks the internal spin-lock mutex.
-     */
-    void UnLock();
 
     /**
      * The container holding all the nodes directly underneath this node.
@@ -166,20 +156,9 @@ private:
     uint32 maxSize;
 
     /**
-     * Protects multiple access to the internal resources
-     */
-    FastPollingMutexSem mux;
-
-    /**
-     * Timeout
-     */
-    TimeoutType muxTimeout;
-
-
-    /**
      * Binary tree containing the indexes of the elements in the container.
      */
-    BinaryTree<uint32, Fnv1aHashFunction> binTree;
+    UnorderedMap<uint32, Fnv1aHashFunction> binTree;
 
     /**
      * The parent node

@@ -58,30 +58,102 @@ extern void NetworkInterfaceHook(void* netifParams);
 void EnqueueJoinRequest(udp_pcb *pcb, ip4_addr_t *ifaddr, ip4_addr_t *groupaddr);
 #endif
 
+#ifdef UDP_CALLBACK_STATS_ENABLE
+    #define MAX_NUM_OF_SOCKETS 30
+    #define ALPHA 0.975
+#endif
+
+
 namespace MARTe {
 
+#ifdef UDP_CALLBACK_STATS_ENABLE
+    uint64_t statsCtr = 0u;
+    uint32_t statsCounter = 0u;
+    uint32_t currentSockIdentifier = 0u;
+    uint32_t statsArray[MAX_NUM_OF_SOCKETS] = { 0u };
+    double maxDeltaArray[MAX_NUM_OF_SOCKETS] = { 0.0 };  
+    double avgArray[MAX_NUM_OF_SOCKETS] = { 0.0 };
+    uint16_t socketPortId[MAX_NUM_OF_SOCKETS] = { 0u };
+    //SocketCore* socketsArray[MAX_NUM_OF_SOCKETS] { NULL };
+#endif
+
 void UDPRegistrationCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
-    SocketCore* tmpSocketCore = static_cast<SocketCore*>(arg);
-    //uint64 nowTicks = HighResolutionTimer::Counter();
+    if(arg != NULL) {
+        uint64 nowTicks = HighResolutionTimer::Counter();
+        SocketCore* tmpSocketCore = static_cast<SocketCore*>(arg);
+        //Copy locally the relevant packet data. WARNING! Do NOT use direct memcpy instead of pbuf_copy_partial
+        tmpSocketCore->packetLen = pbuf_copy_partial(p, tmpSocketCore->packetBuffer, MAX_RX_PACKET_BUFFERSIZE, 0);
 
-    //Copy locally the relevant packet data. WARNING! Do NOT use direct memcpy instead of pbuf_copy_partial
-    tmpSocketCore->packetLen = pbuf_copy_partial(p, tmpSocketCore->packetBuffer, MAX_RX_PACKET_BUFFERSIZE, 0);
+        if((tmpSocketCore->packetLen == 0) || (tmpSocketCore->packetLen > MAX_RX_PACKET_BUFFERSIZE)) {
+            pbuf_free(p);
+            return;
+        }
 
-    tmpSocketCore->packetSourceIpAddress = *addr;
-    tmpSocketCore->packetSourcePort = port;
-
-    //Update control variables to emulate sequential read behaviour on socket
-    tmpSocketCore->isWritten = true;
-    //tmpSocketCore->lastPacketArrivalTimestamp = nowTicks;
-
-    //Update control variables to emulate read select behaviour on socket
-    if(tmpSocketCore->isReadSelected && !tmpSocketCore->isReadReady) {
+        tmpSocketCore->packetSourceIpAddress = *addr;
+        tmpSocketCore->packetSourcePort = port;
+        //Update control variables to emulate sequential read behaviour on socket
+        tmpSocketCore->isWritten = true;
         tmpSocketCore->isReadReady = true;
-        //tmpSocketCore->readReadyAt = nowTicks;
+        tmpSocketCore->lastPacketArrivalTimestamp = nowTicks;
+
+        //Free the lwIP buffer and return it to the pbuf pool
+        pbuf_free(p);
+
+        #ifdef UDP_CALLBACK_STATS_ENABLE
+            uint64 lastDeltaTicks = (uint64)nowTicks - tmpSocketCore->lastPacketArrivalTimestamp;
+            double lastDelta = (double)lastDeltaTicks / (double)COUNTS_PER_SECOND;
+            avgArray[tmpSocketCore->socketIdentifier] = avgArray[tmpSocketCore->socketIdentifier] + ALPHA * (lastDelta - avgArray[tmpSocketCore->socketIdentifier]);
+
+            if(lastDelta > maxDeltaArray[tmpSocketCore->socketIdentifier]) {
+                maxDeltaArray[tmpSocketCore->socketIdentifier] = lastDelta;
+            }
+
+            if((statsCtr % 280000) == 0) {
+                //uint64 maxArrivalTimestamp;
+                //uint64 minArrivalTimestamp = __UINT64_MAX__;
+
+                printf("\r\nHEAD");
+                for(int i = 0; i < currentSockIdentifier; i++) {
+                    // if(socketsArray[i]->lastPacketArrivalTimestamp > maxArrivalTimestamp) {
+                    //     maxArrivalTimestamp = socketsArray[i]->lastPacketArrivalTimestamp;
+                    // }
+                    // if(socketsArray[i]->lastPacketArrivalTimestamp < minArrivalTimestamp) {
+                    //     minArrivalTimestamp = socketsArray[i]->lastPacketArrivalTimestamp;
+                    // }
+                    printf("%u@%hu |", i, socketPortId[i]);
+                }
+                printf("\r\nCNT: ");
+                for(int i = 0; i < currentSockIdentifier; i++) {
+                    printf("%u | ", statsArray[i]);
+                }
+                printf("\r\n");
+
+                printf("MAX: ");
+                for(int i = 0; i < currentSockIdentifier; i++) {
+                    printf("%f | ", (double)maxDeltaArray[i]*1.0e6);
+                }
+                printf("\r\n");
+
+                printf("AVG: ");
+                for(int i = 0; i < currentSockIdentifier; i++) {
+                    printf("%f | ", avgArray[i]);
+                }
+
+                printf("\r\n");
+                //printf("DELTA = %u\r\n", (maxArrivalTimestamp - minArrivalTimestamp));
+                printf("\r\n---\r\n");
+            }
+
+            if((tmpSocketCore->packetCounter % 28000) == 0) {
+                maxDeltaArray[tmpSocketCore->socketIdentifier] = 0;
+                
+            }
+            statsArray[tmpSocketCore->socketIdentifier]++;
+            tmpSocketCore->packetCounter++;
+            statsCtr++;
+        #endif
     }
 
-    //Free the lwIP buffer and return it to the pbuf pool
-    pbuf_free(p);
 }
 
 BasicUDPSocket::BasicUDPSocket() :
@@ -194,6 +266,15 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     bool retVal = false;
     
     #ifdef LWIP_ENABLED
+        
+        #ifdef UDP_CALLBACK_STATS_ENABLE
+            connectionSocket.socketIdentifier = currentSockIdentifier;
+            socketPortId[currentSockIdentifier] = port;
+            //socketsArray[currentSockIdentifier] = &connectionSocket;
+            currentSockIdentifier++;
+            printf("\r\n\r\n------>Setting port %hu in slot %u\r\n\r\n", port, connectionSocket.socketIdentifier);
+        #endif
+
         err_t err = udp_bind(connectionSocket.UDPHandle, IP_ADDR_ANY, port);
         retVal = (err == ERR_OK);
     #endif /* ! LWIP_ENABLED */
@@ -246,7 +327,7 @@ bool BasicUDPSocket::Read(char8 * const output,
     retVal = (size <= MAX_RX_PACKET_BUFFERSIZE);
 
     if(!retVal) {
-        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Read currently does not support reading more than 9000 bytes per call");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Read currently does not support reading more than 1700 bytes per call");
     } else {
         uint64 currentTicks = HighResolutionTimer::Counter();
         uint64 endTicks = 0u;
@@ -256,8 +337,7 @@ bool BasicUDPSocket::Read(char8 * const output,
         }
     
         while(readRetry) {
-            NetworkInterfaceHook(NULL);
-            
+
             canRead = connectionSocket.isWritten;
 
             readRetry = !canRead;
@@ -267,22 +347,25 @@ bool BasicUDPSocket::Read(char8 * const output,
                     readRetry = (endTicks > currentTicks);
                 }
             }
+
+            if(!canRead) {
+                NetworkInterfaceHook(NULL);
+            }
         }
 
         if(canRead) {
-            //TODO: Check this
-            //retVal = (size <= connectionSocket.packetLen);
-            
-            if(retVal) {
-                size = connectionSocket.packetLen;
-                if(connectionSocket.packetBuffer != output) {
-                    MemoryOperationsHelper::Copy(output, connectionSocket.packetBuffer, size);
-                }
-                
-                connectionSocket.isWritten = false;
-                connectionSocket.isReadReady = false;
-                connectionSocket.isReadSelected = false;
+            //If size is less than connectionSocket.packetLen, the copy will be truncated to "size"
+            if(connectionSocket.packetBuffer != output) {
+                MemoryOperationsHelper::Copy(output, connectionSocket.packetBuffer, size);
             }
+            if(size < connectionSocket.packetLen) {
+                //Size updated as less bytes than effectively arrived were copied
+                size = connectionSocket.packetLen;
+            }
+            connectionSocket.isWritten = false;
+            connectionSocket.isReadReady = false;
+            connectionSocket.isReadSelected = false;
+
         } else {
             size = 0u;
         }
