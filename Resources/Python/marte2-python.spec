@@ -8,7 +8,7 @@ License:        EUPL
 
 Source0:        MARTe-%{version}-py3-none-any.whl
 
-BuildArch:      noarch
+BuildArch:      x86_64
 
 BuildRequires:  python%{python_ver}-devel
 BuildRequires:  python%{python_ver}-pip
