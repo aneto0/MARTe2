@@ -1,10 +1,5 @@
 #Package with pip
 
-all:
-	rm -f Build/MARTe
-	ln -s $(PWD)/Source Build/MARTe
-	pip3 install --upgrade .
-
 PYTHON ?= python3
 PYTHON_MAJOR := $(shell $(PYTHON) -c "import sys; print(sys.version_info.major)")
 PYTHON_MINOR := $(shell $(PYTHON) -c "import sys; print(sys.version_info.minor)")
@@ -24,12 +19,19 @@ rpm:
 rpm-ccs-3.11:
 	rm -f Build/MARTe
 	ln -s $(PWD)/Source Build/MARTe
-	pip3.11 wheel .
+	M2_RPM_VERSION=$(M2_RPM_VERSION) pip3.11 wheel .
 	mkdir -p rpmbuild
 	mkdir -p rpmbuild/SPECS rpmbuild/SOURCES rpmbuild/BUILD rpmbuild/BUILDROOT rpmbuild/RPMS rpmbuild/SRPMS
 	cp marte2-python.spec rpmbuild/SPECS/
 	cp MARTe*.whl rpmbuild/SOURCES
-	rpmbuild -ba rpmbuild/SPECS/marte2-python.spec --define "_topdir $(PWD)/rpmbuild" --define "python_ver 3.11" --define "pyparsing_dep $(CODAC_RPM_PREFIX)-python3.11-pyparsing" --define "rpm_version $(M2_RPM_VERSION)"  
+	rpmbuild -ba rpmbuild/SPECS/marte2-python.spec --define "_topdir $(PWD)/rpmbuild" --define "python_ver 3.11" --define "pyparsing_dep $(CODAC_RPM_PREFIX)-python3.11-pyparsing" --define "rpm_version $(M2_RPM_VERSION)" --define "dist .ccs730"
+
+pip: 
+	rm -f Build/MARTe
+	ln -s $(PWD)/Source Build/MARTe
+	M2_RPM_VERSION=$(M2_RPM_VERSION) pip3 install --upgrade .
+
+all: pip
 
 clean:
 	rm -f *.whl
