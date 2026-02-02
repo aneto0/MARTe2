@@ -760,7 +760,7 @@ bool GAM::ExportData(StructuredDataI &data) {
                     at.SetNumberOfElements(0u, numberOfElements);
                 }
                 ok = data.Write(signalName.Buffer(), at);
-           }
+            }
         }
         if (ok) {
             ok = data.MoveToAncestor(1u);

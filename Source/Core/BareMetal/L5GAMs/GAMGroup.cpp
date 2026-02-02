@@ -80,6 +80,7 @@ void GAMGroup::Purge(ReferenceContainer &purgeList) {
     ReferenceContainer::Purge(purgeList);
 }
 
+//lint -e{715} Symbols not referenced. Justification: virtual function prototype to be used via inheritance.
 bool GAMGroup::PrepareNextState(const char8 * const currentStateName,
                                 const char8 * const nextStateName){
     return true;
