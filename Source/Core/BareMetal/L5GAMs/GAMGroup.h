@@ -59,6 +59,7 @@ namespace MARTe {
  */
 class DLL_API GAMGroup: public ReferenceContainer , public StatefulI {
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor. NOOP
@@ -78,6 +79,13 @@ public:
      * @see ReferenceContainer::Purge()
      */
     virtual void Purge(ReferenceContainer &purgeList);
+
+
+    /**
+     * @brief Dummy implementation
+     */
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+                                  const char8 * const nextStateName);
 
 protected:
 

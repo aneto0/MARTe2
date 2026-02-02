@@ -80,4 +80,11 @@ void GAMGroup::Purge(ReferenceContainer &purgeList) {
     ReferenceContainer::Purge(purgeList);
 }
 
+bool GAMGroup::PrepareNextState(const char8 * const currentStateName,
+                                const char8 * const nextStateName){
+    return true;
+}
+
+CLASS_REGISTER(GAMGroup, "1.0")
+
 }

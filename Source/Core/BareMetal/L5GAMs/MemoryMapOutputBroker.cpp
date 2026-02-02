@@ -60,6 +60,9 @@ bool MemoryMapOutputBroker::Execute() {
             ret = MemoryOperationsHelper::Copy(copyTable[dataSourceIndex].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
         }
     }
+    if (ret) {
+        ret = dataSource->BrokerCopyTerminated();
+    }
     return ret;
 }
 
