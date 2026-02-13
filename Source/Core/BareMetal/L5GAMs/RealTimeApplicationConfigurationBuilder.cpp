@@ -999,9 +999,11 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                             //Add the signal to the Data.dataSourceName node (if the Type is defined)
                             ret = AddSignalToDataSource(functionName, dataSourceName);
                             uint32 numberOfElements = 0u;
-                            if (!functionsDatabase.Read("NumberOfElements", numberOfElements)) {
-                                numberOfElements = 1u;
-                                ret = functionsDatabase.Write("NumberOfElements", numberOfElements);
+                            if (ret) {
+                                if (!functionsDatabase.Read("NumberOfElements", numberOfElements)) {
+                                    numberOfElements = 1u;
+                                    ret = functionsDatabase.Write("NumberOfElements", numberOfElements);
+                                }
                             }
                             if (ret) {
                                 uint32 numberOfDimensions = 0u;
