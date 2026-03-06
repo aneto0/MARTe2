@@ -88,10 +88,6 @@ uint32 GetCPUs(const ThreadIdentifier &threadId) {
     return 0;
 }
 
-ThreadIdentifier Id() {
-    return GetCurrentThreadId();
-}
-
 void SetPriority(const ThreadIdentifier &threadId,
                  const PriorityClassType &priorityClass,
                  const uint8 &priorityLevel) {

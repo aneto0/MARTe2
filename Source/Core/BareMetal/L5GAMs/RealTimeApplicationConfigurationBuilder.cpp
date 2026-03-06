@@ -1008,7 +1008,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                             if (ret) {
                                 uint32 numberOfDimensions = 0u;
                                 if (!functionsDatabase.Read("NumberOfDimensions", numberOfDimensions)) {
-                                    numberOfDimensions = (numberOfElements>1)?(1u):(0u);
+                                    numberOfDimensions = (numberOfElements>1u)?(1u):(0u);
                                     ret = functionsDatabase.Write("NumberOfDimensions", numberOfDimensions);
                                 }
                             }

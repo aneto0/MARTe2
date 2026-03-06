@@ -127,6 +127,12 @@ ErrorManagement::ErrorType LoggerService::Execute(ExecutionInfo & info) {
         if (!terminate) {
             terminate = (info.GetStage() == ExecutionInfo::BadTerminationStage);
         }
+        if (!terminate) {
+            if (info.GetStage() == ExecutionInfo::StartupStage) {
+                ThreadIdentifier logThredId = Threads::Id();
+                logger->SetLogCallerThreadId(logThredId);
+            }
+        }
 
         if (terminate){
             //If terminating wait a couple of seconds for the log to flush before...
