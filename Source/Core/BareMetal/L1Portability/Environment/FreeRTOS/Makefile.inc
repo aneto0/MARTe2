@@ -37,7 +37,8 @@ OBJSX=  BasicConsole.x \
     StandardHeap.x \
     StringHelperExtras_Gen.x \
     StringHelper_CLIB_Gen.x \
-    TimeStamp.x
+    TimeStamp.x \
+    Threads.x
 #HighResolutionTimerCalibrator.x 
     
 

@@ -122,6 +122,17 @@ public:
      * @return the number of LoggerPage elements that were not consumed.
      */
     uint32 GetNumberOfLogs() const;
+
+    /**
+     * @brief TODO
+     */
+    void SetLogCallerThreadId(ThreadIdentifier callerThreadId);
+
+    /**
+     * @brief TODO
+     */
+    ThreadIdentifier GetLogCallerThreadId();
+
 private:
 
     /**
@@ -153,6 +164,13 @@ private:
      * When a log is returned by the consumer a page is returned to this container.
      */
     FastResourceContainer pagesIndex;
+
+    /**
+     * Id of the thread that is currently processing a log message.
+     * It assumes that only one thread will print to the output (console, udp, etc) at a time.
+     * This is to avoid dead-locks with the LoggerService.
+     */
+    ThreadIdentifier logCallerThreadId;
 
     /*lint -e{1712} This class does not have a default constructor because
      * the numberOfPages must be defined on construction and remain constant

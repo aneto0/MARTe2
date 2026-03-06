@@ -39,6 +39,7 @@ OBJSX=  BasicConsole.x \
 		StandardHeap_Gen.x \
 		StringHelperExtras_Gen.x \
 		StringHelper_CLIB_Gen.x \
+		Threads.x \
 		TimeStamp.x
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)

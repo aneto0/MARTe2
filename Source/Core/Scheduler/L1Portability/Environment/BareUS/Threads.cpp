@@ -78,10 +78,6 @@ uint32 GetCPUs(const ThreadIdentifier &threadId) {
     return 0u;
 }
 
-ThreadIdentifier Id() {
-    return 0;
-}
-
 /*
  * In linux the priority will vary between 0, i.e. priorityClass = Unknown
  * and priorityLevel = 0 and 99, i.e. priorityClass = RealTime

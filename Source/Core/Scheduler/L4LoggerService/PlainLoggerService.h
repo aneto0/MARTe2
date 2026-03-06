@@ -122,6 +122,8 @@ class DLL_API PlainLoggerService: public ReferenceContainer {
         * @brief Number of consumers kept into the accelerated list.
         */
         uint32 nOfConsumers;
+
+
 };
 
 /**
@@ -202,6 +204,11 @@ class PlainLoggerBinderSingleton {
         */
         /*lint -e{1722} Assignment operator does not return anything and is private per singleton pattern implementation. */
         void operator=(PlainLoggerBinderSingleton const&);
+
+        /**
+         * The thread id that is currently logging.
+         */
+        ThreadIdentifier logCallerThreadId;
 };
 
 }
