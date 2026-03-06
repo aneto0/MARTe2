@@ -134,11 +134,11 @@ uint32 Logger::GetNumberOfLogs() const {
     return logsIndex.GetSize();
 }
 
-void Logger::SetLogCallerThreadId(ThreadIdentifier callerThreadId) {
+void Logger::SetLogCallerThreadId(const ThreadIdentifier callerThreadId) {
     logCallerThreadId = callerThreadId;
 }
 
-ThreadIdentifier Logger::GetLogCallerThreadId() {
+ThreadIdentifier Logger::GetLogCallerThreadId() const {
     return logCallerThreadId;
 }
 

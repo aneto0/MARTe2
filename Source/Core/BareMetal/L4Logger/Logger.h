@@ -131,7 +131,7 @@ public:
     /**
      * @brief TODO
      */
-    ThreadIdentifier GetLogCallerThreadId();
+    ThreadIdentifier GetLogCallerThreadId() const;
 
 private:
 
