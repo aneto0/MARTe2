@@ -11,6 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
+.. _MARTeRealTimeApplication:
+
 RealTimeApplication
 ===================
 
@@ -225,6 +227,8 @@ The RealTimeApplication will automatically add to the TimingDataSource the follo
             DataSource = Timings
          
 
+.. _MARTeRealTimeState:
+
 States
 ------
 
@@ -305,6 +309,8 @@ Each RealTimeThread shall contain the name of the ``Functions`` to be executed. 
               }
            }
      
+
+.. _MARTeScheduler:
 
 Scheduler
 ---------

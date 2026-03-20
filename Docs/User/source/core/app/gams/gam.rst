@@ -11,6 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
+.. _MARTeGAMs:
+
 GAM
 ===
 
