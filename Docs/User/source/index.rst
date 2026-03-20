@@ -28,6 +28,7 @@ Welcome to MARTe2's documentation!
    deploying/deploying
    contributing/contributing
    porting/porting
+   tutorial/tutorial
    faq
    publications
    licence
