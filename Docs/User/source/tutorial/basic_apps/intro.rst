@@ -39,3 +39,4 @@ for all subsequent sections.
 
    hello_world
    hello_world_exercises
+   hello_world_faq

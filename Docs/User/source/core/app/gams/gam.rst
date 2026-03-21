@@ -306,7 +306,9 @@ The following is an example of GAM which adapts to the number of output signals.
    :caption: Variable signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=GAMs-2.cfg)
    :linenos:
    :emphasize-lines: 29-68
-     
+
+.. _StructuredGAM:
+
 Structure GAM
 ~~~~~~~~~~~~~
 

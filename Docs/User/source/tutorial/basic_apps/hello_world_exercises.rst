@@ -22,7 +22,7 @@ Ex. 1: Modify the thread frequency
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-2.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-2.cfg -l RealTimeLoader -s State1
 
 .. dropdown:: Solution
    :icon: key
@@ -43,7 +43,7 @@ Ex. 2: Find the typo
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-3.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-3.cfg -l RealTimeLoader -s State1
 
 2. Identify the typo in the configuration file that prevents the application from running.
 
@@ -51,6 +51,10 @@ Ex. 2: Find the typo
    :icon: key
 
    The State name is misspelled as ``Idle`` instead of ``State1`` in the configuration file.
+
+   .. code-block:: console
+
+      $ [InitialisationEr - RealTimeLoader.cpp:118]: Failed to PrepareNextState for state State1
 
    .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-3.cfg
       :language: c++
@@ -68,7 +72,7 @@ Ex. 2: Find the typo
 
    .. code-block:: bash
 
-       /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-3.cfg -l RealTimeLoader -s Idle
+       ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-3.cfg -l RealTimeLoader -s Idle
 
 Ex. 3: Modify the logged signal
 -------------------------------
@@ -94,7 +98,7 @@ Ex. 4: Signal names
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-5.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-5.cfg -l RealTimeLoader -s State1
 
 2. Identify the typo in the configuration file that prevents the application from running.
 
@@ -105,7 +109,9 @@ Ex. 4: Signal names
 
    The GAMDataSource complains that the ``GAMDisplay`` GAM is requesting for a signal named ``Counter``, which does not exist and the application fails to start.
 
-   ``[FatalError - GAMDataSource.cpp:400]: In GAMDataSource DDB1, state State1, signal Counter has an invalid number of producers. Should be > 0 but is 0``
+   .. code-block:: console
+
+      $ [FatalError - GAMDataSource.cpp:400]: In GAMDataSource DDB1, state State1, signal Counter has an invalid number of producers. Should be > 0 but is 0
 
    .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-5.cfg
       :language: c++
@@ -121,11 +127,13 @@ Ex. 5: Signal alias
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-6.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-6.cfg -l RealTimeLoader -s State1
 
 2. The application will fail to start with the following error message:
 
-   ``[FatalError - GAMDataSource.cpp:400]: In GAMDataSource DDB1, state State1, signal CounterIn has an invalid number of producers. Should be > 0 but is 0``
+.. code-block:: console
+
+   $ [FatalError - GAMDataSource.cpp:400]: In GAMDataSource DDB1, state State1, signal CounterIn has an invalid number of producers. Should be > 0 but is 0
 
 3. Modify the configuration file to fix the issue by using the signal :ref:`Alias <MARTeSignalProperties>` property and make the application run.
 
@@ -161,7 +169,7 @@ Ex. 6: Signal types
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-7.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-7.cfg -l RealTimeLoader -s State1
 
 2. Identify the typo in the configuration file that prevents the application from running.
 
@@ -169,6 +177,10 @@ Ex. 6: Signal types
    :icon: key
 
    A typo in the ``Time`` signal type is preventing the application from running. The signal type is misspelled as ``uint22`` instead of ``uint32`` in the configuration file. 
+
+   .. code-block:: console
+
+      $ [InitialisationEr - RealTimeLoader.cpp:118]: Failed to PrepareNextState for state State1
 
    .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-7.cfg
       :language: c++
@@ -181,7 +193,7 @@ Ex. 6: Signal types
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-8.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-8.cfg -l RealTimeLoader -s State1
 
 4. Identify the typo in the configuration file that prevents the application from running.
 
@@ -190,9 +202,10 @@ Ex. 6: Signal types
 
    A typo in the ``Counter`` signal type in the ``Display`` GAM is preventing the application from running. The signal is produced and offered to the ``GAMDataSource`` as an ``uint32`` and is trying to be consumed as an ``uint16`` by the ``DisplayGAM``. 
 
-   ``[InitialisationEr - RealTimeApplicationConfigurationBuilder.cpp:1160]: The data source assigned to the signal Counter in GAMDisplay is incompatible``
+   .. code-block:: console
 
-   ``[FatalError - RealTimeApplicationConfigurationBuilder.cpp:1037]: Failed to resolve for data source DDB1 and function GAMDisplay``
+      $ [InitialisationError - RealTimeApplicationConfigurationBuilder.cpp:1160]: The data source assigned to the signal Counter in GAMDisplay is incompatible
+      $ [FatalError - RealTimeApplicationConfigurationBuilder.cpp:1037]: Failed to resolve for data source DDB1 and function GAMDisplay
 
    .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-8.cfg
       :language: c++
@@ -208,7 +221,7 @@ Ex. 7: Component instantiation
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-9.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-9.cfg -l RealTimeLoader -s State1
 
 2. Identify and correct the typo in the configuration file that prevents the application from running.
 
@@ -216,16 +229,14 @@ Ex. 7: Component instantiation
    :icon: key
 
    A typo in the ``Class`` name of the GAMTimer does not allow MARTe to find the class to be automatically instantiated.
-   
-   ``[Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): iogam.so: cannot open shared object file: No such file or directory``
 
-   ``[Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): iogam.gam: cannot open shared object file: No such file or directory``
+   .. code-block:: console
 
-   ``[Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): iogam.drv: cannot open shared object file: No such file or directory``
-
-   ``[FatalError - Reference.cpp:129]: Reference: Failed CreateByName() in constructor``
-
-   ``[FatalError - ReferenceContainer.cpp:421]: Failed to Initialise object with name +GAMTimer``
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): iogam.so: cannot open shared object file: No such file or directory
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): iogam.gam: cannot open shared object file: No such file or directory
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): iogam.drv: cannot open shared object file: No such file or directory
+      $ [FatalError - Reference.cpp:129]: Reference: Failed CreateByName() in constructor
+      $ [FatalError - ReferenceContainer.cpp:421]: Failed to Initialise object with name +GAMTimer
 
    All MARTe components are automatically :ref:`instantiated by the framework <MARTeDataDrivenApplications>` based on the configuration file. The ``Class`` property of each component specifies the type of the component to be instantiated. 
    
@@ -242,7 +253,7 @@ Ex. 7: Component instantiation
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-10.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-10.cfg -l RealTimeLoader -s State1
 
 2. Identify the typo in the configuration file that prevents the application from running.
 
@@ -251,9 +262,10 @@ Ex. 7: Component instantiation
 
    The name of the component to be instantiated does not start with a ``+`` character, which is required for components that are to be :ref:`instantiated by the framework <MARTeDataDrivenApplications>` in runtime. In this case the name of the component is ``GAMTimer`` instead of ``+GAMTimer``.
 
-   ``[FatalError - RealTimeThread.cpp:156]: Undefined GAMTimer``
+   .. code-block:: console
 
-   ``[ParametersError - RealTimeApplicationConfigurationBuilder.cpp:104]: Failed to ResolveStates``
+      $ [FatalError - RealTimeThread.cpp:156]: Undefined GAMTimer
+      $ [ParametersError - RealTimeApplicationConfigurationBuilder.cpp:104]: Failed to ResolveStates
 
    .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-10.cfg
       :language: c++

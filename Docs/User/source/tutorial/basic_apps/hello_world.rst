@@ -25,10 +25,10 @@ Start the application with:
 
 Once the application is running, inspect the ``screen`` output and verify that the log shows the counter increasing:
 
-.. code-block:: text
+.. code-block:: console
 
-    [Information - LoggerBroker.cpp:152]: Counter [0:0]:1
-    [Information - LoggerBroker.cpp:152]: Counter [0:0]:2
+    $ [Information - LoggerBroker.cpp:152]: Counter [0:0]:1
+    $ [Information - LoggerBroker.cpp:152]: Counter [0:0]:2
     ...
 
 If these messages appear, the Hello World MARTe2 application has started successfully.
@@ -42,10 +42,10 @@ Notes on common warning messages
 
     While running the application, you may observe messages such as:
 
-    .. code-block:: text
+    .. code-block:: console
 
-        [Warning - Threads.cpp:169]: Requested a thread priority that is higher ...
-        [Warning - Threads.cpp:181]: Failed to change the thread priority ...
+        $ [Warning - Threads.cpp:169]: Requested a thread priority that is higher ...
+        $ [Warning - Threads.cpp:181]: Failed to change the thread priority ...
 
     These warnings are caused by insufficient user permissions to set real-time thread priorities.
 
