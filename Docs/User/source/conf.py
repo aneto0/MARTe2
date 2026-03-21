@@ -41,7 +41,8 @@ release = u'v1.0.0'
 extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.extlinks',
-    'sphinxcontrib.jquery'
+    'sphinxcontrib.jquery',
+    'sphinx_design'
     #'rst2pdf.pdfbuilder',
     #'sphinx.ext.githubpages',
 ]

@@ -38,3 +38,4 @@ for all subsequent sections.
    :caption: Contents:
 
    hello_world
+   hello_world_exercises

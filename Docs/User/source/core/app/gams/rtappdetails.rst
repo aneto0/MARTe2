@@ -360,6 +360,8 @@ Global rules
 6. For each state, at least one thread shall be declared;
 7. For each thread, at least one function (GAM) shall be declared;
 
+.. _MARTeSignalRules:
+
 Signal rules
 ~~~~~~~~~~~~
 

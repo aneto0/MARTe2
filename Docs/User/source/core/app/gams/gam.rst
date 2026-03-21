@@ -147,6 +147,8 @@ Note that the structure will be automatically expanded into the equivalent confi
    }   
    ...
 
+.. _MARTeSignalProperties:
+
 Signal properties
 ~~~~~~~~~~~~~~~~~
 

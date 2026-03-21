@@ -75,7 +75,7 @@ MARTe2 loaded this configuration, created the :ref:`RealTimeApplication <MARTeRe
 
 
 RealTimeApplication
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 At the top level (but not necessarily at the beginning of the file) of every MARTe2 configuration there is a :ref:`RealTimeApplication <MARTeRealTimeApplication>`. This component defines the overall structure and behaviour of the application.
 
@@ -87,8 +87,8 @@ At the top level (but not necessarily at the beginning of the file) of every MAR
 The ``RealTimeApplication`` is always composed by the following sections:
 
 - :ref:`+Functions <MARTeGAMs>`: defines the processing components (GAMs)
-- :ref:`+Data <MARTeDataSources>`: defines the data sources and signals
-- :ref:`+States <MARTeRealTimeState>`: defines the execution states (e.g. ``State1``)
+- :ref:`+Data <MARTeDataSources>`: defines the data sources 
+- :ref:`+States <MARTeRealTimeState>`: defines the execution states (e.g. ``State1``) and their ``RealTimeThread`` instances
 - :ref:`+Scheduler <MARTeScheduler>`: controls how the application is executed
 
 .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
@@ -98,15 +98,10 @@ The ``RealTimeApplication`` is always composed by the following sections:
    :linenos:
    :emphasize-lines: 3, 5, 7, 9
 
-In the HelloWorld example, these elements are configured to execute a single state (``State1``), with a single thread (``Thread``).
-
-.. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
-   :language: c++
-   :lines: 70-83
-   :caption: MARTe RealTimeState definition.
-   :linenos:
-   :emphasize-lines: 3, 7, 10
  
+Functions
++++++++++
+
 Two functional blocks (GAMs) are executed in the thread: ``GAMTimer`` and ``GAMDisplay``. 
 
 The first is an :vcisdoxygenmccl:`IOGAM` responsible for getting a counter and a timer signal from a DataSource named ``Timer`` and copying these signals to a :ref:`GAMDataSource <GAMDataSource>`.
@@ -116,5 +111,52 @@ The first is an :vcisdoxygenmccl:`IOGAM` responsible for getting a counter and a
    :lines: 5-28
    :caption: IOGAM named GAMTimer
    :linenos: 
-   :emphasize-lines: 2, 5, 16
- 
+   :emphasize-lines: 2, 5, 9, 16
+
+The ``Frequency`` is a special :ref:`signal property <MARTeSignalRules>` that defines the rate at which the thread executes. The actual pacing of the thread is determined by the DataSource that provides the signal with the ``Frequency`` property. In this case, the ``Timer`` DataSource is configured to execute at a frequency of ``1 Hz``.
+
+The second ``IOGAM`` that takes care of copying the signals from the :ref:`GAMDataSource <GAMDataSource>` and offering them to a DataSource named ``Display``.
+
+.. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
+   :language: c++
+   :lines: 29-43
+   :caption: GAMDisplay IOGAM
+   :linenos: 
+   :emphasize-lines: 2, 5, 11
+
+DataSources
++++++++++++
+
+The MARTe :ref:`+Data <MARTeDataSources>`: provide an interface between the functional blocks (GAMs) and the outside world. They are responsible for acquiring data from external sources (e.g. hardware, files, network) and making it available to the GAMs, as well as for taking data from the GAMs and sending it to external sinks.
+Two DataSources are defined in the configuration: ``Timer`` (of type :vcisdoxygenmccl:`LinuxTimer`) and ``Display`` (of type :vcisdoxygenmccl:`LoggerDataSource`).
+
+.. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
+   :language: c++
+   :lines: 57-68
+   :caption: LinuxTimer DataSource 
+   :linenos: 
+   :emphasize-lines: 1, 5, 8
+
+.. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
+   :language: c++
+   :lines: 51-53
+   :caption: LoggerDataSource 
+   :linenos: 
+   :emphasize-lines: 2
+
+States and Threads
+++++++++++++++++++
+
+In the HelloWorld example, a single state (``State1``), with a single thread (``Thread``) is defined. The thread executes the two GAMs described in the previous section.
+
+.. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
+   :language: c++
+   :lines: 70-83
+   :caption: MARTe RealTimeState definition.
+   :linenos:
+   :emphasize-lines: 3, 7, 10
+
+Scheduler
++++++++++
+
+MARTe allows to modify the default :ref:`GAMScheduler <MARTeScheduler>` component, but this is meant only for special applications (e.g. in embedded systems). For most applications, the default scheduler is sufficient.
