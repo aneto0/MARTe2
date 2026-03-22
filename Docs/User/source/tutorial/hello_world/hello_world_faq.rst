@@ -85,3 +85,8 @@ FAQ
 
    All the MARTe component properties, including those of DataSources are specific to the component and are documented in the component API documentation.
 
+.. dropdown:: Why do I see the acronym "DDB" in many configuration files?
+   :icon: question
+
+   The DDB is the name of the original implementation of the GAMDataSource in MARTe1. It is used interchangeably with GAMDataSource in MARTe2, and it is still present in many configuration files for historical reasons. The DDB is a simple DataSource that provides an interface for GAMs to exchange data between each other, without any connection to external hardware or software. 
+

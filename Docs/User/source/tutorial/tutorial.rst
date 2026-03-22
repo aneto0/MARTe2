@@ -20,4 +20,5 @@ Tutorial
 
    intro
    deploy/intro
-   basic_apps/intro
+   hello_world/intro
+   mass_spring/intro
