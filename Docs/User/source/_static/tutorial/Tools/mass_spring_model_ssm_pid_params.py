@@ -132,7 +132,7 @@ if __name__ == '__main__':
     print(f'{" " * args.output_spaces}StateMatrix = {state_matrix_str}')
     print(f'{" " * args.output_spaces}InputMatrix = {input_matrix_str}')
     print(f'{" " * args.output_spaces}OutputMatrix = {output_matrix_str}')
-    print(f'{" " * args.output_spaces}FeedtroughMatrix = {feedthrough_matrix_str}')
+    print(f'{" " * args.output_spaces}FeedthroughMatrix= {feedthrough_matrix_str}')
  
     Kp, Ki, Kd = msd_pid_gains(args.mass, args.friction_coefficient, args.spring_coefficient, wn=args.closed_loop_freq, zeta=args.dumping_ratio, alpha=args.pole_3_mult)
     print('PIDGAM')

@@ -47,4 +47,30 @@ In this example the system will be controlled to maintain a constant position. T
 The selected components are:
 
 - Desired position: :vcisdoxygenmccl:`ConstantGAM`
-- Controller: :vcisdoxygenmccl:`PIDGAM`
+
+.. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-1.cfg
+   :language: c++
+   :lines: 29-38
+   :caption: Constant GAM configuration. Outputs a signal with the name ReferencePosition. The value is set with the parameter ``Default``.
+   :linenos: 
+   :emphasize-lines: 4, 7
+
+- Controller: :vcisdoxygenmccl:`PIDGAM`. The controller takes as input the desired position (ReferencePosition) and the actual position of the mass (Position) and produces as output the control force (Force).
+
+.. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-1.cfg
+   :language: c++
+   :lines: 39-70
+   :caption: PIDGAM configuration. 
+   :linenos: 
+   :emphasize-lines: 3-5,7,11,17,25
+
+- Mass-spring: :vcisdoxygenmccl:`SSMGAM`. The SSMGAM implements the spring mass damper system dynamics using a state-space representation. The input is the control force (Force) and the outputs are the position (Position) and velocity (Velocity) of the mass, as well as the internal states (not used in this application).
+
+.. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-1.cfg
+   :language: c++
+   :lines: 71-103
+   :caption: SSMGAM configuration. 
+   :linenos: 
+   :emphasize-lines: 3-5,7,11,17,25
+
+- Monitoring: :vcisdoxygenmccl:`LoggerDataSource` to log all the signals.
