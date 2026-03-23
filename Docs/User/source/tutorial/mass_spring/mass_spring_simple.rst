@@ -74,3 +74,13 @@ The selected components are:
    :emphasize-lines: 3-5,7,11,17,25
 
 - Monitoring: :vcisdoxygenmccl:`LoggerDataSource` to log all the signals.
+
+- GAMTimer: :vcisdoxygenmccl:`IOGAM`. Triggers the execution of the thread at a fixed rate of 100 Hz, which corresponds to the sampling time of 0.01 s.
+
+.. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-1.cfg
+   :language: c++
+   :lines: 5-28
+   :caption: GAMTimer configuration. 
+   :linenos: 
+   :emphasize-lines: 10
+
