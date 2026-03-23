@@ -11,8 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Mass-spring-damper Example - Simple Control
-===========================================
+Constant Position #1
+====================
 
 In this section, you will implement a simple control strategy for the mass-spring-damper system using MARTe2 components. The control strategy will be based on a proportional controller that adjusts the external force (:math:`F`) applied to the mass based on the error between the desired position and the actual position of the mass.
 
@@ -39,10 +39,10 @@ The following parameters are common to all the examples in this tutorial:
 - Initial velocity of the mass: 0 m/s
 - Sampling time: 0.01 s
 
-Constant position
------------------
-
 In this example the system will be controlled to maintain a constant position. The desired position will be set to a fixed value, and the controller will adjust the force to keep the mass at that position.
+
+Application architecture
+------------------------
 
 The selected components are:
 
@@ -71,7 +71,7 @@ The selected components are:
    :lines: 71-103
    :caption: SSMGAM configuration. 
    :linenos: 
-   :emphasize-lines: 3-5,7,11,17,25
+   :emphasize-lines: 3-5,10,16,20
 
 - Monitoring: :vcisdoxygenmccl:`LoggerDataSource` to log all the signals.
 
@@ -82,5 +82,41 @@ The selected components are:
    :lines: 5-28
    :caption: GAMTimer configuration. 
    :linenos: 
-   :emphasize-lines: 10
+   :emphasize-lines: 9
+
+.. figure:: images/RTApp-MassSpring-1StateState1.png
+   :align: center
+   :alt: Mass-spring-damper configuration file representation 
+   :width: 800px
+
+   Schematic representation of the mass-spring-damper system MARTe2 configuration. 
+
+.. note::
+
+   The ``Position`` signal provided to the ``Controller GAM`` is connected to the ``Position`` output of the ``MassSpring GAM``. Due to the execution semantics of MARTe2, this value corresponds to the output computed during the previous time step. 
+   
+   As a result, the controller effectively operates on the delayed signal :math:`\text{Position}[k-1]`, introducing an implicit unit delay :math:`z^{-1}` in the feedback path.
+
+   This scheme is commonly used in MARTe2 configurations. By default, the initial value of the delayed signal is set to zero; however, it can be explicitly initialised using the ``Default`` parameter of the signal.
+
+Running the application
+-----------------------
+
+Start the application with:
+
+.. code-block:: bash
+
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-1.cfg -l RealTimeLoader -s State1
+
+Once the application is running, inspect the ``screen`` output and verify that the log shows the Position signal converging to the desired reference position (which is set to 2 m in this example):
+
+.. code-block:: console
+
+   $ [Information - LoggerBroker.cpp:152]: Time [0:0]:28890000
+   $ [Information - LoggerBroker.cpp:152]: ReferencePosition [0:0]:2.000000
+   $ [Information - LoggerBroker.cpp:152]: Position [0:0]:2.000000
+   $ [Information - LoggerBroker.cpp:152]: Velocity [0:0]:0
+   $ [Information - LoggerBroker.cpp:152]: Force [0:0]:20.000000
+
+    ...
 
