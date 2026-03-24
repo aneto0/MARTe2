@@ -3,10 +3,22 @@
 OUTPUT=png
 IMAGES:= $(patsubst %.gv,%.$(OUTPUT),$(wildcard *.gv))
 
+PLANTUML_SRC := $(wildcard *.puml)
+PLANTUML_PNG := $(addsuffix .png, $(basename $(PLANTUML_SRC)))
+
 %.$(OUTPUT): %.gv
 	dot -T$(OUTPUT) $< -o $@
 
-all: $(IMAGES)
+%.png: %.puml
+	java -jar $(PLANTUML_JAR) -tpng $^
+
+all: check_plantuml_jar $(IMAGES) $(PLANTUML_PNG)
 
 clean:
-	rm $(IMAGES)
+	rm $(IMAGES) $(PLANTUML_PNG)
+
+check_plantuml_jar:
+ifndef PLANTUML_JAR
+#Note the tab
+	$(error PLANTUML_JAR is undefined)
+endif 

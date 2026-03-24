@@ -1,0 +1,104 @@
+.. date: 24/03/2026
+   author: Andre' Neto
+   copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+   the Development of Fusion Energy ('Fusion for Energy').
+   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   by the European Commission - subsequent versions of the EUPL (the "Licence")
+   You may not use this work except in compliance with the Licence.
+   You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+   warning: Unless required by applicable law or agreed to in writing, 
+   software distributed under the Licence is distributed on an "AS IS"
+   basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+   or implied. See the Licence permissions and limitations under the Licence.
+
+Constant Position #3
+====================
+
+This section continues to build upon the previous example and adds features that allow to compute runtime statistics on the MARTe2 signals.
+
+The MARTe2-components offers two GAMs that can be used to implement statistics: 
+
+- :vcisdoxygenmccl:`StatisticGAM`, provides average, standard deviation, minimum and maximum of its input signal over a moving time window.
+
+- :vcisdoxygenmccl:`HistogramGAM`, computes histograms from the input signal values.
+
+In this example, the `StatisticGAM` is used to compute the average and standard deviation of the cycle time, while the `HistogramGAM` is used to compute a histogram of the cycle time values.
+
+.. note::
+    The number of bins of the HistogramGAM is computed using the output signal number of elements. The size of the bin is automatically computed as :math:`(MaxValue - MinValue) / (NumberOfElements - 2)`. This size is cast to the input signal type and thus may lead to rounding errors.
+
+    In case the input signal is an integer it is recommended to satisfy the equation above such that the size of the bin is also an exact integer.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-5.cfg
+      :language: c++
+      :lines: 285-303
+      :caption: HistogramGAM configuration.
+      :linenos:
+      :emphasize-lines: 8-9, 16
+
+Running the application
+-----------------------
+
+Start the application with:
+
+.. code-block:: bash
+
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-5.cfg -l RealTimeLoader -s State1
+
+Once the application is running, inspect the ``screen`` output and verify that the log shows the cycle time average, maximum and minimum value, as well as the standard deviation and the histogram values. The log should show entries similar to the following:
+
+.. code-block:: console
+
+    $ [Information - LoggerBroker.cpp:152]: Thread1CycleTimeAverage [0:0]:10002
+    $ [Information - LoggerBroker.cpp:152]: Thread1CycleTimeStdDev [0:0]:61
+    $ [Information - LoggerBroker.cpp:152]: Thread1CycleTimeMax [0:0]:9859
+    $ [Information - LoggerBroker.cpp:152]: Thread1CycleTimeMin [0:0]:10131
+    $ [Information - LoggerBroker.cpp:152]: Thread1CycleTimeHistogram [0:10]:{ 5 0 0 0 2 888 1 0 0 1 4 }
+
+Exercices
+---------
+
+Ex. 1: Add the force statistics 
+-------------------------------
+
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-6.cfg`` and add a StatisticGAM to compute information about the `Force` signal.
+
+.. warning::
+
+    MARTe2 does not distinguish between a scalar signal (`NumberOfDimensions = 0`, `NumberOfElements = 1`) and a single-element vector signal (`NumberOfDimensions = 1`, `NumberOfElements = 1`).
+
+    However, some components impose specific requirements. For example, the ``PIDGAM`` requires its output to be a single-element vector, while the ``StatisticGAM`` requires its input to be a scalar.
+
+    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-6.cfg
+      :language: c++
+      :lines: 39, 62-69
+      :caption: PIDGAM output signal requirements.
+      :linenos:
+      :emphasize-lines: 6
+
+    Consequently, connecting the output of the ``PIDGAM`` to the input of the ``StatisticGAM`` requires an intermediate GAM to convert between these definitions. Otherwise, the application will report conflicting signal requirements.
+
+    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-6.cfg
+      :language: c++
+      :lines: 285-303
+      :caption: GAM to convert between scalar and vector single-element signals.
+      :linenos:
+      :emphasize-lines: 8, 16
+
+    Note that the IOGAM performs a memcpy of all the input signals memory into the output signals memory, only requiring size compatibility between the input and output signals. This allows to use the IOGAM as a simple pass-through GAM to convert between different signal definitions, without the need to implement a custom GAM for this purpose.
+
+.. code-block:: bash
+
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-6.cfg -l RealTimeLoader -s State1
+
+.. dropdown:: Solution
+   :icon: key
+
+   The solution is to add a new GAM and connect all the signals to the `GAMDisplay`.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-6-solution.cfg
+      :language: c++
+      :lines: 302-330
+      :caption: Updated configuration with the Force statistics.
+      :linenos:
+

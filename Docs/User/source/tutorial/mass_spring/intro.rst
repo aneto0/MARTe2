@@ -11,8 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Development of a MARTe2 Application - Mass-spring-damper Example
-================================================================
+Development of a MARTe2 Application - Mass-spring-damper 
+========================================================
 
 In this section, you will develop your first MARTe2 applications based on a mass-spring-damper example.
 
@@ -50,5 +50,7 @@ The main objective of this tutorial is to identify and integrate from existing M
    :maxdepth: 1
    :caption: Contents:
 
-   mass_spring_simple
+   mass_spring_1
+   mass_spring_2
+   mass_spring_3
 

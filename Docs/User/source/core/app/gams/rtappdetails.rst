@@ -162,6 +162,8 @@ A component of class type ``TimingDataSource`` shall exist.
 
 The property ``DefaultDataSource`` shall define what is the DataSource to be used when the :doc:`GAM </core/app/gams/gam>` signals do not specify the ``DataSource`` property.
 
+.. _MARTeTimingDataSource:
+
 TimingDataSource
 ~~~~~~~~~~~~~~~~
 

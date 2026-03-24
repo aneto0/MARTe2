@@ -21,7 +21,7 @@ Start the application with:
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-1.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-1.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the log shows the counter increasing:
 
@@ -69,7 +69,7 @@ When the command below was executed:
 
 .. code-block:: bash
 
-    /MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-1.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-1.cfg -l RealTimeLoader -s State1
 
 MARTe2 loaded this configuration, created the :ref:`RealTimeApplication <MARTeRealTimeApplication>`, selected the ``State1`` :ref:`state <MARTeRealTimeState>`, and started :ref:`executing <MARTeScheduler>` it:.
 

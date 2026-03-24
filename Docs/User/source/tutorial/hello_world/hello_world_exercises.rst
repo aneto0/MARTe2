@@ -214,8 +214,8 @@ Ex. 6: Signal types
       :linenos: 
       :emphasize-lines: 6, 30
 
-Ex. 7: Component instantiation
-------------------------------
+Ex. 7: Component instantiation 1
+--------------------------------
 
 1. Run the following application.
 
@@ -249,6 +249,9 @@ Ex. 7: Component instantiation
       :linenos: 
       :emphasize-lines: 2
 
+Ex. 8: Component instantiation 2
+--------------------------------
+
 1. Run the following application.
 
 .. code-block:: bash
@@ -273,4 +276,32 @@ Ex. 7: Component instantiation
       :caption: Class name typo in the configuration file
       :linenos: 
       :emphasize-lines: 1
+
+Ex. 9: Multiple writers
+-----------------------
+
+1. Run the following application.
+
+.. code-block:: bash
+
+    ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-12.cfg -l RealTimeLoader -s State1
+
+2. Identify and correct the typo in the configuration file that prevents the application from running.
+
+.. dropdown:: Solution
+   :icon: key
+
+   The same signal is written by two different GAMs into the same DataSource. This is not allowed in MARTe and the application will fail to start with the following error message:
+
+   .. code-block:: console
+
+      $ [FatalError - RealTimeApplicationConfigurationBuilder.cpp:2280]: Producers of Counter in DDB1 overlap write operations on the same memory area
+      $ [ParametersError - RealTimeApplicationConfigurationBuilder.cpp:125]: Failed to VerifyConsumersAndProducers
+
+   .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-12.cfg
+      :language: c++
+      :lines: 5,19-28,30,38-43
+      :caption: Multiple writers for the same signal in the configuration file 
+      :linenos: 
+      :emphasize-lines: 3-4,14-15
 

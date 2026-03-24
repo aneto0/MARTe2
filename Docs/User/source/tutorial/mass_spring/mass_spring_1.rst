@@ -120,3 +120,38 @@ Once the application is running, inspect the ``screen`` output and verify that t
 
     ...
 
+Exercices
+---------
+
+Ex. 1: Modify the reference position
+------------------------------------
+
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-2.cfg`` and modify the ReferencePosition to `3.1` m.
+2. Verify the output of the Position in the logger.
+3. Why does the Position does not converge to the new reference position?
+
+.. code-block:: bash
+
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-2.cfg -l RealTimeLoader -s State1
+
+.. dropdown:: Solution
+   :icon: key
+
+   The solution is to modify the ``Default`` property of the signal in the `ConstantGAM` output.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-2-solution.cfg
+      :language: c++
+      :lines: 29-38
+      :caption: ConstantGAM configuration. 
+      :linenos: 
+      :emphasize-lines: 7
+
+   The reason why the Position does not converge to the new reference position is that the output of the controller is limited to `30` N. Modify this parameter to e.g. `40` N in the `PIDGAM` configuration to allow the controller to apply a larger force and reach the new reference position.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-2-solution.cfg
+      :language: c++
+      :lines: 39-48
+      :caption: PIDGAM configuration. 
+      :linenos: 
+      :emphasize-lines: 8
+
