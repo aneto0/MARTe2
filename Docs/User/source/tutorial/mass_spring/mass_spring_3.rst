@@ -102,3 +102,9 @@ Ex. 1: Add the force statistics
       :caption: Updated configuration with the Force statistics.
       :linenos:
 
+Ex. 1: Add an additional histogram for the GAMTimer read signal
+---------------------------------------------------------------
+
+The GAMTimer Read signal provides a good indication of the amount of free time in the thread and thus of the system load. Adding a histogram of this signal can help to identify if the system is overloaded and thus if the cycle time is sufficient for the application.
+
+TODO FINISH ME
