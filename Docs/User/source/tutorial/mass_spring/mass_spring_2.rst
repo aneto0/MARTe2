@@ -11,14 +11,14 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Constant Position #2
-====================
+Performance monitoring
+======================
 
 In this section, we will build upon the previous example and add features that allow to monitor the performance of the MARTe2 application, namely the :ref:`timing <MARTeTimingDataSource>` of the GAMs and of the thread cycle time.
 
 Namely, we will want to monitor:
 
-- The cycle time of the thread executing the GAMs. This is the time between two consecutive executions of the thread. It is expected to be constant and equal to the inverse of the `Frequency` parameter of the `GAMTimer`.
+- The cycle time of the thread executing the GAMs. This is the time between two consecutive executions of the thread. It is expected to be constant and equal to the inverse of the `Frequency` parameter of the ``GAMTimer``.
 - The execution time of the GAMs. This is the time taken by the GAMs to execute their logic.
 - The time it took to copy from the DataSource to the GAMs. This includes any overhead of the DataSource (e.g. to access the hardware) and the time taken to copy the data from the DataSource to the GAMs. 
 - The time it took to copy from the GAMs to the DataSources. This includes any overhead of the DataSource (e.g. to access the hardware) and the time taken to copy the data from the GAMs to the DataSources. 

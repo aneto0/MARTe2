@@ -11,18 +11,18 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Constant Position #3
-====================
+Statistics 
+==========
 
 This section continues to build upon the previous example and adds features that allow to compute runtime statistics on the MARTe2 signals.
 
 The MARTe2-components offers two GAMs that can be used to implement statistics: 
 
-- :vcisdoxygenmccl:`StatisticGAM`, provides average, standard deviation, minimum and maximum of its input signal over a moving time window.
+- :vcisdoxygenmccl:`StatisticsGAM`, provides average, standard deviation, minimum and maximum of its input signal over a moving time window.
 
 - :vcisdoxygenmccl:`HistogramGAM`, computes histograms from the input signal values.
 
-In this example, the `StatisticGAM` is used to compute the average and standard deviation of the cycle time, while the `HistogramGAM` is used to compute a histogram of the cycle time values.
+In this example, the ``StatisticGAM`` is used to compute the average and standard deviation of the cycle time, while the ``HistogramGAM`` is used to compute a histogram of the cycle time values.
 
 .. note::
     The number of bins of the HistogramGAM is computed using the output signal number of elements. The size of the bin is automatically computed as :math:`(MaxValue - MinValue) / (NumberOfElements - 2)`. This size is cast to the input signal type and thus may lead to rounding errors.
@@ -102,9 +102,27 @@ Ex. 1: Add the force statistics
       :caption: Updated configuration with the Force statistics.
       :linenos:
 
-Ex. 1: Add an additional histogram for the GAMTimer read signal
+Ex. 2: Add an additional histogram for the GAMTimer read signal
 ---------------------------------------------------------------
 
 The GAMTimer Read signal provides a good indication of the amount of free time in the thread and thus of the system load. Adding a histogram of this signal can help to identify if the system is overloaded and thus if the cycle time is sufficient for the application.
 
-TODO FINISH ME
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-7.cfg`` and add a signal to the HistogramGAM to compute a histogram of the ``GAMTimer_ReadTime`` signal.
+2. Rename the signal in the output as ``Thread1FreeTimeHistogram``.
+3. Use as ``MinLim`` the value ``2600`` and as ``MaxLim`` the value ``9800``.
+
+  1. Why are the Min and Max limits of the histogram set to these values? What is the expected range of values for the ``GAMTimer_ReadTime`` signal?
+  2. Why were these two exact numbers chosen (and not e.g. ``2000`` and ``10000``)? What is the bin size of the histogram?
+
+
+.. dropdown:: Solution
+   :icon: key
+
+   The solution is to add the signal to the HistogramGAM and connect it to the ``GAMDisplay``.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-7-solution.cfg
+      :language: c++
+      :lines: 331-360
+      :caption: Updated configuration with the Force statistics.
+      :linenos: 
+      :emphasize-lines: 11, 24

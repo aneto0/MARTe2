@@ -11,8 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Constant Position #1
-====================
+Basic application
+=================
 
 In this section, you will implement a simple control strategy for the mass-spring-damper system using MARTe2 components. The control strategy will be based on a proportional controller that adjusts the external force (:math:`F`) applied to the mass based on the error between the desired position and the actual position of the mass.
 
