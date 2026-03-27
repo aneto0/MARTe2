@@ -87,6 +87,42 @@ Ex. 1: Add the force statistics
 
     Note that the IOGAM performs a memcpy of all the input signals memory into the output signals memory, only requiring size compatibility between the input and output signals. This allows to use the IOGAM as a simple pass-through GAM to convert between different signal definitions, without the need to implement a custom GAM for this purpose.
 
+.. warning::
+
+  Because the IOGAM performs a `memcpy`` of the input signal memory into the output signal memory, it does not perform any transformation of the signal values and will copy the signals in the same order as they are defined in the configuration file. 
+  
+  This means that if the order is not maintained consistently, the output signals will not match the expected input signal order and/or cast to the incorrect type.
+
+  For example:
+
+  .. code-block:: c++
+
+      +MyIOGAM = {
+          Class = IOGAM
+          InputSignals = {
+            InputReference = {
+                DataSource = Driver1
+                Type = float64
+            }
+            Measurement = {
+                DataSource = Driver2
+                Type = float64
+            }
+          }
+          OutputSignals = {
+            Measurement = {
+                DataSource = DDB1
+                Type = float64
+            }
+            InputReference = {
+                DataSource = DDB1
+                Type = float64
+            }
+          }
+       }
+
+  Would swap the ``InputReference`` and ``Measurement`` signals.
+
 .. code-block:: bash
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-6.cfg -l RealTimeLoader -s State1

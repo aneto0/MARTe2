@@ -72,7 +72,7 @@ Ex. 1: Modify the waveform
 
 .. figure:: images/mass_spring_refpos_square.svg
    :align: center
-   :alt: Mass-spring-damper reference position squaer wave.
+   :alt: Mass-spring-damper reference position square wave.
    :width: 400px
 
    Reference position square wave.
@@ -123,5 +123,9 @@ Ex. 2: Add a disturbance to the system
       :caption: Modified controller to use the disturbed signal.
       :linenos: 
       :emphasize-lines: 17
+
+   Make sure that the GAMs are added to the execution list and that the new signals are added to the ``GAMDisplay`` for monitoring.
+
+   Note that the disturbance causes the system to oscillate around the reference position, and the controller tries to compensate for the disturbance to keep the position close to the reference.
 
 
