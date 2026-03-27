@@ -60,7 +60,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
 Exercices
 ---------
 
-Ex. 1: implement the mass spring model with the MathExpressionGAM
+Ex. 1: Implement the mass spring model with the MathExpressionGAM
 ------------------------------------------------------------------
 
 The ``MathExpressionGAM`` can be used to implement the mass-spring-damper model by defining the equations of motion as mathematical expressions. This allows to implement the model without the need to write a custom GAM, while still benefiting from the features of the `MathExpressionGAM`.
@@ -129,16 +129,16 @@ the discrete-time equations become:
 Ex. 2: Compare the output from both models 
 ------------------------------------------
 
-When running the application the output given by the ``GAMMathModel`` and the one computed by the `GAMSpringMass` are similar but not exactly the same. 
+When running the application the output given by the ``GAMMathModel`` and the one computed by the ``GAMSpringMass`` are similar but not exactly the same. 
 
 1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-10.cfg`` and add a MathExpressionGAM to compute the difference between the `Position` value computed by the two models.
-2. Why is the `PositionM` value never converging to the target value? What could be done to modify this behaviour?
+2. Why is the ``PositionM`` value never converging to the target value? What could be done to modify this behaviour?
 
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add the signal to the HistogramGAM and connect it to the ``GAMDisplay``.
+   The solution is to add the signal to the ``HistogramGAM`` and connect it to the ``GAMDisplay``.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-7-solution.cfg
       :language: c++
@@ -147,4 +147,4 @@ When running the application the output given by the ``GAMMathModel`` and the on
       :linenos: 
       :emphasize-lines: 11, 24
 
-  The `PositionM` value is never converging to the target value because the `GAMController` is using as feedback the `Position` value. Try to modify it to use the `PositionM` value instead.
+  The `PositionM` value is never converging to the target value because the ``GAMController`` is using as feedback the ``Position`` value. Try to modify it to use the ``PositionM`` value instead.
