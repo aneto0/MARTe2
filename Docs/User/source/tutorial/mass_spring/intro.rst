@@ -46,14 +46,12 @@ Where:
 
 The main objective of this tutorial is to identify and integrate from existing MARTe2 components the ones that can be used to implement a controller for the mass-spring-damper system, including features that can facilitate the debugging and monitoring of the system.
 
+It will start by introducing GAMs from the MARTe2-components repository to implement common features, followed by sections dedicated to DataSources and Interfaces.
+
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
    mass_spring_1
-   mass_spring_2
-   mass_spring_3
-   mass_spring_4
-   mass_spring_5
-   mass_spring_6
+   gams/intro
 
