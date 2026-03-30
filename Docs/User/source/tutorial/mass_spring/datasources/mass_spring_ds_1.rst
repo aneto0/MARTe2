@@ -63,6 +63,14 @@ Open another console and check the content of the log file (e.g. ``../Test/Integ
     20000,2.000000,0.001496,0.009511,0.009097,0.003000,0.299177,0.598500,-1.990903,30.000000,0,9849,9850,9851,9852,9853,9874,9875,9876,9876,9883,9883,5,7,10,9932,9933,9941,0,0,0,0,0,{ 0 0 0 0 0 0 0 0 0 0 0 } ,{ 0 0 0 0 0 0 0 0 0 0 0 } ,92,0.300000,2.984962,30.000000,30.000000
     ...
 
+The data can be plot using any plotting tool (e.g. ``gnuplot``) and should show the expected behaviour of the system.
+
+A python based plotting script is also available in ``../Test/Integrated/plot_mass_spring_csv.py``. To run the script, execute the following command:
+
+.. code-block:: bash
+
+    python ../Test/Integrated/plot_mass_spring_csv.py -f ../Test/Integrated/MassSpring-18.csv -s ReferencePosition Position
+
 Exercices
 ---------
 
@@ -103,5 +111,39 @@ Also make sure that data is only written to the file for the first 10 seconds of
       :linenos:
       :emphasize-lines: 15-17
 
+Ex. 2: Use the Refresh for live monitoring
+------------------------------------------
 
+The ``FileWriter`` DataSource has a built-in capability to refresh the file content instead of appending to it. This can be used to monitor the application behaviour in real-time using an external tool (e.g. ``watch -n 1 cat ../Test/Integrated/MassSpring-20-stats.csv``).
+
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-20.cfg`` and add a ``FileWriter`` DataSource to store the signals ``Thread1CycleTime``, ``Thread1CycleTimeAverage``, ``Thread1CycleTimeMovingAverage``, ``Thread1CycleTimeStdDev``, ``Thread1CycleTimeMax``, ``Thread1CycleTimeMin``, ``Thread1CycleTimeHistogram``, ``Thread1FreeTimeHistogram``, ``GAMsExecutionTime``.
+2. Make sure that the property ``RefreshContent`` is set to ``1`` in the DataSource configuration.
+3. Write the data into a file named ``../Test/Integrated/MassSpring-20-stats.csv``.
+4. Add a GAM write the signals to the DataSource.
+5. Add the GAM to the execution list.
+6. Check that the file is being refreshed and that the content is updated with the latest values of the signals.
+
+.. code-block:: bash
+
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-20.cfg -l RealTimeLoader -s State1
+
+.. dropdown:: Solution
+   :icon: key
+
+   The solution is to add a ``FileWriterStats`` with the signals.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-20-solution.cfg
+      :language: c++
+      :lines: 1193-1237
+      :caption: FileWriterStats to store the signals.
+      :linenos:
+      :emphasize-lines: 11
+
+   Add the GAM to write the signals to the DataSource.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-20-solution.cfg
+      :language: c++
+      :lines: 956-963, 998-1003
+      :caption: GAM to write the signals to the DataSource. 
+      :linenos:
 
