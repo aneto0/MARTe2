@@ -16,7 +16,7 @@ FileWriter
 
 On the previous sections the application monitoring was based on the use of the Logger, which is a powerful tool to log any information from the application, but it has some obvious limitations. Namely it does not store the files and the output can quicly become overwhelming if the application is running for a long time. 
 
-In this section, data will be stored into a file using the ``FileWriter`` DataSource. This DataSource can be configured to store the data in a binary or text CSV format. 
+In this section, data will be stored into a file using the :vcisdoxygenmccl:`FileWriter` DataSource. This DataSource can be configured to store the data in a binary or text CSV format. 
 
 Many  MARTe2 data sources, including the ``FileWriter`` data source, have decoupling mechanisms so that the writing of data does not interfere with the real-time execution of the application.
 

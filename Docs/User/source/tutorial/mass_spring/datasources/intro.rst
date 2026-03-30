@@ -21,4 +21,5 @@ This section follows on the previous one, and introduces the use of MARTe2-compo
    :caption: Contents:
 
    mass_spring_ds_1
+   mass_spring_ds_2
 
