@@ -77,7 +77,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
-The ``CCS`` tool ``sdn-print`` will be used to monitor the SDN traffic and verify that the application is streaming data over the SDN network. 
+The ``CCS`` tool ``sdn-print`` will be used to monitor the SDN traffic and verify that the applications is streaming data over the SDN network. 
 
 Open another console and generate the required ``.xml`` configuration files for the ``sdn-print``. 
 
@@ -92,15 +92,18 @@ Export the required environment variables for the ``sdn-print`` tool and run the
     export SDN_TOPIC_PATH=../Test/Integrated
     sdn-print -i lo -t mass-spring-1 -c -1
 
+Notice that both MARTe2 and the ``sdn-print`` tool are receiving from the SDN topic source using multicast.
+
 If everything is working correctly, you should see the SDN packets being printed to the console:
 
 .. code-block:: console
 
     $ Using topic definition - <topic name="mass-spring-cabrian-1" version="1" size="8" mapping="239.0.50.191:52544"><dataType format="json">{"type":"mass-spring-cabrian-1","attributes":[{"ReferencePosition":{"type":"float64"}}]}</dataType></topic>
-    $ 2026-03-31T11:18:56.931172148 {"ReferencePosition":0.924}
-    $ 2026-03-31T11:18:56.941171017 {"ReferencePosition":0.928}
-    $ 2026-03-31T11:18:56.951171288 {"ReferencePosition":0.932}
+    $ 2026-03-31T16:15:11.716842934 {"ReferencePosition":1.592}
+    $ 2026-03-31T16:15:11.726838572 {"ReferencePosition":1.588}
+
     ...
+
 
 Exercices
 ---------

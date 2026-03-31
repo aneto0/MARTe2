@@ -56,8 +56,6 @@ Given that some GAMs require a relative time reference, a ``MathExpressionGAM`` 
 Running the application
 -----------------------
 
-TODO HERE!!
-
 Generate the configuration files:
 
 .. code-block:: bash
@@ -68,7 +66,7 @@ Start the sender application with:
 
 .. code-block:: bash
 
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-24-Sender_Gen.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-28-Publisher_Gen.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
 
@@ -78,6 +76,8 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - RealTimeLoader.cpp:111]: Started application in state State1
     $ [Information - MARTeApp.cpp:135]: Application starting
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:0
+    $ [Information - SDNLoggerCallback.cpp:95]: [ccs::mcast] MessengerImpl::Receive - Received message from '127.0.0.1:10002'
+    $ [Information - SDNLoggerCallback.cpp:95]: [sdn::disc] MessengerImpl::Receive - Message ...
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
@@ -85,7 +85,7 @@ Open another terminal and start the receiver application with:
 
 .. code-block:: bash
 
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-24-Receiver_Gen.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-28-Subscriber_Gen.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
 
@@ -94,10 +94,45 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Warning - Threads.cpp:181]: Failed to change the thread priority (likely due to insufficient permissions)
     $ [Information - RealTimeLoader.cpp:111]: Started application in state State1
     $ [Information - MARTeApp.cpp:135]: Application starting
-    $ [Information - LoggerBroker.cpp:152]: Time [0:0]:14000000
+    $ [Information - SDNLoggerCallback.cpp:95]: [ccs::mcast] MessengerImpl::Receive - Received message from '127.0.0.1:10002'
+    $ [Information - SDNLoggerCallback.cpp:95]: [sdn::disc] MessengerImpl::Receive - Message ...
+    $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
+    $ [Information - LoggerBroker.cpp:152]: Time [0:0]:2000000
     ...
 
-.. note:: The actual time values will depend on the arrival of UDP packets, which in turn depends on the execution of the sender application. If the receiver application is started before the sender, the first ``Time`` value will not be zero, but will instead correspond to the ``Time`` from the first received UDP packet.
+.. note:: The actual time values will depend on the arrival of the SDN packets, which in turn depends on the execution of the sender application. If the receiver application is started before the sender, the first ``Time`` value will not be zero, but will instead correspond to the ``Time`` from the first received SDN packet.
+
+The ``CCS`` tool ``sdn-print`` will be used to monitor the SDN traffic and verify that the applications is streaming data over the SDN network. 
+
+Open another console and generate the required ``.xml`` configuration files for the ``sdn-print``. 
+
+.. code-block:: bash
+
+    ../Test/Integrated/GenerateSDNTopicFiles.sh
+
+Export the required environment variables for the ``sdn-print`` tool and run the tool.
+
+.. code-block:: bash
+
+    export SDN_TOPIC_PATH=../Test/Integrated
+    sdn-print -i lo -t mass-spring-1 -c -1
+
+Notice that both MARTe2 and the ``sdn-print`` tool are receiving from the SDN topic source using multicast.
+
+On another console check the statistics from the publisher application:
+
+.. code-block:: bash
+
+    export SDN_TOPIC_PATH=../Test/Integrated
+    sdn-print -i lo -t mass-spring-2 -c -1
+
+And on another console check the statistics from the subscriber application:
+
+.. code-block:: bash
+
+    export SDN_TOPIC_PATH=../Test/Integrated
+    sdn-print -i lo -t mass-spring-3 -c -1
+
 
 Exercices
 ---------
@@ -105,7 +140,7 @@ Exercices
 Ex. 1: Detecting stalled data
 -----------------------------
 
-In the example above, the receiver application waits forever for UDP packets to arrive. In some cases, it may be desirable to detect if the data stream has stalled (e.g. due to a network issue or because the sender application has stopped). This can be achieved by using the ``Timeout`` parameter of the ``UDPReceiver`` DataSource, which specifies a timeout in milliseconds after which the ``UDPReceiver`` will return with a failure.
+In the example above, the application waits with the default ``SDNSubscriber`` timeout for packets to arrive. In some cases, it may be desirable to detect if the data stream has stalled (e.g. due to a network issue or because the sender application has stopped). 
 
 .. warning::
 
@@ -115,52 +150,53 @@ In the example above, the receiver application waits forever for UDP packets to 
     
     Consequently, if a GAM needs to gracefully handle a failure, it must be executed before the GAM that will fail (which means that it will use data from the previous cycle).
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-25-Receiver.cfg`` and modify the DataSource ``UDPWriterReference`` to have a ``Timeout`` of ``1.0 s``.
-2. Add a ``MathExpressionGAM`` to detect stalled data based on the ``Time`` signal and name it ``UDPStalled``.
-3. Add the  ``UDPStalled`` signal to the ``GAMWriterStats`` GAM and to the ``UDPWriterStats`` DataSource.
-4. Add the new ``MathExpressionGAM`` to the execution list, before the ``GAMUDPReceiver`` and move the ``GAMWriterStats`` also before the ``GAMUDPReceiver``.
-5. Run ``make -C ../Configurations/MassSpring/ -f Makefile.cfg`` to generate the configuration file with the correct UDP port numbers.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-29-Subscriber.cfg`` and a ``MathExpressionGAM`` to detect stalled data based on the ``TopicCounter`` signal and name it ``SDNStalled``.
+3. Add the  ``SDNStalled`` signal to the ``GAMWriterStats`` GAM and to the ``SDNPublisherStats`` DataSource.
+4. Add the new ``MathExpressionGAM`` to the execution list, before the ``GAMSDNSubscriber`` and move the ``GAMWriterStats`` to also before the ``GAMSDNSubscriber``.
+5. Run ``make -C ../Configurations/MassSpring/ -f Makefile.cfg`` to generate the configuration file with the correct topic names.
 
 .. code-block:: bash
 
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-25-Receiver_Gen.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-29-Subscriber_Gen.cfg -l RealTimeLoader -s State1
 
 .. code-block:: bash
 
-    python ../Test/Integrated/udp_monitor.py -p TUTORIAL_UDP_PORT_4 -s 3 #Replace TUTORIAL_UDP_PORT_4 with the actual port number being used by the application. Note that the signal index is set to 3, which corresponds to expect a packet with the ``UDPStalled`` signal in the payload.
+    ../Test/Integrated/GenerateSDNTopicFiles.sh
+    export SDN_TOPIC_PATH=../Test/Integrated
+    sdn-print -i lo -t mass-spring-3 -c -1
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to modify the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-25-Receiver.cfg`` and to add a ``MathExpressionGAM``.
+   The solution is to modify the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-29-Subscriber.cfg`` and to add a ``MathExpressionGAM``.
 
-   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-25-Receiver-solution.cfg
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-29-Subscriber-solution.cfg
       :language: c++
-      :caption: MathExpressionGAM to detect stalled data based on the ``Time`` signal.
+      :caption: MathExpressionGAM to detect stalled data based on the ``TopicCounter`` signal.
       :linenos:
       :lines: 5-30
 
-   Add the ``UDPStalled`` signal to the ``GAMWriterStats`` GAM and to the ``UDPWriterStats`` DataSource.
+   Add the ``SDNStalled`` signal to the ``GAMWriterStats`` GAM and to the ``SDNPublisherStats`` DataSource.
 
-   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-25-Receiver-solution.cfg
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-29-Subscriber-solution.cfg
       :language: c++
-      :caption: Updated ``GAMWriterStats`` with the ``UDPStalled`` signal.
+      :caption: Updated ``GAMWriterStats`` with the ``SDNStalled`` signal.
       :linenos:
-      :lines: 950-957,992-997
+      :lines: 1037-1044, 1079-1084 
 
-   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-25-Receiver-solution.cfg
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-29-Subscriber-solution.cfg
       :language: c++
-      :caption: Updated ``UDPWriterStats`` with the ``UDPStalled`` signal.
+      :caption: Updated ``SDNPublisherStats`` with the ``SDNStalled`` signal.
       :linenos:
-      :lines: 1184-1193
+      :lines: 1272-1280
 
-   Add the new ``MathExpressionGAM`` to the execution list, before the ``GAMUDPReceiver`` and move the ``GAMWriterStats`` also before the ``GAMUDPReceiver``.
-    
-    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-25-Receiver-solution.cfg
+   Add the new ``MathExpressionGAM`` to the execution list, before the ``GAMSDNSubscriber`` and move the ``GAMWriterStats`` also before the ``GAMSDNSubscriber``.
+
+    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-29-Subscriber-solution.cfg
       :language: c++
       :caption: Updated execution list.
       :linenos:
-      :lines: 1238-1251
+      :lines: 1324-1337
       :emphasize-lines: 10
 
 

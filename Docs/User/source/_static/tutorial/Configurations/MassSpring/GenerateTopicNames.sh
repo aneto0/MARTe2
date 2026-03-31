@@ -5,7 +5,7 @@ USERNAME=${1:-$USER}
 
 TOPICS=()
 # Generate 10 unique names
-for i in $(seq 1 10); do
+for i in $(seq 0 9); do
     TOPIC_I="mass-spring-${USERNAME}-${i}"
     TOPICS+=($TOPIC_I)
 done
