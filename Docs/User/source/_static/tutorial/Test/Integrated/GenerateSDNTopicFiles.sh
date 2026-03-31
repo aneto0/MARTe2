@@ -16,9 +16,12 @@ done
 #Update the configuration
 TOPIC_0="${TOPICS[0]}"
 TOPIC_1="${TOPICS[1]}"
+TOPIC_2="${TOPICS[2]}"
 
 cp mass-spring-1-template.xml mass-spring-1.xml
-sed -i "s/TOPIC_NAME_0/${TOPIC_0}/g" mass-spring-1.xml
+sed -i "s/TOPIC_NAME/${TOPIC_0}/g" mass-spring-1.xml
 cp mass-spring-2-template.xml mass-spring-2.xml
-sed -i "s/TOPIC_NAME_1/${TOPIC_1}/g" mass-spring-2.xml
+sed -i "s/TOPIC_NAME/${TOPIC_1}/g" mass-spring-2.xml
+cp mass-spring-2-template.xml mass-spring-3.xml
+sed -i "s/TOPIC_NAME/${TOPIC_2}/g" mass-spring-3.xml
 

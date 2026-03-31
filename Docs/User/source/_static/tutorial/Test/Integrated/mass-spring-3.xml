@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- Implicit size (assumed to be 256 bytes incl. header) -->
-<topic name="TOPIC_NAME" description="MARTe2 topic test for stats" version="1.0" uid="0">
+<topic name="mass-spring-cabrian-3" description="MARTe2 topic test for stats" version="1.0" uid="0">
   <attributes>
       <attribute rank="0" name="Thread1CycleTime" dataType="uint32" description="Thread1 cycle time" unit="us - microseconds"></attribute>
       <attribute rank="1" name="Thread1CycleTimeAverage" dataType="uint32" description="Thread1 average cycle time" unit="us - microseconds"></attribute>

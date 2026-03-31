@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- Implicit size (assumed to be 256 bytes incl. header) -->
-<topic name="TOPIC_NAME_0" description="MARTe2 topic test" version="1.0" uid="0">
+<topic name="TOPIC_NAME" description="MARTe2 topic test" version="1.0" uid="0">
   <attributes>
       <attribute rank="0" name="ReferencePosition" dataType="float64" description="Reference position" unit="m - meter"></attribute>
   </attributes>
