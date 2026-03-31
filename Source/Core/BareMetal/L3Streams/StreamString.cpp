@@ -324,4 +324,100 @@ int32 StreamString::Locate(const StreamString &x) const {
     return static_cast<int32>(ret);
 }
 
+StreamString StreamString::SubString(const int32 start, const int32 stop){
+    uint32 rStart = 0u;
+    if(start < 0){
+        uint32 x = static_cast<uint32>(-start);
+        if(x < Size()){
+            rStart = (Size() - x); 
+        }
+    }
+    else{
+        rStart = static_cast<uint32>(start);
+    }
+    uint32 rStop = 0u;
+    if(stop < 0){
+        uint32 x = static_cast<uint32>(-stop);
+        if(x < Size()){
+            rStop = (Size() - x); 
+        }
+    }
+    else{
+        rStop = static_cast<uint32>(stop);
+    }
+    StreamString ret;
+    if(rStop >= rStart){
+        ret = (Buffer() + rStart);
+        ret.SetSize(rStop - rStart + 1u);
+    }
+    return ret;
+}
+
+
+Vector<StreamString> StreamString::Split(const char8 *pattern, const uint32 nSplits){
+    Vector<StreamString> res(nSplits + 1u);
+    if(pattern != NULL){
+        uint32 patternL = StringHelper::Length(pattern);
+        uint32 rnSplits = nSplits;
+        //0 splits means all
+        //Unfortunately need to compute the size before... need to add append in Vector
+        if(nSplits == 0u){
+            uint32 i = 0u;
+            const char8 *buff = Buffer();
+            uint32 curSize = static_cast<uint32>(Size());
+            while(i < curSize){
+                if(StringHelper::CompareN(&buff[i], pattern, patternL) == 0){
+                    rnSplits++;
+                    i+=patternL;
+                }
+                else{
+                    i++;
+                }
+            }    
+        }
+        res.SetSize(rnSplits + 1u);
+        int32 idx = 0;
+        uint32 splitsCnt = 0u;
+        StreamString lastElement = Buffer();
+        uint32 i = 0u;
+        while((idx >= 0) && (splitsCnt < rnSplits)){
+            int32 newidx = lastElement.Locate(pattern);
+            StreamString newElement;
+            if(newidx >= 0){
+                if(newidx > 0){
+                    newElement = lastElement.SubString(0, (newidx - 1));
+                }
+                lastElement = lastElement.SubString(newidx + patternL, -1);
+                splitsCnt++;
+            }
+            else if(newidx < 0){
+                newElement = lastElement;
+            }
+            res[i] = newElement;
+            i++;
+            idx = newidx;
+        }
+
+        //add the rest of the string
+        if(idx >= 0){
+            res[i] = lastElement;
+        }
+    }
+    
+    return res;
+}
+
+
+StreamString StreamString::Replace(const char8 *pattern, const char8 *replacement, const uint32 nReplacements){
+    Vector<StreamString> tokens = Split(pattern, nReplacements);
+    StreamString res;
+    uint32 replacements = (tokens.GetNumberOfElements() - 1u);
+    for(uint32 i = 0u; i < replacements; i++){
+        res += tokens[i];
+        res += replacement;
+    }
+    res += tokens[replacements];
+    return res;
+}
+
 }

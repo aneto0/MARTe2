@@ -498,6 +498,42 @@ bool StreamStringTest::TestConcatenateOperator_String(const char8 *input) {
     return StringHelper::Compare(test, string.Buffer()) == 0;
 }
 
+
+bool StreamStringTest::TestSumOperator_Char(char8 input) {
+
+    StreamString initial = "DUMMY";
+    uint32 size = StringHelper::Length(initial.Buffer());
+    StreamString string = initial + input;
+
+    char8 test[64];
+    StringHelper::Copy(test, initial.Buffer());
+    test[size] = input;
+    test[size + 1] = 0;
+
+    return StringHelper::Compare(test, string.Buffer()) == 0;
+}
+
+bool StreamStringTest::TestSumOperator_CCString(const char8 *input) {
+
+    StreamString initial = "DUMMY";
+    StreamString string = initial + input;
+    char8 test[64];
+    StringHelper::Copy(test, initial.Buffer());
+    StringHelper::Concatenate(test, input);
+    return StringHelper::Compare(test, string.Buffer()) == 0;
+}
+
+bool StreamStringTest::TestSumOperator_String(const char8 *input) {
+    StreamString initial = "DUMMY";
+    StreamString toConcatenate = input;
+    StreamString string = initial + toConcatenate;
+    char8 test[64];
+    StringHelper::Copy(test, initial.Buffer());
+    StringHelper::Concatenate(test, input);
+    return StringHelper::Compare(test, string.Buffer()) == 0;
+}
+
+
 bool StreamStringTest::TestIsEqualOperator_CCString(const char8 *input) {
     StreamString string = input;
 
@@ -628,3 +664,71 @@ bool StreamStringTest::TestGetToken(const TokenTestTableRow *table) {
     }
     return result;
 }
+
+
+
+bool StreamStringTest::TestSubString(){
+    StreamString test = "abcdefghilmnopqrst";
+
+    StreamString res1 = test.SubString(0, 0);
+    bool ok = (res1 == "a");
+
+    StreamString res2 = test.SubString(0, 4);
+    ok &= (res2 == "abcde");
+
+    StreamString res3 = test.SubString(1, 5);
+    ok &= (res3 == "bcdef");
+    
+    StreamString res4 = test.SubString(-3, -1);
+    ok &= (res4 == "rst");
+
+    StreamString res5 = test.SubString(0, -1);
+    ok &= (res5 == test);
+
+    StreamString res6 = test.SubString(-1, -2);
+    ok &= (res6 == "");
+
+    StreamString res7 = test.SubString(-1, 0);
+    ok &= (res7 == "");
+
+    StreamString res8 = test.SubString(4, 3);
+    ok &= (res8 == "");
+
+    return ok;
+}
+
+
+bool StreamStringTest::TestSplit(){
+    StreamString test = ".one.two..three.four";
+    Vector<StreamString> res1 = test.Split(".");
+    const char8 * expected1[] = {"", "one", "two", "", "three", "four"};
+    
+    bool ok = (res1.GetNumberOfElements() == 6u);
+    for(uint32 i = 0u; i < res1.GetNumberOfElements(); i++){
+        ok &= (res1[i] == expected1[i]);
+    }
+    
+    const char8 * expected2[] = {"", "one", "two..three.four"};
+    Vector<StreamString> res2 = test.Split(".", 2);
+    ok = (res2.GetNumberOfElements() == 3u);
+    for(uint32 i = 0u; i < res2.GetNumberOfElements(); i++){
+        ok &= (res2[i] == expected2[i]);
+    }
+
+    return ok;
+}
+
+
+bool StreamStringTest::TestReplace(){
+    StreamString test = "eheh1234eheh56789eheh";
+    StreamString res1 = test.Replace("eheh", "__");
+    bool ok = res1 == "__1234__56789__";
+    StreamString res2 = res1.Replace("__", "");
+    ok &= res2 == "123456789";
+    StreamString res3 = test.Replace("eheh", "__", 2);
+    ok &= res3 == "__1234__56789eheh";
+    return ok;
+}
+
+
+
