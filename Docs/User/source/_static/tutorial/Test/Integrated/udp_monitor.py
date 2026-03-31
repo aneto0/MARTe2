@@ -33,9 +33,8 @@ console_handler = logging.StreamHandler()
 console_handler_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(console_handler_format)
 
-def listen_and_print(udp_ip, udp_port):
-
-    signals = [
+signals = {
+    "1" : [
         ("Thread1CycleTime", "I", 1),
         ("Thread1CycleTimeAverage", "I", 1),
         ("Thread1CycleTimeStdDev", "I", 1),
@@ -44,7 +43,13 @@ def listen_and_print(udp_ip, udp_port):
         ("Thread1CycleTimeHistogram", "I", 11),
         ("Thread1FreeTimeHistogram", "I", 11),
         ("GAMsExecutionTime", "I", 1),
+    ],
+    "2" : [
+        ("ReferencePosition", "d", 1)
     ]
+}
+
+def listen_and_print(signals, udp_ip, udp_port):
 
     # Build struct format (little endian)
     fmt = "<"
@@ -91,6 +96,7 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--log_level', type=str, help='Log level, one of: CRITICAL, ERROR, WARNING, INFO, DEBUG', default='INFO', choices=log_options)
     parser.add_argument('-p', '--port', type=int, help='UDP port to listen', required=True)
     parser.add_argument('-i', '--ip', type=str, help='UDP IP to listen', default='0.0.0.0')
+    parser.add_argument('-s', '--signals_id', type=str, help='ID of the expected signal struct', default='1')
 
     args = parser.parse_args()
 
@@ -102,5 +108,6 @@ if __name__ == '__main__':
     root_logger.setLevel(log_criticality)
     console_handler.setLevel(log_criticality)
 
-    listen_and_print(args.ip, args.port)
+    signals_struct = signals[args.signals_id]
+    listen_and_print(signals_struct, args.ip, args.port)
 

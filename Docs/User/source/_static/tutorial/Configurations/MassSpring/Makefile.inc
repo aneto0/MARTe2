@@ -24,7 +24,8 @@
 
 #Named of the unit files to be compiled
 OBJSX=RTApp-MassSpring-23-Sender.x \
-	RTApp-MassSpring-24-Sender.x
+	RTApp-MassSpring-24-Sender.x \
+	RTApp-MassSpring-24-Sender-solution.x
 
 #Location of the Build directory where the configuration file will be written to
 BUILD_DIR?=.

@@ -20,6 +20,8 @@ Typicaly use-cases include streaming data to a remote monitoring or control appl
 
 In this section, the ``FileWriter`` named ``FileWriterStats`` will be replaced by a ``UDPSender``.
 
+This DataSource can also be used to stream data asynchronously to the ``RealTimeThread``, as discussed for the ``FileWriter``, but typically the UDP streaming is used for streaming real-time data and thus set with ``ExecutionMode = RealTimeThread``. 
+
 Given that the UDP port number is extremely dependent on the system configuration, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-23-Sender.cfg`` will be automatically updated from a ``Makefile.cfg``, as explained in the section :ref:`MARTeConfigurationPreProcessing` of the documentation.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/Makefile.inc
@@ -94,32 +96,42 @@ Exercices
 Ex. 1: Stream the ``ReferencePosition`` signal over UDP. 
 --------------------------------------------------------
 
-TODO FINISH ME!!
-
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-22.cfg`` and modity the FileReader to read from the ``../Test/Integrated/MassSpring-22-Reference.csv`` file.
-2. Make sure that the ``FileReader`` interpolates the data between the samples in the file and rewinds and reloops forever.
-3. Check that the output file ``../Test/Integrated/MassSpring-22.csv`` is being created and that the ``ReferencePosition`` is set to the expected ramp values.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-24.cfg`` and modify the DataSource ``UDPWriterReference`` to stream to the UDP port identified as ``TUTORIAL_UDP_PORT_1``.
+2. Add an ``IOGAM`` to copy the ``ReferencePosition`` from the ``DDB`` into the ``UDPWriterReference``. Add the GAM to execution list.
+3. Run ``make -C ../Configurations/MassSpring/ -f Makefile.cfg`` to generate the configuration file with the correct UDP port numbers.
+4. Check that the application statistics are still being streamed over UDP to the port identified as ``TUTORIAL_UDP_PORT_2`` and that the ``ReferencePosition`` is being streamed to the port identified as ``TUTORIAL_UDP_PORT_1``.
 
 .. code-block:: bash
 
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-22.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-24-Sender_Gen.cfg -l RealTimeLoader -s State1
+
+.. code-block:: bash
+
+    python ../Test/Integrated/udp_monitor.py -p TUTORIAL_UDP_PORT_2 #Replace TUTORIAL_UDP_PORT_2 with the actual port number being used by the application
+    
+    python ../Test/Integrated/udp_monitor.py -p TUTORIAL_UDP_PORT_1 -s 2 #Replace TUTORIAL_UDP_PORT_1 with the actual port number being used by the application. Note that the signal index is set to 2, which corresponds to expect a packet with the ``ReferencePosition`` signal in the payload.
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add the relevant points to the ``../Test/Integrated/MassSpring-22-Reference.csv``.
+   The solution is to modify the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-24-Sender.cfg`` and complete the necessary changes on the ``UDPWriterReference`` DataSource and to add the necessary GAM to copy the ``ReferencePosition`` signal into the ``UDPWriterReference`` DataSource.
 
-   .. literalinclude:: /_static/tutorial/Test/Integrated/MassSpring-22-Reference-solution.csv
-      :language: console
-      :caption: CSV file with ``ReferencePosition`` ramp values.
-      :linenos:
-
-   Modify the ``FileReader`` DataSource to read from the new file and to interpolate the data between the samples.
-
-   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-22-solution.cfg
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-24-Sender-solution.cfg
       :language: c++
-      :lines: 1243-1253
-      :caption: Updated FileReader configuration to read the ramp values.
+      :caption: Updated UDPWriterReference configuration.
       :linenos:
+      :lines: 447-457
 
-   Verify that the output file ``../Test/Integrated/MassSpring-22.csv`` is being created and that the ``ReferencePosition`` is set to the expected ramp values.
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-24-Sender-solution.cfg
+      :language: c++
+      :caption: IOGAM to copy data from ``DDB1`` to ``UDPWriterReference``.
+      :linenos:
+      :lines: 344-358
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-24-Sender-solution.cfg
+      :language: c++
+      :caption: Updated GAM execution list.
+      :linenos:
+      :lines: 505-518
+      :emphasize-lines: 10
+
