@@ -45,7 +45,20 @@ signals = {
         ("GAMsExecutionTime", "I", 1),
     ],
     "2" : [
+        ("Counter", "I", 1),
+        ("Time", "I", 1),
         ("ReferencePosition", "d", 1)
+    ],
+    "3" : [
+        ("UDPStalled", "B", 1),
+        ("Thread1CycleTime", "I", 1),
+        ("Thread1CycleTimeAverage", "I", 1),
+        ("Thread1CycleTimeStdDev", "I", 1),
+        ("Thread1CycleTimeMax", "I", 1),
+        ("Thread1CycleTimeMin", "I", 1),
+        ("Thread1CycleTimeHistogram", "I", 11),
+        ("Thread1FreeTimeHistogram", "I", 11),
+        ("GAMsExecutionTime", "I", 1),
     ]
 }
 

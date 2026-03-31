@@ -15,7 +15,6 @@ for ((i=0; i<NUM_PORTS; i++)); do
     PORT=$((UDP_BASE_PORT + i))
 
     while netstat -uln | grep -q ":$PORT"; do
-        echo "Port $PORT in use, trying next one..."
         UDP_BASE_PORT=$((UDP_BASE_PORT + 1))
         PORT=$((UDP_BASE_PORT + i))
     done

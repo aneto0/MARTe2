@@ -40,6 +40,18 @@ The ``Makefile`` will automatically call the script ``../Test/Integrated/FindFre
     :linenos: 
     :emphasize-lines: 4
 
+.. warning::
+
+    Some DataSources allow for implicit signal declaration, meaning that the signals are not explicitly declared as part of the DataSource configuration, but instead are automatically created based on the signals being written to or read from the DataSource. 
+    
+    This is not the case for the ``UDPSender`` DataSource, which requires that all the signals are explicitly declared as part of its configuration.
+
+    An attempt to write a signal to a ``UDPSender`` DataSource that has not been declared as part of the DataSource configuration will result in an error similar to the following:
+
+    .. code-block:: console
+
+        $ [InitialisationEr - RealTimeApplicationConfigurationBuilder.cpp:1183]: Cannot add the signal Time in GAM GAMWriterRefPos because the related DataSource is locked
+
 
 Running the application
 -----------------------
@@ -72,7 +84,7 @@ Start the application with:
 
 .. code-block:: bash
 
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-23-Sender.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-23-Sender_Gen.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
 
@@ -96,8 +108,8 @@ Exercices
 Ex. 1: Stream the ``ReferencePosition`` signal over UDP. 
 --------------------------------------------------------
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-24.cfg`` and modify the DataSource ``UDPWriterReference`` to stream to the UDP port identified as ``TUTORIAL_UDP_PORT_1``.
-2. Add an ``IOGAM`` to copy the ``ReferencePosition`` from the ``DDB`` into the ``UDPWriterReference``. Add the GAM to execution list.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-24.cfg`` and modify the DataSource ``UDPWriterReference`` to stream the signals: ``Counter``, ``Time`` and ``ReferencePosition`` to the UDP port identified as ``TUTORIAL_UDP_PORT_1``.
+2. Add an ``IOGAM`` to copy the signals from the ``DDB1`` into the ``UDPWriterReference``. Add the GAM to execution list.
 3. Run ``make -C ../Configurations/MassSpring/ -f Makefile.cfg`` to generate the configuration file with the correct UDP port numbers.
 4. Check that the application statistics are still being streamed over UDP to the port identified as ``TUTORIAL_UDP_PORT_2`` and that the ``ReferencePosition`` is being streamed to the port identified as ``TUTORIAL_UDP_PORT_1``.
 
@@ -120,18 +132,18 @@ Ex. 1: Stream the ``ReferencePosition`` signal over UDP.
       :language: c++
       :caption: Updated UDPWriterReference configuration.
       :linenos:
-      :lines: 447-457
+      :lines: 463-479
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-24-Sender-solution.cfg
       :language: c++
       :caption: IOGAM to copy data from ``DDB1`` to ``UDPWriterReference``.
       :linenos:
-      :lines: 344-358
+      :lines: 344-374
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-24-Sender-solution.cfg
       :language: c++
       :caption: Updated GAM execution list.
       :linenos:
-      :lines: 505-518
+      :lines: 527-540
       :emphasize-lines: 10
 

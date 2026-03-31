@@ -25,7 +25,10 @@
 #Named of the unit files to be compiled
 OBJSX=RTApp-MassSpring-23-Sender.x \
 	RTApp-MassSpring-24-Sender.x \
-	RTApp-MassSpring-24-Sender-solution.x
+	RTApp-MassSpring-24-Sender-solution.x \
+	RTApp-MassSpring-24-Receiver.x \
+	RTApp-MassSpring-25-Receiver.x \
+	RTApp-MassSpring-25-Receiver-solution.x 
 
 #Location of the Build directory where the configuration file will be written to
 BUILD_DIR?=.
@@ -39,7 +42,9 @@ FREE_UDP_PORTS := $(shell ./FindFreeUDPPort.sh)
 FREE_UDP_PORT_0 := $(word 1, $(FREE_UDP_PORTS))
 FREE_UDP_PORT_1 := $(word 2, $(FREE_UDP_PORTS))
 FREE_UDP_PORT_2 := $(word 3, $(FREE_UDP_PORTS))
-CFLAGS += -DTUTORIAL_UDP_PORT=$(FREE_UDP_PORT_0) -DTUTORIAL_UDP_PORT_1=$(FREE_UDP_PORT_1) -DTUTORIAL_UDP_PORT_2=$(FREE_UDP_PORT_2)
+FREE_UDP_PORT_3 := $(word 4, $(FREE_UDP_PORTS))
+FREE_UDP_PORT_4 := $(word 5, $(FREE_UDP_PORTS))
+CFLAGS += -DTUTORIAL_UDP_PORT=$(FREE_UDP_PORT_0) -DTUTORIAL_UDP_PORT_1=$(FREE_UDP_PORT_1) -DTUTORIAL_UDP_PORT_2=$(FREE_UDP_PORT_2) -DTUTORIAL_UDP_PORT_3=$(FREE_UDP_PORT_3) -DTUTORIAL_UDP_PORT_4=$(FREE_UDP_PORT_4)
 
 all: check-env $(OBJS) 
 	echo  $(OBJS)
