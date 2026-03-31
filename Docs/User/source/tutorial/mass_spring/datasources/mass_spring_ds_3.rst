@@ -14,7 +14,7 @@
 UDPSender
 =========
 
-The :vcisdoxygenmccl:`UDPSender` ` DataSource can be used to stream application data over UDP.
+The :vcisdoxygenmccl:`UDPSender` DataSource can be used to stream application data over UDP.
 
 Typicaly use-cases include streaming data to a remote monitoring or control application.
 
@@ -96,7 +96,9 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
-A python script to receive the UDP data and print it to the console is available in the file ``../Test/Integrated/UDPReceiver.py``. Run the script with:
+A python script to receive the UDP data and print it to the console is available in the file ``../Test/Integrated/UDPReceiver.py``. 
+
+Open another terminal and run the script with:
 
 .. code-block:: bash
 

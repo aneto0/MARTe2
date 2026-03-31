@@ -14,7 +14,7 @@
 UDPReceiver
 ===========
 
-The :vcisdoxygenmccl:`UDPReceiver` ` DataSource can be used to receive application data over UDP.
+The :vcisdoxygenmccl:`UDPReceiver` DataSource can be used to receive application data over UDP.
 
 Typicaly use-cases include subscribing to data from a remote application. This data can be used for monitoring or control purposes. In the latter case, the data is used to synchronise the ``RealTimeThread``.
 
@@ -62,7 +62,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
-Start the receiver application with:
+Open another terminal and start the receiver application with:
 
 .. code-block:: bash
 

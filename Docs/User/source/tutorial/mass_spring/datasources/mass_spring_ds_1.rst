@@ -52,7 +52,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - MARTeApp.cpp:135]: Application starting
     ...
 
-Open another console and check the content of the log file (e.g. ``../Test/Integrated/MassSpring-18.csv``) and verify that the data is being stored in the file as expected. The log should show entries similar to the following:
+Open another terminal and check the content of the log file (e.g. ``../Test/Integrated/MassSpring-18.csv``) and verify that the data is being stored in the file as expected. The log should show entries similar to the following:
 
 .. code-block:: console
 
