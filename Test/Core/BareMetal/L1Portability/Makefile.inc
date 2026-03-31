@@ -44,6 +44,7 @@ OBJSX=  AtomicTest.x \
 	MemoryCheckTest.x \
 	MemoryOperationsHelperTest.x\
 	ProcessorTypeTest.x \
+	ResultTTest.x \
 	SafeMathTest.x \
 	SleepTest.x\
 	StandardHeap_GenericTest.x \
