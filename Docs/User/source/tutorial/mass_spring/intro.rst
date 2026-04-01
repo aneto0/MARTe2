@@ -61,5 +61,6 @@ It will start by introducing GAMs from the MARTe2-components repository to imple
 
    mass_spring_1
    gams/intro
+   structured_types
    datasources/intro
 

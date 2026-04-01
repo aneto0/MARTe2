@@ -66,7 +66,7 @@ FAQ
 
 .. dropdown:: Can I use structured types for the signals?
 
-   Yes, see the :ref:`GAM documentation <StructuredGAM>` .
+   Yes, see the :ref:`GAM documentation <StructuredGAM>` and the tutorial on :ref:`Structured types <MassSpringStructuredTypes>`.
 
 .. dropdown:: What are the available GAM properties?
    :icon: question
