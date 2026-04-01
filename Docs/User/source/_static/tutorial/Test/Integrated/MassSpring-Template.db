@@ -1,0 +1,129 @@
+record(longout, "MARTE2-TUTORIAL-USERNAME-TRIGGER-WRITER") {
+    field(DTYP, "Soft Channel")
+}            
+record(longout, "MARTE2-TUTORIAL-USERNAME-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(ai, "MARTE2-TUTORIAL-USERNAME-REFERENCE-POSITION") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-POSITION") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-POSITION-DISTURBED") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-POSITION-FILTERED") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-POSITION-M") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-VELOCITY") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-VELOCITY-M") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-POSITION-ERR") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-FORCE") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-TIMER-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-TIMER-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-TIMER-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-REFERENCE-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-REFERENCE-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-REFERENCE-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-CONTROLLER-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-CONTROLLER-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-CONTROLLER-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-SPRINGMASS-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-SPRINGMASS-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-SPRINGMASS-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-PERFMONITOR-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-PERFMONITOR-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-PERFMONITOR-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-WRITER-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-WRITER-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAM-WRITER-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-FORCE-AVERAGE") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-FORCE-STDDEV") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-FORCE-MAX") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-USERNAME-FORCE-MIN") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-AVERAGE") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-MOVING-AVERAGE") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-STDDEV") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-MAX") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-MIN") {
+    field(DTYP, "Soft Channel")
+}
+record(waveform, "MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-HISTOGRAM") {
+    field(NELM, 11)
+    field(FTVL, "ULONG")
+}
+record(waveform, "MARTE2-TUTORIAL-USERNAME-THREAD1-FREE-TIME-HISTOGRAM") {
+    field(NELM, 11)
+    field(FTVL, "ULONG")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-GAMS-EXECUTION-TIME") {
+    field(DTYP, "Soft Channel")
+}
+

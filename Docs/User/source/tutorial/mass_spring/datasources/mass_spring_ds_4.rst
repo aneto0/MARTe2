@@ -49,6 +49,7 @@ Start the sender application with:
 
 .. code-block:: bash
 
+    make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-24-Sender_Gen.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
@@ -66,6 +67,7 @@ Open another terminal and start the receiver application with:
 
 .. code-block:: bash
 
+    make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-24-Receiver_Gen.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
@@ -104,6 +106,7 @@ In the example above, the receiver application waits forever for UDP packets to 
 
 .. code-block:: bash
 
+    make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-25-Receiver_Gen.cfg -l RealTimeLoader -s State1
 
 .. code-block:: bash

@@ -35,7 +35,10 @@ OBJSX=RTApp-MassSpring-23-Sender.x \
 	RTApp-MassSpring-28-Publisher.x \
 	RTApp-MassSpring-28-Subscriber.x \
 	RTApp-MassSpring-29-Subscriber.x \
-	RTApp-MassSpring-29-Subscriber-solution.x 
+	RTApp-MassSpring-29-Subscriber-solution.x \
+	RTApp-MassSpring-30.x \
+	RTApp-MassSpring-31.x \
+	RTApp-MassSpring-31-solution.x 
 
 #Location of the Build directory where the configuration file will be written to
 BUILD_DIR?=.
@@ -71,6 +74,9 @@ FREE_TOPIC_NAME_7 := $(word 8, $(FREE_TOPIC_NAMES))
 FREE_TOPIC_NAME_8 := $(word 9, $(FREE_TOPIC_NAMES))
 FREE_TOPIC_NAME_9 := $(word 10, $(FREE_TOPIC_NAMES))
 CFLAGS += -DTUTORIAL_TOPIC_NAME_0=$(FREE_TOPIC_NAME_0) -DTUTORIAL_TOPIC_NAME_1=$(FREE_TOPIC_NAME_1) -DTUTORIAL_TOPIC_NAME_2=$(FREE_TOPIC_NAME_2) -DTUTORIAL_TOPIC_NAME_3=$(FREE_TOPIC_NAME_3) -DTUTORIAL_TOPIC_NAME_4=$(FREE_TOPIC_NAME_4) -DTUTORIAL_TOPIC_NAME_5=$(FREE_TOPIC_NAME_5) -DTUTORIAL_TOPIC_NAME_6=$(FREE_TOPIC_NAME_6) -DTUTORIAL_TOPIC_NAME_7=$(FREE_TOPIC_NAME_7) -DTUTORIAL_TOPIC_NAME_8=$(FREE_TOPIC_NAME_8) -DTUTORIAL_TOPIC_NAME_9=$(FREE_TOPIC_NAME_9)
+
+USERNAME_UPPER := $(shell echo $(USER) | tr '[:lower:]' '[:upper:]')
+CFLAGS += -DUSERNAME=$(USERNAME_UPPER)
 
 all: check-env $(OBJS) 
 	echo  $(OBJS)

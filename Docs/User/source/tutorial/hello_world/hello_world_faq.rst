@@ -19,6 +19,13 @@ FAQ
 
    The destruction of the RealTimeApplication object is being attempted without the application having been started. This can be caused by a failure during the startup phase of the application, which prevents the application from reaching the state where it is considered "started".  It rarely is the root cause of the issue, but rather a consequence of an earlier failure during startup. To identify the root cause, it is necessary to look at the log messages that appear before this error message in the application log.
 
+.. dropdown:: [FatalError - Reference.cpp:129]: Reference: Failed CreateByName() in constructor... [FatalError - ReferenceContainer.cpp:421]: Failed to Initialise object with name ...
+  :icon: question
+
+   The application could not instantiate the object for the type specified in the ``Class =`` field. 
+   
+   This can be caused by a typo in the class name, or by the fact that the class is not available as part of the ``LD_LIBRARY_PATH``, or because it is part of a library and the class name needs to be prefixed with the library name. For example, if the class is part of the library ``MyLibrary``, the class name should be specified as ``Class = MyLibrary::MyClass``. 
+
 .. dropdown:: What are the rules for signal naming in the configuration file?
    :icon: question
 
