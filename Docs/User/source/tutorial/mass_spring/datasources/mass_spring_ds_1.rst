@@ -22,6 +22,8 @@ Many  MARTe2 data sources, including the ``FileWriter`` data source, have decoup
 
 These mechanisms typically involve buffering the data in memory and writing it to the file asynchronously on a separate thread (which may be allocated to a different CPU core).
 
+In this example data is stored into a CSV file, which can be easily opened with a spreadsheet software or plotted with any plotting tool (e.g. `gnuplot <https://www.gnuplot.info/>`__). The configuration of the ``FileWriter`` DataSource is shown in the following listing.
+
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-18.cfg
     :language: c++
     :lines: 919-934

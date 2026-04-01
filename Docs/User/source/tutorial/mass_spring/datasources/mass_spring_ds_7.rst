@@ -16,9 +16,9 @@ EPICSCAOutput
 
 .. warning::
     
-    The EPICSCAOutput DataSource is only available in distribution where `EPICS Channel Access is installed <https://epics-controls.org/>`__.
+    The EPICSCAOutput DataSource is only available in distribution where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
 
-The ``EPICSCAOutput`` DataSource can be used to stream application data over the EPICS Channel Access protocol. This allows to interface the application with any EPICS based monitoring or control application (e.g. `EPICS Archiver Appliance <https://slacmshankar.github.io/epicsarchiver_docs/>`__, `EPICS Control System Studio <https://controlsystemstudio.org/>`__, etc ...).
+The :vcisdoxygenmccl:`EPICSCAOutput` DataSource can be used to stream application data over the EPICS Channel Access protocol. This allows to interface the application with any EPICS based monitoring or control application (e.g. `EPICS Archiver Appliance <https://slacmshankar.github.io/epicsarchiver_docs/>`__, `EPICS Control System Studio <https://controlsystemstudio.org/>`__, etc ...).
 
 This DataSource writes to the PVs asynchronously on a separate thread (which may be allocated to a different CPU core).
 
@@ -27,6 +27,8 @@ The name of the PVs needs to be defined for every signal in the DataSource confi
 Given that the PV name needs to be unique, in order to avoid name clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-30.cfg`` will be automatically updated from a ``Makefile.cfg``. The name of the PVs are based on the username.
 
 The PVs are hosted on a ``softIOC`` which needs to be started before running the application. The ``softIOC`` configuration file is generated from a template by running the command ``../Test/Integrated/GenerateEPICSSoftIOCDb.sh``, which will also automatically generate the PV names to match the ones defined in the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-30.cfg``.
+
+In this example the main application data is written into the corresponding PVs.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-30.cfg
     :language: c++

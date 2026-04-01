@@ -126,4 +126,7 @@ record(waveform, "MARTE2-TUTORIAL-USERNAME-THREAD1-FREE-TIME-HISTOGRAM") {
 record(longout, "MARTE2-TUTORIAL-USERNAME-GAMS-EXECUTION-TIME") {
     field(DTYP, "Soft Channel")
 }
+record(longout, "MARTE2-TUTORIAL-USERNAME-SWITCH-ON") {
+    field(DTYP, "Soft Channel")
+}
 

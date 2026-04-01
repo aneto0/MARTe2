@@ -27,4 +27,5 @@ This section follows on the previous one, and introduces the use of MARTe2-compo
    mass_spring_ds_5
    mass_spring_ds_6
    mass_spring_ds_7
+   mass_spring_ds_8
 

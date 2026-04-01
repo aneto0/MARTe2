@@ -29,6 +29,7 @@ The ``FileReader`` DataSource can be configured to react in different ways to th
 
 The DataSource can also be configured to interpolate the data between the samples in the file. This can be useful to test the application with a specific sampling time that is different from the one used to record the data.
 
+In this example the ``ReferencePosition`` is read from the file ``../Test/Integrated/MassSpring-21-Reference.csv``, which contains a constant value of ``2.0`` for the ``ReferencePosition`` signal.
 
 Running the application
 -----------------------
