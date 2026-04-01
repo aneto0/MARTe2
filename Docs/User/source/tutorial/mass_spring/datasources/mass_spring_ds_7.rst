@@ -18,7 +18,7 @@ EPICSCAOutput
     
     The EPICSCAOutput DataSource is only available in distribution where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
 
-The :vcisdoxygenmccl:`EPICSCAOutput` DataSource can be used to stream application data over the EPICS Channel Access protocol. This allows to interface the application with any EPICS based monitoring or control application (e.g. `EPICS Archiver Appliance <https://slacmshankar.github.io/epicsarchiver_docs/>`__, `EPICS Control System Studio <https://controlsystemstudio.org/>`__, etc ...).
+The :vcisdoxygenmccl:`EPICSCAOutput` DataSource can be used to stream application data over the EPICS Channel Access protocol. This allows to interface the application with any EPICS based monitoring or control application (e.g. `EPICS Archiver Appliance <https://slacmshankar.github.io/epicsarchiver_docs/>`__, `EPICS Control System Studio <https://controlsystemstudio.org/>`__).
 
 This DataSource writes to the PVs asynchronously on a separate thread (which may be allocated to a different CPU core).
 

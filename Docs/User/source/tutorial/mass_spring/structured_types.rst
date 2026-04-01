@@ -50,7 +50,23 @@ In this section, the control signals are grouped into a struct to facilitate the
 
    The use of structured types is not limited to the GAMDisplay. It can be used in any component that supports structured types (e.g. FileWriter, Logger, ...).  GAMs can also access individual fields of the structured types, in a very similar way to ``C``. The access to the individual fields of the structured types is done using the dot notation in the ``Alias`` field (e.g. ``Alias=Monitor.Control.Position``).
 
+.. important::
 
+   While loading the registered types the MARTe2 application will output the log many warning messages similar to the following:
+
+   .. code-block:: c++
+
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): ControlParameters.so: cannot open shared object file: No such file or directory
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): ControlParameters.gam: cannot open shared object file: No such file or directory
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): ControlParameters.drv: cannot open shared object file: No such file or directory
+      $ [Information - IntrospectionStructure.cpp:270]: Registering type ControlParameters
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): GAMPerformance.so: cannot open shared object file: No such file or directory
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): GAMPerformance.gam: cannot open shared object file: No such file or directory
+      $ [Warning - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): GAMPerformance.drv: cannot open shared object file: No such file or directory
+      $ [Information - IntrospectionStructure.cpp:270]: Registering type GAMPerformance
+      ...
+
+   These messages are expected and can be safely ignored. They are due to the fact that MARTe2 tries to load the structured types as if they were components (GAMs, DataSources, ...), but since they are not components, the loading fails and the warning messages are output. However, the structured types are still registered successfully (provided that the message ``[Information - IntrospectionStructure.cpp:270]: Registering type <type_name>`` is shown) and can be used in the application without any issues.
 
 Running the application
 -----------------------
