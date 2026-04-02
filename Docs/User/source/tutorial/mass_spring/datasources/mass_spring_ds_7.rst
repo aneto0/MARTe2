@@ -33,7 +33,7 @@ In this example the main application data is written into the corresponding PVs.
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-30.cfg
     :language: c++
     :lines: 896-915
-    :caption: EPICSCAOutput configuration. Note that the PVs names are then automatically replaced by the ``Makefile.cfg``.
+    :caption: EPICSCAOutput configuration. Note that the PVs names are automatically replaced by the ``Makefile.cfg``.
     :linenos: 
     :emphasize-lines: 9, 13, 17
 

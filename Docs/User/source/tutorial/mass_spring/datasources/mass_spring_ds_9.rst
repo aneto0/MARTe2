@@ -26,14 +26,14 @@ The DataSource only supports structured types as defined in the :ref:`MassSpring
 
 Given that the PVA records names needs to be unique, in order to avoid name clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-36.cfg`` will be automatically updated from a ``Makefile.cfg``. The name of the PV records are based on the username.
 
-The PV records are hosted using a MARTe2 :vcisdoxygenmccl:`EPICSPVADatabase`, which in this example is instantiated in the same configuration file of the application. The PV records are then defined in a separate file ``../Test/Integrated/MassSpring-1.db``.
+The PV records are hosted using a MARTe2 :vcisdoxygenmccl:`EPICSPVADatabase`, which in this example is instantiated in the same configuration file of the application. 
 
 The objective of this example is to monitor the application data using EPICS PVA records.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-36.cfg
     :language: c++
     :lines: 126-141
-    :caption: EPICSPVADatabase configuration. Note that the PV record names are then automatically replaced by the ``Makefile.cfg``.
+    :caption: EPICSPVADatabase configuration. Note that the PV record names are automatically replaced by the ``Makefile.cfg``.
     :linenos:
     :emphasize-lines: 2, 8, 10-11
 
@@ -46,7 +46,7 @@ The objective of this example is to monitor the application data using EPICS PVA
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-36.cfg
     :language: c++
     :lines: 838-851
-    :caption: EPICSPVAOutput DataSource configuration. Note that the PV record names are then automatically replaced by the ``Makefile.cfg``.
+    :caption: EPICSPVAOutput DataSource configuration. Note that the PV record names are automatically replaced by the ``Makefile.cfg``.
     :linenos:
     :emphasize-lines: 2,9-11
 
@@ -141,7 +141,7 @@ Monitor the statistics signals as part of another EPICS PVA record.
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-37-solution.cfg
       :language: c++
       :lines: 1569-1587
-      :caption: Updated EPICSPVAOutput DataSource configuration highlighting the addition of the structured signal. Note that the PV record names are then automatically replaced by the ``Makefile.cfg``.
+      :caption: Updated EPICSPVAOutput DataSource configuration highlighting the addition of the structured signal. Note that the PV record names are automatically replaced by the ``Makefile.cfg``.
       :linenos:
       :emphasize-lines: 13-17
 

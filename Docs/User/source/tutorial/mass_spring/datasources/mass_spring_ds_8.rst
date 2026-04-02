@@ -33,7 +33,7 @@ In this example the ``ReferencePosition`` signal is read from the corresponding 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-32.cfg
     :language: c++
     :lines: 986-996
-    :caption: EPICSCAInput configuration. Note that the PVs names are then automatically replaced by the ``Makefile.cfg``.
+    :caption: EPICSCAInput configuration. Note that the PVs names are automatically replaced by the ``Makefile.cfg``.
     :linenos: 
     :emphasize-lines: 8
 
@@ -64,7 +64,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
-Open another terminal and modity the value of the ``ReferencePosition`` PV using the command:
+Open another terminal and modify the value of the ``ReferencePosition`` PV using the command:
 
 .. code-block:: bash
 
@@ -95,10 +95,11 @@ Ex. 1: Switch on/off
 
 The objective of this exercise is to use the EPICSCAInput DataSource to switch on/off the force output of the mass-spring system.
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-33.cfg`` and add a :vcisdoxygenmccl:`MuxGAM` that selects between a signal named ``ForceZero`` and the signal ``ForceFromController`` to generate an output signal named ``Force`` into the ``DDB1``. Name the GAM ``GAMMuxSwitchOn``.
-2. The names of the switch on-off PV is ``MARTE2-TUTORIAL-USERNAME-SWITCH-ON``. 
-3. Add the MuxGAM to the execution list.
-4. Execute the application:
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-33.cfg`` and add a :vcisdoxygenmccl:`MuxGAM` that selects between a signal named ``ForceZero`` and the signal ``ForceFromController`` to produce an output signal named ``Force`` in ``DDB1``. Name the GAM ``GAMMuxSwitchOn``.
+2. Modify the ``ControllerGAM`` to output the signal named ``ForceFromController`` instead of ``Force``.
+3. The name of the switch on-off PV is ``MARTE2-TUTORIAL-USERNAME-SWITCH-ON``. 
+4. Add the MuxGAM to the execution list.
+5. Execute the application:
 
 .. code-block:: bash
 
@@ -117,7 +118,7 @@ The objective of this exercise is to use the EPICSCAInput DataSource to switch o
 
     camonitor MARTE2-TUTORIAL-USERNAME-REFERENCE-POSITION MARTE2-TUTORIAL-USERNAME-POSITION #Replace with your username in capital letters  
 
-7. Switch on the system by setting the switch on-off PV to 1 using the command: ``caput MARTE2-TUTORIAL-USERNAME-SWITCH-ON 1``, where ``USERNAME`` is your username in capital letters.
+7. Switch on the system by setting the switch on-off PV to 1 using the command: 
 
 .. code-block:: bash
 
