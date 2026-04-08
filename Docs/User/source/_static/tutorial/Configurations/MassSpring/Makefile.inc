@@ -47,7 +47,12 @@ OBJSX=RTApp-MassSpring-23-Sender.x \
 	RTApp-MassSpring-37-solution.x \
 	RTApp-MassSpring-38.x \
 	RTApp-MassSpring-39.x \
-	RTApp-MassSpring-39-solution.x 
+	RTApp-MassSpring-39-solution.x \
+	RTApp-MassSpring-40.x \
+	RTApp-MassSpring-40-Monitor.x \
+	RTApp-MassSpring-41.x \
+	RTApp-MassSpring-41-solution.x \
+	RTApp-MassSpring-41-Monitor.x 
 
 #Location of the Build directory where the configuration file will be written to
 BUILD_DIR?=.
@@ -86,6 +91,12 @@ CFLAGS += -DTUTORIAL_TOPIC_NAME_0=$(FREE_TOPIC_NAME_0) -DTUTORIAL_TOPIC_NAME_1=$
 
 USERNAME_UPPER := $(shell echo $(USER) | tr '[:lower:]' '[:upper:]')
 CFLAGS += -DUSERNAME=$(USERNAME_UPPER)
+
+FREE_OPCUA_PORTS := $(shell ./FindFreeOPCUAPort.sh)
+FREE_OPCUA_PORT_0 := $(word 1, $(FREE_OPCUA_PORTS))
+
+CFLAGS += -DOPCUA_PORT=$(FREE_OPCUA_PORT_0)
+CFLAGS += -DOPCUA_FULL_URL=\"opc.tcp://127.0.0.1:$(FREE_OPCUA_PORT_0)\"
 
 all: check-env $(OBJS) 
 	echo  $(OBJS)

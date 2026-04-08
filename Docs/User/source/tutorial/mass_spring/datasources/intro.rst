@@ -30,4 +30,5 @@ This section follows on the previous one, and introduces the use of MARTe2-compo
    mass_spring_ds_8
    mass_spring_ds_9
    mass_spring_ds_10
+   mass_spring_ds_11
 
