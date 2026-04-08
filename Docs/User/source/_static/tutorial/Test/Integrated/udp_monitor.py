@@ -104,7 +104,7 @@ def listen_and_print(signals, udp_ip, udp_port):
         sys.stdout.flush()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = 'Plot signals from the mass spring model', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description = 'Print signals from the mass spring model', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     log_options = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
     parser.add_argument('-l', '--log_level', type=str, help='Log level, one of: CRITICAL, ERROR, WARNING, INFO, DEBUG', default='INFO', choices=log_options)
     parser.add_argument('-p', '--port', type=int, help='UDP port to listen', required=True)
