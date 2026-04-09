@@ -60,7 +60,10 @@ OBJSX=RTApp-MassSpring-23-Sender.x \
 	RTApp-MassSpring-44.x \
 	RTApp-MassSpring-44-solution.x \
 	RTApp-MassSpring-44-Control-On.x \
-	RTApp-MassSpring-44-Control-Off.x 
+	RTApp-MassSpring-44-Control-Off.x \
+	RTApp-MassSpring-45.x \
+	RTApp-MassSpring-46.x \
+	RTApp-MassSpring-46-solution.x 
 
 #Location of the Build directory where the configuration file will be written to
 BUILD_DIR?=.
@@ -99,6 +102,9 @@ CFLAGS += -DTUTORIAL_TOPIC_NAME_0=$(FREE_TOPIC_NAME_0) -DTUTORIAL_TOPIC_NAME_1=$
 
 USERNAME_UPPER := $(shell echo $(USER) | tr '[:lower:]' '[:upper:]')
 CFLAGS += -DUSERNAME=$(USERNAME_UPPER)
+
+USERNAME_FIRST_CAP := $(shell u=$(USER); echo "$${u^}")
+CFLAGS += -DUSERNAME_FIRST_CAP=$(USERNAME_FIRST_CAP)
 
 FREE_OPCUA_PORTS := $(shell ./FindFreeOPCUAPort.sh)
 FREE_OPCUA_PORT_0 := $(word 1, $(FREE_OPCUA_PORTS))
