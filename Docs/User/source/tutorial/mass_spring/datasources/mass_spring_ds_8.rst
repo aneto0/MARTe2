@@ -140,7 +140,7 @@ The objective of this exercise is to use the EPICSCAInput DataSource to switch o
       :lines: 148-178
       :caption: MuxGAM configuration.
       :linenos:
-      :emphasize-lines: 2,5
+      :emphasize-lines: 2,4
 
    Add the signal to the EPICSCAInput DataSource.
 

@@ -105,7 +105,7 @@ The output should be similar to the following:
 
     You can also use any OPCUA client to connect to the MARTe2 OPCUA server and monitor the application data. 
 
-    For example, if the python ``opcua`` library is installed in your system, you can use the python script located in ``../Test/Integrated/OPCUAClient.py`` to connect to the server and print the values of the nodes being written by the application.
+    For example, if the python ``opcua`` library is installed in your system, you can use the python script located in ``../Test/Integrated/opcua_monitor.py`` to connect to the server and print the values of the nodes being written by the application.
 
     .. code-block:: bash
 

@@ -187,14 +187,14 @@ The objective of this exercise is to use the EPICSPVAInput DataSource to switch 
       :lines: 345-375
       :caption: MuxGAM configuration.
       :linenos:
-      :emphasize-lines: 2,5
+      :emphasize-lines: 2,4
 
    Update the ``GAMReference`` to read both signals from the DataSource.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-39-solution.cfg
       :language: c++
       :lines: 253-271
-      :caption: DataSource configuration
+      :caption: GAMReference configuration
       :linenos:
 
    .. note::

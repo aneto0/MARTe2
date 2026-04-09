@@ -14,10 +14,10 @@ __copyright__ = '''
 '''
 __license__ = 'EUPL'
 __author__ = 'Andre Neto'
-__date__ = '08/04/2026'
+__date__ = '09/04/2026'
 
 '''
-Monitor signals received using OPCUA
+Modify signals over OPCUA
 '''
 import argparse
 import logging
@@ -35,54 +35,30 @@ console_handler = logging.StreamHandler()
 console_handler_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(console_handler_format)
 
-
-def print_node_value(node, print_time_stamps, level=0):
-    ret = []
-
-    try:
-        name = node.get_display_name().Text
-    except:
-        name = 'Unknown'
-
-    try:
-        if node.get_node_class() == ua.NodeClass.Variable:
-            dv = node.get_data_value()
-            value = dv.Value.Value
-            if print_time_stamps:
-                source_ts = dv.SourceTimestamp
-                server_ts = dv.ServerTimestamp
-                ret.append('  ' * level + f'- {name}:{value} | src_ts:{source_ts} | srv_ts:{server_ts}')
-            else:
-                ret.append('  ' * level + f'- {name}:{value}')
-        else:
-            ret.append('  ' * level + f'- {name}')
-
-        children = node.get_children()
-        for child in children:
-            ret += print_node_value(child, print_time_stamps, level + 1)
-    except Exception as e:
-        logger.critical('  ' * (level + 1) + f'[Error: {e}]')
-
-    return ret
-
 def get_node(node, node_name):
     ret = None
 
-    try:
-        name = node.get_display_name().Text
-        if name == node_name:
-            ret = node
-    except:
-        name = 'Unknown'
-        ret = None
-
-    if ret is None: 
-        for child in node.get_children():
-            ret = get_node(child, node_name)
-            if ret is not None:
+    for child in node.get_children():
+        try:
+            name = child.get_display_name().Text
+            if name == node_name:
+                ret = child
                 break
+        except:
+            ret = None
 
     return ret
+
+def get_node_from_dot_name(o_node, dot_name):
+
+    dot_name_arr = dot_name.split('.')
+    node = o_node
+    for dot_name_i in dot_name_arr:
+        node = get_node(node, dot_name_i)
+        if node is None:
+            break
+
+    return node
 
 
 if __name__ == '__main__':
@@ -92,6 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--address', type=str, help='OPCUA address to connect to', default='localhost')
     parser.add_argument('-p', '--port', type=int, help='OPCUA port to connect to', required=True)
     parser.add_argument('-s', '--signal_name', type=str, help='OPCUA port to connect to', required=True)
+    parser.add_argument('-v', '--signal_value', type=float, help='OPCUA port to connect to', required=True)
     parser.add_argument("--print_time_stamps", action="store_true")
 
 
@@ -113,20 +90,18 @@ if __name__ == '__main__':
     client.connect()
 
     objects = client.get_objects_node()
-    node = get_node(objects, args.signal_name)
+    node = get_node_from_dot_name(objects, args.signal_name)
     if node is not None:
-        try:
-            while True:
-                output_lines = print_node_value(node, args.print_time_stamps)
-                # overwrite screen
-                sys.stdout.write("\033[H\033[J")  # clear screen
-                sys.stdout.write("\n".join(output_lines))
-                sys.stdout.flush()
-                time.sleep(0.1)
-        except KeyboardInterrupt:
-            print('\n\n')
-            pass
-
+        dv = node.get_data_value()
+        variant_type = dv.Value.VariantType
+        if variant_type == ua.VariantType.Double:
+            value = ua.Variant(args.signal_value, variant_type)
+            node.set_value(value)
+        elif variant_type == ua.VariantType.Int32 or variant_type == ua.VariantType.UInt32:
+            value = ua.Variant(int(args.signal_value), variant_type)
+            node.set_value(value)
+        else:
+            logger.critical(f'Invalid type: {variant_type}')
     else:
         logger.critical(f'Signal with name {args.signal_name} could not be found in the server')
     client.disconnect()
