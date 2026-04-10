@@ -93,135 +93,73 @@ Open another terminal and plot the archived data using the ``dan-tool``:
 Exercices
 ---------
 
-Ex. 1: Statistics monitoring
-----------------------------
+Ex. 1: Statistics archiving
+---------------------------
 
-Monitor the statistics signals as part of another OPCUA structure.
+Archive the following statistics signals using a separate ``DANSource``.
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-41.cfg`` and a new DataSource instance to write the signal ``MonitorPerf`` from the ``GAMWriterPerf`` IOGAM.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-46.cfg`` and a new DataSource instance to archive the following signals: ``Time``, 
+``Thread1CycleTime``,  ``Thread1CycleTimeMax``, ``Thread1CycleTimeMin``, ``Thread1CycleTimeHistogram``, ``Thread1FreeTimeHistogram``, and ``GAMsExecutionTime``; with a period of 0.01 seconds.
 
-.. important::
-
-    The ``OPCUADSOutput`` does not allow to write multiple structured signals, so a new DataSource needs to be added to the configuration file.
-
-2. Start the sender application.
-
-.. code-block:: bash
-
-    make -C ../Configurations/MassSpring/ -f Makefile.cfg
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-41_Gen.cfg -l RealTimeLoader -s State1
-
-3. Open another terminal and check that the OPCUA records are being updated with the application data, by running another MARTe2 application.
-
-.. code-block:: bash
-
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-41-Monitor_Gen.cfg -l RealTimeLoader -s State1
-
-.. dropdown:: Solution
-   :icon: key
-
-   The solution is to add a new ``OPCUADSOutput`` instance. 
-   
-   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-41-solution.cfg
-      :language: c++
-      :lines: 1583-1594
-      :caption: New OPCUADSOutput DataSource configuration.
-      :linenos:
-      :emphasize-lines: 3,9
-
-   The outputs from the monitor application (running on the other terminal) should be similar to the following:
-
-   .. code-block:: bash
-
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMHist.ReadTime [0:0]:9848
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMHist.ExecTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMHist.WriteTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathExpr.ReadTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathExpr.ExecTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathExpr.WriteTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMConversion.ReadTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMConversion.ExecTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMConversion.WriteTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMFilterMovingAvg.ReadTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMFilterMovingAvg.ExecTime [0:0]:9849
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMFilterMovingAvg.WriteTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathTrigger.ReadTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathTrigger.ExecTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathTrigger.WriteTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathTriggerSecond.ReadTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathTriggerSecond.ExecTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMMathTriggerSecond.WriteTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMDisplay.ReadTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMDisplay.ExecTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMDisplay.WriteTime [0:0]:9850
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMWriter.ReadTime [0:0]:9851
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMWriter.ExecTime [0:0]:9851
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.GAMWriter.WriteTime [0:0]:9896
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.CycleTime [0:0]:10001
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.CycleTimeAverage [0:0]:9998
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.CycleTimeMovingAverage [0:0]:9998.599052
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.CycleTimeStdDev [0:0]:141
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.CycleTimeMax [0:0]:10076
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.CycleTimeMin [0:0]:9918
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.CycleTimeHistogram [0:10]:{ 2 1 0 0 0 137 0 0 1 2 1 }
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.FreeTimeHistogram [0:10]:{ 0 0 1 0 0 1 0 1 0 29 112 }
-        $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.GAMsExecutionTime [0:0]:58
-
-Ex. 2: Timestamping 
--------------------
-
-The objective of this exercise is to use another signal to timestamp the OPCUA against a given signal instead of the timestamp that is automatically set by the library.
-
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-42.cfg`` and a new signal named ``AbsoluteTimeStamp`` to the ``OPCUAWriter`` DataSource.
-2. Make sure that the signal contains the property ``DefaultTimestampSignal`` set to ``1``.
-3. Modify the IOGAM ``GAMWriter`` to copy the ``AbsoluteTimeStamp`` signal from the DDB1 into the new signal in the OPCUAWriter DataSource.
+2. Open the file ``../Test/Integrated/dan_mass_spring_demo_template.xml`` to check how the DataSource needs to be named, and name it accordingly.
 
 .. note::
 
-    As explained in the :vcisdoxygenmccl:`LinuxTimer` documentation the ``AbsoluteTimeStamp`` signal is the counter multiplied by the period (counting from the Epoch). If you are running from a CODAC Core System, you may use the :vcisdoxygenmccl:`TcnTimeProvider` to obtain the absolute time.
+    As explained in the :vcisdoxygenmccl:`DANSource` documentation, arrays need to follow a specific naming convention in the ``xml`` file. 
+    
+    No action is required on the MARTe2 configuration file, but the arrays in the DAN configuration file need to be named following the convention ``<SignalName>_N_T``, where ``N`` is the number of elements in the array and ``T`` is the period in nanoseconds. 
+    
+    For example, for the signal ``Thread1CycleTimeHistogram`` with 11 elements and a period of 0.01 seconds, the element in the DAN configuration file needs to be named ``DANWriterPerf_T10000000_N11_uint32``.
 
-4. Start the sender application.
+    .. literalinclude:: /_static/tutorial/Test/Integrated/dan_mass_spring_demo_template.xml
+        :language: xml
+        :lines: 131-132,153-157
+        :caption: DAN configuration file, highighting the naming convention for arrays. Note that ``N`` denotes the number of elements in the array and ``T`` the period in nanoseconds.
+        :linenos:
+        :emphasize-lines: 1
+
+3. Add the corresponding IOGAM and add it to the execution list.
+
+4. Note that the StateMachine already contains the necessary messages to open the DAN stream, so no modification is needed in this case.
+
+5. Start the archiving application.
 
 .. code-block:: bash
 
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-42_Gen.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-46_Gen.cfg -l RealTimeLoader -m StateMachine::START
 
-5. Open another terminal and check that the OPCUA records are being updated with the application data, by running the following python application (assuming that the python ``opcua`` library is installed in your system):
+6. Wait a few seconds and stop the application.
+
+7. Open another terminal and check that the performance signals have been archived.
 
 .. code-block:: bash
 
-    python3.6 ../Test/Integrated/opcua_monitor.py -p -s MassSpringDemo --print_time_stamps #Replace the OPCUA_PORT with the actual port number being used in the configuration file.
+    dan-plot VT /tmp/data/ICMassSpringDemoAppUSERNAME_DANSTREAMER0_DANWriterPerf_uint32_NUMBER.h5 Thread1CycleTime,Thread1CycleTimeMin,Thread1CycleTimeMax #Replace USERNAME with your username with the first letter in capital letters and the NUMBER with the actual number of the file generated in the ``/tmp/data/`` directory.
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add the ``AbsoluteTime`` to the ``DataSource`` and set the ``DefaultTimestampSignal`` property.
-
-   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-42-solution.cfg
+   The solution is to add a new ``DAN::DANSource`` instance, named ``DANSourcePerf`` to the configuration file and set the corresponding properties.
+   
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-46-solution.cfg
       :language: c++
-      :lines: 1587-1602
-      :caption: New OPCUADSOutput DataSource configuration.
+      :lines: 1490-1531
+      :caption: New DANSource configuration.
       :linenos:
-      :emphasize-lines: 6-9
+      :emphasize-lines: 1, 12
 
-   The outputs from the monitor application (running on the other terminal) should be similar to the following (note that the timestamps are near the Epoch):
+   Add a new IOGAM to read the performance signals and add it to the execution list.
 
-   .. code-block:: bash
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-46-solution.cfg
+      :language: c++
+      :lines: 1342-1349,1376-1381
+      :caption: IOGAM to copy the performance signals.
+      :linenos:
 
-        - MassSpringDemo
-        - Time:22100000 | src_ts:1970-01-01 01:51:12.614091 | srv_ts:None
-        - Control
-            - ReferencePosition:0.8280000000000002 | src_ts:1970-01-01 01:51:12.614101 | srv_ts:None
-            - Position:0.7308889950318065 | src_ts:1970-01-01 01:51:12.614101 | srv_ts:None
-            - PositionDisturbed:0.7329734151785503 | src_ts:1970-01-01 01:51:12.614101 | srv_ts:None
-            - PositionFiltered:0.726084634618206 | src_ts:1970-01-01 01:51:12.614101 | srv_ts:None
-            - PositionM:0.7292609341046103 | src_ts:1970-01-01 01:51:12.614101 | srv_ts:None
-            - Velocity:0.3796677587971925 | src_ts:1970-01-01 01:51:12.614101 | srv_ts:None
-            - VelocityM:0.3941233025599467 | src_ts:1970-01-01 01:51:12.614111 | srv_ts:None
-            - PositionErr:-0.10212367380322629 | src_ts:1970-01-01 01:51:12.614111 | srv_ts:None
-            - Force:7.6191469671596765 | src_ts:1970-01-01 01:51:12.614111 | srv_ts:None
-            - ForceAverage:4.3079819265028485 | src_ts:1970-01-01 01:51:12.614111 | srv_ts:None
-            - ForceStdDev:1.8327930024983468 | src_ts:1970-01-01 01:51:12.614111 | srv_ts:None
-            - ForceMax:7.6191469671596765 | src_ts:1970-01-01 01:51:12.614111 | srv_ts:None
-            - ForceMin:1.325131643231978 | src_ts:1970-01-01 01:51:12.614121 | srv_ts:None
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-46-solution.cfg
+      :language: c++
+      :lines: 1547-1557
+      :caption: Updated execution list.
+      :linenos:
+      :emphasize-lines: 8
