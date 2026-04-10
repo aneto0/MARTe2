@@ -61,10 +61,12 @@ FAQ
    See the :ref:`MARTeSignalProperties` documentation for a complete list of available signal properties.
 
 .. dropdown:: What are the available signal types?
+   :icon: question
 
    See the :ref:`MARTe Types <MARTeTypes>` documentation for a complete list of available signal types.
 
 .. dropdown:: Can I use structured types for the signals?
+   :icon: question
 
    Yes, see the :ref:`GAM documentation <StructuredGAM>` and the tutorial on :ref:`Structured types <MassSpringStructuredTypes>`.
 
