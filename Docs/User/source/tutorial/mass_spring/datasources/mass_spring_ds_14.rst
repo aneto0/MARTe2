@@ -11,6 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
+.. _RealTimeThreadSynchronisationTutorial:
+
 RealTimeThreadSynchronisation
 =============================
 
@@ -114,8 +116,8 @@ Check that the cycle-times are 1000 microseconds for the receiver thread and 100
 Exercices
 ---------
 
-Ex. 1: Comparing two threads with different models
---------------------------------------------------
+Ex. 1: Running two threads with different models
+------------------------------------------------
 
 The objective of this exercice is to synchronise two threads with the same data producer. They will both run at the same frequency (100 Hz) but will implement different models for the mass-spring system (as shown in previous examples).
 

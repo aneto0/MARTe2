@@ -22,7 +22,7 @@ The :vcisdoxygenmccl:`OPCUADSOutput` DataSource can be used to stream applicatio
 
 .. warning:: 
 
-    This DataSource writes to OPCUA **synchronously** on the same thread of the MARTe ReadTimeThread, which may negatively impact the real-time performance of the application. Decoupling mechanisms are discussed later in the tutorial.
+    This DataSource writes to OPCUA **synchronously** on the same thread of the MARTe ReadTimeThread, which may negatively impact the real-time performance of the application. Decoupling mechanisms are discussed later in the tutorial (see the sections on :ref:`RealTimeThreadAsyncBridgeTutorial` and :ref:`RealTimeThreadSynchronisationTutorial`).
 
 The DataSource only supports structured types as defined in the :ref:`MassSpringStructuredTypes`. 
 
