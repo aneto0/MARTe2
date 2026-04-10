@@ -63,7 +63,11 @@ OBJSX=RTApp-MassSpring-23-Sender.x \
 	RTApp-MassSpring-44-Control-Off.x \
 	RTApp-MassSpring-45.x \
 	RTApp-MassSpring-46.x \
-	RTApp-MassSpring-46-solution.x 
+	RTApp-MassSpring-46-solution.x \
+	RTApp-MassSpring-47-Receiver.x \
+	RTApp-MassSpring-47-Sender.x \
+	RTApp-MassSpring-48-Receiver.x \
+	RTApp-MassSpring-48-Receiver-solution.x 
 
 #Location of the Build directory where the configuration file will be written to
 BUILD_DIR?=.
@@ -112,16 +116,18 @@ FREE_OPCUA_PORT_0 := $(word 1, $(FREE_OPCUA_PORTS))
 CFLAGS += -DOPCUA_PORT=$(FREE_OPCUA_PORT_0)
 CFLAGS += -DOPCUA_FULL_URL=\"opc.tcp://127.0.0.1:$(FREE_OPCUA_PORT_0)\"
 
-all: check-env $(OBJS) 
+all: check_no_process check_env $(OBJS) 
 	echo  $(OBJS)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
-check-env:
+check_env:
 ifndef MARTe2_DIR
-    $(error MARTe2_DIR is undefined)
-endif
-ifndef TARGET
-    $(error TARGET is undefined)
+	$(error MARTe2_DIR is undefined)
 endif
 
+check_no_process:
+	@if ps -u $$(whoami) -o args= | grep -E 'MARTeApp\.ex .*MassSpring' | grep -v grep > /dev/null; then \
+		echo "Error: A MARTeApp.ex process for the tutorial is already running. This may lead to inconsistent port allocations between sender and receiver applications."; \
+	    exit 1; \
+	fi

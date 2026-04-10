@@ -440,6 +440,9 @@ Typically the interface to the state changing mechanism is provided by the :doc:
             }
             ...
 
+
+.. _MARTeMultipleThreads:
+
 Synchronising multiple threads
 ------------------------------
 

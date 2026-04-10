@@ -54,12 +54,6 @@ The ``Makefile`` will automatically call the script ``./GenerateTopicNames.sh`` 
 Running the application
 -----------------------
 
-Generate the configuration file:
-
-.. code-block:: bash
-
-    make -C ../Configurations/MassSpring/ -f Makefile.cfg
-
 Start the application with:
 
 .. code-block:: bash

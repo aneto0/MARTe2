@@ -56,12 +56,6 @@ Given that some GAMs require a relative time reference, a ``MathExpressionGAM`` 
 Running the application
 -----------------------
 
-Generate the configuration files:
-
-.. code-block:: bash
-
-    make -C ../Configurations/MassSpring/ -f Makefile.cfg
-
 Start the sender application with:
 
 .. code-block:: bash
@@ -86,7 +80,6 @@ Open another terminal and start the receiver application with:
 
 .. code-block:: bash
 
-    make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-28-Subscriber_Gen.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
