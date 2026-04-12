@@ -46,7 +46,7 @@ console_handler.setFormatter(console_handler_format)
 root_logger = logging.getLogger()
 root_logger.addHandler(console_handler)
 
-if __name__ == '__main__':
+def main():
 
     parser = argparse.ArgumentParser(description = 'Rename all the elements and packages under a  given package or element', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     logOptions = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
@@ -113,4 +113,5 @@ if __name__ == '__main__':
 
     sys.exit(ret)
 
- 
+if __name__ == '__main__':
+    main()
