@@ -11,8 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-MARTe2-components DataSources
-=============================
+DataSources
+===========
 
 This section follows on the previous one, and introduces the use of MARTe2-components DataSources. The DataSources are used to interface with the external world (from memory to hardware).
 

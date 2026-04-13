@@ -17,6 +17,7 @@ Other GAMs
 This section concludes the introduction to the GAMs used in the mass-spring-damper example, listing other commonly used GAMs that are not covered in the previous sections.
 
 - :vcisdoxygenmccl:`CRCGAM`: computes CRC checksum of the input signals.
+- :vcisdoxygenmccl:`MessageGAM`: sends :vcisdoxygencl:`Message` events on the basis of commands received in the input signals.
 - :vcisdoxygenmccl:`MuxGAM`: selects the signal to be output based on a selector signal.
 - :vcisdoxygenmccl:`SimulinkWrapperGAM`: encapsulates a shared library generated from a Simulink(r) model (requires the Simulink Coder(r) toolbox to generate the model, but not to execute the GAM).
 - :vcisdoxygenmccl:`TriggeredIOGAM`: writes to an output DataSource only when a trigger condition is met.
