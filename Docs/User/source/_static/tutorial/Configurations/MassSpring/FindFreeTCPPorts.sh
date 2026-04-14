@@ -3,7 +3,7 @@
 
 BASE_MIN=4840
 RANGE_SIZE=1000
-NUM_PORTS=1
+NUM_PORTS=2
 
 USER_HASH=$(echo -n "${USER}_$(id -u)" | cksum | awk '{print $1}')
 OFFSET=$((USER_HASH % (RANGE_SIZE - NUM_PORTS)))

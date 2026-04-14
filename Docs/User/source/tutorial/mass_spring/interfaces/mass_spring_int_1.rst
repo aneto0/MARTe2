@@ -27,11 +27,11 @@ In this first example the StateMachine allows to change the state of the applica
     :linenos:
     :emphasize-lines: 5, 17, 27, 39
 
-Depending on the selected initial the Message parameter will match either the RealTimeApplication state, as shown in the following listing.
+Depending on the selected initial the Message parameter will match one of the RealTimeApplication states, as shown in the following listing.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-50.cfg
     :language: c++
-    :lines: 894-898,913-915
+    :lines: 906-910,925-927
     :caption: RealTimeApplication state definition.
     :linenos:
     :emphasize-lines: 3,6

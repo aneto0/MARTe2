@@ -67,7 +67,8 @@ OBJSX=RTApp-MassSpring-23-Sender.x \
 	RTApp-MassSpring-47-Receiver.x \
 	RTApp-MassSpring-47-Sender.x \
 	RTApp-MassSpring-48-Receiver.x \
-	RTApp-MassSpring-48-Receiver-solution.x 
+	RTApp-MassSpring-48-Receiver-solution.x \
+	RTApp-MassSpring-53.x 
 
 #Location of the Build directory where the configuration file will be written to
 BUILD_DIR?=.
@@ -110,11 +111,18 @@ CFLAGS += -DUSERNAME=$(USERNAME_UPPER)
 USERNAME_FIRST_CAP := $(shell u=$(USER); echo "$${u^}")
 CFLAGS += -DUSERNAME_FIRST_CAP=$(USERNAME_FIRST_CAP)
 
-FREE_OPCUA_PORTS := $(shell ./FindFreeOPCUAPort.sh)
-FREE_OPCUA_PORT_0 := $(word 1, $(FREE_OPCUA_PORTS))
+FREE_TCP_PORTS := $(shell ./FindFreeTCPPorts.sh)
+FREE_OPCUA_PORT_0 := $(word 1, $(FREE_TCP_PORTS))
 
 CFLAGS += -DOPCUA_PORT=$(FREE_OPCUA_PORT_0)
 CFLAGS += -DOPCUA_FULL_URL=\"opc.tcp://127.0.0.1:$(FREE_OPCUA_PORT_0)\"
+
+MARTE2_HTTP_BASE_DIR="$(MARTe2_DIR)/Resources/HTTP"
+CFLAGS += -DMARTE2_HTTP_BASE_DIR=$(MARTE2_HTTP_BASE_DIR)
+
+FREE_HTTP_PORT_0 := $(word 2, $(FREE_TCP_PORTS))
+CFLAGS += -DHTTP_PORT=$(FREE_HTTP_PORT_0)
+
 
 all: check_no_process check_env $(OBJS) 
 	echo  $(OBJS)

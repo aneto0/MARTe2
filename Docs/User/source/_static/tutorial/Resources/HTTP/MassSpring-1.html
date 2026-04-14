@@ -1,0 +1,87 @@
+<!--
+  @file index_example.html 
+  @brief Source file for index_example.html
+  @date 14/04/2026
+  @author Andre' Neto
+ 
+  @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+  the Development of Fusion Energy ('Fusion for Energy').
+  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+  by the European Commission - subsequent versions of the EUPL (the "Licence")
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+  @warning Unless required by applicable law or agreed to in writing, 
+  software distributed under the Licence is distributed on an "AS IS"
+  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+  or implied. See the Licence permissions and limitations under the Licence.
+-->
+<html>
+    <head>
+        <script src="/?path=MARTeLoader.js&TextMode=1">
+        </script>
+        <script src="/?path=MARTeObject.js&TextMode=1">
+        </script>
+        <script src="/?path=Chart.min.js&TextMode=1">
+        </script>
+        <link type="text/css" rel="stylesheet" href="/?path=MARTe.css&TextMode=1"/>
+    </head>
+    <style>
+        .divTable{
+            display: table;
+            width: 1200px;
+        }
+        .divTableBody {
+            display: table-row-group;
+        }
+        .divTableRow {
+            display: table-row;
+        }
+        .divTableCell {
+            width: 600px;
+            height: 400px;
+            border: 1px solid #999999;
+            display: table-cell;
+            vertical-align: middle;
+            max-width: 1px; //avoid dynamic change of width
+        }
+    </style>
+    <script>
+        function loadPanels() {         
+            MARTeLoader.instance().load("ObjectBrowse/MassSpringApp/Functions/GAMWriter", "MassSpring", "table0x0");        
+            MARTeLoader.instance().load("ObjectBrowse/MassSpringApp/Functions/GAMWriter", "MARTeObject", "table1x0");        
+            MARTeLoader.instance().load("ObjectBrowse/MassSpringApp/Functions/GAMWriter", "ChartMassSpring", "table0x1", 
+                                            function(obj) {
+                                                obj.setXSignal("Time");
+                                                obj.setXDivider(1e6);
+                                                obj.addYSignal("ReferencePosition", "OutputSignals", "Ref. [m]", "red");
+                                                obj.addYSignal("Position", "OutputSignals", "Pos [m]", "blue");
+                                            }
+                                       );
+             MARTeLoader.instance().load("ObjectBrowse/MassSpringApp/Functions/GAMWriter", "ChartMassSpring", "table1x1", 
+                                            function(obj) {
+                                                obj.setXSignal("Time");
+                                                obj.setXDivider(1e6);
+                                                obj.addYSignal("Force", "OutputSignals", "F [N]", "blue");
+                                                obj.addYSignal("ForceMax", "OutputSignals", "F. max [N]", "red");
+                                                obj.addYSignal("ForceMin", "OutputSignals", "F. min [N]", "green");
+                                            }
+                                       );
+
+        }
+    </script>    
+    <body onload="loadPanels()">
+        <div class="divTable" id="mainTarget">
+            <div class="divTableBody">
+                <div class="divTableRow">
+                    <div class="divTableCell" id="table0x0"></div>
+                    <div class="divTableCell" id="table0x1"></div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell" id="table1x0"></div>
+                    <div class="divTableCell" id="table1x1"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
