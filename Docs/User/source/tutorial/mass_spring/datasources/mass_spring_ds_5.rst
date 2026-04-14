@@ -59,7 +59,7 @@ Start the application with:
 .. code-block:: bash
 
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-26-Sender_Gen.cfg -l RealTimeLoader -s State1
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-26-Publisher_Gen.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
 
@@ -85,7 +85,7 @@ Export the required environment variables for the ``sdn-print`` tool and run the
 .. code-block:: bash
 
     export SDN_TOPIC_PATH=../Test/Integrated
-    sdn-print -i lo -t mass-spring-1 -c -1
+    sdn-print -i lo -t mass-spring-0 -c -1
 
 Notice that both MARTe2 and the ``sdn-print`` tool are receiving from the SDN topic source using multicast.
 

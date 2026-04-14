@@ -123,7 +123,6 @@ CFLAGS += -DMARTE2_HTTP_BASE_DIR=$(MARTE2_HTTP_BASE_DIR)
 FREE_HTTP_PORT_0 := $(word 2, $(FREE_TCP_PORTS))
 CFLAGS += -DHTTP_PORT=$(FREE_HTTP_PORT_0)
 
-
 all: check_no_process check_env $(OBJS) 
 	echo  $(OBJS)
 

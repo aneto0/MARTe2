@@ -57,6 +57,12 @@ Start the DAN archiver:
 
     sudo dan_archiver_writer start
 
+Generate the DAN configuration file from the template:
+
+.. code-block:: bash
+
+    ../Test/Integrated/GenerateDANConfig.sh
+
 Use the ``danApiTool`` to configure and initialise the archiver:
 
 .. code-block:: bash
