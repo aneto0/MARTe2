@@ -77,6 +77,10 @@ class BaseManager(object):
             'namespace': '',
             'header_guard': ''
         }
+        self._template_marte_app_sh_vars = {
+            'header_text': '\n'.join(self._app_def_data['startup']['header']['text'])
+        }
+        
 
     def _copy_template_text_file(self, template_name, destination_path, template_vars, target_name = None):
         ok = True
@@ -86,8 +90,9 @@ class BaseManager(object):
             destination_path = destination_path / target_name
             template_f = self._resources_files / 'templates' / template_name
             template_content = template_f.read_text(encoding="utf-8")
-            template_content = self._expand_template(template_content, template_vars)
-            template_content = self._expand_template(template_content, template_vars) # Expand twice to allow for nested variables. Do not remove!
+            if template_vars is not None:
+                template_content = self._expand_template(template_content, template_vars)
+                template_content = self._expand_template(template_content, template_vars) # Expand twice to allow for nested variables. Do not remove!
             template_content = self._expand_template(template_content, self._template_global_vars) # Expand global variables at the end to allow for their use in the templates
             template_content = self._remove_extra_blank_lines(template_content)
             destination_path.write_text(template_content, encoding="utf-8")

@@ -59,6 +59,8 @@ class ComponentManager(BaseManager):
             ok = self._patch_parent_makefiles()
         if ok:
             ok = self._add_component_files()
+        if ok:
+            ok = self._patch_startup_marte_app_sh()
         return ok
     
     def _add_component_folders(self):
@@ -232,4 +234,34 @@ class ComponentManager(BaseManager):
 
     def _add_component_templates(self, comp_folder_name):
         ok = True
+        return ok
+
+    def _patch_startup_marte_app_sh(self):
+        ok = True
+        startup_folder_name = self._app_def_data['folders']['startup']['name']
+        marte_app_sh_path = Path(self._project_path) / self._project_name / startup_folder_name / 'MARTeApp.sh'
+
+        with open(marte_app_sh_path, "r") as f:
+            lines = f.readlines()
+
+        target_prefix = "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+        last_index = -1
+
+        # Find the last occurrence
+        for i, line in enumerate(lines):
+            if line.strip().startswith(target_prefix):
+                last_index = i
+        
+        # If found, insert new line after it
+        ok = last_index != -1
+        if ok:
+            comp_type_name = self._app_def_data['components'][self._comp_type]['name']
+            new_ld_lib_path = f'../Build/x86-linux/{comp_type_name}/{self._comp_name}'
+ 
+            new_line = f'{target_prefix}:{new_ld_lib_path}\n'
+            lines.insert(last_index + 1, new_line)
+            with open(marte_app_sh_path, "w") as f:
+                f.writelines(lines)
+        else:
+            logger.critical(f'Failed to patch {marte_app_sh_path}: could not find line starting with "{target_prefix}"')
         return ok

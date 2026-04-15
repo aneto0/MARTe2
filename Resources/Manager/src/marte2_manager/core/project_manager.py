@@ -62,11 +62,12 @@ class ProjectManager(BaseManager):
         folders = self._get_base_folder_structure()
         return self._validate_folders(self._project_path, folders)
 
-
     def _add_templates(self):
         ok = self._add_makefiles()
         if ok:
             ok = self._add_gtest()
+        if ok:
+            ok = self._add_marte_app_sh()
         return ok
 
     def _add_makefiles(self):
@@ -150,4 +151,11 @@ class ProjectManager(BaseManager):
 
         if ok:
             ok = self._copy_template_text_file('Makefile.gcc', Path(self._project_path) / self._project_name / test_folder_name / 'GTest', template_make_vars)
+        return ok
+
+
+    def _add_marte_app_sh(self):
+        template_marte_app_sh_vars = copy.deepcopy(self._template_marte_app_sh_vars)
+        startup_folder_name = self._app_def_data['folders']['startup']['name']
+        ok = self._copy_template_text_file('MARTeApp.sh', Path(self._project_path) / self._project_name / startup_folder_name, template_marte_app_sh_vars)
         return ok
