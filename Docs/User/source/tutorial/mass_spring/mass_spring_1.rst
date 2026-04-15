@@ -2,7 +2,7 @@
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
-   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   Licensed under the EUPL, Version 1.1 or - as soon as they will be approved
    by the European Commission - subsequent versions of the EUPL (the "Licence")
    You may not use this work except in compliance with the Licence.
    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
@@ -23,12 +23,12 @@ In this section, you will implement a simple control strategy for the mass-sprin
 
    Schematic representation of the mass-spring-damper system control system. 
 
-The first is to identify the main components required for the control of the mass-spring-damper system and map them to existing MARTe2 components. The main components are:
+The first step is to identify the main components required for the control of the mass-spring-damper system and map them to existing MARTe2 components. The main components are:
 
 - Desired position: This component represents the target position for the mass. 
 - Controller: This component implements the control logic that calculates the external force (:math:`F`) based on the error between the desired position and the actual position of the mass.
 - Mass-spring: This component represents the physical system of the mass-spring-damper and simulates its dynamics based on the applied force.
-- Monitoring: This component allows monitoring the system's behavior, such as the actual position of the mass and the applied force.
+- Monitoring: This component allows monitoring the system's behaviour, such as the actual position of the mass and the applied force.
 
 The following parameters are common to all the examples in this tutorial:
 
@@ -39,7 +39,7 @@ The following parameters are common to all the examples in this tutorial:
 - Initial velocity of the mass: 0 m/s
 - Sampling time: 0.01 s
 
-In this example the system will be controlled to maintain a constant position. The desired position will be set to a fixed value, and the controller will adjust the force to keep the mass at that position.
+In this example, the system will be controlled to maintain a constant position. The desired position will be set to a fixed value, and the controller will adjust the force to keep the mass at that position.
 
 Application architecture
 ------------------------
@@ -64,7 +64,7 @@ The selected components are:
    :linenos: 
    :emphasize-lines: 3-5,7,11,17,25
 
-- Mass-spring: :vcisdoxygenmccl:`SSMGAM`. The SSMGAM implements the spring mass damper system dynamics using a state-space representation. The input is the control force (Force) and the outputs are the position (Position) and velocity (Velocity) of the mass, as well as the internal states (not used in this application).
+- Mass-spring: :vcisdoxygenmccl:`SSMGAM`. The SSMGAM implements the spring-mass-damper system dynamics using a state-space representation. The input is the control force (Force) and the outputs are the position (Position) and velocity (Velocity) of the mass, as well as the internal states (not used in this application).
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-1.cfg
    :language: c++
@@ -120,15 +120,15 @@ Once the application is running, inspect the ``screen`` output and verify that t
 
     ...
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Modify the reference position
 ------------------------------------
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-2.cfg`` and modify the ReferencePosition to `3.1` m.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-2.cfg`` and modify the ReferencePosition to ``3.1`` m.
 2. Verify the output of the Position in the logger.
-3. Why does the Position does not converge to the new reference position?
+3. Why does the Position not converge to the new reference position?
 
 .. code-block:: bash
 
@@ -137,7 +137,7 @@ Ex. 1: Modify the reference position
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to modify the ``Default`` property of the signal in the `ConstantGAM` output.
+   The solution is to modify the ``Default`` property of the signal in the ``ConstantGAM`` output.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-2-solution.cfg
       :language: c++
@@ -146,7 +146,7 @@ Ex. 1: Modify the reference position
       :linenos: 
       :emphasize-lines: 7
 
-   The reason why the Position does not converge to the new reference position is that the output of the controller is limited to `30` N. Modify this parameter to e.g. `40` N in the `PIDGAM` configuration to allow the controller to apply a larger force and reach the new reference position.
+   The reason why the Position does not converge to the new reference position is that the output of the controller is limited to ``30`` N. Modify this parameter to e.g. ``40`` N in the ``PIDGAM`` configuration to allow the controller to apply a larger force and reach the new reference position.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-2-solution.cfg
       :language: c++
@@ -154,4 +154,3 @@ Ex. 1: Modify the reference position
       :caption: PIDGAM configuration. 
       :linenos: 
       :emphasize-lines: 8
-
