@@ -134,7 +134,7 @@ The output should be similar to the following:
     $           double ForceMax 10.489
     $           double ForceMin 9.96202
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Switch on/off

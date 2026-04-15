@@ -98,7 +98,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
    $ [Information - LoggerBroker.cpp:152]: Thread1CycleTime [0:0]:9992
    ...
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Structured statistics

@@ -113,7 +113,7 @@ Wait some seconds and inspect the collected data:
 
 Check that the cycle-times are 1000 microseconds for the receiver thread and 10000 microseconds for the processing thread, which confirms that the synchronisation is working correctly.
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Running two threads with different models

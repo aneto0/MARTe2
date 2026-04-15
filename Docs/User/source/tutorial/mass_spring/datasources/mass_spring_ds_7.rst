@@ -80,7 +80,7 @@ The output should be similar to the following:
     $ MARTE2-TUTORIAL-USERNAME-REFERENCE-POSITION 2026-04-01 10:07:25.753653 1.332
     $ MARTE2-TUTORIAL-USERNAME-POSITION 2026-04-01 10:07:25.753660 1.23562
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Statistics monitoring

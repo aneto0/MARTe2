@@ -100,7 +100,7 @@ If everything is working correctly, you should see the SDN packets being printed
     ...
 
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Stream the ``Stats`` signals over SDN. 

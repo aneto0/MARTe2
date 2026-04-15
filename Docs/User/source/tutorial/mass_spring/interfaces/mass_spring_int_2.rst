@@ -73,7 +73,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
 7. Click on ``GOTO_CONSTANT_REF`` and observe on the dashboard that the position settles at the constant reference.
 8. Click on ``GOTO_SWITCH_OFF`` and observe on the dashboard that the position decays to zero.
  
-Exercices
+Exercises
 ---------
 
 Ex. 1: Change the reference position using the HttpMessageInterface

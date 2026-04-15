@@ -129,7 +129,7 @@ The application will start in the ``CONSTANT_REF`` state and will change to the 
     $ [Information - LoggerBroker.cpp:152]: ReferencePosition [0:0]:0.772000
     ...
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Add a switch off state

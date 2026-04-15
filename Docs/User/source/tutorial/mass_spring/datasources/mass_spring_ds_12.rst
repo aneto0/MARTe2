@@ -142,7 +142,7 @@ Or:
 
     python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace the OPCUA_PORT with the actual port number being used in the configuration file.
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Switch on/off

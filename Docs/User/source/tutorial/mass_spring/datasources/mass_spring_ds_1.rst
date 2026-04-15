@@ -73,7 +73,7 @@ A python based plotting script is also available in ``../Test/Integrated/plot_ma
 
     python ../Test/Integrated/plot_mass_spring_csv.py -f ../Test/Integrated/MassSpring-18.csv -s ReferencePosition Position
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Log execution every second

@@ -88,7 +88,7 @@ The output should be similar to the following:
     $ MARTE2-TUTORIAL-USERNAME-POSITION 2026-04-01 13:22:03.421299 1.00055
     $ MARTE2-TUTORIAL-USERNAME-POSITION 2026-04-01 13:22:03.431300 1.0005
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Switch on/off

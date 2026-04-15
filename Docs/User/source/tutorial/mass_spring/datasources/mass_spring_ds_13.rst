@@ -96,7 +96,7 @@ Open another terminal and plot the archived data using the ``dan-tool``:
 
     dan-plot VT /tmp/data/ICMassSpringDemoAppUSERNAME_DANSTREAMER0_DANWriter_float64_NUMBER.h5 ReferencePosition,Position #Replace USERNAME with your username with the first letter in capital letters and the NUMBER with the actual number of the file generated in the ``/tmp/data/`` directory.
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Statistics archiving

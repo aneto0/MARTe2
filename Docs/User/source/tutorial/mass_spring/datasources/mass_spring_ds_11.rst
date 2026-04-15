@@ -113,7 +113,7 @@ The output should be similar to the following:
 
 As explained in the :vcisdoxygenmccl:`OPCUADSOutput` documentation, it is possible to associate a timestamp signal to one or more output signals. When a timestamp signal is configured, its value is used to populate the ``OPCUA`` ``SourceTimestamp`` field when writing the associated nodes.
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Statistics monitoring

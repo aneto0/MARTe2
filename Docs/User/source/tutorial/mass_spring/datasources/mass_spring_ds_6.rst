@@ -129,7 +129,7 @@ And on another console check the statistics from the subscriber application:
     sdn-print -i lo -t mass-spring-3 -c -1
 
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Detecting stalled data

@@ -104,7 +104,7 @@ Open another terminal and run the script with:
 
     python ../Test/Integrated/udp_monitor.py -p TUTORIAL_UDP_PORT #Replace TUTORIAL_UDP_PORT with the actual port number being used by the application
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Stream the ``ReferencePosition`` signal over UDP. 

@@ -52,7 +52,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
 
 Also check that the output file ``../Test/Integrated/MassSpring-21.csv`` is being created and that the ``ReferencePosition`` is set to the constant value ``2.0``.
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Read a ramp from the file 

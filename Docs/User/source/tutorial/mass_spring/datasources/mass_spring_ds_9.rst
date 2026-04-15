@@ -101,7 +101,7 @@ The output should be similar to the following:
     $           double ForceMax 13.3695
     $           double ForceMin 5.70393
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Statistics monitoring
