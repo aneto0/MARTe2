@@ -2,7 +2,7 @@
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
-   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   Licensed under the EUPL, Version 1.1 or - as soon as they will be approved
    by the European Commission - subsequent versions of the EUPL (the "Licence")
    You may not use this work except in compliance with the Licence.
    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
@@ -11,7 +11,7 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Exercices
+Exercises
 =========
 
 Ex. 1: Modify the thread frequency
@@ -63,7 +63,7 @@ Ex. 2: Find the typo
       :linenos: 
       :emphasize-lines: 3
 
-3. Is there a way of launching the application without modifying the configuration file to fix the typo?
+3. Is there a way to launch the application without modifying the configuration file to fix the typo?
 
 .. dropdown:: Solution
    :icon: key
@@ -92,7 +92,7 @@ Ex. 3: Modify the logged signal
       :emphasize-lines: 4, 10
 
 Ex. 4: Signal names
---------------------
+-------------------
 
 1. Run the following application.
 
@@ -107,7 +107,7 @@ Ex. 4: Signal names
 
    MARTe signal names are case-sensitive. The signal name ``counter`` is misspelled as ``Counter`` in the configuration file.
 
-   The GAMDataSource complains that the ``GAMDisplay`` GAM is requesting for a signal named ``Counter``, which does not exist and the application fails to start.
+   The GAMDataSource complains that the ``GAMDisplay`` GAM is requesting a signal named ``Counter``, which does not exist, and the application fails to start.
 
    .. code-block:: console
 
@@ -140,7 +140,7 @@ Ex. 5: Signal alias
 .. dropdown:: Solution
    :icon: key
 
-   MARTe allows the GAMs to rename signals with different names than the ones provided by the DataSources. 
+   MARTe allows GAMs to rename signals with different names than the ones provided by the DataSources.
 
    The scope of these signal names is private to the GAM.
 
@@ -160,10 +160,10 @@ Ex. 5: Signal alias
 .. dropdown:: Answer
    :icon: key
 
-   Some DataSources, such as the LoggerDataSource, allow to add signals in runtime. In this case, the LoggerDataSource will create a new signal named ``CounterOut`` and log its value.
+   Some DataSources, such as the LoggerDataSource, allow signals to be added at runtime. In this case, the LoggerDataSource will create a new signal named ``CounterOut`` and log its value.
 
 Ex. 6: Signal types
---------------------
+------------------
 
 1. Run the following application.
 
@@ -200,7 +200,7 @@ Ex. 6: Signal types
 .. dropdown:: Solution
    :icon: key
 
-   A typo in the ``Counter`` signal type in the ``Display`` GAM is preventing the application from running. The signal is produced and offered to the ``GAMDataSource`` as an ``uint32`` and is trying to be consumed as an ``uint16`` by the ``DisplayGAM``. 
+   A typo in the ``Counter`` signal type in the ``Display`` GAM is preventing the application from running. The signal is produced and offered to the ``GAMDataSource`` as a ``uint32`` and is being consumed as a ``uint16`` by the ``DisplayGAM``.
 
    .. code-block:: console
 
@@ -263,7 +263,7 @@ Ex. 8: Component instantiation 2
 .. dropdown:: Solution
    :icon: key
 
-   The name of the component to be instantiated does not start with a ``+`` character, which is required for components that are to be :ref:`instantiated by the framework <MARTeDataDrivenApplications>` in runtime. In this case the name of the component is ``GAMTimer`` instead of ``+GAMTimer``.
+   The name of the component to be instantiated does not start with a ``+`` character, which is required for components that are to be :ref:`instantiated by the framework <MARTeDataDrivenApplications>` at runtime. In this case the name of the component is ``GAMTimer`` instead of ``+GAMTimer``.
 
    .. code-block:: console
 
@@ -304,4 +304,3 @@ Ex. 9: Multiple writers
       :caption: Multiple writers for the same signal in the configuration file 
       :linenos: 
       :emphasize-lines: 3-4,14-15
-
