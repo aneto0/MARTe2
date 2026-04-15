@@ -2,7 +2,7 @@
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
-   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   Licensed under the EUPL, Version 1.1 or - as soon as they will be approved
    by the European Commission - subsequent versions of the EUPL (the "Licence")
    You may not use this work except in compliance with the Licence.
    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
@@ -14,11 +14,11 @@
 Filters and type conversion
 ===========================
 
-The last exercise on the previous section introduced a disturbance to the system. 
+The last exercise in the previous section introduced a disturbance to the system.
 
-In this section we will add a filter before the controller to mitigate the effect of the disturbance.
+In this section, we will add a filter before the controller to mitigate the effect of the disturbance.
 
-The filter is implemented using the :vcisdoxygenmccl:`FilterGAM`, and is configured as a notch filter filtered at at 10 Hz.
+The filter is implemented using the :vcisdoxygenmccl:`FilterGAM`, and is configured as a notch filter centred at 10 Hz.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-14.cfg
     :language: c++
@@ -36,7 +36,7 @@ Start the application with:
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-14.cfg -l RealTimeLoader -s State1
 
-Once the application is running, inspect the ``screen`` output and verify that the log shows the ``Position`` converging to the ``ReferencePosition`` value despite the ``PositionDisturbed`` (which is the input to the filter) varying over time. The log should show entries similar to the following:
+Once the application is running, inspect the ``screen`` output and verify that the log shows the ``Position`` converging to the ``ReferencePosition`` value despite the ``PositionDisturbed`` signal (which is the input to the filter) varying over time. The log should show entries similar to the following:
 
 .. code-block:: console
 
@@ -46,7 +46,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
    $ [Information - LoggerBroker.cpp:152]: PositionDisturbed [0:0]:1.990489
    $ [Information - LoggerBroker.cpp:152]: PositionFiltered [0:0]:2.000000
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Simple statistics 
@@ -76,4 +76,4 @@ Ex. 1: Simple statistics
       :linenos:
       :emphasize-lines: 3-4
 
-   Finally, add the output signal of the FilterGAM to the ``GAMDisplay`` and the GAMs to the execution list.
+   Finally, add the output signal of the ``FilterGAM`` to the ``GAMDisplay`` and the GAMs to the execution list.

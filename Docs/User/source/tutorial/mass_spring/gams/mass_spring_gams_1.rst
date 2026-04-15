@@ -2,7 +2,7 @@
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
-   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   Licensed under the EUPL, Version 1.1 or - as soon as they will be approved
    by the European Commission - subsequent versions of the EUPL (the "Licence")
    You may not use this work except in compliance with the Licence.
    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
@@ -14,14 +14,14 @@
 Performance monitoring
 ======================
 
-In this section, we will build upon the previous example and add features that allow to monitor the performance of the MARTe2 application, namely the :ref:`timing <MARTeTimingDataSource>` of the GAMs and of the thread cycle time.
+In this section, we will build upon the previous example and add features that allow monitoring the performance of the MARTe2 application, namely the :ref:`timing <MARTeTimingDataSource>` of the GAMs and of the thread cycle time.
 
 Namely, we will want to monitor:
 
-- The cycle time of the thread executing the GAMs. This is the time between two consecutive executions of the thread. It is expected to be constant and equal to the inverse of the `Frequency` parameter of the ``GAMTimer``.
+- The cycle time of the thread executing the GAMs. This is the time between two consecutive executions of the thread. It is expected to be constant and equal to the inverse of the ``Frequency`` parameter of the ``GAMTimer``.
 - The execution time of the GAMs. This is the time taken by the GAMs to execute their logic.
-- The time it took to copy from the DataSource to the GAMs. This includes any overhead of the DataSource (e.g. to access the hardware) and the time taken to copy the data from the DataSource to the GAMs. 
-- The time it took to copy from the GAMs to the DataSources. This includes any overhead of the DataSource (e.g. to access the hardware) and the time taken to copy the data from the GAMs to the DataSources. 
+- The time it takes to copy from the DataSource to the GAMs. This includes any overhead of the DataSource (e.g. to access the hardware) and the time taken to copy the data from the DataSource to the GAMs.
+- The time it takes to copy from the GAMs to the DataSources. This includes any overhead of the DataSource (e.g. to access the hardware) and the time taken to copy the data from the GAMs to the DataSources.
 
 All the times are absolute with respect to the start of the real-time cycle and are measured in microseconds. 
 
@@ -76,13 +76,13 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: GAMDisplay_WriteTime [0:0]:9991
     ...
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Add the missing times 
 ----------------------------
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-4.cfg`` and add the `Read`, `Exec`, and `Write` times for the two missing GAMs.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-4.cfg`` and add the ``Read``, ``Exec``, and ``Write`` times for the two missing GAMs.
 2. Verify that the two missing times are now present in the logger output.
 
 .. code-block:: bash
@@ -92,11 +92,10 @@ Ex. 1: Add the missing times
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add the missing signals in the `GAMPerMonitor` and `GAMDisplay`.
+   The solution is to add the missing signals in the ``GAMPerMonitor`` and ``GAMDisplay``.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-4-solution.cfg
       :language: c++
       :lines: 104-106, 144-167,181,218-241,256-258,315-338,352,409-432
       :caption: Updated configuration with the two missing GAMs.
       :linenos:
-

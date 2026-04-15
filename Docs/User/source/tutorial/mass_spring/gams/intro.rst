@@ -2,7 +2,7 @@
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
-   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   Licensed under the EUPL, Version 1.1 or - as soon as they will be approved
    by the European Commission - subsequent versions of the EUPL (the "Licence")
    You may not use this work except in compliance with the Licence.
    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
@@ -14,7 +14,7 @@
 GAMs
 ====
 
-This section introduces the GAMs from the MARTe2-components repository that are used in the mass-spring-damper example. The GAMs are organized in the following sections:
+This section introduces the GAMs from the MARTe2-components repository that are used in the mass-spring-damper example. The GAMs are organised in the following sections:
 
 .. toctree::
    :maxdepth: 1
@@ -26,4 +26,3 @@ This section introduces the GAMs from the MARTe2-components repository that are 
    mass_spring_gams_4
    mass_spring_gams_5
    mass_spring_gams_6
-

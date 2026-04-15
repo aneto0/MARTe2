@@ -2,7 +2,7 @@
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
-   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   Licensed under the EUPL, Version 1.1 or - as soon as they will be approved
    by the European Commission - subsequent versions of the EUPL (the "Licence")
    You may not use this work except in compliance with the Licence.
    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
@@ -14,13 +14,13 @@
 Math expressions
 ================
 
-This section builds upon the previous example and adds features that allow to compute mathematical expressions on the MARTe2 signals.
+This section builds upon the previous example and adds features that allow computing mathematical expressions on the MARTe2 signals.
 
-The expressions are implemented using the :vcisdoxygenmccl:`MathExpressionGAM`, which allows to compute mathematical expressions on the input signals and provide the result in the output signals. The expressions are defined in a configuration file and can use any of the input signals as variables.  It also supports `Constants` in numeric and literal form.
+The expressions are implemented using the :vcisdoxygenmccl:`MathExpressionGAM`, which allows computing mathematical expressions on the input signals and providing the result in the output signals. The expressions are defined in a configuration file and can use any of the input signals as variables. It also supports ``Constants`` in numeric and literal form.
 
 The backend of the ``MathExpressionGAM`` is the :ref:`MathExpressionParser <MathExpressionParser>`.
 
-In this example, the ``MathExpressionGAM`` is used to compute the time taken by all the GAMs to execute their logic by subtracting the write time of the last GAM from the read time of the first GAM, that is: `GAMsExecutionTime = GAMDisplay_WriteTime - GAMTimer_ReadTime`. 
+In this example, the ``MathExpressionGAM`` is used to compute the time taken by all the GAMs to execute their logic by subtracting the write time of the last GAM from the read time of the first GAM, that is: ``GAMsExecutionTime = GAMDisplay_WriteTime - GAMTimer_ReadTime``.
 
 .. figure:: images/mass_spring_timings_all_gams.png
    :align: center
@@ -49,7 +49,7 @@ Start the application with:
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-8.cfg -l RealTimeLoader -s State1
 
-Once the application is running, inspect the ``screen`` output and verify that the log shows the `GAMsExecutionTime` value. The log should show entries similar to the following:
+Once the application is running, inspect the ``screen`` output and verify that the log shows the ``GAMsExecutionTime`` value. The log should show entries similar to the following:
 
 .. code-block:: console
 
@@ -57,13 +57,13 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: GAMsExecutionTime [0:0]:206
     $ [Information - LoggerBroker.cpp:152]: ForceAverage [0:0]:20.342940
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Implement the mass spring model with the MathExpressionGAM
 ------------------------------------------------------------------
 
-The ``MathExpressionGAM`` can be used to implement the mass-spring-damper model by defining the equations of motion as mathematical expressions. This allows to implement the model without the need to write a custom GAM, while still benefiting from the features of the `MathExpressionGAM`.
+The ``MathExpressionGAM`` can be used to implement the mass-spring-damper model by defining the equations of motion as mathematical expressions. This allows implementing the model without the need to write a custom GAM, while still benefiting from the features of the ``MathExpressionGAM``.
 
 Consider the continuous-time state-space model of the spring–mass system:
 
@@ -112,13 +112,13 @@ the discrete-time equations become:
 
    x_2[k+1] = x_2[k] + T_s\left(-\frac{k}{m}x_1[k] - \frac{c}{m}x_2[k] + \frac{1}{m}u[k]\right)
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-8.cfg`` and add modify the existing ``MathExpressionGAM``, named ``GAMMathModel`` to compute the equations above.
-2. Connect the output of the ``GAMMathModel`` to the ``GAMDisplay`` to log the position and velocity of the mass. In order to avoid conflicting name definitions, call the name the signals as `PositionM` and `VelocityM`.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-8.cfg`` and modify the existing ``MathExpressionGAM``, named ``GAMMathModel``, to compute the equations above.
+2. Connect the output of the ``GAMMathModel`` to the ``GAMDisplay`` to log the position and velocity of the mass. In order to avoid conflicting name definitions, call the signals ``PositionM`` and ``VelocityM``.
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to modify the ``GAMMathModel`` and add the equations to the `Expression` field.
+   The solution is to modify the ``GAMMathModel`` and add the equations to the ``Expression`` field.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-9-solution.cfg
       :language: c++
@@ -129,9 +129,9 @@ the discrete-time equations become:
 Ex. 2: Compare the output from both models 
 ------------------------------------------
 
-When running the application the output given by the ``GAMMathModel`` and the one computed by the ``GAMSpringMass`` are similar but not exactly the same. 
+When running the application, the output given by the ``GAMMathModel`` and the one computed by the ``GAMSpringMass`` are similar but not exactly the same.
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-10.cfg`` and add a MathExpressionGAM to compute the difference between the `Position` value computed by the two models.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-10.cfg`` and add a ``MathExpressionGAM`` to compute the difference between the ``Position`` value computed by the two models.
 2. Why is the ``PositionM`` value never converging to the target value? What could be done to modify this behaviour?
 
 
@@ -147,4 +147,4 @@ When running the application the output given by the ``GAMMathModel`` and the on
       :linenos: 
       :emphasize-lines: 11, 24
 
-  The `PositionM` value is never converging to the target value because the ``GAMController`` is using as feedback the ``Position`` value. Try to modify it to use the ``PositionM`` value instead.
+  The ``PositionM`` value is never converging to the target value because the ``GAMController`` is using the ``Position`` value as feedback. Try modifying it to use the ``PositionM`` value instead.

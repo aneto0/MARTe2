@@ -2,7 +2,7 @@
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
-   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   Licensed under the EUPL, Version 1.1 or - as soon as they will be approved
    by the European Commission - subsequent versions of the EUPL (the "Licence")
    You may not use this work except in compliance with the Licence.
    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
@@ -14,11 +14,11 @@
 Waveforms
 =========
 
-In this section we will modify the application to generate the ``ReferencePosition`` signal as a waveform instead of a constant. 
+In this section, we will modify the application to generate the ``ReferencePosition`` signal as a waveform instead of a constant.
 
 The waveforms are implemented using the ``WaveformGAM``. 
 
-The GAM allows to generate three types of waveforms: 
+The GAM allows generating three types of waveforms:
 
 - :vcisdoxygenmccl:`WaveformSin`, for sinusoidal waveforms.
 - :vcisdoxygenmccl:`WaveformChirp`, for waveforms where the frequency varies over time.
@@ -42,8 +42,7 @@ In this example, the ``WaveformGAM`` is used to slowly modify the ``ReferencePos
 
 .. note::
 
-   The ``WaveformGAM`` is an example on how to instantiate classes with a name different from the library, as described in :ref:`here <MARTeDataDrivenApplications>`.
-
+   The ``WaveformGAM`` is an example of how to instantiate classes with a name different from the library name, as described :ref:`here <MARTeDataDrivenApplications>`.
 
 Running the application
 -----------------------
@@ -54,7 +53,7 @@ Start the application with:
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-11.cfg -l RealTimeLoader -s State1
 
-Once the application is running, inspect the ``screen`` output and verify that the log shows the ``ReferencePosition`` value varying as function of time. The log should show entries similar to the following:
+Once the application is running, inspect the ``screen`` output and verify that the log shows the ``ReferencePosition`` value varying as a function of time. The log should show entries similar to the following:
 
 .. code-block:: console
 
@@ -62,13 +61,13 @@ Once the application is running, inspect the ``screen`` output and verify that t
    $ [Information - LoggerBroker.cpp:152]: ReferencePosition [0:0]:0.416000
    $ [Information - LoggerBroker.cpp:152]: Position [0:0]:0.354657
 
-Exercices
+Exercises
 ---------
 
 Ex. 1: Modify the waveform 
 --------------------------
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-12.cfg`` and add modify the existing ``GAMReferenceWaveform`` to implement the following figure.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-12.cfg`` and modify the existing ``GAMReferenceWaveform`` to implement the following figure.
 
 .. figure:: images/mass_spring_refpos_square.svg
    :align: center
@@ -92,12 +91,12 @@ Ex. 1: Modify the waveform
 Ex. 2: Add a disturbance to the system
 ---------------------------------------
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-13.cfg`` and add a disturbance to the ``Position`` signal, before it enters the controller. The disturbance should be a sinusoidal signal with an amplitude of `0.01`` and a frequency of 10 Hz.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-13.cfg`` and add a disturbance to the ``Position`` signal before it enters the controller. The disturbance should be a sinusoidal signal with an amplitude of ``0.01`` and a frequency of 10 Hz.
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add a ``WaveformSin`` to the generate the disturbed ``PositionDisturbance`` signal.
+   The solution is to add a ``WaveformSin`` to generate the disturbed ``PositionDisturbance`` signal.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-13-solution.cfg
       :language: c++
@@ -127,5 +126,3 @@ Ex. 2: Add a disturbance to the system
    Make sure that the GAMs are added to the execution list and that the new signals are added to the ``GAMDisplay`` for monitoring.
 
    Note that the disturbance causes the system to oscillate around the reference position, and the controller tries to compensate for the disturbance to keep the position close to the reference.
-
-
