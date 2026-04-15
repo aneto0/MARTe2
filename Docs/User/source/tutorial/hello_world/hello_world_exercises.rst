@@ -163,7 +163,7 @@ Ex. 5: Signal alias
    Some DataSources, such as the LoggerDataSource, allow signals to be added at runtime. In this case, the LoggerDataSource will create a new signal named ``CounterOut`` and log its value.
 
 Ex. 6: Signal types
-------------------
+-------------------
 
 1. Run the following application.
 

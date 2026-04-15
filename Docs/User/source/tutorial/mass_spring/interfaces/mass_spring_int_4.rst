@@ -21,53 +21,67 @@ The MARTe2 :vcisdoxygenmccl:`EPICSCAClient` allows to trigger messages based on 
     The EPICSCAClient is only available in distributions where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
 
 
-Examples of LoggerService consumers include the :vcisdoxygencl:`ConsoleLogger` (which prints the log messages on the console), the :vcisdoxygencl:`UDPLogger` (which sends the log messages over UDP) and the :vcisdoxygenmccl:`SysLogger` (which sends the log messages to the machine ``syslog``).
+In this example, the ``EPICSCAClient`` is used to trigger a message to send the ``StateMachine`` state as well as to monitor the application status.
 
-All the :vcisdoxygencl:`LoggerConsumerI` accept a ``Format`` string which specifies what log properties are to be included in the log message.
-
-In this example two LoggerConsumers are used: the ``ConsoleLogger`` and the ``UDPLogger``.  In order to avoid mixing messages from different applications the destination  ``UDP`` port number needs to be unique. In order to avoid clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-55.cfg`` will be automatically updated from a ``Makefile.cfg``.
-
-.. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-55.cfg
+.. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-56.cfg
     :language: c++
-    :lines: 4-19
-    :caption: LoggerService configuration. Note that destination UDP port will be automatically updated by the ``Makefile.cfg``.
+    :lines: 4-24
+    :caption: EPICSCAClient configuration. Note that destination PV variable names will be automatically updated by the ``Makefile.cfg``.
     :linenos:
-    :emphasize-lines: 6, 8, 13
+    :emphasize-lines: 8,13,16-18
 
-The tools to handle the reception of the log messages are outside the scope of this tutorial, but a simple example of how to receive the log messages using the `marte2-log <https://vcis-gitlab.f4e.europa.eu/common/marte2-logview>`__ application is shown below.
+The ``StateMachine`` is configured to send a message every time the state changes.
+
+.. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-56.cfg
+    :language: c++
+    :lines: 110-111,149-163,227-241,307-319
+    :caption: StateMachine configuration, highlighting the messages sent on state change (which will always start in the ``ENTER`` substate). 
+    :linenos:
+    :emphasize-lines: 9-10,14,24-25,29,37-38,42
+
 
 Running the application
 -----------------------
 
-Start the first application with:
+Start the ``softIOC`` in a separate terminal:
+
+.. code-block:: bash
+
+    ../Test/Integrated/GenerateEPICSSoftIOCDb.sh
+    softIoc -d ../Test/Integrated/MassSpring-1.db
+
+Start the application with:
 
 .. code-block:: bash
 
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-55_Gen.cfg -l RealTimeLoader -m StateMachine::START
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-56_Gen.cfg -l RealTimeLoader -m StateMachine::START
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
 
 .. code-block:: console
 
-    $ |E=Warning|TM=16:55:55 (7196770772734895)|o=|O=|C=|T=|P=x86-linux|f=void MARTe::Threads::SetPriority(const ThreadIdentifier&, const MARTe::Threads::PriorityClassType&, const uint8&)|F=Threads.cpp:185|D=Failed to change the thread priority (likely due to insufficient permissions)
-    $ |E=Information|TM=16:55:55 (7196770772750327)|o=StateMachine|O=0x0000000001D490F0|C=StateMachine|T=|P=x86-linux|f=virtual MARTe::ErrorManagement::ErrorType MARTe::StateMachine::SendMultipleMessagesAndWaitReply(MARTe::ReferenceContainer, const MARTe::TimeoutType&)|F=StateMachine.cpp:340|D=In state (INITIAL) triggered message (StartNextStateExecutionRTApp)
-    $ |E=Information|TM=16:55:56 (7196771773805898)|o=|O=0x0000000001DFCAB0|C=LoggerBroker|T=|P=x86-linux|f=virtual bool MARTe::LoggerBroker::Execute()|F=LoggerBroker.cpp:152|D=Time [0:0]:990000
+    $ |E=Information|TM=13:35:40 (7271154714286675)|o=StateMachine|O=0x000000000247CED0|C=StateMachine|T=|P=x86-linux|f=virtual MARTe::ErrorManagement::ErrorType MARTe::StateMachine::SendMultipleMessagesAndWaitReply(MARTe::ReferenceContainer, const MARTe::TimeoutType&)|F=StateMachine.cpp:340|D=In state (INITIAL) triggered message (StartNextStateExecutionRTApp)
+    $ |E=Information|TM=13:35:40 (7271154714327563)|o=StateMachine|O=0x000000000247CED0|C=StateMachine|T=|P=x86-linux|f=virtual MARTe::ErrorMManagement::ErrorType MARTe::StateMachine::SendMultipleMessagesAndWaitReply(MARTe::ReferenceContainer, const MARTe::TimeoutType&)|F=StateMachine.cpp:340|D=In state (WAVEFORM_REF) triggered message (InformStatusUpdate)
+    $ |E=Information|TM=13:35:41 (7271155716506427)|o=|O=0x0000000002540BE0|C=LoggerBroker|T=|P=x86-linux|f=virtual bool MARTe::LoggerBroker::Execute()|F=LoggerBroker.cpp:152|D=Time [0:0]:1000000
+    $ |E=Information|TM=13:35:41 (7271155716512697)|o=|O=0x0000000002540BE0|C=LoggerBroker|T=|P=x86-linux|f=virtual bool MARTe::LoggerBroker::Execute()|F=LoggerBroker.cpp:152|D=ReferencePosition [0:0]:0.400000
     ...
 
-1. Open the file ``../Configurations/MassSpring/RTApp-MassSpring-55_Gen.cfg`` and take note of the allocated ``UDPLogger`` ``Port`` number. (Alternatively, run the command ``UDP_LOGGER_DEST_PORT=`awk '/\+UDPLogger/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-55_Gen.cfg`;echo "UDP_LOGGER_DEST_PORT=$UDP_LOGGER_DEST_PORT"`` to extract the port number from the configuration file).:
-2. Clone the `marte2-log <https://vcis-gitlab.f4e.europa.eu/common/marte2-logview>`__ application and start it with the same ``UDP`` port number as the one allocated to the ``UDPLogger`` in the configuration file:
-3. Use the following command to find an available port number:
+On another terminal change the state of the application by writing to the corresponding PV:
 
 .. code-block:: bash
 
-    LOG_HTTP_PORT=`PORT=8080;while netstat -tln | grep -q ":$PORT"; do PORT=$((PORT + 1)); done; echo $PORT
-    echo $LOG_HTTP_PORT
+    caput MARTE2-TUTORIAL-USERNAME-APP-COMMAND 0 #Replace with your username in capital letters
+    caput MARTE2-TUTORIAL-USERNAME-APP-COMMAND 1 #Replace with your username in capital letters
 
-4. Start the ``marte2-log`` application in web mode with the following command:
+Check that the state of the application has changed by monitoring the corresponding PV:
 
 .. code-block:: bash
 
-    python3.6 logapp.py -t WS -p $UDP_LOGGER_DEST_PORT -r $LOG_HTTP_PORT #Replace the $UDP_LOGGER_DEST_PORT with the port number allocated to the UDPLogger in the configuration file
+    camonitor MARTE2-TUTORIAL-USERNAME-APP-STATUS #Replace with your username in capital letters
 
-5. Open a web browser and navigate to ``http://localhost:$LOG_HTTP_PORT/index.html`` (replace the $LOG_HTTP_PORT with the port number allocated in the previous step) to view the log messages in real-time.
+Which should read ``1``. The ``ReferencePosition`` should also be updated to a constant value in the log output
+
+.. code-block:: console
+
+    |E=Information|TM=13:40:35 (7271449679705588)|o=|O=0x0000000001C6DBE0|C=LoggerBroker|T=|P=x86-linux|f=virtual bool MARTe::LoggerBroker::Execute()|F=LoggerBroker.cpp:152|D=ReferencePosition [0:0]:2.000000
