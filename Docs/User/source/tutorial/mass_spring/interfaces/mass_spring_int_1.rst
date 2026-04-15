@@ -150,6 +150,10 @@ Note that the configuration file already includes the ``RealTimeState`` ``StateS
 
 2. Check that the application outputs ``Force`` with zero value when started with:
 
+.. code-block:: bash
+
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-52.cfg -l RealTimeLoader -m STATE_MACHINE::START_SWITCH_OFF
+
 3. The output should show entries similar to the following:
 
 .. code-block:: console
@@ -159,10 +163,6 @@ Note that the configuration file already includes the ``RealTimeState`` ``StateS
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     $ [Information - LoggerBroker.cpp:152]: Force [0:0]:0.000000
     ...
-
-.. code-block:: bash
-
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-52.cfg -l RealTimeLoader -m STATE_MACHINE::START_SWITCH_OFF
 
 .. dropdown:: Solution
    :icon: key

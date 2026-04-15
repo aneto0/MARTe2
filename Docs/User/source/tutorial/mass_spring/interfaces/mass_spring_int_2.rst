@@ -32,11 +32,12 @@ Given that the ``HTTPService`` port number needs to be unique, in order to avoid
 Running the application
 -----------------------
 
-Start the first application with:
+Start the first application (note that the ``HTTP_PORT`` will be automatically updated by the ``Makefile.cfg`` and print in the screen):
 
 .. code-block:: bash
 
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
+    HTTP_PORT=`awk '/\+WebServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-53_Gen.cfg`;echo "HTTP_PORT=$HTTP_PORT"
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-53_Gen.cfg -l RealTimeLoader -m StateMachine::START
 
 Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
@@ -72,4 +73,51 @@ Once the application is running, inspect the ``screen`` output and verify that t
 7. Click on ``GOTO_CONSTANT_REF`` and observe on the dashboard that the position settles at the constant reference.
 8. Click on ``GOTO_SWITCH_OFF`` and observe on the dashboard that the position decays to zero.
  
+Exercices
+---------
+
+Ex. 1: Change the reference position using the HttpMessageInterface
+-------------------------------------------------------------------
+
+The objective of this exercise is to add a new message to the ``HttpMessageInterface`` to directly send a new reference position to the :vcisdoxygenmccl:`ConstantGAM` ``GAMReference``. 
+
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-54.cfg`` and add a new message to allow setting the value ``3`` (an example is already provided on how to set the value ``1``).
+
+2. Start the application:
+
+    make -C ../Configurations/MassSpring/ -f Makefile.cfg
+    HTTP_PORT=`awk '/\+WebServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-53_Gen.cfg`;echo "HTTP_PORT=$HTTP_PORT"
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-54_Gen.cfg -l RealTimeLoader -m StateMachine::START
+
+3. The output should show entries similar to the following:
+
+.. code-block:: console
+
+    $ [Warning - Threads.cpp:185]: Failed to change the thread priority (likely due to insufficient permissions)
+    $ [Information - StateMachine.cpp:340]: In state (INITIAL) triggered message (StartNextStateExecutionRTApp)
+    $ [Information - LoggerBroker.cpp:152]: Time [0:0]:990000
+    $ [Information - LoggerBroker.cpp:152]: ReferencePosition [0:0]:2.000000
+    ...
+
+4. Open another browser tab and navigate to the ``HttpMessageInterface``:
+
+::
+
+    [-] ObjectBrowse (HttpObjectBrowser) 
+        [-] HttpMessageInterface (HttpMessageInterface) [>] 0x0
+
+7. Click on the new added message and observe on the console (or on the web dashboard) that the ``ReferencePosition`` is change to the value ``3``.
+
+.. dropdown:: Solution
+   :icon: key
+
+   The solution is to add the new message as described above.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-54-solution.cfg
+      :language: c++
+      :lines: 19-61
+      :caption: Modified HttpMessageInterface configuration to add the new message.
+      :linenos:
+      :emphasize-lines: 32-42
+
 
