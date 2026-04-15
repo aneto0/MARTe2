@@ -2,7 +2,7 @@
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
-   Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+   Licensed under the EUPL, Version 1.1 or - as soon as they will be approved
    by the European Commission - subsequent versions of the EUPL (the "Licence")
    You may not use this work except in compliance with the Licence.
    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
@@ -71,7 +71,7 @@ When the command below was executed:
 
     ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-1.cfg -l RealTimeLoader -s State1
 
-MARTe2 loaded this configuration, created the :ref:`RealTimeApplication <MARTeRealTimeApplication>`, selected the ``State1`` :ref:`state <MARTeRealTimeState>`, and started :ref:`executing <MARTeScheduler>` it:.
+MARTe2 loaded this configuration, created the :ref:`RealTimeApplication <MARTeRealTimeApplication>`, selected the ``State1`` :ref:`state <MARTeRealTimeState>`, and started :ref:`executing <MARTeScheduler>` it.
 
 
 RealTimeApplication
@@ -84,7 +84,7 @@ At the top level (but not necessarily at the beginning of the file) of every MAR
      A MARTe configuration file may contain multiple RealTimeApplication instances.
 
 
-The ``RealTimeApplication`` is always composed by the following sections:
+The ``RealTimeApplication`` is always composed of the following sections:
 
 - :ref:`+Functions <MARTeGAMs>`: defines the processing components (GAMs)
 - :ref:`+Data <MARTeDataSources>`: defines the data sources 
@@ -115,7 +115,7 @@ The first is an :vcisdoxygenmccl:`IOGAM` responsible for getting a counter and a
 
 The ``Frequency`` is a special :ref:`signal property <MARTeSignalRules>` that defines the rate at which the thread executes. The actual pacing of the thread is determined by the DataSource that provides the signal with the ``Frequency`` property. In this case, the ``Timer`` DataSource is configured to execute at a frequency of ``1 Hz``.
 
-The second ``IOGAM`` that takes care of copying the signals from the :ref:`GAMDataSource <GAMDataSource>` and offering them to a DataSource named ``Display``.
+The second is an ``IOGAM`` that takes care of copying the signals from the :ref:`GAMDataSource <GAMDataSource>` and offering them to a DataSource named ``Display``.
 
 .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
    :language: c++
@@ -127,7 +127,7 @@ The second ``IOGAM`` that takes care of copying the signals from the :ref:`GAMDa
 DataSources
 +++++++++++
 
-The MARTe :ref:`+Data <MARTeDataSources>`: provide an interface between the functional blocks (GAMs) and the outside world. They are responsible for acquiring data from external sources (e.g. hardware, files, network) and making it available to the GAMs, as well as for taking data from the GAMs and sending it to external sinks.
+The MARTe :ref:`+Data <MARTeDataSources>` provide an interface between the functional blocks (GAMs) and the outside world. They are responsible for acquiring data from external sources (e.g. hardware, files, network) and making it available to the GAMs, as well as for taking data from the GAMs and sending it to external sinks.
 Two DataSources are defined in the configuration: ``Timer`` (of type :vcisdoxygenmccl:`LinuxTimer`) and ``Display`` (of type :vcisdoxygenmccl:`LoggerDataSource`).
 
 .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
@@ -147,7 +147,7 @@ Two DataSources are defined in the configuration: ``Timer`` (of type :vcisdoxyge
 States and Threads
 ++++++++++++++++++
 
-In the HelloWorld example, a single state (``State1``), with a single thread (``Thread``) is defined. The thread executes the two GAMs described in the previous section.
+In the HelloWorld example, a single state (``State1``), with a single thread (``Thread``), is defined. The thread executes the two GAMs described in the previous section.
 
 .. literalinclude:: /_static/tutorial/Configurations/HelloWorld/RTApp-HelloWorld-1.cfg
    :language: c++
@@ -159,4 +159,4 @@ In the HelloWorld example, a single state (``State1``), with a single thread (``
 Scheduler
 +++++++++
 
-MARTe allows to modify the default :ref:`GAMScheduler <MARTeScheduler>` component, but this is meant only for special applications (e.g. in embedded systems). For most applications, the default scheduler is sufficient.
+MARTe allows the default :ref:`GAMScheduler <MARTeScheduler>` component to be modified, but this is meant only for special applications (e.g. in embedded systems). For most applications, the default scheduler is sufficient.
