@@ -25,8 +25,7 @@
 #                                                            
 #############################################################
 
-SPB = DeltaT.x \
-	DeltaTSol.x 
+SPB = DeltaTSol.x 
 
 OBJSX = 
 
