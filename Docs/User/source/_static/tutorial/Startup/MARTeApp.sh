@@ -1,11 +1,40 @@
 #!/bin/bash
-#Arguments -l LOADER -f FILENAME -m MESSAGE | -s STATE [-d cgdb|strace]
+
+#############################################################
+#                                                            
+# Copyright 2026 EFDA | European Joint Undertaking for ITER  
+# and the Development of Fusion Energy ('Fusion for Energy') 
+#                                                            
+# Licensed under the EUPL, Version 1.1 or - as soon they     
+# will be approved by the European Commission - subsequent   
+# versions of the EUPL (the 'Licence');                      
+# You may not use this work except in compliance with the    
+# Licence.                                                   
+# You may obtain a copy of the Licence at:                   
+#                                                            
+# https://eupl.eu/                                           
+#                                                            
+# Unless required by applicable law or agreed to in          
+# writing, software distributed under the Licence is         
+# distributed on an 'AS IS' basis,                           
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either       
+# express or implied.                                        
+# See the Licence for the specific language governing        
+# permissions and limitations under the Licence.             
+#                                                            
+# Date:   16/04/2026                                            
+# Author: cabrian                                          
+#                                                            
+#############################################################
+
+#Arguments -l LOADER -f FILENAME -m MESSAGE | -s STATE [-d cgdb|strace|valgrind]
 #-l LOADER=The Loader to use
 #-f FILENAME=MARTe configuration file
 #-m MESSAGE=Start message
 #-s STATE=RealTimeApplication first state 
 #-d cgdb=Run with cgdb
 #-d strace=Run with strace
+#-d valgrind=Run with valgrind
 
 #Run with cgdb or strace?
 DEBUG=""
@@ -50,7 +79,6 @@ if [ -z ${MARTe2_DIR+x} ]; then echo "Please set the MARTe2_DIR environment vari
 if [ -z ${MARTe2_Components_DIR+x} ]; then echo "Please set the MARTe2_Components_DIR environment variable"; exit; fi
 
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../../../Build/x86-linux/Examples/Core/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:Core/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_DIR/Build/x86-linux/Core/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_Components_DIR/Build/x86-linux/Components/DataSources/EPICSCA/

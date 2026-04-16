@@ -61,7 +61,11 @@ public:
      virtual bool Execute();
 
 private:
+    ///AUTO-GENERATED: PARAMETERS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF PARAMETERS. DO NOT EDIT!
 
+    ///AUTO-GENERATED: SIGNALS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF SIGNALS. DO NOT EDIT!
 };
 
 /*---------------------------------------------------------------------------*/

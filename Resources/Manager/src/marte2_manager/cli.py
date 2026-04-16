@@ -63,6 +63,12 @@ def main():
     add_parser.add_argument('--cpt_type', type=str, help='Type of the component to create', choices=['gams', 'datasources', 'interfaces'], required=True)
     add_parser.add_argument('--cpt_name', type=str, help='Name of the component to create', required=True)
     add_parser.add_argument('--cpt_namespace', type=str, help='Namespace of the component to create', required=True)
+    add_parser.add_argument('--cpt_template', type=str, help='Template to use for the component', required=False)
+
+    modify_parser = command_parsers.add_parser('modify', help='Modify an existing component in the project')
+    modify_parser.add_argument('--cpt_type', type=str, help='Type of the component to modify', choices=['gams', 'datasources', 'interfaces'], required=True)
+    modify_parser.add_argument('--cpt_name', type=str, help='Name of the component to modify', required=True)
+    modify_parser.add_argument('--cpt_template', type=str, help='Template to use for the component', required=True)
 
     args = parser.parse_args()
 
@@ -104,8 +110,27 @@ def main():
             if ok:
                 component_manager = ComponentManager(app_def_data, resources.files('marte2_manager'), template_global_vars, args.project_name, args.project_path)
                 ok = component_manager.create_component(args.cpt_type, args.cpt_name, args.cpt_namespace)
+            if ok:
+                if args.cpt_template is not None:
+                    with open(args.cpt_template) as f:
+                        template_dict = json.load(f)
+                    ok = component_manager.expand_from_template(template_dict)
+                    if ok:
+                        if args.cpt_type == 'gams':
+                            ok = component_manager.expand_gam_signals_from_template(template_dict)
             if not ok:
                 logger.error(f'Project validation failed. Cannot add component.')
+        elif args.command == 'modify':
+            component_manager = ComponentManager(app_def_data, resources.files('marte2_manager'), template_global_vars, args.project_name, args.project_path)
+            with open(args.cpt_template) as f:
+                template_dict = json.load(f)
+            if ok:
+                ok = component_manager.validate_component(args.cpt_type, args.cpt_name)
+            if ok:
+                ok = component_manager.expand_from_template(template_dict)
+            if ok:
+                if args.cpt_type == 'gams':
+                    ok = component_manager.expand_gam_signals_from_template(template_dict)
 
     ret = 0
     if not ok:
