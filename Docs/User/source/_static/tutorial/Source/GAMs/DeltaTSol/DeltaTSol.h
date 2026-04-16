@@ -45,6 +45,28 @@ namespace Tutorial {
  * @details TODO.
  */
 
+///AUTO-GENERATED: CLASS DOC. DO NOT EDIT!
+/**
+ * @details
+ * +DeltaTSolInstance = {
+ *     Class = DeltaTSol
+ *     DeltaTDiv = 0 //Required. The time difference will be divided by this value before being sent to the output signal
+ *     InputSignals = {
+ *         AbsoluteTime = {//Absolute time in user defined units (e.g. microseconds) used to calculate the time difference. After division by DeltaTDiv, the output signal will be in micro-seconds.
+ *             Type = uint64
+ *             DataSource = "DDB1"
+ *         }
+ *     }
+ *     OutputSignals = {
+ *         DeltaT = {//Time difference between the current and previous AbsoluteTime input signal
+ *             Type = uint32
+ *             DataSource = "DDB1"
+ *         }
+ *     }
+ * }
+ */
+///AUTO-GENERATED: END OF CLASS DOC. DO NOT EDIT!
+
 class DeltaTSol : public MARTe::GAM {
 public:
     CLASS_REGISTER_DECLARATION()

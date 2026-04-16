@@ -44,9 +44,9 @@
             "number_of_elements": 1,
             "required": true,
             "enum_values": {
-                "option1": 0,
-                "option2": 1,
-                "option3": 2
+                "Option1": 0,
+                "Option2": 1,
+                "Option3": 2
              }  
         },
         "Parameter8": {

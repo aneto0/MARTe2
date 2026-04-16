@@ -24,6 +24,9 @@ namespace ${namespace} {
  * @details TODO.
  */
 
+///AUTO-GENERATED: CLASS DOC. DO NOT EDIT!
+///AUTO-GENERATED: END OF CLASS DOC. DO NOT EDIT!
+
 class ${class} : public MARTe::GAM {
 public:
     CLASS_REGISTER_DECLARATION()

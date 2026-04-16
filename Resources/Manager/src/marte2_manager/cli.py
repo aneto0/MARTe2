@@ -118,6 +118,8 @@ def main():
                     if ok:
                         if args.cpt_type == 'gams':
                             ok = component_manager.expand_gam_signals_from_template(template_dict)
+                            if ok:
+                                ok = component_manager.generate_gam_doc_from_template(template_dict)
             if not ok:
                 logger.error(f'Project validation failed. Cannot add component.')
         elif args.command == 'modify':
@@ -131,6 +133,9 @@ def main():
             if ok:
                 if args.cpt_type == 'gams':
                     ok = component_manager.expand_gam_signals_from_template(template_dict)
+                    if ok:
+                        ok = component_manager.generate_gam_doc_from_template(template_dict)
+
 
     ret = 0
     if not ok:

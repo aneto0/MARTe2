@@ -56,7 +56,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
 
 .. code-block:: bash
 
-    LOG_HTTP_PORT=`PORT=8080;while netstat -tln | grep -q ":$PORT"; do PORT=$((PORT + 1)); done; echo $PORT
+    LOG_HTTP_PORT=`PORT=8080;while netstat -tln | grep -q ":$PORT"; do PORT=$((PORT + 1)); done; echo $PORT`
     echo $LOG_HTTP_PORT
 
 4. Start the ``marte2-log`` application in web mode with the following command:
