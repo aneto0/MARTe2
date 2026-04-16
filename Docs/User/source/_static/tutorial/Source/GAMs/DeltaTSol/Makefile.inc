@@ -25,18 +25,44 @@
 #                                                            
 #############################################################
 
-SPB = DeltaT.x \
-	DeltaTSol.x 
+SPB =  
 
-OBJSX = 
+OBJSX = DeltaTSol.x
+
+PACKAGE = GAMs
 
 MAKEDEFAULTDIR=$(MARTe2_DIR)/MakeDefaults
 
-ROOT_DIR = ../../
+ROOT_DIR = ../../../
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ) check-env
+INCLUDES += -I.
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L0Types
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L1Portability
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L2Objects
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L3Streams
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Configuration
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4HttpService
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Logger
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Messages
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L5GAMs
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L6App
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L1Portability
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L3Streams
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L4HttpService
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L4LoggerService
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L6App
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L1Portability
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L3Services
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4LoggerService
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L5GAMs
+
+all: $(OBJS) $(SUBPROJ) check-env \
+	$(BUILD_DIR)/DeltaTSol$(LIBEXT) \
+	$(BUILD_DIR)/DeltaTSol$(DLLEXT)
 	echo  $(OBJS)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

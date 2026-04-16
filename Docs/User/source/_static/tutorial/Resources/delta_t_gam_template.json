@@ -1,0 +1,26 @@
+{
+    "parameters": {
+        "DeltaTDiv": {
+            "type": "uint32",
+            "description": "The time difference will be divided by this value before being sent to the output signal",
+            "validation": "(DeltaTDiv > (uint32)(0))",
+            "number_of_elements": 1,
+            "required": true
+        }
+    },
+    "input_signals": {
+        "AbsoluteTime": {
+            "type": "uint64",
+            "description": "Absolute time in user defined units (e.g. microseconds) used to calculate the time difference. After division by DeltaTDiv, the output signal will be in micro-seconds.",
+            "number_of_elements": 1,
+            "samples": 1
+        }
+    },
+    "output_signals": {
+        "DeltaT": {
+            "type": "uint32",
+            "description": "Time difference between the current and previous AbsoluteTime input signal",
+            "number_of_elements": 1
+        }
+   }
+}
