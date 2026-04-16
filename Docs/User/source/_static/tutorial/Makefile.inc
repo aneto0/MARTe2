@@ -27,8 +27,9 @@
 
 SPB = 	Source/GAMs.x\
 	Source/DataSources.x\
-	Source/Interfaces.x\
-	Test/GAMs.x\
+	Source/Interfaces.x
+
+SPBT = Test/GAMs.x\
 	Test/DataSources.x\
 	Test/Interfaces.x\
 	Test/GTest.x
@@ -41,8 +42,14 @@ ROOT_DIR = .
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ) check-env
+all: $(OBJS) core test check-env
 	echo  $(OBJS)
+
+core: $(SUBPROJ)
+	echo $(SUBPROJ)
+
+test: $(SUBPROJT)
+	echo $(SUBPROJT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
