@@ -1,6 +1,6 @@
 /**                                                                             
- * @file NetworkMonitor.cpp                                                                
- * @brief Source file for class NetworkMonitor                                        
+ * @file SystemMonitor.cpp                                                                
+ * @brief Source file for class SystemMonitor                                        
  * @date 17/04/2026                                                                
  * @author cabrian                                                            
  *                                                                              
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.   
 
  * @details This source file contains the definition of all the methods for     
- * the class NetworkMonitor (public, protected, and private). Be aware that some      
+ * the class SystemMonitor (public, protected, and private). Be aware that some      
  * methods, such as those inline could be defined on the header file, instead.  
  */                                                                             
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "NetworkMonitor.h"
+#include "SystemMonitor.h"
 #include "StructuredDataIHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -41,7 +41,7 @@
 
 namespace Tutorial {
 
-NetworkMonitor::NetworkMonitor() :
+SystemMonitor::SystemMonitor() :
         MARTe::DataSourceI () {
     using namespace MARTe;
     ///AUTO-GENERATED: CTOR PARAMETERS. DO NOT EDIT!
@@ -58,7 +58,7 @@ NetworkMonitor::NetworkMonitor() :
 
 }
 
-NetworkMonitor::~NetworkMonitor() {
+SystemMonitor::~SystemMonitor() {
     using namespace MARTe;
     ///AUTO-GENERATED: DTOR PARAMETERS. DO NOT EDIT!
 
@@ -66,14 +66,14 @@ NetworkMonitor::~NetworkMonitor() {
     ///AUTO-GENERATED: DTOR SIGNALS. DO NOT EDIT!
 
     ///AUTO-GENERATED: END OF DTOR SIGNALS. DO NOT EDIT!
-
+    
     (void) txPacketsFile.Close();
     (void) rxPacketsFile.Close();
     (void) txDroppedFile.Close();
     (void) rxDroppedFile.Close();
 }
 
-bool NetworkMonitor::Initialise(MARTe::StructuredDataI &data) {
+bool SystemMonitor::Initialise(MARTe::StructuredDataI &data) {
     using namespace MARTe;
     bool ok = DataSourceI::Initialise(data);
     StructuredDataIHelper helper(data, this);
@@ -84,7 +84,7 @@ bool NetworkMonitor::Initialise(MARTe::StructuredDataI &data) {
         ok = helper.Read("NICName", nicName);
     }
     ///AUTO-GENERATED: END OF INITIALISE PARAMETERS. DO NOT EDIT!
-
+      
     File *files[] = {&txPacketsFile, &rxPacketsFile, &txDroppedFile, &rxDroppedFile};
     StreamString statName[] = {"tx_packets", "rx_packets", "tx_dropped", "rx_dropped"};
     uint32 numberOfFiles = sizeof(files) / sizeof(files[0]);
@@ -99,10 +99,11 @@ bool NetworkMonitor::Initialise(MARTe::StructuredDataI &data) {
         }
     }
 
+
     return ok;
 }
 
-bool NetworkMonitor::SetConfiguredDatabase(MARTe::StructuredDataI & data) {
+bool SystemMonitor::SetConfiguredDatabase(MARTe::StructuredDataI & data) {
     using namespace MARTe;
     bool ok = DataSourceI::SetConfiguredDatabase(data);
     StructuredDataIHelper helper(data, this);
@@ -112,7 +113,7 @@ bool NetworkMonitor::SetConfiguredDatabase(MARTe::StructuredDataI & data) {
     if (ok) {
         ok = (GetNumberOfSignals() == 4);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of signals. Expected 0 and read %d", 4, GetNumberOfSignals());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of signals. Expected 4 and read %d", GetNumberOfSignals());
         }
     }
     if (ok) {
@@ -147,10 +148,9 @@ bool NetworkMonitor::SetConfiguredDatabase(MARTe::StructuredDataI & data) {
     return ok;
 }
 
-bool NetworkMonitor::Synchronise() {
+bool SystemMonitor::Synchronise() {
     using namespace MARTe;
     bool ok = true;
-
     File *files[] = {&txPacketsFile, &rxPacketsFile, &txDroppedFile, &rxDroppedFile};
     uint64 *signals[] = {&txPackets, &rxPackets, &txDropped, &rxDropped};
     uint32 numberOfFiles = sizeof(files) / sizeof(files[0]);
@@ -167,7 +167,7 @@ bool NetworkMonitor::Synchronise() {
     return ok;
 }
 
-bool NetworkMonitor::AllocateMemory() {
+bool SystemMonitor::AllocateMemory() {
     using namespace MARTe;
     bool ok = true;
 
@@ -177,7 +177,7 @@ bool NetworkMonitor::AllocateMemory() {
     return ok;
 }
 
-bool NetworkMonitor::GetSignalMemoryBuffer(const MARTe::uint32 signalIdx, const MARTe::uint32 bufferIdx, void *&signalAddress) {
+bool SystemMonitor::GetSignalMemoryBuffer(const MARTe::uint32 signalIdx, const MARTe::uint32 bufferIdx, void *&signalAddress) {
     using namespace MARTe;
     bool ok = true;
     ///AUTO-GENERATED: GET MEMORY SIGNALS. DO NOT EDIT!
@@ -198,7 +198,7 @@ bool NetworkMonitor::GetSignalMemoryBuffer(const MARTe::uint32 signalIdx, const 
     return ok;
 }
 
-const MARTe::char8 *NetworkMonitor::GetBrokerName(MARTe::StructuredDataI &data, const MARTe::SignalDirection direction) {
+const MARTe::char8 *SystemMonitor::GetBrokerName(MARTe::StructuredDataI &data, const MARTe::SignalDirection direction) {
     using namespace MARTe;
     const char8 *brokerName = "";
     ///AUTO-GENERATED: GET BROKER NAME. DO NOT EDIT!
@@ -207,11 +207,11 @@ const MARTe::char8 *NetworkMonitor::GetBrokerName(MARTe::StructuredDataI &data, 
     return brokerName;
 }
 
-bool NetworkMonitor::PrepareNextState(const MARTe::char8 * const currentStateName, const MARTe::char8 * const nextStateName) {
+bool SystemMonitor::PrepareNextState(const MARTe::char8 * const currentStateName, const MARTe::char8 * const nextStateName) {
     using namespace MARTe;
     bool ok = true;
     return ok;
 }
 
-CLASS_REGISTER(NetworkMonitor, "1.0")
+CLASS_REGISTER(SystemMonitor, "1.0")
 }

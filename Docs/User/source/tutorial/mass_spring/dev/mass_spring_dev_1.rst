@@ -108,7 +108,7 @@ Compile the GAM:
     export TARGET=x86-linux
     make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
 
-Note that the GAM path is automatically added to the ``MARTeApp.sh`` script.
+Note that the GAM path was automatically added to the ``MARTeApp.sh`` script.
 
 Running the application
 -----------------------
@@ -127,6 +127,12 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: AbsoluteTime [0:0]:7437436439108
     $ [Information - LoggerBroker.cpp:152]: DeltaTime [0:0]:3820000
     ...
+
+The Manager also allows to print a snippet of the configuration file that corresponds to the GAM being developed.
+
+.. code-block:: bash
+
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG print --cpt_type gams --cpt_name DeltaT --cpt_template $HOME/MARTe2-training-proj/Resources/delta_t_gam_template.json # Modify the project name and path if needed
 
 Exercise
 --------

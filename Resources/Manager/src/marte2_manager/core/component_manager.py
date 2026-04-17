@@ -720,12 +720,12 @@ class ComponentManager(BaseManager):
         if signal_direction == 'input_signals':
             line += f'\n{self.TAB}{self.TAB}ok = (GetNumberOfInputSignals() == ' + str(len(signals)) + ');'
             line += f'\n{self.TAB}{self.TAB}if (!ok) {{'
-            line += f'\n{self.TAB}{self.TAB}{self.TAB}REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected {0} and read %d", ' + str(len(signals)) + ', GetNumberOfInputSignals());'
+            line += f'\n{self.TAB}{self.TAB}{self.TAB}REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected {str(len(signals))} and read %d", GetNumberOfInputSignals());'
             line += f'\n{self.TAB}{self.TAB}}}'
         else:
             line += f'\n{self.TAB}{self.TAB}ok = (GetNumberOfOutputSignals() == ' + str(len(signals)) + ');'
             line += f'\n{self.TAB}{self.TAB}if (!ok) {{'
-            line += f'\n{self.TAB}{self.TAB}{self.TAB}REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected {0} and read %d", ' + str(len(signals)) + ', GetNumberOfOutputSignals());'
+            line += f'\n{self.TAB}{self.TAB}{self.TAB}REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected {str(len(signals))} and read %d", GetNumberOfOutputSignals());'
             line += f'\n{self.TAB}{self.TAB}}}'
         line += f'\n{self.TAB}}}'
         return line
@@ -734,7 +734,7 @@ class ComponentManager(BaseManager):
         line = f'\n{self.TAB}if (ok) {{'
         line += f'\n{self.TAB}{self.TAB}ok = (GetNumberOfSignals() == ' + str(len(signals)) + ');'
         line += f'\n{self.TAB}{self.TAB}if (!ok) {{'
-        line += f'\n{self.TAB}{self.TAB}{self.TAB}REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of signals. Expected {0} and read %d", ' + str(len(signals)) + ', GetNumberOfSignals());'
+        line += f'\n{self.TAB}{self.TAB}{self.TAB}REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of signals. Expected {str(len(signals))} and read %d", GetNumberOfSignals());'
         line += f'\n{self.TAB}{self.TAB}}}'
         line += f'\n{self.TAB}}}'
         return line

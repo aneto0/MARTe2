@@ -79,19 +79,28 @@ class ProjectManager(BaseManager):
         interfaces_folder_name = self._app_def_data['components']['interfaces']['name']
 
         spb = []
-        for parent_folder_name in [src_folder_name, test_folder_name]:
-            for folder_name in [gam_folder_name, datasources_folder_name, interfaces_folder_name]:
-                spb.append(f"\t{parent_folder_name}/{folder_name}.x\\") 
-        spb.append(f"\t{test_folder_name}/GTest.x") 
+        parent_folder_name = src_folder_name
+        for folder_name in [gam_folder_name, datasources_folder_name, interfaces_folder_name]:
+            spb.append(f"\t{parent_folder_name}/{folder_name}.x\\") 
         template_make_vars['spb'] = '\n'.join(spb)
+        
+        spbt = []
+        parent_folder_name = test_folder_name
+        for folder_name in [gam_folder_name, datasources_folder_name, interfaces_folder_name]:
+            spbt.append(f"\t{parent_folder_name}/{folder_name}.x\\") 
+        spbt.append(f"\t{test_folder_name}/GTest.x") 
+        template_make_vars['spbt'] = '\n'.join(spbt)
 
-        template_make_vars['target_1'] = 'all: $(OBJS) $(SUBPROJ) check-env\n\techo  $(OBJS)' 
+        template_make_vars['target_1'] = 'all: $(OBJS) core test check-env\n\techo  $(OBJS)' 
+        template_make_vars['target_2'] = 'core: $(SUBPROJ)\n\techo  $(SUBPROJ)' 
+        template_make_vars['target_3'] = 'test: $(SUBPROJT)\n\techo  $(SUBPROJT)' 
 
         for makefile_name in ['Makefile.inc', 'Makefile.gcc', 'Makefile.cov']:
             ok = self._copy_template_text_file(makefile_name, Path(self._project_path) / self._project_name, template_make_vars)
             if not ok:
                 break
         template_make_vars['spb'] = ''
+        template_make_vars['spbt'] = ''
         template_make_vars['objsx'] = ''
         template_make_vars['root_dir'] = '../../'
         for parent_folder_name in [src_folder_name, test_folder_name]:

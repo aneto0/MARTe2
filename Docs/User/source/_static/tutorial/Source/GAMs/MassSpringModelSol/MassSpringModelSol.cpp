@@ -104,7 +104,7 @@ bool MassSpringModelSol::Setup() {
     if (ok) {
         ok = (GetNumberOfInputSignals() == 2);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected 0 and read %d", 2, GetNumberOfInputSignals());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected 2 and read %d", GetNumberOfInputSignals());
         }
     }
     if (ok) {
@@ -130,7 +130,7 @@ bool MassSpringModelSol::Setup() {
     if (ok) {
         ok = (GetNumberOfOutputSignals() == 2);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected 0 and read %d", 2, GetNumberOfOutputSignals());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected 2 and read %d", GetNumberOfOutputSignals());
         }
     }
     if (ok) {

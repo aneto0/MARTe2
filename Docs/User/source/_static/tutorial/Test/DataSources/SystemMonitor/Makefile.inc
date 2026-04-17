@@ -27,8 +27,10 @@
 
 SPB =  
 
-OBJSX = NetworkMonitorTest.x\
-	NetworkMonitorGTest.x
+SPBT = ${spbt}
+
+OBJSX = SystemMonitorTest.x\
+	SystemMonitorGTest.x
 
 PACKAGE = DataSources
 
@@ -60,11 +62,11 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4LoggerService
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L5GAMs
-INCLUDES += -I$(ROOT_DIR)/Source/DataSources/NetworkMonitor
+INCLUDES += -I$(ROOT_DIR)/Source/DataSources/SystemMonitor
 INCLUDES += -I$(MARTe2_DIR)/Lib/gtest-1.7.0/include
 
 all: $(OBJS) $(SUBPROJ) check-env \
-	$(BUILD_DIR)/NetworkMonitorTest$(LIBEXT)
+	$(BUILD_DIR)/SystemMonitorTest$(LIBEXT)
 	echo  $(OBJS)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

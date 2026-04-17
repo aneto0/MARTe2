@@ -37,3 +37,4 @@ Check that the manager is correctly installed by running the command ``python3 -
    :caption: Contents:
 
    mass_spring_dev_1
+   mass_spring_dev_2

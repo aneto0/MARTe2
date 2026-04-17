@@ -1,6 +1,6 @@
 /**                                                                             
- * @file NetworkMonitorTest.cpp                                                                
- * @brief Source file for class NetworkMonitorTest                                        
+ * @file SystemMonitorGTest.cpp                                                                
+ * @brief Source file for class SystemMonitorGTest                                        
  * @date 17/04/2026                                                                
  * @author cabrian                                                            
  *                                                                              
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.   
 
  * @details This source file contains the definition of all the methods for     
- * the class NetworkMonitorTest (public, protected, and private). Be aware that some      
+ * the class SystemMonitorGTest (public, protected, and private). Be aware that some      
  * methods, such as those inline could be defined on the header file, instead.  
  */                                                                             
 
@@ -26,71 +26,57 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "NetworkMonitorTest.h"
+#include "SystemMonitorTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace Tutorial {
+
+TEST(SystemMonitorGTest, TestInitialise) {
+    SystemMonitorTest test;
+    ASSERT_TRUE(test.TestInitialise());
+}
+
+TEST(SystemMonitorGTest, TestSetConfiguredDatabase) {
+    SystemMonitorTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase());
+}
+
+TEST(SystemMonitorGTest, TestSynchronise) {
+    SystemMonitorTest test;
+    ASSERT_TRUE(test.TestSynchronise());
+}
+
+TEST(SystemMonitorGTest, TestAllocateMemory) {
+    SystemMonitorTest test;
+    ASSERT_TRUE(test.TestAllocateMemory());
+}
+
+TEST(SystemMonitorGTest, TestGetSignalMemoryBuffer) {
+    SystemMonitorTest test;
+    ASSERT_TRUE(test.TestGetSignalMemoryBuffer());
+}
+
+TEST(SystemMonitorGTest, TestGetBrokerName) {
+    SystemMonitorTest test;
+    ASSERT_TRUE(test.TestGetBrokerName());
+}
+
+TEST(SystemMonitorGTest, TestPrepareNextState) {
+    SystemMonitorTest test;
+    ASSERT_TRUE(test.TestPrepareNextState());
+}
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace Tutorial {
-
-NetworkMonitorTest::NetworkMonitorTest() {
-    using namespace MARTe;
-}
-
-NetworkMonitorTest::~NetworkMonitorTest() {
-    using namespace MARTe;
-}
-
-bool NetworkMonitorTest::TestInitialise() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-bool NetworkMonitorTest::TestSetConfiguredDatabase() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-bool NetworkMonitorTest::TestSynchronise() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-bool NetworkMonitorTest::TestAllocateMemory() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-bool NetworkMonitorTest::TestGetSignalMemoryBuffer() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-bool NetworkMonitorTest::TestGetBrokerName() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-bool NetworkMonitorTest::TestPrepareNextState() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-}

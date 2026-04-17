@@ -86,7 +86,7 @@ bool DeltaTSol::Setup() {
     if (ok) {
         ok = (GetNumberOfInputSignals() == 1);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected 0 and read %d", 1, GetNumberOfInputSignals());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected 1 and read %d", GetNumberOfInputSignals());
         }
     }
     if (ok) {
@@ -102,7 +102,7 @@ bool DeltaTSol::Setup() {
     if (ok) {
         ok = (GetNumberOfOutputSignals() == 1);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected 0 and read %d", 1, GetNumberOfOutputSignals());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected 1 and read %d", GetNumberOfOutputSignals());
         }
     }
     if (ok) {

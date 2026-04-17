@@ -1,6 +1,6 @@
 /**                                                                              
- * @file NetworkMonitor.h                                                                 
- * @brief Header file for class NetworkMonitor                                         
+ * @file SystemMonitorSol.h                                                                 
+ * @brief Header file for class SystemMonitorSol                                         
  * @date 17/04/2026                                                                 
  * @author cabrian                                                             
  *                                                                               
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express           
  * or implied. See the Licence permissions and limitations under the Licence.    
 
- * @details This header file contains the declaration of the class NetworkMonitor      
+ * @details This header file contains the declaration of the class SystemMonitorSol      
  * with all of its public, protected and private members. It may also include    
  * definitions for inline methods which need to be visible to the compiler.      
  */                                                                              
 
-#ifndef _TUTORIAL_NETWORKMONITOR_H_
-#define _TUTORIAL_NETWORKMONITOR_H_
+#ifndef _TUTORIAL_SYSTEMMONITORSOL_H_
+#define _TUTORIAL_SYSTEMMONITORSOL_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -49,8 +49,8 @@ namespace Tutorial {
 ///AUTO-GENERATED: CLASS DOC. DO NOT EDIT!
 /**
  * @details
- * +NetworkMonitorInstance = {
- *     Class = NetworkMonitor
+ * +SystemMonitorSolInstance = {
+ *     Class = SystemMonitorSol
  *     NICName = "" //Required. Name of the network interface card to monitor
  *     Signals = {
  *         RXPackets = {//Number of RX packets
@@ -65,12 +65,16 @@ namespace Tutorial {
  *         TXDropped = {//Number of dropped TX packets
  *             Type = uint64
  *         }
+ *         CPULoad = {//CPU load percentage
+ *             Type = float64
+ *             NumberOfElements = 8
+ *         }
  *     }
  * }
  */
 ///AUTO-GENERATED: END OF CLASS DOC. DO NOT EDIT!
 
-class NetworkMonitor : public MARTe::DataSourceI {
+class SystemMonitorSol : public MARTe::DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -78,13 +82,13 @@ public:
      * @brief Constructor. 
      * @details TODO.
      */
-    NetworkMonitor ();
+    SystemMonitorSol ();
 
     /**
      * @brief Destructor. 
      * @details TODO.
      */
-    virtual ~NetworkMonitor ();
+    virtual ~SystemMonitorSol ();
 
     /**
      * @brief Initialises the DataSource. TODO
@@ -156,6 +160,14 @@ public:
     virtual bool PrepareNextState(const MARTe::char8 * const currentStateName, const MARTe::char8 * const nextStateName);
 
 private:
+    /**
+     * Parses the next CPU load token from /proc/stat
+     */
+    MARTe::uint64 ParseNextCPUToken(MARTe::StreamString &line);
+    /**
+     * Parses and computes a CPU load as read from the /proc/stat
+     */
+    MARTe::float64 ParseCPULoad(MARTe::StreamString &line, MARTe::uint32 cpuIdx);
 
     ///AUTO-GENERATED: PARAMETERS. DO NOT EDIT!
 
@@ -186,6 +198,12 @@ private:
      * Number of dropped TX packets
      */
     MARTe::uint64 txDropped;
+
+    /**
+     * CPU load percentage
+     */
+    MARTe::float64 *cpuLoad;
+    MARTe::uint32 nOfElementsCPULoad;
     ///AUTO-GENERATED: END OF SIGNALS. DO NOT EDIT!
 
     /**
@@ -207,6 +225,18 @@ private:
      * RXDropped file
      */
     MARTe::File rxDroppedFile;
+
+    /**
+     * Stat file
+     */
+    MARTe::File statFile;
+
+    /**
+     * Last CPU measurements
+     */
+    MARTe::uint64 *lastTotalIdle;
+    MARTe::uint64 *lastTotal;
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -215,4 +245,4 @@ private:
 
 }
 
-#endif /* _TUTORIAL_NETWORKMONITOR_H_*/
+#endif /* _TUTORIAL_SYSTEMMONITORSOL_H_*/

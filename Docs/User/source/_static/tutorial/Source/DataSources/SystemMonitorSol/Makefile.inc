@@ -27,7 +27,9 @@
 
 SPB =  
 
-OBJSX = NetworkMonitor.x
+SPBT = ${spbt}
+
+OBJSX = SystemMonitorSol.x
 
 PACKAGE = DataSources
 
@@ -61,8 +63,8 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L5GAMs
 
 all: $(OBJS) $(SUBPROJ) check-env \
-	$(BUILD_DIR)/NetworkMonitor$(LIBEXT) \
-	$(BUILD_DIR)/NetworkMonitor$(DLLEXT)
+	$(BUILD_DIR)/SystemMonitorSol$(LIBEXT) \
+	$(BUILD_DIR)/SystemMonitorSol$(DLLEXT)
 	echo  $(OBJS)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

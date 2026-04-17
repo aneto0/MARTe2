@@ -1,6 +1,6 @@
 /**                                                                             
- * @file NetworkMonitorGTest.cpp                                                                
- * @brief Source file for class NetworkMonitorGTest                                        
+ * @file SystemMonitorSolGTest.cpp                                                                
+ * @brief Source file for class SystemMonitorSolGTest                                        
  * @date 17/04/2026                                                                
  * @author cabrian                                                            
  *                                                                              
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.   
 
  * @details This source file contains the definition of all the methods for     
- * the class NetworkMonitorGTest (public, protected, and private). Be aware that some      
+ * the class SystemMonitorSolGTest (public, protected, and private). Be aware that some      
  * methods, such as those inline could be defined on the header file, instead.  
  */                                                                             
 
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "NetworkMonitorTest.h"
+#include "SystemMonitorSolTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,38 +39,38 @@
 
 namespace Tutorial {
 
-TEST(NetworkMonitorGTest, TestInitialise) {
-    NetworkMonitorTest test;
+TEST(SystemMonitorSolGTest, TestInitialise) {
+    SystemMonitorSolTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(NetworkMonitorGTest, TestSetConfiguredDatabase) {
-    NetworkMonitorTest test;
+TEST(SystemMonitorSolGTest, TestSetConfiguredDatabase) {
+    SystemMonitorSolTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase());
 }
 
-TEST(NetworkMonitorGTest, TestSynchronise) {
-    NetworkMonitorTest test;
+TEST(SystemMonitorSolGTest, TestSynchronise) {
+    SystemMonitorSolTest test;
     ASSERT_TRUE(test.TestSynchronise());
 }
 
-TEST(NetworkMonitorGTest, TestAllocateMemory) {
-    NetworkMonitorTest test;
+TEST(SystemMonitorSolGTest, TestAllocateMemory) {
+    SystemMonitorSolTest test;
     ASSERT_TRUE(test.TestAllocateMemory());
 }
 
-TEST(NetworkMonitorGTest, TestGetSignalMemoryBuffer) {
-    NetworkMonitorTest test;
+TEST(SystemMonitorSolGTest, TestGetSignalMemoryBuffer) {
+    SystemMonitorSolTest test;
     ASSERT_TRUE(test.TestGetSignalMemoryBuffer());
 }
 
-TEST(NetworkMonitorGTest, TestGetBrokerName) {
-    NetworkMonitorTest test;
+TEST(SystemMonitorSolGTest, TestGetBrokerName) {
+    SystemMonitorSolTest test;
     ASSERT_TRUE(test.TestGetBrokerName());
 }
 
-TEST(NetworkMonitorGTest, TestPrepareNextState) {
-    NetworkMonitorTest test;
+TEST(SystemMonitorSolGTest, TestPrepareNextState) {
+    SystemMonitorSolTest test;
     ASSERT_TRUE(test.TestPrepareNextState());
 }
 

@@ -2,6 +2,8 @@ ${header_text}
 
 SPB = ${spb}
 
+SPBT = ${spbt}
+
 OBJSX = ${objsx}
 
 ${package}

@@ -25,7 +25,8 @@
 #                                                            
 #############################################################
 
-SPB = NetworkMonitor.x 
+SPB = SystemMonitorSol.x \
+	SystemMonitor.x 
 
 OBJSX = 
 

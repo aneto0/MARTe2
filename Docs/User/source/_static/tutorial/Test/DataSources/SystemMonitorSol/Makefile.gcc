@@ -20,32 +20,10 @@
 # See the Licence for the specific language governing        
 # permissions and limitations under the Licence.             
 #                                                            
-# Date:   16/04/2026                                            
+# Date:   17/04/2026                                            
 # Author: cabrian                                          
 #                                                            
 #############################################################
 
-SPB = SystemMonitor.x \
-	SystemMonitorSol.x
-
-OBJSX = 
-
-MAKEDEFAULTDIR=$(MARTe2_DIR)/MakeDefaults
-
-ROOT_DIR = ../../
-
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-all: $(OBJS) $(SUBPROJ) check-env
-	echo  $(OBJS)
-
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
-
-check-env:
-ifndef MARTe2_DIR
-    $(error MARTe2_DIR is undefined)
-endif
-ifndef MARTe2_Components_DIR
-    $(error MARTe2_Components_DIR is undefined)
-endif
+include Makefile.inc
 

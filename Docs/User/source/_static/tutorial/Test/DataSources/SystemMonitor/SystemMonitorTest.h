@@ -1,6 +1,6 @@
 /**                                                                              
- * @file NetworkMonitorTest.h                                                                 
- * @brief Header file for class NetworkMonitorTest                                         
+ * @file SystemMonitorTest.h                                                                 
+ * @brief Header file for class SystemMonitorTest                                         
  * @date 17/04/2026                                                                 
  * @author cabrian                                                             
  *                                                                               
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express           
  * or implied. See the Licence permissions and limitations under the Licence.    
 
- * @details This header file contains the declaration of the class NetworkMonitorTest      
+ * @details This header file contains the declaration of the class SystemMonitorTest      
  * with all of its public, protected and private members. It may also include    
  * definitions for inline methods which need to be visible to the compiler.      
  */                                                                              
 
-#ifndef _TUTORIAL_NETWORKMONITOR_TEST_H_
-#define _TUTORIAL_NETWORKMONITOR_TEST_H_
+#ifndef _TUTORIAL_SYSTEMMONITOR_TEST_H_
+#define _TUTORIAL_SYSTEMMONITOR_TEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "DataSourceI.h"
-#include "NetworkMonitor.h"
+#include "SystemMonitor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -45,11 +45,11 @@ namespace Tutorial {
  * @details TODO.
  */
 
-class NetworkMonitorTest {
+class SystemMonitorTest {
 public:
-    NetworkMonitorTest();
+    SystemMonitorTest();
 
-    virtual ~NetworkMonitorTest();
+    virtual ~SystemMonitorTest();
 
     /**
      * @brief Tests the Initialise method.
@@ -94,5 +94,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* _TUTORIAL_NETWORKMONITOR_TEST_H_ */
+#endif /* _TUTORIAL_SYSTEMMONITOR_TEST_H_ */
 
