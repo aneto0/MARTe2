@@ -11,6 +11,7 @@ ${header_text}
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -23,6 +24,9 @@ namespace ${namespace} {
  *
  * @details TODO.
  */
+
+///AUTO-GENERATED: CLASS DOC. DO NOT EDIT!
+///AUTO-GENERATED: END OF CLASS DOC. DO NOT EDIT!
 
 class ${class} : public MARTe::ReferenceContainer {
 public:
@@ -49,6 +53,8 @@ public:
     virtual bool Initialise(MARTe::StructuredDataI & data);
 
 private:
+    ///AUTO-GENERATED: PARAMETERS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF PARAMETERS. DO NOT EDIT!
 
 };
 

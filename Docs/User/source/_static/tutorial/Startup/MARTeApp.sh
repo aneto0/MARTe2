@@ -115,6 +115,7 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_Components_DIR/Build/x86-linux/Componen
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_Components_DIR/Build/x86-linux/Components/Interfaces/EPICSPVA/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_Components_DIR/Build/x86-linux/Components/Interfaces/OPCUA/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../Build/x86-linux/GAMs/DeltaTSol
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../Build/x86-linux/DataSources/NetworkMonitor
 
 echo $LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH

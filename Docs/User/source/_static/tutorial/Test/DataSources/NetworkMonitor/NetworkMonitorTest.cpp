@@ -1,6 +1,6 @@
 /**                                                                             
- * @file DeltaTSolTest.cpp                                                                
- * @brief Source file for class DeltaTSolTest                                        
+ * @file NetworkMonitorTest.cpp                                                                
+ * @brief Source file for class NetworkMonitorTest                                        
  * @date 17/04/2026                                                                
  * @author cabrian                                                            
  *                                                                              
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.   
 
  * @details This source file contains the definition of all the methods for     
- * the class DeltaTSolTest (public, protected, and private). Be aware that some      
+ * the class NetworkMonitorTest (public, protected, and private). Be aware that some      
  * methods, such as those inline could be defined on the header file, instead.  
  */                                                                             
 
@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "DeltaTSolTest.h"
+#include "NetworkMonitorTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,29 +43,54 @@
 
 namespace Tutorial {
 
-DeltaTSolTest::DeltaTSolTest() {
+NetworkMonitorTest::NetworkMonitorTest() {
     using namespace MARTe;
 }
 
-DeltaTSolTest::~DeltaTSolTest() {
+NetworkMonitorTest::~NetworkMonitorTest() {
     using namespace MARTe;
 }
 
-bool DeltaTSolTest::TestInitialise() {
+bool NetworkMonitorTest::TestInitialise() {
     using namespace MARTe;
     bool ok = true;
     return ok;
 }
 
-bool DeltaTSolTest::TestSetup() {
+bool NetworkMonitorTest::TestSetConfiguredDatabase() {
     using namespace MARTe;
     bool ok = true;
     return ok;
 }
 
-bool DeltaTSolTest::TestExecute() {
+bool NetworkMonitorTest::TestSynchronise() {
     using namespace MARTe;
     bool ok = true;
     return ok;
 }
+
+bool NetworkMonitorTest::TestAllocateMemory() {
+    using namespace MARTe;
+    bool ok = true;
+    return ok;
+}
+
+bool NetworkMonitorTest::TestGetSignalMemoryBuffer() {
+    using namespace MARTe;
+    bool ok = true;
+    return ok;
+}
+
+bool NetworkMonitorTest::TestGetBrokerName() {
+    using namespace MARTe;
+    bool ok = true;
+    return ok;
+}
+
+bool NetworkMonitorTest::TestPrepareNextState() {
+    using namespace MARTe;
+    bool ok = true;
+    return ok;
+}
+
 }

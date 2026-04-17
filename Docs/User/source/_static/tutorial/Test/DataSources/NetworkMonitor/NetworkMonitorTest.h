@@ -1,6 +1,6 @@
 /**                                                                              
- * @file DeltaTSol.h                                                                 
- * @brief Header file for class DeltaTSol                                         
+ * @file NetworkMonitorTest.h                                                                 
+ * @brief Header file for class NetworkMonitorTest                                         
  * @date 17/04/2026                                                                 
  * @author cabrian                                                             
  *                                                                               
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express           
  * or implied. See the Licence permissions and limitations under the Licence.    
 
- * @details This header file contains the declaration of the class DeltaTSol      
+ * @details This header file contains the declaration of the class NetworkMonitorTest      
  * with all of its public, protected and private members. It may also include    
  * definitions for inline methods which need to be visible to the compiler.      
  */                                                                              
 
-#ifndef _TUTORIAL_DELTATSOL_H_
-#define _TUTORIAL_DELTATSOL_H_
+#ifndef _TUTORIAL_NETWORKMONITOR_TEST_H_
+#define _TUTORIAL_NETWORKMONITOR_TEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,12 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAM.h"
+#include "DataSourceI.h"
+#include "NetworkMonitor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace Tutorial {
 
 /**
@@ -45,96 +45,54 @@ namespace Tutorial {
  * @details TODO.
  */
 
-///AUTO-GENERATED: CLASS DOC. DO NOT EDIT!
-/**
- * @details
- * +DeltaTSolInstance = {
- *     Class = DeltaTSol
- *     DeltaTDiv = 0 //Required. The time difference will be divided by this value before being sent to the output signal
- *     InputSignals = {
- *         AbsoluteTime = {//Absolute time in user defined units (e.g. microseconds) used to calculate the time difference. After division by DeltaTDiv, the output signal will be in micro-seconds.
- *             Type = uint64
- *             DataSource = "DDB1"
- *         }
- *     }
- *     OutputSignals = {
- *         DeltaT = {//Time difference between the current and previous AbsoluteTime input signal
- *             Type = uint32
- *             DataSource = "DDB1"
- *         }
- *     }
- * }
- */
-///AUTO-GENERATED: END OF CLASS DOC. DO NOT EDIT!
-
-class DeltaTSol : public MARTe::GAM {
+class NetworkMonitorTest {
 public:
-    CLASS_REGISTER_DECLARATION()
+    NetworkMonitorTest();
+
+    virtual ~NetworkMonitorTest();
 
     /**
-     * @brief Constructor. 
-     * @details TODO.
+     * @brief Tests the Initialise method.
      */
-    DeltaTSol ();
+    bool TestInitialise();
 
     /**
-     * @brief Destructor. 
-     * @details TODO.
+     * @brief Tests the SetConfiguredDatabase method.
      */
-    virtual ~DeltaTSol ();
+    bool TestSetConfiguredDatabase();
 
     /**
-     * @brief Initialises the GAM. TODO
-     * @details TODO. 
-     * @param[in] data The GAM configuration parameters. TODO
-     * @return TODO.
+     * @brief Tests the Synchronise method.
      */
-    virtual bool Initialise(MARTe::StructuredDataI & data);
+    bool TestSynchronise();
 
     /**
-     * @brief Perform post-initialise configurations. TODO 
-     * @return TODO
+     * @brief Tests the AllocateMemory method.
      */
-    virtual bool Setup();
+    bool TestAllocateMemory();
 
     /**
-     * @brief Executes the GAM logic. TODO
-     * @return TODO.
+     * @brief Tests the GetSignalMemoryBuffer method.
      */
-     virtual bool Execute();
-
-private:
-    ///AUTO-GENERATED: PARAMETERS. DO NOT EDIT!
+    bool TestGetSignalMemoryBuffer();
 
     /**
-     * The time difference will be divided by this value before being sent to the output signal
+     * @brief Tests the GetBrokerName method.
      */
-    MARTe::uint32 deltaTDiv;
-    ///AUTO-GENERATED: END OF PARAMETERS. DO NOT EDIT!
-
-    ///AUTO-GENERATED: SIGNALS. DO NOT EDIT!
+    bool TestGetBrokerName();
 
     /**
-     * Absolute time in user defined units (e.g. microseconds) used to calculate the time difference. After division by DeltaTDiv, the output signal will be in micro-seconds.
+     * @brief Tests the PrepareNextState method.
      */
-    MARTe::uint64 *absoluteTime;
+    bool TestPrepareNextState();
 
-    /**
-     * Time difference between the current and previous AbsoluteTime input signal
-     */
-    MARTe::uint32 *deltaT;
-    ///AUTO-GENERATED: END OF SIGNALS. DO NOT EDIT!
-   
-    /**
-     * Last absolute time
-     */
-    MARTe::uint64 lastAbsoluteTime;
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-}
+#endif /* _TUTORIAL_NETWORKMONITOR_TEST_H_ */
 
-#endif /* _TUTORIAL_DELTATSOL_H_*/

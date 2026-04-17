@@ -1,6 +1,6 @@
 /**                                                                             
- * @file DeltaTSolTest.cpp                                                                
- * @brief Source file for class DeltaTSolTest                                        
+ * @file NetworkMonitorGTest.cpp                                                                
+ * @brief Source file for class NetworkMonitorGTest                                        
  * @date 17/04/2026                                                                
  * @author cabrian                                                            
  *                                                                              
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.   
 
  * @details This source file contains the definition of all the methods for     
- * the class DeltaTSolTest (public, protected, and private). Be aware that some      
+ * the class NetworkMonitorGTest (public, protected, and private). Be aware that some      
  * methods, such as those inline could be defined on the header file, instead.  
  */                                                                             
 
@@ -26,46 +26,57 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <limits.h>
+#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "DeltaTSolTest.h"
+#include "NetworkMonitorTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace Tutorial {
+
+TEST(NetworkMonitorGTest, TestInitialise) {
+    NetworkMonitorTest test;
+    ASSERT_TRUE(test.TestInitialise());
+}
+
+TEST(NetworkMonitorGTest, TestSetConfiguredDatabase) {
+    NetworkMonitorTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase());
+}
+
+TEST(NetworkMonitorGTest, TestSynchronise) {
+    NetworkMonitorTest test;
+    ASSERT_TRUE(test.TestSynchronise());
+}
+
+TEST(NetworkMonitorGTest, TestAllocateMemory) {
+    NetworkMonitorTest test;
+    ASSERT_TRUE(test.TestAllocateMemory());
+}
+
+TEST(NetworkMonitorGTest, TestGetSignalMemoryBuffer) {
+    NetworkMonitorTest test;
+    ASSERT_TRUE(test.TestGetSignalMemoryBuffer());
+}
+
+TEST(NetworkMonitorGTest, TestGetBrokerName) {
+    NetworkMonitorTest test;
+    ASSERT_TRUE(test.TestGetBrokerName());
+}
+
+TEST(NetworkMonitorGTest, TestPrepareNextState) {
+    NetworkMonitorTest test;
+    ASSERT_TRUE(test.TestPrepareNextState());
+}
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace Tutorial {
-
-DeltaTSolTest::DeltaTSolTest() {
-    using namespace MARTe;
-}
-
-DeltaTSolTest::~DeltaTSolTest() {
-    using namespace MARTe;
-}
-
-bool DeltaTSolTest::TestInitialise() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-bool DeltaTSolTest::TestSetup() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-
-bool DeltaTSolTest::TestExecute() {
-    using namespace MARTe;
-    bool ok = true;
-    return ok;
-}
-}

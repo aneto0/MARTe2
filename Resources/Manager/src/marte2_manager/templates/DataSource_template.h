@@ -24,6 +24,9 @@ namespace ${namespace} {
  * @details TODO.
  */
 
+///AUTO-GENERATED: CLASS DOC. DO NOT EDIT!
+///AUTO-GENERATED: END OF CLASS DOC. DO NOT EDIT!
+
 class ${class} : public MARTe::DataSourceI {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -108,6 +111,14 @@ public:
      * @return true if the state change is accepted by this component.
      */
     virtual bool PrepareNextState(const MARTe::char8 * const currentStateName, const MARTe::char8 * const nextStateName);
+
+private:
+
+    ///AUTO-GENERATED: PARAMETERS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF PARAMETERS. DO NOT EDIT!
+
+    ///AUTO-GENERATED: SIGNALS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF SIGNALS. DO NOT EDIT!
 };
 
 /*---------------------------------------------------------------------------*/

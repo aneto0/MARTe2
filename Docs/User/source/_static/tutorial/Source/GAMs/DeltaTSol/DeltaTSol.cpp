@@ -1,7 +1,7 @@
 /**                                                                             
  * @file DeltaTSol.cpp                                                                
  * @brief Source file for class DeltaTSol                                        
- * @date 16/04/2026                                                                
+ * @date 17/04/2026                                                                
  * @author cabrian                                                            
  *                                                                              
  * @copyright Copyright 2026 F4E | European Joint Undertaking for ITER and      
@@ -47,21 +47,19 @@ DeltaTSol::DeltaTSol() :
     ///AUTO-GENERATED: CTOR PARAMETERS. DO NOT EDIT!
 
     deltaTDiv = 0;
-    ///AUTO-GENERATED: CTOR END OF PARAMETERS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF CTOR PARAMETERS. DO NOT EDIT!
     ///AUTO-GENERATED: CTOR SIGNALS. DO NOT EDIT!
 
     absoluteTime = NULL_PTR(uint64 *);
     deltaT = NULL_PTR(uint32 *);
-    ///AUTO-GENERATED: CTOR END OF SIGNALS. DO NOT EDIT!
-
-    lastAbsoluteTime = 0;
+    ///AUTO-GENERATED: END OF CTOR SIGNALS. DO NOT EDIT!
 }
 
 DeltaTSol::~DeltaTSol() {
     using namespace MARTe;
     ///AUTO-GENERATED: DTOR PARAMETERS. DO NOT EDIT!
 
-    ///AUTO-GENERATED: DTOR END OF PARAMETERS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF DTOR PARAMETERS. DO NOT EDIT!
 }
 
 bool DeltaTSol::Initialise(MARTe::StructuredDataI &data) {
@@ -74,7 +72,7 @@ bool DeltaTSol::Initialise(MARTe::StructuredDataI &data) {
     if (ok) {
         ok = helper.ReadValidated("DeltaTDiv", deltaTDiv, "(DeltaTDiv > (uint32)(0))");
     }
-    ///AUTO-GENERATED: INITIALISE END OF PARAMETERS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF INITIALISE PARAMETERS. DO NOT EDIT!
 
     return ok;
 }
@@ -84,6 +82,12 @@ bool DeltaTSol::Setup() {
     bool ok = true;
     ///AUTO-GENERATED: SETUP SIGNALS. DO NOT EDIT!
 
+    if (ok) {
+        ok = (GetNumberOfInputSignals() == 1);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected 0 and read %d", 1, GetNumberOfInputSignals());
+        }
+    }
     if (ok) {
         TypeDescriptor signalTypeAbsoluteTime = GetSignalType(InputSignals, 0);
         ok = (signalTypeAbsoluteTime == UnsignedInteger64Bit);
@@ -95,6 +99,12 @@ bool DeltaTSol::Setup() {
         absoluteTime = reinterpret_cast<uint64 *>(GetInputSignalMemory(0));
     }
     if (ok) {
+        ok = (GetNumberOfOutputSignals() == 1);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected 0 and read %d", 1, GetNumberOfOutputSignals());
+        }
+    }
+    if (ok) {
         TypeDescriptor signalTypeDeltaT = GetSignalType(OutputSignals, 0);
         ok = (signalTypeDeltaT == UnsignedInteger32Bit);
         if (!ok) {
@@ -104,7 +114,7 @@ bool DeltaTSol::Setup() {
     if (ok) {
         deltaT = reinterpret_cast<uint32 *>(GetOutputSignalMemory(0));
     }
-    ///AUTO-GENERATED: SETUP END OF SIGNALS. DO NOT EDIT!
+    ///AUTO-GENERATED: END OF SETUP SIGNALS. DO NOT EDIT!
     return ok;
 }
 

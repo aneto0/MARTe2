@@ -70,6 +70,11 @@ def main():
     modify_parser.add_argument('--cpt_name', type=str, help='Name of the component to modify', required=True)
     modify_parser.add_argument('--cpt_template', type=str, help='Template to use for the component', required=True)
 
+    print_parser = command_parsers.add_parser('print', help='Print the configuration file of an existing component')
+    print_parser.add_argument('--cpt_type', type=str, help='Type of the component to print', choices=['gams', 'datasources', 'interfaces'], required=True)
+    print_parser.add_argument('--cpt_name', type=str, help='Name of the component to print', required=True)
+    print_parser.add_argument('--cpt_template', type=str, help='Template to use for the component', required=True)
+
     args = parser.parse_args()
 
     log_criticalities = [logging.CRITICAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
@@ -115,11 +120,16 @@ def main():
                     with open(args.cpt_template) as f:
                         template_dict = json.load(f)
                     ok = component_manager.expand_from_template(template_dict)
-                    if ok:
-                        if args.cpt_type == 'gams':
+                    if args.cpt_type == 'gams':
+                        if ok:
                             ok = component_manager.expand_gam_signals_from_template(template_dict)
-                            if ok:
-                                ok = component_manager.generate_gam_doc_from_template(template_dict)
+                        if ok:
+                            ok = component_manager.generate_gam_doc_from_template(template_dict)
+                    elif args.cpt_type == 'datasources':
+                        if ok:
+                            ok = component_manager.expand_datasource_signals_from_template(template_dict)
+                        if ok:
+                            ok = component_manager.generate_datasource_doc_from_template(template_dict)
             if not ok:
                 logger.error(f'Project validation failed. Cannot add component.')
         elif args.command == 'modify':
@@ -130,12 +140,24 @@ def main():
                 ok = component_manager.validate_component(args.cpt_type, args.cpt_name)
             if ok:
                 ok = component_manager.expand_from_template(template_dict)
-            if ok:
-                if args.cpt_type == 'gams':
+            if args.cpt_type == 'gams':
+                if ok:
                     ok = component_manager.expand_gam_signals_from_template(template_dict)
-                    if ok:
-                        ok = component_manager.generate_gam_doc_from_template(template_dict)
-
+                if ok:
+                    ok = component_manager.generate_gam_doc_from_template(template_dict)
+            elif args.cpt_type == 'datasources':
+                if ok:
+                    ok = component_manager.expand_datasource_signals_from_template(template_dict) 
+                if ok:
+                    ok = component_manager.generate_datasource_doc_from_template(template_dict)
+        elif args.command == 'print':
+            component_manager = ComponentManager(app_def_data, resources.files('marte2_manager'), template_global_vars, args.project_name, args.project_path)
+            with open(args.cpt_template) as f:
+                template_dict = json.load(f)
+            if ok:
+                ok = component_manager.validate_component(args.cpt_type, args.cpt_name)
+            if ok:
+                ok = component_manager.print_component_configuration(template_dict)
 
     ret = 0
     if not ok:
