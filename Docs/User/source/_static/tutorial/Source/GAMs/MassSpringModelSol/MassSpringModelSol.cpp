@@ -1,6 +1,6 @@
 /**                                                                             
- * @file DeltaTSol.cpp                                                                
- * @brief Source file for class DeltaTSol                                        
+ * @file MassSpringModelSol.cpp                                                                
+ * @brief Source file for class MassSpringModelSol                                        
  * @date 17/04/2026                                                                
  * @author cabrian                                                            
  *                                                                              
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.   
 
  * @details This source file contains the definition of all the methods for     
- * the class DeltaTSol (public, protected, and private). Be aware that some      
+ * the class MassSpringModelSol (public, protected, and private). Be aware that some      
  * methods, such as those inline could be defined on the header file, instead.  
  */                                                                             
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "DeltaTSol.h"
+#include "MassSpringModelSol.h"
 #include "StructuredDataIHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -41,29 +41,35 @@
 
 namespace Tutorial {
 
-DeltaTSol::DeltaTSol() :
+MassSpringModelSol::MassSpringModelSol() :
         GAM() {
     using namespace MARTe;
     ///AUTO-GENERATED: CTOR PARAMETERS. DO NOT EDIT!
 
-    deltaTDiv = 0;
+    mass = 0.0f;
+    springConstant = 0.0f;
+    dampingCoefficient = 0.0f;
+    initialPosition = 0.0f;
+    initialVelocity = 0.0f;
     ///AUTO-GENERATED: END OF CTOR PARAMETERS. DO NOT EDIT!
     ///AUTO-GENERATED: CTOR SIGNALS. DO NOT EDIT!
 
-    absoluteTime = NULL_PTR(uint64 *);
-    deltaT = NULL_PTR(uint32 *);
+    time = NULL_PTR(uint32 *);
+    force = NULL_PTR(float64 *);
+    position = NULL_PTR(float64 *);
+    velocity = NULL_PTR(float64 *);
     ///AUTO-GENERATED: END OF CTOR SIGNALS. DO NOT EDIT!
-    lastAbsoluteTime = 0;
+    lastTime = 0u;
 }
 
-DeltaTSol::~DeltaTSol() {
+MassSpringModelSol::~MassSpringModelSol() {
     using namespace MARTe;
     ///AUTO-GENERATED: DTOR PARAMETERS. DO NOT EDIT!
 
     ///AUTO-GENERATED: END OF DTOR PARAMETERS. DO NOT EDIT!
 }
 
-bool DeltaTSol::Initialise(MARTe::StructuredDataI &data) {
+bool MassSpringModelSol::Initialise(MARTe::StructuredDataI &data) {
     using namespace MARTe;
     bool ok = GAM::Initialise(data);
     StructuredDataIHelper helper(data, this);
@@ -71,69 +77,109 @@ bool DeltaTSol::Initialise(MARTe::StructuredDataI &data) {
     ///AUTO-GENERATED: INITIALISE PARAMETERS. DO NOT EDIT!
 
     if (ok) {
-        ok = helper.ReadValidated("DeltaTDiv", deltaTDiv, "(DeltaTDiv > (uint32)(0))");
+        ok = helper.ReadValidated("Mass", mass, "(Mass > (float64)(0))");
+    }
+    if (ok) {
+        ok = helper.Read("SpringConstant", springConstant, 10.0);
+    }
+    if (ok) {
+        ok = helper.Read("DampingCoefficient", dampingCoefficient, 0.5);
+    }
+    if (ok) {
+        ok = helper.Read("InitialPosition", initialPosition, 0.0);
+    }
+    if (ok) {
+        ok = helper.Read("InitialVelocity", initialVelocity, 0.0);
     }
     ///AUTO-GENERATED: END OF INITIALISE PARAMETERS. DO NOT EDIT!
 
     return ok;
 }
 
-bool DeltaTSol::Setup() {
+bool MassSpringModelSol::Setup() {
     using namespace MARTe;
     bool ok = true;
     ///AUTO-GENERATED: SETUP SIGNALS. DO NOT EDIT!
 
     if (ok) {
-        ok = (GetNumberOfInputSignals() == 1);
+        ok = (GetNumberOfInputSignals() == 2);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected 0 and read %d", 1, GetNumberOfInputSignals());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of input signals. Expected 0 and read %d", 2, GetNumberOfInputSignals());
         }
     }
     if (ok) {
-        TypeDescriptor signalTypeAbsoluteTime = GetSignalType(InputSignals, 0);
-        ok = (signalTypeAbsoluteTime == UnsignedInteger64Bit);
+        TypeDescriptor signalTypeTime = GetSignalType(InputSignals, 0);
+        ok = (signalTypeTime == UnsignedInteger32Bit);
         if (!ok) {
             REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected signal type for InputSignals at index 0");
         }
     }
     if (ok) {
-        absoluteTime = reinterpret_cast<uint64 *>(GetInputSignalMemory(0));
+        time = reinterpret_cast<uint32 *>(GetInputSignalMemory(0));
     }
     if (ok) {
-        ok = (GetNumberOfOutputSignals() == 1);
+        TypeDescriptor signalTypeForce = GetSignalType(InputSignals, 1);
+        ok = (signalTypeForce == Float64Bit);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected 0 and read %d", 1, GetNumberOfOutputSignals());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected signal type for InputSignals at index 1");
         }
     }
     if (ok) {
-        TypeDescriptor signalTypeDeltaT = GetSignalType(OutputSignals, 0);
-        ok = (signalTypeDeltaT == UnsignedInteger32Bit);
+        force = reinterpret_cast<float64 *>(GetInputSignalMemory(1));
+    }
+    if (ok) {
+        ok = (GetNumberOfOutputSignals() == 2);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected number of output signals. Expected 0 and read %d", 2, GetNumberOfOutputSignals());
+        }
+    }
+    if (ok) {
+        TypeDescriptor signalTypePosition = GetSignalType(OutputSignals, 0);
+        ok = (signalTypePosition == Float64Bit);
         if (!ok) {
             REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected signal type for OutputSignals at index 0");
         }
     }
     if (ok) {
-        deltaT = reinterpret_cast<uint32 *>(GetOutputSignalMemory(0));
+        position = reinterpret_cast<float64 *>(GetOutputSignalMemory(0));
+    }
+    if (ok) {
+        TypeDescriptor signalTypeVelocity = GetSignalType(OutputSignals, 1);
+        ok = (signalTypeVelocity == Float64Bit);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unexpected signal type for OutputSignals at index 1");
+        }
+    }
+    if (ok) {
+        velocity = reinterpret_cast<float64 *>(GetOutputSignalMemory(1));
     }
     ///AUTO-GENERATED: END OF SETUP SIGNALS. DO NOT EDIT!
+    //Normalise the springConstant and the dampingCoefficient
+    if (ok) {
+        springConstant /= mass;
+        dampingCoefficient /= mass;
+    }
     return ok;
 }
 
-bool DeltaTSol::Execute() {
+bool MassSpringModelSol::Execute() {
     using namespace MARTe;
     bool ok = true;
-    if (lastAbsoluteTime > 0) {
-        uint64 timeDiff = (*absoluteTime - lastAbsoluteTime);
-        timeDiff /= static_cast<uint64>(deltaTDiv);
-        *deltaT += static_cast<uint32>(timeDiff);
+    if (lastTime == 0u) {
+        *position = initialPosition;
+        *velocity = initialVelocity;
     }
     else {
-        *deltaT = 0;
+        float64 dt = static_cast<uint32>(*time - lastTime);
+        dt /= 1e6;
+        *velocity += dt * ((-springConstant * (*position)) - (dampingCoefficient * (*velocity)) + (*force / mass));
+        *position += dt * (*velocity); //Use the already updated velocity even if it is not exact Forward Euler
     }
-    lastAbsoluteTime = *absoluteTime;
+    lastTime = *time;
+
     return ok;
 }
 
-CLASS_REGISTER(DeltaTSol, "1.0")
+CLASS_REGISTER(MassSpringModelSol, "1.0")
 } 
 

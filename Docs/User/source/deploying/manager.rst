@@ -1,4 +1,4 @@
-.. date: 27/03/2018
+.. date: 17/04/2026
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -11,19 +11,19 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Deploying
-=========
+Using the Manager
+=================
 
-A typical MARTe2 project is made of: the core library; a set of reusable components from the :doc:`MARTe2-components library </components>` and a collection of project specific components (i.e. that are not distributed to the community in the MARTe2-components).
+The MARTe2 Manager is a command line tool that allows managing the development of MARTe2 applications.
 
-.. image:: MARTeProj-1.png
+It can be used to:
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+- Deploy a new project
+- Add a new component (including the boilerplate code) and its corresponding tests and makefiles
+- Modify an existing component (including the boilerplate code)
 
-   buildsources
-   rpm
-   linux
-   manager
-   
+To install the Manager, navigate to the folder ``MARTe2/Resources/Manager`` and run the command ``pip install .``. 
+
+This will install the Manager on the system and make it available as a command line tool.
+
+Examples of the use of the Manager can be found in the :doc:`MARTe2 tutorial </tutorial/mass_spring/dev/intro>`.

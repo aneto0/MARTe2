@@ -25,7 +25,8 @@
 #                                                            
 #############################################################
 
-SPB = DeltaTSol.x 
+SPB = DeltaTSol.x \
+	MassSpringModelSol.x 
 
 OBJSX = 
 

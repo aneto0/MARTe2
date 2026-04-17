@@ -64,3 +64,4 @@ It will start by introducing GAMs from the MARTe2-components repository to imple
    structured_types
    datasources/intro
    interfaces/intro
+   dev/intro
