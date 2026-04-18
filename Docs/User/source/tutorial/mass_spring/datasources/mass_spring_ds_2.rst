@@ -16,7 +16,7 @@ FileReader
 
 The :vcisdoxygenmccl:`FileReader` DataSource can be used to read data from a file and inject it into the application. This can be useful to test the application with pre-recorded data or to replay a specific scenario.
 
-In this section, the ``ReferencePosition`` will be read from a file using the ``FileReader`` DataSource. As with the ``FileWriter``, this DataSource can be configured to store the data in a binary or text CSV format. 
+In this section, the ``ReferencePosition`` will be read from a file using the ``FileReader`` DataSource. As with the ``FileWriter``, this DataSource can be configured to store the data in a binary or text CSV format.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-21.cfg
     :language: c++
@@ -25,11 +25,11 @@ In this section, the ``ReferencePosition`` will be read from a file using the ``
     :linenos:
     :emphasize-lines: 8
 
-The ``FileReader`` DataSource can be configured to react in different ways to the end of file event. In this case it is configured to rewind and reloop forever.
+The ``FileReader`` DataSource can be configured to react in different ways to the end-of-file event. In this case, it is configured to rewind and reloop forever.
 
 The DataSource can also be configured to interpolate the data between the samples in the file. This can be useful to test the application with a specific sampling time that is different from the one used to record the data.
 
-In this example the ``ReferencePosition`` is read from the file ``../Test/Integrated/MassSpring-21-Reference.csv``, which contains a constant value of ``2.0`` for the ``ReferencePosition`` signal.
+In this example, the ``ReferencePosition`` is read from the file ``../Test/Integrated/MassSpring-21-Reference.csv``, which contains a constant value of ``2.0`` for the ``ReferencePosition`` signal.
 
 Running the application
 -----------------------
@@ -55,7 +55,7 @@ Also check that the output file ``../Test/Integrated/MassSpring-21.csv`` is bein
 Exercises
 ---------
 
-Ex. 1: Read a ramp from the file 
+Ex. 1: Read a ramp from the file
 --------------------------------
 
 Modify the file ``../Test/Integrated/MassSpring-22-reference.csv`` to include a ramp for the ``ReferencePosition`` signal as shown in the following figure.
@@ -66,7 +66,7 @@ Modify the file ``../Test/Integrated/MassSpring-22-reference.csv`` to include a 
    :width: 400px
 
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-22.cfg`` and modity the FileReader to read from the ``../Test/Integrated/MassSpring-22-Reference.csv`` file.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-22.cfg`` and modify the FileReader to read from the ``../Test/Integrated/MassSpring-22-Reference.csv`` file.
 2. Make sure that the ``FileReader`` interpolates the data between the samples in the file and rewinds and reloops forever.
 3. Check that the output file ``../Test/Integrated/MassSpring-22.csv`` is being created and that the ``ReferencePosition`` is set to the expected ramp values.
 

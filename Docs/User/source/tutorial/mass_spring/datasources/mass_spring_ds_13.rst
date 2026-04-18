@@ -15,19 +15,19 @@ DAN
 ===
 
 .. warning::
-    
-    The DAN DataSource is only available in `CODAC Core System <https://www.iter.org/machine/supporting-systems/codac/codac-core-system>`__ distributions. 
 
-The :vcisdoxygenmccl:`DANSource` DataSource can be used to archive application data to the ITER Data Archiving Network (DAN). 
+    The DAN DataSource is only available in `CODAC Core System <https://www.iter.org/machine/supporting-systems/codac/codac-core-system>`__ distributions.
 
-Given that the property ``ICProgramName`` needs to be unique, in order to avoid clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-45.cfg`` will be automatically updated from a ``Makefile.cfg``. 
+The :vcisdoxygenmccl:`DANSource` DataSource can be used to archive application data to the ITER Data Archiving Network (DAN).
 
-The signals to be archived are defined in a DAN configuration file, which is generated from a template by running the command ``../Test/Integrated/GenerateDANConfig.sh``. 
+Given that the property ``ICProgramName`` needs to be unique in order to avoid clashes, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-45.cfg`` will be automatically updated from a ``Makefile.cfg``.
+
+The signals to be archived are defined in a DAN configuration file, which is generated from a template by running the command ``../Test/Integrated/GenerateDANConfig.sh``.
 
 .. literalinclude:: /_static/tutorial/Test/Integrated/dan_mass_spring_demo_template.xml
     :language: xml
     :lines: 9-38
-    :caption: DAN configuration file. 
+    :caption: DAN configuration file.
     :linenos:
     :emphasize-lines: 2-3
 
@@ -42,7 +42,7 @@ The objective of this example is to archive the application data using the DAN D
 
 .. important::
 
-    As explained in the :vcisdoxygenmccl:`DANSource` documentation, the DAN DataSource requires that the ``OpenStream`` is called using the MARTe2 messaging system (see also the section :ref:`MARTeMessages`) before writing any signal to the DataSource. In this example, this is implemented using the :vcisdoxygencl:`StateMachine` (see also the section :ref:`MARTeStateMachine`).
+    As explained in the :vcisdoxygenmccl:`DANSource` documentation, the DAN DataSource requires that ``OpenStream`` is called using the MARTe2 messaging system (see also the section :ref:`MARTeMessages`) before writing any signal to the DataSource. In this example, this is implemented using the :vcisdoxygencl:`StateMachine` (see also the section :ref:`MARTeStateMachine`).
 
     Examples with the StateMachine component are covered later in the tutorial.
 
@@ -87,14 +87,14 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:2000000
     ...
 
-Wait some seconds and stop the application. 
+Wait a few seconds and stop the application.
 
-The files will be stored in ``/tmp/data/``. 
-Open another terminal and plot the archived data using the ``dan-tool``:
+The files will be stored in ``/tmp/data/``.
+Open another terminal and plot the archived data using ``dan-tool``:
 
 .. code-block:: bash
 
-    dan-plot VT /tmp/data/ICMassSpringDemoAppUSERNAME_DANSTREAMER0_DANWriter_float64_NUMBER.h5 ReferencePosition,Position #Replace USERNAME with your username with the first letter in capital letters and the NUMBER with the actual number of the file generated in the ``/tmp/data/`` directory.
+    dan-plot VT /tmp/data/ICMassSpringDemoAppUSERNAME_DANSTREAMER0_DANWriter_float64_NUMBER.h5 ReferencePosition,Position #Replace USERNAME with your username with the first letter in capital letters and NUMBER with the actual number of the file generated in the ``/tmp/data/`` directory.
 
 Exercises
 ---------
@@ -104,23 +104,22 @@ Ex. 1: Statistics archiving
 
 Archive the following statistics signals using a separate ``DANSource``.
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-46.cfg`` and a new DataSource instance to archive the following signals: ``Time``, 
-``Thread1CycleTime``,  ``Thread1CycleTimeMax``, ``Thread1CycleTimeMin``, ``Thread1CycleTimeHistogram``, ``Thread1FreeTimeHistogram``, and ``GAMsExecutionTime``; with a period of 0.01 seconds.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-46.cfg`` and add a new DataSource instance to archive the following signals: ``Time``, ``Thread1CycleTime``, ``Thread1CycleTimeMax``, ``Thread1CycleTimeMin``, ``Thread1CycleTimeHistogram``, ``Thread1FreeTimeHistogram``, and ``GAMsExecutionTime``; with a period of 0.01 seconds.
 
 2. Open the file ``../Test/Integrated/dan_mass_spring_demo_template.xml`` to check how the DataSource needs to be named, and name it accordingly.
 
 .. note::
 
-    As explained in the :vcisdoxygenmccl:`DANSource` documentation, arrays need to follow a specific naming convention in the ``xml`` file. 
-    
-    No action is required on the MARTe2 configuration file, but the arrays in the DAN configuration file need to be named following the convention ``<SignalName>_N_T``, where ``N`` is the number of elements in the array and ``T`` is the period in nanoseconds. 
-    
+    As explained in the :vcisdoxygenmccl:`DANSource` documentation, arrays need to follow a specific naming convention in the ``xml`` file.
+
+    No action is required in the MARTe2 configuration file, but the arrays in the DAN configuration file need to be named following the convention ``<SignalName>_N_T``, where ``N`` is the number of elements in the array and ``T`` is the period in nanoseconds.
+
     For example, for the signal ``Thread1CycleTimeHistogram`` with 11 elements and a period of 0.01 seconds, the element in the DAN configuration file needs to be named ``DANWriterPerf_T10000000_N11_uint32``.
 
     .. literalinclude:: /_static/tutorial/Test/Integrated/dan_mass_spring_demo_template.xml
         :language: xml
         :lines: 131-132,153-157
-        :caption: DAN configuration file, highighting the naming convention for arrays. Note that ``N`` denotes the number of elements in the array and ``T`` the period in nanoseconds.
+        :caption: DAN configuration file, highlighting the naming convention for arrays. Note that ``N`` denotes the number of elements in the array and ``T`` the period in nanoseconds.
         :linenos:
         :emphasize-lines: 1
 
@@ -141,13 +140,13 @@ Archive the following statistics signals using a separate ``DANSource``.
 
 .. code-block:: bash
 
-    dan-plot VT /tmp/data/ICMassSpringDemoAppUSERNAME_DANSTREAMER0_DANWriterPerf_uint32_NUMBER.h5 Thread1CycleTime,Thread1CycleTimeMin,Thread1CycleTimeMax #Replace USERNAME with your username with the first letter in capital letters and the NUMBER with the actual number of the file generated in the ``/tmp/data/`` directory.
+    dan-plot VT /tmp/data/ICMassSpringDemoAppUSERNAME_DANSTREAMER0_DANWriterPerf_uint32_NUMBER.h5 Thread1CycleTime,Thread1CycleTimeMin,Thread1CycleTimeMax #Replace USERNAME with your username with the first letter in capital letters and NUMBER with the actual number of the file generated in the ``/tmp/data/`` directory.
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add a new ``DAN::DANSource`` instance, named ``DANSourcePerf`` to the configuration file and set the corresponding properties.
-   
+   The solution is to add a new ``DAN::DANSource`` instance, named ``DANSourcePerf``, to the configuration file and set the corresponding properties.
+
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-46-solution.cfg
       :language: c++
       :lines: 1490-1531

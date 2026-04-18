@@ -38,3 +38,4 @@ Check that the manager is correctly installed by running the command ``python3 -
 
    mass_spring_dev_1
    mass_spring_dev_2
+   mass_spring_dev_3

@@ -14,7 +14,7 @@
 DataSources
 ===========
 
-This section follows on the previous one, and introduces the use of MARTe2-components DataSources. The DataSources are used to interface with the external world (from memory to hardware).
+This section follows the previous one and introduces the use of MARTe2-components DataSources. DataSources are used to interface with the external world (from memory to hardware).
 
 .. toctree::
    :maxdepth: 1
@@ -36,4 +36,3 @@ This section follows on the previous one, and introduces the use of MARTe2-compo
    mass_spring_ds_14
    mass_spring_ds_15
    mass_spring_ds_16
-

@@ -15,18 +15,18 @@ EPICSPVAOutput
 ==============
 
 .. warning::
-    
-    The EPICSPVAOutput DataSource is only available in distribution where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
 
-The :vcisdoxygenmccl:`EPICSPVAOutput` DataSource can be used to stream application data over the EPICS pvAccess protocol. This allows to interface the application with any EPICS pvAccess based monitoring or control applications.
+    The EPICSPVAOutput DataSource is only available in distributions where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
+
+The :vcisdoxygenmccl:`EPICSPVAOutput` DataSource can be used to stream application data over the EPICS pvAccess protocol. This allows interfacing the application with any EPICS pvAccess-based monitoring or control applications.
 
 This DataSource writes to the PVA records asynchronously on a separate thread (which may be allocated to a different CPU core).
 
-The DataSource only supports structured types as defined in the :ref:`MassSpringStructuredTypes`. 
+The DataSource only supports structured types as defined in :ref:`MassSpringStructuredTypes`.
 
-Given that the PVA records names needs to be unique, in order to avoid name clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-36.cfg`` will be automatically updated from a ``Makefile.cfg``. The name of the PV records are based on the username.
+Given that the PVA record names need to be unique, in order to avoid name clashes, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-36.cfg`` will be automatically updated from a ``Makefile.cfg``. The names of the PV records are based on the username.
 
-The PV records are hosted using a MARTe2 :vcisdoxygenmccl:`EPICSPVADatabase`, which in this example is instantiated in the same configuration file of the application. 
+The PV records are hosted using a MARTe2 :vcisdoxygenmccl:`EPICSPVADatabase`, which in this example is instantiated in the same configuration file as the application.
 
 The objective of this example is to monitor the application data using EPICS PVA records.
 
@@ -110,7 +110,7 @@ Ex. 1: Statistics monitoring
 Monitor the statistics signals as part of another EPICS PVA record.
 
 1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-37.cfg`` and add to the ``GAMWriter`` output signals a signal of type ``MonitorPerformance``.
-2. Add the corresponding signal to the EPICSPVAOutput DataSource. 
+2. Add the corresponding signal to the EPICSPVAOutput DataSource.
 3. Check that the PVA record is being written and that the content is updated with the latest values of the statistics signals.
 
 .. code-block:: bash
@@ -121,10 +121,10 @@ Monitor the statistics signals as part of another EPICS PVA record.
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add the structured signal to the ``GAMWriter`` output signals. 
-   
-    .. note:: 
-    
+   The solution is to add the structured signal to the ``GAMWriter`` output signals.
+
+   .. note::
+
         The ``MonitorPerformance`` structure also requires a ``Time`` signal, so this signal must be included among the ``GAMWriter`` input signals.
 
         Since ``Time`` is already defined as an ``InputSignal`` for ``MonitorControl``, and MARTe2 does not allow duplicate node names, an ``Alias`` node must be added to the configuration file to provide an alias for ``Time``, as shown in the following snippet.
@@ -132,7 +132,7 @@ Monitor the statistics signals as part of another EPICS PVA record.
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-37-solution.cfg
       :language: c++
       :lines: 1190-1197, 1249-1253, 1545-1554
-      :caption: Updated GAMWriter highlighting the addition of the structured signal and the alias for the Time signal. 
+      :caption: Updated GAMWriter highlighting the addition of the structured signal and the alias for the Time signal.
       :linenos:
       :emphasize-lines: 4, 9, 12, 19, 21
 
@@ -186,5 +186,3 @@ Monitor the statistics signals as part of another EPICS PVA record.
         $               uint[] CycleTimeHistogram [0,0,0,0,0,137,0,0,0,0,0]
         $               uint[] FreeTimeHistogram [0,0,0,0,0,0,0,0,0,0,137]
         $               int GAMsExecutionTime 13
-
-

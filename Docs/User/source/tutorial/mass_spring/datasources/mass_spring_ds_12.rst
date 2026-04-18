@@ -15,30 +15,30 @@ OPCUADSInput
 ============
 
 .. warning::
-    
-    The OPCUADataSource is only available in distribution where `open62541 <https://open62541.org//>`__ is installed.
 
-The :vcisdoxygenmccl:`OPCUADSInput` DataSource can be used to receive application data using the OPCUA. 
+    The OPCUADataSource is only available in distributions where `open62541 <https://open62541.org//>`__ is installed.
 
-This DataSource can read both in synchronous and asynchronous mode. In the first case, the data is read from the OPCUA server in the same thread of the application, while in the second case, the data is read asynchronously on a separate thread (which may be allocated to a different CPU core). The asynchronous mode is not intended to be used for real-time control, but rather for live parameter configuration.
+The :vcisdoxygenmccl:`OPCUADSInput` DataSource can be used to receive application data using OPCUA.
 
-Given that the OPCUA server ports need to be unique, in order to avoid port clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-43.cfg`` will be automatically updated from a ``Makefile.cfg``. 
+This DataSource can read both in synchronous and asynchronous mode. In the first case, the data is read from the OPCUA server in the same thread as the application, while in the second case, the data is read asynchronously on a separate thread (which may be allocated to a different CPU core). The asynchronous mode is not intended to be used for real-time control, but rather for live parameter configuration.
 
-The OPCUA types are hosted using a MARTe2 :vcisdoxygenmccl:`OPCUAServer`, which in this example is instantiated in the same configuration file of the application. 
+Given that the OPCUA server ports need to be unique in order to avoid port clashes, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-43.cfg`` will be automatically updated from a ``Makefile.cfg``.
+
+The OPCUA types are hosted using a MARTe2 :vcisdoxygenmccl:`OPCUAServer`, which in this example is instantiated in the same configuration file as the application.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-43.cfg
     :language: c++
     :lines: 186-207
-    :caption: OPCUAServer configuration. Note that the OPCUA server port is automatically replaced by the ``Makefile.cfg``. 
+    :caption: OPCUAServer configuration. Note that the OPCUA server port is automatically replaced by the ``Makefile.cfg``.
     :linenos:
     :emphasize-lines: 2,8,17
 
-In this example the ``ReferencePosition`` signal is read from an OPCUA signal and used as reference for the control of the mass-spring system.
+In this example, the ``ReferencePosition`` signal is read from an OPCUA signal and used as the reference for the control of the mass-spring system.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-43.cfg
     :language: c++
     :lines: 236-251
-    :caption: IOGAM to copy from the DataSource. Note of the use of the ``Alias`` field to access directly the signal from the DataSource without the need to copy the full structure.
+    :caption: IOGAM to copy from the DataSource. Note the use of the ``Alias`` field to access the signal directly from the DataSource without the need to copy the full structure.
     :linenos:
     :emphasize-lines: 7
 
@@ -46,7 +46,7 @@ In this example the ``ReferencePosition`` signal is read from an OPCUA signal an
     :language: c++
     :lines: 1569-1582
     :caption: OPCUADSInput DataSource configuration. Note that the OPCUA address is automatically replaced by the ``Makefile.cfg``.
-    :linenos: 
+    :linenos:
     :emphasize-lines: 2,6,8-12
 
 Running the application
@@ -69,7 +69,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
-Open another terminal and check that the OPCUA records are being updated with the application data, by running another MARTe2 application.
+Open another terminal and check that the OPCUA records are being updated with the application data by running another MARTe2 application.
 
 .. code-block:: bash
 
@@ -96,13 +96,13 @@ The output should be similar to the following:
 
 .. note::
 
-    You can also use any OPCUA client to connect to the MARTe2 OPCUA server and monitor the application data. 
+    You can also use any OPCUA client to connect to the MARTe2 OPCUA server and monitor the application data.
 
-    For example, if the python ``opcua`` library is installed in your system, you can use the python script located in ``../Test/Integrated/opcua_monitor.py`` to connect to the server and print the values of the nodes being written by the application.
+    For example, if the Python ``opcua`` library is installed on your system, you can use the Python script located in ``../Test/Integrated/opcua_monitor.py`` to connect to the server and print the values of the nodes being written by the application.
 
     .. code-block:: bash
 
-        python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace the OPCUA_PORT with the actual port number being used in the configuration file.
+        python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace OPCUA_PORT with the actual port number being used in the configuration file.
 
 Open another terminal and modify the value of the ``ReferencePosition`` OPCUA signal using another MARTe2 application.
 
@@ -112,14 +112,13 @@ Open another terminal and modify the value of the ``ReferencePosition`` OPCUA si
 
 .. note::
 
-    You can also use any OPCUA client to connect to the MARTe2 OPCUA server and modify the application data. 
+    You can also use any OPCUA client to connect to the MARTe2 OPCUA server and modify the application data.
 
-    For example, if the python ``opcua`` library is installed in your system, you can use the python script located in ``../Test/Integrated/opcua_writer.py`` to connect to the server and modify the values of the ``ReferencePosition``.
+    For example, if the Python ``opcua`` library is installed on your system, you can use the Python script located in ``../Test/Integrated/opcua_writer.py`` to connect to the server and modify the value of ``ReferencePosition``.
 
     .. code-block:: bash
 
-        python3.6 ../Test/Integrated/opcua_writer.py -p OPCUA_PORT -s MassSpringDemoControlInput.ReferencePosition -v 1.3 #Replace the OPCUA_PORT with the actual port number being used in the configuration file.
-
+        python3.6 ../Test/Integrated/opcua_writer.py -p OPCUA_PORT -s MassSpringDemoControlInput.ReferencePosition -v 1.3 #Replace OPCUA_PORT with the actual port number being used in the configuration file.
 
 The output should be similar to the following:
 
@@ -129,8 +128,8 @@ The output should be similar to the following:
     $ [Warning - Threads.cpp:185]: Failed to change the thread priority (likely due to insufficient permissions)
     $ [Information - RealTimeLoader.cpp:111]: Started application in state State1
     $ [Information - MARTeApp.cpp:135]: Application starting
- 
-Open another terminal and using one of the commands above check that the ReferencePosition is being updated and that the system is responding to the new target.:
+
+Open another terminal and, using one of the commands above, check that the ``ReferencePosition`` is being updated and that the system is responding to the new target:
 
 .. code-block:: bash
 
@@ -140,7 +139,7 @@ Or:
 
 .. code-block:: bash
 
-    python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace the OPCUA_PORT with the actual port number being used in the configuration file.
+    python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace OPCUA_PORT with the actual port number being used in the configuration file.
 
 Exercises
 ---------
@@ -148,11 +147,11 @@ Exercises
 Ex. 1: Switch on/off
 --------------------
 
-The objective of this exercise is to use the ``OPCUADSInput`` DataSource to switch on/off the force output of the mass-spring system.
+The objective of this exercise is to use the ``OPCUADSInput`` DataSource to switch the force output of the mass-spring system on and off.
 
 1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-44.cfg`` and add a :vcisdoxygenmccl:`MuxGAM` that selects between the signals ``ForceZero`` and ``ForceFromController`` to produce an output signal named ``Force`` in ``DDB1``. Name this GAM ``GAMMuxSwitchOn``.
 2. Modify the ``ControllerGAM`` to output the signal named ``ForceFromController`` instead of ``Force``.
-3. Modify the ``ReferenceGAM`` to read the full structure from the ``OPCUADSInput`` DataSource and to copy both the ``ReferencePosition`` and the ``SwitchOn`` signal to the ``DDB1``.
+3. Modify the ``ReferenceGAM`` to read the full structure from the ``OPCUADSInput`` DataSource and copy both the ``ReferencePosition`` and the ``SwitchOn`` signal to ``DDB1``.
 4. Add the MuxGAM to the execution list.
 5. Execute the application:
 
@@ -161,29 +160,29 @@ The objective of this exercise is to use the ``OPCUADSInput`` DataSource to swit
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-44_Gen.cfg -l RealTimeLoader -s State1
 
-6. Set a new target ``ReferencePosition`` running the following MARTe2 application.
+6. Set a new target ``ReferencePosition`` by running the following MARTe2 application.
 
 .. code-block:: bash
 
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-43-Control_Gen.cfg -l RealTimeLoader -s State1 #Alternatively use the python script described above to update the OPCUA signal.
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-43-Control_Gen.cfg -l RealTimeLoader -s State1 #Alternatively, use the Python script described above to update the OPCUA signal.
 
 7. Observe that the ``Position`` is not changing and that the system is not responding to the new target ``ReferencePosition``.
 
 .. code-block:: bash
 
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-40-Monitor_Gen.cfg -l RealTimeLoader -s State1 #Alternatively use the python script described above to monitor the OPCUA signal.
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-40-Monitor_Gen.cfg -l RealTimeLoader -s State1 #Alternatively, use the Python script described above to monitor the OPCUA signal.
 
-8. Switch on the system by setting the switch on-off to 1 using the command: 
-
-.. code-block:: bash
-
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-44-Control-On_Gen.cfg -l RealTimeLoader -s State1 
-
-8.1. Alternatively use the python script described above to update the OPCUA signal.
+8. Switch on the system by setting the switch on/off signal to 1 using the command:
 
 .. code-block:: bash
 
-        python3.6 ../Test/Integrated/opcua_writer.py -p OPCUA_PORT -s MassSpringDemoControlInput.SwitchOn -v 1 #Replace the OPCUA_PORT with the actual port number being used in the configuration file.
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-44-Control-On_Gen.cfg -l RealTimeLoader -s State1
+
+8.1. Alternatively, use the Python script described above to update the OPCUA signal.
+
+.. code-block:: bash
+
+        python3.6 ../Test/Integrated/opcua_writer.py -p OPCUA_PORT -s MassSpringDemoControlInput.SwitchOn -v 1 #Replace OPCUA_PORT with the actual port number being used in the configuration file.
 
 9. Observe that the ``Position`` is now changing and that the system is responding to the new target ``ReferencePosition``, using one of the commands described above.
 
@@ -209,15 +208,15 @@ The objective of this exercise is to use the ``OPCUADSInput`` DataSource to swit
 
    .. note::
 
-        The ``Alias`` could also have been used to access directly the signals from the DataSource, in the ``MuxGAM``, without the need to copy the full structure in the ``ReferenceGAM``. 
-        
-        However, the MuxGAM requires the signal to have ``NumberOfDimensions=1``, while the structured signal read from the DataSource has ``NumberOfDimensions=0``, and even if they are binary compatible (array of one element and scalar), another GAM to covert between them would be needed, which would make the configuration more complex.
+        The ``Alias`` could also have been used to access the signals directly from the DataSource in the ``MuxGAM``, without the need to copy the full structure in the ``ReferenceGAM``.
+
+        However, the MuxGAM requires the signal to have ``NumberOfDimensions=1``, while the structured signal read from the DataSource has ``NumberOfDimensions=0``. Even if they are binary compatible (array of one element and scalar), another GAM to convert between them would be needed, which would make the configuration more complex.
 
    Add the GAM to the execution list.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-44-solution.cfg
       :language: c++
       :lines: 1667-1685
-      :caption: GAM execution list. 
+      :caption: GAM execution list.
       :linenos:
       :emphasize-lines: 10

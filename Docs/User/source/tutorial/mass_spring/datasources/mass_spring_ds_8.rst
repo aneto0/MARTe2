@@ -12,29 +12,29 @@
    or implied. See the Licence permissions and limitations under the Licence.
 
 EPICSCAInput
-=============
+============
 
 .. warning::
-    
-    The EPICSCAInput DataSource is only available in distribution where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
 
-The :vcisdoxygenmccl:`EPICSCAInput` DataSource can be used to receive application data using the EPICS Channel Access protocol. This allows to interface the application with any EPICS based monitoring or control application (e.g  `EPICS Control System Studio <https://controlsystemstudio.org/>`__).
+    The EPICSCAInput DataSource is only available in distributions where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
+
+The :vcisdoxygenmccl:`EPICSCAInput` DataSource can be used to receive application data using the EPICS Channel Access protocol. This allows interfacing the application with any EPICS-based monitoring or control application (e.g. `EPICS Control System Studio <https://controlsystemstudio.org/>`__).
 
 This DataSource reads from the PVs asynchronously on a separate thread (which may be allocated to a different CPU core). This means that it is not intended to be used for real-time control, but rather for live parameter configuration.
 
-The name of the PVs needs to be defined for every signal in the DataSource configuration. 
+The names of the PVs need to be defined for every signal in the DataSource configuration.
 
-Given that the PV name needs to be unique, in order to avoid name clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-32.cfg`` will be automatically updated from a ``Makefile.cfg``. The name of the PVs are based on the username.
+Given that the PV name needs to be unique, in order to avoid name clashes, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-32.cfg`` will be automatically updated from a ``Makefile.cfg``. The names of the PVs are based on the username.
 
 The PVs are hosted on a ``softIOC`` which needs to be started before running the application. The ``softIOC`` configuration file is generated from a template by running the command ``../Test/Integrated/GenerateEPICSSoftIOCDb.sh``, which will also automatically generate the PV names to match the ones defined in the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-32.cfg``.
 
-In this example the ``ReferencePosition`` signal is read from the corresponding PV and used as reference for the control of the mass-spring system.
+In this example, the ``ReferencePosition`` signal is read from the corresponding PV and used as a reference for the control of the mass-spring system.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-32.cfg
     :language: c++
     :lines: 986-996
-    :caption: EPICSCAInput configuration. Note that the PVs names are automatically replaced by the ``Makefile.cfg``.
-    :linenos: 
+    :caption: EPICSCAInput configuration. Note that the PV names are automatically replaced by the ``Makefile.cfg``.
+    :linenos:
     :emphasize-lines: 8
 
 Running the application
@@ -94,11 +94,11 @@ Exercises
 Ex. 1: Switch on/off
 --------------------
 
-The objective of this exercise is to use the EPICSCAInput DataSource to switch on/off the force output of the mass-spring system.
+The objective of this exercise is to use the EPICSCAInput DataSource to switch the force output of the mass-spring system on and off.
 
 1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-33.cfg`` and add a :vcisdoxygenmccl:`MuxGAM` that selects between a signal named ``ForceZero`` and the signal ``ForceFromController`` to produce an output signal named ``Force`` in ``DDB1``. Name the GAM ``GAMMuxSwitchOn``.
 2. Modify the ``ControllerGAM`` to output the signal named ``ForceFromController`` instead of ``Force``.
-3. The name of the switch on-off PV is ``MARTE2-TUTORIAL-USERNAME-SWITCH-ON``. 
+3. The name of the switch on/off PV is ``MARTE2-TUTORIAL-USERNAME-SWITCH-ON``.
 4. Add the MuxGAM to the execution list.
 5. Execute the application:
 
@@ -107,29 +107,29 @@ The objective of this exercise is to use the EPICSCAInput DataSource to switch o
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-33_Gen.cfg -l RealTimeLoader -s State1
 
-5. Set a new target ``ReferencePosition`` using the ``caput`` command.
+6. Set a new target ``ReferencePosition`` using the ``caput`` command.
 
 .. code-block:: bash
 
     caput MARTE2-TUTORIAL-USERNAME-REFERENCE-POSITION 1.0 #Replace with your username in capital letters
 
-6. Observe that the ``Position`` is not changing and that the system is not responding to the new target ``ReferencePosition``.
+7. Observe that the ``Position`` is not changing and that the system is not responding to the new target ``ReferencePosition``.
 
 .. code-block:: bash
 
-    camonitor MARTE2-TUTORIAL-USERNAME-REFERENCE-POSITION MARTE2-TUTORIAL-USERNAME-POSITION #Replace with your username in capital letters  
+    camonitor MARTE2-TUTORIAL-USERNAME-REFERENCE-POSITION MARTE2-TUTORIAL-USERNAME-POSITION #Replace with your username in capital letters
 
-7. Switch on the system by setting the switch on-off PV to 1 using the command: 
+8. Switch on the system by setting the switch on/off PV to 1 using the command:
 
 .. code-block:: bash
 
     caput MARTE2-TUTORIAL-USERNAME-SWITCH-ON 1 #Replace with your username in capital letters
 
-8. Observe that the ``Position`` is now changing and that the system is responding to the new target ``ReferencePosition``.
+9. Observe that the ``Position`` is now changing and that the system is responding to the new target ``ReferencePosition``.
 
 .. code-block:: bash
 
-    camonitor MARTE2-TUTORIAL-USERNAME-REFERENCE-POSITION MARTE2-TUTORIAL-USERNAME-POSITION #Replace with your username in capital letters  
+    camonitor MARTE2-TUTORIAL-USERNAME-REFERENCE-POSITION MARTE2-TUTORIAL-USERNAME-POSITION #Replace with your username in capital letters
 
 .. dropdown:: Solution
    :icon: key
@@ -148,7 +148,7 @@ The objective of this exercise is to use the EPICSCAInput DataSource to switch o
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-33-solution.cfg
       :language: c++
       :lines: 1027-1041
-      :caption: DataSource 
+      :caption: DataSource
       :linenos:
       :emphasize-lines: 2,12
 
@@ -157,6 +157,6 @@ The objective of this exercise is to use the EPICSCAInput DataSource to switch o
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-33-solution.cfg
       :language: c++
       :lines: 1233-1246
-      :caption: GAM execution list. 
+      :caption: GAM execution list.
       :linenos:
       :emphasize-lines: 10

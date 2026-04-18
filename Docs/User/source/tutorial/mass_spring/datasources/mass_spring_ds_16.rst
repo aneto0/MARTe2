@@ -16,11 +16,10 @@ Other DataSources
 
 This section concludes the introduction to the DataSources used in the mass-spring-damper example, listing other commonly used DataSources that are not covered in the previous sections.
 
-- :vcisdoxygenmccl:`MDSReader`, :vcisdoxygenmccl:`MDSWriter`: Read/Write from/to `MDSplus <https://www.mdsplus.org/>`__ trees.
-- :vcisdoxygenmccl:`NI1588Timestamp`: Time stamp events using the NI-1588 board.
-- :vcisdoxygenmccl:`NI6259ADC`, :vcisdoxygenmccl:`NI6259DAC`, :vcisdoxygenmccl:`NI6259DIO`: Read and write from National Instruments NI-6259 DAQ card.
-- :vcisdoxygenmccl:`NI6368ADC`, :vcisdoxygenmccl:`NI6368DAC`, :vcisdoxygenmccl:`NI6368DIO`: Read and write from National Instruments NI-6368 DAQ card.
+- :vcisdoxygenmccl:`MDSReader`, :vcisdoxygenmccl:`MDSWriter`: Read/write from/to `MDSplus <https://www.mdsplus.org/>`__ trees.
+- :vcisdoxygenmccl:`NI1588Timestamp`: Timestamp events using the NI-1588 board.
+- :vcisdoxygenmccl:`NI6259ADC`, :vcisdoxygenmccl:`NI6259DAC`, :vcisdoxygenmccl:`NI6259DIO`: Read and write from the National Instruments NI-6259 DAQ card.
+- :vcisdoxygenmccl:`NI6368ADC`, :vcisdoxygenmccl:`NI6368DAC`, :vcisdoxygenmccl:`NI6368DIO`: Read and write from the National Instruments NI-6368 DAQ card.
 - :vcisdoxygenmccl:`NI9157MxiDataSource`, :vcisdoxygenmccl:`NI9157CircularFifoReader`: Interface to the NI-9157 Mxi data acquisition system.
 - :vcisdoxygenmccl:`UARTDataSource`: UART reader.
 - :vcisdoxygenmccl:`UEIReader`, :vcisdoxygenmccl:`UEIWriter`: `United Electronic Industries (UEI) <https://www.ueidaq.com/>`__ read/write from UEIDAQ hardware.
-

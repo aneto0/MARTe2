@@ -15,27 +15,27 @@ OPCUADSOutput
 =============
 
 .. warning::
-    
-    The OPCUADataSource is only available in distribution where `open62541 <https://open62541.org//>`__ is installed.
 
-The :vcisdoxygenmccl:`OPCUADSOutput` DataSource can be used to stream application data over the OPC UA protocol. This allows to interface the application with any OPC UA based monitoring or control applications.
+    The OPCUADataSource is only available in distributions where `open62541 <https://open62541.org//>`__ is installed.
 
-.. warning:: 
+The :vcisdoxygenmccl:`OPCUADSOutput` DataSource can be used to stream application data over the OPC UA protocol. This allows interfacing the application with any OPC UA-based monitoring or control applications.
 
-    This DataSource writes to OPCUA **synchronously** on the same thread of the MARTe ReadTimeThread, which may negatively impact the real-time performance of the application. Decoupling mechanisms are discussed later in the tutorial (see the sections on :ref:`RealTimeThreadAsyncBridgeTutorial` and :ref:`RealTimeThreadSynchronisationTutorial`).
+.. warning::
 
-The DataSource only supports structured types as defined in the :ref:`MassSpringStructuredTypes`. 
+    This DataSource writes to OPCUA **synchronously** on the same thread as the MARTe RealTimeThread, which may negatively impact the real-time performance of the application. Decoupling mechanisms are discussed later in the tutorial (see the sections on :ref:`RealTimeThreadAsyncBridgeTutorial` and :ref:`RealTimeThreadSynchronisationTutorial`).
 
-Given that the OPCUA server ports need to be unique, in order to avoid port clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-40.cfg`` will be automatically updated from a ``Makefile.cfg``. 
+The DataSource only supports structured types as defined in :ref:`MassSpringStructuredTypes`.
 
-The OPCUA types are hosted using a MARTe2 :vcisdoxygenmccl:`OPCUAServer`, which in this example is instantiated in the same configuration file of the application. 
+Given that the OPCUA server ports need to be unique in order to avoid port clashes, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-40.cfg`` will be automatically updated from a ``Makefile.cfg``.
+
+The OPCUA types are hosted using a MARTe2 :vcisdoxygenmccl:`OPCUAServer`, which in this example is instantiated in the same configuration file as the application.
 
 The objective of this example is to monitor the application data using OPCUA.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-40.cfg
     :language: c++
     :lines: 126-141
-    :caption: OPCUAServer configuration. Note that the OPCUA server port is automatically replaced by the ``Makefile.cfg``. 
+    :caption: OPCUAServer configuration. Note that the OPCUA server port is automatically replaced by the ``Makefile.cfg``.
     :linenos:
     :emphasize-lines: 2, 7-9
 
@@ -76,7 +76,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
-Open another terminal and check that the OPCUA records are being updated with the application data, by running another MARTe2 application.
+Open another terminal and check that the OPCUA records are being updated with the application data by running another MARTe2 application.
 
 .. code-block:: bash
 
@@ -103,15 +103,15 @@ The output should be similar to the following:
 
 .. note::
 
-    You can also use any OPCUA client to connect to the MARTe2 OPCUA server and monitor the application data. 
+    You can also use any OPCUA client to connect to the MARTe2 OPCUA server and monitor the application data.
 
-    For example, if the python ``opcua`` library is installed in your system, you can use the python script located in ``../Test/Integrated/opcua_monitor.py`` to connect to the server and print the values of the nodes being written by the application.
+    For example, if the Python ``opcua`` library is installed on your system, you can use the Python script located in ``../Test/Integrated/opcua_monitor.py`` to connect to the server and print the values of the nodes being written by the application.
 
     .. code-block:: bash
 
-        python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace the OPCUA_PORT with the actual port number being used in the configuration file.
+        python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace OPCUA_PORT with the actual port number being used in the configuration file.
 
-As explained in the :vcisdoxygenmccl:`OPCUADSOutput` documentation, it is possible to associate a timestamp signal to one or more output signals. When a timestamp signal is configured, its value is used to populate the ``OPCUA`` ``SourceTimestamp`` field when writing the associated nodes.
+As explained in the :vcisdoxygenmccl:`OPCUADSOutput` documentation, it is possible to associate a timestamp signal with one or more output signals. When a timestamp signal is configured, its value is used to populate the ``OPCUA`` ``SourceTimestamp`` field when writing the associated nodes.
 
 Exercises
 ---------
@@ -121,11 +121,11 @@ Ex. 1: Statistics monitoring
 
 Monitor the statistics signals as part of another OPCUA structure.
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-41.cfg`` and a new DataSource instance to write the signal ``MonitorPerf`` from the ``GAMWriterPerf`` IOGAM.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-41.cfg`` and add a new DataSource instance to write the signal ``MonitorPerf`` from the ``GAMWriterPerf`` IOGAM.
 
 .. important::
 
-    The ``OPCUADSOutput`` does not allow to write multiple structured signals, so a new DataSource needs to be added to the configuration file.
+    The ``OPCUADSOutput`` does not allow writing multiple structured signals, so a new DataSource needs to be added to the configuration file.
 
 2. Start the sender application.
 
@@ -134,7 +134,7 @@ Monitor the statistics signals as part of another OPCUA structure.
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-41_Gen.cfg -l RealTimeLoader -s State1
 
-3. Open another terminal and check that the OPCUA records are being updated with the application data, by running another MARTe2 application.
+3. Open another terminal and check that the OPCUA records are being updated with the application data by running another MARTe2 application.
 
 .. code-block:: bash
 
@@ -143,8 +143,8 @@ Monitor the statistics signals as part of another OPCUA structure.
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add a new ``OPCUADSOutput`` instance. 
-   
+   The solution is to add a new ``OPCUADSOutput`` instance.
+
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-41-solution.cfg
       :language: c++
       :lines: 1583-1594
@@ -190,18 +190,18 @@ Monitor the statistics signals as part of another OPCUA structure.
         $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.FreeTimeHistogram [0:10]:{ 0 0 1 0 0 1 0 1 0 29 112 }
         $ [Information - LoggerBroker.cpp:152]: MonitorPerf.Perf.Thread1.GAMsExecutionTime [0:0]:58
 
-Ex. 2: Timestamping 
+Ex. 2: Timestamping
 -------------------
 
-The objective of this exercise is to use another signal to timestamp the OPCUA against a given signal instead of the timestamp that is automatically set by the library.
+The objective of this exercise is to use another signal to timestamp OPCUA against a given signal instead of the timestamp that is automatically set by the library.
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-42.cfg`` and a new signal named ``AbsoluteTimeStamp`` to the ``OPCUAWriter`` DataSource.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-42.cfg`` and add a new signal named ``AbsoluteTimeStamp`` to the ``OPCUAWriter`` DataSource.
 2. Make sure that the signal contains the property ``DefaultTimestampSignal`` set to ``1``.
 3. Modify the IOGAM ``GAMWriter`` to copy the ``AbsoluteTimeStamp`` signal from the DDB1 into the new signal in the OPCUAWriter DataSource.
 
 .. note::
 
-    As explained in the :vcisdoxygenmccl:`LinuxTimer` documentation the ``AbsoluteTimeStamp`` signal is the counter multiplied by the period (counting from the Epoch). If you are running from a CODAC Core System, you may use the :vcisdoxygenmccl:`TcnTimeProvider` to obtain the absolute time.
+    As explained in the :vcisdoxygenmccl:`LinuxTimer` documentation, the ``AbsoluteTimeStamp`` signal is the counter multiplied by the period (counting from the Epoch). If you are running on a CODAC Core System, you may use the :vcisdoxygenmccl:`TcnTimeProvider` to obtain the absolute time.
 
 4. Start the sender application.
 
@@ -210,16 +210,16 @@ The objective of this exercise is to use another signal to timestamp the OPCUA a
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-42_Gen.cfg -l RealTimeLoader -s State1
 
-5. Open another terminal and check that the OPCUA records are being updated with the application data, by running the following python application (assuming that the python ``opcua`` library is installed in your system):
+5. Open another terminal and check that the OPCUA records are being updated with the application data by running the following Python application (assuming that the Python ``opcua`` library is installed on your system):
 
 .. code-block:: bash
 
-    python3.6 ../Test/Integrated/opcua_monitor.py -p -s MassSpringDemo --print_time_stamps #Replace the OPCUA_PORT with the actual port number being used in the configuration file.
+    python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo --print_time_stamps #Replace OPCUA_PORT with the actual port number being used in the configuration file.
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add the ``AbsoluteTime`` to the ``DataSource`` and set the ``DefaultTimestampSignal`` property.
+   The solution is to add the ``AbsoluteTime`` to the DataSource and set the ``DefaultTimestampSignal`` property.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-42-solution.cfg
       :language: c++

@@ -15,16 +15,16 @@ SDNSubscriber
 =============
 
 .. warning::
-    
-    The SDNSubscriber DataSource is only available in `CODAC Core System <https://www.iter.org/machine/supporting-systems/codac/codac-core-system>`__ distributions. 
 
-The :vcisdoxygenmccl:`SDNSubscriber` DataSource can be used to receive application data over the ITER SDN network. 
+    The SDNSubscriber DataSource is only available in `CODAC Core System <https://www.iter.org/machine/supporting-systems/codac/codac-core-system>`__ distributions.
 
-Typicaly use-cases include subscribing to data from a remote application. This data can be used for monitoring or control purposes. In the latter case, the data is used to synchronise the ``RealTimeThread``.
+The :vcisdoxygenmccl:`SDNSubscriber` DataSource can be used to receive application data over the ITER SDN network.
 
-In this section, the ``LinuxTimer`` will be replaced by a ``SDNSubscriber`` and the ``RealTimeThread`` will execute everytime a SDN topic arrives.
+Typical use cases include subscribing to data from a remote application. This data can be used for monitoring or control purposes. In the latter case, the data is used to synchronise the ``RealTimeThread``.
 
-The publisher will be the application developed as part of the exercise from the previous section, which is streaming application data and statistics over SDN. The configuration file for the sender is ``../Configurations/MassSpring/RTApp-MassSpring-28-Sender.cfg``.
+In this section, the ``LinuxTimer`` will be replaced by a ``SDNSubscriber`` and the ``RealTimeThread`` will execute every time an SDN topic arrives.
+
+The publisher will be the application developed as part of the exercise in the previous section, which streams application data and statistics over SDN. The configuration file for the sender is ``../Configurations/MassSpring/RTApp-MassSpring-28-Sender.cfg``.
 
 The ``SDNSubscriber`` configuration is similar to the ``UDPReceiver``, with the main difference being that the topic name is set from the variable ``TUTORIAL_TOPIC_NAME``, which is replaced by the ``Makefile.cfg``. The ExecutionMode is set to ``RealTimeThread``, which means that the pace of the ``RealTimeThread`` will be determined by the arrival of SDN topics.
 
@@ -33,25 +33,25 @@ Given that some application GAMs need to use a relative time reference, the ``SD
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-28-Subscriber.cfg
     :language: c++
     :lines: 1271-1285
-    :caption: SDNSubscriber configuration. 
-    :linenos: 
+    :caption: SDNSubscriber configuration.
+    :linenos:
     :emphasize-lines: 3-5,7-10
 
-The ``GAMSDNSubscriber`` is an excellent example on how an IOGAM can be used to expand and cast signals. This strategy is used to expand the binary definition of the SDN header into individual signals that can be used by other GAMs.
+The ``GAMSDNSubscriber`` is an excellent example of how an IOGAM can be used to expand and cast signals. This strategy is used to expand the binary definition of the SDN header into individual signals that can be used by other GAMs.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-28-Subscriber.cfg
     :language: c++
     :lines: 5-63
     :caption: ``GAMTimer`` replaced with ``GAMSDNSubscriber``. The ``Frequency`` parameter still needs to be set to a non-zero value, but the actual pace of the ``RealTimeThread`` will be provided by the arrival of SDN packets.
-    :linenos: 
+    :linenos:
 
-Given that some GAMs require a relative time reference, a ``MathExpressionGAM`` is used to compute and maintain a relative time based on the timestamp received in the SDN header. Since this signal is of type ``uint64``, and because the ``MathExpressionGAM`` supports neither conditional statements nor the mod operator, a fairly complex expression is needed to compute the relative time in microseconds, as shown in the following code snippet. This provides a good example of why a custom GAM is often preferable for complex signal processing tasks, as discussed later in the tutorial.
+Given that some GAMs require a relative time reference, a ``MathExpressionGAM`` is used to compute and maintain a relative time based on the timestamp received in the SDN header. Since this signal is of type ``uint64``, and because the ``MathExpressionGAM`` supports neither conditional statements nor the ``mod`` operator, a fairly complex expression is needed to compute the relative time in microseconds, as shown in the following code snippet. This provides a good example of why a custom GAM is often preferable for complex signal processing tasks, as discussed later in the tutorial.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-28-Subscriber.cfg
     :language: c++
     :lines: 64-78
     :caption: ``MathExpressionGAM`` to compute relative time in microseconds (``uint32``).
-    :linenos: 
+    :linenos:
 
 Running the application
 -----------------------
@@ -95,33 +95,33 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:2000000
     ...
 
-.. note:: The actual time values will depend on the arrival of the SDN packets, which in turn depends on the execution of the sender application. If the receiver application is started before the sender, the first ``Time`` value will not be zero, but will instead correspond to the ``Time`` from the first received SDN packet.
+.. note:: The actual time values will depend on the arrival of SDN packets, which in turn depends on the execution of the sender application. If the receiver application is started before the sender, the first ``Time`` value will not be zero, but will instead correspond to the ``Time`` from the first received SDN packet.
 
-The ``CCS`` tool ``sdn-print`` will be used to monitor the SDN traffic and verify that the applications is streaming data over the SDN network. 
+The ``CCS`` tool ``sdn-print`` will be used to monitor the SDN traffic and verify that the application is streaming data over the SDN network.
 
-Open another console and generate the required ``.xml`` configuration files for the ``sdn-print``. 
+Open another console and generate the required ``.xml`` configuration files for ``sdn-print``.
 
 .. code-block:: bash
 
     ../Test/Integrated/GenerateSDNTopicFiles.sh
 
-Export the required environment variables for the ``sdn-print`` tool and run the tool.
+Export the required environment variables for the ``sdn-print`` tool and run it.
 
 .. code-block:: bash
 
     export SDN_TOPIC_PATH=../Test/Integrated
     sdn-print -i lo -t mass-spring-1 -c -1
 
-Notice that both MARTe2 and the ``sdn-print`` tool are receiving from the SDN topic source using multicast.
+Notice that both MARTe2 and the ``sdn-print`` tool receive from the SDN topic source using multicast.
 
-On another console check the statistics from the publisher application:
+On another console, check the statistics from the publisher application:
 
 .. code-block:: bash
 
     export SDN_TOPIC_PATH=../Test/Integrated
     sdn-print -i lo -t mass-spring-2 -c -1
 
-And on another console check the statistics from the subscriber application:
+And on another console, check the statistics from the subscriber application:
 
 .. code-block:: bash
 
@@ -135,20 +135,20 @@ Exercises
 Ex. 1: Detecting stalled data
 -----------------------------
 
-In the example above, the application waits with the default ``SDNSubscriber`` timeout for packets to arrive. In some cases, it may be desirable to detect if the data stream has stalled (e.g. due to a network issue or because the sender application has stopped). 
+In the example above, the application waits with the default ``SDNSubscriber`` timeout for packets to arrive. In some cases, it may be desirable to detect if the data stream has stalled (e.g. due to a network issue or because the sender application has stopped).
 
 .. warning::
 
-    A DataSource failure propagates to the interfacing GAM and from there to the ``GAMScheduler``. 
-    
-    This means that all the subsequent GAMs in the execution list **will not be executed**. 
-    
+    A DataSource failure propagates to the interfacing GAM and from there to the ``GAMScheduler``.
+
+    This means that all subsequent GAMs in the execution list **will not be executed**.
+
     Consequently, if a GAM needs to gracefully handle a failure, it must be executed before the GAM that will fail (which means that it will use data from the previous cycle).
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-29-Subscriber.cfg`` and a ``MathExpressionGAM`` to detect stalled data based on the ``TopicCounter`` signal and name it ``SDNStalled``.
-3. Add the  ``SDNStalled`` signal to the ``GAMWriterStats`` GAM and to the ``SDNPublisherStats`` DataSource.
-4. Add the new ``MathExpressionGAM`` to the execution list, before the ``GAMSDNSubscriber`` and move the ``GAMWriterStats`` to also before the ``GAMSDNSubscriber``.
-5. Run ``make -C ../Configurations/MassSpring/ -f Makefile.cfg`` to generate the configuration file with the correct topic names.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-29-Subscriber.cfg`` and add a ``MathExpressionGAM`` to detect stalled data based on the ``TopicCounter`` signal and name it ``SDNStalled``.
+2. Add the ``SDNStalled`` signal to the ``GAMWriterStats`` GAM and to the ``SDNPublisherStats`` DataSource.
+3. Add the new ``MathExpressionGAM`` to the execution list before the ``GAMSDNSubscriber`` and move the ``GAMWriterStats`` also before the ``GAMSDNSubscriber``.
+4. Run ``make -C ../Configurations/MassSpring/ -f Makefile.cfg`` to generate the configuration file with the correct topic names.
 
 .. code-block:: bash
 
@@ -178,7 +178,7 @@ In the example above, the application waits with the default ``SDNSubscriber`` t
       :language: c++
       :caption: Updated ``GAMWriterStats`` with the ``SDNStalled`` signal.
       :linenos:
-      :lines: 1037-1044, 1079-1084 
+      :lines: 1037-1044, 1079-1084
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-29-Subscriber-solution.cfg
       :language: c++
@@ -186,13 +186,11 @@ In the example above, the application waits with the default ``SDNSubscriber`` t
       :linenos:
       :lines: 1272-1280
 
-   Add the new ``MathExpressionGAM`` to the execution list, before the ``GAMSDNSubscriber`` and move the ``GAMWriterStats`` also before the ``GAMSDNSubscriber``.
+   Add the new ``MathExpressionGAM`` to the execution list before the ``GAMSDNSubscriber`` and move the ``GAMWriterStats`` also before the ``GAMSDNSubscriber``.
 
-    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-29-Subscriber-solution.cfg
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-29-Subscriber-solution.cfg
       :language: c++
       :caption: Updated execution list.
       :linenos:
       :lines: 1324-1337
       :emphasize-lines: 10
-
-

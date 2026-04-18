@@ -16,16 +16,16 @@ DataSources
 
 The development of DataSource components is discussed in the :doc:`DataSource development section </core/app/gams/datasource>`.
 
-The development of DataSource components requires a good understanding of the MARTe2 framework, (in particular the concept of Brokers - see also :vcisdoxygencl:`BrokerI`), as well as a good knowledge of the C++ programming language and the real-time programming concepts. 
+Developing DataSource components requires a good understanding of the MARTe2 framework (in particular the concept of Brokers – see also :vcisdoxygencl:`BrokerI`), as well as solid knowledge of the C++ programming language and real-time programming concepts. 
 
-The most important methods in DataSource developments are:
+The most important methods in DataSource development are:
 
-- ``Initialise``, which is called once at the beginning of the application execution, is used to load the static parameters.
-- ``SetConfiguredDatabase`` is called after the application is set up, when the characteristics of all input signals are known. It can be used to validate the signal characteristics and allocate any private memory that depends on them.
-- ``Synchronise``, called by synchroning Broker components (e.g. :vcisdoxygencl:`MemoryMapSynchronisedInputBroker`), to update the memory before (or after) a copy.
-- ``AllocateMemory``, requiring the allocation of memory for the input and output signals.
-- ``GetSignalMemoryBuffer``, to return the pointer to the memory buffer of a given signal.
-- ``GetBrokerName``, to return the name of the Broker(s) that can be used to interact with the DataSource.
+- ``Initialise``: called once at the beginning of the application execution; used to load static parameters.
+- ``SetConfiguredDatabase``: called after the application is set up, when the characteristics of all input signals are known. It can be used to validate signal characteristics and allocate any private memory that depends on them.
+- ``Synchronise``: called by synchronising Broker components (e.g. :vcisdoxygencl:`MemoryMapSynchronisedInputBroker`) to update the memory before (or after) a copy.
+- ``AllocateMemory``: responsible for allocating memory for input and output signals.
+- ``GetSignalMemoryBuffer``: returns the pointer to the memory buffer of a given signal.
+- ``GetBrokerName``: returns the name of the Broker(s) that can be used to interact with the DataSource.
 
 .. literalinclude:: /_static/tutorial/Source/DataSources/SystemMonitor/SystemMonitor.h
     :language: c++
@@ -39,63 +39,56 @@ The most important methods in DataSource developments are:
     :caption: DataSource Initialise method. 
     :linenos:
 
-As for the GAMs, DataSources are divided into two broad categories: generic and application-specific, with the further caveat that they tend to also be platform (hardware and operating system) specific.
+As with GAMs, DataSources are divided into two broad categories: generic and application-specific. Additionally, they are often platform-specific (hardware and operating system dependent).
 
-For application-specific DataSource components, the use of the manager to create the boilerplate code is recommended, as it allows developers to quickly create a new DataSource and focus on implementing the functionality. 
+For application-specific DataSource components, using the manager to generate the boilerplate code is recommended, as it allows developers to quickly create a new DataSource and focus on implementing its functionality. 
 
 .. warning::
 
-    Great care shall be taken as this approach greatly limits the flexibility of the design: for example, the type of Broker is imposed (e.g. :vcisdoxygencl:`MemoryMapSynchronisedInputBroker` or :vcisdoxygencl:`MemoryMapSynchronisedOutputBroker`); the implementation is run directly on the context of the RealTimeThread, where typically the DataSource implementation is expected to be executed in a different thread.
+    Great care must be taken, as this approach significantly limits design flexibility. For example, the type of Broker is imposed (e.g. :vcisdoxygencl:`MemoryMapSynchronisedInputBroker` or :vcisdoxygencl:`MemoryMapSynchronisedOutputBroker`), and the implementation runs directly in the context of the RealTimeThread, whereas DataSource logic is typically expected to run in a separate thread.
 
-In order to use the manager to create the boilerplate code for the DataSource, the following command can be used:
+To create a new DataSource using the manager, run:
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG add --cpt_type datasources --cpt_name MyDataSource --cpt_namespace Tutorial # Modify the project name and path if needed
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG add --cpt_type datasources --cpt_name MyDataSource --cpt_namespace Tutorial
 
-This will create a new DataSource component named ``MyDataSource`` in the namespace ``Tutorial``, together with all the required Makefiles and tests.
+This creates a new DataSource component named ``MyDataSource`` in the ``Tutorial`` namespace, along with the required Makefiles and tests.
 
-To facilitate the generation of boilerplate code, a JSON template can be used to specify the characteristics of the DataSource, including the number of signals, their data types, and the static parameters. An example of such a template is shown in the following listings:
+To simplify boilerplate generation, a JSON template can be used to define characteristics such as signals, data types, and static parameters. An example is shown below:
 
 .. literalinclude:: /_static/tutorial/Resources/system_monitor_datasource_template.json
     :language: json
-    :caption: JSON definition for the generation of boilerplate code.
+    :caption: JSON definition for boilerplate generation.
     :linenos:
 
-In this example a DataSource named ``SystemMonitor`` is defined and monitors several statistics by reading from ``/sys/class/net/lo/statistics/`` and from ``/proc/stat``.
+In this example, a DataSource named ``SystemMonitor`` is defined, monitoring statistics by reading from ``/sys/class/net/lo/statistics/`` and ``/proc/stat``.
 
-To update the DataSource boilerplate code based on the JSON template, the following command can be used:
-
-.. code-block:: bash
-
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template $HOME/MARTe2-training-proj/Resources/system_monitor_datasource_template.json # Modify the project name and path if needed
-
-The code can be immediately compiled and tested using the generated Makefiles.
+To update the boilerplate code based on the template:
 
 .. code-block:: bash
 
-    export TARGET=x86-linux
-    make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template $HOME/MARTe2-training-proj/Resources/system_monitor_datasource_template.json
 
-Compile the DataSource:
+The code can then be compiled and tested using the generated Makefiles:
 
 .. code-block:: bash
 
     export TARGET=x86-linux
     make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
 
-Note that the DataSource path was automatically added to the ``MARTeApp.sh`` script.
+Note that the DataSource path is automatically added to the ``MARTeApp.sh`` script.
 
 Running the application
 -----------------------
 
-The DataSource is already added to the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-59.cfg``, so the application can be run directly after compiling the GAM.
+The DataSource is already included in the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-59.cfg``, so the application can be run directly after compilation.
 
 .. code-block:: bash
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-59.cfg -l RealTimeLoader -m StateMachine::START
 
-Once the application is running, inspect the ``screen`` output and verify that the application is running without issues. The log should show entries similar to the following:
+Once running, check the output to verify correct behaviour. Example log entries:
 
 .. code-block:: console
 
@@ -109,39 +102,46 @@ Once the application is running, inspect the ``screen`` output and verify that t
 Exercise
 --------
 
-The objective of this exercise is to add to the DataSource the CPU load, reading and parsing from the ``/proc/stat`` file .
+The goal of this exercise is to extend the DataSource to compute CPU load by reading and parsing ``/proc/stat``.
 
-Edit the file ``Resources/system_monitor_datasource_template.json``, and add a signal named ``CPULoad`` with ``number_of_elements=8`` and ``number_of_elements_fixed=false``. This will prevent the boilerplate code from forcing the number of elements to be fixed to the value set by the template.
+Edit ``Resources/system_monitor_datasource_template.json`` and add a signal named ``CPULoad`` with:
 
-1. Run the manager command to update the boilerplate code for the DataSource.
+- ``number_of_elements=8``
+- ``number_of_elements_fixed=false``
+
+This allows dynamic sizing rather than enforcing a fixed number of elements.
+
+1. Update the boilerplate code:
 
 .. code-block:: bash
 
    python3 -m marte2_manager.cli --project_name tutorial --project_path ~/Projects/MARTe2/Docs/User/source/_static/ modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template ~/Projects/MARTe2/Docs/User/source/_static/tutorial/Resources/system_monitor_datasource_template.json 
 
-2. Modify the generated code to read from the ``/proc/stat`` file and extract the CPU load information.
+2. Modify the generated code to read and parse ``/proc/stat``.
 
-3. The ``/proc/stat`` file contains a line starting with ``cpu`` followed by several numbers representing the time spent by the CPU in different states (user, nice, system, idle, iowait, irq, softirq). The CPU load can be calculated as the percentage of time spent in non-idle states over the total time:
+3. The CPU load is computed from the ``cpu`` line:
 
-.. math:: \text{CPULoad} = 1 - \frac{\text{idle} + \text{iowait}}{\text{user} + \text{nice} + \text{system} + \text{iowait} + \text{irq} + \text{softirq} + \text{idle}}
+.. math::
 
-4. You should make use of the :doc:`MARTe2 stream API</core/streams/streams>` to read from the file and parse the contents.
+   \text{CPULoad} = 1 - \frac{\text{idle} + \text{iowait}}{\text{user} + \text{nice} + \text{system} + \text{iowait} + \text{irq} + \text{softirq} + \text{idle}}
 
-5. Compile the DataSource using the generated Makefiles.
+4. Use the :doc:`MARTe2 stream API </core/streams/streams>` to read and parse the file.
+
+5. Compile the DataSource:
 
 .. code-block:: bash
 
     export TARGET=x86-linux
     make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
 
-6. Execute the application:
+6. Run the application:
 
 .. code-block:: bash
 
     make -C ../Configurations/MassSpring/ -f Makefile.cfg #The configuration file needs to be regenerated to update with the actual number of elements of the CPULoad signal. 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-60_Gen.cfg -l RealTimeLoader -m StateMachine::START
 
-7. Inspect the ``screen`` output and verify that the application is running without issues. The log should show entries similar to the following:
+7. Verify the output:
 
 .. code-block:: bash
 
@@ -158,17 +158,17 @@ Edit the file ``Resources/system_monitor_datasource_template.json``, and add a s
 .. dropdown:: Solution
    :icon: key
 
-    The solution is to add the signal to be template file as required.
+    Add the signal to the template:
 
     .. literalinclude:: /_static/tutorial/Resources/system_monitor_datasource_template_sol.json
         :language: json
-        :caption: Updated json file.
+        :caption: Updated JSON file.
         :linenos:
 
-    Then implement the functionality of the system monitor data source.
+    Then implement the CPU load computation:
 
     .. literalinclude:: /_static/tutorial/Source/DataSources/SystemMonitorSol/SystemMonitorSol.cpp
         :language: c++
         :lines: 195,212-232,283-323
-        :caption: Reading of the CPU load.
+        :caption: CPU load computation.
         :linenos:

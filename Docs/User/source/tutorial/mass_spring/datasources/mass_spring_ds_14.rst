@@ -16,47 +16,47 @@
 RealTimeThreadSynchronisation
 =============================
 
-The :vcisdoxygenmccl:`RealTimeThreadSynchronisation` DataSource allows to synchronise multiple RealTimeThreads.
+The :vcisdoxygenmccl:`RealTimeThreadSynchronisation` DataSource allows synchronising multiple RealTimeThreads.
 
-Typicaly use-cases include (see also the section on :ref:`MARTeMultipleThreads`):
+Typical use cases include (see also the section on :ref:`MARTeMultipleThreads`):
 
-- Sharing of workload between multiple threads.
-- Synchronisation of threads with different execution frequencies (e.g. a thread executing at 1 kHz and another thread executing at 10 kHz, where the 1 kHz thread needs to be synchronised with the 10 kHz thread).
+- Sharing the workload between multiple threads.
+- Synchronising threads with different execution frequencies (e.g. a thread executing at 1 kHz and another thread executing at 10 kHz, where the 1 kHz thread needs to be synchronised with the 10 kHz thread).
 
-In this example one thread is used to receive data from a UDP stream and to synchronise the execution of the RealTimeThread with the arrival of UDP packets. This data will then be offered to a separate thread which will be responsible for processing the data at 100 Hz and store it in a file.
+In this example, one thread is used to receive data from a UDP stream and to synchronise the execution of the RealTimeThread with the arrival of UDP packets. This data will then be offered to a separate thread, which will be responsible for processing the data at 100 Hz and storing it in a file.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-47-Receiver.cfg
     :language: c++
     :lines: 1259-1277
     :caption: Thread configuration. Note that the ``CPUs`` could have been allocated to different cores.
-    :linenos: 
+    :linenos:
     :emphasize-lines: 7, 10, 12, 15
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-47-Receiver.cfg
     :language: c++
     :lines: 1254-1257
     :caption: The ``RealTimeThreadSynchronisation`` expects one thread to write data to it and one or more threads to read data from it.
-    :linenos: 
+    :linenos:
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-47-Receiver.cfg
     :language: c++
     :lines: 54-92
-    :caption: The ``GAMThreadSyncOut`` writes data into the ``RTThreadSynch``.
-    :linenos: 
+    :caption: The ``GAMThreadSyncOut`` writes data into ``RTThreadSynch``.
+    :linenos:
     :emphasize-lines: 23
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-47-Receiver.cfg
     :language: c++
     :lines: 93-138
-    :caption: The ``GAMThreadSyncIn`` reads data into the ``RTThreadSynch``. Note that by requesting ``Samples=10`` the GAM will read 10 samples from the ``RTThreadSynch`` and will only execute when 10 samples are available, thus lowering to process data at a lower frequency (e.g. 100 Hz). The 10 collected samples will then be offered as an array of 10 elements.
-    :linenos: 
+    :caption: The ``GAMThreadSyncIn`` reads data from ``RTThreadSynch``. Note that by requesting ``Samples=10`` the GAM will read 10 samples from ``RTThreadSynch`` and will only execute when 10 samples are available, thus allowing data to be processed at a lower frequency (e.g. 100 Hz). The 10 collected samples will then be offered as an array of 10 elements.
+    :linenos:
     :emphasize-lines: 7,12,17,22,29,34,39,44
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-47-Receiver.cfg
     :language: c++
     :lines: 140-186
-    :caption: The data needs to downsampled. Ideally, it should have been decimated with a proper filter, but for simplicity in this example the data is just downsampled by taking one sample every 10.
-    :linenos: 
+    :caption: The data needs to be downsampled. Ideally, it should have been decimated with a proper filter, but for simplicity in this example the data is just downsampled by taking one sample every 10.
+    :linenos:
     :emphasize-lines: 8,14,20,26
 
 Running the application
@@ -69,7 +69,7 @@ Start the receiver application with:
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-47-Receiver_Gen.cfg -l RealTimeLoader -s State1
 
-Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
+Once the application is running, inspect the ``screen`` output and verify that it is running without any issues. The log should show entries similar to the following:
 
 .. code-block:: console
 
@@ -79,7 +79,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
 
 .. note::
 
-    The ``RTThreadSynch`` is configured with a timeout of 5 seconds, which means that if the sender application is not started within 5 seconds, the receiver application will log a warning message and will continue to wait for data to arrive. 
+    The ``RTThreadSynch`` is configured with a timeout of 5 seconds, which means that if the sender application is not started within 5 seconds, the receiver application will log a warning message and will continue to wait for data to arrive.
 
     .. code-block:: console
 
@@ -93,7 +93,7 @@ Open another terminal and start the sender application (which will be sending at
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-47-Sender_Gen.cfg -l RealTimeLoader -s State1
 
-Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
+Once the application is running, inspect the ``screen`` output and verify that it is running without any issues. The log should show entries similar to the following:
 
 .. code-block:: console
 
@@ -104,14 +104,14 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
-Wait some seconds and inspect the collected data:
+Wait a few seconds and inspect the collected data:
 
 .. code-block:: bash
 
     python ../Test/Integrated/plot_mass_spring_csv.py -f ../Test/Integrated/MassSpring-47.csv -s ReferencePosition Position
     python ../Test/Integrated/plot_mass_spring_csv.py -f ../Test/Integrated/MassSpring-47.csv -s ThreadReceiverCycleTime ThreadProcessCycleTime
 
-Check that the cycle-times are 1000 microseconds for the receiver thread and 10000 microseconds for the processing thread, which confirms that the synchronisation is working correctly.
+Check that the cycle times are 1000 microseconds for the receiver thread and 10000 microseconds for the processing thread, which confirms that the synchronisation is working correctly.
 
 Exercises
 ---------
@@ -119,12 +119,12 @@ Exercises
 Ex. 1: Running two threads with different models
 ------------------------------------------------
 
-The objective of this exercice is to synchronise two threads with the same data producer. They will both run at the same frequency (100 Hz) but will implement different models for the mass-spring system (as shown in previous examples).
+The objective of this exercise is to synchronise two threads with the same data producer. They will both run at the same frequency (100 Hz) but will implement different models for the mass-spring system (as shown in previous examples).
 
-This use-case could be used to compare the performance of two different models and implement an 1oo2 mechanism to switch between the two models in case of a failure.
+This use case could be used to compare the performance of two different models and implement a 1oo2 mechanism to switch between the two models in case of a failure.
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-48-Receiver.cfg`` and add an IOGAM named ``GAMThreadSyncIn2``. This GAM shall read the signals ``Counter``, ``Time``, ``ReferencePosition`` and ``ThreadReceiverCycleTime`` from the ``RTThreadSynch`` DataSource, with 10 samples each, and offer them to the rest of the RealTimeThread as arrays of 10 elements. 
-2. Add another thread to the ``RealTimeState`` and name it ``+ThreadProcess2``. Make sure that the following GAMs are executed in the correct order: ``GAMPerfMonitorProcess2``, ``GAMThreadSyncIn2``, ``GAMDownsample2``, ``GAMController2``, ``GAMMathModel``,  ``GAMMathTrigger2`` and ``GAMWriter2``.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-48-Receiver.cfg`` and add an IOGAM named ``GAMThreadSyncIn2``. This GAM shall read the signals ``Counter``, ``Time``, ``ReferencePosition`` and ``ThreadReceiverCycleTime`` from the ``RTThreadSynch`` DataSource, with 10 samples each, and offer them to the rest of the RealTimeThread as arrays of 10 elements.
+2. Add another thread to the ``RealTimeState`` and name it ``+ThreadProcess2``. Make sure that the following GAMs are executed in the correct order: ``GAMPerfMonitorProcess2``, ``GAMThreadSyncIn2``, ``GAMDownsample2``, ``GAMController2``, ``GAMMathModel``, ``GAMMathTrigger2`` and ``GAMWriter2``.
 3. Run ``make -C ../Configurations/MassSpring/ -f Makefile.cfg`` to generate the configuration file with the correct UDP port numbers.
 
 .. code-block:: bash
@@ -138,7 +138,7 @@ This use-case could be used to compare the performance of two different models a
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-47-Sender_Gen.cfg -l RealTimeLoader -s State1
 
-Wait some seconds and inspect the collected data:
+Wait a few seconds and inspect the collected data:
 
 .. code-block:: bash
 
@@ -150,7 +150,7 @@ Wait some seconds and inspect the collected data:
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to modify the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-48-Receiver.cfg`` and to add the IOGAM as described above.
+   The solution is to modify the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-48-Receiver.cfg`` and add the IOGAM as described above.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-48-Receiver-solution.cfg
       :language: c++
@@ -158,7 +158,7 @@ Wait some seconds and inspect the collected data:
       :linenos:
       :lines: 140-186
 
-   The ThreadProcess2 is then added to the RealTimeState and the GAMs are added in the correct order.
+   ``ThreadProcess2`` is then added to the RealTimeState and the GAMs are added in the correct order.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-48-Receiver-solution.cfg
        :language: c++

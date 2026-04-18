@@ -15,26 +15,26 @@ EPICSCAOutput
 =============
 
 .. warning::
-    
-    The EPICSCAOutput DataSource is only available in distribution where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
 
-The :vcisdoxygenmccl:`EPICSCAOutput` DataSource can be used to stream application data over the EPICS Channel Access protocol. This allows to interface the application with any EPICS based monitoring or control application (e.g. `EPICS Archiver Appliance <https://slacmshankar.github.io/epicsarchiver_docs/>`__, `EPICS Control System Studio <https://controlsystemstudio.org/>`__).
+    The EPICSCAOutput DataSource is only available in distributions where `EPICS Channel Access <https://epics-controls.org/>`__ is installed.
+
+The :vcisdoxygenmccl:`EPICSCAOutput` DataSource can be used to stream application data over the EPICS Channel Access protocol. This allows interfacing the application with any EPICS-based monitoring or control application (e.g. `EPICS Archiver Appliance <https://slacmshankar.github.io/epicsarchiver_docs/>`__, `EPICS Control System Studio <https://controlsystemstudio.org/>`__).
 
 This DataSource writes to the PVs asynchronously on a separate thread (which may be allocated to a different CPU core).
 
-The name of the PVs needs to be defined for every signal in the DataSource configuration. 
+The names of the PVs need to be defined for every signal in the DataSource configuration.
 
-Given that the PV name needs to be unique, in order to avoid name clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-30.cfg`` will be automatically updated from a ``Makefile.cfg``. The name of the PVs are based on the username.
+Given that the PV name needs to be unique, in order to avoid name clashes, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-30.cfg`` will be automatically updated from a ``Makefile.cfg``. The names of the PVs are based on the username.
 
 The PVs are hosted on a ``softIOC`` which needs to be started before running the application. The ``softIOC`` configuration file is generated from a template by running the command ``../Test/Integrated/GenerateEPICSSoftIOCDb.sh``, which will also automatically generate the PV names to match the ones defined in the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-30.cfg``.
 
-In this example the main application data is written into the corresponding PVs.
+In this example, the main application data is written into the corresponding PVs.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-30.cfg
     :language: c++
     :lines: 896-915
-    :caption: EPICSCAOutput configuration. Note that the PVs names are automatically replaced by the ``Makefile.cfg``.
-    :linenos: 
+    :caption: EPICSCAOutput configuration. Note that the PV names are automatically replaced by the ``Makefile.cfg``.
+    :linenos:
     :emphasize-lines: 9, 13, 17
 
 Running the application
@@ -89,9 +89,10 @@ Ex. 1: Statistics monitoring
 Add a GAM and another DataSource to monitor the statistics of the execution of the application. The statistics should include ``Thread1CycleTime``, ``Thread1CycleTimeAverage``, ``Thread1CycleTimeMovingAverage``, ``Thread1CycleTimeStdDev``, ``Thread1CycleTimeMax``, ``Thread1CycleTimeMin``, ``Thread1CycleTimeHistogram``, ``Thread1FreeTimeHistogram``, ``GAMsExecutionTime``.
 
 1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-31.cfg`` and add an ``EPICSCAOutput`` DataSource to store the signals ``Thread1CycleTime``, ``Thread1CycleTimeAverage``, ``Thread1CycleTimeMovingAverage``, ``Thread1CycleTimeStdDev``, ``Thread1CycleTimeMax``, ``Thread1CycleTimeMin``, ``Thread1CycleTimeHistogram``, ``Thread1FreeTimeHistogram``, ``GAMsExecutionTime``.
-2. The names of the PVs can be found in the file ``../Test/Integrated/MassSpring-1.db``. 4. Add a GAM write the signals to the DataSource.
-3. Add the GAM to the execution list.
-4. Check that the PVs are being written and that the content is updated with the latest values of the signals.
+2. The names of the PVs can be found in the file ``../Test/Integrated/MassSpring-1.db``. 
+3. Add a GAM to write the signals to the DataSource.
+4. Add the GAM to the execution list.
+5. Check that the PVs are being written and that the content is updated with the latest values of the signals.
 
 .. code-block:: bash
 
@@ -101,12 +102,12 @@ Add a GAM and another DataSource to monitor the statistics of the execution of t
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add a ``EPICSCAWriterStats`` with the signals.
+   The solution is to add an ``EPICSCAWriterStats`` with the signals.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-31-solution.cfg
       :language: c++
       :lines: 1115-1133
-      :caption: EPICSCAWriterStats to the write the statistics signals.
+      :caption: EPICSCAWriterStats to write the statistics signals.
       :linenos:
       :emphasize-lines: 9, 13, 17
 
@@ -115,7 +116,7 @@ Add a GAM and another DataSource to monitor the statistics of the execution of t
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-31-solution.cfg
       :language: c++
       :lines: 883-894, 925-934
-      :caption: GAM to write the signals to the DataSource. 
+      :caption: GAM to write the signals to the DataSource.
       :linenos:
 
    Open another terminal and check that the PVs are being updated with the application data using the command:

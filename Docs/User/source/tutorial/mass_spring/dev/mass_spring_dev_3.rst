@@ -12,13 +12,14 @@
    or implied. See the Licence permissions and limitations under the Licence.
 
 Interfaces
-===========
+==========
 
-The Manager can be also used to create new Interface components, including the boilerplate code for the ``Initialise`` method, Makefiles and tests. For example, to create a new Interface component, the following command can be used:
+The Manager can also be used to create new Interface components, including the boilerplate code for the ``Initialise`` method, along with the required Makefiles and tests.
+
+For example, to create a new Interface component, the following command can be used:
 
 .. code-block:: bash
 
     python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG add --cpt_type interfaces --cpt_name MyInterface --cpt_namespace Tutorial # Modify the project name and path if needed
 
-This will create a new Interface component named ``MyInterface`` in the namespace ``Tutorial``, together with all the required Makefiles and tests.
-
+This command creates a new Interface component named ``MyInterface`` in the ``Tutorial`` namespace, together with all the required Makefiles and tests.

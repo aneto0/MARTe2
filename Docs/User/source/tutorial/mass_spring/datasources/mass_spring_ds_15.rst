@@ -13,12 +13,12 @@
 
 .. _RealTimeThreadAsyncBridgeTutorial:
 
-RealTimeThreadAsyncBridge 
+RealTimeThreadAsyncBridge
 =========================
 
-The :vcisdoxygenmccl:`RealTimeThreadAsyncBridge` DataSource allows to asynchronously collect data from RealTimeThreads. 
+The :vcisdoxygenmccl:`RealTimeThreadAsyncBridge` DataSource allows asynchronously collecting data from RealTimeThreads.
 
-It is typicaly used to collect data from a RealTimeThread and offer it to a non-real-time thread, for example for logging purposes. The data is collected asynchronously, which means that the RealTimeThread is not blocked while the data is being collected. The data is then offered to the non-real-time thread with a certain frequency (e.g. 100 Hz).
+It is typically used to collect data from a RealTimeThread and offer it to a non-real-time thread, for example for logging purposes. The data is collected asynchronously, which means that the RealTimeThread is not blocked while the data is being collected. The data is then offered to the non-real-time thread at a certain frequency (e.g. 100 Hz).
 
 .. note::
 
@@ -26,35 +26,35 @@ It is typicaly used to collect data from a RealTimeThread and offer it to a non-
 
 .. important::
 
-    Since the data is collected asynchronously, it is good practice to use techniques that mitigate aliasing, such as latching, tracking minimum and maximum values, or collecting histograms. 
+    Since the data is collected asynchronously, it is good practice to use techniques that mitigate aliasing, such as latching, tracking minimum and maximum values, or collecting histograms.
 
-In this example a monitor thread asynchronously logs to the screen at a frequency of 1 Hz, without impacting the performance of the real-time thread, which is running at 100 Hz. 
+In this example, a monitor thread asynchronously logs to the screen at a frequency of 1 Hz, without impacting the performance of the real-time thread, which is running at 100 Hz.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-49.cfg
     :language: c++
     :lines: 791-810
     :caption: Thread configuration. Note that the ``CPUs`` could have been allocated to different cores.
-    :linenos: 
+    :linenos:
     :emphasize-lines: 7, 10, 12, 15
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-49.cfg
     :language: c++
     :lines: 763-765
     :caption: The ``RealTimeThreadAsyncBridge`` expects one thread to write data to it and one or more threads to read data from it.
-    :linenos: 
+    :linenos:
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-49.cfg
     :language: c++
     :lines: 664-675,706-715
-    :caption: The ``GAMWriter`` writes data into the ``RTThreadAsynch``.
-    :linenos: 
+    :caption: The ``GAMWriter`` writes data into ``RTThreadAsynch``.
+    :linenos:
     :emphasize-lines: 15,19
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-49.cfg
     :language: c++
     :lines: 581-592,623-632
-    :caption: The ``GAMDisplay`` reads data directly from into the ``RTThreadAsynch``. Note that the ``GAMDisplay`` is executed by the ``ThreadMonitor``, which is running at 1 Hz, while the ``GAMWriter`` is executed by the ``ThreadProcess``, which is running at 100 Hz.
-    :linenos: 
+    :caption: The ``GAMDisplay`` reads data directly from ``RTThreadAsynch``. Note that ``GAMDisplay`` is executed by ``ThreadMonitor``, which runs at 1 Hz, while ``GAMWriter`` is executed by ``ThreadProcess``, which runs at 100 Hz.
+    :linenos:
     :emphasize-lines: 5,9
 
 Running the application
@@ -66,7 +66,7 @@ Start the receiver application with:
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-49.cfg -l RealTimeLoader -s State1
 
-Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
+Once the application is running, inspect the ``screen`` output and verify that it is running without any issues. The log should show entries similar to the following:
 
 .. code-block:: console
 
@@ -93,4 +93,3 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Thread1FreeTimeHistogram [0:10]:{ 0 0 0 0 0 0 0 0 0 0 0 }
     $ [Information - LoggerBroker.cpp:152]: ForceMax [0:0]:30.000000
     $ [Information - LoggerBroker.cpp:152]: ForceMin [0:0]:3.420744
-

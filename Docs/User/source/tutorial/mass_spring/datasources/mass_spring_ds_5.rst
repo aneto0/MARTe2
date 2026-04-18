@@ -15,39 +15,39 @@ SDNPublisher
 ============
 
 .. warning::
-    
-    The SDNPublisher DataSource is only available in `CODAC Core System <https://www.iter.org/machine/supporting-systems/codac/codac-core-system>`__ distributions. 
 
-The :vcisdoxygenmccl:`SDNPublisher` ` DataSource can be used to stream application data over the ITER SDN network (based on UDP multicast).
+    The SDNPublisher DataSource is only available in `CODAC Core System <https://www.iter.org/machine/supporting-systems/codac/codac-core-system>`__ distributions.
 
-Typicaly use-cases include streaming data to a remote monitoring or control application.
+The :vcisdoxygenmccl:`SDNPublisher` DataSource can be used to stream application data over the ITER SDN network (based on UDP multicast).
 
-One of the main differences between the ``SDNPublisher`` and the ``UDPSender`` DataSources is that the former is that the ``SDN`` imposes a common header and offers the possibility of streaming over multicast. The multicast addresses are encoded in the so called ``Topic`` names. 
+Typical use cases include streaming data to a remote monitoring or control application.
 
-The SDN header includes built-in fields such as an received and sent absolute time-stamps, counter, and expected topic size and **version**. These features can be used by the receiving application to implement features such as data synchronisation, data integrity checks and to detect stalled data.
+One of the main differences between the ``SDNPublisher`` and the ``UDPSender`` DataSources is that SDN imposes a common header and offers the possibility of streaming over multicast. The multicast addresses are encoded in the so-called ``Topic`` names.
+
+The SDN header includes built-in fields such as received and sent absolute timestamps, a counter, and the expected topic size and **version**. These features can be used by the receiving application to implement features such as data synchronisation, data integrity checks, and detection of stalled data.
 
 In this section, the ``UDPSender`` from the previous section will be replaced by a ``SDNPublisher``.
 
 Given that the topic name is also dependent on the system configuration, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-26-Publisher.cfg`` will be automatically updated from a ``Makefile.cfg``, as in the previous example.
 
-The ``Makefile`` will automatically call the script ``./GenerateTopicNames.sh`` to generate a unique ``Topic`` name, which will then be used by the ``Makefile`` to update the variables ``TUTORIAL_TOPIC_NAME`` in the generated configuration file ``../Configurations/MassSpring/RTApp-MassSpring-26-Publisher_Gen.cfg``.
+The ``Makefile`` will automatically call the script ``./GenerateTopicNames.sh`` to generate a unique ``Topic`` name, which will then be used by the ``Makefile`` to update the variable ``TUTORIAL_TOPIC_NAME`` in the generated configuration file ``../Configurations/MassSpring/RTApp-MassSpring-26-Publisher_Gen.cfg``.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-26-Publisher.cfg
     :language: c++
     :lines: 448-458
     :caption: SDNPublisher configuration. Note that the topic name is set from the variable ``TUTORIAL_TOPIC_NAME``, which is replaced by the ``Makefile.cfg``.
-    :linenos: 
+    :linenos:
     :emphasize-lines: 3-4
 
 .. note::
 
-    Some Output DataSources require for a ``Trigger`` signal (see :ref:`MARTeSignalProperties`) to be explicitly declared in the GAM that interfaces with the DataSource. This is the case for the ``SDNPublisher`` DataSource. 
+    Some output DataSources require a ``Trigger`` signal (see :ref:`MARTeSignalProperties`) to be explicitly declared in the GAM that interfaces with the DataSource. This is the case for the ``SDNPublisher`` DataSource.
 
     .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-26-Publisher.cfg
         :language: c++
         :lines: 344-359
-        :caption: Trigger property needs to be explicitly set by at least on signal.
-        :linenos: 
+        :caption: Trigger property needs to be explicitly set by at least one signal.
+        :linenos:
         :emphasize-lines: 13
 
 
@@ -72,22 +72,22 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:1000000
     ...
 
-The ``CCS`` tool ``sdn-print`` will be used to monitor the SDN traffic and verify that the applications is streaming data over the SDN network. 
+The ``CCS`` tool ``sdn-print`` will be used to monitor the SDN traffic and verify that the application is streaming data over the SDN network.
 
-Open another console and generate the required ``.xml`` configuration files for the ``sdn-print``. 
+Open another console and generate the required ``.xml`` configuration files for ``sdn-print``.
 
 .. code-block:: bash
 
     ../Test/Integrated/GenerateSDNTopicFiles.sh
 
-Export the required environment variables for the ``sdn-print`` tool and run the tool.
+Export the required environment variables for the ``sdn-print`` tool and run it.
 
 .. code-block:: bash
 
     export SDN_TOPIC_PATH=../Test/Integrated
     sdn-print -i lo -t mass-spring-0 -c -1
 
-Notice that both MARTe2 and the ``sdn-print`` tool are receiving from the SDN topic source using multicast.
+Notice that both MARTe2 and the ``sdn-print`` tool receive from the SDN topic source using multicast.
 
 If everything is working correctly, you should see the SDN packets being printed to the console:
 
@@ -103,7 +103,7 @@ If everything is working correctly, you should see the SDN packets being printed
 Exercises
 ---------
 
-Ex. 1: Stream the ``Stats`` signals over SDN. 
+Ex. 1: Stream the ``Stats`` signals over SDN.
 ---------------------------------------------
 
 1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-27-Publisher.cfg`` and modify the DataSource ``UDPWriterStats`` to stream the signals to the topic identified as ``TUTORIAL_TOPIC_NAME_1``.
@@ -129,9 +129,9 @@ Ex. 1: Stream the ``Stats`` signals over SDN.
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to modify the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-27-Publisher.cfg`` and complete the necessary changes on the ``UDPWriterStats`` DataSource, making sure that a ``Trigger=1`` is also explicitly declared in one of the signals interfacing with the ``UDPWriterStats`` DataSource. 
-   
-   For the sake of clarity the DataSource name should also be updated to reflect that it is now a ``SDNPublisher``.
+   The solution is to modify the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-27-Publisher.cfg`` and complete the necessary changes to the ``UDPWriterStats`` DataSource, making sure that a ``Trigger = 1`` is also explicitly declared in one of the signals interfacing with the ``UDPWriterStats`` DataSource.
+
+   For the sake of clarity, the DataSource name should also be updated to reflect that it is now an ``SDNPublisher``.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-27-Publisher-solution.cfg
       :language: c++
@@ -141,7 +141,7 @@ Ex. 1: Stream the ``Stats`` signals over SDN.
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-27-Publisher-solution.cfg
       :language: c++
-      :caption: IOGAM to with ``Trigger=1`` property set in one of the signals interfacing with the DataSource.
+      :caption: IOGAM with ``Trigger = 1`` property set in one of the signals interfacing with the DataSource.
       :linenos:
       :lines: 360-367,398-404
       :emphasize-lines: 13
