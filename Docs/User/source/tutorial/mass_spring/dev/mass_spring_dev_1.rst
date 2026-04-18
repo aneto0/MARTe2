@@ -39,7 +39,7 @@ GAMs are divided into two broad categories:
 - GAMs that are generic and adapt to the application requirements (e.g. the number of input and output signals, their data types, etc.). These GAMs are typically transversal to several applications and are therefore good candidates to be included in the MARTe2-components library. They usually require more extensive development, as they demand careful design and testing to cover edge cases.
 - GAMs that are specific to a particular application.
 
-For application-specific GAMs, the use of the manager to create the boilerplate code is recommended, as it allows developers to quickly create a new GAM and focus on implementing the functionality.
+For application-specific GAMs, the use of the ``marte2_manager`` to create the boilerplate code is recommended, as it allows developers to quickly create a new GAM and focus on implementing the functionality.
 
 .. note::
 
@@ -47,7 +47,7 @@ For application-specific GAMs, the use of the manager to create the boilerplate 
 
 In this example, a GAM will be developed to generate a relative time from an absolute time signal. The user shall be able to specify a divider value named ``DeltaTDiv``, which will be used to divide the absolute time signal and generate the relative time signal.
 
-In order to use the manager to create the boilerplate code for the GAM, the following command can be used:
+In order to use the ``marte2_manager`` to create the boilerplate code for the GAM, the following command can be used:
 
 .. code-block:: bash
 
@@ -128,7 +128,7 @@ Once the application is running, inspect the ``screen`` output and verify that t
     $ [Information - LoggerBroker.cpp:152]: DeltaTime [0:0]:3820000
     ...
 
-The Manager also allows to print a snippet of the configuration file that corresponds to the GAM being developed.
+The ``marte2_manager`` also allows to print a snippet of the configuration file that corresponds to the GAM being developed.
 
 .. code-block:: bash
 

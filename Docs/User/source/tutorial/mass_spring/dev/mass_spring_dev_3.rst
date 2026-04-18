@@ -14,7 +14,7 @@
 Interfaces
 ==========
 
-The Manager can also be used to create new Interface components, including the boilerplate code for the ``Initialise`` method, along with the required Makefiles and tests.
+The ``marte2_manager`` can also be used to create new Interface components, including the boilerplate code for the ``Initialise`` method, along with the required Makefiles and tests.
 
 For example, to create a new Interface component, the following command can be used:
 

@@ -41,13 +41,13 @@ The most important methods in DataSource development are:
 
 As with GAMs, DataSources are divided into two broad categories: generic and application-specific. Additionally, they are often platform-specific (hardware and operating system dependent).
 
-For application-specific DataSource components, using the manager to generate the boilerplate code is recommended, as it allows developers to quickly create a new DataSource and focus on implementing its functionality. 
+For application-specific DataSource components, using the ``marte2_manager`` to generate the boilerplate code is recommended, as it allows developers to quickly create a new DataSource and focus on implementing its functionality. 
 
 .. warning::
 
     Great care must be taken, as this approach significantly limits design flexibility. For example, the type of Broker is imposed (e.g. :vcisdoxygencl:`MemoryMapSynchronisedInputBroker` or :vcisdoxygencl:`MemoryMapSynchronisedOutputBroker`), and the implementation runs directly in the context of the RealTimeThread, whereas DataSource logic is typically expected to run in a separate thread.
 
-To create a new DataSource using the manager, run:
+To create a new DataSource using the ``marte2_manager``, run:
 
 .. code-block:: bash
 
