@@ -51,7 +51,7 @@ To create a new DataSource using the ``marte2_manager``, run:
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG add --cpt_type datasources --cpt_name MyDataSource --cpt_namespace Tutorial
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG add --cpt_type datasources --cpt_name MyDataSource --cpt_namespace Tutorial
 
 This creates a new DataSource component named ``MyDataSource`` in the ``Tutorial`` namespace, along with the required Makefiles and tests.
 
@@ -68,14 +68,14 @@ To update the boilerplate code based on the template:
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template $HOME/MARTe2-training-proj/Resources/system_monitor_datasource_template.json
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/Resources/system_monitor_datasource_template.json
 
 The code can then be compiled and tested using the generated Makefiles:
 
 .. code-block:: bash
 
     export TARGET=x86-linux
-    make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
+    make -C $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/ -f Makefile.gcc core
 
 Note that the DataSource path is automatically added to the ``MARTeApp.sh`` script.
 
@@ -132,7 +132,7 @@ This allows dynamic sizing rather than enforcing a fixed number of elements.
 .. code-block:: bash
 
     export TARGET=x86-linux
-    make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
+    make -C $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/ -f Makefile.gcc core
 
 6. Run the application:
 

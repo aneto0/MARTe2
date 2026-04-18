@@ -51,7 +51,7 @@ In order to use the ``marte2_manager`` to create the boilerplate code for the GA
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG add --cpt_type gams --cpt_name DeltaT --cpt_namespace Tutorial # Modify the project name and path if needed
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG add --cpt_type gams --cpt_name DeltaT --cpt_namespace Tutorial # Modify the project name and path if needed
 
 This will create a new GAM component named ``DeltaT`` in the namespace ``Tutorial``, together with all the required Makefiles and tests.
 
@@ -71,14 +71,14 @@ To update the GAM boilerplate code based on the JSON template, the following com
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG modify --cpt_type gams --cpt_name DeltaT --cpt_template $HOME/MARTe2-training-proj/Resources/delta_t_gam_template.json # Modify the project name and path if needed
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG modify --cpt_type gams --cpt_name DeltaT --cpt_template $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/Resources/delta_t_gam_template.json # Modify the project name and path if needed
 
 The code can be immediately compiled and tested using the generated Makefiles.
 
 .. code-block:: bash
 
     export TARGET=x86-linux
-    make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
+    make -C $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/ -f Makefile.gcc core
 
 The code must then be modified to add the missing variables and implement the ``Execute`` method. The implementation can be copied from the ``DeltaTSol`` GAM.
 
@@ -106,7 +106,7 @@ Compile the GAM:
 .. code-block:: bash
 
     export TARGET=x86-linux
-    make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
+    make -C $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/ -f Makefile.gcc core
 
 Note that the GAM path was automatically added to the ``MARTeApp.sh`` script.
 
@@ -132,7 +132,7 @@ The ``marte2_manager`` also allows to print a snippet of the configuration file 
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG print --cpt_type gams --cpt_name DeltaT --cpt_template $HOME/MARTe2-training-proj/Resources/delta_t_gam_template.json # Modify the project name and path if needed
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG print --cpt_type gams --cpt_name DeltaT --cpt_template $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/Resources/delta_t_gam_template.json # Modify the project name and path if needed
 
 Exercise
 --------
@@ -163,7 +163,7 @@ Based on the file ``Resources/any_gam_template.json``, create a new JSON templat
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG add --cpt_type gams --cpt_name MassSpringModel --cpt_namespace Tutorial --cpt_template $HOME/MARTe2-training-proj/Resources/mass_spring_gam_template.json # Modify the project name and path if needed
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG add --cpt_type gams --cpt_name MassSpringModel --cpt_namespace Tutorial --cpt_template $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/Resources/mass_spring_gam_template.json # Modify the project name and path if needed
 
 2. Modify the generated code to implement the functionality of the MassSpring model based on the equations of motion of the system. The equations of motion are described in the :doc:`MathExpressionGAM section</tutorial/mass_spring/gams/mass_spring_gams_3>` of the tutorial.
 
@@ -172,7 +172,7 @@ Based on the file ``Resources/any_gam_template.json``, create a new JSON templat
 .. code-block:: bash
 
     export TARGET=x86-linux
-    make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
+    make -C $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/ -f Makefile.gcc core
 
 4. Execute the application:
 

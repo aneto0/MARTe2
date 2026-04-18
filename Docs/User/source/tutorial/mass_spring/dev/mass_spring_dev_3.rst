@@ -20,6 +20,6 @@ For example, to create a new Interface component, the following command can be u
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG add --cpt_type interfaces --cpt_name MyInterface --cpt_namespace Tutorial # Modify the project name and path if needed
+    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG add --cpt_type interfaces --cpt_name MyInterface --cpt_namespace Tutorial # Modify the project name and path if needed
 
 This command creates a new Interface component named ``MyInterface`` in the ``Tutorial`` namespace, together with all the required Makefiles and tests.
