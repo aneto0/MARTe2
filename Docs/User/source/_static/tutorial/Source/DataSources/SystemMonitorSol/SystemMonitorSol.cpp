@@ -318,7 +318,7 @@ MARTe::uint64 SystemMonitorSol::ParseNextCPUToken(MARTe::StreamString &line) {
     StreamString token;
     char8 term;
     (void) line.GetToken(token, " ", term);
-    TypeConvert(tokenU64, token.Buffer());
+    (void) TypeConvert(tokenU64, token.Buffer());
     return tokenU64;
 }
 

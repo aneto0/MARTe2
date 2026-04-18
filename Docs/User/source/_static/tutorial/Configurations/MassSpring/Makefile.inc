@@ -73,7 +73,8 @@ OBJSX=RTApp-MassSpring-23-Sender.x \
 	RTApp-MassSpring-54-solution.x \
 	RTApp-MassSpring-55.x \
 	RTApp-MassSpring-56.x \
-	RTApp-MassSpring-60.x 
+	RTApp-MassSpring-60.x \
+	RTApp-MassSpring-60-solution.x 
 
 #Location of the Build directory where the configuration file will be written to
 BUILD_DIR?=.

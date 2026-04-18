@@ -27,13 +27,13 @@ The most important methods in DataSource developments are:
 - ``GetSignalMemoryBuffer``, to return the pointer to the memory buffer of a given signal.
 - ``GetBrokerName``, to return the name of the Broker(s) that can be used to interact with the DataSource.
 
-.. literalinclude:: /_static/tutorial/Source/DataSources/SystemMonitor/NetworkMonitor.h
+.. literalinclude:: /_static/tutorial/Source/DataSources/SystemMonitor/SystemMonitor.h
     :language: c++
     :lines: 163-166
     :caption: Static parameters definition.
     :linenos:
 
-.. literalinclude:: /_static/tutorial/Source/DataSources/SystemMonitor/NetworkMonitor.cpp
+.. literalinclude:: /_static/tutorial/Source/DataSources/SystemMonitor/SystemMonitor.cpp
     :language: c++
     :lines: 81-86
     :caption: DataSource Initialise method. 
@@ -109,86 +109,66 @@ Once the application is running, inspect the ``screen`` output and verify that t
 Exercise
 --------
 
-The objective of this exercise is to implement the MassSpring model in a GAM.
+The objective of this exercise is to add to the DataSource the CPU load, reading and parsing from the ``/proc/stat`` file .
 
-The configurable parameters are:
+Edit the file ``Resources/system_monitor_datasource_template.json``, and add a signal named ``CPULoad`` with ``number_of_elements=8`` and ``number_of_elements_fixed=false``. This will prevent the boilerplate code from forcing the number of elements to be fixed to the value set by the template.
 
-- Mass (m) [kg] – must be set and greater than zero
-- Spring constant (k) [N/m] – default value: 10.0
-- Damping coefficient (c) [Ns/m] – default value: 0.5
-- Initial position (x0) [m] – default value: 0.0
-- Initial velocity (v0) [m/s] – default value: 0.0
-
-The input signals are:
-
-- Time (t) [microseconds]
-- Force (F) [N]
-
-The output signals are:
-
-- Position (x) [m]
-- Velocity (v) [m/s]
-
-Based on the file ``Resources/any_gam_template.json``, create a new JSON template for the MassSpring GAM that implements the requirements above.
-
-1. Run the manager command to generate the boilerplate code for the MassSpring GAM based on the JSON template created in the previous step.
+1. Run the manager command to update the boilerplate code for the DataSource.
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $HOME -l DEBUG add --cpt_type gams --cpt_name MassSpringModel --cpt_namespace Tutorial --cpt_template $HOME/MARTe2-training-proj/Resources/mass_spring_gam_template.json # Modify the project name and path if needed
+   python3 -m marte2_manager.cli --project_name tutorial --project_path ~/Projects/MARTe2/Docs/User/source/_static/ modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template ~/Projects/MARTe2/Docs/User/source/_static/tutorial/Resources/system_monitor_datasource_template.json 
 
-2. Modify the generated code to implement the functionality of the MassSpring model based on the equations of motion of the system. The equations of motion are described in the :doc:`MathExpressionGAM section</tutorial/mass_spring/gams/mass_spring_gams_3>` of the tutorial.
+2. Modify the generated code to read from the ``/proc/stat`` file and extract the CPU load information.
 
-3. Compile the GAM using the generated Makefiles.
+3. The ``/proc/stat`` file contains a line starting with ``cpu`` followed by several numbers representing the time spent by the CPU in different states (user, nice, system, idle, iowait, irq, softirq). The CPU load can be calculated as the percentage of time spent in non-idle states over the total time:
+
+.. math:: \text{CPULoad} = 1 - \frac{\text{idle} + \text{iowait}}{\text{user} + \text{nice} + \text{system} + \text{iowait} + \text{irq} + \text{softirq} + \text{idle}}
+
+4. You should make use of the :doc:`MARTe2 stream API</core/streams/streams>` to read from the file and parse the contents.
+
+5. Compile the DataSource using the generated Makefiles.
 
 .. code-block:: bash
 
     export TARGET=x86-linux
     make -C $HOME/MARTe2-training-proj/ -f Makefile.gcc core
 
-4. Execute the application:
+6. Execute the application:
 
 .. code-block:: bash
 
-    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-58.cfg -l RealTimeLoader -m StateMachine::START
+    make -C ../Configurations/MassSpring/ -f Makefile.cfg #The configuration file needs to be regenerated to update with the actual number of elements of the CPULoad signal. 
+    ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-60_Gen.cfg -l RealTimeLoader -m StateMachine::START
 
-5. Inspect the ``screen`` output and verify that the application is running without issues. The log should show entries similar to the following:
+7. Inspect the ``screen`` output and verify that the application is running without issues. The log should show entries similar to the following:
 
 .. code-block:: bash
 
     ...
-    $ [Information - LoggerBroker.cpp:152]: Time [0:0]:7010000
-    $ [Information - LoggerBroker.cpp:152]: Position [0:0]:2.000131
-    $ [Information - LoggerBroker.cpp:152]: PositionM [0:0]:2.010475
-    $ [Information - LoggerBroker.cpp:152]: PositionSPM [0:0]:2.002166
-    $ [Information - LoggerBroker.cpp:152]: Velocity [0:0]:-0.000294
-    $ [Information - LoggerBroker.cpp:152]: VelocityM [0:0]:-0.012081
-    $ [Information - LoggerBroker.cpp:152]: VelocitySPM [0:0]:0.048822
-
-Where ``PositionSPM`` and ``VelocitySPM`` are the position and velocity calculated by the MassSpringModel GAM, while ``Position``, ``PositionM``, ``Velocity`` and ``VelocityM`` are calculated by the ``MathExpressionGAM`` and the ``SSMGAM``. The values should be similar across the three GAMs, with minor differences due to numerical errors and differences in the integration methods used.
+    $ [Warning - Threads.cpp:185]: Failed to change the thread priority (likely due to insufficient permissions)
+    $ [Information - StateMachine.cpp:340]: In state (INITIAL) triggered message (StartNextStateExecutionRTApp)
+    $ [Information - LoggerBroker.cpp:152]: TimeMon [0:0]:500000
+    $ [Information - LoggerBroker.cpp:152]: RXPackets [0:0]:5208123795
+    $ [Information - LoggerBroker.cpp:152]: TXPackets [0:0]:5208123795
+    $ [Information - LoggerBroker.cpp:152]: RXDropped [0:0]:0
+    $ [Information - LoggerBroker.cpp:152]: TXDropped [0:0]:0
+    $ [Information - LoggerBroker.cpp:152]: CPULoad [0:19]:{ 0.025482 0.041496 0 0 0 0.033175 0.023800 0 0.024148 0.024399 0 0 0 0 0.031807 0.031398 0 0.030271 0.032084 0.031658 }
 
 .. dropdown:: Solution
    :icon: key
 
-    The solution is to create a new JSON template for the MassSpring GAM based on the requirements specified above, and then use the manager to generate the boilerplate code.
+    The solution is to add the signal to be template file as required.
 
-    .. literalinclude:: /_static/tutorial/Resources/mass_spring_gam_template_sol.json
+    .. literalinclude:: /_static/tutorial/Resources/system_monitor_datasource_template_sol.json
         :language: json
-        :caption: JSON definition for the generation of boilerplate code for the ``MassSpringModel`` GAM example.
+        :caption: Updated json file.
         :linenos:
 
-    Then implement the functionality of the MassSpring model based on the equations of motion.
+    Then implement the functionality of the system monitor data source.
 
-    .. literalinclude:: /_static/tutorial/Source/GAMs/MassSpringModelSol/MassSpringModelSol.cpp
+    .. literalinclude:: /_static/tutorial/Source/DataSources/SystemMonitorSol/SystemMonitorSol.cpp
         :language: c++
-        :lines: 165-181
-        :caption: ``Execute`` method definition.
-        :linenos:
-
-    Note that the damping coefficient and the spring constant are divided by the mass in the ``Setup`` method.
-
-    .. literalinclude:: /_static/tutorial/Source/GAMs/MassSpringModelSol/MassSpringModelSol.cpp
-        :language: c++
-        :lines: 99-104, 158-162
-        :caption: ``Setup`` method definition (snippet).
+        :lines: 195,212-232,283-323
+        :caption: Reading of the CPU load.
         :linenos:
