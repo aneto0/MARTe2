@@ -43,7 +43,7 @@ For application-specific GAMs, the use of the ``marte2_manager`` to create the b
 
 .. note::
 
-    For generic GAMs, the use of the manager is not recommended, as it might not provide all the necessary flexibility for the design. In this case, it is recommended to start from an existing GAM with similar characteristics and modify it accordingly.
+    For generic GAMs, the use of the ``marte2_manager`` is not recommended, as it might not provide all the necessary flexibility for the design. In this case, it is recommended to start from an existing GAM with similar characteristics and modify it accordingly.
 
 In this example, a GAM will be developed to generate a relative time from an absolute time signal. The user shall be able to specify a divider value named ``DeltaTDiv``, which will be used to divide the absolute time signal and generate the relative time signal.
 

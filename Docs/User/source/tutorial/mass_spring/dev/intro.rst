@@ -24,7 +24,7 @@ In this section, the development of new components will be covered.
 
 The application structure is the same discussed in the :doc:`deploying section </deploying/deploying>`.
 
-In this tutorial, the MARTe2 command line Manager will be used to create the project and the components. The Manager is a command line tool that allows managing the development of MARTe2 applications. It can be used to deploy a new project, add a new component (including the boilerplate code) and its corresponding tests and makefiles, and modify an existing component (including the boilerplate code).
+In this tutorial, the MARTe2 command line Manager will be used to create the project and the components. The ``marte2_manager`` is a command line tool that allows managing the development of MARTe2 applications. It can be used to deploy a new project, add a new component (including the boilerplate code) and its corresponding tests and makefiles, and modify an existing component (including the boilerplate code).
 
 .. note::
 
