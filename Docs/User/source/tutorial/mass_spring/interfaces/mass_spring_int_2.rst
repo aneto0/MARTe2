@@ -14,13 +14,13 @@
 HttpService
 ===========
 
-The MARTe2 :vcisdoxygencl:`HttpService` (see also :ref:`MARTeHTTPService`) allows to interact with MARTe2 application over ``HTTP``.
+The MARTe2 :vcisdoxygencl:`HttpService` (see also :ref:`MARTeHTTPService`) allows interaction with a MARTe2 application over ``HTTP``.
 
-Is allows to query using ``JSON`` the internal state of any component in the application. By default, the ``GAMs`` and ``DataSources`` expose the values of their signals, which can be useful to implement dashboards using other tools. Another interesting feature is to browse and navigate through the application structure. 
+It enables querying the internal state of any component using ``JSON``. By default, ``GAMs`` and ``DataSources`` expose their signal values, which can be useful for building dashboards with external tools. Another useful feature is the ability to browse and navigate the application structure.
 
-In this example the HTTPService is used to query the internal state of the application and to implement a simple HTML based dashboard of the MassSpring. The :vcisdoxygencl:`HttpMessageInterface` component is used to send messages to the application to change the state of the StateMachine and thus change the reference position of the system.
+In this example, the ``HttpService`` is used to query the internal state of the application and to implement a simple HTML-based dashboard for the MassSpring system. The :vcisdoxygencl:`HttpMessageInterface` component is used to send messages to the application, allowing the StateMachine to change state and thus modify the reference position.
 
-Given that the ``HTTPService`` port number needs to be unique, in order to avoid clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-53.cfg`` will be automatically updated from a ``Makefile.cfg``. 
+Since the ``HttpService`` port must be unique to avoid conflicts, the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-53.cfg`` is automatically updated by ``Makefile.cfg``.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-53.cfg
     :language: c++
@@ -32,7 +32,7 @@ Given that the ``HTTPService`` port number needs to be unique, in order to avoid
 Running the application
 -----------------------
 
-Start the first application (note that the ``HTTP_PORT`` will be automatically updated by the ``Makefile.cfg`` and print in the screen):
+Start the application (note that ``HTTP_PORT`` is automatically assigned and printed):
 
 .. code-block:: bash
 
@@ -40,56 +40,68 @@ Start the first application (note that the ``HTTP_PORT`` will be automatically u
     HTTP_PORT=`awk '/\+WebServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-53_Gen.cfg`;echo "HTTP_PORT=$HTTP_PORT"
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-53_Gen.cfg -l RealTimeLoader -m StateMachine::START
 
-Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
+Verify that the application is running correctly:
 
 .. code-block:: console
 
-    $ [Warning - Threads.cpp:185]: Failed to change the thread priority (likely due to insufficient permissions)
-    $ [Information - StateMachine.cpp:340]: In state (INITIAL) triggered message (StartNextStateExecutionRTApp)
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:990000
     $ [Information - LoggerBroker.cpp:152]: ReferencePosition [0:0]:0.396000
-    ...
 
-1. Open a web browser and navigate to ``http://localhost:HTTP_PORT``, where ``HTTP_PORT`` is the port number assigned to the ``HttpService``. 
-2. Navigate to (by clicking on the ``[+]`` button):
+1. Open a web browser and navigate to:
+
+   ``http://localhost:HTTP_PORT``
+
+2. Browse the application structure:
 
 ::
 
     [-] ObjectBrowse (HttpObjectBrowser) 
         [-] MassSpringApp (RealTimeApplication)
             [-] Functions (ReferenceContainer)
-                [-] GAMWriter (IOGAM) [>] 0x0 
-                    
-3. Check that value of all the signals are being updated.
-4. Open another browser tab and navigate to ``http://localhost:HTTP_PORT/ObjectBrowse/MassSpringApp/Functions/GAMWriter?TextMode=0``. Verify that the JSON is being retrived.
-5. Open another browser tab and navigate to ``http://localhost:HTTP_PORT/?path=MassSpring-1.html``. Verify that a simple dashboard is shown and updated.
-6. Open another browser tab and navigate to the ``HttpMessageInterface``:
+                [-] GAMWriter (IOGAM)
+
+3. Verify that signal values are updating.
+4. Open:
+
+   ``http://localhost:HTTP_PORT/ObjectBrowse/MassSpringApp/Functions/GAMWriter?TextMode=0``
+
+   and confirm that JSON data is returned.
+
+5. Open:
+
+   ``http://localhost:HTTP_PORT/?path=MassSpring-1.html``
+
+   to view the dashboard.
+
+6. Navigate to the ``HttpMessageInterface``:
 
 ::
 
-    [-] ObjectBrowse (HttpObjectBrowser) 
-        [-] HttpMessageInterface (HttpMessageInterface) [>] 0x0
+    [-] ObjectBrowse
+        [-] HttpMessageInterface (HttpMessageInterface)
 
-7. Click on ``GOTO_CONSTANT_REF`` and observe on the dashboard that the position settles at the constant reference.
-8. Click on ``GOTO_SWITCH_OFF`` and observe on the dashboard that the position decays to zero.
- 
+7. Click ``GOTO_CONSTANT_REF`` and observe the system settling at a constant reference.
+8. Click ``GOTO_SWITCH_OFF`` and observe the position decaying to zero.
+
 Exercises
 ---------
 
-Ex. 1: Change the reference position using the HttpMessageInterface
--------------------------------------------------------------------
+Ex. 1: Change the reference position via HttpMessageInterface
+-------------------------------------------------------------
 
-The objective of this exercise is to add a new message to the ``HttpMessageInterface`` to directly send a new reference position to the :vcisdoxygenmccl:`ConstantGAM` ``GAMReference``. 
+The objective is to add a message that directly sets a new reference value in the :vcisdoxygenmccl:`ConstantGAM` ``GAMReference``.
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-54.cfg`` and add a new message to allow setting the value ``3`` (an example is already provided on how to set the value ``1``).
+1. Edit ``../Configurations/MassSpring/RTApp-MassSpring-54.cfg`` and add a new message to set the value ``3`` (an example for value ``1`` is already provided).
 
 2. Start the application:
 
+.. code-block:: bash
+
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
-    HTTP_PORT=`awk '/\+WebServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-53_Gen.cfg`;echo "HTTP_PORT=$HTTP_PORT"
+    HTTP_PORT=`awk '/\+WebServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-54_Gen.cfg`;echo "HTTP_PORT=$HTTP_PORT"
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-54_Gen.cfg -l RealTimeLoader -m StateMachine::START
 
-3. The output should show entries similar to the following:
+3. Verify output:
 
 .. code-block:: console
 
@@ -97,27 +109,24 @@ The objective of this exercise is to add a new message to the ``HttpMessageInter
     $ [Information - StateMachine.cpp:340]: In state (INITIAL) triggered message (StartNextStateExecutionRTApp)
     $ [Information - LoggerBroker.cpp:152]: Time [0:0]:990000
     $ [Information - LoggerBroker.cpp:152]: ReferencePosition [0:0]:2.000000
-    ...
 
-4. Open another browser tab and navigate to the ``HttpMessageInterface``:
+4. Open the ``HttpMessageInterface`` in the browser:
 
 ::
 
-    [-] ObjectBrowse (HttpObjectBrowser) 
-        [-] HttpMessageInterface (HttpMessageInterface) [>] 0x0
+    [-] ObjectBrowse
+        [-] HttpMessageInterface (HttpMessageInterface)
 
-7. Click on the new added message and observe on the console (or on the web dashboard) that the ``ReferencePosition`` is change to the value ``3``.
+5. Click the new message and verify that ``ReferencePosition`` changes to ``3``.
 
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to add the new message as described above.
+   Add the new message:
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-54-solution.cfg
       :language: c++
       :lines: 19-61
-      :caption: Modified HttpMessageInterface configuration to add the new message.
+      :caption: Updated HttpMessageInterface configuration.
       :linenos:
       :emphasize-lines: 32-42
-
-

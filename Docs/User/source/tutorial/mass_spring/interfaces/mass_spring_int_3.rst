@@ -14,34 +14,38 @@
 LoggerService
 =============
 
-The MARTe2 :vcisdoxygencl:`LoggerService` (see also :ref:`MARTeLogging`) enables to decouple (real-time safe) and propagate the logging messages to different consumers.
+The MARTe2 :vcisdoxygencl:`LoggerService` (see also :ref:`MARTeLogging`) enables real-time safe logging by decoupling the generation of log messages from their consumption and propagation to different outputs.
 
-Examples of LoggerService consumers include the :vcisdoxygencl:`ConsoleLogger` (which prints the log messages on the console), the :vcisdoxygencl:`UDPLogger` (which sends the log messages over UDP) and the :vcisdoxygenmccl:`SysLogger` (which sends the log messages to the machine ``syslog``).
+Typical LoggerService consumers include:
 
-All the :vcisdoxygencl:`LoggerConsumerI` accept a ``Format`` string which specifies what log properties are to be included in the log message.
+- :vcisdoxygencl:`ConsoleLogger`: prints log messages to the console.
+- :vcisdoxygencl:`UDPLogger`: sends log messages over UDP.
+- :vcisdoxygenmccl:`SysLogger`: forwards log messages to the system ``syslog``.
 
-In this example two LoggerConsumers are used: the ``ConsoleLogger`` and the ``UDPLogger``.  In order to avoid mixing messages from different applications the destination  ``UDP`` port number needs to be unique. In order to avoid clashes,  the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-55.cfg`` will be automatically updated from a ``Makefile.cfg``.
+All :vcisdoxygencl:`LoggerConsumerI` implementations accept a ``Format`` string, which defines which log properties are included in each message.
+
+In this example, two LoggerConsumers are configured: ``ConsoleLogger`` and ``UDPLogger``. To avoid mixing messages from different applications, the destination ``UDP`` port must be unique. This port is automatically assigned in the configuration file ``../Configurations/MassSpring/RTApp-MassSpring-55.cfg`` via ``Makefile.cfg``.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-55.cfg
     :language: c++
     :lines: 4-19
-    :caption: LoggerService configuration. Note that destination UDP port will be automatically updated by the ``Makefile.cfg``.
+    :caption: LoggerService configuration. The UDP destination port is automatically assigned.
     :linenos:
     :emphasize-lines: 6, 8, 13
 
-The tools to handle the reception of the log messages are outside the scope of this tutorial, but a simple example of how to receive the log messages using the `marte2-log <https://vcis-gitlab.f4e.europa.eu/common/marte2-logview>`__ application is shown below.
+Tools for receiving and visualising log messages are outside the scope of this tutorial. However, an example using the `marte2-log <https://vcis-gitlab.f4e.europa.eu/common/marte2-logview>`__ application is provided below.
 
 Running the application
 -----------------------
 
-Start the first application with:
+Start the application:
 
 .. code-block:: bash
 
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-55_Gen.cfg -l RealTimeLoader -m StateMachine::START
 
-Once the application is running, inspect the ``screen`` output and verify that the application is running without any issues. The log should show entries similar to the following:
+Verify that the application is running correctly. The log output should look similar to:
 
 .. code-block:: console
 
@@ -59,10 +63,16 @@ Once the application is running, inspect the ``screen`` output and verify that t
     LOG_HTTP_PORT=`PORT=8080;while netstat -tln | grep -q ":$PORT"; do PORT=$((PORT + 1)); done; echo $PORT`
     echo $LOG_HTTP_PORT
 
-4. Start the ``marte2-log`` application in web mode with the following command:
+4. Start the logging application in web mode:
 
 .. code-block:: bash
 
-    python3.6 logapp.py -t WS -p $UDP_LOGGER_DEST_PORT -r $LOG_HTTP_PORT #Replace the $UDP_LOGGER_DEST_PORT with the port number allocated to the UDPLogger in the configuration file
+    python3.6 logapp.py -t WS -p $UDP_LOGGER_DEST_PORT -r $LOG_HTTP_PORT
 
-5. Open a web browser and navigate to ``http://localhost:$LOG_HTTP_PORT/index.html`` (replace the $LOG_HTTP_PORT with the port number allocated in the previous step) to view the log messages in real-time.
+5. Open a browser and navigate to:
+
+::
+
+    http://localhost:$LOG_HTTP_PORT/index.html
+
+You should now see real-time log messages streamed from the MARTe2 application.

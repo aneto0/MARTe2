@@ -35,7 +35,7 @@ The ``Makefile`` will automatically call the script ``../Test/Integrated/FindFre
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-23-Sender.cfg
     :language: c++
-    :lines: 1198-1234
+    :lines: 1157-1190
     :caption: UDPSender configuration. Note that the port number is set from the variable ``TUTORIAL_UDP_PORT``, which is replaced by the ``Makefile.cfg``.
     :linenos:
     :emphasize-lines: 4

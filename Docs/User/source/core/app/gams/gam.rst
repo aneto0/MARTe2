@@ -341,13 +341,11 @@ The following is an example of GAMGroup which shares a Matrix with several GAMs.
    :language: c++   
    :caption: Child GAMGroup which shares a Matrix with the ParentGAMGroupExample1 instance.
    :linenos:
-   :emphasize-lines: 127,130-131,142,164
 
 .. literalinclude:: /_static/examples/Core/ChildGAMGroupExample2.cpp
    :language: c++   
    :caption: Child GAMGroup which shares a Matrix with the ParentGAMGroupExample1 instance.
    :linenos:
-   :emphasize-lines: 131,134-135,146,160,169-170
       
 .. literalinclude:: /_static/examples/Configurations/GAMs-4.cfg
    :language: bash	

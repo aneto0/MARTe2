@@ -14,8 +14,16 @@
 Other Interfaces
 ================
 
-This section concludes the introduction to the Interface components used in the mass-spring-damper example, listing other commonly used Interface components that are not covered in the previous sections.
+This section concludes the overview of Interface components used in the mass-spring-damper example, by listing other commonly used interfaces that were not covered previously.
 
-- :vcisdoxygenmccl:`ApplicationKiller`: terminates an application based on a Message event.
-- :vcisdoxygenmccl:`SysLogger`: to be used with a :vcisdoxygencl:`LoggerService`. Sends log messages to the configured ``syslog``.
-- :vcisdoxygenmccl:`TcnTimeProvider`: to be used with a :vcisdoxygenmccl:`LinuxTimer`. Provides TCN synchronised information to the system.
+- :vcisdoxygenmccl:`ApplicationKiller`:  
+  Terminates the application when a specific Message is received.  
+  Useful for implementing controlled shutdowns or safety mechanisms.
+
+- :vcisdoxygenmccl:`SysLogger`:  
+  Designed to be used with the :vcisdoxygencl:`LoggerService`.  
+  Forwards log messages to the system ``syslog``, enabling integration with standard OS logging tools and monitoring systems.
+
+- :vcisdoxygenmccl:`TcnTimeProvider`:  
+  Typically used together with a :vcisdoxygenmccl:`LinuxTimer`.  
+  Provides time synchronisation based on TCN (Timing Communication Network), ensuring consistent and accurate timing across distributed systems.

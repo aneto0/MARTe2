@@ -136,15 +136,30 @@ When running the application, the output given by the ``GAMMathModel`` and the o
 
 
 .. dropdown:: Solution
-   :icon: key
+  :icon: key
 
-   The solution is to add the signal to the ``HistogramGAM`` and connect it to the ``GAMDisplay``.
+   The solution is to add a ``MathExpressionGAM`` to compute the difference.
 
-   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-7-solution.cfg
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-10-solution.cfg
       :language: c++
-      :lines: 331-360
-      :caption: Updated configuration with the Force statistics.
+      :lines: 314-333
+      :caption: Computation of the ``PositionErr``.
       :linenos: 
-      :emphasize-lines: 11, 24
 
-  The ``PositionM`` value is never converging to the target value because the ``GAMController`` is using the ``Position`` value as feedback. Try modifying it to use the ``PositionM`` value instead.
+   Add the computed signal to the ``GAMDisplay`` to log the error between the two models.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-10-solution.cfg
+      :language: c++
+      :lines: 439-441,466-469,593,618-621
+      :caption: Computation of the ``PositionErr``.
+      :linenos: 
+
+   Add the GAM to the execution list.
+
+   .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-10-solution.cfg
+      :language: c++
+      :lines: 776-784
+      :caption: GAM execution list.
+      :linenos: 
+
+   The ``PositionM`` value is never converging to the target value because the ``GAMController`` is using the ``Position`` value as feedback. Try modifying it to use the ``PositionM`` value instead.

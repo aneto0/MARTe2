@@ -16,18 +16,18 @@
 Structured types
 ================
 
-This section describes how to define structured types in MARTe2 configuration files, given that some components require structured types to represent complex data structures. A structured type is a user-defined data type that can contain multiple fields of different types. This allows for more complex data representations and can be used to model real-world entities more accurately.
+This section describes how to define structured types in MARTe2 configuration files. Some components require structured types to represent complex data structures. A structured type is a user-defined data type that can contain multiple fields of different types, enabling more expressive and realistic data modelling.
 
-Note that this section only focus on the use of structured types in the configuration files, and does not cover the implementation of structured types in the code. For more information on how to implement structured types in the code, please refer to the :ref:`GAM documentation <StructuredGAM>`.
+Note that this section focuses only on the use of structured types in configuration files and does not cover their implementation in code. For more details on implementing structured types, refer to the :ref:`GAM documentation <StructuredGAM>`.
 
-Structured types are very similar to ``C structs`` (defined with packed alignment), meaning that no padding is added between the fields. This allows for a straightforward mapping between the structured types defined in the configuration files and the corresponding ``C structures`` used in the code (which need to be defined with ``__attribute__((__packed__))``).
+Structured types are very similar to ``C structs`` (defined with packed alignment), meaning that no padding is added between fields. This enables a direct mapping between structured types defined in configuration files and the corresponding ``C structures`` in code (which must be defined with ``__attribute__((__packed__))``).
 
-In this section, the control signals are grouped into a struct to facilitate the monitoring of the application.
+In this section, control signals are grouped into a structure to simplify application monitoring.
 
 .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-34.cfg
     :language: c++
     :lines: 1-54
-    :caption: Application structures definition. Note the use of structures of structures.
+    :caption: Application structures definition (including nested structures).
     :linenos:
     :emphasize-lines: 4, 46, 51
 
@@ -40,19 +40,19 @@ In this section, the control signals are grouped into a struct to facilitate the
 
 .. important::
 
-   MARTe2 always expands the structured types into their individual fields when the application is run. This means that the structured types are only a convenient way to group related signals together in the configuration file, but they do not have any impact on the actual data representation in memory nor on the way the signals are accessed in the components (GAMs and DataSource) code.
+   MARTe2 expands structured types into their individual fields at runtime. Structured types are therefore only a convenient way to group related signals in the configuration file; they do not affect the in-memory representation or how signals are accessed in component (GAM and DataSource) code.
 
 .. note::
 
-   The IOGAM is typically used to convert between types that are memory compatible. In this case the flat list of the input signals of the ``GAMDisplay`` is converted into a single structured signal that is then used as an output to the ``GAMDisplay``. 
+   The IOGAM is typically used to convert between memory-compatible types. In this example, a flat list of input signals is converted into a single structured signal, which is then passed to the ``GAMDisplay``.
 
 .. note::
 
-   The use of structured types is not limited to the GAMDisplay. It can be used in any component that supports structured types (e.g. FileWriter, Logger, ...).  GAMs can also access individual fields of the structured types, in a very similar way to ``C``. The access to the individual fields of the structured types is done using the dot notation in the ``Alias`` field (e.g. ``Alias=Monitor.Control.Position``).
+   Structured types are not limited to ``GAMDisplay``. They can be used in any component that supports them. GAMs can also access individual fields using a syntax similar to ``C``, via dot notation in the ``Alias`` field (e.g. ``Alias=Monitor.Control.Position``).
 
 .. important::
 
-   While loading the registered types the MARTe2 application will output the log many warning messages similar to the following:
+   When loading registered types, the MARTe2 application may output several warning messages such as:
 
    .. code-block:: c++
 
@@ -66,7 +66,11 @@ In this section, the control signals are grouped into a struct to facilitate the
       $ [Information - IntrospectionStructure.cpp:270]: Registering type GAMPerformance
       ...
 
-   These messages are expected and can be safely ignored. They are due to the fact that MARTe2 tries to load the structured types as if they were components (GAMs, DataSources, ...), but since they are not components, the loading fails and the warning messages are output. However, the structured types are still registered successfully (provided that the message ``[Information - IntrospectionStructure.cpp:270]: Registering type <type_name>`` is shown) and can be used in the application without any issues.
+   These messages are expected and can be safely ignored. They occur because MARTe2 attempts to load structured types as components (e.g. GAMs or DataSources). Since they are not components, loading fails and warnings are issued. However, as long as messages such as:
+
+   ``[Information - IntrospectionStructure.cpp:270]: Registering type <type_name>``
+
+   are present, the structured types are correctly registered and can be used without issues.
 
 Running the application
 -----------------------
@@ -77,7 +81,7 @@ Start the application with:
 
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-34.cfg -l RealTimeLoader -s State1
 
-Once the application is running, inspect the ``screen`` output and verify that the log shows the structured data as expected. The log should show entries similar to the following:
+Once running, verify that structured data is correctly displayed in the logs:
 
 .. code-block:: console
 
@@ -104,7 +108,7 @@ Exercises
 Ex. 1: Structured statistics
 ----------------------------
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-35.cfg`` and add structured types that match the following C structures:
+1. Edit ``../Configurations/MassSpring/RTApp-MassSpring-35.cfg`` and define structured types matching the following C structures:
 
    .. code-block:: c++
 
@@ -158,8 +162,9 @@ Ex. 1: Structured statistics
          AppPerformance Performance;
       };
 
+2. Modify ``GAMDisplay`` to output the full structured signal.
 
-2. Modify the GAMDisplay to output the full structure.
+Run the application:
 
 .. code-block:: bash
 
@@ -168,20 +173,19 @@ Ex. 1: Structured statistics
 .. dropdown:: Solution
    :icon: key
 
-   The solution is to modify the add the types to the configuration file.
+   Add the structured types to the configuration file:
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-35-solution.cfg
       :language: c++
       :lines: 1-125
-      :caption: Structured type definition. 
+      :caption: Structured type definitions.
       :linenos: 
 
-   Add add the structured type to the GAMDisplay configuration.
+   Then update the ``GAMDisplay`` configuration:
 
    .. literalinclude:: /_static/tutorial/Configurations/MassSpring/RTApp-MassSpring-35-solution.cfg
       :language: c++
       :lines: 708-715, 882-887
-      :caption: GAMDisplay configuration. 
+      :caption: GAMDisplay configuration using structured types.
       :linenos: 
       :emphasize-lines: 12
-
