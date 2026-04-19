@@ -110,7 +110,7 @@ Export the required environment variables for the ``sdn-print`` tool and run it.
 .. code-block:: bash
 
     export SDN_TOPIC_PATH=../Test/Integrated
-    sdn-print -i lo -t mass-spring-1 -c -1
+    sdn-print -i lo -t mass-spring-0 -c -1
 
 Notice that both MARTe2 and the ``sdn-print`` tool receive from the SDN topic source using multicast.
 
@@ -119,14 +119,14 @@ On another console, check the statistics from the publisher application:
 .. code-block:: bash
 
     export SDN_TOPIC_PATH=../Test/Integrated
-    sdn-print -i lo -t mass-spring-2 -c -1
+    sdn-print -i lo -t mass-spring-1 -c -1
 
 And on another console, check the statistics from the subscriber application:
 
 .. code-block:: bash
 
     export SDN_TOPIC_PATH=../Test/Integrated
-    sdn-print -i lo -t mass-spring-3 -c -1
+    sdn-print -i lo -t mass-spring-2 -c -1
 
 
 Exercises
