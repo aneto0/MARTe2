@@ -109,7 +109,8 @@ The output should be similar to the following:
 
     .. code-block:: bash
 
-        python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace OPCUA_PORT with the actual port number being used in the configuration file.
+        OPCUA_PORT=`awk '/\+OPCUAServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-40_Gen.cfg`;echo "OPCUA_PORT=$OPCUA_PORT"
+        python3.6 ../Test/Integrated/opcua_monitor.py -p $OPCUA_PORT -s MassSpringDemo
 
 As explained in the :vcisdoxygenmccl:`OPCUADSOutput` documentation, it is possible to associate a timestamp signal with one or more output signals. When a timestamp signal is configured, its value is used to populate the ``OPCUA`` ``SourceTimestamp`` field when writing the associated nodes.
 
@@ -214,7 +215,8 @@ The objective of this exercise is to use another signal to timestamp OPCUA again
 
 .. code-block:: bash
 
-    python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo --print_time_stamps #Replace OPCUA_PORT with the actual port number being used in the configuration file.
+    OPCUA_PORT=`awk '/\+OPCUAServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-42_Gen.cfg`;echo "OPCUA_PORT=$OPCUA_PORT"
+    python3.6 ../Test/Integrated/opcua_monitor.py -p $OPCUA_PORT -s MassSpringDemo --print_time_stamps
 
 .. dropdown:: Solution
    :icon: key
