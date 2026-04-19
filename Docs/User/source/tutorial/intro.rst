@@ -50,7 +50,7 @@ This tutorial is organised as a step-by-step path:
   - a CODAC Core System environment
 - Start from a minimal working application
 - Explore how MARTe2 components interact (GAMs, DataSources, signals)
-- Introduce a simple control example (water tank)
+- Introduce a simple control example (mass-spring-damper)
 - Extend the application using standard components
 - Modify behaviour through configuration changes
 - Implement custom logic with a GAM
