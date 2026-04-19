@@ -51,7 +51,7 @@ To create a new DataSource using the ``marte2_manager``, run:
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG add --cpt_type datasources --cpt_name MyDataSource --cpt_namespace Tutorial
+    pyhon -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG add --cpt_type datasources --cpt_name MyDataSource --cpt_namespace Tutorial
 
 This creates a new DataSource component named ``MyDataSource`` in the ``Tutorial`` namespace, along with the required Makefiles and tests.
 
@@ -68,7 +68,7 @@ To update the boilerplate code based on the template:
 
 .. code-block:: bash
 
-    python3 -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/Resources/system_monitor_datasource_template.json
+    pyhon -m marte2_manager.cli --project_name MARTe2-training-proj --project_path $MARTE_TRAINING_PARENT_DIR -l DEBUG modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/Resources/system_monitor_datasource_template.json
 
 The code can then be compiled and tested using the generated Makefiles:
 
@@ -115,7 +115,7 @@ This allows dynamic sizing rather than enforcing a fixed number of elements.
 
 .. code-block:: bash
 
-   python3 -m marte2_manager.cli --project_name tutorial --project_path ~/Projects/MARTe2/Docs/User/source/_static/ modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template ~/Projects/MARTe2/Docs/User/source/_static/tutorial/Resources/system_monitor_datasource_template.json 
+   pyhon -m marte2_manager.cli --project_name tutorial --project_path ~/Projects/MARTe2/Docs/User/source/_static/ modify --cpt_type datasources --cpt_name SystemMonitor --cpt_template ~/Projects/MARTe2/Docs/User/source/_static/tutorial/Resources/system_monitor_datasource_template.json 
 
 2. Modify the generated code to read and parse ``/proc/stat``.
 
