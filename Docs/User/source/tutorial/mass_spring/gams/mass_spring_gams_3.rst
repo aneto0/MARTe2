@@ -112,7 +112,7 @@ the discrete-time equations become:
 
    x_2[k+1] = x_2[k] + T_s\left(-\frac{k}{m}x_1[k] - \frac{c}{m}x_2[k] + \frac{1}{m}u[k]\right)
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-8.cfg`` and modify the existing ``MathExpressionGAM``, named ``GAMMathModel``, to compute the equations above.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-9.cfg`` and modify the existing ``MathExpressionGAM``, named ``GAMMathModel``, to compute the equations above.
 2. Connect the output of the ``GAMMathModel`` to the ``GAMDisplay`` to log the position and velocity of the mass. In order to avoid conflicting name definitions, call the signals ``PositionM`` and ``VelocityM``.
 
 .. dropdown:: Solution
