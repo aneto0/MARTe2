@@ -51,7 +51,7 @@ The DataSource also supports the archiving of structures (see the :vcisdoxygencl
 Running the application
 -----------------------
 
-Start the DAN archiver:
+Start the DAN archiver (if not already running):
 
 .. code-block:: bash
 
