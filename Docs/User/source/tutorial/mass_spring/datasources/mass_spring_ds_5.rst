@@ -124,7 +124,7 @@ Ex. 1: Stream the ``Stats`` signals over SDN.
 .. code-block:: bash
 
     export SDN_TOPIC_PATH=../Test/Integrated
-    sdn-print -i lo -t mass-spring-2 -c -1
+    sdn-print -i lo -t mass-spring-0 -c -1
 
 .. dropdown:: Solution
    :icon: key
