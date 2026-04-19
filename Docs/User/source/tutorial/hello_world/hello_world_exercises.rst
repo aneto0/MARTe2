@@ -77,7 +77,7 @@ Ex. 2: Find the typo
 Ex. 3: Modify the logged signal
 -------------------------------
 
-1. Edit the file ``../Configurations/HelloWorld/RTApp-HelloWorld-4.cfg`` and modify the configuration to log the ``Timer`` signal instead of the ``Counter`` signal.
+1. Edit the file ``../Configurations/HelloWorld/RTApp-HelloWorld-4.cfg`` and modify the configuration to log the ``Time`` signal instead of the ``Counter`` signal.
 
 .. dropdown:: Solution
    :icon: key
