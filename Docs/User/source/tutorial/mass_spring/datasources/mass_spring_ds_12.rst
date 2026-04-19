@@ -141,7 +141,8 @@ Or:
 
 .. code-block:: bash
 
-    python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace OPCUA_PORT with the actual port number being used in the configuration file.
+    OPCUA_PORT=`awk '/\+OPCUAServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-43_Gen.cfg`;echo "OPCUA_PORT=$OPCUA_PORT"
+    python3.6 ../Test/Integrated/opcua_monitor.py -p $OPCUA_PORT -s MassSpringDemo 
 
 Exercises
 ---------
@@ -184,7 +185,8 @@ The objective of this exercise is to use the ``OPCUADSInput`` DataSource to swit
 
 .. code-block:: bash
 
-        python3.6 ../Test/Integrated/opcua_writer.py -p OPCUA_PORT -s MassSpringDemoControlInput.SwitchOn -v 1 #Replace OPCUA_PORT with the actual port number being used in the configuration file.
+    OPCUA_PORT=`awk '/\+OPCUAServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-44_Gen.cfg`;echo "OPCUA_PORT=$OPCUA_PORT"
+    python3.6 ../Test/Integrated/opcua_writer.py -p $OPCUA_PORT -s MassSpringDemoControlInput.SwitchOn -v 1 
 
 9. Observe that the ``Position`` is now changing and that the system is responding to the new target ``ReferencePosition``, using one of the commands described above.
 
