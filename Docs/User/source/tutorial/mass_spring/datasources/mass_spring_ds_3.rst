@@ -102,7 +102,8 @@ Open another terminal and run the script with:
 
 .. code-block:: bash
 
-    python ../Test/Integrated/udp_monitor.py -p TUTORIAL_UDP_PORT #Replace TUTORIAL_UDP_PORT with the actual port number being used by the application
+    TUTORIAL_UDP_PORT=`awk '/\+UDPWriterStats/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-23-Sender_Gen.cfg`;echo "TUTORIAL_UDP_PORT=$TUTORIAL_UDP_PORT"
+    python ../Test/Integrated/udp_monitor.py -p $TUTORIAL_UDP_PORT 
 
 Exercises
 ---------
@@ -122,9 +123,11 @@ Ex. 1: Stream the ``ReferencePosition`` signal over UDP.
 
 .. code-block:: bash
 
-    python ../Test/Integrated/udp_monitor.py -p TUTORIAL_UDP_PORT_2 #Replace TUTORIAL_UDP_PORT_2 with the actual port number being used by the application
+    TUTORIAL_UDP_PORT_2=`awk '/\+UDPWriterStats/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-24-Sender_Gen.cfg`;echo "TUTORIAL_UDP_PORT_2=$TUTORIAL_UDP_PORT_2"
+    python ../Test/Integrated/udp_monitor.py -p $TUTORIAL_UDP_PORT_2 
 
-    python ../Test/Integrated/udp_monitor.py -p TUTORIAL_UDP_PORT_1 -s 2 #Replace TUTORIAL_UDP_PORT_1 with the actual port number being used by the application. Note that the signal index is set to 2, which corresponds to expecting a packet with the ``ReferencePosition`` signal in the payload.
+    TUTORIAL_UDP_PORT_1=`awk '/\+UDPWriterReference/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-24-Sender_Gen.cfg`;echo "TUTORIAL_UDP_PORT_1=$TUTORIAL_UDP_PORT_1"
+    python ../Test/Integrated/udp_monitor.py -p $TUTORIAL_UDP_PORT_1 -s 2 #Note that the signal index is set to 2, which corresponds to expecting a packet with the ``ReferencePosition`` signal in the payload.
 
 .. dropdown:: Solution
    :icon: key
