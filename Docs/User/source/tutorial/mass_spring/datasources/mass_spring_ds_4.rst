@@ -104,7 +104,10 @@ In the example above, the receiver application waits indefinitely for UDP packet
 
 .. code-block:: bash
 
-    python ../Test/Integrated/udp_monitor.py -p TUTORIAL_UDP_PORT_4 -s 3 #Replace TUTORIAL_UDP_PORT_4 with the actual port number being used by the application. Note that the signal index is set to 3, which corresponds to expecting a packet with the ``UDPStalled`` signal in the payload.
+    TUTORIAL_UDP_PORT_4=`awk '/\+UDPWriterStats/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-25-Receiver_Gen.cfg`;echo "TUTORIAL_UDP_PORT_4=$TUTORIAL_UDP_PORT_4"
+    python ../Test/Integrated/udp_monitor.py -p $TUTORIAL_UDP_PORT_4 -s 3
+
+6. Stop the sender application and verify on the python output that the receiver application detects the stalled data stream.
 
 .. dropdown:: Solution
    :icon: key
