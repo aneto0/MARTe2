@@ -23445,7 +23445,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestVerifyDataSourcesSignals_A
             "                    DataSource = \"DDB1\""
             "                    FullType = \"Node.uint32\""
             "                    DataSourceNumber = \"0\""
-            "                    NumberOfDimensions = 0"
+            "                    NumberOfDimensions = 1"
             "                    ByteSize = 8"
             "                }"
             "                \"1\" = {"

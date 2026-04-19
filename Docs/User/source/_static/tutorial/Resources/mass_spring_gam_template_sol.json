@@ -1,0 +1,67 @@
+{
+    "parameters": {
+        "Mass": {
+            "type": "float64",
+            "description": "The mass in kg",
+            "number_of_elements": 1,
+            "required": false,
+            "validation": "(Mass > (float64)(0))",
+            "default_value": 1.0
+        },
+        "SpringConstant": {
+            "type": "float64",
+            "description": "The spring constant in N/m",
+            "required": false,
+            "default_value": 10.0
+        },
+        "DampingCoefficient": {
+            "type": "float64",
+            "description": "The damping coefficient in Ns/m",
+            "required": false,
+            "default_value": 0.5
+        },
+        "InitialPosition": {
+            "type": "float64",
+            "description": "The initial position in m",
+            "required": false,
+            "default_value": 0.0
+        },
+        "InitialVelocity": {
+            "type": "float64",
+            "description": "The initial velocity in m/s",
+            "required": false,
+            "default_value": 0.0
+        }
+    },
+    "input_signals": {
+        "Time": {
+            "type": "uint32",
+            "description": "Input time in microseconds",
+            "number_of_elements": 1,
+            "samples": 1,
+            "number_of_elements_fixed": true
+        },
+        "Force": {
+            "type": "float64",
+            "description": "Input force in N",
+            "number_of_elements": 1,
+            "samples": 1,
+            "number_of_elements_fixed": true
+        }
+    },
+    "output_signals": {
+        "Position": {
+            "type": "float64",
+            "description": "Position in m",
+            "number_of_elements": 1,
+            "number_of_elements_fixed": true
+        },
+        "Velocity": {
+            "type": "float64",
+            "description": "Velocity in m/s",
+            "number_of_elements": 1,
+            "number_of_elements_fixed": true
+        }
+
+    }
+}

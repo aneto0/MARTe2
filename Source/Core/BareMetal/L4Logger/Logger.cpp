@@ -31,7 +31,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
-#include "../../BareMetal/L4Logger/Logger.h"
+#include "ThreadsB.h"
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -48,11 +49,15 @@ void LoggerErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &
                                        const char8 * const errorDescription) {
     Logger *loggerService = Logger::Instance();
     if (loggerService != NULL_PTR(Logger *)) {
-        LoggerPage *page = loggerService->GetPage();
-        if (page != NULL_PTR(LoggerPage *)) {
-            page->errorInfo = errorInfo;
-            (void)MemoryOperationsHelper::Copy(&page->errorStrBuffer[0u], errorDescription, MAX_ERROR_MESSAGE_SIZE);
-            loggerService->AddLogEntry(page);
+        ThreadIdentifier callbackThreadId = Threads::Id();
+        bool deadLock = (loggerService->GetLogCallerThreadId() == callbackThreadId);
+        if (!deadLock) {
+            LoggerPage *page = loggerService->GetPage();
+            if (page != NULL_PTR(LoggerPage *)) {
+                page->errorInfo = errorInfo;
+                (void)MemoryOperationsHelper::Copy(&page->errorStrBuffer[0u], errorDescription, MAX_ERROR_MESSAGE_SIZE);
+                loggerService->AddLogEntry(page);
+            }
         }
     }
 }
@@ -73,6 +78,7 @@ Logger::Logger(const uint32 numberOfPages) :
         pagesIndex(nOfPages, false) {
     /*lint -e{1732} -e{1733} new in constructor safe as this class can only be used as a singleton*/
     pages = new LoggerPage[nOfPages];
+    logCallerThreadId = InvalidThreadIdentifier;
     SetErrorProcessFunction(&LoggerErrorProcessFunction);
 }
 
@@ -126,6 +132,14 @@ uint32 Logger::GetNumberOfPages() const {
 
 uint32 Logger::GetNumberOfLogs() const {
     return logsIndex.GetSize();
+}
+
+void Logger::SetLogCallerThreadId(const ThreadIdentifier callerThreadId) {
+    logCallerThreadId = callerThreadId;
+}
+
+ThreadIdentifier Logger::GetLogCallerThreadId() const {
+    return logCallerThreadId;
 }
 
 }

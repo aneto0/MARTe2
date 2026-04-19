@@ -133,10 +133,6 @@ uint32 GetCPUs(const ThreadIdentifier &threadId) {
     return 1;
 }
 
-ThreadIdentifier Id() {
-    return xTaskGetCurrentTaskHandle();
-}
-
 /**
  * The priority will vary between 0, i.e. priorityClass = Unknown
  * and priorityLevel = 0 and 99, i.e. priorityClass = RealTime

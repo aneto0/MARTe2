@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- Implicit size (assumed to be 256 bytes incl. header) -->
+<topic name="TOPIC_NAME" description="MARTe2 topic test for stats" version="1.0" uid="0">
+  <attributes>
+      <attribute rank="0" name="Thread1CycleTime" dataType="uint32" description="Thread1 cycle time" unit="us - microseconds"></attribute>
+      <attribute rank="1" name="Thread1CycleTimeAverage" dataType="uint32" description="Thread1 average cycle time" unit="us - microseconds"></attribute>
+      <attribute rank="2" name="Thread1CycleTimeStdDev" dataType="uint32" description="Thread1 cycle time std" unit="us - microseconds"></attribute>
+      <attribute rank="3" name="Thread1CycleTimeMax" dataType="uint32" description="Thread1 max. cycle time" unit="us - microseconds"></attribute>
+      <attribute rank="4" name="Thread1CycleTimeMin" dataType="uint32" description="Thread1 min. cycle time" unit="us - microseconds"></attribute>
+      <attribute rank="5" name="Thread1CycleTimeHistogram" dataType="uint32" description="Thread1 cycle time histogram" unit="us - microseconds" multiplicity="11"></attribute>
+      <attribute rank="6" name="Thread1FreeTimeHistogram" dataType="uint32" description="Thread1 free time histogram" unit="us - microseconds" multiplicity="11"></attribute>
+      <attribute rank="7" name="GAMsExecutionTime" dataType="uint32" description="Total execution time by all GAMs" unit="us - microseconds"></attribute>
+  </attributes>
+</topic>
+

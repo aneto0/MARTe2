@@ -52,6 +52,7 @@
 
 int main(int argc, char **argv) {
     using namespace MARTe;
+    SetErrorProcessFunction(&ErrorProcessExampleFunction);
     ConfigurationDatabase cdb;
     uint64 now = HighResolutionTimer::Counter();
     for(uint32 b=0; b<68; b++) {
@@ -77,12 +78,12 @@ int main(int argc, char **argv) {
             cdb.MoveToAncestor(1u);
         }
         cdb.MoveToAncestor(1u);
-        printf("Node [%d]\n", b);
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Node [%d].", b);
     }
     uint64 end = HighResolutionTimer::Counter();
     uint64 tdiff = end - now;
     float64 ttime = tdiff * HighResolutionTimer::Period();
-    printf("Took [%e] seconds\n", ttime);
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Took [%e] seconds.", ttime);
     return 0;
 }
 

@@ -11,6 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
+.. _MARTeDataDrivenApplications:
+
 Data-driven applications
 ========================
 
@@ -151,6 +153,8 @@ The :vcisdoxygencl:`IntrospectionStructure` class can also be used to dynamicall
             Type = GainFromIntroStructure
        }
        ...
+
+.. _MARTeConfigurationPreProcessing:
 
 Preprocessing
 -------------

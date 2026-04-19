@@ -49,9 +49,9 @@ MemoryMapInputBroker::~MemoryMapInputBroker() {
 
 }
 
+/*lint -e{613} no NULL pointers expected at this stage as this would violate the pre-conditions to use this function (i.e. to have had a valid Init).*/
 bool MemoryMapInputBroker::Execute() {
     uint32 n;
-    /*lint -e{613} null pointer checked before.*/
     uint32 i = dataSource->GetCurrentStateBuffer();
     bool ret = true;
     if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
@@ -59,6 +59,9 @@ bool MemoryMapInputBroker::Execute() {
             uint32 dataSourceIndex = ((i * numberOfCopies) + n);
             ret = MemoryOperationsHelper::Copy(copyTable[n].gamPointer, copyTable[dataSourceIndex].dataSourcePointer, copyTable[n].copySize);
         }
+    }
+    if (ret) {
+        ret = dataSource->BrokerCopyTerminated();
     }
     return ret;
 }

@@ -33,6 +33,7 @@
 #include "PlainLoggerService.h"
 #include "ReferenceT.h"
 #include "StringHelper.h"
+#include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -137,6 +138,7 @@ namespace MARTe {
         }
         /*lint -e{1938} Access to the global variable is currently the only way of modifying the global error function handler */
         originalErrorMessageFunction = ErrorManagement::errorMessageProcessFunction;
+        logCallerThreadId = InvalidThreadIdentifier;
     }
 
     /*lint -e{818} Inner call does not accept const for the parameter */
@@ -202,12 +204,23 @@ namespace MARTe {
     }
 
     void PlainLoggerBinderSingleton::PropagateLog(const ErrorManagement::ErrorInformation &errorInfo, const char8 * const errorDescription) {
-        ErrorManagement::ErrorType err = mux.FastLock();
-        if(err == ErrorManagement::NoError) {
-            for(uint32 i = 0u; (i < plainLoggersList.GetSize()); i++) {
-                plainLoggersList[i]->Log(errorInfo, errorDescription);
+        ThreadIdentifier callerThreadId = Threads::Id(); 
+        /* Prevent recursive logging.
+           If plainLoggersList[i]->Log() calls REPORT_ERROR (e.g. when BasicUDPSocket fails), execution may re-enter this function and cause an infinite loop. In that case logCallerThreadId is already equal to callerThreadId.
+           
+           There is no race condition in this scenario. In all other cases this protection is irrelevant and the code simply waits on mux.FastLock() as it did previously*/
+
+        bool deadLock = (callerThreadId == logCallerThreadId);
+        if (!deadLock) {
+            ErrorManagement::ErrorType err = mux.FastLock();
+            logCallerThreadId = callerThreadId;
+            if(err == ErrorManagement::NoError) {
+                for(uint32 i = 0u; (i < plainLoggersList.GetSize()); i++) {
+                    plainLoggersList[i]->Log(errorInfo, errorDescription);
+                }
+                logCallerThreadId = InvalidThreadIdentifier;
+                mux.FastUnLock();
             }
-            mux.FastUnLock();
         }
     }
 

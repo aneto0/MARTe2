@@ -743,23 +743,23 @@ bool GAM::ExportData(StructuredDataI &data) {
         uint32 i;
         for (i = 0u; (i < numberOfOutputSignals) && (ok); i++) {
             StreamString signalName;
+            uint32 numberOfDimensions = 0u;
+            TypeDescriptor td = GetSignalType(OutputSignals, i);
+            AnyType at(td, 0u, GetOutputSignalMemory(i));
             ok = GetSignalName(OutputSignals, i, signalName);
             if (ok) {
-                TypeDescriptor td = GetSignalType(OutputSignals, i);
-                AnyType at(td, 0u, GetOutputSignalMemory(i));
-                uint32 numberOfDimensions = 0u;
                 ok = GetSignalNumberOfDimensions(OutputSignals, i, numberOfDimensions);
+            }
+            if (ok) {
+                at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
+                uint32 numberOfElements = 0u;
                 if (ok) {
-                    at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
-                    uint32 numberOfElements = 0u;
-                    if (ok) {
-                        ok = GetSignalNumberOfElements(OutputSignals, i, numberOfElements);
-                    }
-                    if (ok) {
-                        at.SetNumberOfElements(0u, numberOfElements);
-                    }
-                    ok = data.Write(signalName.Buffer(), at);
+                    ok = GetSignalNumberOfElements(OutputSignals, i, numberOfElements);
                 }
+                if (ok) {
+                    at.SetNumberOfElements(0u, numberOfElements);
+                }
+                ok = data.Write(signalName.Buffer(), at);
             }
         }
         if (ok) {

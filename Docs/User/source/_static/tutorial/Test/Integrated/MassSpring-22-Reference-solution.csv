@@ -1,0 +1,5 @@
+#ReferenceTime (uint32)[1],ReferencePosition (float64)[1]
+0,0.000000
+5000000,2.0
+10000000,2.0
+15000000,0.0
