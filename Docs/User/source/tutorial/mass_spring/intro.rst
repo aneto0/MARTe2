@@ -48,13 +48,6 @@ The main objective of this tutorial is to identify and integrate existing MARTe2
 
 It will start by introducing GAMs from the MARTe2-components repository to implement common features, followed by sections dedicated to DataSources and Interfaces.
 
-.. important::
-
-   Two implicit rules:
-
-   - All commands are assumed to be run from the ``$MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/Startup`` directory, unless otherwise specified.
-   - When more than one application must be executed in parallel, a new terminal needs to be opened for each application.
-
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
