@@ -28,9 +28,17 @@ In this tutorial, the MARTe2 command line Manager will be used to create the pro
 
 .. note::
 
-   If the manager cannot be installed on the system, clone the MARTe2 repository, change to the folder ``Resources/Manager`` and run ``export PYTHONPATH=$PYTHONPATH:src``.
+   If the ``marte2_manager`` cannot be installed on the system, clone the MARTe2 repository, change to the folder ``Resources/Manager`` and run ``export PYTHONPATH=$PYTHONPATH:src``.
 
 Check that the manager is correctly installed by running the command ``python -m marte2_manager.cli -h``. This should print the help message of the manager.
+
+.. important::
+
+   The ``marte2_manager`` requires Python 3.9 or higher.
+
+   The commands assume that ``python`` points to a Python 3.9 or higher interpreter. 
+
+   If this is not the case, replace ``python`` with the appropriate command (e.g. ``python3.11``).
 
 .. toctree::
    :maxdepth: 1
