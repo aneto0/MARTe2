@@ -13,6 +13,6 @@ if [[ -e "$DEST_DIR" ]]; then
 fi
 
 # Copy directory
-cp -r "./" "$DEST_DIR"
+rsync -av --delete --exclude='.git' ./ $DEST_DIR/
 
 echo "Copied '.' -> '$DEST_DIR'"

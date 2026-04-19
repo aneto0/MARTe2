@@ -19,7 +19,7 @@ It is designed to guide new users from setting up their environment and running 
 first application to extending the framework with custom components.
 
 The tutorial follows a progressive approach, where each section introduces new
-concepts through practical examples. A simple control problem (a water tank) is used
+concepts through practical examples. A simple control problem (a mass-spring-damper) is used
 as a common thread to illustrate how different MARTe2 components are assembled into
 working applications.
 
