@@ -16,7 +16,7 @@ Performance monitoring
 
 In this section, we will build upon the previous example and add features that allow monitoring the performance of the MARTe2 application, namely the :ref:`timing <MARTeTimingDataSource>` of the GAMs and of the thread cycle time.
 
-Namely, we will want to monitor:
+We want to monitor:
 
 - The cycle time of the thread executing the GAMs. This is the time between two consecutive executions of the thread. It is expected to be constant and equal to the inverse of the ``Frequency`` parameter of the ``GAMTimer``.
 - The execution time of the GAMs. This is the time taken by the GAMs to execute their logic.
