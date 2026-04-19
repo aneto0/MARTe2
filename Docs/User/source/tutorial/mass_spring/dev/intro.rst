@@ -28,7 +28,7 @@ In this tutorial, the MARTe2 command line Manager will be used to create the pro
 
 .. note::
 
-   If the manager cannot be installed on the system, clone the MARTe2 repository, change to the folder ``MARTe2/Resources/Manager`` and run ``export PYTHONPATH=$PYTHONPATH:src``.
+   If the manager cannot be installed on the system, clone the MARTe2 repository, change to the folder ``Resources/Manager`` and run ``export PYTHONPATH=$PYTHONPATH:src``.
 
 Check that the manager is correctly installed by running the command ``python3 -m marte2_manager.cli -h``. This should print the help message of the manager.
 
