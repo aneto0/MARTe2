@@ -11,6 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
+.. _MARTeDataSources:
+
 DataSource & Brokers
 ====================
 
@@ -195,6 +197,8 @@ Asynchronous brokers are expected to provide unblocking data (i.e. as soon as th
 .. warning::
 
    If the synchronisation requires interfacing with the operating system, a decoupling thread shall be used. This allows to decouple the real-time thread performance and to handle possible timeouts. The :vcisdoxygencl:`MemoryMapAsyncOutputBroker` is an example of such type of Broker.
+
+.. _GAMDataSource:
 
 GAMDataSource (DDB)
 -------------------

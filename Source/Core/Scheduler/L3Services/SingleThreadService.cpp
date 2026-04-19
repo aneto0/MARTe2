@@ -62,7 +62,11 @@ SingleThreadService::~SingleThreadService() {
 }
 
 ErrorManagement::ErrorType SingleThreadService::Start() {
-    embeddedThread.SetName(GetName());
+    const char8 *name = GetName();
+    if (name == NULL_PTR(const char8 *)) {
+        name = "SingleThreadService";
+    }
+    embeddedThread.SetName(name);
     return embeddedThread.Start();
 }
 

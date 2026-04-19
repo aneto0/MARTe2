@@ -1,0 +1,115 @@
+{
+    "parameters": {
+        "Parameter1": {
+            "type": "uint32",
+            "description": "This is a required uint32 parameter",
+            "number_of_elements": 1,
+            "required": true
+        },
+        "Parameter2": {
+            "type": "uint32",
+            "description": "This is a uint32 array parameter with a fixed number of elements",
+            "number_of_elements": 3,
+            "number_of_elements_fixed": true
+        },
+        "Parameter3": {
+            "type": "uint32",
+            "description": "This is a uint32 matrix parameter with a variable number of elements",
+            "number_of_elements": [2, 2],
+            "number_of_elements_fixed": false
+        },
+        "Parameter4": {
+            "type": "uint32",
+            "description": "This is an optional uint32 parameter",
+            "number_of_elements": 1,
+            "required": false,
+            "default_value": 5
+        },
+        "Parameter5": {
+            "type": "uint32",
+            "description": "This is a uint32 array parameter with a variable number of elements",
+            "number_of_elements": 3,
+            "number_of_elements_fixed": false
+        },
+        "Parameter6": {
+            "type": "uint32",
+            "description": "This is a uint32 matrix parameter with a fixed number of elements",
+            "number_of_elements": [3, 2],
+            "number_of_elements_fixed": true
+        },
+        "Parameter7": {
+            "type": "enum",
+            "enum_type": "uint32",
+            "description": "This is a a compulsory (pseudo) enum parameter",
+            "number_of_elements": 1,
+            "required": true,
+            "enum_values": {
+                "Option1": 0,
+                "Option2": 1,
+                "Option3": 2
+             }  
+        },
+        "Parameter8": {
+            "type": "enum",
+            "enum_type": "uint32",
+            "description": "This is an optional (pseudo) enum parameter",
+            "number_of_elements": 1,
+            "required": false,
+            "default_value": 2,
+            "enum_values": {
+                "Option1": 0,
+                "Option2": 1,
+                "Option3": 2
+             }
+        },
+        "Parameter9": {
+            "type": "float64",
+            "description": "This is a required float64 parameter with validation",
+            "number_of_elements": 1,
+            "required": true,
+            "validation": "(Parameter9 > (float32)(-3.0)) && (Parameter9 <= (float32)(0.0))"
+        },
+        "Parameter10": {
+            "type": "StreamString",
+            "description": "This is a required String parameter",
+            "number_of_elements": 1,
+            "required": true
+        },
+        "Parameter11": {
+            "type": "StreamString",
+            "description": "This is a an optional String parameter",
+            "number_of_elements": 1,
+            "required": false,
+            "default_value": "Default"
+        },
+        "Parameter12": {
+            "type": "StreamString",
+            "description": "This is a an optional String parameter",
+            "number_of_elements": 3,
+            "required": false,
+            "default_value": "Default"
+        }
+
+    },
+    "signals": {
+        "Signal1": {
+            "type": "uint32",
+            "description": "This is a uint32 input signal",
+            "number_of_elements": 1,
+            "number_of_elements_fixed": true
+        },
+        "Signal2": {
+            "type": "float32",
+            "description": "This is a float32 array input signal",
+            "number_of_elements": 3,
+            "number_of_elements_fixed": true
+        },
+        "Signal3": {
+            "type": "uint64",
+            "description": "This is a uint64 array input signal",
+            "number_of_elements": 5,
+            "number_of_elements_fixed": false
+        }
+    },
+    "direction": "input"
+}
