@@ -14,7 +14,7 @@
 Basic application
 =================
 
-In this section, you will implement a simple control strategy for the mass-spring-damper system using MARTe2 components. The control strategy will be based on a proportional controller that adjusts the external force (:math:`F`) applied to the mass based on the error between the desired position and the actual position of the mass.
+In this section, you will implement a simple control strategy for the mass-spring-damper system using MARTe2 components. The control strategy will be based on a PID controller that adjusts the external force (:math:`F`) applied to the mass based on the error between the desired position and the actual position of the mass.
 
 .. figure:: images/mass_spring_control.svg
    :align: center
