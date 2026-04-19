@@ -28,7 +28,7 @@ Dependencies
 
 Some DataSources and components require additional external dependencies, such as:
 
-- `EPICS Base <https://epics-controls.org/resources-and-support/downloads/>`__
+- `EPICS <https://epics-controls.org/resources-and-support/downloads/>`__
 - `open62541 <https://open62541.org/>`__
 
 Installation of these dependencies is not covered here. Please refer to their respective documentation.
