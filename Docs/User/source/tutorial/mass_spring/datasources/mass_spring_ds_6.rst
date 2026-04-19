@@ -161,6 +161,8 @@ In the example above, the application waits with the default ``SDNSubscriber`` t
     export SDN_TOPIC_PATH=../Test/Integrated
     sdn-print -i lo -t mass-spring-3 -c -1
 
+5. Stop the publisher application and verify that the receiver detects the stalled data stream and that the ``SDNStalled`` signal is set to 1.
+
 .. dropdown:: Solution
    :icon: key
 
