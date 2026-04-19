@@ -28,6 +28,7 @@ Start the application with:
 
 .. code-block:: bash
 
+   cd $MARTE_TRAINING_PARENT_DIR/MARTe2-training-proj/Startup
     ./MARTeApp.sh -f ../Configurations/HelloWorld/RTApp-HelloWorld-1.cfg -l RealTimeLoader -s State1
 
 Once the application is running, inspect the ``screen`` output and verify that the log shows the counter increasing:
