@@ -129,4 +129,10 @@ record(longout, "MARTE2-TUTORIAL-USERNAME-GAMS-EXECUTION-TIME") {
 record(longout, "MARTE2-TUTORIAL-USERNAME-SWITCH-ON") {
     field(DTYP, "Soft Channel")
 }
+record(longout, "MARTE2-TUTORIAL-USERNAME-APP-COMMAND") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-USERNAME-APP-STATUS") {
+    field(DTYP, "Soft Channel")
+}
 
