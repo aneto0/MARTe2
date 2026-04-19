@@ -102,7 +102,8 @@ The output should be similar to the following:
 
     .. code-block:: bash
 
-        python3.6 ../Test/Integrated/opcua_monitor.py -p OPCUA_PORT -s MassSpringDemo #Replace OPCUA_PORT with the actual port number being used in the configuration file.
+        OPCUA_PORT=`awk '/\+OPCUAServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-43_Gen.cfg`;echo "OPCUA_PORT=$OPCUA_PORT"
+        python3.6 ../Test/Integrated/opcua_monitor.py -p $OPCUA_PORT -s MassSpringDemo 
 
 Open another terminal and modify the value of the ``ReferencePosition`` OPCUA signal using another MARTe2 application.
 
@@ -118,7 +119,8 @@ Open another terminal and modify the value of the ``ReferencePosition`` OPCUA si
 
     .. code-block:: bash
 
-        python3.6 ../Test/Integrated/opcua_writer.py -p OPCUA_PORT -s MassSpringDemoControlInput.ReferencePosition -v 1.3 #Replace OPCUA_PORT with the actual port number being used in the configuration file.
+        OPCUA_PORT=`awk '/\+OPCUAServer/,/}/ {if ($1=="Port") print $3}' ../Configurations/MassSpring/RTApp-MassSpring-43_Gen.cfg`;echo "OPCUA_PORT=$OPCUA_PORT"
+        python3.6 ../Test/Integrated/opcua_writer.py -p $OPCUA_PORT -s MassSpringDemoControlInput.ReferencePosition -v 1.3 
 
 The output should be similar to the following:
 
