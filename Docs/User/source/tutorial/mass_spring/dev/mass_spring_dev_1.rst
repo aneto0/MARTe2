@@ -217,6 +217,6 @@ Where ``PositionSPM`` and ``VelocitySPM`` are the position and velocity calculat
 
     .. literalinclude:: /_static/tutorial/Source/GAMs/MassSpringModelSol/MassSpringModelSol.cpp
         :language: c++
-        :lines: 99-104, 158-162
+        :lines: 99-104, 159-162
         :caption: ``Setup`` method definition (snippet).
         :linenos:
