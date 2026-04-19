@@ -112,11 +112,54 @@ Monitor the statistics signals as part of another EPICS PVA record.
 1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-37.cfg`` and add to the ``GAMWriter`` output signals a signal of type ``MonitorPerformance``.
 2. Add the corresponding signal to the EPICSPVAOutput DataSource.
 3. Check that the PVA record is being written and that the content is updated with the latest values of the statistics signals.
+4. Run the application with:
 
 .. code-block:: bash
 
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-37_Gen.cfg -l RealTimeLoader -s State1
+
+5. Open another terminal and check that the PVA records are being updated with the application data using the command:
+
+.. code-block:: bash
+
+    pvget -m MARTE2-TUTORIAL-USERNAME-MASS-SPRING-PERF #Replace with your username in capital letters
+
+6. The output should be similar to the following:
+
+.. code-block:: bash
+
+    $ MARTE2-TUTORIAL-USERNAME-MASS-SPRING-PERF structure
+    $     MonitorPerformance value
+    $         uint Time 3370000
+    $         AppPerformance Control
+    $             GAMPerformance GAMPerfMonitor
+    $                 uint ReadTime 0
+    $               uint ExecTime 0
+    $               uint WriteTime 0
+    $           GAMPerformance GAMTimer
+    $               uint ReadTime 9985
+    $               uint ExecTime 9985
+    $               uint WriteTime 9985
+    $           GAMPerformance GAMReferenceWaveform
+    $               uint ReadTime 9985
+    $               uint ExecTime 9986
+    $               uint WriteTime 9986
+    $               ...
+    $           GAMPerformance GAMWriter
+    $               uint ReadTime 9997
+    $               uint ExecTime 9997
+    $               uint WriteTime 9998
+    $           ThreadPerformance Thread1
+    $               uint CycleTime 9999
+    $               uint CycleTimeAverage 9999
+    $               float CycleTimeMovingAverage 9999.5
+    $               uint CycleTimeStdDev 93
+    $               uint CycleTimeMax 10012
+    $               uint CycleTimeMin 9988
+    $               uint[] CycleTimeHistogram [0,0,0,0,0,137,0,0,0,0,0]
+    $               uint[] FreeTimeHistogram [0,0,0,0,0,0,0,0,0,0,137]
+    $               int GAMsExecutionTime 13
 
 .. dropdown:: Solution
    :icon: key
@@ -145,44 +188,3 @@ Monitor the statistics signals as part of another EPICS PVA record.
       :linenos:
       :emphasize-lines: 13-17
 
-   Open another terminal and check that the PVA records are being updated with the application data using the command:
-
-   .. code-block:: bash
-
-        pvget -m MARTE2-TUTORIAL-USERNAME-MASS-SPRING-PERF #Replace with your username in capital letters
-
-   The output should be similar to the following:
-
-   .. code-block:: bash
-
-        $ MARTE2-TUTORIAL-USERNAME-MASS-SPRING-PERF structure
-        $     MonitorPerformance value
-        $         uint Time 3370000
-        $         AppPerformance Control
-        $             GAMPerformance GAMPerfMonitor
-        $                 uint ReadTime 0
-        $               uint ExecTime 0
-        $               uint WriteTime 0
-        $           GAMPerformance GAMTimer
-        $               uint ReadTime 9985
-        $               uint ExecTime 9985
-        $               uint WriteTime 9985
-        $           GAMPerformance GAMReferenceWaveform
-        $               uint ReadTime 9985
-        $               uint ExecTime 9986
-        $               uint WriteTime 9986
-        $               ...
-        $           GAMPerformance GAMWriter
-        $               uint ReadTime 9997
-        $               uint ExecTime 9997
-        $               uint WriteTime 9998
-        $           ThreadPerformance Thread1
-        $               uint CycleTime 9999
-        $               uint CycleTimeAverage 9999
-        $               float CycleTimeMovingAverage 9999.5
-        $               uint CycleTimeStdDev 93
-        $               uint CycleTimeMax 10012
-        $               uint CycleTimeMin 9988
-        $               uint[] CycleTimeHistogram [0,0,0,0,0,137,0,0,0,0,0]
-        $               uint[] FreeTimeHistogram [0,0,0,0,0,0,0,0,0,0,137]
-        $               int GAMsExecutionTime 13
