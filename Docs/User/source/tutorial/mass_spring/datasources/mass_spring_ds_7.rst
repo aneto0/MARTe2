@@ -92,12 +92,29 @@ Add a GAM and another DataSource to monitor the statistics of the execution of t
 2. The names of the PVs can be found in the file ``../Test/Integrated/MassSpring-1.db``. 
 3. Add a GAM to write the signals to the DataSource.
 4. Add the GAM to the execution list.
-5. Check that the PVs are being written and that the content is updated with the latest values of the signals.
+5. Run the application with:
 
 .. code-block:: bash
 
     make -C ../Configurations/MassSpring/ -f Makefile.cfg
     ./MARTeApp.sh -f ../Configurations/MassSpring/RTApp-MassSpring-31_Gen.cfg -l RealTimeLoader -s State1
+
+6. Check that the PVs are being written and that the content is updated with the latest values of the signals.
+7.   Open another terminal and check that the PVs are being updated with the application data using the command:
+
+.. code-block:: bash
+
+    camonitor MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-HISTOGRAM #Replace with your username in capital letters
+
+8. The output should be similar to the following:
+
+.. code-block:: bash
+
+   $ MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME 2026-04-01 10:17:06.617292 9990
+   $ MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-HISTOGRAM 2026-04-01 10:17:06.617297 11 0 0 0 2 0 1362 0 2 0 0 0
+   $ MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME 2026-04-01 10:17:06.627271 10009
+   $ MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-HISTOGRAM 2026-04-01 10:17:06.627276 11 0 0 0 2 0 1363 0 2 0 0 0
+
 
 .. dropdown:: Solution
    :icon: key
@@ -119,17 +136,3 @@ Add a GAM and another DataSource to monitor the statistics of the execution of t
       :caption: GAM to write the signals to the DataSource.
       :linenos:
 
-   Open another terminal and check that the PVs are being updated with the application data using the command:
-
-   .. code-block:: bash
-
-       camonitor MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-HISTOGRAM #Replace with your username in capital letters
-
-   The output should be similar to the following:
-
-   .. code-block:: bash
-
-       $ MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME 2026-04-01 10:17:06.617292 9990
-       $ MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-HISTOGRAM 2026-04-01 10:17:06.617297 11 0 0 0 2 0 1362 0 2 0 0 0
-       $ MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME 2026-04-01 10:17:06.627271 10009
-       $ MARTE2-TUTORIAL-USERNAME-THREAD1-CYCLE-TIME-HISTOGRAM 2026-04-01 10:17:06.627276 11 0 0 0 2 0 1363 0 2 0 0 0
