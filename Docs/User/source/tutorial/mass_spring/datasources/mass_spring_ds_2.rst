@@ -58,7 +58,7 @@ Exercises
 Ex. 1: Read a ramp from the file
 --------------------------------
 
-Modify the file ``../Test/Integrated/MassSpring-22-reference.csv`` to include a ramp for the ``ReferencePosition`` signal as shown in the following figure.
+Modify the file ``../Test/Integrated/MassSpring-22-Reference.csv`` to include a ramp for the ``ReferencePosition`` signal as shown in the following figure.
 
 .. figure:: ../gams/images/mass_spring_refpos_ramp.svg
    :align: center
