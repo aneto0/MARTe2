@@ -91,7 +91,7 @@ In the example above, the receiver application waits indefinitely for UDP packet
 
     Consequently, if a GAM needs to gracefully handle a failure, it must be executed before the GAM that will fail (which means it will use data from the previous cycle).
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-25-Receiver.cfg`` and modify the DataSource ``UDPWriterReference`` to have a ``Timeout`` of ``1.0 s``.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-25-Receiver.cfg`` and modify the DataSource ``UDPReceiver`` to have a ``Timeout`` of ``1.0 s``.
 2. Add a ``MathExpressionGAM`` to detect stalled data based on the ``Time`` signal and name it ``UDPStalled``.
 3. Add the ``UDPStalled`` signal to the ``GAMWriterStats`` GAM and to the ``UDPWriterStats`` DataSource.
 4. Add the new ``MathExpressionGAM`` to the execution list before the ``GAMUDPReceiver``, and also move the ``GAMWriterStats`` before the ``GAMUDPReceiver``.
