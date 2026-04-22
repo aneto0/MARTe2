@@ -111,7 +111,7 @@ Exercises
 Ex. 1: Stream the ``ReferencePosition`` signal over UDP.
 --------------------------------------------------------
 
-1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-24.cfg`` and modify the DataSource ``UDPWriterReference`` to stream the signals: ``Counter``, ``Time`` and ``ReferencePosition`` to the UDP port identified as ``TUTORIAL_UDP_PORT_1``.
+1. Edit the file ``../Configurations/MassSpring/RTApp-MassSpring-24-Sender.cfg`` and modify the DataSource ``UDPWriterReference`` to stream the signals: ``Counter``, ``Time`` and ``ReferencePosition`` to the UDP port identified as ``TUTORIAL_UDP_PORT_1``.
 2. Add an ``IOGAM`` to copy the signals from the ``DDB1`` into the ``UDPWriterReference``. Add the GAM to the execution list.
 3. Run ``make -C ../Configurations/MassSpring/ -f Makefile.cfg`` to generate the configuration file with the correct UDP port numbers.
 4. Check that the application statistics are still being streamed over UDP to the port identified as ``TUTORIAL_UDP_PORT_2`` and that the ``ReferencePosition`` is being streamed to the port identified as ``TUTORIAL_UDP_PORT_1``.
