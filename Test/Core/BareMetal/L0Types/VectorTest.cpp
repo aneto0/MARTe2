@@ -48,7 +48,7 @@ bool VectorTest::TestDefaultConstructor() {
         return false;
     }
 
-    if (myVector.GetDataPointer() != NULL) {
+    if (myVector.GetDataPointer() == NULL) {
         return false;
     }
 
@@ -197,12 +197,7 @@ bool VectorTest::TestSetSize(Vector<int32> &vector1,
     vector1.SetSize(newSize);
 
     ok &= (vector1.GetNumberOfElements() == newSize);
-    if (newSize != 0) {
-        ok &= (vector1.GetDataPointer() != NULL_PTR(int32*));
-    }
-    else {
-        ok &= (vector1.GetDataPointer() == NULL_PTR(int32*));
-    }
+    ok &= (vector1.GetDataPointer() != NULL_PTR(int32*));
 
     return ok;
 }
@@ -227,4 +222,104 @@ bool VectorTest::TestCopyAssignmentNULLPointer() {
     }
     return ret;
 }
+
+
+bool VectorTest::TestGetMaxNumberOfElements(){
+    Vector<uint32> vec;
+    bool ok = (vec.GetMaxNumberOfElements() == 4u);
+
+    vec.SetAllocationGranularity(10u);
+    vec.Append(1u);
+    ok &= (vec.GetMaxNumberOfElements() == 4u);
+    vec.Append(2u);
+    vec.Append(3u);
+    vec.Append(4u);
+    ok &= (vec.GetMaxNumberOfElements() == 10u);
+
+    uint32 x[5];
+    Vector<uint32> vec1(x, 5);
+    ok &= (vec1.GetMaxNumberOfElements() == 4u);
+
+    return ok;
+}
+
+
+
+bool VectorTest::TestAppend(){
+    Vector<uint32> vec1;
+    vec1.Append(1u);
+    vec1.Append(2u);
+    vec1.Append(3u);
+
+    bool ok=(vec1.GetNumberOfElements() == 3u);
+
+    if(ok){
+        ok=(vec1[0] == 1u);
+        ok&=(vec1[1] == 2u);
+        ok&=(vec1[2] == 3u);
+    }
+    return ok;
+}
+   
+bool VectorTest::TestInsert(){
+    Vector<uint32> vec1;
+    vec1.Append(1u);
+    vec1.Append(2u);
+    vec1.Append(3u);
+
+    bool ok=(vec1.GetNumberOfElements() == 3u);
+
+    if(ok){
+        ok=(vec1[0] == 1u);
+        ok&=(vec1[1] == 2u);
+        ok&=(vec1[2] == 3u);
+    }
+    
+    vec1.Insert(0u, 0u);
+    vec1.Insert(4u, 4u);
+    vec1.Insert(6u, 2u);
+
+    if(ok){
+        ok=(vec1[0] == 0u);
+        ok=(vec1[1] == 1u);
+        ok&=(vec1[2] == 6u);
+        ok&=(vec1[3] == 2u);
+        ok&=(vec1[4] == 3u);
+        ok&=(vec1[5] == 4u);
+    }
+
+    return ok;
+}
+
+bool VectorTest::TestSetAllocationGranularity(){
+    Vector<uint32> vec1;
+    uint32 gran=vec1.GetAllocationGranularity();
+
+    bool ok = (gran == 4u);
+    vec1.SetAllocationGranularity(10u);
+
+    ok &= (vec1.GetAllocationGranularity() == 10u);
+
+    return ok;
+}
+
+
+bool VectorTest::TestGetAllocationGranularity(){
+    Vector<uint32> vec1;
+    uint32 gran=vec1.GetAllocationGranularity();
+
+    bool ok = (gran == 4u);
+    vec1.SetAllocationGranularity(10u);
+
+    ok &= (vec1.GetAllocationGranularity() == 10u);
+    
+    vec1.SetAllocationGranularity(0u);
+    ok &= (vec1.GetAllocationGranularity() == 1u);
+
+
+    return ok;
+}
+
+
+
 
