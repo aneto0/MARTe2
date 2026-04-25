@@ -97,7 +97,7 @@ DummyScheduler    ();
 
     virtual bool ConfigureScheduler(Reference realTimeApp);
 
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
 private:
 
@@ -130,8 +130,8 @@ MARTe::ErrorManagement::ErrorType DummyScheduler::StopCurrentStateExecution() {
     return MARTe::ErrorManagement::NoError;
 }
 
-void DummyScheduler::CustomPrepareNextState() {
-
+bool DummyScheduler::CustomPrepareNextState() {
+    return true;
 }
 
 CLASS_REGISTER(DummyScheduler, "1.0")

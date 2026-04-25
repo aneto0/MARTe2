@@ -154,7 +154,7 @@ protected:
     /**
      * @brief Starts the threads for the next state
      */
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
     /**
      * @brief Map the RTTs to the executed threads depending on the cpus

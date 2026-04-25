@@ -164,7 +164,7 @@ ErrorManagement::ErrorType GAMScheduler::StopCurrentStateExecution() {
     return err;
 }
 
-void GAMScheduler::CustomPrepareNextState() {
+bool GAMScheduler::CustomPrepareNextState() {
     ErrorManagement::ErrorType err;
     if (eventSem.Reset()) {
         realTimeApplicationT = realTimeApp;
@@ -214,7 +214,7 @@ void GAMScheduler::CustomPrepareNextState() {
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Failed Reset(*) of the event semaphore");
     }
-
+    return err.ErrorsCleared();
 }
 
 /*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/

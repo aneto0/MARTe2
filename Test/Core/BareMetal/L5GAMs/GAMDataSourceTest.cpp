@@ -73,7 +73,7 @@ GAMDataSourceTestScheduler1    ();
     virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
     virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
 };
 
@@ -90,8 +90,8 @@ MARTe::ErrorManagement::ErrorType GAMDataSourceTestScheduler1::StopCurrentStateE
     return MARTe::ErrorManagement::NoError;
 }
 
-void GAMDataSourceTestScheduler1::CustomPrepareNextState() {
-
+bool GAMDataSourceTestScheduler1::CustomPrepareNextState() {
+    return true;
 }
 
 CLASS_REGISTER(GAMDataSourceTestScheduler1, "1.0")

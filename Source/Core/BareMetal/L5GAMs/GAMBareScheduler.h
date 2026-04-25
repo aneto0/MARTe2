@@ -100,7 +100,7 @@ protected:
     /**
      * @brief Resets the current cycle counter to zero (only meaningful if MaxCycles != 0) 
      */
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
 
 private:

@@ -356,7 +356,7 @@ public:CLASS_REGISTER_DECLARATION()
 
     virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
 };
 
@@ -373,8 +373,8 @@ MARTe::ErrorManagement::ErrorType GAMTestScheduler1::StopCurrentStateExecution()
     return MARTe::ErrorManagement::NoError;
 }
 
-void GAMTestScheduler1::CustomPrepareNextState() {
-
+bool GAMTestScheduler1::CustomPrepareNextState() {
+    return true;
 }
 
 CLASS_REGISTER(GAMTestScheduler1, "1.0")
