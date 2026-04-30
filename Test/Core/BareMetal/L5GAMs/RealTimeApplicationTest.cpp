@@ -62,8 +62,8 @@ RealTimeApplicationTestScheduler    ();
 
     const char8 *GetStateName();
 
-    virtual void CustomPrepareNextState() {
-
+    virtual bool CustomPrepareNextState() {
+        return true;
     }
 
 private:

@@ -126,6 +126,7 @@ class ProjectManager(BaseManager):
 
         if ok:
             template_make_vars = copy.deepcopy(self._template_make_vars)
+            template_make_vars['spbt'] = ''
             template_make_vars['root_dir'] = '../..'
             template_make_vars['target_1'] = 'all: $(OBJS) check-env\\\n\t$(BUILD_DIR)/MainGTest$(EXEEXT)\n\techo  $(OBJS)' 
             includes = []
@@ -137,10 +138,13 @@ class ProjectManager(BaseManager):
             template_make_vars['includes'] = '\n'.join(includes)
 
             libraries = []
-            libraries.append('LIBRARIES   += -L$(MARTe2_DIR)/Build/$(TARGET)/Core/ -lMARTe2')
-            libraries.append('LIBRARIES   += $(MARTe2_DIR)/Lib/gtest-1.7.0/libgtest.a $(MARTe2_DIR)/Lib/gtest-1.7.0/libgtest_main.a')
+            libraries.append('LIBRARIES += -L$(MARTe2_DIR)/Build/$(TARGET)/Core/ -lMARTe2')
+            libraries.append('ifneq ($(wildcard $(MARTe2_DIR)/Lib/gtest-1.7.0/libgtest.a),)')
+            libraries.append('LIBRARIES += $(MARTe2_DIR)/Lib/gtest-1.7.0/libgtest.a $(MARTe2_DIR)/Lib/gtest-1.7.0/libgtest_main.a')
+            libraries.append('else')
+            libraries.append('LIBRARIES += $(MARTe2_DIR)/Include/Lib/libgtest.a $(MARTe2_DIR)/Include/Lib/libgtest_main.a')
+            libraries.append('endif')
             template_make_vars['libraries'] = '\n'.join(libraries)
-
             libraries_static = 'LIBRARIES_STATIC+=$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*.a")'
             template_make_vars['libraries_static'] = libraries_static
             ok = self._copy_template_text_file('Makefile.inc', Path(self._project_path) / self._project_name / test_folder_name / 'GTest', template_make_vars)

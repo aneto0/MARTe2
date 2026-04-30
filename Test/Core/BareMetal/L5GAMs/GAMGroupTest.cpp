@@ -57,7 +57,7 @@ GAMGroupTestScheduler1    ();
 
     virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
 };
 
@@ -74,8 +74,8 @@ MARTe::ErrorManagement::ErrorType  GAMGroupTestScheduler1::StopCurrentStateExecu
     return MARTe::ErrorManagement::NoError;
 }
 
-void GAMGroupTestScheduler1::CustomPrepareNextState(){
-
+bool GAMGroupTestScheduler1::CustomPrepareNextState(){
+    return true;
 }
 
 

@@ -341,7 +341,7 @@ ErrorManagement::ErrorType FastScheduler::SetupThreadMap() {
 }
 
 /*lint -e{613} rtThreadInfo != NULL is guaranteed by the caller, i.e. the function will not be reached*/
-void FastScheduler::CustomPrepareNextState() {
+bool FastScheduler::CustomPrepareNextState() {
     ErrorManagement::ErrorType err;
 
     err = !realTimeApplicationT.IsValid();
@@ -377,6 +377,8 @@ void FastScheduler::CustomPrepareNextState() {
             }
         }
     }
+    return err.ErrorsCleared();
+
 }
 
 /*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/

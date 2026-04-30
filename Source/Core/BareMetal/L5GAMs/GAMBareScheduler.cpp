@@ -100,8 +100,9 @@ bool GAMBareScheduler::Initialise(StructuredDataI & data) {
     return ok;
 }
 
-void GAMBareScheduler::CustomPrepareNextState() {   
+bool GAMBareScheduler::CustomPrepareNextState() {   
     nCycle = 0u;
+    return true;
 }
 
 ErrorManagement::ErrorType GAMBareScheduler::StopCurrentStateExecution() {

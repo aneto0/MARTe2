@@ -385,7 +385,7 @@ DefaultSchedulerForTests    ();
 
     virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
 
 };
