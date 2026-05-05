@@ -1,0 +1,37 @@
+{
+    "parameters": {
+        "NICName": {
+            "type": "StreamString",
+            "description": "Name of the network interface card to monitor",
+            "number_of_elements": 1,
+            "required": true
+        }
+    },
+    "signals": {
+        "RXPackets": {
+            "type": "uint64",
+            "description": "Number of RX packets",
+            "number_of_elements": 1,
+            "number_of_elements_fixed": true
+        },
+        "TXPackets": {
+            "type": "uint64",
+            "description": "Number of TX packets",
+            "number_of_elements": 1,
+            "number_of_elements_fixed": true
+        },
+        "RXDropped": {
+            "type": "uint64",
+            "description": "Number of dropped RX packets",
+            "number_of_elements": 1,
+            "number_of_elements_fixed": true
+        },
+        "TXDropped": {
+            "type": "uint64",
+            "description": "Number of dropped TX packets",
+            "number_of_elements": 1,
+            "number_of_elements_fixed": true
+        }
+    },
+    "direction": "input"
+}

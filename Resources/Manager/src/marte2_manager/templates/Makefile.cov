@@ -1,0 +1,9 @@
+${header_text}
+
+TARGET=cov
+
+include Makefile.inc
+
+${libraries_cov}
+
+${libraries_static_cov}

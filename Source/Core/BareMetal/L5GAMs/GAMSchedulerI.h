@@ -200,7 +200,7 @@ protected:
     /**
      * @brief Custom routine to prepare the specific scheduler for the next state execution.
      */
-    virtual void CustomPrepareNextState()=0;
+    virtual bool CustomPrepareNextState()=0;
 
     /**
      * Clock period

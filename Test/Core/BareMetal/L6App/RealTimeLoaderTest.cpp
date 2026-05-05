@@ -86,8 +86,8 @@ RealTimeLoaderTestScheduler    () {
 
     }
 
-    virtual void CustomPrepareNextState() {
-
+    virtual bool CustomPrepareNextState() {
+        return true;
     }
 
     bool startCalled;

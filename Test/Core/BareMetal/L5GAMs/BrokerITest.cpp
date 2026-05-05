@@ -50,7 +50,7 @@ public:CLASS_REGISTER_DECLARATION()
 
     virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
 };
 
@@ -67,8 +67,8 @@ MARTe::ErrorManagement::ErrorType BrokerITestScheduler1::StopCurrentStateExecuti
     return ErrorManagement::NoError;
 }
 
-void BrokerITestScheduler1::CustomPrepareNextState() {
-
+bool BrokerITestScheduler1::CustomPrepareNextState() {
+    return true;
 }
 
 CLASS_REGISTER(BrokerITestScheduler1, "1.0")

@@ -78,6 +78,11 @@ TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData
     ASSERT_TRUE(test.TestGetAsStructuredData_Message_Does_Not_Exist());
 }
 
+TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData_Message_Parameter) {
+    HttpMessageInterfaceTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_Message_Parameter());
+}
+
 TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_Message_Does_Not_Exist) {
     HttpMessageInterfaceTest test;
     ASSERT_TRUE(test.TestGetAsText_Message_Does_Not_Exist());

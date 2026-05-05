@@ -53,7 +53,7 @@ MemoryMapInputBrokerTestScheduler1    ();
 
     virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
 
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
 };
 
@@ -70,8 +70,8 @@ MARTe::ErrorManagement::ErrorType   MemoryMapInputBrokerTestScheduler1::StopCurr
     return MARTe::ErrorManagement::NoError;
 }
 
-void MemoryMapInputBrokerTestScheduler1::CustomPrepareNextState(){
-
+bool MemoryMapInputBrokerTestScheduler1::CustomPrepareNextState(){
+    return true;
 }
 
 

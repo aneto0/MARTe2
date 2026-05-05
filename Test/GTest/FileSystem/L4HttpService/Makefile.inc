@@ -31,7 +31,8 @@ OBJSX= HttpChunkedStreamGTest.x \
     HttpMessageInterfaceGTest.x \
     HttpObjectBrowserGTest.x \
     HttpProtocolGTest.x \
-    HttpServiceGTest.x
+    HttpServiceGTest.x \
+    HttpDataMonitorGTest.x
 		
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..

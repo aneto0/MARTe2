@@ -11,6 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
+.. _MARTeRealTimeApplication:
+
 RealTimeApplication
 ===================
 
@@ -160,6 +162,8 @@ A component of class type ``TimingDataSource`` shall exist.
 
 The property ``DefaultDataSource`` shall define what is the DataSource to be used when the :doc:`GAM </core/app/gams/gam>` signals do not specify the ``DataSource`` property.
 
+.. _MARTeTimingDataSource:
+
 TimingDataSource
 ~~~~~~~~~~~~~~~~
 
@@ -224,6 +228,8 @@ The RealTimeApplication will automatically add to the TimingDataSource the follo
             Alias = State1.Thread1_CycleTime
             DataSource = Timings
          
+
+.. _MARTeRealTimeState:
 
 States
 ------
@@ -306,6 +312,8 @@ Each RealTimeThread shall contain the name of the ``Functions`` to be executed. 
            }
      
 
+.. _MARTeScheduler:
+
 Scheduler
 ---------
 
@@ -353,6 +361,8 @@ Global rules
 5. At least one state shall be declared;
 6. For each state, at least one thread shall be declared;
 7. For each thread, at least one function (GAM) shall be declared;
+
+.. _MARTeSignalRules:
 
 Signal rules
 ~~~~~~~~~~~~
@@ -429,6 +439,9 @@ Typically the interface to the state changing mechanism is provided by the :doc:
                Mode = ExpectsReply
             }
             ...
+
+
+.. _MARTeMultipleThreads:
 
 Synchronising multiple threads
 ------------------------------

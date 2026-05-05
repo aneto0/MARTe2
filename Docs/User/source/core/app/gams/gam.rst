@@ -11,6 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
+.. _MARTeGAMs:
+
 GAM
 ===
 
@@ -144,6 +146,8 @@ Note that the structure will be automatically expanded into the equivalent confi
       }                
    }   
    ...
+
+.. _MARTeSignalProperties:
 
 Signal properties
 ~~~~~~~~~~~~~~~~~
@@ -302,7 +306,9 @@ The following is an example of GAM which adapts to the number of output signals.
    :caption: Variable signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=GAMs-2.cfg)
    :linenos:
    :emphasize-lines: 29-68
-     
+
+.. _StructuredGAM:
+
 Structure GAM
 ~~~~~~~~~~~~~
 
@@ -335,13 +341,11 @@ The following is an example of GAMGroup which shares a Matrix with several GAMs.
    :language: c++   
    :caption: Child GAMGroup which shares a Matrix with the ParentGAMGroupExample1 instance.
    :linenos:
-   :emphasize-lines: 127,130-131,142,164
 
 .. literalinclude:: /_static/examples/Core/ChildGAMGroupExample2.cpp
    :language: c++   
    :caption: Child GAMGroup which shares a Matrix with the ParentGAMGroupExample1 instance.
    :linenos:
-   :emphasize-lines: 131,134-135,146,160,169-170
       
 .. literalinclude:: /_static/examples/Configurations/GAMs-4.cfg
    :language: bash	

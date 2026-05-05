@@ -67,6 +67,11 @@ public:
     bool TestGetAsStructuredData_Message_Does_Not_Exist();
 
     /**
+     * @brief Tests the GetAsStructuredData with a Message that contains configurable payload.
+     */
+    bool TestGetAsStructuredData_Message_Parameter();
+
+    /**
      * @brief Tests the GetAsText with a Message that does not exist.
      */
     bool TestGetAsText_Message_Does_Not_Exist();
