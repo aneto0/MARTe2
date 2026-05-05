@@ -247,6 +247,11 @@ public:
      * @brief Tests the copy equal operator forcing a condition that led to a bug in release 1.4.0
      */
     bool TestCopyOperatorEqualBug();
+
+    /**
+     * @brief Tests the ExportData method
+     */
+    bool TestExportData();
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

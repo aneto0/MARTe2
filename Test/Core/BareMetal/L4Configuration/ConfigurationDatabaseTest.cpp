@@ -339,7 +339,7 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
         member3[i] = i;
     }
     source.Write("member3_from", member3);
-    const char8* member4[2][2];
+    const char8 *member4[2][2];
     member4[0][0] = (char8*) "1";
     member4[0][1] = (char8*) "2";
     member4[1][0] = (char8*) "3";
@@ -369,7 +369,7 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
     if (StringHelper::Compare(testDestination.member1_to, "1") != 0) {
         return false;
     }
-    if (testDestination.member2_to != (uintp) &member2_x) {
+    if (testDestination.member2_to != (uintp) & member2_x) {
         return false;
     }
     for (uint32 i = 0; i < 32; i++) {
@@ -636,7 +636,7 @@ bool ConfigurationDatabaseTest::TestUnlock() {
 }
 
 bool ConfigurationDatabaseTest::TestInitialise() {
-    const char8 * const config = ""
+    const char8 *const config = ""
             "+Config1 = {"
             "    Class = ConfigurationDatabase"
             "    param1 = \"Test\""
@@ -862,3 +862,62 @@ bool ConfigurationDatabaseTest::TestCopyOperatorEqualBug() {
 
     return ok;
 }
+
+bool ConfigurationDatabaseTest::TestExportData() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A");
+    ok &= cdb.CreateAbsolute("A.B");
+    ok &= cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.CreateAbsolute("A.B.D");
+    ok &= cdb.CreateAbsolute("E");
+    ok &= cdb.MoveToRoot();
+    cdb.Object::SetName("MyCdb");
+    if (ok) {
+        ConfigurationDatabase out;
+        cdb.ExportData(out);
+        out.MoveToRoot();
+        StreamString name;
+        ok &= out.Read("Name", name);
+        ok &= (name == "MyCdb");
+        StreamString classN;
+        ok &= out.Read("Class", classN);
+        ok &= (classN == "ConfigurationDatabase");
+        ok &= out.MoveRelative("0");
+        if (ok) {
+            name = "";
+            ok &= out.Read("Name", name);
+            ok &= (name == "A");
+            ok &= out.MoveRelative("0");
+            if (ok) {
+                name = "";
+                ok &= out.Read("Name", name);
+                ok &= (name == "B");
+                ok &= out.MoveRelative("0");
+                if(ok){
+                    name = "";
+                    ok &= out.Read("Name", name);
+                    ok &= (name == "C");
+                    ok &= out.MoveToAncestor(1u);
+                }
+                ok &= out.MoveRelative("1");
+                if(ok){
+                    name = "";
+                    ok &= out.Read("Name", name);
+                    ok &= (name == "D");
+                    ok &= out.MoveToAncestor(1u);
+                }
+                ok &= out.MoveToAncestor(1u);
+            }
+            ok &= out.MoveToAncestor(1u);
+        }
+        ok &= out.MoveRelative("1");
+        if (ok) {
+            name = "";
+            ok &= out.Read("Name", name);
+            ok &= (name == "E");
+            ok &= out.MoveToAncestor(1u);
+        }
+    }
+    return ok;
+}
+
