@@ -256,10 +256,27 @@ TEST(BareMetal_L3Streams_StreamStringGTest, TestConcatenateOperator_String) {
     ASSERT_TRUE(stringtest.TestConcatenateOperator_String("HelloWorld"));
 }
 
+TEST(BareMetal_L3Streams_StreamStringGTest, TestSumOperator_Char) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSumOperator_Char('a'));
+}
+
+TEST(BareMetal_L3Streams_StreamStringGTest, TestSumOperator_CCString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSumOperator_CCString("HelloWorld"));
+}
+
+TEST(BareMetal_L3Streams_StreamStringGTest, TestSumOperator_String) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSumOperator_String("HelloWorld"));
+}
+
 TEST(BareMetal_L3Streams_StreamStringGTest, TestIsEqualOperator_CCString) {
     StreamStringTest stringtest;
     ASSERT_TRUE(stringtest.TestIsEqualOperator_CCString("HelloWorld"));
 }
+
+
 
 TEST(BareMetal_L3Streams_StreamStringGTest, TestIsEqualOperator_EmptyCCString) {
     StreamStringTest stringtest;
@@ -346,3 +363,19 @@ TEST(BareMetal_L3Streams_StreamStringGTest, TestGetToken) {
     StreamStringTest stringtest;
     ASSERT_TRUE(stringtest.TestGetToken(TokenTestTableTerminators));
 }
+
+TEST(BareMetal_L3Streams_StreamStringGTest, TestSubString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSubString());
+}
+
+TEST(BareMetal_L3Streams_StreamStringGTest, TestSplit) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSplit());
+}
+
+TEST(BareMetal_L3Streams_StreamStringGTest, TestReplace) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestReplace());
+}
+
