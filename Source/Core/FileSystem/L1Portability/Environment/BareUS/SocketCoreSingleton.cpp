@@ -116,5 +116,19 @@ namespace MARTe {
         }
     }
 
+    void SocketCoreSingleton::ClearAll() {
+        SocketCore* tmpSocketCore = socketCoreRoot;
+
+        bool canIterate = (tmpSocketCore != NULL_PTR(SocketCore*));
+        
+        //Helps emulating the select behaviour. When it finishes, only the ready sockets are kept in the set
+        while(canIterate) {
+            tmpSocketCore->isReadSelected = false;
+
+            tmpSocketCore = tmpSocketCore->nextSocketCore;
+            canIterate = (tmpSocketCore != NULL_PTR(SocketCore*));
+        }
+    }
+
     #endif /* LWIP_ENABLED */
 }

@@ -55,7 +55,7 @@ namespace MARTe {
  *    Class = GAMDataSource
  *    HeapName = "The name of the Heap to use" If not specified GlobalObjectsDatabase::GetStandardHeap() will be used.
  *    AllowNoProducers = 0 //Optional. If 1 the GAMDataSource will allow for signals not to be connected (only issuing a warning).
- *    allowMultipleSamples = 0 //Optional. If 1 the GAMDataSource will allow for signals with NumberOfSamples > 0
+ *    AllowMultipleSamples = 0 //Optional. If 1 the GAMDataSource will allow for signals with NumberOfSamples > 0
  *    ResetUnusedVariablesAtStateChange = 1 //Optional. If 1 the GAMDataSource will reset the value of any input to its default value if the producer was not executed in the current state. 
  * }
  */

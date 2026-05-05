@@ -138,6 +138,11 @@ private:
      * Number of consumers.
      */
     uint32 nOfConsumers;
+
+    /**
+     * The thread id of the logger thread.
+     */
+    ThreadIdentifier logCallerThreadId;
 };
 }
 

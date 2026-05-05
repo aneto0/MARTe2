@@ -137,7 +137,7 @@ protected:
     /**
      * @brief Starts the threads for the next state
      */
-    virtual void CustomPrepareNextState();
+    virtual bool CustomPrepareNextState();
 
     /**
      * The array of identifiers of the thread in execution.

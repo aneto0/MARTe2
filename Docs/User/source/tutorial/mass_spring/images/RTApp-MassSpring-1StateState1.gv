@@ -1,0 +1,35 @@
+digraph G {
+rankdir=LR
+concentrate=true
+"State1.Thread1.GAMTimer" [shape=record, style=filled, fillcolor=white, color=blue,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">GAMTimer <BR/>(IOGAM)</font></TD></TR></TABLE>>]
+"State1.Thread1.GAMReference" [shape=record, style=filled, fillcolor=white, color=blue,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">GAMReference <BR/>(ConstantGAM)</font></TD></TR></TABLE>>]
+"State1.Thread1.GAMController" [shape=record, style=filled, fillcolor=white, color=blue,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">GAMController <BR/>(PIDGAM)</font></TD></TR></TABLE>>]
+"State1.Thread1.GAMSpringMass" [shape=record, style=filled, fillcolor=white, color=blue,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">GAMSpringMass <BR/>(SSMGAM)</font></TD></TR></TABLE>>]
+"State1.Thread1.GAMDisplay" [shape=record, style=filled, fillcolor=white, color=blue,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">GAMDisplay <BR/>(IOGAM)</font></TD></TR></TABLE>>]
+subgraph cluster_State1 {
+label = "State: State1"
+subgraph cluster_State1_Thread1 {
+label = "Thread: Thread1"
+color= "red"
+"State1.Thread1.GAMTimer"->"State1.Thread1.GAMReference"->"State1.Thread1.GAMController"->"State1.Thread1.GAMSpringMass"->"State1.Thread1.GAMDisplay"
+}
+}
+"+Timer"->"State1.Thread1.GAMTimer"
+"State1.Thread1.GAMTimer"->"+DDB1"
+"State1.Thread1.GAMReference"->"+DDB1"
+"+DDB1"->"State1.Thread1.GAMController"
+"State1.Thread1.GAMController"->"+DDB1"
+"+DDB1"->"State1.Thread1.GAMSpringMass"
+"State1.Thread1.GAMSpringMass"->"+DDB1"
+"+DDB1"->"State1.Thread1.GAMDisplay"
+"State1.Thread1.GAMDisplay"->"+Display"
+"+Timer" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+Timer <BR/>(LinuxTimer)</font></TD></TR></TABLE>>]
+"+DDB1" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+DDB1 <BR/>(GAMDataSource)</font></TD></TR></TABLE>>]
+"+DDB1" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+DDB1 <BR/>(GAMDataSource)</font></TD></TR></TABLE>>]
+"+DDB1" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+DDB1 <BR/>(GAMDataSource)</font></TD></TR></TABLE>>]
+"+DDB1" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+DDB1 <BR/>(GAMDataSource)</font></TD></TR></TABLE>>]
+"+DDB1" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+DDB1 <BR/>(GAMDataSource)</font></TD></TR></TABLE>>]
+"+DDB1" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+DDB1 <BR/>(GAMDataSource)</font></TD></TR></TABLE>>]
+"+DDB1" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+DDB1 <BR/>(GAMDataSource)</font></TD></TR></TABLE>>]
+"+Display" [shape=record, style=filled, fillcolor=white, color=darkgreen,label=<<TABLE border="0" cellborder="0"><TR><TD width="60" height="60"><font point-size="12">+Display <BR/>(LoggerDataSource)</font></TD></TR></TABLE>>]
+}

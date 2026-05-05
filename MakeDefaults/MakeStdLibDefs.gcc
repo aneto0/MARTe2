@@ -73,6 +73,9 @@ LFLAGS ?=
 CFLAGS ?= -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable -fno-strict-aliasing
 CPPFLAGS ?= $(CFLAGS) -frtti 
 CFLAGSPEC ?= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
+ifdef MARTe2_MULTIHEAP_SUPPORT
+CFLAGSPEC += -DMULTIHEAP_SUPPORT
+endif
 LIBRARIES ?=  
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

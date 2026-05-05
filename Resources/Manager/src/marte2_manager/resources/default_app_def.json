@@ -1,0 +1,154 @@
+{
+    "folders": {
+        "src": {
+            "name": "Source"
+        },
+        "test": {
+            "name": "Test"
+        },
+        "configurations": {
+            "name": "Configurations"
+        },
+        "docs": {
+            "name": "Documentation"
+        },
+        "startup": {
+            "name": "Startup"
+        }
+    },
+    "components": {
+        "gams": {
+            "name": "GAMs",
+            "src_template_name": "GAM_template",
+            "test_template_name": "GAMTest_template",
+            "gtest_template_name": "GAMGTest_template"
+        },
+        "datasources": {
+            "name": "DataSources",
+            "src_template_name": "DataSource_template",
+            "test_template_name": "DataSourceTest_template",
+            "gtest_template_name": "DataSourceGTest_template"
+        },
+        "interfaces": {
+            "name": "Interfaces",
+            "src_template_name": "Interface_template",
+            "test_template_name": "InterfaceTest_template",
+            "gtest_template_name": "InterfaceGTest_template"
+        }
+    },
+    "makefiles": {
+        "header": {
+            "text": ["#############################################################",
+                     "#                                                            ",
+                     "# Copyright 2026 EFDA | European Joint Undertaking for ITER  ",
+                     "# and the Development of Fusion Energy ('Fusion for Energy') ",
+                     "#                                                            ",
+                     "# Licensed under the EUPL, Version 1.1 or - as soon they     ",
+                     "# will be approved by the European Commission - subsequent   ",
+                     "# versions of the EUPL (the 'Licence');                      ",
+                     "# You may not use this work except in compliance with the    ",
+                     "# Licence.                                                   ",
+                     "# You may obtain a copy of the Licence at:                   ",
+                     "#                                                            ",
+                     "# https://eupl.eu/                                           ",
+                     "#                                                            ",
+                     "# Unless required by applicable law or agreed to in          ",
+                     "# writing, software distributed under the Licence is         ",
+                     "# distributed on an 'AS IS' basis,                           ",
+                     "# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either       ",
+                     "# express or implied.                                        ",
+                     "# See the Licence for the specific language governing        ",
+                     "# permissions and limitations under the Licence.             ",
+                     "#                                                            ",
+                     "# Date:   ${date}                                            ",
+                     "# Author: ${author}                                          ",
+                     "#                                                            ",
+                     "#############################################################"]
+
+        }
+    },
+    "src": {
+        ".h": {
+            "header": {
+                "text": ["/**                                                                              ",
+                         " * @file ${file}                                                                 ",
+                         " * @brief Header file for class ${class}                                         ",
+                         " * @date ${date}                                                                 ",
+                         " * @author ${author}                                                             ",
+                         " *                                                                               ",
+                         " * @copyright Copyright 2026 F4E | European Joint Undertaking for ITER and       ",
+                         " * the Development of Fusion Energy ('Fusion for Energy').                       ",
+                         " * Licensed under the EUPL, Version 1.1 or - as soon they will be approved       ",
+                         " * by the European Commission - subsequent versions of the EUPL (the 'Licence')  ",
+                         " * You may not use this work except in compliance with the Licence.              ",
+                         " * You may obtain a copy of the Licence at: https://eupl.eu/                     ",
+                         " *                                                                               ",
+                         " * @warning Unless required by applicable law or agreed to in writing,           ", 
+                         " * software distributed under the Licence is distributed on an  'AS IS'          ",
+                         " * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express           ",
+                         " * or implied. See the Licence permissions and limitations under the Licence.    ",
+                         "                                                                                 ",
+                         " * @details This header file contains the declaration of the class ${class}      ",
+                         " * with all of its public, protected and private members. It may also include    ",
+                         " * definitions for inline methods which need to be visible to the compiler.      ",
+                         " */                                                                              "]
+            }
+        },
+        ".cpp": {
+            "header": {
+                "text": ["/**                                                                             ",
+                        " * @file ${file}                                                                ",
+                        " * @brief Source file for class ${class}                                        ",
+                        " * @date ${date}                                                                ",
+                        " * @author ${author}                                                            ",
+                        " *                                                                              ",
+                        " * @copyright Copyright 2026 F4E | European Joint Undertaking for ITER and      ",
+                        " * the Development of Fusion Energy ('Fusion for Energy').                      ",
+                        " * Licensed under the EUPL, Version 1.1 or - as soon they will be approved      ",
+                        " * by the European Commission - subsequent versions of the EUPL (the 'Licence') ",
+                        " * You may not use this work except in compliance with the Licence.             ",
+                        " * You may obtain a copy of the Licence at: https://eupl.eu/                    ",
+                        " *                                                                              ",
+                        " * @warning Unless required by applicable law or agreed to in writing,          ",
+                        " * software distributed under the Licence is distributed on an 'AS IS'          ",
+                        " * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express          ",
+                        " * or implied. See the Licence permissions and limitations under the Licence.   ",
+                        "                                                                                ",
+                        " * @details This source file contains the definition of all the methods for     ",
+                        " * the class ${class} (public, protected, and private). Be aware that some      ",
+                        " * methods, such as those inline could be defined on the header file, instead.  ",
+                        " */                                                                             "] 
+            }
+        }
+    },
+    "startup": {
+        "header": {
+            "text": ["#############################################################",
+                     "#                                                            ",
+                     "# Copyright 2026 EFDA | European Joint Undertaking for ITER  ",
+                     "# and the Development of Fusion Energy ('Fusion for Energy') ",
+                     "#                                                            ",
+                     "# Licensed under the EUPL, Version 1.1 or - as soon they     ",
+                     "# will be approved by the European Commission - subsequent   ",
+                     "# versions of the EUPL (the 'Licence');                      ",
+                     "# You may not use this work except in compliance with the    ",
+                     "# Licence.                                                   ",
+                     "# You may obtain a copy of the Licence at:                   ",
+                     "#                                                            ",
+                     "# https://eupl.eu/                                           ",
+                     "#                                                            ",
+                     "# Unless required by applicable law or agreed to in          ",
+                     "# writing, software distributed under the Licence is         ",
+                     "# distributed on an 'AS IS' basis,                           ",
+                     "# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either       ",
+                     "# express or implied.                                        ",
+                     "# See the Licence for the specific language governing        ",
+                     "# permissions and limitations under the Licence.             ",
+                     "#                                                            ",
+                     "# Date:   ${date}                                            ",
+                     "# Author: ${author}                                          ",
+                     "#                                                            ",
+                     "#############################################################"]
+        }
+    }
+}

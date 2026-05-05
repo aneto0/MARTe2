@@ -145,6 +145,9 @@ bool MemoryMapMultiBufferBroker::CopyInputs() {
             }
         }
     }
+    if (ret) {
+        ret = dataSource->BrokerCopyTerminated();
+    }
     return ret;
 }
 
@@ -212,6 +215,9 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
                 ret = dataSource->TerminateOutputCopy(signalIdxArr[n], uintoffset, samples[n]);
             }
         }
+    }
+    if (ret) {
+        ret = dataSource->BrokerCopyTerminated();
     }
     return ret;
 }

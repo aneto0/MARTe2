@@ -52,7 +52,8 @@ OBJSX=  AtomicGTest.x \
 	StringPortableGTest.x \
 	TimeStampGTest.x \
 	TimeoutTypeGTest.x \
-	TypeDescriptorGTest.x
+	TypeDescriptorGTest.x \
+	UnorderedMapGTest.x
 		
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..

@@ -37,7 +37,8 @@ OBJSX=  BasicConsole.x \
     StandardHeap.x \
     StringHelperExtras_Gen.x \
     StringHelper_CLIB_Gen.x \
-    TimeStamp.x
+    TimeStamp.x \
+    Threads.x
 #HighResolutionTimerCalibrator.x 
     
 
@@ -45,6 +46,7 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
 INCLUDES+=-I../../../L0Types
+INCLUDES+=-I../../../L1Portability
 
 all: $(OBJS) $(CPPS) \
     $(BUILD_DIR)/L1Portability$(LIBEXT)

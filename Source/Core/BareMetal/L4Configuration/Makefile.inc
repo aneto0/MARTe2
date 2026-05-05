@@ -26,8 +26,8 @@
 
 OBJSX=	AnyObject.x \
 		AnyTypeCreator.x \
-		ConfigurationDatabase.x\
-		ConfigurationDatabaseNode.x\
+		ConfigurationDatabase.x2\
+		ConfigurationDatabaseNode.x2\
 		ConfigurationParserI.x \
 		FloatToInteger.x \
 		IntegerToFloat.x \

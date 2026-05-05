@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='MARTe',
-    version='0.1.0',    
+    version=os.environ.get("M2_RPM_VERSION", "0.0.0"),
     description='Python MARTe support libraries',
     url='https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/',
     author='Andre Neto',

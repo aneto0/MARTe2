@@ -52,8 +52,8 @@ public:CLASS_REGISTER_DECLARATION()
 
     virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
-    virtual void CustomPrepareNextState() {
-
+    virtual bool CustomPrepareNextState() {
+        return true;
     }
 
 };

@@ -1,0 +1,138 @@
+record(longout, "MARTE2-TUTORIAL-CABRIAN-TRIGGER-WRITER") {
+    field(DTYP, "Soft Channel")
+}            
+record(longout, "MARTE2-TUTORIAL-CABRIAN-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(ai, "MARTE2-TUTORIAL-CABRIAN-REFERENCE-POSITION") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-POSITION") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-POSITION-DISTURBED") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-POSITION-FILTERED") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-POSITION-M") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-VELOCITY") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-VELOCITY-M") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-POSITION-ERR") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-FORCE") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-TIMER-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-TIMER-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-TIMER-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-REFERENCE-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-REFERENCE-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-REFERENCE-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-CONTROLLER-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-CONTROLLER-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-CONTROLLER-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-SPRINGMASS-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-SPRINGMASS-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-SPRINGMASS-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-PERFMONITOR-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-PERFMONITOR-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-PERFMONITOR-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-WRITER-READ-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-WRITER-EXEC-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAM-WRITER-WRITE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-FORCE-AVERAGE") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-FORCE-STDDEV") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-FORCE-MAX") {
+    field(DTYP, "Soft Channel")
+}
+record(ao, "MARTE2-TUTORIAL-CABRIAN-FORCE-MIN") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-THREAD1-CYCLE-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-THREAD1-CYCLE-TIME-AVERAGE") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-THREAD1-CYCLE-TIME-MOVING-AVERAGE") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-THREAD1-CYCLE-TIME-STDDEV") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-THREAD1-CYCLE-TIME-MAX") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-THREAD1-CYCLE-TIME-MIN") {
+    field(DTYP, "Soft Channel")
+}
+record(waveform, "MARTE2-TUTORIAL-CABRIAN-THREAD1-CYCLE-TIME-HISTOGRAM") {
+    field(NELM, 11)
+    field(FTVL, "ULONG")
+}
+record(waveform, "MARTE2-TUTORIAL-CABRIAN-THREAD1-FREE-TIME-HISTOGRAM") {
+    field(NELM, 11)
+    field(FTVL, "ULONG")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-GAMS-EXECUTION-TIME") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-SWITCH-ON") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-APP-COMMAND") {
+    field(DTYP, "Soft Channel")
+}
+record(longout, "MARTE2-TUTORIAL-CABRIAN-APP-STATUS") {
+    field(DTYP, "Soft Channel")
+}
+

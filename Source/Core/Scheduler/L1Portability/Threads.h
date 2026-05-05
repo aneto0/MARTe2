@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ThreadsB.h"
 #include "GeneralDefinitions.h"
 #include "ExceptionHandler.h"
 #include "ProcessorType.h"

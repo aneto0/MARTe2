@@ -110,7 +110,8 @@ bool BinaryTreeTest<T, HashFunction>::TestConstructor() {
 template<typename T, typename HashFunction>
 bool BinaryTreeTest<T, HashFunction>::TestInsert(BinaryTree<T, HashFunction> &test, const char8 *id, T value) {
     uint32 size = test.GetSize();
-    test.Insert(id, value);
+    uint32 idx;
+    test.Insert(id, value, idx);
     return test.GetSize() == (size + 1u);
 }
 template<typename T, typename HashFunction>

@@ -248,6 +248,9 @@ bool MemoryMapInterpolatedInputBroker::Execute() {
             }
         }
     }
+    if (ok) {
+        ok = dataSource->BrokerCopyTerminated();
+    }
 
     return ok;
 }

@@ -108,12 +108,6 @@ bool ConfigurationDatabase::Write(const char8 *const name,
     else {
         ok = (StringHelper::Length(name) > 0u);
         if (ok) {
-            AnyType existentType = GetType(name);
-            if (existentType.GetTypeDescriptor() != voidAnyType.GetTypeDescriptor()) {
-                ok = Delete(name);
-            }
-        }
-        if (ok) {
             ReferenceT<AnyObject> objToWrite(GlobalObjectsDatabase::Instance()->GetStandardHeap());
             ok = objToWrite.IsValid();
             if (ok) {
@@ -122,7 +116,7 @@ bool ConfigurationDatabase::Write(const char8 *const name,
                     objToWrite->SetName(name);
                     ok = currentNode.IsValid();
                     if (ok) {
-                        ok = currentNode->Insert(objToWrite);
+                        ok = currentNode->Insert(objToWrite, false);
                     }
                 }
             }
@@ -139,7 +133,6 @@ AnyType ConfigurationDatabase::GetType(const char8 *const name) {
             retType = objToRead->GetType();
         }
     }
-
     return retType;
 }
 
@@ -294,16 +287,25 @@ bool ConfigurationDatabase::CreateNodes(const char8 *const path) {
 
     while ((pathStr.GetToken(token, ".", c)) && (ok)) {
         ok = (token.Size() > 0u);
+        bool createNewNode = false;
         if (ok) {
-            //Check if a node with this name already exists
-            Reference foundReference = currentNode->FindLeaf(token.Buffer());
-            if (foundReference.IsValid()) {
-                currentNode = foundReference;
+            if (c == '\0') {//Last token => leaf. This allows to optime the node creation when working at the node leaf level.
+                createNewNode = true;
             }
             else {
+                //Check if a node with this name already exists
+                Reference foundReference = currentNode->FindLeaf(token.Buffer());
+                if (foundReference.IsValid()) {
+                    currentNode = foundReference;
+                }
+                else {
+                    createNewNode = true;
+                }
+            }
+            if (createNewNode) {
                 ReferenceT<ConfigurationDatabaseNode> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 container->SetName(token.Buffer());
-                ok = currentNode->Insert(container);
+                ok = currentNode->Insert(container, true);
                 if (ok) {
                     container->SetParent(currentNode);
                     currentNode = container;
@@ -313,11 +315,7 @@ bool ConfigurationDatabase::CreateNodes(const char8 *const path) {
         }
 
         if (ok) {
-            ok = token.Seek(0Lu);
-            if (ok) {
-                ok = token.SetSize(0Lu);
-            }
-
+            token = "";
         }
     }
     if (ok) {
@@ -352,7 +350,7 @@ bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
     ReferenceT<ConfigurationDatabaseNode> nodeToAdd = node;
     bool ok = nodeToAdd.IsValid();
     if (ok) {
-        ok = currentNode->Insert(nodeToAdd);
+        ok = currentNode->Insert(nodeToAdd, true);
     }
     return ok;
 }

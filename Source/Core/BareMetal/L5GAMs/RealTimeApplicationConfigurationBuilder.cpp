@@ -719,7 +719,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                     ret = (numberOfDimensions <= 3u);
                     if (!ret) {
                         REPORT_ERROR_STATIC(ErrorManagement::InitialisationError,
-                                            "Invalid NumberOfDimensions for signal %s. Structured types only support NumberOfDimensions <= 1", signalName);
+                                            "Invalid NumberOfDimensions for signal %s. NumberOfDimensions must be >0 and <=3", signalName);
                     }
                 }
                 //TODO the NumberOfElements will have to be read as an array!
@@ -999,14 +999,16 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                             //Add the signal to the Data.dataSourceName node (if the Type is defined)
                             ret = AddSignalToDataSource(functionName, dataSourceName);
                             uint32 numberOfElements = 0u;
-                            if (!functionsDatabase.Read("NumberOfElements", numberOfElements)) {
-                                numberOfElements = 1u;
-                                ret = functionsDatabase.Write("NumberOfElements", numberOfElements);
+                            if (ret) {
+                                if (!functionsDatabase.Read("NumberOfElements", numberOfElements)) {
+                                    numberOfElements = 1u;
+                                    ret = functionsDatabase.Write("NumberOfElements", numberOfElements);
+                                }
                             }
                             if (ret) {
                                 uint32 numberOfDimensions = 0u;
                                 if (!functionsDatabase.Read("NumberOfDimensions", numberOfDimensions)) {
-                                    numberOfDimensions = 0u;
+                                    numberOfDimensions = (numberOfElements>1u)?(1u):(0u);
                                     ret = functionsDatabase.Write("NumberOfDimensions", numberOfDimensions);
                                 }
                             }
@@ -1016,13 +1018,12 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                             if (temp.MoveRelative("States")) {
                                 uint32 numberOfStates = temp.GetNumberOfChildren();
                                 if (numberOfStates > 0u) {
-                                    Vector<StreamString> states(numberOfStates);
+                                    Vector < StreamString > states(numberOfStates);
                                     for (uint32 st = 0u; (st < numberOfStates) && (ret); st++) {
                                         StreamString stateName = temp.GetChildName(st);
                                         states[st] = stateName;
                                     }
-                                    ret = ResolveConsumersAndProducers((directions[j] == InputSignals), states, functionId.Buffer(), functionName.Buffer(),
-                                                                       signalId.Buffer());
+                                    ret = ResolveConsumersAndProducers((directions[j] == InputSignals), states, functionId.Buffer(), functionName.Buffer(), signalId.Buffer());
                                 }
                             }
                         }
@@ -1033,8 +1034,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
                             ret = ResolveFunctionsMemory(directions[j], functionDatabaseFunction, totalByteSize, allocatedByteSize, functionName.Buffer());
                         }
                         if (!ret) {
-                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to resolve for data source %s and function %s", dataSourceName.Buffer(),
-                                                functionName.Buffer());
+                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to resolve for data source %s and function %s", dataSourceName.Buffer(), functionName.Buffer());
                         }
                     }
                     if (ret) {
@@ -1715,7 +1715,7 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 *const g
             }
             else {
                 uint32 numberOfThreadsGAM = atStateThread.GetNumberOfElements(0u);
-                Vector<StreamString> threadsGAM(numberOfThreadsGAM + 1u);
+                Vector < StreamString > threadsGAM(numberOfThreadsGAM + 1u);
                 uint32 stateNDims = atStateThread.GetNumberOfDimensions();
                 if (stateNDims == 0u) {
                     StreamString curThreadsGAM;
@@ -1724,7 +1724,7 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 *const g
                 }
                 else {
 
-                    Vector<StreamString> curThreadsGAM(numberOfThreadsGAM);
+                    Vector < StreamString > curThreadsGAM(numberOfThreadsGAM);
                     ret = functionsDatabase.Read(&stateName[1], curThreadsGAM);
                     for (uint32 n = 0u; n < numberOfThreadsGAM; n++) {
                         threadsGAM[n] = curThreadsGAM[n];
@@ -1874,7 +1874,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveStatesFromConfiguration() {
                                 ret = (at.GetNumberOfDimensions() == 1u);
                                 if (ret) {
                                     uint32 numberOfFunctions = at.GetNumberOfElements(0u);
-                                    Vector<StreamString> functions(numberOfFunctions);
+                                    Vector < StreamString > functions(numberOfFunctions);
                                     ret = globalDatabase.Read("Functions", functions);
                                     uint32 syncSignals = 0u;
                                     uint32 k;
@@ -2129,9 +2129,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const
                 newGAMArray = new StreamString[numberOfNewsElements];
                 newGAMNamesArray = new StreamString[numberOfNewsElements];
                 newSignalArray = new StreamString[numberOfNewsElements];
-                Vector<StreamString> newGAMVector(newGAMArray, numberOfExistentElements);
-                Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements);
-                Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements);
+                Vector < StreamString > newGAMVector(newGAMArray, numberOfExistentElements);
+                Vector < StreamString > newGAMNamesVector(newGAMNamesArray, numberOfExistentElements);
+                Vector < StreamString > newSignalVector(newSignalArray, numberOfExistentElements);
                 ret = (dataSourcesDatabase.Read(operationTypeGAM.Buffer(), newGAMVector));
                 if (ret) {
                     ret = (dataSourcesDatabase.Read(operationTypeGAMNames.Buffer(), newGAMNamesVector));
@@ -2148,9 +2148,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const
             newGAMArray[numberOfExistentElements] = functionId;
             newGAMNamesArray[numberOfExistentElements] = functionName;
             newSignalArray[numberOfExistentElements] = signalId;
-            Vector<StreamString> newGAMVector(newGAMArray, numberOfExistentElements + 1u);
-            Vector<StreamString> newGAMNamesVector(newGAMNamesArray, numberOfExistentElements + 1u);
-            Vector<StreamString> newSignalVector(newSignalArray, numberOfExistentElements + 1u);
+            Vector < StreamString > newGAMVector(newGAMArray, numberOfExistentElements + 1u);
+            Vector < StreamString > newGAMNamesVector(newGAMNamesArray, numberOfExistentElements + 1u);
+            Vector < StreamString > newSignalVector(newSignalArray, numberOfExistentElements + 1u);
 
             if (existentArray.GetDataPointer() != NULL_PTR(void*)) {
                 ret = dataSourcesDatabase.Delete(operationTypeGAM.Buffer());
@@ -2299,9 +2299,9 @@ bool RealTimeApplicationConfigurationBuilder::BuildProducersRanges() {
     AnyType prods = dataSourcesDatabase.GetType("GAMProducers");
 
     uint32 numberOfProducers = prods.GetNumberOfElements(0u);
-    Vector<StreamString> producers(numberOfProducers);
+    Vector < StreamString > producers(numberOfProducers);
     bool ret = dataSourcesDatabase.Read("GAMProducers", producers);
-    Vector<StreamString> signalProducers(numberOfProducers);
+    Vector < StreamString > signalProducers(numberOfProducers);
     if (ret) {
         ret = dataSourcesDatabase.Read("SignalProducers", signalProducers);
     }
@@ -2328,7 +2328,7 @@ bool RealTimeApplicationConfigurationBuilder::BuildProducersRanges() {
                 if (ret) {
                     uint32 rangeRows = at.GetNumberOfElements(1u);
                     uint32 rangeCols = at.GetNumberOfElements(0u);
-                    Matrix<uint32> rangesMatrix = Matrix<uint32>(rangeRows, rangeCols);
+                    Matrix < uint32 > rangesMatrix = Matrix < uint32 > (rangeRows, rangeCols);
                     ret = functionsDatabase.Read("Ranges", rangesMatrix);
                     for (uint32 k = 0u; (k < rangeRows) && (ret); k++) {
                         // allocate new memory if needed
@@ -2509,9 +2509,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
                     uint32 *rangesMatBackend = new uint32[backendRangesSize];
                     offsetMatrixBackend = new uint32[backendRangesSize];
                     //The offset matrix stores, for each range and in bytes, the starting offset and the size of the range to copy.
-                    Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
+                    Matrix < uint32 > offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
                     //Read the Ranges matrix from the configuration data.
-                    Matrix<uint32> rangesMat(rangesMatBackend, numberOfRanges, 2u);
+                    Matrix < uint32 > rangesMat(rangesMatBackend, numberOfRanges, 2u);
                     ret = functionsDatabase.Read("Ranges", rangesMat);
                     if (ret) {
                         for (uint32 n = 0u; (n < numberOfRanges) && (ret); n++) {
@@ -2556,7 +2556,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
     }
     if (ret) {
         if (offsetMatrixBackend != NULL_PTR(uint32*)) {
-            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
+            Matrix < uint32 > offsetMat(offsetMatrixBackend, numberOfRanges, 2u);
             ret = functionsDatabase.Write("ByteOffset", offsetMat);
         }
     }
@@ -2619,7 +2619,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
             // create a static matrix
             const uint32 offsetMatrixBackendNElements = numberOfOffsetElements * 2u;
             offsetMatrixBackend = new uint32[offsetMatrixBackendNElements];
-            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
+            Matrix < uint32 > offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
             ret = functionsDatabase.Read("ByteOffset", offsetMat);
         }
         else {
@@ -2728,7 +2728,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
     }
     if (ret) {
         if (offsetMatrixBackend != NULL_PTR(void*)) {
-            Matrix<uint32> offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
+            Matrix < uint32 > offsetMat(offsetMatrixBackend, numberOfOffsetElements, 2u);
             ret = functionsDatabase.Write("ByteOffset", offsetMat);
         }
     }
@@ -2811,7 +2811,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                 ret = FindDataSourceNumber(dataSourceName.Buffer(), dataSourceIdInDataSourceDatabase);
             }
             StreamString dsName;
-            ReferenceT<DataSourceI> dataSource;
+            ReferenceT < DataSourceI > dataSource;
             if (ret) {
                 ret = dataSourcesDatabase.MoveAbsolute("Data");
             }
@@ -2957,7 +2957,7 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
         if (ret) {
             ret = dataSourcesDatabase.Read("QualifiedName", dsName);
         }
-        ReferenceT<DataSourceI> dataSource;
+        ReferenceT < DataSourceI > dataSource;
         if (ret) {
             StreamString fullDsPath = "Data.";
             fullDsPath += dsName;
@@ -3067,7 +3067,7 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
             if (ret) {
                 ret = dataSourcesDatabase.Read("QualifiedName", qualifiedName);
             }
-            ReferenceT<DataSourceI> dataSource;
+            ReferenceT < DataSourceI > dataSource;
             if (ret) {
                 /*lint -e{613} NULL pointer checking done before entering here */
                 dataSource = realTimeApplication->Find(qualifiedName.Buffer());
@@ -3113,7 +3113,7 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
             if (ret) {
                 ret = functionsDatabase.Read("QualifiedName", qualifiedName);
             }
-            ReferenceT<GAM> gam;
+            ReferenceT < GAM > gam;
             if (ret) {
                 /*lint -e{613} NULL pointer checking done before entering here */
                 gam = realTimeApplication->Find(qualifiedName.Buffer());
@@ -3432,7 +3432,6 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         StreamString cachedQualifiedName;
         StreamString cachedAliasName;
         StreamString cachedFullType;
-        StreamString cachedType;
         StreamString fullSignalName;
         StreamString fullAliasName;
         if (ret) {
@@ -3454,9 +3453,6 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
         }
         if (ret) {
             ret = cachedIntrospections.Read("FullType", cachedFullType);
-        }
-        if (ret) {
-            ret = cachedIntrospections.Read("Type", cachedType);
         }
         //Finally got to the BasicType. Write all the properties
         if (ret) {
@@ -3958,14 +3954,14 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureThreads() const {
         // for each of them call Validate(*)
         uint32 numberOfStates = statesContainer.Size();
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
-            ReferenceT<RealTimeState> state = statesContainer.Get(i);
+            ReferenceT < RealTimeState > state = statesContainer.Get(i);
             if (state.IsValid()) {
-                ReferenceT<ReferenceContainer> threadsContainer = state->Find("Threads");
+                ReferenceT < ReferenceContainer > threadsContainer = state->Find("Threads");
 
                 // for each state call the configuration function
                 uint32 numberOfThreads = threadsContainer->Size();
                 for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
-                    ReferenceT<RealTimeThread> thread = threadsContainer->Get(j);
+                    ReferenceT < RealTimeThread > thread = threadsContainer->Get(j);
                     if (thread.IsValid()) {
                         ret = thread->ConfigureArchitecture();
                     }

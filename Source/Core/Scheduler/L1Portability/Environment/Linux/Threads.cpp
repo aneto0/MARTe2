@@ -58,7 +58,9 @@ static void* SystemThreadFunction(ThreadInformation *const threadInfo) {
         ErrorManagement::ErrorType err = threadInfo->ThreadWait();
         //Start the user thread
         if (err == ErrorManagement::NoError) {
-            threadInfo->UserThreadFunction();
+            if (threadInfo->GetThreadIdentifier() != InvalidThreadIdentifier) {
+                threadInfo->UserThreadFunction();
+            }
 
             bool ok = ThreadsDatabase::Lock();
             if (ok) {
@@ -116,10 +118,6 @@ uint32 GetCPUs(const ThreadIdentifier &threadId) {
     }
     (void) ThreadsDatabase::UnLock();
     return cpus;
-}
-
-ThreadIdentifier Id() {
-    return pthread_self();
 }
 
 /*
@@ -337,6 +335,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 }
             }
         }
+        bool threadSpawned = ok;
         if (ok) {
             if (name != NULL_PTR(const char8 * const)) {
                 //pthread_setname_np name maximum size is 16, including the \0
@@ -375,28 +374,36 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_setaffinity_np()");
             }
         }
-        if (ok) {
-            ok = ThreadsDatabase::Lock();
-            if (ok) {
+        if (threadSpawned) {
+            if (ThreadsDatabase::Lock()) {
                 threadInfo->SetThreadIdentifier(threadId);
-                ok = ThreadsDatabase::NewEntry(threadInfo);
+                if (!ThreadsDatabase::NewEntry(threadInfo)) {
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: ThreadsDatabase::NewEntry()");
+                }
             }
             ThreadsDatabase::UnLock();
             SetPriority(threadId, Threads::NormalPriorityClass, 0u);
         }
-        if (ok) {
-            ok = ThreadsDatabase::Lock();
-            if (ok) {
-                ok = threadInfo->ThreadPost();
+        if (threadSpawned) {
+            if (!ok) {
+                //Do not let the User thread run
+                threadInfo->SetThreadIdentifier(InvalidThreadIdentifier);
+            }
+            if (ThreadsDatabase::Lock()) {
+                if (!threadInfo->ThreadPost()) {
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: threadInfo->ThreadPost()");
+                }
             }
             ThreadsDatabase::UnLock();
         }
-        if(!ok) {
+        if(!threadSpawned) {
             threadId = InvalidThreadIdentifier;
             delete threadInfo;
         }
+        if (!ok) {
+            threadId = InvalidThreadIdentifier;
+        }
     }
-
     return threadId;
 }
 

@@ -49,16 +49,31 @@ TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestConstructor) {
 
 TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute) {
     DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 0, 2087772673));
+    ASSERT_TRUE(test.TestCompute("ciao", 0, 2090149025));
 }
 
 TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestComputeSize) {
     DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 4, 2087772673));
+    ASSERT_TRUE(test.TestCompute("ciao", 4, 2090149025));
 }
 
 TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestComputeLessSize) {
     DjbHashFunctionTest  test;
-    ASSERT_TRUE(test.TestCompute("ciao", 3, 193416366));
+    ASSERT_TRUE(test.TestCompute("ciao", 3, 193488370));
+}
+
+TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64) {
+    DjbHashFunctionTest  test;
+    ASSERT_TRUE(test.TestCompute64("ciao", 0, 6385116321));
+}
+
+TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64Size) {
+    DjbHashFunctionTest  test;
+    ASSERT_TRUE(test.TestCompute64("ciao", 4, 6385116321));
+}
+
+TEST(BareMetal_L0Types_DjbHashFunctionGTest,TestCompute64LessSize) {
+    DjbHashFunctionTest  test;
+    ASSERT_TRUE(test.TestCompute64("ciao", 3, 193488370));
 }
 

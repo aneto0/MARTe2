@@ -88,9 +88,6 @@ bool Select::AddReadHandle(const HandleI &handle) {
 
     if(retVal) {
         tmpSocketCore->isReadSelected = true;
-        tmpSocketCore->isReadReady = false;
-        tmpSocketCore->readReadyAt = 0u;
-        tmpSocketCore->isWritten = false;
     } else {
         REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Failure to add read handle in select");
     }
@@ -185,8 +182,6 @@ bool Select::RemoveReadHandle(const HandleI &handle) {
 
     if(retVal) {
         tmpSocketCore->isReadSelected = false;
-        tmpSocketCore->isReadReady = false;
-        tmpSocketCore->readReadyAt = 0u;
     } else {
         REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Failure to remove read handle in select");
     }
@@ -287,7 +282,7 @@ void Select::ClearAllHandles() {
     // /*lint -e{909} .Justification: Removes the warning "Implicit conversion from int to bool [MISRA C++ Rule 5-0-13], [MISRA C++ Rule 5-0-14], [MISRA C++ Rule 5-3-1]". */
     // FD_ZERO(&exceptionHandle);
     // highestHandle = 0;
-    return;
+    SocketCoreSingleton::GetInstance().ClearAll();
 }
 
 bool Select::IsSet(const HandleI &handle) const {
@@ -297,7 +292,7 @@ bool Select::IsSet(const HandleI &handle) const {
     retVal = (tmpSocketCore != NULL_PTR(SocketCore*));
 
     if(retVal) {
-        retVal = tmpSocketCore->isReadSelected;
+        retVal = (tmpSocketCore->isReadSelected);
     }
 
     return retVal;

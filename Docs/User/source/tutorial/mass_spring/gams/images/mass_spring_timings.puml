@@ -1,0 +1,161 @@
+@startuml
+scale 10 as 150 pixels
+
+robust "LinuxTimer" as LT
+concise "GAMTimer" as GT
+concise "GAMReference" as GR
+concise "GAMController" as GC
+concise "GAMSpringMass" as GSM
+concise "GAMPerfMonitor" as GPM
+concise "GAMDisplay" as GD
+
+@0 
+GT is R
+LT is 0
+
+@31
+LT is 1
+
+@0 <-> @32 : Free time 
+
+@32
+LT is 0
+LT-> GT
+GT is E
+
+@36
+GT is W
+
+@40
+GT-> GR
+GR is R
+GT is {hidden}
+
+@44
+GR is E
+
+@48
+GR is W
+
+@52
+GR -> GC
+GC is R
+GR is {hidden}
+
+@56
+GC is E
+
+@60
+GC is W
+
+@64
+GC -> GSM
+GSM is R
+GC is {hidden}
+
+@68
+GSM is E
+
+@72
+GSM is W
+
+@76
+GSM -> GPM
+GPM is R
+GSM is {hidden}
+
+@80
+GPM is E
+
+@84
+GPM is W
+
+@88
+GPM -> GD
+GD is R
+GPM is {hidden}
+
+@92
+GD is E
+
+@96
+GD is W
+
+@100
+GD is {hidden}
+GT is R
+GD -> GT
+
+@131
+LT is 1
+
+@132
+LT is 0
+GT is E
+
+@136
+GT is W
+
+@140
+GT-> GR
+GR is R
+GT is {hidden}
+
+@144
+GR is E
+
+@148
+GR is W
+
+@152
+GR -> GC
+GC is R
+GR is {hidden}
+
+@156
+GC is E
+
+@160
+GC is W
+
+@164
+GC -> GSM
+GSM is R
+GC is {hidden}
+
+@168
+GSM is E
+
+@172
+GSM is W
+
+@176
+GSM -> GPM
+GPM is R
+GSM is {hidden}
+
+@180
+GPM is E
+
+@184
+GPM is W
+
+@188
+GPM -> GD
+GD is R
+GPM is {hidden}
+
+@192
+GD is E
+
+@196
+GD is W
+
+@200
+GD is {hidden}
+LT is {hidden}
+
+
+@100 <-> @200 : Cycle time 
+
+@enduml

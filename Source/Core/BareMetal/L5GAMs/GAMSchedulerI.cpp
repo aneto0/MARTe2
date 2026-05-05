@@ -390,7 +390,7 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
         ret = found;
     }
     if (ret) {
-        CustomPrepareNextState();
+        ret = CustomPrepareNextState();
     }
 
     return ret;

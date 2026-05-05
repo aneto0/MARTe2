@@ -452,8 +452,8 @@ MARTe::ErrorManagement::ErrorType DefaultSchedulerForTests::StopCurrentStateExec
     return MARTe::ErrorManagement::NoError;
 }
 
-void DefaultSchedulerForTests::CustomPrepareNextState() {
-
+bool DefaultSchedulerForTests::CustomPrepareNextState() {
+    return true;
 }
 
 CLASS_REGISTER(DefaultSchedulerForTests, "1.0")
