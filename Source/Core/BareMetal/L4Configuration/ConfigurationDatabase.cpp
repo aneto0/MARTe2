@@ -403,7 +403,7 @@ bool ConfigurationDatabase::ExportChildren(StructuredDataI &data) {
         const char8 *childName = GetChildName(i);
         StreamString id;
         if (MoveRelative(childName)) {
-            id.Printf("%d", cnt);
+            (void) id.Printf("%d", cnt);
             ok = data.CreateRelative(id.Buffer());
             if (ok) {
                 ok = data.Write("Name", childName);

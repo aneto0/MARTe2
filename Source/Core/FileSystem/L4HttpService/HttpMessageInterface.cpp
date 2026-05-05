@@ -126,12 +126,16 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
                         if (childName != "msg") {
                             StreamString toBeParsed = childName.Buffer();
                             toBeParsed += "=";
-                            protocol.Read(childName.Buffer(), toBeParsed);
                             ConfigurationDatabase paramCdb;
-                            toBeParsed.Seek(0ull);
                             StandardParser parser(toBeParsed, paramCdb);
-                            ok = parser.Parse();
                             if (ok) {
+                                ok = protocol.Read(childName.Buffer(), toBeParsed);
+                            }
+                            if (ok) {
+                                ok = toBeParsed.Seek(0ull);
+                            }
+                            if (ok) {
+                                ok = parser.Parse();
                                 if (parameters->Delete(childName.Buffer())) {
                                     ok = parameters->Write(childName.Buffer(), paramCdb.GetType(childName.Buffer()));
                                 }
@@ -142,14 +146,14 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
                         StreamString paramVal;
                         StreamString paramName = parameters->GetChildName(i);
                         if (parameters->Read(paramName.Buffer(), paramVal)) {
-                            if (paramVal[0] == '$') {
+                            if (paramVal[0u] == '$') {
                                 const char8 *paramValP = &(paramVal.Buffer()[1u]);
 
                                 StreamString toBeParsed = paramName.Buffer();
                                 toBeParsed += "=";
                                 toBeParsed += paramValP;
                                 ConfigurationDatabase paramCdb;
-                                toBeParsed.Seek(0ull);
+                                (void) toBeParsed.Seek(0ull);
                                 StandardParser parser(toBeParsed, paramCdb);
                                 ok = parser.Parse();
                                 if (ok) {
