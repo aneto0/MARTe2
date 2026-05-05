@@ -42,7 +42,7 @@
 namespace MARTe {
 
 /**
- * @brief Fixed size array of values.
+ * @brief Array of values.
  * @details The Vector can allocate and manage its own memory or it can be
  * associated to an existent memory array.
  * @tparam T the scalar type for the cells of the matrix
@@ -165,6 +165,12 @@ public:
      * @return the number of elements in the vector.
      */
     inline uint32 GetNumberOfElements() const;
+    
+     /**
+     * @brief Gets the max number of elements allocated in the vector.
+     * @return the number of elements in the vector memory ready to be used.
+     */
+    inline uint32 GetMaxNumberOfElements() const;
 
     /**
      * @brief Performs the vector scalar product.
@@ -179,6 +185,30 @@ public:
     bool Product(Vector<T> factor,
                  T &result) const;
 
+    /**
+     * @brief Append element to this vector
+     * @param[in] newElement the element to be appended at the end
+     */
+    void Append(const T &newElement);
+   
+    /**
+     * @brief Insert an element in a specific position
+     * @param[in] newElement the element to be inserted
+     * @param[in] idx the position
+     */ 
+    void Insert(const T &newElement, const uint32 idx);
+
+    /**
+     * @brief Sets the allocation granularity
+     * @param[in] allocGranularityIn the new allocation granularity
+     */
+    void SetAllocationGranularity(const uint32 allocGranularityIn);
+    
+    /**
+     * @brief Get the allocation granularity
+     * @return the allocation granularity
+     */
+    uint32 GetAllocationGranularity() const;
 private:
     /**
      * @brief Frees memory if necessary
@@ -186,6 +216,11 @@ private:
      *   GetDataPointer() == NULL
      */
     void FreeMemory();
+
+    /**
+     * @brief Re-allocates if needed
+     */
+    void Reallocate(const uint32 nElementsToCopy);
 
     /**
      * The data pointer to the raw data.
@@ -201,6 +236,16 @@ private:
      * True if the vector is allocated internally on heap and has to be destroyed by the destructor.
      */
     bool canDestroy;
+
+    /**
+     * The max number of elements allocated in memory
+     */
+    uint32 maxNumberOfElements;
+
+    /**
+     * The allocation granularity
+     */
+    uint32 allocGranularity;
 };
 }
 
@@ -213,17 +258,22 @@ namespace MARTe {
 template<typename T>
 Vector<T>::Vector() {
     numberOfElements = 0u;
+    maxNumberOfElements = 0u;
     dataPointer = NULL_PTR(T*);
-    canDestroy = false;
+    canDestroy = true;
+    allocGranularity = 4u;
+    Reallocate(numberOfElements);
 }
 
 //lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
 template<typename T>
 Vector<T>::Vector(const Vector<T> &that) {
     this->numberOfElements = that.GetNumberOfElements();
+    this->maxNumberOfElements = that.GetMaxNumberOfElements();
+    allocGranularity = 4u;
     if ((this->GetNumberOfElements() > 0u) && (that.dataPointer != NULL_PTR(T*))) {
         if (that.canDestroy) {
-            this->dataPointer = new T[that.numberOfElements];
+            this->dataPointer = new T[that.maxNumberOfElements];
             this->canDestroy = true;
             T *arrayD = this->dataPointer;
             T *arrayO = that.dataPointer;
@@ -241,13 +291,17 @@ Vector<T>::Vector(const Vector<T> &that) {
         this->dataPointer = NULL_PTR(T*);
         this->canDestroy = false;
         this->numberOfElements = 0u;
+        this->maxNumberOfElements = 0u;
     }
 }
 
 template<typename T>
 Vector<T>::Vector(uint32 nOfElements) {
-    dataPointer = new T[nOfElements];
+    dataPointer = NULL_PTR(T*);
+    allocGranularity = 4u;
     numberOfElements = nOfElements;
+    maxNumberOfElements = (nOfElements/allocGranularity)*allocGranularity;
+    Reallocate(0);
     canDestroy = true;
 }
 //lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
@@ -255,22 +309,20 @@ template<typename T>
 Vector<T>::Vector(T *const existingArray,
                   const uint32 nOfElements) {
     dataPointer = existingArray;
+    allocGranularity = 4u;
     numberOfElements = nOfElements;
+    maxNumberOfElements = (nOfElements/allocGranularity)*allocGranularity;
     canDestroy = false;
 }
 
 template<typename T>
 void Vector<T>::SetSize(uint32 nOfElements) {
-    FreeMemory();
-    if (nOfElements > 0) {
-        dataPointer = new T[nOfElements];
-        canDestroy = true;
+    if(nOfElements != numberOfElements){
+        uint32 toCopy = (numberOfElements > nOfElements)?(nOfElements):(numberOfElements);
+        numberOfElements = nOfElements;
+        maxNumberOfElements = (nOfElements/allocGranularity)*allocGranularity;
+        Reallocate(toCopy);
     }
-    else if (nOfElements == 0) {
-        dataPointer = NULL_PTR(T*);
-        canDestroy = false;
-    }
-    numberOfElements = nOfElements;
 }
 
 template<typename T>
@@ -278,6 +330,7 @@ template<uint32 nOfElementsStatic>
 Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
     dataPointer = &source[0];
     numberOfElements = nOfElementsStatic;
+    maxNumberOfElements = numberOfElements;
     canDestroy = false;
 }
 //lint -e{9107} header cannot be included in more than one translation unit because of the definition of symbol [MISRA C++ Rule 3-1-1]. Justification: It is a template function
@@ -300,9 +353,10 @@ Vector<T>& Vector<T>::operator =(const Vector<T> &that) {
     if (this != &that) {
         this->FreeMemory();
         this->numberOfElements = that.GetNumberOfElements();
+        this->maxNumberOfElements = that.GetMaxNumberOfElements();
         if ((this->GetNumberOfElements() > 0u) && (that.dataPointer != NULL_PTR(T*))) {
             if (that.canDestroy) {
-                this->dataPointer = new T[that.numberOfElements];
+                this->dataPointer = new T[that.maxNumberOfElements];
                 this->canDestroy = true;
                 //lint -e{295} Note 925: cast from pointer to pointer [MISRA C++ Rule 5-2-8], [MISRA C++ Rule 5-2-9].Justification to pointer cast needed.
                 T *arrayD = this->dataPointer;
@@ -337,6 +391,11 @@ inline uint32 Vector<T>::GetNumberOfElements() const {
 }
 
 template<typename T>
+inline uint32 Vector<T>::GetMaxNumberOfElements() const {
+    return maxNumberOfElements;
+}
+
+template<typename T>
 bool Vector<T>::Product(Vector<T> factor,
                         T &result) const {
     bool ret = (factor.numberOfElements == numberOfElements);
@@ -356,11 +415,68 @@ void Vector<T>::FreeMemory() {
         delete[] dataPointer;
         dataPointer = NULL_PTR(T*);
         numberOfElements = 0u;
+        maxNumberOfElements = 0u;
         canDestroy = false;
     }
 }
 
+template<typename T>
+void Vector<T>::Reallocate(const uint32 nElementsToCopy){
+    if(maxNumberOfElements <= numberOfElements){
+        maxNumberOfElements=((numberOfElements/allocGranularity)+1u)*allocGranularity;
+        if(dataPointer == NULL_PTR(T*)){
+            dataPointer = new T[maxNumberOfElements];
+        }
+        else{
+            T *newDataPointer = new T[maxNumberOfElements];
+            for(uint32 i = 0u; i < nElementsToCopy; i++){
+                newDataPointer[i] = dataPointer[i];
+            }
+            T *temp = dataPointer;
+            dataPointer = newDataPointer;
+            if(canDestroy){
+                delete[] temp;
+            }
+        }
+        canDestroy = true;
+    }
 }
 
+template<typename T>
+void Vector<T>::Append(const T &newElement){
+    if(canDestroy){
+        dataPointer[numberOfElements] = newElement;
+        numberOfElements++;
+        Reallocate(numberOfElements);
+    }
+}
+
+template<typename T>
+void Vector<T>::Insert(const T &newElement, const uint32 idx){
+    if(canDestroy){
+        for(uint32 i = (numberOfElements); i > idx; i--){
+            dataPointer[i] = dataPointer[i-1u];
+        }
+        dataPointer[idx] = newElement;
+        numberOfElements++;
+        Reallocate(numberOfElements);
+    }
+}
+    
+template<typename T>
+void Vector<T>::SetAllocationGranularity(const uint32 allocGranularityIn){
+    this->allocGranularity = allocGranularityIn;
+    if(this->allocGranularity == 0u){
+        this->allocGranularity++;
+    }
+}
+
+template<typename T>
+uint32 Vector<T>::GetAllocationGranularity() const{
+    return allocGranularity;
+}
+
+
+}
 #endif /* VECTOR_H_ */
 
