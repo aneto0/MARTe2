@@ -329,6 +329,7 @@ template<typename T>
 template<uint32 nOfElementsStatic>
 Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
     dataPointer = &source[0];
+    allocGranularity = 4u;
     numberOfElements = nOfElementsStatic;
     maxNumberOfElements = numberOfElements;
     canDestroy = false;
