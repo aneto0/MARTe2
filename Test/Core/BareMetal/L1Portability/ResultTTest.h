@@ -1,8 +1,8 @@
 /**
- * @file HttpMessageInterfaceTest.h
- * @brief Header file for class HttpMessageInterfaceTest
- * @date 18/03/2019
- * @author Andre Neto
+ * @file ResultTTest.h
+ * @brief Header file for class ResultTTest
+ * @date 02/12/2015
+ * @author Giuseppe ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HttpMessageInterfaceTest
+ * @details This header file contains the declaration of the class ResultTTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPMESSAGEINTERFACETEST_H_
-#define TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPMESSAGEINTERFACETEST_H_
+#ifndef TOKENTEST_H_
+#define TOKENTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,60 +31,84 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "ResultT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
+
 /**
- * @brief Tests the HttpMessageInterface public methods.
+ * @brief Tests all the ResultTTest functions
  */
-class HttpMessageInterfaceTest {
+class ResultTTest {
 public:
+    
     /**
-     * @brief Tests the Initialise method.
+     * @brief Tests the constructor
      */
-    bool TestInitialise();
+    bool TestConstructor();
+    
+    /**
+     * @brief Tests the copy constructor
+     */
+    bool TestCopyConstructor();
+   
+    /**
+     * @brief Tests the destructor
+     */ 
+    bool TestDestructor();
 
     /**
-     * @brief Tests that the Initialise method fails if there are childs which are not messages.
+     * @brief Tests the SetError function
      */
-    bool TestInitialise_False_Not_Only_Messages();
+    bool TestSetError();
+    
+    /**
+     * @brief Tests the PrintError function
+     */
+    bool TestPrintError();
 
     /**
-     * @brief Tests the GetAsStructuredData.
+     * @brief Tests the GetValue function
      */
-    bool TestGetAsStructuredData();
+    bool TestGetValue();
+    
+    /**
+     * @brief Tests the bool operator
+     */
+    bool TestBoolOperator();
 
     /**
-     * @brief Tests the GetAsText.
+     * @brief Tests the assignment operator with another T instance
      */
-    bool TestGetAsText();
+    bool TestAssignOperator_Type();
+    
+    /**
+     * @brief Tests the assigment operator with another Result
+     */
+    bool TestAssignOperator_Result();
 
     /**
-     * @brief Tests the GetAsStructuredData with a Message that does not exist.
+     * @brief tests the equal operator with another t instance
      */
-    bool TestGetAsStructuredData_Message_Does_Not_Exist();
+    bool TestEqualOperator_Type();
+ 
+    /**
+     * @brief Tests the equal operator with another Result
+     */
+    bool TestEqualOperator_Result();
 
     /**
-     * @brief Tests the GetAsStructuredData with a Message that contains configurable payload.
+     * @brief tests the different operator with another t instance
      */
-    bool TestGetAsStructuredData_Message_Parameter();
-
+    bool TestDifferentOperator_Type();
+    
     /**
-     * @brief Tests the GetAsText with a Message that does not exist.
+     * @brief Tests the different operator with another Result
      */
-    bool TestGetAsText_Message_Does_Not_Exist();
+    bool TestDifferentOperator_Result();
 
-    /**
-     * @brief Tests the GetAsStructuredData with a Message that cannot be sent.
-     */
-    bool TestGetAsStructuredData_Message_Cannot_Be_Sent();
-
-    /**
-     * @brief Tests the GetAsText with a Message that cannot be sent.
-     */
-    bool TestGetAsText_Message_Cannot_Be_Sent();
 
 };
 
@@ -92,4 +116,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPMESSAGEINTERFACETEST_H_ */
+#endif /* TOKENTEST_H_ */
+

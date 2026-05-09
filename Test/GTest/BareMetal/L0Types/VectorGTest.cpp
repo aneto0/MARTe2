@@ -632,3 +632,29 @@ TEST(BareMetal_L0Types_VectorGTest,TestCopyAssignmentNULLPointer) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestCopyAssignmentNULLPointer());
 }
+
+TEST(BareMetal_L0Types_VectorGTest,TestGetMaxNumberOfElements) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestGetMaxNumberOfElements());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestAppend) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestAppend());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestInsert) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestInsert());
+}
+
+ TEST(BareMetal_L0Types_VectorGTest,TestSetAllocationGranularity) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestSetAllocationGranularity());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestGetAllocationGranularity) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestGetAllocationGranularity());
+}
+

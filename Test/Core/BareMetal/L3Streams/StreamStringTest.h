@@ -200,6 +200,21 @@ public:
     bool TestConcatenateOperator_String(const char8 *input);
 
     /**
+     * @brief Tests if the char in input is appended on the stream queue.
+     */
+    bool TestSumOperator_Char(char8 input);
+
+    /**
+     * @brief Tests if the C string in input is appended on the stream queue.
+     */
+    bool TestSumOperator_CCString(const char8 *input);
+
+    /**
+     * @brief Tests if a the buffer of a StreamString in input is appended on the stream queue.
+     */
+    bool TestSumOperator_String(const char8 *input);
+
+    /**
      * @brief Tests if the function returns true if the buffers contain the same data of the C string in input.
      */
     bool TestIsEqualOperator_CCString(const char8 *input);
@@ -253,7 +268,20 @@ public:
      */
     bool TestGetToken(const TokenTestTableRow *table);
 
-
+    /**
+     * @brief Tests the SubString function
+     */
+    bool TestSubString();
+    
+    /**
+     * @brief Tests the Split function
+     */
+    bool TestSplit();
+    
+    /**
+     * @brief Tests the Replace function
+     */
+    bool TestReplace();
 
 };
 

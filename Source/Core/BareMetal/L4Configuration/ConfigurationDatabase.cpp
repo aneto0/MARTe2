@@ -67,7 +67,7 @@ ConfigurationDatabase::ConfigurationDatabase(const ConfigurationDatabase &toCopy
     currentNode = toCopy.currentNode;
 }
 
-ConfigurationDatabase &ConfigurationDatabase::operator =(const ConfigurationDatabase &toCopy) {
+ConfigurationDatabase& ConfigurationDatabase::operator =(const ConfigurationDatabase &toCopy) {
     if (this != &toCopy) {
         currentNode = Reference();
         Purge();
@@ -86,12 +86,13 @@ void ConfigurationDatabase::Purge() const {
         //currentNode is pointing at rootNode
         numberOfReferences--;
     }
-    if(numberOfReferences == rootNode->GetNumberOfNodes()) {
+    if (numberOfReferences == rootNode->GetNumberOfNodes()) {
         rootNode->Purge();
     }
 }
 
-bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value) {
+bool ConfigurationDatabase::Write(const char8 *const name,
+                                  const AnyType &value) {
 
     bool ok = false;
     // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
@@ -124,7 +125,7 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
     return ok;
 }
 
-AnyType ConfigurationDatabase::GetType(const char8 * const name) {
+AnyType ConfigurationDatabase::GetType(const char8 *const name) {
     AnyType retType;
     if (currentNode.IsValid()) {
         ReferenceT<AnyObject> objToRead = currentNode->FindLeaf(name);
@@ -188,7 +189,8 @@ bool ConfigurationDatabase::MoveToRoot() {
     return ok;
 }
 
-bool ConfigurationDatabase::Read(const char8 * const name, const AnyType &value) {
+bool ConfigurationDatabase::Read(const char8 *const name,
+                                 const AnyType &value) {
 
     bool ok = false;
     // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
@@ -216,7 +218,7 @@ bool ConfigurationDatabase::Read(const char8 * const name, const AnyType &value)
     return ok;
 }
 
-bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
+bool ConfigurationDatabase::MoveAbsolute(const char8 *const path) {
     //Invalidate move to leafs
     ReferenceT<ConfigurationDatabaseNode> container = rootNode->Find(path);
     bool ok = container.IsValid();
@@ -227,7 +229,7 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
     return ok;
 }
 
-bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
+bool ConfigurationDatabase::MoveRelative(const char8 *const path) {
 
     ReferenceT<ConfigurationDatabaseNode> container = currentNode->Find(path);
     bool ok = container.IsValid();
@@ -272,7 +274,7 @@ bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
     return ok;
 }
 
-bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
+bool ConfigurationDatabase::CreateNodes(const char8 *const path) {
     StreamString pathStr = path;
     bool ok = pathStr.Seek(0Lu);
     if (ok) {
@@ -325,16 +327,16 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
     return ok;
 }
 
-bool ConfigurationDatabase::CreateAbsolute(const char8 * const path) {
+bool ConfigurationDatabase::CreateAbsolute(const char8 *const path) {
     currentNode = rootNode;
     return CreateNodes(path);
 }
 
-bool ConfigurationDatabase::CreateRelative(const char8 * const path) {
+bool ConfigurationDatabase::CreateRelative(const char8 *const path) {
     return CreateNodes(path);
 }
 
-bool ConfigurationDatabase::Delete(const char8 * const name) {
+bool ConfigurationDatabase::Delete(const char8 *const name) {
     Reference foundReference = currentNode->FindLeaf(name);
     bool ok = (foundReference.IsValid());
     if (ok) {
@@ -353,11 +355,11 @@ bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
     return ok;
 }
 
-const char8 *ConfigurationDatabase::GetName() {
+const char8* ConfigurationDatabase::GetName() {
     return (currentNode.IsValid()) ? (currentNode->GetName()) : (NULL_PTR(const char8*));
 }
 
-const char8 *ConfigurationDatabase::GetChildName(const uint32 index) {
+const char8* ConfigurationDatabase::GetChildName(const uint32 index) {
     Reference foundReference = currentNode->Get(index);
     return (foundReference.IsValid()) ? (foundReference->GetName()) : (NULL_PTR(const char8*));
 }
@@ -379,11 +381,49 @@ void ConfigurationDatabase::Unlock() {
 }
 
 /*Reference ConfigurationDatabase::GetCurrentNode() const {
-    return currentNode;
-}*/
+ return currentNode;
+ }*/
 
 void ConfigurationDatabase::SetCurrentNodeAsRootNode() {
     rootNode = currentNode;
+}
+
+bool ConfigurationDatabase::ExportData(StructuredDataI &data) {
+    bool ok = Object::ExportData(data);
+    if (ok) {
+        ok = ExportChildren(data);
+    }
+    return ok;
+}
+
+bool ConfigurationDatabase::ExportChildren(StructuredDataI &data) {
+    bool ok = true;
+    uint32 cnt = 0u;
+    for (uint32 i = 0u; (i < GetNumberOfChildren()) && ok; i++) {
+        const char8 *childName = GetChildName(i);
+        StreamString id;
+        if (MoveRelative(childName)) {
+            (void) id.Printf("%d", cnt);
+            ok = data.CreateRelative(id.Buffer());
+            if (ok) {
+                ok = data.Write("Name", childName);
+                if (ok) {
+                    ok = ExportChildren(data);
+                }
+                if (ok) {
+                    ok = data.MoveToAncestor(1u);
+                }
+            }
+            if (ok) {
+                ok = MoveToAncestor(1u);
+            }
+            cnt++;
+        }
+        else {
+            ok = data.Write(childName, GetType(childName));
+        }
+    }
+    return ok;
 }
 
 CLASS_REGISTER(ConfigurationDatabase, "1.0")

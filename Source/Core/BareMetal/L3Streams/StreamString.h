@@ -283,6 +283,13 @@ public:
     inline bool operator+=(const char8 c);
 
     /**
+     * @brief Concatenate a character to this string and return the result.
+     * @param[in] c The character to concatenate.
+     * @return the concatenated string
+     */
+    inline StreamString operator+(const char8 c);
+
+    /**
      * @brief Concatenate the string to the string contained in the buffer.
      * @param[in] s The string to concatenate.
      * @return true if successful. false otherwise.
@@ -290,11 +297,25 @@ public:
     inline bool operator+=(const char8 * const s);
 
     /**
+     * @brief Concatenate a const char string to this string and return the result.
+     * @param[in] s The const char string to concatenate.
+     * @return the concatenated string
+     */
+    inline StreamString operator+(const char8 * const s);
+
+    /**
      * @brief Concatenate the StreamString to the string contained in the buffer.
      * @param[in] s The StreamString to concatenate.
      * @return true if successful. false otherwise.
      */
     inline bool operator+=(const StreamString &s);
+
+    /**
+     * @brief Concatenate a string to this string and return the result.
+     * @param[in] s The string to concatenate.
+     * @return the concatenated string
+     */
+    inline StreamString operator+(const StreamString &s);
 
     /**
      * @brief  Compare the buffer content with the input content.
@@ -345,6 +366,29 @@ public:
      */
     virtual int32 Locate(const StreamString &x) const;
 
+    /**
+     * @brief Returns the substring between two indexes
+     * @details If index is negative, then it is respect to the string end (-1 means the string end)
+     * @param[in] start is the start index
+     * @param[in] stop is the stop index
+     * @return the sub-string between start and stop
+     */
+    virtual StreamString SubString(const int32 start, const int32 stop);
+
+    /**
+     * @brief Splits the string in chunks around a pattern delimiter
+     * @param[in] pattern is the delimiter
+     * @param[in] nSplits is the maximum number of splits. Default is 0 which means all the found splits.
+     */
+    virtual Vector<StreamString> Split(const char8 *pattern, const uint32 nSplits = 0u);
+
+    /**
+     * @brief Replace a pattern in the string
+     * @param[in] pattern is the pattern to replace
+     * @param[in] replacement is the replacement
+     * @param[in] nReplacements is the max number of replacements. Default is 0 which means all.
+     */
+    virtual StreamString Replace(const char8 *pattern, const char8 *replacement, const uint32 nReplacements = 0u);
 protected:
 
     /**
@@ -466,12 +510,31 @@ bool StreamString::operator+=(const char8 c) {
     return Append(c);
 }
 
+StreamString StreamString::operator+(const char8 c) {
+    StreamString res(*this);
+    (void)res.Append(c);
+    return res;
+}
+
+
 bool StreamString::operator+=(const char8 * const s) {
     return Append(s);
 }
 
+StreamString StreamString::operator+(const char8 * const s) {
+    StreamString res(*this);
+    (void)res.Append(s);
+    return res;
+}
+
 bool StreamString::operator+=(const StreamString &s) {
     return Append(s);
+}
+
+StreamString StreamString::operator+(const StreamString &s) {
+    StreamString res(*this);
+    (void)res.Append(s);
+    return res;
 }
 
 bool StreamString::operator==(const StreamString &s) const {

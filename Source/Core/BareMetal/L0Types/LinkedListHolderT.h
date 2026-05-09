@@ -189,7 +189,7 @@ LinkedListHolderT<T, canDestroy>::~LinkedListHolderT() {
 
 template <class T, bool canDestroy>
 T *LinkedListHolderT<T, canDestroy>::List() {
-    return static_cast<T*>(LinkedListHolder::List());
+    return dynamic_cast<T*>(LinkedListHolder::List());
 }
 
 template <class T, bool canDestroy>
@@ -247,7 +247,7 @@ bool LinkedListHolderT<T, canDestroy>::ListSearch(const T * const p) {
 template <class T, bool canDestroy>
 T *LinkedListHolderT<T, canDestroy>::ListSearch(SearchFilter * const filter) {
     LinkedListable *ll = LinkedListHolder::ListSearch(filter);
-    return static_cast<T*>(ll);
+    return dynamic_cast<T*>(ll);
 }
 
 template <class T, bool canDestroy>
@@ -257,7 +257,7 @@ bool LinkedListHolderT<T, canDestroy>::ListExtract(T * const p) {
 
 template <class T, bool canDestroy>
 T *LinkedListHolderT<T, canDestroy>::ListExtract(SearchFilter * const filter) {
-    return static_cast<T*>(LinkedListHolder::ListExtract(filter));
+    return dynamic_cast<T*>(LinkedListHolder::ListExtract(filter));
 }
 
 template <class T, bool canDestroy>
@@ -282,12 +282,12 @@ void LinkedListHolderT<T, canDestroy>::ListBSort(SortFilter * const sorter) {
 
 template <class T, bool canDestroy>
 T *LinkedListHolderT<T, canDestroy>::ListPeek(const uint32 index) {
-    return static_cast<T*>(LinkedListHolder::ListPeek(index));
+    return dynamic_cast<T*>(LinkedListHolder::ListPeek(index));
 }
 
 template <class T, bool canDestroy>
 T *LinkedListHolderT<T, canDestroy>::ListExtract(uint32 index) {
-    return static_cast<T*>(LinkedListHolder::ListExtract(index));
+    return dynamic_cast<T*>(LinkedListHolder::ListExtract(index));
 }
 
 template <class T, bool canDestroy>

@@ -134,10 +134,36 @@ public:
      * Test copy constructor using a vector with the pointer not initialised
      */
     bool TestCopyConstructorNULLPointer();
+
     /**
      * Test copy assignment using a vector with the pointer not initialised.
      */
     bool TestCopyAssignmentNULLPointer();
+
+    /**
+     * Test the GetMaxNumberOfElements function
+     */
+    bool TestGetMaxNumberOfElements();
+
+    /**
+     * Test the append function
+     */
+    bool TestAppend();
+   
+    /**
+     * Test the insert function
+     */ 
+    bool TestInsert();
+
+    /**
+     * Test SetAllocationGranularity function
+     */
+    bool TestSetAllocationGranularity();
+ 
+     /**
+     * Test GetAllocationGranularity function
+     */
+    bool TestGetAllocationGranularity();
 
 private:
     /**
@@ -282,6 +308,7 @@ Vector<T> VectorTest::AuxiliaryFunctionOut(uint32 nOfElements) {
     }
     return vec;
 }
+
 
 #endif /* VECTORTEST_H_ */
 

@@ -1,8 +1,8 @@
 /**
- * @file HttpMessageInterfaceGTestGTest.cpp
- * @brief Source file for class HttpMessageInterfaceGTest
- * @date 18/03/2019
- * @author Andre Neto
+ * @file ResultTGTest.cpp
+ * @brief Source file for class ResultTGTest
+ * @date 02/12/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class HttpMessageInterfaceGTest (public, protected, and private). Be aware that some
+ * the class ResultTGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -30,11 +30,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MARTe2UTest.h"
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "HttpMessageInterfaceTest.h"
+#include "ResultTTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,47 +42,74 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestInitialise) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestInitialise());
+
+TEST(BareMetal_L4Configuration_ResultTGTest,TestConstructor) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestInitialise_False_Not_Only_Messages) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestInitialise_False_Not_Only_Messages());
+TEST(BareMetal_L4Configuration_ResultTGTest,TestCopyConstructor) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestCopyConstructor());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData());
+TEST(BareMetal_L4Configuration_ResultTGTest,TestDestructor) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestDestructor());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsText());
+TEST(BareMetal_L4Configuration_ResultTGTest, TestSetError) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestSetError());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData_Message_Cannot_Be_Sent) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Message_Cannot_Be_Sent());
+
+TEST(BareMetal_L4Configuration_ResultTGTest, TestPrintError) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestPrintError());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_Message_Cannot_Be_Sent) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsText_Message_Cannot_Be_Sent());
+TEST(BareMetal_L4Configuration_ResultTGTest, TestGetValue) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestGetValue());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData_Message_Does_Not_Exist) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Message_Does_Not_Exist());
+TEST(BareMetal_L4Configuration_ResultTGTest, TestBoolOperator) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestBoolOperator());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsStructuredData_Message_Parameter) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Message_Parameter());
+TEST(BareMetal_L4Configuration_ResultTGTest, TestAssignOperator_Type) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestAssignOperator_Type());
 }
 
-TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_Message_Does_Not_Exist) {
-    HttpMessageInterfaceTest test;
-    ASSERT_TRUE(test.TestGetAsText_Message_Does_Not_Exist());
+TEST(BareMetal_L4Configuration_ResultTGTest, TestAssignOperator_Result) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestAssignOperator_Result());
 }
+
+TEST(BareMetal_L4Configuration_ResultTGTest, TestEqualOperator_Type) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestEqualOperator_Type());
+}
+
+TEST(BareMetal_L4Configuration_ResultTGTest, TestEqualOperator_Result) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestEqualOperator_Result());
+}
+
+TEST(BareMetal_L4Configuration_ResultTGTest, TestDifferentOperator_Type) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestDifferentOperator_Type());
+}
+
+TEST(BareMetal_L4Configuration_ResultTGTest, TestDifferentOperator_Result) {
+    ResultTTest test;
+    ASSERT_TRUE(test.TestDifferentOperator_Result());
+}
+
+
+
+
+

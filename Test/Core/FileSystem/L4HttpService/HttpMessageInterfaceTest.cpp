@@ -39,27 +39,41 @@
 #include "HttpService.h"
 #include "ObjectRegistryDatabase.h"
 #include "StandardParser.h"
+#include "ReferenceT.h"
+#include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 class HttpMessageInterfaceTestObject: public MARTe::Object, public MARTe::MessageI {
-public:
-    CLASS_REGISTER_DECLARATION()
+public:CLASS_REGISTER_DECLARATION()
 
-HttpMessageInterfaceTestObject    () {
-        MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter> filter = MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter>(MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    HttpMessageInterfaceTestObject() {
+        MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter> filter = MARTe::ReferenceT<MARTe::RegisteredMethodsMessageFilter>(
+                MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
         filter->SetDestination(this);
         InstallMessageFilter(filter);
         flag = 0;
     }
 
-    MARTe::ErrorManagement::ErrorType ReceiverMethod(MARTe::ReferenceContainer& ref) {
+    MARTe::ErrorManagement::ErrorType ReceiverMethod(MARTe::ReferenceContainer &ref) {
         flag++;
+        param = 0;
+        param2 = 0;
+        if (ref.Size() > 0u) {
+            MARTe::ReferenceT<MARTe::ConfigurationDatabase> config = ref.Get(0u);
+            if (config.IsValid()) {
+                config->Read("param1", param);
+                config->Read("param2", param2);
+            }
+        }
+
         return MARTe::ErrorManagement::NoError;
     }
 
     MARTe::int32 flag;
+    MARTe::int32 param;
+    MARTe::int32 param2;
 
 };
 CLASS_REGISTER(HttpMessageInterfaceTestObject, "1.0")
@@ -230,7 +244,7 @@ bool HttpMessageInterfaceTest::TestGetAsStructuredData() {
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
-    const char8 * expectedReply = "1E\r\n{\n\r\"Name\": \"MessageInterface1\"\r\n"
+    const char8 *expectedReply = "1E\r\n{\n\r\"Name\": \"MessageInterface1\"\r\n"
             "20\r\n,\n\r\"Class\": \"HttpMessageInterfac\r\n2\r\ne\"\r\n"
             "9\r\n\n\r,\"0\": {\r\n10\r\n\n\r\"Name\": \"Msg1\"\r\n"
             "15\r\n,\n\r\"Class\": \"Message\"\r\n"
@@ -336,7 +350,7 @@ bool HttpMessageInterfaceTest::TestGetAsText() {
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
-    const char8 * expectedReply = "0\r\n\r\n";
+    const char8 *expectedReply = "0\r\n\r\n";
     if (ok) {
         ok = (reply == expectedReply);
     }
@@ -579,6 +593,114 @@ bool HttpMessageInterfaceTest::TestGetAsStructuredData_Message_Does_Not_Exist() 
     }
     if (ok) {
         ok = (reply == "A\r\n{\n\r\"OK\": 0\r\n1\r\n}\r\n0\r\n\r\n");
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
+}
+
+bool HttpMessageInterfaceTest::TestGetAsStructuredData_Message_Parameter() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+TestObj = {\n"
+            "    Class = HttpMessageInterfaceTestObject\n"
+            "}\n"
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 0\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +MessageInterface1 = {\n"
+            "        Class = HttpMessageInterface\n"
+            "        +Msg1 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "            +Parameters = {\n"
+            "                Class = ConfigurationDatabase\n"
+            "                param1 = $1\n"
+            "                param2 = 3\n"
+            "            }\n"
+            "        }\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    if (ok) {
+        ok = service.IsValid();
+    }
+
+    ReferenceT<HttpMessageInterfaceTestObject> target = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = target.IsValid();
+    }
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/MessageInterface1?msg=Msg1");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (reply == "A\r\n{\n\r\"OK\": 1\r\n1\r\n}\r\n0\r\n\r\n");
+    }
+    if (ok) {
+        ok = (target->param == 1);
+        if(ok) {
+            ok = (target->param2 == 3);
+        }
+    }
+    if (ok) {
+        test.SetServerUri("/MessageInterface1?msg=Msg1&param1=2");
+    }
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+        if(ok) {
+            ok = (target->param == 2);
+        }
+        if(ok) {
+            ok = (target->param2 == 3);
+        }
+    }
+    //test restore
+    if (ok) {
+        test.SetServerUri("/MessageInterface1?msg=Msg1");
+    }
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+        if(ok) {
+            ok = (target->param == 2);
+        }
+        if(ok) {
+            ok = (target->param2 == 3);
+        }
     }
     if (ok) {
         ok = service->Stop();

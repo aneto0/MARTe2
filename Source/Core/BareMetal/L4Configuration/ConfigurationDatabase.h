@@ -212,12 +212,18 @@ ConfigurationDatabase    ();
      */
     void SetCurrentNodeAsRootNode();
 
+
+    virtual bool ExportData(StructuredDataI &data);
+
+
     /**
      * @brief Automatic cast to AnyType.
     */
     operator AnyType();
 
 private:
+
+    bool ExportChildren(StructuredDataI &data);
 
     /**
      * @brief Create nodes relative to the currentNode.
