@@ -74,6 +74,30 @@ TEST(BareMetal_L1Portability_AtomicGTest,Int32TestBoundaryDecrement) {
     ASSERT_TRUE(int32Test.TestBoundaryDecrement());
 }
 
+TEST(BareMetal_L1Portability_AtomicGTest,Int32TestLoadAcquire) {
+    int32 testValue = 32;
+    AtomicTest<int32> int32Test(testValue);
+    ASSERT_TRUE(int32Test.TestLoadAcquire());
+}
+
+TEST(BareMetal_L1Portability_AtomicGTest,Int32TestStoreRelease) {
+    int32 testValue = 32;
+    AtomicTest<int32> int32Test(testValue);
+    ASSERT_TRUE(int32Test.TestStoreRelease());
+}
+
+TEST(BareMetal_L1Portability_AtomicGTest,UInt32TestLoadAcquire) {
+    uint32 testValue = 32;
+    AtomicTest<uint32> uint32Test(testValue);
+    ASSERT_TRUE(uint32Test.TestLoadAcquire());
+}
+
+TEST(BareMetal_L1Portability_AtomicGTest,UInt32TestStoreRelease) {
+    uint32 testValue = 32;
+    AtomicTest<uint32> uint32Test(testValue);
+    ASSERT_TRUE(uint32Test.TestStoreRelease());
+}
+
 TEST(BareMetal_L1Portability_AtomicGTest,Int16TestIncrement) {
     int32 testValue = 16;
     AtomicTest<int16> int16Test(testValue);
@@ -105,6 +129,18 @@ TEST(BareMetal_L1Portability_AtomicGTest,Int16TestBoundaryDecrement) {
     int32 testValue = 16;
     AtomicTest<int16> int16Test(testValue);
     ASSERT_TRUE(int16Test.TestBoundaryDecrement());
+}
+
+TEST(BareMetal_L1Portability_AtomicGTest,Int16TestLoadAcquire) {
+    int32 testValue = 16;
+    AtomicTest<int16> int16Test(testValue);
+    ASSERT_TRUE(int16Test.TestLoadAcquire());
+}
+
+TEST(BareMetal_L1Portability_AtomicGTest,Int16TestStoreRelease) {
+    int32 testValue = 16;
+    AtomicTest<int16> int16Test(testValue);
+    ASSERT_TRUE(int16Test.TestStoreRelease());
 }
 
 
@@ -139,6 +175,18 @@ TEST(BareMetal_L1Portability_AtomicGTest,Int8TestBoundaryDecrement) {
     int32 testValue = 8;
     AtomicTest<int8> int8Test(testValue);
     ASSERT_TRUE(int8Test.TestBoundaryDecrement());
+}
+
+TEST(BareMetal_L1Portability_AtomicGTest,Int8TestLoadAcquire) {
+    int32 testValue = 8;
+    AtomicTest<int8> int8Test(testValue);
+    ASSERT_TRUE(int8Test.TestLoadAcquire());
+}
+
+TEST(BareMetal_L1Portability_AtomicGTest,Int8TestStoreRelease) {
+    int32 testValue = 8;
+    AtomicTest<int8> int8Test(testValue);
+    ASSERT_TRUE(int8Test.TestStoreRelease());
 }
 
 

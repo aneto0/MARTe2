@@ -135,6 +135,69 @@ namespace MARTe {
          */
         inline void Sub (volatile int32 *p, int32 value);
 
+        /**
+         * @brief Atomically loads a 32 bit unsigned integer from memory with acquire semantics.
+         * @param[in] p the pointer to the 32 bit unsigned variable to load.
+         * @return the loaded value.
+         * @pre p != NULL.
+         */
+        inline uint32 LoadAcquire(volatile uint32 *p);
+
+        /**
+         * @brief Atomically loads a 32 bit integer from memory with acquire semantics.
+         * @param[in] p the pointer to the 32 bit variable to load.
+         * @return the loaded value.
+         * @pre p != NULL.
+         */
+        inline int32 LoadAcquire(volatile int32 *p);
+
+        /**
+         * @brief Atomically loads a 16 bit integer from memory with acquire semantics.
+         * @param[in] p the pointer to the 16 bit variable to load.
+         * @return the loaded value.
+         * @pre p != NULL.
+         */
+        inline int16 LoadAcquire(volatile int16 *p);
+
+        /**
+         * @brief Atomically loads a 8 bit integer from memory with acquire semantics.
+         * @param[in] p the pointer to the 8 bit variable to load.
+         * @return the loaded value.
+         * @pre p != NULL.
+         */
+        inline int8 LoadAcquire(volatile int8 *p);
+
+        /**
+         * @brief Atomically stores a 32 bit unsigned integer to memory with release semantics.
+         * @param[in,out] p the pointer to the 32 bit unsigned variable to overwrite.
+         * @param[in] value the value to store.
+         * @pre p != NULL.
+         */
+        inline void StoreRelease(volatile uint32 *p, uint32 value);
+
+        /**
+         * @brief Atomically stores a 32 bit integer to memory with release semantics.
+         * @param[in,out] p the pointer to the 32 bit variable to overwrite.
+         * @param[in] value the value to store.
+         * @pre p != NULL.
+         */
+        inline void StoreRelease(volatile int32 *p, int32 value);
+
+        /**
+         * @brief Atomically stores a 16 bit integer to memory with release semantics.
+         * @param[in,out] p the pointer to the 16 bit variable to overwrite.
+         * @param[in] value the value to store.
+         * @pre p != NULL.
+         */
+        inline void StoreRelease(volatile int16 *p, int16 value);
+
+        /**
+         * @brief Atomically stores a 8 bit integer to memory with release semantics.
+         * @param[in,out] p the pointer to the 8 bit variable to overwrite.
+         * @param[in] value the value to store.
+         * @pre p != NULL.
+         */
+        inline void StoreRelease(volatile int8 *p, int8 value);
     }
 
 }

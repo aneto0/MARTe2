@@ -29,6 +29,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include <intrin.h>
+#include <atomic>       // std::atomic_thread_fence / memory_order
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -112,6 +114,50 @@ inline void Sub(volatile int32 *p,
                 int32 value) {
     volatile long* pp = (volatile long *) p;
     _InterlockedExchangeAdd(pp, -value);
+}
+
+inline uint32 LoadAcquire(volatile uint32 *p) {
+    uint32 value = *p;
+    std::atomic_thread_fence(std::memory_order_acquire);
+    return value;
+}
+
+inline int32 LoadAcquire(volatile int32 *p) {
+    int32 value = *p;
+    std::atomic_thread_fence(std::memory_order_acquire);
+    return value;
+}
+
+inline int16 LoadAcquire(volatile int16 *p) {
+    int16 value = *p;
+    std::atomic_thread_fence(std::memory_order_acquire);
+    return value;
+}
+
+inline int8 LoadAcquire(volatile int8 *p) {
+    int8 value = *p;
+    std::atomic_thread_fence(std::memory_order_acquire);
+    return value;
+}
+
+inline void StoreRelease(volatile uint32 *p, uint32 value) {
+    std::atomic_thread_fence(std::memory_order_release);
+    *p = value;
+}
+
+inline void StoreRelease(volatile int32 *p, int32 value) {
+    std::atomic_thread_fence(std::memory_order_release);
+    *p = value;
+}
+
+inline void StoreRelease(volatile int16 *p, int16 value) {
+    std::atomic_thread_fence(std::memory_order_release);
+    *p = value;
+}
+
+inline void StoreRelease(volatile int8 *p, int8 value) {
+    std::atomic_thread_fence(std::memory_order_release);
+    *p = value;
 }
 
 }
