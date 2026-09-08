@@ -291,6 +291,87 @@ bool VectorTest::TestInsert(){
     return ok;
 }
 
+bool VectorTest::TestRemove(){
+    Vector<uint32> vec1;
+    vec1.Append(1u);
+    vec1.Append(2u);
+    vec1.Append(3u);
+
+    bool ok=(vec1.GetNumberOfElements() == 3u);
+
+    if(ok){
+        ok=(vec1[0] == 1u);
+        ok&=(vec1[1] == 2u);
+        ok&=(vec1[2] == 3u);
+    }
+    
+    uint32 ret = vec1.Remove(1u);
+    if(ok){
+        ok=(ret==2u);
+        ok&=(vec1.GetNumberOfElements() == 2u);
+    }
+
+    ret = vec1.Remove(0u);
+    if(ok){
+        ok=(ret==1u);
+        ok&=(vec1.GetNumberOfElements() == 1u);
+    }
+
+
+    ret = vec1.Remove(0u);
+    if(ok){
+        ok=(ret==3u);
+        ok&=(vec1.GetNumberOfElements() == 0u);
+    }
+
+    ret = vec1.Remove(0u);
+    if(ok){
+        ok=(ret==0u);
+        ok&=(vec1.GetNumberOfElements() == 0u);
+    }
+
+    return ok;
+}
+
+bool VectorTest::TestPush(){
+    return TestAppend();
+}
+
+
+
+bool VectorTest::TestPop(){
+    Vector<uint32> vec1;
+    vec1.Append(1u);
+    vec1.Append(2u);
+    vec1.Append(3u);
+
+    bool ok=(vec1.GetNumberOfElements() == 3u);
+
+    if(ok){
+        uint32 ret=vec1.Pop();
+        ok=(ret == 3u);
+        ok&=(vec1.GetNumberOfElements() == 2u);
+    }
+    if(ok){
+        uint32 ret=vec1.Pop();
+        ok=(ret == 2u);
+        ok&=(vec1.GetNumberOfElements() == 1u);
+    }
+    if(ok){
+        uint32 ret=vec1.Pop();
+        ok=(ret == 1u);
+        ok&=(vec1.GetNumberOfElements() == 0u);
+    }
+    if(ok){
+        uint32 ret=vec1.Pop();
+        ok=(ret == 0u);
+        ok&=(vec1.GetNumberOfElements() == 0u);
+    }
+
+    return ok;
+}
+
+
 bool VectorTest::TestSetAllocationGranularity(){
     Vector<uint32> vec1;
     uint32 gran=vec1.GetAllocationGranularity();

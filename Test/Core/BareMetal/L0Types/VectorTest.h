@@ -156,6 +156,21 @@ public:
     bool TestInsert();
 
     /**
+     * Test the push function
+     */ 
+    bool TestPush();
+
+    /**
+     * Test the pop function
+     */ 
+    bool TestPop();
+
+    /**
+     * Test the remove function
+     */ 
+    bool TestRemove();
+    
+    /**
      * Test SetAllocationGranularity function
      */
     bool TestSetAllocationGranularity();
