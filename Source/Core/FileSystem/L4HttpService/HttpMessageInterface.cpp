@@ -116,7 +116,6 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
     StreamString msgName;
     if (protocol.GetInputCommand("msg", msgName)) {
         ReferenceT<Message> msg = Find(msgName.Buffer());
-
         if (msg.IsValid()) {
             ReferenceT<ConfigurationDatabase> parameters = msg->Get(0u);
             if (parameters.IsValid()) {
@@ -206,6 +205,78 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
                     }
                 }
             }
+        } else if (msgName == "_CustomMessage") {
+            ok = true;
+            StreamString destination;
+            StreamString function;
+            StreamString mode;
+            StreamString parameters;
+            StreamString msgCfg;
+            msgCfg.SetSize(10000u);
+            ConfigurationDatabase msgCdb;
+            if (!protocol.GetInputCommand("Destination", destination)) {
+                REPORT_ERROR(ErrorManagement::FatalError,
+                            "Failed to read Destination for _CustomMessage");
+                ok = false;
+            } else {
+                msgCfg += "Destination = ";
+                msgCfg += destination;
+                msgCfg += "\n";
+            }
+            if (!protocol.GetInputCommand("Function", function)) {
+                REPORT_ERROR(ErrorManagement::FatalError,
+                            "Failed to read Function for _CustomMessage");
+                ok = false;
+            } else {
+                msgCfg += "Function = ";
+                msgCfg += function;
+                msgCfg += "\n";
+            }
+            if (!protocol.GetInputCommand("Mode", mode)) {
+                REPORT_ERROR(ErrorManagement::FatalError,
+                            "Failed to read Mode for _CustomMessage");
+                ok = false;
+            } else {
+                msgCfg += "Mode = ";
+                msgCfg += mode;
+                msgCfg += "\n";
+            }
+            if (!protocol.GetInputCommand("Parameters", parameters)) {
+                REPORT_ERROR(ErrorManagement::Warning,
+                            "No parameters are set for _CustomMessage");
+            } else if (parameters != "") {
+                msgCfg += "+Parameters = {\nClass = ConfigurationDatabase\n";
+                msgCfg += parameters;
+                msgCfg +=  "\n}\n";
+            }
+            if (ok) {
+                msgCfg.Seek(0u);
+                StandardParser stdParser(msgCfg, msgCdb);
+                ok = stdParser.Parse();
+            }
+            if (ok) {
+                ReferenceT<Message> msg = new Message;
+                msg->SetName(msgName.Buffer());
+                msg->Initialise(msgCdb);
+                if (msg.IsValid()) {
+                    msg->SetAsReply(false);
+                    ErrorManagement::ErrorType err;
+                    if (msg->ExpectsReply()) {
+                        err = MessageI::SendMessageAndWaitReply(msg, this);
+                    } else {
+                        err = MessageI::SendMessage(msg, this);
+                    }
+                    if (err != ErrorManagement::NoError) {
+                        ok = false;
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                                            "Could not send message _CustomMessage");
+                    }
+                } else {
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                                        "_CustomMessage is nots not valid");
+                    ok = false;
+                }
+            }
         }
         else {
             REPORT_ERROR(ErrorManagement::FatalError, "Message %s does not exist or is not valid", msgName.Buffer());
@@ -216,5 +287,6 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
 }
 
 CLASS_REGISTER(HttpMessageInterface, "1.0")
+
 }
 

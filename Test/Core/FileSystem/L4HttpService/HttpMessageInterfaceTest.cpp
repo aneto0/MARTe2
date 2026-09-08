@@ -780,3 +780,548 @@ bool HttpMessageInterfaceTest::TestGetAsText_Message_Does_Not_Exist() {
 
     return ok;
 }
+
+bool HttpMessageInterfaceTest::TestGetAsText_CustomMessage() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+TestObj = {\n"
+            "    Class = HttpMessageInterfaceTestObject\n"
+            "}\n"
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +MessageInterface1 = {\n"
+            "        Class = HttpMessageInterface\n"
+            "        +Msg1 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "        +Msg2 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/MessageInterface1");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 *expectedReply = "0\r\n\r\n";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+
+    ReferenceT<HttpMessageInterfaceTestObject> target = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = target.IsValid();
+    }
+    test.SetServerUri("/MessageInterface1?msg=_CustomMessage&Destination=TestObj&Function=ReceiverMethod&Mode=ExpectsReply");
+    StreamString reply1;
+    if (ok) {
+        ok = test.HttpExchange(reply1, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (reply1 == "0\r\n\r\n");
+    }
+    if (ok) {
+        ok = (target->flag == 1);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
+}
+
+bool HttpMessageInterfaceTest::TestGetAsText_CustomMessage_Parameters() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+TestObj = {\n"
+            "    Class = HttpMessageInterfaceTestObject\n"
+            "}\n"
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +MessageInterface1 = {\n"
+            "        Class = HttpMessageInterface\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/MessageInterface1");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 *expectedReply = "0\r\n\r\n";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+
+    ReferenceT<HttpMessageInterfaceTestObject> target = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = target.IsValid();
+    }
+
+    test.SetServerUri("/MessageInterface1?msg=_CustomMessage&Destination=TestObj&Function=ReceiverMethod&Mode=ExpectsReply&Parameters=param1=1\%20param2=2");
+    StreamString reply1;
+    if (ok) {
+        ok = test.HttpExchange(reply1, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (reply1 == "0\r\n\r\n");
+    }
+    if (ok) {
+        ok = (target->flag == 1);
+    }
+    if (ok) {
+      ok = (target->param == 1);
+    }
+    if (ok) {
+      ok = (target->param2 == 2);
+    }
+
+    test.SetServerUri("/MessageInterface1?msg=_CustomMessage&Destination=TestObj&Function=ReceiverMethod&Mode=ExpectsReply&Parameters=param1=10\%20param2=20");
+    StreamString reply2;
+    if (ok) {
+        ok = test.HttpExchange(reply2, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (reply2 == "0\r\n\r\n");
+    }
+    if (ok) {
+        ok = (target->flag == 2);
+    }
+    if (ok) {
+      ok = (target->param == 10);
+    }
+    if (ok) {
+      ok = (target->param2 == 20);
+    }
+
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
+}
+
+bool HttpMessageInterfaceTest::TestGetAsText_CustomMessage_NoDestination() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+TestObj = {\n"
+            "    Class = HttpMessageInterfaceTestObject\n"
+            "}\n"
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +MessageInterface1 = {\n"
+            "        Class = HttpMessageInterface\n"
+            "        +Msg1 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "        +Msg2 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/MessageInterface1");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 *expectedReply = "0\r\n\r\n";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+
+    ReferenceT<HttpMessageInterfaceTestObject> target = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = target.IsValid();
+    }
+    test.SetServerUri("/MessageInterface1?msg=_CustomMessage&Function=ReceiverMethod&Mode=ExpectsReply");
+    StreamString reply1;
+    if (ok) {
+        ok = test.HttpExchange(reply1, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (reply1 == "0\r\n\r\n");
+    }
+    if (ok) {
+        ok = (target->flag == 0);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
+}
+
+bool HttpMessageInterfaceTest::TestGetAsText_CustomMessage_NoFunction() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+TestObj = {\n"
+            "    Class = HttpMessageInterfaceTestObject\n"
+            "}\n"
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +MessageInterface1 = {\n"
+            "        Class = HttpMessageInterface\n"
+            "        +Msg1 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "        +Msg2 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/MessageInterface1");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 *expectedReply = "0\r\n\r\n";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+
+    ReferenceT<HttpMessageInterfaceTestObject> target = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = target.IsValid();
+    }
+    test.SetServerUri("/MessageInterface1?msg=_CustomMessage&Destination=TestObj&Mode=ExpectsReply");
+    StreamString reply1;
+    if (ok) {
+        ok = test.HttpExchange(reply1, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (reply1 == "0\r\n\r\n");
+    }
+    if (ok) {
+        ok = (target->flag == 0);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
+}
+
+bool HttpMessageInterfaceTest::TestGetAsText_CustomMessage_WrongDestination() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+TestObj = {\n"
+            "    Class = HttpMessageInterfaceTestObject\n"
+            "}\n"
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +MessageInterface1 = {\n"
+            "        Class = HttpMessageInterface\n"
+            "        +Msg1 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "        +Msg2 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/MessageInterface1");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 *expectedReply = "0\r\n\r\n";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+
+    ReferenceT<HttpMessageInterfaceTestObject> target = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = target.IsValid();
+    }
+    test.SetServerUri("/MessageInterface1?msg=_CustomMessage&Destination=WrongTestObj&Function=ReceiverMethod&Mode=ExpectsReply");
+    StreamString reply1;
+    if (ok) {
+        ok = test.HttpExchange(reply1, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (reply1 == "0\r\n\r\n");
+    }
+    if (ok) {
+        ok = (target->flag == 0);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
+}
+
+bool HttpMessageInterfaceTest::TestGetAsText_CustomMessage_WrongFunction() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+TestObj = {\n"
+            "    Class = HttpMessageInterfaceTestObject\n"
+            "}\n"
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +MessageInterface1 = {\n"
+            "        Class = HttpMessageInterface\n"
+            "        +Msg1 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "        +Msg2 = {\n"
+            "            Class = Message\n"
+            "            Destination = TestObj\n"
+            "            Function = ReceiverMethod\n"
+            "        }\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/MessageInterface1");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 *expectedReply = "0\r\n\r\n";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+
+    ReferenceT<HttpMessageInterfaceTestObject> target = ObjectRegistryDatabase::Instance()->Find("TestObj");
+    if (ok) {
+        ok = target.IsValid();
+    }
+    test.SetServerUri("/MessageInterface1?msg=_CustomMessage&Destination=TestObj&Function=WrongReceiverMethod&Mode=ExpectsReply");
+    StreamString reply1;
+    if (ok) {
+        ok = test.HttpExchange(reply1, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (reply1 == "0\r\n\r\n");
+    }
+    if (ok) {
+        ok = (target->flag == 0);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
+}
+

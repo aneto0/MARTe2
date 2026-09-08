@@ -14,8 +14,10 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
  */
+
 /**
- * Interface to the HttpMessageInterface class. Creates one button for each Message.
+ * Interface to the HttpMessageInterface class.
+ * Creates one button for each Message and adds a message template to use at runtime.
  */
 class HttpMessageInterface extends MARTeObject {
 
@@ -25,7 +27,6 @@ class HttpMessageInterface extends MARTeObject {
     constructor() {
         super();
     }
-
 
     /**
      * NOOP
@@ -135,6 +136,94 @@ class HttpMessageInterface extends MARTeObject {
             false);
     }
 
+    displayCustomMsgRow(table, idxN) {
+        var idx = "" + idxN
+        var msgBtnTxt = document.createTextNode("CustomMessage");
+        var msgBtn = document.createElement("button");
+        msgBtn.appendChild(msgBtnTxt);
+        var td2 = document.getElementById("button_" + idx)
+        td2.appendChild(msgBtn);
+        
+        const xParams = ["Destination", "Function", "Mode", "Parameters"];
+        const xDefault = ["TestApp.Functions", "", "ExpectsReply", ""];
+        var xInputsTxt = [];
+        for (var x = 0; x < xParams.length; x++) {
+            var tr2 = document.createElement("tr");
+            var paramName = document.createTextNode(xParams[x]);
+            var tdx1 = document.createElement("td");
+            tdx1.appendChild(paramName);
+            tdx1.style.color = "blue";
+            tdx1.style.border = "1px solid #000"
+
+            var tdx2 = document.createElement("td");
+            var inputTxt = document.createElement("textarea");
+            inputTxt.cols = 50;
+            inputTxt.defaultValue = xDefault[x];
+            tdx2.appendChild(inputTxt);
+            xInputsTxt.push(inputTxt);
+            tr2.appendChild(tdx1);
+            tr2.appendChild(tdx2);
+            
+            var next_idx=""+(idxN+1);
+            var next_row=document.getElementById("first_" + next_idx);
+            if(next_row===undefined){
+                table.appendChild(tr2);
+            } else {
+                table.insertBefore(tr2, next_row);
+            }
+        }
+
+        var td3 = document.getElementById("feedback_" + idx);
+        var lastMessageTxt = document.createTextNode("No message sent ever");
+        td3.appendChild(lastMessageTxt);
+
+        msgBtn.addEventListener("click",
+            function(ev, msgBtnTxt, lastMessageTxt, lastMessageTd) {
+                lastMessageTxt.nodeValue = "Sending message";
+                lastMessageTd.style.color = "orange";
+                var fullURL = MARTeLoader.instance().getDataUrl(this.getPath());
+                if (fullURL.includes("?")) {
+                    fullURL += ("&msg=" + msgBtnTxt);
+                } else {
+                    fullURL += ("?msg=" + msgBtnTxt);
+                }
+                for (var x = 0; x < xParams.length; x++) {
+                    fullURL += ("&" + xParams[x] + "=" + xInputsTxt[x].value.replace("\n", " "));
+                }
+                var xhttp = new XMLHttpRequest();
+                var that = this;
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        try {
+                            var jsonData = JSON.parse(this.responseText);
+                            var ok = jsonData["OK"];
+                            if (ok !== undefined) {
+                                ok = parseInt(ok);
+                            }
+                            else {
+                                ok = 0;
+                            }
+                            if (ok === 1) {
+                                lastMessageTxt.nodeValue = "Last message was successfully sent";
+                                lastMessageTd.style.color = "green";
+                            }
+                            else {
+                                lastMessageTxt.nodeValue = "Last message was not successfully sent";
+                                lastMessageTd.style.color = "red";
+                            }
+                        }
+                        catch (e) {
+                            console.log(e);
+                        }
+                    }
+                };
+                xhttp.open("GET", fullURL, true);
+                xhttp.send();
+            }.bind(this, null, "CustomMessage", lastMessageTxt, td3),
+            false);
+    }
+
+
 
     /**
      * Renders the data on the navigation tree.
@@ -186,9 +275,36 @@ class HttpMessageInterface extends MARTeObject {
                         table.appendChild(tr1);
                     }
                 }
+                i++;
             }
-            i++;
         }
+       
+        // Custom message
+        var idx = "" + i;
+        var tr0 = document.createElement("tr");
+        tr0.setAttribute("id", "first_" + idx);
+        var td0 = document.createElement("td");
+        var td01 = document.createElement("td");
+        var td02 = document.createElement("td");
+        td0.appendChild(document.createTextNode("               "));
+        td01.appendChild(document.createTextNode("==== Message ===="));
+        td02.appendChild(document.createTextNode("               "));
+        tr0.appendChild(td0);
+        tr0.appendChild(td01);
+        tr0.appendChild(td02);
+        table.appendChild(tr0);
+        var tr1 = document.createElement("tr");
+        var td1 = document.createElement("td");
+        td1.appendChild(document.createTextNode(idx));
+        var td2 = document.createElement("td");
+        td2.setAttribute("id", "button_" + idx);
+        var td3 = document.createElement("td");
+        td3.setAttribute("id", "feedback_" + idx);
+        td1.style.border = "1px solid #000"
+        tr1.appendChild(td1);
+        tr1.appendChild(td2);
+        tr1.appendChild(td3);
+        table.appendChild(tr1);
 
         i = 0;
         done = false;
@@ -227,9 +343,28 @@ class HttpMessageInterface extends MARTeObject {
                         xhttp.send();
                     }
                 }
+                i++;
+            } else { // Custom message
+                var xhttp = new XMLHttpRequest();
+                var that = this;
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var msgData = JSON.parse(this.responseText);
+                        that.displayCustomMsgRow(table, i);
+                    }
+                }
+                 //Get the URL and add all the extra parameters
+                var fullpath = this.getPath();
+                if (!fullpath.endsWith("/")) {
+                  fullpath += "/";
+                }
+                var objpath = fullpath + "CustomMessage";
+                var fullURL = MARTeLoader.instance().getDataUrl(objpath);
+                xhttp.open("GET", fullURL, true);
+                xhttp.send();
             }
-            i++;
         }
+  
         this.target.appendChild(table);
     }
 }
