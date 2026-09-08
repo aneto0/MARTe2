@@ -146,6 +146,6 @@ int main(int argc, char *argv[]){
     }
     REPORT_ERROR_STATIC(ErrorManagement::Information, "Value of sharedVariable = %d (should be zero)", sharedVariable);
     mutexSem.Close();
-    delete sleepTimes;
+    delete[] sleepTimes;
     return 0;
 }
