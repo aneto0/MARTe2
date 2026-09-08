@@ -58,20 +58,21 @@ DataSourceI::~DataSourceI() {
 
 }
 
-bool DataSourceI::Initialise(StructuredDataI & data) {
+bool DataSourceI::Initialise(StructuredDataI &data) {
     bool ret = ReferenceContainer::Initialise(data);
     StreamString defaultBrokerOptimStr;
     if (ret) {
         if (data.Read("DefaultBrokerOptim", defaultBrokerOptimStr)) {
             if (defaultBrokerOptimStr == "true") {
                 defaultBrokerOptim = true;
-            } 
+            }
             else if (defaultBrokerOptimStr == "false") {
                 defaultBrokerOptim = false;
-            } 
+            }
             else {
                 ret = false;
-                REPORT_ERROR(ErrorManagement::ParametersError, "DefaultBrokerOptim shall be either true or false. %s is not valid", defaultBrokerOptimStr.Buffer());
+                REPORT_ERROR(ErrorManagement::ParametersError, "DefaultBrokerOptim shall be either true or false. %s is not valid",
+                             defaultBrokerOptimStr.Buffer());
             }
         }
     }
@@ -98,8 +99,8 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
     return ret;
 }
 
-bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
-    configuredDatabase = dynamic_cast<ConfigurationDatabase &>(data);
+bool DataSourceI::SetConfiguredDatabase(StructuredDataI &data) {
+    configuredDatabase = dynamic_cast<ConfigurationDatabase&>(data);
     configuredDatabase.SetCurrentNodeAsRootNode();
     if (configuredDatabase.MoveAbsolute("Functions")) {
         functionsDatabaseNode = configuredDatabase;
@@ -110,7 +111,7 @@ bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
         numberOfSignals = configuredDatabase.GetNumberOfChildren();
     }
     uint32 n;
-    for (n=0u; (n<numberOfSignals) && (ret); n++) {
+    for (n = 0u; (n < numberOfSignals) && (ret); n++) {
         StreamString signalName;
         ret = configuredDatabase.MoveToChild(n);
         if (ret) {
@@ -131,7 +132,8 @@ uint32 DataSourceI::GetNumberOfSignals() const {
     return numberOfSignals;
 }
 
-bool DataSourceI::GetSignalName(const uint32 signalIdx, StreamString &signalName) {
+bool DataSourceI::GetSignalName(const uint32 signalIdx,
+                                StreamString &signalName) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("QualifiedName", signalName);
@@ -139,7 +141,8 @@ bool DataSourceI::GetSignalName(const uint32 signalIdx, StreamString &signalName
     return ret;
 }
 
-bool DataSourceI::GetSignalIndex(uint32 &signalIdx, const char8* const signalName) {
+bool DataSourceI::GetSignalIndex(uint32 &signalIdx,
+                                 const char8 *const signalName) {
     return signalNameCache.Read(signalName, signalIdx);
 }
 
@@ -156,7 +159,8 @@ TypeDescriptor DataSourceI::GetSignalType(const uint32 signalIdx) {
     return signalTypeDescriptor;
 }
 
-bool DataSourceI::GetSignalNumberOfDimensions(const uint32 signalIdx, uint8 &numberOfDimensions) {
+bool DataSourceI::GetSignalNumberOfDimensions(const uint32 signalIdx,
+                                              uint8 &numberOfDimensions) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("NumberOfDimensions", numberOfDimensions);
@@ -164,7 +168,8 @@ bool DataSourceI::GetSignalNumberOfDimensions(const uint32 signalIdx, uint8 &num
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfElements(const uint32 signalIdx, uint32 &numberOfElements) {
+bool DataSourceI::GetSignalNumberOfElements(const uint32 signalIdx,
+                                            uint32 &numberOfElements) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("NumberOfElements", numberOfElements);
@@ -172,7 +177,8 @@ bool DataSourceI::GetSignalNumberOfElements(const uint32 signalIdx, uint32 &numb
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32 &numberOfSamples) {
+bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName,
+                                           uint32 &numberOfSamples) {
 
     uint32 nOfFunctions = GetNumberOfFunctions();
     bool signalFound = false;
@@ -190,10 +196,11 @@ bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32
             StreamString currentSignalName = "";
             StreamString currentSignalAlias = "";
             ret = GetFunctionSignalName(OutputSignals, functionIdx, functionSignalIdx, currentSignalName);
-            if (GetFunctionSignalAlias(OutputSignals, functionIdx, functionSignalIdx, currentSignalAlias)) {}
+            if (GetFunctionSignalAlias(OutputSignals, functionIdx, functionSignalIdx, currentSignalAlias)) {
+            }
             if (ret) {
                 //lint -e{9007} no side effects on signalName == currentSignalAlias
-                if ( (signalName == currentSignalName) || (signalName == currentSignalAlias) ) {
+                if ((signalName == currentSignalName) || (signalName == currentSignalAlias)) {
                     signalFound = true;
                     direction = OutputSignals;
                     break;
@@ -209,10 +216,11 @@ bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32
                 StreamString currentSignalName = "";
                 StreamString currentSignalAlias = "";
                 ret = GetFunctionSignalName(InputSignals, functionIdx, functionSignalIdx, currentSignalName);
-                if (GetFunctionSignalAlias(InputSignals, functionIdx, functionSignalIdx, currentSignalAlias)) {}
+                if (GetFunctionSignalAlias(InputSignals, functionIdx, functionSignalIdx, currentSignalAlias)) {
+                }
                 if (ret) {
                     //lint -e{9007} no side effects on signalName == currentSignalAlias
-                    if ( (signalName == currentSignalName) || (signalName == currentSignalAlias) ) {
+                    if ((signalName == currentSignalName) || (signalName == currentSignalAlias)) {
                         signalFound = true;
                         direction = InputSignals;
                         break;
@@ -232,7 +240,8 @@ bool DataSourceI::GetSignalNumberOfSamples(const StreamString signalName, uint32
     return (ret && signalFound);
 }
 
-bool DataSourceI::GetSignalNumberOfSamples(const uint32 signalIdx, uint32 &numberOfSamples) {
+bool DataSourceI::GetSignalNumberOfSamples(const uint32 signalIdx,
+                                           uint32 &numberOfSamples) {
 
     StreamString signalName = "";
     bool ret = GetSignalName(signalIdx, signalName);
@@ -243,7 +252,8 @@ bool DataSourceI::GetSignalNumberOfSamples(const uint32 signalIdx, uint32 &numbe
     return ret;
 }
 
-bool DataSourceI::GetSignalByteSize(const uint32 signalIdx, uint32 &byteSize) {
+bool DataSourceI::GetSignalByteSize(const uint32 signalIdx,
+                                    uint32 &byteSize) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         if (!configuredDatabase.Read("MemberSize", byteSize)) {
@@ -253,7 +263,8 @@ bool DataSourceI::GetSignalByteSize(const uint32 signalIdx, uint32 &byteSize) {
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfStates(const uint32 signalIdx, uint32 &numberOfStates) {
+bool DataSourceI::GetSignalNumberOfStates(const uint32 signalIdx,
+                                          uint32 &numberOfStates) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
@@ -264,7 +275,9 @@ bool DataSourceI::GetSignalNumberOfStates(const uint32 signalIdx, uint32 &number
     return ret;
 }
 
-bool DataSourceI::GetSignalStateName(const uint32 signalIdx, const uint32 stateIdx, StreamString &stateName) {
+bool DataSourceI::GetSignalStateName(const uint32 signalIdx,
+                                     const uint32 stateIdx,
+                                     StreamString &stateName) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
@@ -289,7 +302,9 @@ bool DataSourceI::GetSignalStateName(const uint32 signalIdx, const uint32 stateI
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx, const char8 * const stateName, uint32 &numberOfConsumers) {
+bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx,
+                                             const char8 *const stateName,
+                                             uint32 &numberOfConsumers) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
@@ -300,7 +315,7 @@ bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx, const char8
     AnyType consumers;
     if (ret) {
         consumers = configuredDatabase.GetType("GAMConsumers");
-        ret = (consumers.GetDataPointer() != NULL_PTR(void *));
+        ret = (consumers.GetDataPointer() != NULL_PTR(void*));
     }
     numberOfConsumers = 0u;
     if (ret) {
@@ -309,7 +324,9 @@ bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx, const char8
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx, const char8 * const stateName, uint32 &numberOfProducers) {
+bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx,
+                                             const char8 *const stateName,
+                                             uint32 &numberOfProducers) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
@@ -320,7 +337,7 @@ bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx, const char8
     AnyType producers;
     if (ret) {
         producers = configuredDatabase.GetType("GAMProducers");
-        ret = (producers.GetDataPointer() != NULL_PTR(void *));
+        ret = (producers.GetDataPointer() != NULL_PTR(void*));
     }
     numberOfProducers = 0u;
     if (ret) {
@@ -329,7 +346,10 @@ bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx, const char8
     return ret;
 }
 
-bool DataSourceI::GetSignalConsumerName(const uint32 signalIdx, const char8 * const stateName, const uint32 consumerIdx, StreamString &consumerName) {
+bool DataSourceI::GetSignalConsumerName(const uint32 signalIdx,
+                                        const char8 *const stateName,
+                                        const uint32 consumerIdx,
+                                        StreamString &consumerName) {
     bool ret = MoveToSignalIndex(signalIdx);
     uint32 numberOfConsumers = 0u;
     if (ret) {
@@ -369,7 +389,10 @@ bool DataSourceI::GetSignalConsumerName(const uint32 signalIdx, const char8 * co
     return ret;
 }
 
-bool DataSourceI::GetSignalProducerName(const uint32 signalIdx, const char8 * const stateName, const uint32 producerIdx, StreamString &producerName) {
+bool DataSourceI::GetSignalProducerName(const uint32 signalIdx,
+                                        const char8 *const stateName,
+                                        const uint32 producerIdx,
+                                        StreamString &producerName) {
     bool ret = MoveToSignalIndex(signalIdx);
     uint32 numberOfProducers = 0u;
     if (ret) {
@@ -406,7 +429,8 @@ bool DataSourceI::GetSignalProducerName(const uint32 signalIdx, const char8 * co
     return ret;
 }
 
-bool DataSourceI::GetSignalDefaultValue(const uint32 signalIdx, const AnyType &defaultValue) {
+bool DataSourceI::GetSignalDefaultValue(const uint32 signalIdx,
+                                        const AnyType &defaultValue) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("Default", defaultValue);
@@ -432,7 +456,8 @@ uint32 DataSourceI::GetNumberOfFunctions() {
     return configuredDatabase.GetNumberOfChildren();
 }
 
-bool DataSourceI::GetFunctionName(const uint32 functionIdx, StreamString &functionName) {
+bool DataSourceI::GetFunctionName(const uint32 functionIdx,
+                                  StreamString &functionName) {
     bool ret = MoveToFunctionIndex(functionIdx);
     if (ret) {
         ret = configuredDatabase.Read("QualifiedName", functionName);
@@ -440,7 +465,8 @@ bool DataSourceI::GetFunctionName(const uint32 functionIdx, StreamString &functi
     return ret;
 }
 
-bool DataSourceI::GetFunctionIndex(uint32 &functionIdx, const char8* const functionName) {
+bool DataSourceI::GetFunctionIndex(uint32 &functionIdx,
+                                   const char8 *const functionName) {
 
     uint32 numberOfFunctions = GetNumberOfFunctions();
     bool ret = true;
@@ -460,7 +486,9 @@ bool DataSourceI::GetFunctionIndex(uint32 &functionIdx, const char8* const funct
     return ret;
 }
 
-bool DataSourceI::GetFunctionNumberOfSignals(const SignalDirection direction, const uint32 functionIdx, uint32 &numSignals) {
+bool DataSourceI::GetFunctionNumberOfSignals(const SignalDirection direction,
+                                             const uint32 functionIdx,
+                                             uint32 &numSignals) {
     const char8 *signalDirection = "InputSignals";
     if (direction == OutputSignals) {
         signalDirection = "OutputSignals";
@@ -479,7 +507,9 @@ bool DataSourceI::GetFunctionNumberOfSignals(const SignalDirection direction, co
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalsByteSize(const SignalDirection direction, const uint32 functionIdx, uint32 &byteSize) {
+bool DataSourceI::GetFunctionSignalsByteSize(const SignalDirection direction,
+                                             const uint32 functionIdx,
+                                             uint32 &byteSize) {
     const char8 *signalDirection = "InputSignals";
     if (direction == OutputSignals) {
         signalDirection = "OutputSignals";
@@ -495,7 +525,10 @@ bool DataSourceI::GetFunctionSignalsByteSize(const SignalDirection direction, co
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalName(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, StreamString &functionSignalName) {
+bool DataSourceI::GetFunctionSignalName(const SignalDirection direction,
+                                        const uint32 functionIdx,
+                                        const uint32 functionSignalIdx,
+                                        StreamString &functionSignalName) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
@@ -504,7 +537,10 @@ bool DataSourceI::GetFunctionSignalName(const SignalDirection direction, const u
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalAlias(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, StreamString &functionSignalAlias) {
+bool DataSourceI::GetFunctionSignalAlias(const SignalDirection direction,
+                                         const uint32 functionIdx,
+                                         const uint32 functionSignalIdx,
+                                         StreamString &functionSignalAlias) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
@@ -515,7 +551,10 @@ bool DataSourceI::GetFunctionSignalAlias(const SignalDirection direction, const 
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalIndex(const SignalDirection direction, const uint32 functionIdx, uint32 &functionSignalIdx, const char8* const functionSignalName) {
+bool DataSourceI::GetFunctionSignalIndex(const SignalDirection direction,
+                                         const uint32 functionIdx,
+                                         uint32 &functionSignalIdx,
+                                         const char8 *const functionSignalName) {
     uint32 numberOfFunctionSignals = 0u;
     bool ret = GetFunctionNumberOfSignals(direction, functionIdx, numberOfFunctionSignals);
     bool found = false;
@@ -534,20 +573,27 @@ bool DataSourceI::GetFunctionSignalIndex(const SignalDirection direction, const 
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, uint32 &numberOfByteOffsets) {
+bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(const SignalDirection direction,
+                                                       const uint32 functionIdx,
+                                                       const uint32 functionSignalIdx,
+                                                       uint32 &numberOfByteOffsets) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     AnyType byteOffset;
     numberOfByteOffsets = 0u;
     if (ret) {
         byteOffset = configuredDatabase.GetType("ByteOffset");
-        if (byteOffset.GetDataPointer() != NULL_PTR(void *)) {
+        if (byteOffset.GetDataPointer() != NULL_PTR(void*)) {
             numberOfByteOffsets = byteOffset.GetNumberOfElements(1u);
         }
     }
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, const uint32 byteOffsetIndex, uint32 &byteOffsetStart,
+bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection direction,
+                                                  const uint32 functionIdx,
+                                                  const uint32 functionSignalIdx,
+                                                  const uint32 byteOffsetIndex,
+                                                  uint32 &byteOffsetStart,
                                                   uint32 &byteOffsetSize) {
     uint32 numberOfByteOffsets = 0u;
     bool ret = GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, functionSignalIdx, numberOfByteOffsets);
@@ -573,7 +619,10 @@ bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection directio
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalSamples(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, uint32 &samples) {
+bool DataSourceI::GetFunctionSignalSamples(const SignalDirection direction,
+                                           const uint32 functionIdx,
+                                           const uint32 functionSignalIdx,
+                                           uint32 &samples) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (!configuredDatabase.Read("Samples", samples)) {
         samples = 1u;
@@ -581,7 +630,10 @@ bool DataSourceI::GetFunctionSignalSamples(const SignalDirection direction, cons
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalReadFrequency(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, float32 &frequency) {
+bool DataSourceI::GetFunctionSignalReadFrequency(const SignalDirection direction,
+                                                 const uint32 functionIdx,
+                                                 const uint32 functionSignalIdx,
+                                                 float32 &frequency) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (!configuredDatabase.Read("Frequency", frequency)) {
         frequency = -1.0F;
@@ -589,7 +641,10 @@ bool DataSourceI::GetFunctionSignalReadFrequency(const SignalDirection direction
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalTrigger(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, uint32 &trigger) {
+bool DataSourceI::GetFunctionSignalTrigger(const SignalDirection direction,
+                                           const uint32 functionIdx,
+                                           const uint32 functionSignalIdx,
+                                           uint32 &trigger) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (!configuredDatabase.Read("Trigger", trigger)) {
         trigger = 0u;
@@ -597,7 +652,10 @@ bool DataSourceI::GetFunctionSignalTrigger(const SignalDirection direction, cons
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalGAMMemoryOffset(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, uint32 &memoryOffset) {
+bool DataSourceI::GetFunctionSignalGAMMemoryOffset(const SignalDirection direction,
+                                                   const uint32 functionIdx,
+                                                   const uint32 functionSignalIdx,
+                                                   uint32 &memoryOffset) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
@@ -606,7 +664,10 @@ bool DataSourceI::GetFunctionSignalGAMMemoryOffset(const SignalDirection directi
     return ret;
 }
 
-bool DataSourceI::IsSupportedBroker(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, const char8* const brokerClassName) {
+bool DataSourceI::IsSupportedBroker(const SignalDirection direction,
+                                    const uint32 functionIdx,
+                                    const uint32 functionSignalIdx,
+                                    const char8 *const brokerClassName) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
         StreamString broker;
@@ -623,7 +684,9 @@ bool DataSourceI::MoveToFunctionIndex(const uint32 functionIdx) {
     return configuredDatabase.MoveToChild(functionIdx);
 }
 
-bool DataSourceI::MoveToFunctionSignalIndex(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx) {
+bool DataSourceI::MoveToFunctionSignalIndex(const SignalDirection direction,
+                                            const uint32 functionIdx,
+                                            const uint32 functionSignalIdx) {
     const char8 *signalDirection = "InputSignals";
     if (direction == OutputSignals) {
         signalDirection = "OutputSignals";
@@ -643,7 +706,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
     // For each Function allocate memory
     // Search the signal and get the memory pointer for each signal linked it to the correct broker
     // Assign the broker to the gam
-    const char8 * dirStr = "InputSignals";
+    const char8 *dirStr = "InputSignals";
     if (direction == OutputSignals) {
         dirStr = "OutputSignals";
     }
@@ -678,7 +741,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
 
                 ReferenceT<GAM> gam = application->Find(fullFunctionName.Buffer());
                 ret = gam.IsValid();
-                void *gamMemoryAddress = NULL_PTR(void *);
+                void *gamMemoryAddress = NULL_PTR(void*);
 
                 bool relevant = false;
                 if (direction == InputSignals) {
@@ -737,8 +800,8 @@ bool DataSourceI::BrokerCopyTerminated() {
 }
 
 bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                     const char8* const functionName,
-                                                     void * const gamMemPtr) {
+                                  const char8 *const functionName,
+                                  void *const gamMemPtr) {
 
     uint32 functionIdx = 0u;
     bool ret = GetFunctionIndex(functionIdx, functionName);
@@ -831,10 +894,9 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
     return ret;
 }
 
-
 bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                      const char8* const functionName,
-                                                      void * const gamMemPtr) {
+                                   const char8 *const functionName,
+                                   void *const gamMemPtr) {
     uint32 functionIdx = 0u;
     bool ret = GetFunctionIndex(functionIdx, functionName);
 
@@ -926,7 +988,7 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
     return ret;
 }
 
-void DataSourceI::Purge(ReferenceContainer &purgeList){
+void DataSourceI::Purge(ReferenceContainer &purgeList) {
     signalsDatabaseNode.Purge();
     functionsDatabaseNode.Purge();
     ReferenceContainer::Purge(purgeList);
@@ -934,38 +996,45 @@ void DataSourceI::Purge(ReferenceContainer &purgeList){
 
 bool DataSourceI::ExportData(StructuredDataI &data) {
     bool ok = ReferenceContainer::ExportData(data);
-    if (numberOfSignals > 0u) {
-        ok = data.CreateRelative("Signals");
-        for (uint32 i = 0u; (i < numberOfSignals) && (ok); i++) {
-            StreamString signalName;
-            uint8 numberOfDimensions = 0u;
-            TypeDescriptor td = GetSignalType(i);
-            void* signalAddress = NULL_PTR(void*);
-            ok = GetSignalMemoryBuffer(i, 0u, signalAddress);
-            AnyType at(td, 0u, signalAddress);
-            if (ok) {
-                ok = GetSignalName(i, signalName);
-            }
-            if (ok) {
-                ok = GetSignalNumberOfDimensions(i, numberOfDimensions);
-            }
-            if (ok) {
-                at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
-                uint32 numberOfElements = 0u;
-                if (ok) {
-                    ok = GetSignalNumberOfElements(i, numberOfElements);
-                }
-                if (ok) {
-                    at.SetNumberOfElements(0u, numberOfElements);
-                }
-                ok = data.Write(signalName.Buffer(), at);
-            }
+    if (ok) {
+        //let's lock as the Get functions move the internal cdb and this might be shared by multiple threads
+        if (Lock()) {
+            if (numberOfSignals > 0u) {
+                ok = data.CreateRelative("Signals");
+                for (uint32 i = 0u; (i < numberOfSignals) && (ok); i++) {
+                    StreamString signalName;
+                    uint8 numberOfDimensions = 0u;
+                    TypeDescriptor td = GetSignalType(i);
+                    void *signalAddress = NULL_PTR(void*);
+                    ok = GetSignalMemoryBuffer(i, 0u, signalAddress);
+                    AnyType at(td, 0u, signalAddress);
+                    if (ok) {
+                        ok = GetSignalName(i, signalName);
+                    }
+                    if (ok) {
+                        ok = GetSignalNumberOfDimensions(i, numberOfDimensions);
+                    }
+                    if (ok) {
+                        at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
+                        uint32 numberOfElements = 0u;
+                        if (ok) {
+                            ok = GetSignalNumberOfElements(i, numberOfElements);
+                        }
+                        if (ok) {
+                            at.SetNumberOfElements(0u, numberOfElements);
+                        }
+                        ok = data.Write(signalName.Buffer(), at);
+                    }
 
-        }
-        if (ok) {
-            ok = data.MoveToAncestor(1u);
+                }
+                if (ok) {
+                    ok = data.MoveToAncestor(1u);
+                }
+            }
+            (void)UnLock();
         }
     }
+
     return ok;
 }
 
@@ -989,22 +1058,30 @@ void DataSourceI::PrepareOutputOffsets() {
 }
 
 /*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/
-bool DataSourceI::GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset) {
+bool DataSourceI::GetInputOffset(const uint32 signalIdx,
+                                 const uint32 numberOfSamples,
+                                 uint32 &offset) {
     return false;
 }
 
 /*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/
-bool DataSourceI::GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset) {
+bool DataSourceI::GetOutputOffset(const uint32 signalIdx,
+                                  const uint32 numberOfSamples,
+                                  uint32 &offset) {
     return false;
 }
 
 /*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/
-bool DataSourceI::TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {
+bool DataSourceI::TerminateInputCopy(const uint32 signalIdx,
+                                     const uint32 offset,
+                                     const uint32 numberOfSamples) {
     return true;
 }
 
 /*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/
-bool DataSourceI::TerminateOutputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {
+bool DataSourceI::TerminateOutputCopy(const uint32 signalIdx,
+                                      const uint32 offset,
+                                      const uint32 numberOfSamples) {
     return true;
 }
 

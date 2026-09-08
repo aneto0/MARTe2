@@ -66,7 +66,11 @@ void ConfigurationDatabaseNode::Purge() {
         for (uint32 n = 0u; (n<containerSize) && (ok); n++) {
             ReferenceT<ConfigurationDatabaseNode> rc = container[n];
             if (rc.IsValid()) {
-                rc->Purge();
+                //this one and container[n]
+                uint32 extRefs = (rc.NumberOfReferences() - 2u);
+                if(extRefs == rc->GetNumberOfNodes()){
+                    rc->Purge();
+                }
             }
         }
         delete [] container;
@@ -245,7 +249,8 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
         ReferenceT<ConfigurationDatabaseNode> refCdbn = ref;
         if (refCdbn.IsValid()) {
             refCdbn->SetParent(Reference());
-            refCdbn->Purge();
+            //not needed... when the reference dies it will destroy the object and call purge
+            //refCdbn->Purge();
             numberOfNodes--;
         }
     }
