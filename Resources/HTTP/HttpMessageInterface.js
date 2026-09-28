@@ -219,7 +219,7 @@ class HttpMessageInterface extends MARTeObject {
                 };
                 xhttp.open("GET", fullURL, true);
                 xhttp.send();
-            }.bind(this, null, "CustomMessage", lastMessageTxt, td3),
+            }.bind(this, null, "_CustomMessage", lastMessageTxt, td3),
             false);
     }
 
