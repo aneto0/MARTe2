@@ -770,7 +770,7 @@ bool GAM::ExportData(StructuredDataI &data) {
                     ok = data.MoveToAncestor(1u);
                 }
             }
-            (void)UnLock();
+            UnLock();
         }
     }
     return ok;

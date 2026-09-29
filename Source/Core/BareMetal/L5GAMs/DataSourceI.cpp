@@ -1031,7 +1031,7 @@ bool DataSourceI::ExportData(StructuredDataI &data) {
                     ok = data.MoveToAncestor(1u);
                 }
             }
-            (void)UnLock();
+            UnLock();
         }
     }
 
