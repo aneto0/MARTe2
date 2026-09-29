@@ -421,7 +421,7 @@ bool GAM::GetSignalByteOffsetInfo(const SignalDirection direction,
         ret = MoveToSignalIndex(direction, signalIdx);
     }
 
-    Matrix<uint32> byteOffsetMat(numberOfByteOffsets, 2u);
+    Matrix < uint32 > byteOffsetMat(numberOfByteOffsets, 2u);
     if (ret) {
         ret = configuredDatabase.Read("ByteOffset", byteOffsetMat);
     }
@@ -465,7 +465,7 @@ bool GAM::GetSignalRangesInfo(const SignalDirection direction,
         ret = MoveToSignalIndex(direction, signalIdx);
     }
 
-    Matrix<uint32> rangesMat(numberOfRanges, 2u);
+    Matrix < uint32 > rangesMat(numberOfRanges, 2u);
     if (ret) {
         ret = configuredDatabase.Read("Ranges", rangesMat);
     }
@@ -598,7 +598,7 @@ bool GAM::AddInputBrokers(ReferenceContainer brokers) {
     uint32 n = 0u;
     uint32 size = brokers.Size();
     while ((n < size) && (ret)) {
-        ReferenceT<BrokerI> broker = brokers.Get(n);
+        ReferenceT < BrokerI > broker = brokers.Get(n);
         ret = broker.IsValid();
         if (ret) {
             ret = inputBrokers.Insert(broker);
@@ -613,7 +613,7 @@ bool GAM::AddOutputBrokers(ReferenceContainer brokers) {
     uint32 n = 0u;
     uint32 size = brokers.Size();
     while ((n < size) && ret) {
-        ReferenceT<BrokerI> broker = brokers.Get(n);
+        ReferenceT < BrokerI > broker = brokers.Get(n);
         ret = broker.IsValid();
         if (ret) {
             ret = outputBrokers.Insert(broker);
@@ -634,7 +634,7 @@ bool GAM::SortBrokers() {
         ret = GetSignalDataSourceName(InputSignals, i, dataSourceName);
         if (ret) {
             for (int32 n = count; (n < numberOfInputBrokers) && ret; n++) {
-                ReferenceT<BrokerI> broker = inputBrokers.Get(static_cast<uint32>(n));
+                ReferenceT < BrokerI > broker = inputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
                 if (dsName == dataSourceName) {
                     if (count != n) {
@@ -662,7 +662,7 @@ bool GAM::SortBrokers() {
         ret = GetSignalDataSourceName(OutputSignals, i, dataSourceName);
         if (ret) {
             for (int32 n = count; (n < numberOfOutputBrokers) && ret; n++) {
-                ReferenceT<BrokerI> broker = outputBrokers.Get(static_cast<uint32>(n));
+                ReferenceT < BrokerI > broker = outputBrokers.Get(static_cast<uint32>(n));
                 StreamString dsName = broker->GetOwnerDataSourceName();
                 if (dsName == dataSourceName) {
                     if (count != n) {
@@ -709,61 +709,68 @@ bool GAM::GetOutputBrokers(ReferenceContainer &brokers) {
 
 bool GAM::ExportData(StructuredDataI &data) {
     bool ok = ReferenceContainer::ExportData(data);
-    if (numberOfInputSignals > 0u) {
-        ok = data.CreateRelative("InputSignals");
-        uint32 i;
-        for (i = 0u; (i < numberOfInputSignals) && (ok); i++) {
-            StreamString signalName;
-            uint32 numberOfDimensions = 0u;
-            TypeDescriptor td = GetSignalType(InputSignals, i);
-            AnyType at(td, 0u, GetInputSignalMemory(i));
-            ok = GetSignalName(InputSignals, i, signalName);
-            if (ok) {
-                ok = GetSignalNumberOfDimensions(InputSignals, i, numberOfDimensions);
-            }
-            if (ok) {
-                at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
-                uint32 numberOfElements = 0u;
-                if (ok) {
-                    ok = GetSignalNumberOfElements(InputSignals, i, numberOfElements);
-                }
-                if (ok) {
-                    at.SetNumberOfElements(0u, numberOfElements);
-                }
-                ok = data.Write(signalName.Buffer(), at);
-            }
+    if (ok) {
+        //let's lock as the Get functions move the internal cdb and this might be shared by multiple threads
+        if (Lock()) {
+            if (numberOfInputSignals > 0u) {
+                ok = data.CreateRelative("InputSignals");
+                uint32 i;
+                for (i = 0u; (i < numberOfInputSignals) && (ok); i++) {
+                    StreamString signalName;
+                    uint32 numberOfDimensions = 0u;
+                    TypeDescriptor td = GetSignalType(InputSignals, i);
+                    AnyType at(td, 0u, GetInputSignalMemory(i));
+                    ok = GetSignalName(InputSignals, i, signalName);
+                    if (ok) {
+                        ok = GetSignalNumberOfDimensions(InputSignals, i, numberOfDimensions);
+                    }
+                    if (ok) {
+                        at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
+                        uint32 numberOfElements = 0u;
+                        if (ok) {
+                            ok = GetSignalNumberOfElements(InputSignals, i, numberOfElements);
+                        }
+                        if (ok) {
+                            at.SetNumberOfElements(0u, numberOfElements);
+                        }
+                        ok = data.Write(signalName.Buffer(), at);
+                    }
 
-        }
-        if (ok) {
-            ok = data.MoveToAncestor(1u);
-        }
-    }
-    if (numberOfOutputSignals > 0u) {
-        ok = data.CreateRelative("OutputSignals");
-        uint32 i;
-        for (i = 0u; (i < numberOfOutputSignals) && (ok); i++) {
-            StreamString signalName;
-            uint32 numberOfDimensions = 0u;
-            TypeDescriptor td = GetSignalType(OutputSignals, i);
-            AnyType at(td, 0u, GetOutputSignalMemory(i));
-            ok = GetSignalName(OutputSignals, i, signalName);
-            if (ok) {
-                ok = GetSignalNumberOfDimensions(OutputSignals, i, numberOfDimensions);
-            }
-            if (ok) {
-                at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
-                uint32 numberOfElements = 0u;
-                if (ok) {
-                    ok = GetSignalNumberOfElements(OutputSignals, i, numberOfElements);
                 }
                 if (ok) {
-                    at.SetNumberOfElements(0u, numberOfElements);
+                    ok = data.MoveToAncestor(1u);
                 }
-                ok = data.Write(signalName.Buffer(), at);
             }
-        }
-        if (ok) {
-            ok = data.MoveToAncestor(1u);
+            if (numberOfOutputSignals > 0u) {
+                ok = data.CreateRelative("OutputSignals");
+                uint32 i;
+                for (i = 0u; (i < numberOfOutputSignals) && (ok); i++) {
+                    StreamString signalName;
+                    uint32 numberOfDimensions = 0u;
+                    TypeDescriptor td = GetSignalType(OutputSignals, i);
+                    AnyType at(td, 0u, GetOutputSignalMemory(i));
+                    ok = GetSignalName(OutputSignals, i, signalName);
+                    if (ok) {
+                        ok = GetSignalNumberOfDimensions(OutputSignals, i, numberOfDimensions);
+                    }
+                    if (ok) {
+                        at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
+                        uint32 numberOfElements = 0u;
+                        if (ok) {
+                            ok = GetSignalNumberOfElements(OutputSignals, i, numberOfElements);
+                        }
+                        if (ok) {
+                            at.SetNumberOfElements(0u, numberOfElements);
+                        }
+                        ok = data.Write(signalName.Buffer(), at);
+                    }
+
+                }
+                if (ok) {
+                    ok = data.MoveToAncestor(1u);
+                }
+            }
+            UnLock();
         }
     }
     return ok;

@@ -56,7 +56,6 @@ ConfigurationDatabase::ConfigurationDatabase() :
 
 /*lint -e{1551} by design memory if freed in the destructor.*/
 ConfigurationDatabase::~ConfigurationDatabase() {
-    currentNode = Reference();
     Purge();
 }
 
@@ -69,7 +68,6 @@ ConfigurationDatabase::ConfigurationDatabase(const ConfigurationDatabase &toCopy
 
 ConfigurationDatabase& ConfigurationDatabase::operator =(const ConfigurationDatabase &toCopy) {
     if (this != &toCopy) {
-        currentNode = Reference();
         Purge();
         mux = toCopy.mux;
         rootNode = toCopy.rootNode;
@@ -81,13 +79,19 @@ ConfigurationDatabase& ConfigurationDatabase::operator =(const ConfigurationData
 void ConfigurationDatabase::Purge() const {
     //If the only references pointing at the rootNode are itself and eventually all its child nodes then it can be purged
     //Note that for every direct child of the rootNode a link to it (the parent) is created
-    uint32 numberOfReferences = (rootNode.NumberOfReferences() - 1u);
-    if (rootNode == currentNode) {
-        //currentNode is pointing at rootNode
-        numberOfReferences--;
+
+    uint32 numberOfRootReferences = (rootNode.NumberOfReferences() - 1u);
+    uint32 numberOfCurrentReferences = (currentNode.NumberOfReferences() - 1u);
+    if(currentNode == rootNode){
+        numberOfRootReferences--;
+        numberOfCurrentReferences--;
     }
-    if (numberOfReferences == rootNode->GetNumberOfNodes()) {
+
+    if(numberOfRootReferences == rootNode->GetNumberOfNodes()) {
         rootNode->Purge();
+    }
+    if(numberOfCurrentReferences == currentNode->GetNumberOfNodes()) {
+        currentNode->Purge();
     }
 }
 

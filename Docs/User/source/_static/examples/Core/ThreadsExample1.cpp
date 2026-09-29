@@ -91,6 +91,6 @@ int main(int argc, char *argv[]) {
         MARTe::Sleep::Sec(1e-3);
     }
     REPORT_ERROR_STATIC(ErrorManagement::Information, "Value of sharedVariable = %d", sharedVariable);
-    delete sleepTimes;
+    delete[] sleepTimes;
     return 0;
 }

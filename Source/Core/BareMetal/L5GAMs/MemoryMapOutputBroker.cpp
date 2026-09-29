@@ -54,8 +54,8 @@ bool MemoryMapOutputBroker::Execute() {
     uint32 n;
     uint32 i = dataSource->GetCurrentStateBuffer();
     bool ret = true;
-    for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+        for (n = 0u; (n < numberOfCopies) && (ret); n++) {
             uint32 dataSourceIndex = ((i * numberOfCopies) + n);
             ret = MemoryOperationsHelper::Copy(copyTable[dataSourceIndex].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
         }
