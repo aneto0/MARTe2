@@ -648,7 +648,22 @@ TEST(BareMetal_L0Types_VectorGTest,TestInsert) {
     ASSERT_TRUE(vectorTest.TestInsert());
 }
 
- TEST(BareMetal_L0Types_VectorGTest,TestSetAllocationGranularity) {
+TEST(BareMetal_L0Types_VectorGTest,TestRemove) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestRemove());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestPush) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestPush());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestPop) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestPop());
+}
+
+TEST(BareMetal_L0Types_VectorGTest,TestSetAllocationGranularity) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestSetAllocationGranularity());
 }

@@ -1374,10 +1374,10 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_Po
     }
     bool ok = TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, numberOfCycles, expectedTrigger, expectedSignal, numberOfExpectedElements, numberOfPreTriggers, numberOfPostTriggers,
                                                                numberOfBuffers, 2);
-    delete triggerToGenerate;
-    delete signalToGenerate;
-    delete expectedTrigger;
-    delete expectedSignal;
+    delete[] triggerToGenerate;
+    delete[] signalToGenerate;
+    delete[] expectedTrigger;
+    delete[] expectedSignal;
     return ok;
 }
 
@@ -1601,7 +1601,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestGetCPUMask() {
     if (ok) {
         ok = (broker->GetCPUMask() == 0xf);
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;
@@ -1660,7 +1660,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestGetNumberOfBuffers() {
     if (ok) {
         ok = (broker->GetNumberOfBuffers() == 10);
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;
@@ -1719,7 +1719,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestGetPreTriggerBuffers() {
     if (ok) {
         ok = (broker->GetPreTriggerBuffers() == 4);
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;
@@ -1778,7 +1778,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestGetPostTriggerBuffers() {
     if (ok) {
         ok = (broker->GetPostTriggerBuffers() == 3);
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;
@@ -1850,7 +1850,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_Buffer_Overrun() {
         }
 
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;
@@ -1909,7 +1909,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestGetStackSize() {
     if (ok) {
         ok = (broker->GetStackSize() == 32768);
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;

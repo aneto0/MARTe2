@@ -43,68 +43,68 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_ResultTGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_ResultTGTest,TestConstructor) {
     ResultTTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest,TestCopyConstructor) {
+TEST(BareMetal_L1Portability_ResultTGTest,TestCopyConstructor) {
     ResultTTest test;
     ASSERT_TRUE(test.TestCopyConstructor());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest,TestDestructor) {
+TEST(BareMetal_L1Portability_ResultTGTest,TestDestructor) {
     ResultTTest test;
     ASSERT_TRUE(test.TestDestructor());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestSetError) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestSetError) {
     ResultTTest test;
     ASSERT_TRUE(test.TestSetError());
 }
 
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestPrintError) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestPrintError) {
     ResultTTest test;
     ASSERT_TRUE(test.TestPrintError());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestGetValue) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestGetValue) {
     ResultTTest test;
     ASSERT_TRUE(test.TestGetValue());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestBoolOperator) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestBoolOperator) {
     ResultTTest test;
     ASSERT_TRUE(test.TestBoolOperator());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestAssignOperator_Type) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestAssignOperator_Type) {
     ResultTTest test;
     ASSERT_TRUE(test.TestAssignOperator_Type());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestAssignOperator_Result) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestAssignOperator_Result) {
     ResultTTest test;
     ASSERT_TRUE(test.TestAssignOperator_Result());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestEqualOperator_Type) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestEqualOperator_Type) {
     ResultTTest test;
     ASSERT_TRUE(test.TestEqualOperator_Type());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestEqualOperator_Result) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestEqualOperator_Result) {
     ResultTTest test;
     ASSERT_TRUE(test.TestEqualOperator_Result());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestDifferentOperator_Type) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestDifferentOperator_Type) {
     ResultTTest test;
     ASSERT_TRUE(test.TestDifferentOperator_Type());
 }
 
-TEST(BareMetal_L4Configuration_ResultTGTest, TestDifferentOperator_Result) {
+TEST(BareMetal_L1Portability_ResultTGTest, TestDifferentOperator_Result) {
     ResultTTest test;
     ASSERT_TRUE(test.TestDifferentOperator_Result());
 }

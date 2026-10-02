@@ -72,8 +72,8 @@ RealTimeApplication::~RealTimeApplication() {
     if (!ret.ErrorsCleared()) {
         REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the RealTimeApplication. Was it ever started?");
     }
-
 }
+
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
     index = 1u;
 
@@ -104,108 +104,76 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
     if (ret) {
         ret = defaultDataSourceName.Seek(0ull);
     }
-    uint32 numberOfContainers = 0u;
+
     if (ret) {
-        numberOfContainers = Size();
-        ret = false;
-        for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
+        uint32 numberOfContainers = Size();
+        bool found = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {
             Reference item = Get(i);
             if (item.IsValid()) {
                 if (StringHelper::Compare(item->GetName(), "States") == 0) {
                     statesContainer = item;
-                    ret = statesContainer.IsValid();
+                    found = statesContainer.IsValid();
                 }
             }
         }
-        if (!ret) {
-            REPORT_ERROR(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName());
-        }
-        if (ret) {
+        if (!found) {
+            REPORT_ERROR(ErrorManagement::InitialisationError,
+                         "No States block found in RealTimeApplication %s.",
+                         GetName());
             ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference container = Get(i);
-                if (container.IsValid()) {
-                    if (StringHelper::Compare(container->GetName(), "Data") == 0) {
-                        dataSourceContainer = container;
-                        ret = dataSourceContainer.IsValid();
-                    }
+        }
+        found = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {
+            Reference container = Get(i);
+            if (container.IsValid()) {
+                if (StringHelper::Compare(container->GetName(), "Data") == 0) {
+                    dataSourceContainer = container;
+                    found = dataSourceContainer.IsValid();
                 }
             }
         }
-        if (!ret) {
-            REPORT_ERROR(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName());
-        }
-        if (ret) {
+        if (!found) {
+            REPORT_ERROR(ErrorManagement::InitialisationError,
+                         "No Data block found in RealTimeApplication %s.",
+                         GetName());
             ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference item = Get(i);
-                if (item.IsValid()) {
-                    if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
-                        functionsContainer = item;
-                        ret = functionsContainer.IsValid();
-                    }
+        }
+        found = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {
+            Reference item = Get(i);
+            if (item.IsValid()) {
+                if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
+                    functionsContainer = item;
+                    found = functionsContainer.IsValid();
                 }
             }
         }
-        if (!ret) {
-            REPORT_ERROR(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName());
-        }
-        if (ret) {
-            numberOfContainers = Size();
+        if (!found) {
+            REPORT_ERROR(ErrorManagement::InitialisationError,
+                         "No Functions block found in RealTimeApplication %s.",
+                         GetName());
             ret = false;
-            for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                Reference item = Get(i);
-                if (item.IsValid()) {
-                    if (StringHelper::Compare(item->GetName(), "States") == 0) {
-                        statesContainer = item;
-                        ret = statesContainer.IsValid();
-                    }
+        }
+        found = false;
+        for (uint32 i = 0u; (i < numberOfContainers) && (!found); i++) {
+            Reference container = Get(i);
+            if (container.IsValid()) {
+                if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
+                    scheduler = container;
+                    found = scheduler.IsValid();
                 }
             }
-            if (ret) {
-                ret = false;
-                for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                    Reference container = Get(i);
-                    if (container.IsValid()) {
-                        if (StringHelper::Compare(container->GetName(), "Data") == 0) {
-                            dataSourceContainer = container;
-                            ret = dataSourceContainer.IsValid();
-                        }
-                    }
-                }
-            }
-            if (ret) {
-                ret = false;
-                for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                    Reference item = Get(i);
-                    if (item.IsValid()) {
-                        if (StringHelper::Compare(item->GetName(), "Functions") == 0) {
-                            functionsContainer = item;
-                            ret = functionsContainer.IsValid();
-                        }
-                    }
-                }
-            }
-
-            if (ret) {
-                ret = false;
-                for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
-                    Reference container = Get(i);
-                    if (container.IsValid()) {
-                        if (StringHelper::Compare(container->GetName(), "Scheduler") == 0) {
-                            scheduler = container;
-                            ret = scheduler.IsValid();
-                        }
-                    }
-                }
-                if (!ret) {
-                    REPORT_ERROR(ErrorManagement::InitialisationError, "No Scheduler block in RealTimeApplication %s", GetName());
-                }
-            }
+        }
+        if (!found) {
+            REPORT_ERROR(ErrorManagement::InitialisationError,
+                         "No Scheduler block in RealTimeApplication %s.",
+                         GetName());
+            ret = false;
         }
     }
-    return ret;
 
+    return ret;
 }
 
 bool RealTimeApplication::ConfigureApplication() {
