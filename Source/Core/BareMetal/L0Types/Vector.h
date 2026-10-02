@@ -190,13 +190,34 @@ public:
      * @param[in] newElement the element to be appended at the end
      */
     void Append(const T &newElement);
-   
+ 
+    /**
+     * @brief Append element to this vector
+     * @param[in] newElement the element to be appended at the end
+     */
+    void Push(const T &newElement);
+ 
+    /**
+     * @brief Remove element from the end of this vector
+     * @param[in] newElement the element to be removed from end
+     * @return the element that was at the end of the vector
+     */
+    T Pop();
+  
     /**
      * @brief Insert an element in a specific position
      * @param[in] newElement the element to be inserted
      * @param[in] idx the position
      */ 
     void Insert(const T &newElement, const uint32 idx);
+
+    /**
+     * @brief Remove an element from a specific position
+     * @param[in] newElement the element to be removed
+     * @param[in] idx the position
+     * @return the removed element
+     */ 
+    T Remove(const uint32 idx);
 
     /**
      * @brief Sets the allocation granularity
@@ -453,16 +474,51 @@ void Vector<T>::Append(const T &newElement){
 }
 
 template<typename T>
+void Vector<T>::Push(const T &newElement){
+    Append(newElement);
+}
+
+template<typename T>
+T Vector<T>::Pop(){
+    if(numberOfElements > 0u){
+        T ret = dataPointer[numberOfElements-1u];
+        if(canDestroy){
+            numberOfElements--;
+        }
+        return ret;
+    }
+    return T();
+}
+
+template<typename T>
 void Vector<T>::Insert(const T &newElement, const uint32 idx){
     if(canDestroy){
-        for(uint32 i = (numberOfElements); i > idx; i--){
-            dataPointer[i] = dataPointer[i-1u];
+        if(idx <= numberOfElements){
+            for(uint32 i = (numberOfElements); i > idx; i--){
+                dataPointer[i] = dataPointer[i-1u];
+            }
+            dataPointer[idx] = newElement;
+            numberOfElements++;
+            Reallocate(numberOfElements);
         }
-        dataPointer[idx] = newElement;
-        numberOfElements++;
-        Reallocate(numberOfElements);
     }
 }
+
+template<typename T>
+T Vector<T>::Remove(const uint32 idx){
+    if(idx < numberOfElements){
+        T ret = dataPointer[idx];
+        if(canDestroy){
+            for(uint32 i = idx; i < (numberOfElements-1u); i++){
+                dataPointer[i] = dataPointer[i+1u];
+            }
+            numberOfElements--;
+        }
+        return ret;
+    }
+    return T();
+}
+
     
 template<typename T>
 void Vector<T>::SetAllocationGranularity(const uint32 allocGranularityIn){

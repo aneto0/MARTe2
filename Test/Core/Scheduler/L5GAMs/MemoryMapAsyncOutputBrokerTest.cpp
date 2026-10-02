@@ -928,7 +928,7 @@ bool MemoryMapAsyncOutputBrokerTest::TestGetCPUMask() {
     if (ok) {
         ok = (broker->GetCPUMask() == 0xf);
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;
@@ -987,7 +987,7 @@ bool MemoryMapAsyncOutputBrokerTest::TestGetStackSize() {
     if (ok) {
         ok = (broker->GetStackSize() == 32768);
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;
@@ -1046,7 +1046,7 @@ bool MemoryMapAsyncOutputBrokerTest::TestGetNumberOfBuffers() {
     if (ok) {
         ok = (broker->GetNumberOfBuffers() == 10);
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;
@@ -1108,7 +1108,7 @@ bool MemoryMapAsyncOutputBrokerTest::TestExecute_Buffer_Overrun() {
     if (ok) {
         ok = !broker->Execute();
     }
-    delete fakeMem;
+    delete[] fakeMem;
 
     godb->Purge();
     return ok;

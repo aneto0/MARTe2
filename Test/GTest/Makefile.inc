@@ -34,6 +34,7 @@ include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 ifeq ($(MARTe2_TEST_ENVIRONMENT), GTest)
 INCLUDES += -I$(ROOT_DIR)/Lib/gtest-1.7.0/include
 OBJSX += MARTe2UTest.x
+#LIBRARIES+=-lgtest -lgtest_main
 LIBRARIES+=../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a
 else
 LIBRARIES+=../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTest$(OBJEXT)
