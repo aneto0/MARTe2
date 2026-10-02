@@ -87,3 +87,34 @@ TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_Message_D
     HttpMessageInterfaceTest test;
     ASSERT_TRUE(test.TestGetAsText_Message_Does_Not_Exist());
 }
+
+TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_CustomMessage) {
+    HttpMessageInterfaceTest test;
+    ASSERT_TRUE(test.TestGetAsText_CustomMessage());
+}
+
+TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_CustomMessage_Parameters) {
+    HttpMessageInterfaceTest test;
+    ASSERT_TRUE(test.TestGetAsText_CustomMessage_Parameters());
+}
+
+TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_CustomMessage_NoDestination) {
+    HttpMessageInterfaceTest test;
+    ASSERT_TRUE(test.TestGetAsText_CustomMessage_NoDestination());
+}
+
+TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_CustomMessage_NoFunction) {
+    HttpMessageInterfaceTest test;
+    ASSERT_TRUE(test.TestGetAsText_CustomMessage_NoFunction());
+}
+
+TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_CustomMessage_WrongDestination) {
+    HttpMessageInterfaceTest test;
+    ASSERT_TRUE(test.TestGetAsText_CustomMessage_WrongDestination());
+}
+
+TEST(FileSystem_L4HttpService_HttpMessageInterfaceGTest, TestGetAsText_CustomMessage_WrongFunction) {
+    HttpMessageInterfaceTest test;
+    ASSERT_TRUE(test.TestGetAsText_CustomMessage_WrongFunction());
+}
+

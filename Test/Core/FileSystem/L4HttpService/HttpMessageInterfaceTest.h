@@ -86,6 +86,35 @@ public:
      */
     bool TestGetAsText_Message_Cannot_Be_Sent();
 
+    /**
+     * @brief Tests the GetAsText with a custom message.
+     */
+    bool TestGetAsText_CustomMessage();
+
+    /**
+     * @brief Tests the GetAsText with a custom message with parameters.
+     */
+    bool TestGetAsText_CustomMessage_Parameters();
+
+    /**
+     * @brief Tests the GetAsText with a custom message without destination.
+     */
+    bool TestGetAsText_CustomMessage_NoDestination();
+
+    /**
+     * @brief Tests the GetAsText with a custom message without function.
+     */
+    bool TestGetAsText_CustomMessage_NoFunction();
+    
+    /**
+     * @brief Tests the GetAsText with a custom message with wrong destination.
+     */
+    bool TestGetAsText_CustomMessage_WrongDestination();
+
+    /**
+     * @brief Tests the GetAsText with a custom message with wrong function.
+     */
+    bool TestGetAsText_CustomMessage_WrongFunction();
 };
 
 /*---------------------------------------------------------------------------*/
