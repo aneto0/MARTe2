@@ -43,6 +43,9 @@
 
 #define MEMMODEL        __ATOMIC_SEQ_CST
 #define TSL_MEMMODEL    __ATOMIC_SEQ_CST
+#define ACQ_MEMMODEL    __ATOMIC_ACQUIRE
+#define REL_MEMMODEL    __ATOMIC_RELEASE
+
 
 namespace MARTe {
 
@@ -97,6 +100,38 @@ inline void Add(volatile int32 *p, int32 value) {
 
 inline void Sub(volatile int32 *p, int32 value) {
     __atomic_sub_fetch(p, value, MEMMODEL);
+}
+
+inline uint32 LoadAcquire(volatile uint32 *p) {
+    return __atomic_load_n(p, ACQ_MEMMODEL);
+}
+
+inline int32 LoadAcquire(volatile int32 *p) {
+    return __atomic_load_n(p, ACQ_MEMMODEL);
+}
+
+inline int16 LoadAcquire(volatile int16 *p) {
+    return __atomic_load_n(p, ACQ_MEMMODEL);
+}
+
+inline int8 LoadAcquire(volatile int8 *p) {
+    return __atomic_load_n(p, ACQ_MEMMODEL);
+}
+
+inline void StoreRelease(volatile uint32 *p, uint32 value) {
+    __atomic_store_n(p, value, REL_MEMMODEL);
+}
+
+inline void StoreRelease(volatile int32 *p, int32 value) {
+    __atomic_store_n(p, value, REL_MEMMODEL);
+}
+
+inline void StoreRelease(volatile int16 *p, int16 value) {
+    __atomic_store_n(p, value, REL_MEMMODEL);
+}
+
+inline void StoreRelease(volatile int8 *p, int8 value) {
+    __atomic_store_n(p, value, REL_MEMMODEL);
 }
 
 }

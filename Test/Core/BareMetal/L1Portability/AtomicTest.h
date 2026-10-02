@@ -102,6 +102,18 @@ public:
      */
     bool TestBoundaryDecrement();
 
+    /**
+     * @brief Tests the load acquire function.
+     * @return true if the value is correctly loaded.
+     */
+    bool TestLoadAcquire();
+
+    /**
+     * @brief Tests the store release function.
+     * @return true if the value is correctly stored.
+     */
+    bool TestStoreRelease();
+
 private:
     /** The atomic variable */
     volatile T testValue;
@@ -262,6 +274,27 @@ bool AtomicTest<T>::TestBoundaryDecrement() {
     }
 
     return true;
+}
+
+template<class T>
+bool AtomicTest<T>::TestLoadAcquire() {
+    volatile T auxValue = testValue;
+    
+    // Test that the load correctly reads the value
+    T loadedVal = Atomic::LoadAcquire(&auxValue);
+    
+    return (loadedVal == testValue);
+}
+
+template<class T>
+bool AtomicTest<T>::TestStoreRelease() {
+    volatile T auxValue = 0;
+    T valToStore = testValue;
+    
+    // Test that the store correctly writes the value
+    Atomic::StoreRelease(&auxValue, valToStore);
+    
+    return (auxValue == valToStore);
 }
 
 #endif /* ATOMICTEST_H_ */
