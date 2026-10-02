@@ -212,7 +212,7 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
             StreamString mode;
             StreamString parameters;
             StreamString msgCfg;
-            msgCfg.SetSize(10000u);
+            (void) msgCfg.SetSize(10000LLU);
             ConfigurationDatabase msgCdb;
             if (!protocol.GetInputCommand("Destination", destination)) {
                 REPORT_ERROR(ErrorManagement::FatalError,
@@ -241,6 +241,7 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
                 msgCfg += mode;
                 msgCfg += "\n";
             }
+            /*lint -e{9013} else not meaningful*/
             if (!protocol.GetInputCommand("Parameters", parameters)) {
                 REPORT_ERROR(ErrorManagement::Warning,
                             "No parameters are set for _CustomMessage");
@@ -250,32 +251,32 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
                 msgCfg +=  "\n}\n";
             }
             if (ok) {
-                msgCfg.Seek(0u);
+                (void) msgCfg.Seek(0LLU);
                 StandardParser stdParser(msgCfg, msgCdb);
                 ok = stdParser.Parse();
             }
+            ReferenceT<Message> newMsg = new Message;
             if (ok) {
-                ReferenceT<Message> msg = new Message;
-                msg->SetName(msgName.Buffer());
-                msg->Initialise(msgCdb);
-                if (msg.IsValid()) {
-                    msg->SetAsReply(false);
-                    ErrorManagement::ErrorType err;
-                    if (msg->ExpectsReply()) {
-                        err = MessageI::SendMessageAndWaitReply(msg, this);
-                    } else {
-                        err = MessageI::SendMessage(msg, this);
-                    }
-                    if (err != ErrorManagement::NoError) {
-                        ok = false;
-                        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                                            "Could not send message _CustomMessage");
-                    }
+                newMsg->SetName(msgName.Buffer());
+                ok = newMsg->Initialise(msgCdb);
+            }
+            if (ok) {
+                newMsg->SetAsReply(false);
+                ErrorManagement::ErrorType err;
+                if (newMsg->ExpectsReply()) {
+                    err = MessageI::SendMessageAndWaitReply(newMsg, this);
                 } else {
-                    REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                                        "_CustomMessage is nots not valid");
-                    ok = false;
+                    err = MessageI::SendMessage(newMsg, this);
                 }
+                if (err != ErrorManagement::NoError) {
+                    ok = false;
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                                        "Could not send message _CustomMessage");
+                }
+            } else {
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                                    "_CustomMessage is not valid");
+                ok = false;
             }
         }
         else {
