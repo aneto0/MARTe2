@@ -204,6 +204,7 @@ if __name__ == '__main__':
         if version is None:
             logger.critical('lcov not found')
         else:
+            logger.debug(f'Lcov version: {version}')
             reporter.SetHelper('Coverage')
             ch = CoverageHelper(logger)
             ch.Configure({'lcovoutputdir': args.lcovoutputdir, 'lcovprefix': args.lcovprefix, 'lcovexec': args.lcovexec,
