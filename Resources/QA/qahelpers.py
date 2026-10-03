@@ -569,6 +569,7 @@ class CoverageHelper(QAHelper):
                          args['lcovminlines'] (float) Minimum line coverage ([0, 1]) 
                          args['compbranch'] (str) name of the branch to compare against
                          args['repo'] (git.Repo) git repo to compare coverage against
+                         args['version'] (tupple) lcov version
         Returns:
             True.
         """
@@ -581,6 +582,7 @@ class CoverageHelper(QAHelper):
         self.minLinesCov = args['lcovminlines']
         self.compBranchName = args['compbranch']
         self.repo = args['repo']
+        self.version = args['version']
 
     def ExecLCov(self, clean):
         """ Executes lcov
@@ -599,10 +601,16 @@ class CoverageHelper(QAHelper):
             self.ExecShellCommand('{0} --gtest_filter={1}'.format(self.lcovExec, f))
 
         #Create test coverage data file
-        self.ExecShellCommand('lcov --capture --directory . --no-external --output-file {0}/{1}.tests'.format(self.lcovOutputDir, self.lcovBuildPrefix))
+        cmd = 'lcov --capture --directory . --no-external'
+        if self.version[0] > 1:
+            cmd += '--ignore-errors mismatch --ignore-errors source'
+        self.ExecShellCommand('{0} --output-file {1}/{2}.tests'.format(cmd, self.lcovOutputDir, self.lcovBuildPrefix))
 
         #Combine baseline and test coverage data
-        self.ExecShellCommand('lcov --add-tracefile {0}/{1}.initial --add-tracefile {0}/{1}.tests --output-file {0}/{1}.1'.format(self.lcovOutputDir, self.lcovBuildPrefix))
+        cmd = 'lcov'
+        if self.version[0] > 1:
+            cmd += '--ignore-errors mismatch --ignore-errors source'
+        self.ExecShellCommand('{0} --add-tracefile {1}/{2}.initial --add-tracefile {1}/{2}.tests --output-file {1}/{2}.1'.format(cmd, self.lcovOutputDir, self.lcovBuildPrefix))
 
         #Remove false positives
         self.ExecShellCommand('lcov --remove {0}/{1}.1 "/Test*" --output-file {0}/{1}.2'.format(self.lcovOutputDir, self.lcovBuildPrefix))

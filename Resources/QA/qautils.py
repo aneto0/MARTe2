@@ -69,4 +69,16 @@ def ChangeBranch(logger, repo, targetBranch):
 
     return ok
 
+def GetLcovVersion(logger):
+    """ Returns the lcov version (major, minor)
+    """
+    process = ExecShellCommand(logger, 'lcov --version', False, False)
+    version = None
+    for outLine in iter(process.stdout.readline, ''):
+        if 'version' in outLine:
+            version = outLine.split('version')[1]
+            major = int(version.split('.')[0])
+            minor = int(version.split('.')[1].split(' ')[0])
+            version = (major, minor)
 
+    return version

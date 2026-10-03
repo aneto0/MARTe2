@@ -200,12 +200,16 @@ if __name__ == '__main__':
 
     #LCov
     if (not args.excludecoverage):
-        reporter.SetHelper('Coverage')
-        ch = CoverageHelper(logger)
-        ch.Configure({'lcovoutputdir': args.lcovoutputdir, 'lcovprefix': args.lcovprefix, 'lcovexec': args.lcovexec,
-            'lcovfilter': args.lcovfilter, 'lcovexecdisable': args.lcovexecdisable, 'lcovminfun': args.lcovminfun, 
-            'lcovminlines': args.lcovminlines, 'compbranch': args.branch, 'repo': repo})
-        ch.Run(reporter)
+        version = qautils.GetLcovVersion(logger)
+        if version is None:
+            logger.critical('lcov not found')
+        else:
+            reporter.SetHelper('Coverage')
+            ch = CoverageHelper(logger)
+            ch.Configure({'lcovoutputdir': args.lcovoutputdir, 'lcovprefix': args.lcovprefix, 'lcovexec': args.lcovexec,
+                'lcovfilter': args.lcovfilter, 'lcovexecdisable': args.lcovexecdisable, 'lcovminfun': args.lcovminfun, 
+                'lcovminlines': args.lcovminlines, 'compbranch': args.branch, 'repo': repo, 'version': version})
+            ch.Run(reporter)
 
     #GTest
     if (not args.excludegtest):
