@@ -176,6 +176,77 @@ inline void Sub(volatile int32 *p, int32 value) {
 #endif
 }
 
+inline uint32 LoadAcquire(volatile uint32 *p) {
+#if GCC_VERSION > 40700
+    return __atomic_load_n(p, __ATOMIC_ACQUIRE);
+#else
+    __sync_synchronize();
+    return *p;
+#endif
+}
+
+inline int32 LoadAcquire(volatile int32 *p) {
+#if GCC_VERSION > 40700
+    return __atomic_load_n(p, __ATOMIC_ACQUIRE);
+#else
+    __sync_synchronize();
+    return *p;
+#endif
+}
+
+inline int16 LoadAcquire(volatile int16 *p) {
+#if GCC_VERSION > 40700
+    return __atomic_load_n(p, __ATOMIC_ACQUIRE);
+#else
+    __sync_synchronize();
+    return *p;
+#endif
+}
+
+inline int8 LoadAcquire(volatile int8 *p) {
+#if GCC_VERSION > 40700
+    return __atomic_load_n(p, __ATOMIC_ACQUIRE);
+#else
+    __sync_synchronize();
+    return *p;
+#endif
+}
+
+inline void StoreRelease(volatile uint32 *p, uint32 value) {
+#if GCC_VERSION > 40700
+    __atomic_store_n(p, value, __ATOMIC_RELEASE);
+#else
+    __sync_synchronize();
+    *p = value;
+#endif
+}
+
+inline void StoreRelease(volatile int32 *p, int32 value) {
+#if GCC_VERSION > 40700
+    __atomic_store_n(p, value, __ATOMIC_RELEASE);
+#else
+    __sync_synchronize();
+    *p = value;
+#endif
+}
+
+inline void StoreRelease(volatile int16 *p, int16 value) {
+#if GCC_VERSION > 40700
+    __atomic_store_n(p, value, __ATOMIC_RELEASE);
+#else
+    __sync_synchronize();
+    *p = value;
+#endif
+}
+
+inline void StoreRelease(volatile int8 *p, int8 value) {
+#if GCC_VERSION > 40700
+    __atomic_store_n(p, value, __ATOMIC_RELEASE);
+#else
+    __sync_synchronize();
+    *p = value;
+#endif
+}
 }
 
 }

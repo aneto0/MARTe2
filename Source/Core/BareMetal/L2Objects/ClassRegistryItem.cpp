@@ -50,7 +50,6 @@
 
 namespace MARTe {
 
-// TODO remove LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem(ClassProperties &classProperties_in) :
         LinkedListable(),
         classProperties(classProperties_in),
