@@ -83,6 +83,7 @@ def GetLcovVersion(logger):
                 patch = int(minor.split('-')[1])
                 minor = int(minor.split('-')[0])
             else:
+                minor = int(minor)
                 patch = 0
             version = (major, minor, patch)
 
