@@ -49,7 +49,6 @@ INCLUDES += -I../../Scheduler/L3Services
 all: $(OBJS) $(SUBPROJ)   \
 	$(BUILD_DIR)/L5GAMsS$(LIBEXT) \
 	$(BUILD_DIR)/L5GAMsS.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -48,7 +48,6 @@ INCLUDES += -I./HAL
 
 all: $(OBJS) $(CPPS) $(SUBPROJ) $(SUBPROJH) \
      $(BUILD_DIR)/L6App$(LIBEXT)
-	echo  $(OBJS) $(CPPS)
 
 include depends.$(TARGET)
 

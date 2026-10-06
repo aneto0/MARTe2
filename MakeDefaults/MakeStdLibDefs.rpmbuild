@@ -27,6 +27,17 @@ BUILD_DIR=$(ROOT_DIR)/Build/rpmbuild
 
 FOLDERS=$(FOLDERSX:%.x=%) 
 
+GCC_VERSION := $(shell $(CXX) -dumpfullversion -dumpversion)
+GCC_MAJOR   := $(word 1,$(subst ., ,$(GCC_VERSION)))
+
+ifeq ($(shell test $(GCC_MAJOR) -ge 11 && echo yes),yes)
+    GTEST_VERSION := 1.18.0
+else ifeq ($(shell test $(GCC_MAJOR) -ge 7 && echo yes),yes)
+    GTEST_VERSION := 1.16.0
+else
+    GTEST_VERSION := 1.7.0
+endif
+
 M2_RPM_COMPILE_TARGET?=x86-linux
 
 M2_RPM_FLAGS=-v -ba

@@ -43,8 +43,6 @@ all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L0TypesB$(LIBEXT) \
 		$(BUILD_DIR)/L0TypesB.def
 		
-	echo  $(OBJS)
-
 include depends.$(TARGET)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

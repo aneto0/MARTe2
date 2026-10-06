@@ -23,24 +23,24 @@
 #############################################################
 
 
-OBJSX=  AdvancedErrorManagementGTest.x \
-        Base64EncoderGTest.x\
-        BitSetToIntegerGTest.x \
-	BufferedStreamIGTest.x \
-	BufferedStreamIOBufferGTest.x \
-	CharBufferGTest.x \
-	DoubleBufferedStreamGTest.x \
-	IOBufferGTest.x \
-	JsonPrinterGTest.x\
-	PrinterIGTest.x\
-	SingleBufferedStreamGTest.x \
-	StandardPrinterGTest.x\
-	StreamMemoryReferenceGTest.x \
-	StreamStringGTest.x \
-	StreamStringIOBufferGTest.x\
-	StreamStructuredDataGTest.x\
-	StreamStructuredDataIGTest.x\
-	XMLPrinterGTest.x
+OBJSX=  AdvancedErrorManagementGTest.xns \
+        Base64EncoderGTest.xns\
+        BitSetToIntegerGTest.xns \
+	BufferedStreamIGTest.xns \
+	BufferedStreamIOBufferGTest.xns \
+	CharBufferGTest.xns \
+	DoubleBufferedStreamGTest.xns \
+	IOBufferGTest.xns \
+	JsonPrinterGTest.xns\
+	PrinterIGTest.xns\
+	SingleBufferedStreamGTest.xns \
+	StandardPrinterGTest.xns\
+	StreamMemoryReferenceGTest.xns \
+	StreamStringGTest.xns \
+	StreamStringIOBufferGTest.xns\
+	StreamStructuredDataGTest.xns\
+	StreamStructuredDataIGTest.xns\
+	XMLPrinterGTest.xns
 
 
 PACKAGE=GTest/BareMetal
@@ -70,7 +70,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L3StreamsBGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

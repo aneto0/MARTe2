@@ -40,7 +40,6 @@ INCLUDES += -I../L3Streams
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L4MessagesB$(LIBEXT) \
 	        $(BUILD_DIR)/L4MessagesB.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

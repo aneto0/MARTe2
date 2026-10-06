@@ -45,7 +45,6 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 all: $(OBJS) $(SUBPROJ)   \
 	$(BUILD_DIR)/L1PortabilityS$(LIBEXT) \
 	$(BUILD_DIR)/L1PortabilityS.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

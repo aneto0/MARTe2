@@ -47,7 +47,6 @@ INCLUDES+=-I$(MARTe2_DIR)/Source/Core/BareMetal/L6App
 
 all: $(OBJS) $(CPPS) \
      $(BUILD_DIR)/L6App$(LIBEXT)
-	echo  $(OBJS) $(CPPS)
 
 include depends.$(TARGET)
 

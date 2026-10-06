@@ -98,7 +98,6 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/TypesExample1$(EXEEXT) \
         $(BUILD_DIR)/TypesExample2$(EXEEXT) \
         $(BUILD_DIR)/VariableGAMExample1$(GAMEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

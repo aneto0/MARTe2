@@ -40,7 +40,6 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsTest$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeCoreSTest$(LIBEXT)
-	echo  $(OBJS)
 
 
 

@@ -50,7 +50,6 @@ INCLUDES += -I../../FileSystem/L3Streams
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L4LoggerServiceF$(LIBEXT) \
 	        $(BUILD_DIR)/L4LoggerServiceF.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

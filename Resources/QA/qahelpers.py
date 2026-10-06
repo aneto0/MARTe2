@@ -596,7 +596,7 @@ class CoverageHelper(QAHelper):
         #Run baseline coverage
         cmd = 'lcov --capture --initial --directory . --no-external'
         if self.version[0] > 1:
-            cmd += ' --ignore-errors mismatch --ignore-errors source'
+            cmd += ' --ignore-errors source'
         self.ExecShellCommand('{0} --output-file {1}/{2}.initial'.format(cmd, self.lcovOutputDir, self.lcovBuildPrefix))
         
         #Execute the tests
@@ -606,13 +606,13 @@ class CoverageHelper(QAHelper):
         #Create test coverage data file
         cmd = 'lcov --capture --directory . --no-external'
         if self.version[0] > 1:
-            cmd += ' --ignore-errors mismatch --ignore-errors source'
+            cmd += ' --ignore-errors source'
         self.ExecShellCommand('{0} --output-file {1}/{2}.tests'.format(cmd, self.lcovOutputDir, self.lcovBuildPrefix))
 
         #Combine baseline and test coverage data
         cmd = 'lcov'
         if self.version[0] > 1:
-            cmd += ' --ignore-errors mismatch --ignore-errors source'
+            cmd += ' --ignore-errors source'
         self.ExecShellCommand('{0} --add-tracefile {1}/{2}.initial --add-tracefile {1}/{2}.tests --output-file {1}/{2}.1'.format(cmd, self.lcovOutputDir, self.lcovBuildPrefix))
 
         #Remove false positives

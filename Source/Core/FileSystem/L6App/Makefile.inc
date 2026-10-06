@@ -57,7 +57,6 @@ all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L6AppF$(LIBEXT) \
 		$(BUILD_DIR)/L6AppF.def
 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -23,9 +23,9 @@
 #############################################################
 
 
-OBJSX=  QueuedMessageIGTest.x\
-    QueuedReplyMessageCatcherFilterGTest.x\
-    QueueingMessageFilterGTest.x
+OBJSX=  QueuedMessageIGTest.xns\
+    QueuedReplyMessageCatcherFilterGTest.xns\
+    QueueingMessageFilterGTest.xns
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
@@ -60,7 +60,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L4MessagesSGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

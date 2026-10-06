@@ -23,11 +23,11 @@
 #############################################################
 
 
-OBJSX=  CountingSemGTest.x\
-		EventSemGTest.x\
-		MutexSemGTest.x\
-		ProcessorGTest.x\
-		ThreadsGTest.x
+OBJSX=  CountingSemGTest.xns\
+		EventSemGTest.xns\
+		MutexSemGTest.xns\
+		ProcessorGTest.xns\
+		ThreadsGTest.xns
 		
 
 PACKAGE=GTest/Scheduler
@@ -57,7 +57,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L1PortabilitySGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

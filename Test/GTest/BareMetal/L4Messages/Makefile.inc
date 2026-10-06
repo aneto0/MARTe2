@@ -23,13 +23,13 @@
 #############################################################
 
 
-OBJSX=  MessageFilterPoolGTest.x \
-        MessageGTest.x \
-	MessageIGTest.x \
-	ObjectRegistryDatabaseMessageFilterGTest.x \
-	ObjectRegistryDatabaseMessageIGTest.x \
-	RegisteredMethodsMessageFilterGTest.x \
-	ReplyMessageCatcherMessageFilterGTest.x
+OBJSX=  MessageFilterPoolGTest.xns \
+        MessageGTest.xns \
+	MessageIGTest.xns \
+	ObjectRegistryDatabaseMessageFilterGTest.xns \
+	ObjectRegistryDatabaseMessageIGTest.xns \
+	RegisteredMethodsMessageFilterGTest.xns \
+	ReplyMessageCatcherMessageFilterGTest.xns
 		
 
 PACKAGE=GTest/BareMetal
@@ -55,7 +55,6 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L4MessagesBGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -46,7 +46,6 @@ INCLUDES += -I../../Scheduler/L3Services
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L4MessagesS$(LIBEXT) \
 	        $(BUILD_DIR)/L4MessagesS.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -23,8 +23,8 @@
 #############################################################
 
 
-OBJSX=  StateMachineEventGTest.x \
-    StateMachineGTest.x
+OBJSX=  StateMachineEventGTest.xns \
+    StateMachineGTest.xns
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
@@ -61,7 +61,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L4StateMachineSGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

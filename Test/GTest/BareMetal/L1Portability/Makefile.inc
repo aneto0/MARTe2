@@ -23,38 +23,38 @@
 #############################################################
 
 
-OBJSX=  AtomicGTest.x \
-	BasicConsoleGTest.x \
-	BinaryTreeGTest.x\
-	CircularStaticListGTest.x \
-	EndianityGTest.x \
-	ErrorManagementGTest.x \
-	FastMathGTest.x \
-	FastPollingEventSemGTest.x \
-	FastPollingMutexSemGTest.x \
-	FastResourceContainerGTest.x \
-	FormatDescriptorGTest.x \
-	GlobalObjectsDatabaseGTest.x \
-	HeapManagerGTest.x \
-	HighResolutionTimerGTest.x \
-	Md5EncryptGTest.x\
-	LoadableLibraryGTest.x \
-	MemoryAreaGTest.x \
-	MemoryCheckGTest.x\
-	MemoryOperationsHelperGTest.x\
-	ProcessorTypeGTest.x \
-	ResultTGTest.x \
-	SafeMathGTest.x \
-	SleepGTest.x\
-	StandardHeap_GenericGTest.x \
-	StaticListGTest.x \
-	StaticStackGTest.x \
-	StringHelperGTest.x \
-	StringPortableGTest.x \
-	TimeStampGTest.x \
-	TimeoutTypeGTest.x \
-	TypeDescriptorGTest.x \
-	UnorderedMapGTest.x
+OBJSX=  AtomicGTest.xns \
+	BasicConsoleGTest.xns \
+	BinaryTreeGTest.xns\
+	CircularStaticListGTest.xns \
+	EndianityGTest.xns \
+	ErrorManagementGTest.xns \
+	FastMathGTest.xns \
+	FastPollingEventSemGTest.xns \
+	FastPollingMutexSemGTest.xns \
+	FastResourceContainerGTest.xns \
+	FormatDescriptorGTest.xns \
+	GlobalObjectsDatabaseGTest.xns \
+	HeapManagerGTest.xns \
+	HighResolutionTimerGTest.xns \
+	Md5EncryptGTest.xns\
+	LoadableLibraryGTest.xns \
+	MemoryAreaGTest.xns \
+	MemoryCheckGTest.xns\
+	MemoryOperationsHelperGTest.xns\
+	ProcessorTypeGTest.xns \
+	ResultTGTest.xns \
+	SafeMathGTest.xns \
+	SleepGTest.xns\
+	StandardHeap_GenericGTest.xns \
+	StaticListGTest.xns \
+	StaticStackGTest.xns \
+	StringHelperGTest.xns \
+	StringPortableGTest.xns \
+	TimeStampGTest.xns \
+	TimeoutTypeGTest.xns \
+	TypeDescriptorGTest.xns \
+	UnorderedMapGTest.xns
 		
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
@@ -82,7 +82,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L1PortabilityBGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -49,7 +49,6 @@ all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L1PortabilityF$(LIBEXT) \
 		$(BUILD_DIR)/L1PortabilityF.def
 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

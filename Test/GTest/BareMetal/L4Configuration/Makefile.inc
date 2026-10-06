@@ -23,23 +23,23 @@
 #############################################################
 
 
-OBJSX=  AnyObjectGTest.x \
-		AnyTypeCreatorGTest.x \
-		ConfigurationDatabaseGTest.x \
-		ConfigurationDatabaseNodeGTest.x \
-		IntrospectionStructureGTest.x \
-		JsonParserGTest.x \
-		LexicalAnalyzerGTest.x \
-		RuntimeEvaluatorGTest.x \
-		RuntimeEvaluatorFunctionGTest.x \
-		StandardParserGTest.x \
-		StructuredDataIHelperGTest.x \
-		TokenGTest.x \
-		TokenInfoGTest.x \
-		TypeConversionGTest.x\
-		ValidateBasicTypeGTest.x\
-		XMLParserGTest.x\
-		MathExpressionParserGTest.x
+OBJSX=  AnyObjectGTest.xns \
+		AnyTypeCreatorGTest.xns \
+		ConfigurationDatabaseGTest.xns \
+		ConfigurationDatabaseNodeGTest.xns \
+		IntrospectionStructureGTest.xns \
+		JsonParserGTest.xns \
+		LexicalAnalyzerGTest.xns \
+		RuntimeEvaluatorGTest.xns \
+		RuntimeEvaluatorFunctionGTest.xns \
+		StandardParserGTest.xns \
+		StructuredDataIHelperGTest.xns \
+		TokenGTest.xns \
+		TokenInfoGTest.xns \
+		TypeConversionGTest.xns\
+		ValidateBasicTypeGTest.xns\
+		XMLParserGTest.xns\
+		MathExpressionParserGTest.xns
 		 
 
 PACKAGE=GTest/BareMetal
@@ -69,7 +69,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L4ConfigurationBGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

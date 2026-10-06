@@ -46,7 +46,6 @@ INCLUDES+=-I../../../L5GAMs
 
 all: $(OBJS) $(CPPS) \
      $(BUILD_DIR)/L6App$(LIBEXT)
-	echo  $(OBJS) $(CPPS)
 
 include depends.$(TARGET)
 

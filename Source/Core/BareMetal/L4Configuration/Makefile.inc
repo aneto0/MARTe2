@@ -64,7 +64,6 @@ OPTIM = -O2
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L4ConfigurationB$(LIBEXT) \
 	        $(BUILD_DIR)/L4ConfigurationB.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

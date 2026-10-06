@@ -23,27 +23,27 @@
 #############################################################
 
 
-OBJSX=  AnyTypeGTest.x \
-		ClassMethodCallerGTest.x \
-		ClassMethodCallerTGTest.x \
-		ClassMethodInterfaceMapperGTest.x \
-		ClassMethodsRegistryItemGTest.x \
-		ClassPropertiesGTest.x \
-		ClassRegistryDatabaseGTest.x \
-		ClassRegistryItemGTest.x \
-		IntrospectionEntryGTest.x\
-		IntrospectionGTest.x\
-		ObjectBuilderGTest.x \
-		ObjectBuilderTGTest.x \
-		ObjectGTest.x \
-		ObjectRegistryDatabaseGTest.x \
-		ReferenceContainerFilterNameAndTypeGTest.x \
-		ReferenceContainerFilterObjectNameGTest.x \
-		ReferenceContainerFilterReferencesGTest.x \
-		ReferenceContainerGTest.x \
-		ReferenceContainerNodeGTest.x \
-		ReferenceGTest.x \
-		ReferenceTGTest.x 
+OBJSX=  AnyTypeGTest.xns \
+		ClassMethodCallerGTest.xns \
+		ClassMethodCallerTGTest.xns \
+		ClassMethodInterfaceMapperGTest.xns \
+		ClassMethodsRegistryItemGTest.xns \
+		ClassPropertiesGTest.xns \
+		ClassRegistryDatabaseGTest.xns \
+		ClassRegistryItemGTest.xns \
+		IntrospectionEntryGTest.xns\
+		IntrospectionGTest.xns\
+		ObjectBuilderGTest.xns \
+		ObjectBuilderTGTest.xns \
+		ObjectGTest.xns \
+		ObjectRegistryDatabaseGTest.xns \
+		ReferenceContainerFilterNameAndTypeGTest.xns \
+		ReferenceContainerFilterObjectNameGTest.xns \
+		ReferenceContainerFilterReferencesGTest.xns \
+		ReferenceContainerGTest.xns \
+		ReferenceContainerNodeGTest.xns \
+		ReferenceGTest.xns \
+		ReferenceTGTest.xns 
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
@@ -71,7 +71,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L2ObjectsBGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

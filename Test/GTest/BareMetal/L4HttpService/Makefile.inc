@@ -23,7 +23,7 @@
 #############################################################
 
 
-OBJSX=  HttpDefinitionGTest.x
+OBJSX=  HttpDefinitionGTest.xns
 
 
 PACKAGE=GTest/BareMetal
@@ -50,7 +50,6 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L4HttpService
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L4HttpServiceBGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

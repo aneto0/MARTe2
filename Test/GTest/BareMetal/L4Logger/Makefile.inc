@@ -23,7 +23,7 @@
 #############################################################
 
 
-OBJSX=  LoggerGTest.x
+OBJSX=  LoggerGTest.xns
 
 
 PACKAGE=GTest/BareMetal
@@ -49,7 +49,6 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L4Logger
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L4LoggerBGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

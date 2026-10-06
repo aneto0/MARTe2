@@ -68,7 +68,6 @@ OPTIM = -O2
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L5GAMsB$(LIBEXT) \
 	        $(BUILD_DIR)/L5GAMsB.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

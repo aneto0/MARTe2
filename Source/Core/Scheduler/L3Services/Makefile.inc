@@ -52,7 +52,6 @@ INCLUDES += -I../../Scheduler/L1Portability
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L3ServicesS$(LIBEXT) \
 	        $(BUILD_DIR)/L3ServicesS.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

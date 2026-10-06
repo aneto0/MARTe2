@@ -49,7 +49,6 @@ INCLUDES+=-I../../../../BareMetal/L1Portability/Environment/Generic
 
 all: $(OBJS) $(CPPS) \
      $(BUILD_DIR)/L6App$(LIBEXT)
-	echo  $(OBJS) $(CPPS)
 
 include depends.$(TARGET)
 

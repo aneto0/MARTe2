@@ -46,7 +46,6 @@ LIBRARIES_STATIC+= $(BUILD_DIR)/L6App/L6AppBGTest$(LIBEXT)
 
 all: $(OBJS)  $(SUBPROJ)  \
         $(BUILD_DIR)/MARTeBGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

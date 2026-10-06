@@ -53,7 +53,6 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L6App$(LIBEXT)
 all: $(OBJS) $(SUBPROJ) \
 	        $(BUILD_DIR)/L6AppB$(LIBEXT) \
 	        $(BUILD_DIR)/L6AppB.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

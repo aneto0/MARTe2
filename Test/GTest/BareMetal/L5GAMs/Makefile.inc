@@ -23,31 +23,31 @@
 #############################################################
 
 
-OBJSX=  BrokerIGTest.x\
-        DataSourceIGTest.x\
-        ExecutableIGTest.x\
-        GAMBareSchedulerGTest.x\
-        GAMDataSourceGTest.x\
-        GAMGroupGTest.x\
-        GAMGTest.x\
-        GAMSchedulerIGTest.x\
-        MemoryDataSourceIGTest.x\
-        MemoryMapBrokerGTest.x\
-        MemoryMapInputBrokerGTest.x\
-        MemoryMapInterpolatedInputBrokerGTest.x\
-        MemoryMapMultiBufferBrokerGTest.x\
-        MemoryMapMultiBufferInputBrokerGTest.x\
-        MemoryMapMultiBufferOutputBrokerGTest.x\
-        MemoryMapOutputBrokerGTest.x\
-        MemoryMapSynchronisedInputBrokerGTest.x\
-        MemoryMapSynchronisedMultiBufferInputBrokerGTest.x\
-        MemoryMapSynchronisedMultiBufferOutputBrokerGTest.x\
-        MemoryMapSynchronisedOutputBrokerGTest.x\
-        RealTimeApplicationGTest.x\
-        RealTimeApplicationConfigurationBuilderGTest.x\
-        RealTimeStateGTest.x\
-        RealTimeThreadGTest.x\
-        TimingDataSourceGTest.x
+OBJSX=  BrokerIGTest.xns\
+        DataSourceIGTest.xns\
+        ExecutableIGTest.xns\
+        GAMBareSchedulerGTest.xns\
+        GAMDataSourceGTest.xns\
+        GAMGroupGTest.xns\
+        GAMGTest.xns\
+        GAMSchedulerIGTest.xns\
+        MemoryDataSourceIGTest.xns\
+        MemoryMapBrokerGTest.xns\
+        MemoryMapInputBrokerGTest.xns\
+        MemoryMapInterpolatedInputBrokerGTest.xns\
+        MemoryMapMultiBufferBrokerGTest.xns\
+        MemoryMapMultiBufferInputBrokerGTest.xns\
+        MemoryMapMultiBufferOutputBrokerGTest.xns\
+        MemoryMapOutputBrokerGTest.xns\
+        MemoryMapSynchronisedInputBrokerGTest.xns\
+        MemoryMapSynchronisedMultiBufferInputBrokerGTest.xns\
+        MemoryMapSynchronisedMultiBufferOutputBrokerGTest.xns\
+        MemoryMapSynchronisedOutputBrokerGTest.xns\
+        RealTimeApplicationGTest.xns\
+        RealTimeApplicationConfigurationBuilderGTest.xns\
+        RealTimeStateGTest.xns\
+        RealTimeThreadGTest.xns\
+        TimingDataSourceGTest.xns
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
@@ -80,7 +80,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L5GAMsBGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

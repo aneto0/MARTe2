@@ -41,7 +41,8 @@ OBJS0= $(OBJSX:%.x=$(BUILD_DIR)/%.o)
 OBJS1= $(OBJS0:%.x1=$(BUILD_DIR)/%.o) 
 OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o) 
 OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o) 
-OBJS= $(OBJS3)
+OBJSNS?=$(OBJS3:%.xns=$(BUILD_DIR)/%.o) 
+OBJS= $(OBJSNS)
 
 SUBPROJ = $(SPB:%.x=%.spb)
 SUBPROJC = $(SPB:%.x=%.spc)
@@ -57,6 +58,21 @@ MARTe2_TEST_ENVIRONMENT?=GTest
 COMPILER = g++
 CCOMPILER = gcc
 MAKE     = make
+
+GCC_VERSION := $(shell $(CXX) -dumpfullversion -dumpversion)
+GCC_MAJOR   := $(word 1,$(subst ., ,$(GCC_VERSION)))
+
+ifeq ($(GTEST_VERSION_AUTODETECT),1)
+    ifeq ($(shell test $(GCC_MAJOR) -ge 11 && echo yes),yes)
+        GTEST_VERSION := 1.18.0
+    else ifeq ($(shell test $(GCC_MAJOR) -ge 7 && echo yes),yes)
+        GTEST_VERSION := 1.16.0
+    else
+        GTEST_VERSION := 1.7.0
+    endif
+else
+    GTEST_VERSION := 1.7.0
+endif
 
 #-maltivec -mabi=altivec
 DEBUG = -g -ggdb

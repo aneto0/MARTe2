@@ -59,7 +59,6 @@ INCLUDES += -I../L2Objects
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L3StreamsTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 
