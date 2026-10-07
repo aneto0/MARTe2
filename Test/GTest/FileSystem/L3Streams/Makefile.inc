@@ -24,9 +24,9 @@
 #
 #############################################################
 
-OBJSX=  FileGTest.x \
-	TCPSocketGTest.x \
-	UDPSocketGTest.x
+OBJSX=  FileGTest.xns \
+	TCPSocketGTest.xns \
+	UDPSocketGTest.xns
 		
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
@@ -56,7 +56,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L3Streams
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L3StreamsFGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

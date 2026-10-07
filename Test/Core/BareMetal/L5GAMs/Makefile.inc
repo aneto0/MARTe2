@@ -71,7 +71,6 @@ INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 
 all: $(OBJS) \
     $(BUILD_DIR)/L5GAMsTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -47,7 +47,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L4LoggerService
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L4LoggerServiceTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

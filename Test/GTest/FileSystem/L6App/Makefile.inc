@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=  BootstrapGTest.x ConfigurationLoaderTCPGTest.x
+OBJSX=  BootstrapGTest.xns ConfigurationLoaderTCPGTest.xns
 		
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
@@ -60,7 +60,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L6App
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L6AppFGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

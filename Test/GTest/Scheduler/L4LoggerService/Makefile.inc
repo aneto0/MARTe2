@@ -23,7 +23,7 @@
 #############################################################
 
 
-OBJSX=  ConsoleLoggerGTest.x LoggerConsumerIGTest.x LoggerServiceGTest.x PlainLoggerServiceGTest.x
+OBJSX=  ConsoleLoggerGTest.xns LoggerConsumerIGTest.xns LoggerServiceGTest.xns PlainLoggerServiceGTest.xns
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
@@ -61,7 +61,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L4LoggerServiceSGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -25,11 +25,11 @@ PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
 MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  CircularBufferThreadInputDataSourceGTest.x \
-    FastSchedulerGTest.x \
-    GAMSchedulerGTest.x \
-    MemoryMapAsyncOutputBrokerGTest.x\
-    MemoryMapAsyncTriggerOutputBrokerGTest.x
+OBJSX=  CircularBufferThreadInputDataSourceGTest.xns \
+    FastSchedulerGTest.xns \
+    GAMSchedulerGTest.xns \
+    MemoryMapAsyncOutputBrokerGTest.xns\
+    MemoryMapAsyncTriggerOutputBrokerGTest.xns
 		 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 include $(ROOT_DIR)/Test/$(MARTe2_TEST_ENVIRONMENT)/Makefile.utest
@@ -59,7 +59,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L5GAMsSGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

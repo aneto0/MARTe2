@@ -62,7 +62,6 @@ OPTIM = -O2
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L3StreamsB$(LIBEXT) \
 	        $(BUILD_DIR)/L3StreamsB.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

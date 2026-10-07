@@ -50,7 +50,6 @@ INCLUDES+=-I../../../L0Types
 all: $(OBJS)  $(CPPS)  \
                 $(BUILD_DIR)/L1Portability$(LIBEXT) \
                 $(BUILD_DIR)/L1Portability.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

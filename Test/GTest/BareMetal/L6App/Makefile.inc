@@ -22,7 +22,7 @@
 #
 #############################################################
 
-OBJSX= ConfigurationLoaderHashCRCGTest.x LoaderGTest.x RealTimeLoaderGTest.x
+OBJSX= ConfigurationLoaderHashCRCGTest.xns LoaderGTest.xns RealTimeLoaderGTest.xns
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
@@ -56,7 +56,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L6AppBGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

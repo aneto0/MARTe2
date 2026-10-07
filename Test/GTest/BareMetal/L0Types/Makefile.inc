@@ -23,23 +23,23 @@
 #############################################################
 
 
-OBJSX=  BasicTypeGTest.x \
-		BitBooleanGTest.x \
-		BitRangeGTest.x \
-		BitSetGTest.x \
-		CRCGTest.x \
-		DjbHashFunctionGTest.x\
-		DoubleIntegerGTest.x \
-		ErrorTypeGTest.x \
-		Fnv1aHashFunctionGTest.x\
-		FractionalIntegerGTest.x \
-		LinkedListHolderGTest.x \
-		LinkedListableGTest.x \
-		MatrixGTest.x \
-		ShiftGTest.x \
-		TypeCharacteristicsGTest.x \
-		VectorGTest.x \
-		ZeroTerminatedArrayGTest.x 
+OBJSX=  BasicTypeGTest.xns \
+		BitBooleanGTest.xns \
+		BitRangeGTest.xns \
+		BitSetGTest.xns \
+		CRCGTest.xns \
+		DjbHashFunctionGTest.xns\
+		DoubleIntegerGTest.xns \
+		ErrorTypeGTest.xns \
+		Fnv1aHashFunctionGTest.xns\
+		FractionalIntegerGTest.xns \
+		LinkedListHolderGTest.xns \
+		LinkedListableGTest.xns \
+		MatrixGTest.xns \
+		ShiftGTest.xns \
+		TypeCharacteristicsGTest.xns \
+		VectorGTest.xns \
+		ZeroTerminatedArrayGTest.xns 
 
 
 PACKAGE=GTest/BareMetal
@@ -68,7 +68,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L0TypesBGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

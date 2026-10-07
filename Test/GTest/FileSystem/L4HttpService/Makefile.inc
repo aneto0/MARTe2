@@ -24,15 +24,15 @@
 #
 #############################################################
 
-OBJSX= HttpChunkedStreamGTest.x \
-    HttpClientGTest.x \
-    HttpDataExportIGTest.x \
-    HttpDirectoryResourceGTest.x \
-    HttpMessageInterfaceGTest.x \
-    HttpObjectBrowserGTest.x \
-    HttpProtocolGTest.x \
-    HttpServiceGTest.x \
-    HttpDataMonitorGTest.x
+OBJSX= HttpChunkedStreamGTest.xns \
+    HttpClientGTest.xns \
+    HttpDataExportIGTest.xns \
+    HttpDirectoryResourceGTest.xns \
+    HttpMessageInterfaceGTest.xns \
+    HttpObjectBrowserGTest.xns \
+    HttpProtocolGTest.xns \
+    HttpServiceGTest.xns \
+    HttpDataMonitorGTest.xns
 		
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
@@ -73,7 +73,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L4HttpService
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L4HttpServiceFGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

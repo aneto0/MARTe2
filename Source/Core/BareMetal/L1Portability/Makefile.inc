@@ -64,8 +64,6 @@ all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L1PortabilityB$(LIBEXT) \
 		$(BUILD_DIR)/L1PortabilityB.def
 		
-	echo  $(OBJS)
-
 include depends.$(TARGET)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

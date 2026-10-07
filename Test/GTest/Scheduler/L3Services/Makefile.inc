@@ -23,15 +23,15 @@
 #############################################################
 
 
-OBJSX=  EmbeddedServiceMethodBinderTGTest.x \
-    EmbeddedThreadGTest.x \
-    EmbeddedThreadIGTest.x \
-    ExecutionInfoGTest.x \
-    MultiClientEmbeddedThreadGTest.x \
-    MultiClientServiceGTest.x \
-    MultiThreadServiceGTest.x \
-    SingleThreadServiceGTest.x \
-    ThreadsInformationQueryGTest.x
+OBJSX=  EmbeddedServiceMethodBinderTGTest.xns \
+    EmbeddedThreadGTest.xns \
+    EmbeddedThreadIGTest.xns \
+    ExecutionInfoGTest.xns \
+    MultiClientEmbeddedThreadGTest.xns \
+    MultiClientServiceGTest.xns \
+    MultiThreadServiceGTest.xns \
+    SingleThreadServiceGTest.xns \
+    ThreadsInformationQueryGTest.xns
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
@@ -66,7 +66,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L3ServicesSGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -45,7 +45,6 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/L6App/L6AppB$(LIBEXT)
 all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeCoreB$(LIBEXT) \
 		$(BUILD_DIR)/MARTeCoreB.def 
-	echo  $(OBJS)
 
 
 

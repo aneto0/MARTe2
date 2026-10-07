@@ -46,7 +46,8 @@ OBJS0=$(OBJSX:%.x=$(BUILD_DIR)/%.o)
 OBJS1?=$(OBJS0:%.x1=$(BUILD_DIR)/%.o1) 
 OBJS2?=$(OBJS1:%.x2=$(BUILD_DIR)/%.o2) 
 OBJS3?=$(OBJS2:%.x3=$(BUILD_DIR)/%.o3) 
-OBJS=$(OBJS3)
+OBJSNS?=$(OBJS3:%.xns=$(BUILD_DIR)/%.ons) 
+OBJS=$(OBJSNS)
 
 #Subprojects
 SUBPROJ=$(SPB:%.x=%.spb)
@@ -65,13 +66,38 @@ CCOMPILER ?= $(COMPILER_PREFIX)gcc
 LINKER ?= $(COMPILER_PREFIX)ld
 MAKE = make
 
+GCC_VERSION := $(shell $(CXX) -dumpfullversion -dumpversion)
+GCC_MAJOR   := $(word 1,$(subst ., ,$(GCC_VERSION)))
+
+ifeq ($(GTEST_VERSION_AUTODETECT),1)
+    ifeq ($(shell test $(GCC_MAJOR) -ge 11 && echo yes),yes)
+        GTEST_VERSION := 1.18.0
+    else ifeq ($(shell test $(GCC_MAJOR) -ge 9 && echo yes),yes)
+        GTEST_VERSION := 1.16.0
+    else
+        GTEST_VERSION := 1.7.0
+    endif
+else
+    GTEST_VERSION := 1.7.0
+endif
+
+ifeq ($(VERBOSE),1)
+    QVB :=
+    ECHO := @true
+else
+    QVB := @
+    ECHO := @echo
+endif
+
 DEBUG ?= -g -ggdb
 MARTe2_OPTIM ?=
 OPTIM ?= $(MARTe2_OPTIM)
 LFLAGS ?=
 #-O2 would force -fstrict-overflow and this breaks the compilation of the core (dereferencing type-punned pointer will break strict-aliasing rules)
-CFLAGS ?= -fPIC -Wall -std=c++98 -Werror -Wno-invalid-offsetof -Wno-unused-variable -fno-strict-aliasing
+CFLAGS_NO_STD ?= -fPIC -Wall -Werror -Wno-invalid-offsetof -Wno-unused-variable -fno-strict-aliasing -Wno-register
+CFLAGS ?= $(CFLAGS_NO_STD) -std=c++98
 CPPFLAGS ?= $(CFLAGS) -frtti 
+CPPFLAGS_NO_STD ?= $(CFLAGS_NO_STD) -frtti 
 CFLAGSPEC ?= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
 ifdef MARTe2_MULTIHEAP_SUPPORT
 CFLAGSPEC += -DMULTIHEAP_SUPPORT

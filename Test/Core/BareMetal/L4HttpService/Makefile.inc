@@ -44,7 +44,6 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L4HttpService
 
 all: $(OBJS) \
     $(BUILD_DIR)/L4HttpServiceTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -54,6 +54,5 @@ all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTe2$(LIBEXT) \
 		$(BUILD_DIR)/MARTe2$(DLLEXT)
 
-#echo  $(OBJS)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

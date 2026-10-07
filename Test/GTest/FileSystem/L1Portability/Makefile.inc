@@ -24,16 +24,16 @@
 #
 #############################################################
 
-OBJSX=  BasicFileGTest.x \
-		BasicSocketGTest.x\
-		BasicTCPSocketGTest.x \
-		BasicUARTGTest.x \
-		BasicUDPSocketGTest.x \
-		DirectoryGTest.x \
-		DirectoryScannerGTest.x \
-		InternetHostGTest.x \
-		InternetServiceGTest.x \
-		SelectGTest.x 
+OBJSX=  BasicFileGTest.xns \
+		BasicSocketGTest.xns\
+		BasicTCPSocketGTest.xns \
+		BasicUARTGTest.xns \
+		BasicUDPSocketGTest.xns \
+		DirectoryGTest.xns \
+		DirectoryScannerGTest.xns \
+		InternetHostGTest.xns \
+		InternetServiceGTest.xns \
+		SelectGTest.xns 
 		
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
@@ -61,7 +61,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L1PortabilityFGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

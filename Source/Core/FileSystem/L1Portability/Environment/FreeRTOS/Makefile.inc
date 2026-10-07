@@ -51,7 +51,6 @@ INCLUDES+=-I../../../../Scheduler/L1Portability
 
 all: $(OBJS) $(CPPS) \
      $(BUILD_DIR)/L1Portability$(LIBEXT)
-	echo  $(OBJS) $(CPPS)
 
 include depends.$(TARGET)
 

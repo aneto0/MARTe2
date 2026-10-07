@@ -53,6 +53,6 @@ INCLUDES += -I../Core/Scheduler/L5GAMs
 
 all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeApp$(EXEEXT)
-	echo  $(OBJS)
+	$(QVB)echo  $(OBJS)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

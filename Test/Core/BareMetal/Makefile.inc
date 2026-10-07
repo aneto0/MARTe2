@@ -45,7 +45,6 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/L6App/L6AppTest$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeCoreBTest$(LIBEXT)
-	echo  $(OBJS)
 
 
 

@@ -43,7 +43,6 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsSGTest$(LIBEXT)
 
 all: $(OBJS)  $(SUBPROJ)  \
         $(BUILD_DIR)/MARTeSGTest$(LIBEXT) 
-	echo  $(OBJS)
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

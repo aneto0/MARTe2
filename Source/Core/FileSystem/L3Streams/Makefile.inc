@@ -43,7 +43,6 @@ INCLUDES+=-I../L1Portability
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L3StreamsF$(LIBEXT) \
 	        $(BUILD_DIR)/L3StreamsF.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -49,7 +49,6 @@ INCLUDES += -I../../../../Test/Core/BareMetal/L4Messages
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L4MessagesTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

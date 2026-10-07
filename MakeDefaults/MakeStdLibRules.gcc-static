@@ -29,23 +29,23 @@ else
 	include $(ROOT_DIR)/MakeDefaults/MakeStdLibRules.gcc
 endif
 
-$(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC)
-	touch $@
-	$(COMPILER) -c $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
-	$(LINKER) -r $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) -o $(BUILD_DIR)/$*.ex 
-	rm -f createLibrary
+$(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.ons $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC)
+	$(QVB)touch $@
+	$(ECHO) "  EX  $*.ex"
+	$(QVB)$(COMPILER) -c $(INCLUDES) $(CPPFLAGS_NO_STD) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+	$(QVB)$(LINKER) -r $(BUILD_DIR)/$*.ons $(OBJS) $(LIBRARIES) -o $(BUILD_DIR)/$*.ex 
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
-	touch $@
-	rm -f $(BUILD_DIR)/$*.gam
-	$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
-	rm -f createLibrary
+	$(QVB)touch $@
+	$(ECHO) "  GAM $*.gam"
+	$(QVB)rm -f $(BUILD_DIR)/$*.gam
+	$(QVB)$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
-	touch $@
-	rm -f $(BUILD_DIR)/$*.drv
-	$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
-	rm -f createLibrary
+	$(QVB)touch $@
+	$(ECHO) "  DRV $*.drv"
+	$(QVB)rm -f $(BUILD_DIR)/$*.drv
+	$(QVB)$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 
 $%: force
 	@$(MAKE) -f Makefile.$(TARGET) $@

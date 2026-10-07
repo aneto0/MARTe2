@@ -37,6 +37,10 @@ SUBPROJMAINTESTCLEAN=$(SPBMT:%.x=%.spc)
 MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
 
 ROOT_DIR=.
+GTEST_VERSION_AUTODETECT = 1
+#The export guarantees that GTEST_VERSION_AUTODETECT is still valid when calling with make -C
+export GTEST_VERSION_AUTODETECT
+
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS) gtest core test
@@ -47,9 +51,9 @@ core: $(SUBPROJMAIN)
 
 gtest:
 ifeq ($(TARGET), x86-linux)
-	make -C Lib/gtest-1.7.0 -f Makefile.$(TARGET)
+	make -C Lib/gtest-$(GTEST_VERSION) -f Makefile.$(TARGET)
 else ifeq ($(TARGET), cov)
-	make -C Lib/gtest-1.7.0 -f Makefile.$(TARGET)
+	make -C Lib/gtest-$(GTEST_VERSION) -f Makefile.$(TARGET)
 endif
 
 test: $(SUBPROJMAINTEST)

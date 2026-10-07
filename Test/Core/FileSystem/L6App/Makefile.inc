@@ -51,7 +51,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L6App
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L6AppTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

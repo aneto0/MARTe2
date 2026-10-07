@@ -43,7 +43,6 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 
 all: $(OBJS) \
     $(BUILD_DIR)/L4LoggerTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

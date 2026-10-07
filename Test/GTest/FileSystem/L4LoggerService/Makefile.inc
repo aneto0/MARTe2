@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=  UDPLoggerGTest.x
+OBJSX=  UDPLoggerGTest.xns
 		
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
@@ -56,7 +56,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L4LoggerService
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L4LoggerServiceFGTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

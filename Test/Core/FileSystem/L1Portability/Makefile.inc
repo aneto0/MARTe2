@@ -51,7 +51,6 @@ INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L1PortabilityTest$(LIBEXT)
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 

@@ -45,7 +45,6 @@ INCLUDES += -I../L4Messages
 all: $(OBJS) $(SUBPROJ) \
 	        $(BUILD_DIR)/L4HttpServiceB$(LIBEXT) \
 	        $(BUILD_DIR)/L4HttpServiceB.def
-	echo  $(OBJS)
 
 include depends.$(TARGET)
 
