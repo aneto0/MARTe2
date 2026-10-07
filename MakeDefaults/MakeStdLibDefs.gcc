@@ -72,7 +72,7 @@ GCC_MAJOR   := $(word 1,$(subst ., ,$(GCC_VERSION)))
 ifeq ($(GTEST_VERSION_AUTODETECT),1)
     ifeq ($(shell test $(GCC_MAJOR) -ge 11 && echo yes),yes)
         GTEST_VERSION := 1.18.0
-    else ifeq ($(shell test $(GCC_MAJOR) -ge 7 && echo yes),yes)
+    else ifeq ($(shell test $(GCC_MAJOR) -ge 9 && echo yes),yes)
         GTEST_VERSION := 1.16.0
     else
         GTEST_VERSION := 1.7.0
