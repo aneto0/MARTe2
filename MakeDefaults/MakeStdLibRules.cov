@@ -28,86 +28,86 @@ ctags : %.cpp %.c %.h
 %_Gen.cpp : ../Generic/%_Generic.cpp
 	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
 	
-createLibrary :
-	touch createLibrary
-
-
 $(BUILD_DIR)/%.o : %.cpp
-	mkdir -p $(BUILD_DIR)
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+	$(QVB)mkdir -p $(BUILD_DIR)
+	$(ECHO) "  CXX  $<"
+	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o : %.c
-	mkdir -p $(BUILD_DIR)
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
+	$(QVB)mkdir -p $(BUILD_DIR)
+	$(ECHO) "  C  $<"
+	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
-$(BUILD_DIR)/%.a : createLibrary $(OBJS)
-	mkdir -p $(BUILD_DIR)
-	touch $(BUILD_DIR)/$*.a
-	rm -f $(BUILD_DIR)/$*.a	
-	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.a
-	rm -f createLibrary
+$(BUILD_DIR)/%.a : $(OBJS)
+	$(QVB)mkdir -p $(BUILD_DIR)
+	$(QVB)touch $(BUILD_DIR)/$*.a
+	$(QVB)rm -f $(BUILD_DIR)/$*.a	
+	$(ECHO) "  LD  $*.a"
+	$(QVB)ld -r $(OBJS) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.a
 	
-$(BUILD_DIR)/%.so : createLibrary $(OBJS)
-	mkdir -p $(BUILD_DIR)
-	touch $@
-	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
-	touch $(BUILD_DIR)/lib$*.so
-	rm  $(BUILD_DIR)/lib$*.so
-	ln -fns $*.so $(BUILD_DIR)/lib$*.so
-	rm -f createLibrary
+$(BUILD_DIR)/%.so : $(OBJS)
+	$(QVB)mkdir -p $(BUILD_DIR)
+	$(QVB)touch $@
+	$(ECHO) "  SO $*.so"
+	$(QVB)$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
+	$(QVB)touch $(BUILD_DIR)/lib$*.so
+	$(QVB)rm  $(BUILD_DIR)/lib$*.so
+	$(QVB)ln -fns $*.so $(BUILD_DIR)/lib$*.so
 
 $(BUILD_DIR)/%.def : 
-	touch a.out
-	objdump -t $(@:%.def=%.a) > $@
-	rm a.out
+	$(QVB)touch a.out
+	$(QVB)objdump -t $(@:%.def=%.a) > $@
+	$(QVB)rm a.out
 
-$(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o
+$(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
 	mkdir -p $(BUILD_DIR) 
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
-$(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
-	mkdir -p $(BUILD_DIR)
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
-	rm -f createLibrary
+$(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS)
+	$(QVB)mkdir -p $(BUILD_DIR)
+	$(ECHO) "  EX $*.ex"
+	$(QVB)$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	
 #If the file does not exist and we are in a clean context, do not create it!
 depends.cov: dependsRaw.cov
 ifneq ($(MAKECMDGOALS),clean)
-	mkdir -p $(BUILD_DIR)
+	$(QVB)mkdir -p $(BUILD_DIR)
 	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateLinuxDepends.sed
-	sed -f CreateLinuxDepends.sed dependsRaw.cov >depends.cov
-	rm -f CreateLinuxDepends.sed 
+	$(QVB)sed -f CreateLinuxDepends.sed dependsRaw.cov >depends.cov
+	$(QVB)rm -f CreateLinuxDepends.sed 
 endif
 
 #If the file does not exist and we are in a clean context, do not create it (a touch is still needed to implement the include)!
 dependsRaw.cov:
 ifneq ($(MAKECMDGOALS),clean)
-	mkdir -p $(BUILD_DIR) 
-	$(COMPILER) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.cov
-	@mkdir -p $(BUILD_DIR)
+	$(QVB)mkdir -p $(BUILD_DIR) 
+	$(QVB)$(COMPILER) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.cov
+	$(QVB)@mkdir -p $(BUILD_DIR)
 else
-	touch $@
+	$(QVB)touch $@
 endif
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
-	mkdir -p $(BUILD_DIR)
-	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+	$(QVB)mkdir -p $(BUILD_DIR)
+	$(ECHO) "  GAM $*.gam"
+	$(QVB)$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
-	mkdir -p cov
-	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+	$(QVB)mkdir -p cov
+	$(ECHO) "  DRV $*.drv"
+	$(QVB)$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 %.spb : 
-	$(MAKE) -C $* -f Makefile.$(TARGET)
+	$(QVB)$(MAKE) -C $* -f Makefile.$(TARGET)
 
 %.spc : 
-	$(MAKE) -C $* -f Makefile.$(TARGET) clean
+	$(QVB)$(MAKE) -C $* -f Makefile.$(TARGET) clean
 
 %.spcg : 
-	$(MAKE) -C $* -f Makefile.$(TARGET) clean_gen
+	$(QVB)$(MAKE) -C $* -f Makefile.$(TARGET) clean_gen
 
 #When changing branches, if a subfolder no longer exists it also must be deleted.
 #This nuke cannot be the general clean rule because we don't want to delete all the built artefacts

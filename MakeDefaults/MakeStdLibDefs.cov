@@ -74,6 +74,14 @@ else
     GTEST_VERSION := 1.7.0
 endif
 
+ifeq ($(VERBOSE),1)
+    QVB :=
+    ECHO := @true
+else
+    QVB := @
+    ECHO := @echo
+endif
+
 #-maltivec -mabi=altivec
 DEBUG = -g -ggdb
 OPTIM = 

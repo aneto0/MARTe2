@@ -71,6 +71,8 @@ $(BUILD_DIR)/%.a : $(OBJS)
 	$(QVB)touch $@
 	$(QVB)rm -f $(BUILD_DIR)/$*.a
 	$(ECHO) "  LD  $*.a"
+    echo $(OBJS)
+    echo $(LIBRARIES_STATIC)
 	$(QVB)$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 
 $(BUILD_DIR)/%.so : $(OBJS)
@@ -93,7 +95,7 @@ $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o $(OBJS)
 #If the file does not exist and we are in a clean context, do not create it!
 depends.$(TARGET): dependsRaw.$(TARGET) 
 ifneq ($(MAKECMDGOALS),clean)
-	$(QVB)echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > Create$(TARGET)Depends.sed
+	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > Create$(TARGET)Depends.sed
 	$(QVB)sed -f Create$(TARGET)Depends.sed dependsRaw.$(TARGET) >depends.$(TARGET)
 	$(QVB)rm -f Create$(TARGET)Depends.sed 
 endif
