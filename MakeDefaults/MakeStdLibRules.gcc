@@ -58,7 +58,7 @@ $(BUILD_DIR)/%.o3 : %.cpp
 $(BUILD_DIR)/%.ons : %.cpp
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  CXX  $<"
-	$(QVB)@$(COMPILER) -c $(INCLUDES) $(CPPFLAGS_NO_STD) $(CFLAGSPEC) $(DEBUG) -MMD -MP -MF $(@:.ons=.d)  $*.cpp -o $(BUILD_DIR)/$*.ons
+	$(QVB)$(COMPILER) -c $(INCLUDES) $(CPPFLAGS_NO_STD) $(CFLAGSPEC) $(DEBUG) -MMD -MP -MF $(@:.ons=.d)  $*.cpp -o $(BUILD_DIR)/$*.ons
 #	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o : %.c
@@ -111,6 +111,7 @@ depends.$(TARGET): dependsRaw.$(TARGET)
 #This nuke cannot be the general clean rule because we don't want to delete all the built artefacts
 #when working at the subdirectory level
 clean_wipe_old:
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DEPEXT)" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)1" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)2" | xargs rm -f)
@@ -132,6 +133,7 @@ clean::  $(SUBPROJC) $(SUBPROJTC) $(SUBPROJHC)
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)1
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)2
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)3
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)ns
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)
 	@rm -f $(BUILD_DIR)/*$(EXEEXT)
 	@rm -f $(BUILD_DIR)/*$(LIBEXT)
