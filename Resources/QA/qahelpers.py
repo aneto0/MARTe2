@@ -601,7 +601,6 @@ class CoverageHelper(QAHelper):
             self.ExecShellCommand('{0} --gtest_filter={1}'.format(self.lcovExec, f))
 
         #Get the json output
-        gcovr --gcov-ignore-errors=no_working_dir_found --gcov-ignore-errors=source_not_found --exclude '.*_Gen\.cpp$' --cobertura Build/MARTe2-coverage.info.xml Source
         self.ExecShellCommand("gcovr --gcov-ignore-errors=no_working_dir_found --gcov-ignore-errors=source_not_found --exclude '.*_Gen\.cpp$' --json-summary {0}/{1}.json Source".format(self.lcovOutputDir, self.lcovBuildPrefix))
         self.ExecShellCommand("gcovr --gcov-ignore-errors=no_working_dir_found --gcov-ignore-errors=source_not_found --exclude '.*_Gen\.cpp$' --cobertura {0}/{1}.xml Source".format(self.lcovOutputDir, self.lcovBuildPrefix))
 
