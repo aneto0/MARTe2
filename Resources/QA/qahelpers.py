@@ -668,7 +668,11 @@ class CoverageHelper(QAHelper):
         for f in gcovrJson['files']:
             filename = f['filename']
             lines = f['line_percent']
+            if lines is None:
+                lines = 0
             functions = f['function_percent']
+            if functions is None:
+                functions = 0
             coverage[filename] = {'lines': lines, 'functions': functions}
         
         return coverage
