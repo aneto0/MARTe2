@@ -27,6 +27,7 @@ BUILD_DIR=cov
 
 ENVIRONMENT=Linux
 ARCHITECTURE=x86_gcc
+DEPEXT=.d
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
@@ -43,6 +44,13 @@ OBJS2= $(OBJS1:%.x2=$(BUILD_DIR)/%.o)
 OBJS3= $(OBJS2:%.x3=$(BUILD_DIR)/%.o) 
 OBJSNS?=$(OBJS3:%.xns=$(BUILD_DIR)/%.o) 
 OBJS= $(OBJSNS)
+
+DEPS0=$(OBJS:%.o=%.d) 
+DEPS1=$(DEPS0:%.o1=%.d) 
+DEPS2=$(DEPS1:%.o2=%.d) 
+DEPS3=$(DEPS2:%.o3=%.d) 
+DEPSNS=$(DEPS3:%.ons=%.d) 
+DEPS=$(DEPSNS)
 
 SUBPROJ = $(SPB:%.x=%.spb)
 SUBPROJC = $(SPB:%.x=%.spc)
@@ -89,6 +97,7 @@ LFLAGS = -Wl,--no-as-needed --coverage
 CFLAGS = -fPIC -Wall -fprofile-arcs -ftest-coverage 
 CPPFLAGS = -fPIC -frtti -fprofile-arcs -ftest-coverage 
 CFLAGSPEC= -DMARTe2_TEST_ENVIRONMENT=$(MARTe2_TEST_ENVIRONMENT) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
+DEPFLAGS = -MMD -MP -MF $(@:.o=.d)
 LIBRARIES =  -lm -lpthread -lrt -lncurses -ldl -lgcov
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

@@ -26,18 +26,18 @@ ctags : %.cpp %.c %.h
 	ctags -R
 
 %_Gen.cpp : ../Generic/%_Generic.cpp
-	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
+	$(QVB)cp ../Generic/$*_Generic.cpp $*_Gen.cpp
 	
 $(BUILD_DIR)/%.o : %.cpp
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  CXX  $<"
-	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG) $(DEPFLAGS) $*.cpp -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o : %.c
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  C  $<"
-	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
+	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(DEPFLAGS) $*.c -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.a : $(OBJS)
@@ -71,24 +71,13 @@ $(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS)
 	$(ECHO) "  EX $*.ex"
 	$(QVB)$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	
-#If the file does not exist and we are in a clean context, do not create it!
+#Migrated to new depends strategy
 depends.cov: dependsRaw.cov
-ifneq ($(MAKECMDGOALS),clean)
-	$(QVB)mkdir -p $(BUILD_DIR)
-	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateLinuxDepends.sed
-	$(QVB)sed -f CreateLinuxDepends.sed dependsRaw.cov >depends.cov
-	$(QVB)rm -f CreateLinuxDepends.sed 
-endif
+	@:
 
-#If the file does not exist and we are in a clean context, do not create it (a touch is still needed to implement the include)!
+#Migrated to new depends strategy
 dependsRaw.cov:
-ifneq ($(MAKECMDGOALS),clean)
-	$(QVB)mkdir -p $(BUILD_DIR) 
-	$(QVB)$(COMPILER) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.cov
-	$(QVB)@mkdir -p $(BUILD_DIR)
-else
-	$(QVB)touch $@
-endif
+	@:
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
 	$(QVB)mkdir -p $(BUILD_DIR)
@@ -125,6 +114,7 @@ clean_wipe_old:
 
 clean::  $(SUBPROJC) 
 	@rm -f depends*
+	@rm -f $(BUILD_DIR)/*$(DEPEXT)
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)
 	@rm -f $(BUILD_DIR)/*$(EXEEXT)
@@ -141,3 +131,4 @@ clean_gen: $(SUBPROJCG)
 	@rm -f *_Gen.cpp
 	@rm -f *_Gen.c
 
+-include $(DEPS)
