@@ -602,6 +602,7 @@ class CoverageHelper(QAHelper):
 
         #Get the json output
         self.ExecShellCommand('gcovr --gcov-ignore-errors=no_working_dir_found --json-summary {0}/{1}.json Source'.format(self.lcovOutputDir, self.lcovBuildPrefix))
+        self.ExecShellCommand('gcovr --gcov-ignore-errors=no_working_dir_found --cobertura {0}/{1}.xml Source'.format(self.lcovOutputDir, self.lcovBuildPrefix))
        
 
     def ExecLCov(self, clean):
