@@ -23,6 +23,7 @@ from abc import ABCMeta, abstractmethod
 from lxml import etree
 
 import datetime
+import json
 import glob
 import qautils
 import os
@@ -567,6 +568,7 @@ class CoverageHelper(QAHelper):
                          args['lcovexecdisable'] (bool) If True lcov will not be executed and the output files from a previous run will be used (tipically used only for debug).
                          args['lcovminfun'] (float) Minimum functional coverage ([0, 1]) 
                          args['lcovminlines'] (float) Minimum line coverage ([0, 1]) 
+                         args['lcovusegcovr'] (bool) Force the usage of gcovr 
                          args['compbranch'] (str) name of the branch to compare against
                          args['repo'] (git.Repo) git repo to compare coverage against
                          args['version'] (tupple) lcov version
@@ -583,6 +585,24 @@ class CoverageHelper(QAHelper):
         self.compBranchName = args['compbranch']
         self.repo = args['repo']
         self.version = args['version']
+        self.useGCovr  = args['lcovusegcovr']
+
+
+    def ExecGCovr(self, clean):
+        """ Executes gcovr
+        """
+        if (clean):
+            self.ExecShellCommand('make -f Makefile.cov clean')
+
+        self.ExecShellCommand('make -f Makefile.cov')
+        
+        #Execute the tests
+        for f in self.lcovTestFilters:
+            self.ExecShellCommand('{0} --gtest_filter={1}'.format(self.lcovExec, f))
+
+        #Get the json output
+        self.ExecShellCommand('gcovr --gcov-ignore-errors=no_working_dir_found --json-summary {0}/{1}.json Source'.format(self.lcovOutputDir, self.lcovBuildPrefix))
+       
 
     def ExecLCov(self, clean):
         """ Executes lcov
@@ -635,6 +655,24 @@ class CoverageHelper(QAHelper):
             lcovLines = process.stdout.readlines()
             
         return lcovLines
+
+
+    def GetGCovrOutput(self):
+        """Gets the gcovr output.
+        """
+        gcovrJson = {}
+        with open('{0}/{1}.json'.format(self.lcovOutputDir, self.lcovBuildPrefix)) as f:
+            gcovrJson = json.load(f)
+           
+        coverage = {}
+        for f in gcovrJson['files']:
+            filename = f['filename']
+            lines = f['line_percent']
+            functions = f['function_percent']
+            coverage[filename] = {'lines': lines, 'functions': functions}
+        
+        return coverage
+
 
     def ParseLCovFile(self, lines):
         """ Parses the lcov output file.
@@ -691,14 +729,24 @@ class CoverageHelper(QAHelper):
             relativeComparison = True
         #Get absolute results
         if (not self.execLCovDisabled):
-            self.ExecLCov(True)
-        lcovLines = self.GetLCovOutput()
+            if not self.useGCovr:
+                self.ExecLCov(True)
+            else:
+                self.ExecGCovr(True)
+
+        if not self.useGCovr:
+            lcovLines = self.GetLCovOutput()
+        else:
+            lcovLines = self.GetGCovrOutput()
         if (len(lcovLines) == 0):
             ok = False
             self.logger.critical('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
             reporter.WriteError('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
         else:
-            covResultsCurrentBranch = self.ParseLCovFile(lcovLines)
+            if not self.useGCovr:
+                covResultsCurrentBranch = self.ParseLCovFile(lcovLines)
+            else:
+                covResultsCurrentBranch = lcovLines
             self.logger.debug(covResultsCurrentBranch)
             if (not relativeComparison):
                 for f in covResultsCurrentBranch:
@@ -719,15 +767,25 @@ class CoverageHelper(QAHelper):
                 branchChangedSuccessfully = self.ChangeBranch(self.repo, self.compBranchName)
                
                 if (branchChangedSuccessfully):
-                    self.ExecLCov(True)
+                    if not self.useGCovr:
+                        self.ExecLCov(True)
+                    else:
+                        self.ExecGCovr(True)
                     branchChangedSuccessfully = self.ChangeBranch(self.repo, currentBranch)
 
-            lcovLines = self.GetLCovOutput()
+            if not self.useGCovr:
+                lcovLines = self.GetLCovOutput()
+            else:
+                lcovLines = self.GetGCovrOutput()
+
             if (len(lcovLines) == 0):
                 self.logger.critical('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
                 reporter.WriteError('Failed to read coverage file {0}'.format(self.lcovBuildPrefix))
             else:
-                covResultsReferenceBranch = self.ParseLCovFile(lcovLines)
+                if not self.useGCovr:
+                    covResultsReferenceBranch = self.ParseLCovFile(lcovLines)
+                else:
+                    covResultsReferenceBranch = lcovLines
                 self.logger.debug(covResultsReferenceBranch)
                 #Just look into the differences with respect to the comparison branch
                 for f in covResultsCurrentBranch:

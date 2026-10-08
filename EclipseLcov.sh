@@ -22,9 +22,9 @@ fi
 
 #Generate the html
 mkdir -p $OUTPUT_DIR/cov_html
-gcovr --gcov-ignore-errors=source_not_found --html-details $OUTPUT_DIR/cov_html/coverage.html Source/
+gcovr --gcov-ignore-errors=no_working_dir_found --html-details $OUTPUT_DIR/cov_html/coverage.html Source/
 
 #Generate the text output
-gcovr --gcov-ignore-errors=source_not_found --txt $OUTPUT_DIR/coverage.txt Source/
+gcovr --gcov-ignore-errors=no_working_dir_found --txt $OUTPUT_DIR/coverage.txt Source/
 
 #make -f Makefile.cov clean_gen
