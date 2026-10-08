@@ -670,9 +670,13 @@ class CoverageHelper(QAHelper):
             lines = f['line_percent']
             if lines is None:
                 lines = 0
+            else:
+                lines /= 100
             functions = f['function_percent']
             if functions is None:
                 functions = 0
+            else:
+                functions /= 100
             coverage[filename] = {'lines': lines, 'functions': functions}
         
         return coverage
