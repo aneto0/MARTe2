@@ -47,7 +47,11 @@ core: $(SUBPROJMAIN)
 	echo  $(SUBPROJMAIN)
 
 gtest:
+ifeq ($(TARGET), x86-linux)
 	make -C Lib -f Makefile.$(TARGET)
+else ifeq ($(TARGET), cov)
+	make -C Lib -f Makefile.$(TARGET)
+endif
 
 test: $(SUBPROJMAINTEST)
 	echo  $(SUBPROJMAINTEST)
