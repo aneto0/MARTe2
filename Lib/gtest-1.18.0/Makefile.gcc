@@ -25,16 +25,21 @@
 #############################################################
 
 LIBS = libgtest.a libgtest_main.a
+GTEST_VERSION = 1.18.0
 
 %.a:
-	rm -rf googletest-release-1.7.0/
-	tar zxf gtest-src-1.7.0.tar.gz 
-	cd googletest-release-1.7.0 && mkdir build && cd build && cmake .. && make
-	mv googletest-release-1.7.0/build/*.a .
+	rm -rf googletest-release-$(GTEST_VERSION)
+	rm -rf include
+	tar zxf gtest-src-$(GTEST_VERSION).tar.gz 
+	mv googletest-$(GTEST_VERSION) googletest-release-$(GTEST_VERSION)
+	cd googletest-release-$(GTEST_VERSION) && mkdir build && cd build && cmake .. && make
+	mv googletest-release-$(GTEST_VERSION)/build/lib/*.a .
+	mv googletest-release-$(GTEST_VERSION)/googletest/include/ .
 
 all: $(LIBS)
 
 clean:
-	rm *.a
+	rm -f *.a
+	rm -rf include
 
 

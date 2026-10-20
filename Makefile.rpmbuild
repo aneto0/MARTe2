@@ -46,8 +46,8 @@ M2_RPM_OTHER_DEVEL_FOLDERS=MakeDefaults\ Resources/RPM Resources/QA
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
-M2_RPM_SRC_DIR=Source Lib/gtest-$(GTEST_VERSION)
-M2_RPM_LIB_DIR=Build Lib/gtest-$(GTEST_VERSION)
+M2_RPM_SRC_DIR=Source Lib/gtest
+M2_RPM_LIB_DIR=Build Lib/gtest
 
 #Core version with no tests
 all: $(OBJS) $(BUILD_DIR)/$(M2_RPM_ID)-$(M2_RPM_VERSION).rpm  

@@ -74,21 +74,6 @@ CCOMPILER ?= $(COMPILER_PREFIX)gcc
 LINKER ?= $(COMPILER_PREFIX)ld
 MAKE = make
 
-GCC_VERSION := $(shell $(CXX) -dumpfullversion -dumpversion)
-GCC_MAJOR   := $(word 1,$(subst ., ,$(GCC_VERSION)))
-
-ifeq ($(GTEST_VERSION_AUTODETECT),1)
-    ifeq ($(shell test $(GCC_MAJOR) -ge 11 && echo yes),yes)
-        GTEST_VERSION := 1.18.0
-    else ifeq ($(shell test $(GCC_MAJOR) -ge 9 && echo yes),yes)
-        GTEST_VERSION := 1.16.0
-    else
-        GTEST_VERSION := 1.7.0
-    endif
-else
-    GTEST_VERSION := 1.7.0
-endif
-
 ifeq ($(VERBOSE),1)
     QVB :=
     ECHO := @true
