@@ -32,7 +32,7 @@ ctags : %.cpp %.c %.h
 $(BUILD_DIR)/%.o : %.cpp
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  CXX  $<"
-	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) -MMD -MP -MF $(@:.o=.d) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -E $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.e
 #	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
@@ -40,31 +40,31 @@ $(BUILD_DIR)/%.o : %.cpp
 $(BUILD_DIR)/%.o1 : %.cpp
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  CXX (O1)  $<"
-	$(QVB)$(COMPILER) -c -O1 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o1
+	$(QVB)$(COMPILER) -c -O1 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG) -MMD -MP -MF $(@:.o1=.d) $*.cpp -o $(BUILD_DIR)/$*.o1
 #	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o2 : %.cpp
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  CXX (O2)  $<"
-	$(QVB)$(COMPILER) -c -O2 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o2
+	$(QVB)$(COMPILER) -c -O2 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG) -MMD -MP -MF $(@:.o2=.d) $*.cpp -o $(BUILD_DIR)/$*.o2
 #	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o3 : %.cpp
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  CXX (O3)  $<"
-	$(QVB)$(COMPILER) -c -O3 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o3
+	$(QVB)$(COMPILER) -c -O3 $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG) -MMD -MP -MF $(@:.o3=.d)  $*.cpp -o $(BUILD_DIR)/$*.o3
 #	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.ons : %.cpp
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  CXX  $<"
-	$(QVB)@$(COMPILER) -c $(INCLUDES) $(CPPFLAGS_NO_STD) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.ons
+	$(QVB)$(COMPILER) -c $(INCLUDES) $(CPPFLAGS_NO_STD) $(CFLAGSPEC) $(DEBUG) -MMD -MP -MF $(@:.ons=.d)  $*.cpp -o $(BUILD_DIR)/$*.ons
 #	$(COMPILER) -S $(OPTIM) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o : %.c
 	$(QVB)mkdir -p $(BUILD_DIR)
 	$(ECHO) "  C  $<"
-	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
+	$(QVB)$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) -MMD -MP -MF $(@:.o=.d) $*.c -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.a : $(OBJS)
@@ -90,22 +90,13 @@ $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o $(OBJS)
 	@touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
-#If the file does not exist and we are in a clean context, do not create it!
-depends.$(TARGET): dependsRaw.$(TARGET) 
-ifneq ($(MAKECMDGOALS),clean)
-	$(QVB)echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > Create$(TARGET)Depends.sed
-	$(QVB)sed -f Create$(TARGET)Depends.sed dependsRaw.$(TARGET) >depends.$(TARGET)
-	$(QVB)rm -f Create$(TARGET)Depends.sed 
-endif
+#Migrated to new depends strategy
+dependsRaw.$(TARGET):
+	@:
 
-#If the file does not exist and we are in a clean context, do not create it (a touch is still needed it to implement the include)!
-dependsRaw.$(TARGET): 
-ifneq ($(MAKECMDGOALS),clean)
-	$(QVB)$(COMPILER) $(INCLUDES) $(CPPFLAGS_NO_STD) $(CFLAGS_NO_STD) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.$(TARGET)
-	$(QVB)mkdir -p $(BUILD_DIR)
-else
-	$(QVB)touch $@
-endif
+#Migrated to new depends strategy
+depends.$(TARGET): dependsRaw.$(TARGET)
+	@:
 
 %.spb : 
 	$(QVB)$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) 
@@ -120,6 +111,7 @@ endif
 #This nuke cannot be the general clean rule because we don't want to delete all the built artefacts
 #when working at the subdirectory level
 clean_wipe_old:
+	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(DEPEXT)" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)1" | xargs rm -f)
 	@$(shell find $(ROOT_DIR)/Build/$(TARGET) -name "*$(OBJEXT)2" | xargs rm -f)
@@ -136,10 +128,12 @@ clean_wipe_old:
 
 clean::  $(SUBPROJC) $(SUBPROJTC) $(SUBPROJHC) 
 	@rm -f depends*
+	@rm -f $(BUILD_DIR)/*$(DEPEXT)
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)1
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)2
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)3
+	@rm -f $(BUILD_DIR)/*$(OBJEXT)ns
 	@rm -f $(BUILD_DIR)/*$(DLLEXT)
 	@rm -f $(BUILD_DIR)/*$(EXEEXT)
 	@rm -f $(BUILD_DIR)/*$(LIBEXT)
@@ -153,3 +147,4 @@ clean::  $(SUBPROJC) $(SUBPROJTC) $(SUBPROJHC)
 	@rm -f *_Gen.c
 	@rm -f *.d
 
+-include $(DEPS)

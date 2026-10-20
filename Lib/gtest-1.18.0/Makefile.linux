@@ -20,26 +20,9 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2015-01-15 16:26:07Z aneto $
+# $Id: Makefile.x86-linux 3 2015-01-15 16:26:07Z aneto $
 #
 #############################################################
 
-LIBS = libgtest.a libgtest_main.a
-GTEST_VERSION = 1.18.0
-
-%.a:
-	rm -rf googletest-release-$(GTEST_VERSION)
-	rm -rf include
-	tar zxf gtest-src-$(GTEST_VERSION).tar.gz 
-	mv googletest-$(GTEST_VERSION) googletest-release-$(GTEST_VERSION)
-	cd googletest-release-$(GTEST_VERSION) && mkdir build && cd build && cmake .. && make
-	mv googletest-release-$(GTEST_VERSION)/build/lib/*.a .
-	mv googletest-release-$(GTEST_VERSION)/googletest/include/ .
-
-all: $(LIBS)
-
-clean:
-	rm *.a
-	rm -rf include
-
+include Makefile.gcc
 

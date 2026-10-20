@@ -35,6 +35,7 @@ LIBS = libgtest.a libgtest_main.a
 all: $(LIBS)
 
 clean:
-	rm *.a
+	rm -f *.a
+	rm -rf include/
 
 

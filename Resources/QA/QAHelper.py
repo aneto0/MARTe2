@@ -92,6 +92,7 @@ if __name__ == '__main__':
     parser.add_argument('-le', '--lcovexecdisable', action='store_true', help='Disable the lcov program? Mostly used for debug')
     parser.add_argument('-la', '--lcovminlines', type=float, help='Minimum line coverage ([0, 1])', default=0.9)
     parser.add_argument('-lb', '--lcovminfun', type=float, help='Minimum function coverage ([0, 1])', default=0)
+    parser.add_argument('-lu', '--donotusegcovr', action='store_true', help='Force lcov (new versions of the tool default to gcovr)')
     parser.add_argument('-do', '--doxygenfile', type=str, help='Name of the doxygen file', default='Doxyfile')
     parser.add_argument('-gg', '--gtestexec', type=str, help='GTest executor location', default='Build/x86-linux/GTest/MainGTest.ex')
     parser.add_argument('-gf', '--gtestfilter', type=str, help='GTest filters', nargs='*', default=['*'])
@@ -209,7 +210,7 @@ if __name__ == '__main__':
             ch = CoverageHelper(logger)
             ch.Configure({'lcovoutputdir': args.lcovoutputdir, 'lcovprefix': args.lcovprefix, 'lcovexec': args.lcovexec,
                 'lcovfilter': args.lcovfilter, 'lcovexecdisable': args.lcovexecdisable, 'lcovminfun': args.lcovminfun, 
-                'lcovminlines': args.lcovminlines, 'compbranch': args.branch, 'repo': repo, 'version': version})
+                'lcovminlines': args.lcovminlines, 'compbranch': args.branch, 'repo': repo, 'version': version, 'lcovusegcovr': not args.donotusegcovr})
             ch.Run(reporter)
 
     #GTest

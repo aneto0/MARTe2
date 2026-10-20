@@ -32,9 +32,9 @@ MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 ifeq ($(MARTe2_TEST_ENVIRONMENT), GTest)
-INCLUDES += -I$(ROOT_DIR)/Lib/gtest-$(GTEST_VERSION)/include
+INCLUDES += -I$(ROOT_DIR)/Lib/gtest/include
 OBJSX += MARTe2UTest.xns
-LIBRARIES+=../../Lib/gtest-$(GTEST_VERSION)/libgtest.a ../../Lib/gtest-$(GTEST_VERSION)/libgtest_main.a
+LIBRARIES+=../../Lib/gtest/libgtest.a ../../Lib/gtest/libgtest_main.a
 else
 LIBRARIES+=../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTest$(OBJEXT)
 LIBRARIES+=../../Build/$(TARGET)/$(MARTe2_TEST_ENVIRONMENT)/MARTe2UTestImpl$(OBJEXT)
