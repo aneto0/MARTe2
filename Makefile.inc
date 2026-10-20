@@ -37,9 +37,6 @@ SUBPROJMAINTESTCLEAN=$(SPBMT:%.x=%.spc)
 MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
 
 ROOT_DIR=.
-GTEST_VERSION_AUTODETECT = 1
-#The export guarantees that GTEST_VERSION_AUTODETECT is still valid when calling with make -C
-export GTEST_VERSION_AUTODETECT
 
 include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
