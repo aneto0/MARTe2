@@ -30,7 +30,7 @@ GCC_MAJOR   := $(word 1,$(subst ., ,$(GCC_VERSION)))
 ifeq ($(DISABLE_GTEST_VERSION_AUTODETECT),1)
     GTEST_VERSION := 1.7.0
 else
-	ifeq ($(shell test $(GCC_MAJOR) -ge 11 && echo yes),yes)
+    ifeq ($(shell test $(GCC_MAJOR) -ge 11 && echo yes),yes)
         GTEST_VERSION := 1.18.0
     else ifeq ($(shell test $(GCC_MAJOR) -ge 9 && echo yes),yes)
         GTEST_VERSION := 1.16.0
